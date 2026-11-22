@@ -2,7 +2,9 @@ import type { GrammarMap, Slot } from '../../../map.ts';
 import type { Under } from '../../../utils.ts';
 import type * as V from '../../../index.ts';
 export namespace Declaration {
-	export interface Enum<G extends GrammarMap, K extends Under<'declaration.enum'> = 'declaration.enum'> {
+	export namespace Type {
+		export interface Enum<G extends GrammarMap, K extends Under<'declaration.type.enum'> = 'declaration.type.enum'> {
+		}
 	}
 	export interface Extension<G extends GrammarMap, K extends Under<'declaration.extension'> = 'declaration.extension'> {
 	}
@@ -16,20 +18,26 @@ export namespace Declaration {
 		export interface Signature<G extends GrammarMap, K extends Under<'declaration.function.signature'> = 'declaration.function.signature'> {
 		}
 	}
-	export namespace Interface {
-		export interface Trait<G extends GrammarMap, K extends Under<'declaration.interface.trait'> = 'declaration.interface.trait'> {
+	export namespace Type {
+		export namespace Interface {
+			export interface Trait<G extends GrammarMap, K extends Under<'declaration.type.interface.trait'> = 'declaration.type.interface.trait'> {
+			}
 		}
 	}
-	export interface Method<G extends GrammarMap, K extends Under<'declaration.method'> = 'declaration.method'> {
-	}
-	export namespace Method {
-		export interface Signature<G extends GrammarMap, K extends Under<'declaration.method.signature'> = 'declaration.method.signature'> {
+	export namespace Member {
+		export interface Method<G extends GrammarMap, K extends Under<'declaration.member.method'> = 'declaration.member.method'> {
+		}
+		export namespace Method {
+			export interface Signature<G extends GrammarMap, K extends Under<'declaration.member.method.signature'> = 'declaration.member.method.signature'> {
+			}
 		}
 	}
-	export interface TypeAlias<G extends GrammarMap, K extends Under<'declaration.type_alias'> = 'declaration.type_alias'> {
-	}
-	export namespace TypeAlias {
-		export interface Associated<G extends GrammarMap, K extends Under<'declaration.type_alias.associated'> = 'declaration.type_alias.associated'> {
+	export namespace Type {
+		export interface TypeAlias<G extends GrammarMap, K extends Under<'declaration.type.type_alias'> = 'declaration.type.type_alias'> {
+		}
+		export namespace TypeAlias {
+			export interface Associated<G extends GrammarMap, K extends Under<'declaration.type.type_alias.associated'> = 'declaration.type.type_alias.associated'> {
+			}
 		}
 	}
 	export interface TypeParameter<G extends GrammarMap, K extends Under<'declaration.type_parameter'> = 'declaration.type_parameter'> {
@@ -57,6 +65,8 @@ export namespace Declaration {
 			readonly bounds?: never;
 		}
 	}
-	export interface Union<G extends GrammarMap, K extends Under<'declaration.union'> = 'declaration.union'> {
+	export namespace Type {
+		export interface Union<G extends GrammarMap, K extends Under<'declaration.type.union'> = 'declaration.type.union'> {
+		}
 	}
 }

@@ -33,7 +33,7 @@ describe("a spelled fact's stamped text", () => {
 		};
 		const spelled = spellingsOf(pythonTable);
 		expect(spelled.filter(({ spelling }) => spelling.text.length !== 1 + Object.keys(spelling.holes ?? {}).length).map(({ path, fact }) => `${path} ${fact}`)).toEqual([]);
-		expect(spelled.filter(({ spelling }) => spelling.holes !== undefined).map(({ path, fact, spelling }) => [path, fact, spelling.text])).toEqual([['declaration.property.setter', 'setter', ['', '.setter']]]);
+		expect(spelled.filter(({ spelling }) => spelling.holes !== undefined).map(({ path, fact, spelling }) => [path, fact, spelling.text])).toEqual([['declaration.member.property.setter', 'setter', ['', '.setter']]]);
 		const texts = spelled.flatMap(({ path, fact, spelling }) => (spelling.holes === undefined ? [[path, fact, spelling.text[0]!] as const] : []));
 		expect(texts.map(([path, fact, text]) => [path, fact, text, readAt(path, fact, text)]).filter(([, , text, read]) => read !== text)).toEqual([]);
 		expect(texts.map(([, fact, text]) => `${fact} ${text}`)).toEqual([

@@ -14,23 +14,23 @@
 (constructor_declaration body: (suite_block (block statements: (_) @statements)))
 (constructor_declaration body: (suite_inline elements: (_) @statements))
 (function_definition body: (suite_block (block . (simple_statements (simple_statements_elements . item: (expression_statement (string) @doc))))))
-(class_definition superclasses: (_)? @bases) @declaration.class
+(class_definition superclasses: (_)? @bases) @declaration.type.class
 (class_definition type_parameters: (type_params (_) @typeParameters))
 (class_definition body: (suite_block (block statements: (_) @members)))
 (class_definition body: (suite_inline elements: (_) @members))
 (class_definition body: (_) @dropped)
 (class_definition body: (suite_block (block . (simple_statements (simple_statements_elements . item: (expression_statement (string) @doc))))))
-(class_definition body: (suite_block (block (function_definition) @declaration.method)))
-(class_definition body: (suite_block (block (decorated_definition definition: (function_definition) @declaration.method))))
-((decorated_definition_class_declaration (decorator (identifier) @_fact) definition: (method_declaration return_type: (_) @type) @declaration.property.getter) (#eq? @_fact "property"))
-((decorated_definition_class_declaration (decorator (attribute object: (identifier) @_object attribute: (identifier) @_fact)) definition: (method_declaration name: (identifier) @name return_type: (_) @returnType) @declaration.property.setter) (#eq? @_object @name) (#eq? @_fact "setter"))
-((decorated_definition_class_declaration (decorator (identifier) @_fact) definition: (method_declaration) @declaration.method.static) (#eq? @_fact "staticmethod"))
-((decorated_definition_class_declaration (decorator (identifier) @_fact) definition: (method_declaration) @declaration.method.override) (#eq? @_fact "override"))
-((decorated_definition_class_declaration (decorator (attribute object: (identifier) @_module attribute: (identifier) @_fact)) definition: (method_declaration) @declaration.method.override) (#eq? @_module "typing") (#eq? @_fact "override"))
-((method_declaration name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))
-(constructor_declaration) @declaration.constructor
-((method_declaration name: (identifier) @name) @declaration.method.special (#match? @name "^__(?<stem>.*)__$"))
-((method_declaration name: (identifier) @name) @declaration.method.privateName (#match? @name "^__(?<name>.*[^_]_?)$"))
+(class_definition body: (suite_block (block (function_definition) @declaration.member.method)))
+(class_definition body: (suite_block (block (decorated_definition definition: (function_definition) @declaration.member.method))))
+((decorated_definition_class_declaration (decorator (identifier) @_fact) definition: (method_declaration return_type: (_) @type) @declaration.member.property.getter) (#eq? @_fact "property"))
+((decorated_definition_class_declaration (decorator (attribute object: (identifier) @_object attribute: (identifier) @_fact)) definition: (method_declaration name: (identifier) @name return_type: (_) @returnType) @declaration.member.property.setter) (#eq? @_object @name) (#eq? @_fact "setter"))
+((decorated_definition_class_declaration (decorator (identifier) @_fact) definition: (method_declaration) @declaration.member.method.static) (#eq? @_fact "staticmethod"))
+((decorated_definition_class_declaration (decorator (identifier) @_fact) definition: (method_declaration) @declaration.member.method.override) (#eq? @_fact "override"))
+((decorated_definition_class_declaration (decorator (attribute object: (identifier) @_module attribute: (identifier) @_fact)) definition: (method_declaration) @declaration.member.method.override) (#eq? @_module "typing") (#eq? @_fact "override"))
+((method_declaration name: (identifier) @name) @declaration.member.constructor (#eq? @name "__init__"))
+(constructor_declaration) @declaration.member.constructor
+((method_declaration name: (identifier) @name) @declaration.member.method.special (#match? @name "^__(?<stem>.*)__$"))
+((method_declaration name: (identifier) @name) @declaration.member.method.privateName (#match? @name "^__(?<name>.*[^_]_?)$"))
 (decorated_definition (decorator)* @decorators definition: (_) @element)
 (typed_parameter) @declaration.parameter.typed
 (default_parameter value: (_)? @default) @declaration.parameter.defaulted
@@ -45,7 +45,7 @@
 ((assignment_eq left: (identifier) @name) @declaration.constant (#match? @name "^[A-Z][A-Z_0-9]*$"))
 ((assignment_typed left: (identifier) @name) @declaration.constant (#match? @name "^[A-Z][A-Z_0-9]*$"))
 ((assignment_type left: (identifier) @name) @declaration.constant (#match? @name "^[A-Z][A-Z_0-9]*$"))
-(type_alias_statement) @declaration.type_alias
+(type_alias_statement) @declaration.type.type_alias
 (type_alias_statement type_parameters: (type_params (_) @typeParameters))
 
 ; ── statement ──────────────────────────────────────────────────────────────────

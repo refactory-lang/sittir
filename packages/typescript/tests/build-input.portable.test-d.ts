@@ -12,7 +12,7 @@ declare const callRead: V.Read<TypeScriptMap, 'expression.call'>;
 // @ts-expect-error an import type's source reads only as a string literal
 export const callImportSource: V.BuildInput<TypeScriptMap, 'type.import'>['source'] = callRead;
 
-export const classDecorators: V.BuildInput<TypeScriptMap, 'declaration.class'>['decorators'] = ['x'];
+export const classDecorators: V.BuildInput<TypeScriptMap, 'declaration.type.class'>['decorators'] = ['x'];
 // @ts-expect-error a decorator reads as its expression, so no path names the decorator
 export const decoratorPath: V.Read<TypeScriptMap, 'attribute.decorator'> = { $path: 'attribute.decorator' };
 // @ts-expect-error an import clause holds its specifiers as its names, never as content

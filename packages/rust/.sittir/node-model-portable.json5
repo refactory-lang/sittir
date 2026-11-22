@@ -324,10 +324,10 @@
       ]
     },
     "associated_type": {
-      "vocab": "declaration.type_alias.associated",
+      "vocab": "declaration.type.type_alias.associated",
       "read": [
         {
-          "vocab": "declaration.type_alias.associated",
+          "vocab": "declaration.type.type_alias.associated",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -651,10 +651,10 @@
       }
     },
     "attributed_ordered_field": {
-      "vocab": "declaration.field",
+      "vocab": "declaration.member.field",
       "read": [
         {
-          "vocab": "declaration.field.private",
+          "vocab": "declaration.member.field.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -747,7 +747,7 @@
           ]
         },
         {
-          "vocab": "declaration.field.public.internal",
+          "vocab": "declaration.member.field.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -840,7 +840,7 @@
           ]
         },
         {
-          "vocab": "declaration.field.public.parent",
+          "vocab": "declaration.member.field.public.parent",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -933,7 +933,7 @@
           ]
         },
         {
-          "vocab": "declaration.field.public.restricted",
+          "vocab": "declaration.member.field.public.restricted",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -1026,7 +1026,7 @@
           ]
         },
         {
-          "vocab": "declaration.field.public",
+          "vocab": "declaration.member.field.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -1066,7 +1066,7 @@
           ]
         },
         {
-          "vocab": "declaration.field.public.internal",
+          "vocab": "declaration.member.field.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -1106,7 +1106,7 @@
           ]
         },
         {
-          "vocab": "declaration.field",
+          "vocab": "declaration.member.field",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4162,10 +4162,10 @@
       "slots": []
     },
     "enum_item": {
-      "vocab": "declaration.enum",
+      "vocab": "declaration.type.enum",
       "read": [
         {
-          "vocab": "declaration.enum.private",
+          "vocab": "declaration.type.enum.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4258,7 +4258,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum.public.internal",
+          "vocab": "declaration.type.enum.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4351,7 +4351,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum.public.parent",
+          "vocab": "declaration.type.enum.public.parent",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4444,7 +4444,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum.public.restricted",
+          "vocab": "declaration.type.enum.public.restricted",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4537,7 +4537,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum.public",
+          "vocab": "declaration.type.enum.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4577,7 +4577,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum.public.internal",
+          "vocab": "declaration.type.enum.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4617,7 +4617,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum",
+          "vocab": "declaration.type.enum",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4727,10 +4727,10 @@
       ]
     },
     "enum_variant": {
-      "vocab": "declaration.enum_member",
+      "vocab": "declaration.member.enum_member",
       "read": [
         {
-          "vocab": "declaration.enum_member.tuple.private",
+          "vocab": "declaration.member.enum_member.tuple.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4836,7 +4836,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum_member.tuple.public.internal",
+          "vocab": "declaration.member.enum_member.tuple.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4942,7 +4942,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum_member.tuple.public.parent",
+          "vocab": "declaration.member.enum_member.tuple.public.parent",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5048,7 +5048,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum_member.tuple.public.restricted",
+          "vocab": "declaration.member.enum_member.tuple.public.restricted",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5154,7 +5154,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum_member.struct.private",
+          "vocab": "declaration.member.enum_member.struct.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5260,7 +5260,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum_member.struct.public.internal",
+          "vocab": "declaration.member.enum_member.struct.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5366,7 +5366,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum_member.struct.public.parent",
+          "vocab": "declaration.member.enum_member.struct.public.parent",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5472,7 +5472,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum_member.struct.public.restricted",
+          "vocab": "declaration.member.enum_member.struct.public.restricted",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5578,7 +5578,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum_member.private",
+          "vocab": "declaration.member.enum_member.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5671,7 +5671,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum_member.public.internal",
+          "vocab": "declaration.member.enum_member.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5764,7 +5764,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum_member.public.parent",
+          "vocab": "declaration.member.enum_member.public.parent",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5857,7 +5857,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum_member.public.restricted",
+          "vocab": "declaration.member.enum_member.public.restricted",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5950,7 +5950,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum_member.tuple.public",
+          "vocab": "declaration.member.enum_member.tuple.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6003,7 +6003,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum_member.tuple.public.internal",
+          "vocab": "declaration.member.enum_member.tuple.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6056,7 +6056,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum_member.struct.public",
+          "vocab": "declaration.member.enum_member.struct.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6109,7 +6109,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum_member.struct.public.internal",
+          "vocab": "declaration.member.enum_member.struct.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6162,7 +6162,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum_member.public",
+          "vocab": "declaration.member.enum_member.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6202,7 +6202,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum_member.public.internal",
+          "vocab": "declaration.member.enum_member.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6242,7 +6242,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum_member.tuple",
+          "vocab": "declaration.member.enum_member.tuple",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6263,7 +6263,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum_member.struct",
+          "vocab": "declaration.member.enum_member.struct",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6284,7 +6284,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum_member",
+          "vocab": "declaration.member.enum_member",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -7203,17 +7203,17 @@
       "slots": []
     },
     "field_declaration": {
-      "vocab": "declaration.field",
+      "vocab": "declaration.member.field",
       "read": [
         {
-          "vocab": "declaration.field",
+          "vocab": "declaration.member.field",
           "toplevel": true,
           "within": [],
           "pins": [],
           "test": []
         },
         {
-          "vocab": "declaration.field.private",
+          "vocab": "declaration.member.field.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -7306,7 +7306,7 @@
           ]
         },
         {
-          "vocab": "declaration.field.public.internal",
+          "vocab": "declaration.member.field.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -7399,7 +7399,7 @@
           ]
         },
         {
-          "vocab": "declaration.field.public.parent",
+          "vocab": "declaration.member.field.public.parent",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -7492,7 +7492,7 @@
           ]
         },
         {
-          "vocab": "declaration.field.public.restricted",
+          "vocab": "declaration.member.field.public.restricted",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -7585,7 +7585,7 @@
           ]
         },
         {
-          "vocab": "declaration.field.public",
+          "vocab": "declaration.member.field.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -7625,7 +7625,7 @@
           ]
         },
         {
-          "vocab": "declaration.field.public.internal",
+          "vocab": "declaration.member.field.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -11997,10 +11997,10 @@
       "slots": []
     },
     "method_declaration": {
-      "vocab": "declaration.method",
+      "vocab": "declaration.member.method",
       "read": [
         {
-          "vocab": "declaration.method",
+          "vocab": "declaration.member.method",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -12030,7 +12030,7 @@
           ]
         },
         {
-          "vocab": "declaration.method",
+          "vocab": "declaration.member.method",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -12086,14 +12086,14 @@
           ]
         },
         {
-          "vocab": "declaration.method",
+          "vocab": "declaration.member.method",
           "toplevel": true,
           "within": [],
           "pins": [],
           "test": []
         },
         {
-          "vocab": "declaration.method.private",
+          "vocab": "declaration.member.method.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -12186,7 +12186,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.public.internal",
+          "vocab": "declaration.member.method.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -12279,7 +12279,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.public.parent",
+          "vocab": "declaration.member.method.public.parent",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -12372,7 +12372,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.public.restricted",
+          "vocab": "declaration.member.method.public.restricted",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -12465,7 +12465,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.public",
+          "vocab": "declaration.member.method.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -12505,7 +12505,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.public.internal",
+          "vocab": "declaration.member.method.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15757,10 +15757,10 @@
       ]
     },
     "signature_method_declaration": {
-      "vocab": "declaration.method.signature",
+      "vocab": "declaration.member.method.signature",
       "read": [
         {
-          "vocab": "declaration.method.signature",
+          "vocab": "declaration.member.method.signature",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15790,14 +15790,14 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature",
+          "vocab": "declaration.member.method.signature",
           "toplevel": true,
           "within": [],
           "pins": [],
           "test": []
         },
         {
-          "vocab": "declaration.method.signature.private",
+          "vocab": "declaration.member.method.signature.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15890,7 +15890,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature.public.internal",
+          "vocab": "declaration.member.method.signature.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15983,7 +15983,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature.public.parent",
+          "vocab": "declaration.member.method.signature.public.parent",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -16076,7 +16076,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature.public.restricted",
+          "vocab": "declaration.member.method.signature.public.restricted",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -16169,7 +16169,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature.public",
+          "vocab": "declaration.member.method.signature.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -16209,7 +16209,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature.public.internal",
+          "vocab": "declaration.member.method.signature.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -17423,10 +17423,10 @@
       ]
     },
     "struct_item_brace": {
-      "vocab": "declaration.struct",
+      "vocab": "declaration.type.struct",
       "read": [
         {
-          "vocab": "declaration.struct.private",
+          "vocab": "declaration.type.struct.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -17519,7 +17519,7 @@
           ]
         },
         {
-          "vocab": "declaration.struct.public.internal",
+          "vocab": "declaration.type.struct.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -17612,7 +17612,7 @@
           ]
         },
         {
-          "vocab": "declaration.struct.public.parent",
+          "vocab": "declaration.type.struct.public.parent",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -17705,7 +17705,7 @@
           ]
         },
         {
-          "vocab": "declaration.struct.public.restricted",
+          "vocab": "declaration.type.struct.public.restricted",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -17798,7 +17798,7 @@
           ]
         },
         {
-          "vocab": "declaration.struct.public",
+          "vocab": "declaration.type.struct.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -17838,7 +17838,7 @@
           ]
         },
         {
-          "vocab": "declaration.struct.public.internal",
+          "vocab": "declaration.type.struct.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -17878,7 +17878,7 @@
           ]
         },
         {
-          "vocab": "declaration.struct",
+          "vocab": "declaration.type.struct",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -17988,10 +17988,10 @@
       ]
     },
     "struct_item_tuple": {
-      "vocab": "declaration.struct.tuple",
+      "vocab": "declaration.type.struct.tuple",
       "read": [
         {
-          "vocab": "declaration.struct.tuple.private",
+          "vocab": "declaration.type.struct.tuple.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -18084,7 +18084,7 @@
           ]
         },
         {
-          "vocab": "declaration.struct.tuple.public.internal",
+          "vocab": "declaration.type.struct.tuple.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -18177,7 +18177,7 @@
           ]
         },
         {
-          "vocab": "declaration.struct.tuple.public.parent",
+          "vocab": "declaration.type.struct.tuple.public.parent",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -18270,7 +18270,7 @@
           ]
         },
         {
-          "vocab": "declaration.struct.tuple.public.restricted",
+          "vocab": "declaration.type.struct.tuple.public.restricted",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -18363,7 +18363,7 @@
           ]
         },
         {
-          "vocab": "declaration.struct.tuple.public",
+          "vocab": "declaration.type.struct.tuple.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -18403,7 +18403,7 @@
           ]
         },
         {
-          "vocab": "declaration.struct.tuple.public.internal",
+          "vocab": "declaration.type.struct.tuple.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -18443,14 +18443,14 @@
           ]
         },
         {
-          "vocab": "declaration.struct.tuple",
+          "vocab": "declaration.type.struct.tuple",
           "toplevel": true,
           "within": [],
           "pins": [],
           "test": []
         },
         {
-          "vocab": "declaration.struct",
+          "vocab": "declaration.type.struct",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -18560,10 +18560,10 @@
       ]
     },
     "struct_item_unit": {
-      "vocab": "declaration.struct.unit",
+      "vocab": "declaration.type.struct.unit",
       "read": [
         {
-          "vocab": "declaration.struct.unit.private",
+          "vocab": "declaration.type.struct.unit.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -18656,7 +18656,7 @@
           ]
         },
         {
-          "vocab": "declaration.struct.unit.public.internal",
+          "vocab": "declaration.type.struct.unit.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -18749,7 +18749,7 @@
           ]
         },
         {
-          "vocab": "declaration.struct.unit.public.parent",
+          "vocab": "declaration.type.struct.unit.public.parent",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -18842,7 +18842,7 @@
           ]
         },
         {
-          "vocab": "declaration.struct.unit.public.restricted",
+          "vocab": "declaration.type.struct.unit.public.restricted",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -18935,7 +18935,7 @@
           ]
         },
         {
-          "vocab": "declaration.struct.unit.public",
+          "vocab": "declaration.type.struct.unit.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -18975,7 +18975,7 @@
           ]
         },
         {
-          "vocab": "declaration.struct.unit.public.internal",
+          "vocab": "declaration.type.struct.unit.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -19015,14 +19015,14 @@
           ]
         },
         {
-          "vocab": "declaration.struct.unit",
+          "vocab": "declaration.type.struct.unit",
           "toplevel": true,
           "within": [],
           "pins": [],
           "test": []
         },
         {
-          "vocab": "declaration.struct",
+          "vocab": "declaration.type.struct",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -19583,10 +19583,10 @@
       }
     },
     "trait_item": {
-      "vocab": "declaration.interface.trait",
+      "vocab": "declaration.type.interface.trait",
       "read": [
         {
-          "vocab": "declaration.interface.trait.private",
+          "vocab": "declaration.type.interface.trait.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -19679,7 +19679,7 @@
           ]
         },
         {
-          "vocab": "declaration.interface.trait.public.internal",
+          "vocab": "declaration.type.interface.trait.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -19772,7 +19772,7 @@
           ]
         },
         {
-          "vocab": "declaration.interface.trait.public.parent",
+          "vocab": "declaration.type.interface.trait.public.parent",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -19865,7 +19865,7 @@
           ]
         },
         {
-          "vocab": "declaration.interface.trait.public.restricted",
+          "vocab": "declaration.type.interface.trait.public.restricted",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -19958,7 +19958,7 @@
           ]
         },
         {
-          "vocab": "declaration.interface.trait.public",
+          "vocab": "declaration.type.interface.trait.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -19998,7 +19998,7 @@
           ]
         },
         {
-          "vocab": "declaration.interface.trait.public.internal",
+          "vocab": "declaration.type.interface.trait.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -20038,7 +20038,7 @@
           ]
         },
         {
-          "vocab": "declaration.interface.trait",
+          "vocab": "declaration.type.interface.trait",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -20653,10 +20653,10 @@
       }
     },
     "type_item": {
-      "vocab": "declaration.type_alias",
+      "vocab": "declaration.type.type_alias",
       "read": [
         {
-          "vocab": "declaration.type_alias.private",
+          "vocab": "declaration.type.type_alias.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -20749,7 +20749,7 @@
           ]
         },
         {
-          "vocab": "declaration.type_alias.public.internal",
+          "vocab": "declaration.type.type_alias.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -20842,7 +20842,7 @@
           ]
         },
         {
-          "vocab": "declaration.type_alias.public.parent",
+          "vocab": "declaration.type.type_alias.public.parent",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -20935,7 +20935,7 @@
           ]
         },
         {
-          "vocab": "declaration.type_alias.public.restricted",
+          "vocab": "declaration.type.type_alias.public.restricted",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -21028,7 +21028,7 @@
           ]
         },
         {
-          "vocab": "declaration.type_alias.public",
+          "vocab": "declaration.type.type_alias.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -21068,7 +21068,7 @@
           ]
         },
         {
-          "vocab": "declaration.type_alias.public.internal",
+          "vocab": "declaration.type.type_alias.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -21108,7 +21108,7 @@
           ]
         },
         {
-          "vocab": "declaration.type_alias",
+          "vocab": "declaration.type.type_alias",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -21517,10 +21517,10 @@
       ]
     },
     "union_item": {
-      "vocab": "declaration.union",
+      "vocab": "declaration.type.union",
       "read": [
         {
-          "vocab": "declaration.union.private",
+          "vocab": "declaration.type.union.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -21613,7 +21613,7 @@
           ]
         },
         {
-          "vocab": "declaration.union.public.internal",
+          "vocab": "declaration.type.union.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -21706,7 +21706,7 @@
           ]
         },
         {
-          "vocab": "declaration.union.public.parent",
+          "vocab": "declaration.type.union.public.parent",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -21799,7 +21799,7 @@
           ]
         },
         {
-          "vocab": "declaration.union.public.restricted",
+          "vocab": "declaration.type.union.public.restricted",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -21892,7 +21892,7 @@
           ]
         },
         {
-          "vocab": "declaration.union.public",
+          "vocab": "declaration.type.union.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -21932,7 +21932,7 @@
           ]
         },
         {
-          "vocab": "declaration.union.public.internal",
+          "vocab": "declaration.type.union.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -21972,7 +21972,7 @@
           ]
         },
         {
-          "vocab": "declaration.union",
+          "vocab": "declaration.type.union",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -23424,27 +23424,33 @@
       },
       {
         "depth": 2,
-        "paths": 92,
-        "kinds": 129,
+        "paths": 86,
+        "kinds": 119,
         "refinements": 5
       },
       {
         "depth": 3,
-        "paths": 109,
-        "kinds": 115,
-        "refinements": 80
+        "paths": 96,
+        "kinds": 112,
+        "refinements": 60
       },
       {
         "depth": 4,
-        "paths": 108,
-        "kinds": 58,
-        "refinements": 82
+        "paths": 96,
+        "kinds": 59,
+        "refinements": 69
       },
       {
         "depth": 5,
-        "paths": 30,
-        "kinds": 13,
-        "refinements": 30
+        "paths": 45,
+        "kinds": 20,
+        "refinements": 45
+      },
+      {
+        "depth": 6,
+        "paths": 18,
+        "kinds": 5,
+        "refinements": 18
       }
     ]
   }

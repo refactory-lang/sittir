@@ -59,7 +59,7 @@ A gated owner is recorded in `owned`. A kind's own declaration is not, since the
 
 ### `packages/tools/src/vocabulary/plan.ts::flagSegments`
 
-The path segments that name a flag of the path before them. The flags of a prefix are the ones declared along the inheritance line of its nearest kind. A claim resolves each segment of its path to a kind or to a flag of the kind before it, so a segment that could be both has no single reading: `declaration.method.static` cannot be a kind while `static` is a flag of `declaration.method`. Each segment is reported once, at the path it ends (`declaration.method.static: static is a flag of declaration.method`), however many kinds lie below it.
+The path segments that name a flag of the path before them. The flags of a prefix are the ones declared along the inheritance line of its nearest kind. A claim resolves each segment of its path to a kind or to a flag of the kind before it, so a segment that could be both has no single reading: `declaration.member.method.static` cannot be a kind while `static` is a flag of `declaration.member.method`. Each segment is reported once, at the path it ends (`declaration.member.method.static: static is a flag of declaration.member.method`), however many kinds lie below it.
 
 ### `packages/tools/src/vocabulary/plan.ts::levels`
 

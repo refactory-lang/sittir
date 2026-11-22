@@ -16,31 +16,28 @@ export namespace Element {
 		>;
 	}
 	export namespace Comparator {
-		export interface Comparison<G extends GrammarMap, K extends Under<'element.comparator.comparison'> = 'element.comparator.comparison'> extends SubKindOf<V.Element.Comparator<G, K>> {
-			readonly $path: K;
-		}
 		export namespace Comparison {
-			export interface Equal<G extends GrammarMap, K extends Under<'element.comparator.comparison.equal'> = 'element.comparator.comparison.equal'> extends SubKindOf<V.Element.Comparator.Comparison<G, K>> {
+			export interface Equal<G extends GrammarMap, K extends Under<'element.comparator.comparison.equal'> = 'element.comparator.comparison.equal'> extends SubKindOf<V.Element.Comparator<G, K>> {
 				// claimed by p
 				readonly $path: K;
 			}
-			export interface Greater<G extends GrammarMap, K extends Under<'element.comparator.comparison.greater'> = 'element.comparator.comparison.greater'> extends SubKindOf<V.Element.Comparator.Comparison<G, K>> {
+			export interface Greater<G extends GrammarMap, K extends Under<'element.comparator.comparison.greater'> = 'element.comparator.comparison.greater'> extends SubKindOf<V.Element.Comparator<G, K>> {
 				// claimed by p
 				readonly $path: K;
 			}
-			export interface GreaterEqual<G extends GrammarMap, K extends Under<'element.comparator.comparison.greater_equal'> = 'element.comparator.comparison.greater_equal'> extends SubKindOf<V.Element.Comparator.Comparison<G, K>> {
+			export interface GreaterEqual<G extends GrammarMap, K extends Under<'element.comparator.comparison.greater_equal'> = 'element.comparator.comparison.greater_equal'> extends SubKindOf<V.Element.Comparator<G, K>> {
 				// claimed by p
 				readonly $path: K;
 			}
-			export interface Less<G extends GrammarMap, K extends Under<'element.comparator.comparison.less'> = 'element.comparator.comparison.less'> extends SubKindOf<V.Element.Comparator.Comparison<G, K>> {
+			export interface Less<G extends GrammarMap, K extends Under<'element.comparator.comparison.less'> = 'element.comparator.comparison.less'> extends SubKindOf<V.Element.Comparator<G, K>> {
 				// claimed by p
 				readonly $path: K;
 			}
-			export interface LessEqual<G extends GrammarMap, K extends Under<'element.comparator.comparison.less_equal'> = 'element.comparator.comparison.less_equal'> extends SubKindOf<V.Element.Comparator.Comparison<G, K>> {
+			export interface LessEqual<G extends GrammarMap, K extends Under<'element.comparator.comparison.less_equal'> = 'element.comparator.comparison.less_equal'> extends SubKindOf<V.Element.Comparator<G, K>> {
 				// claimed by p
 				readonly $path: K;
 			}
-			export interface NotEqual<G extends GrammarMap, K extends Under<'element.comparator.comparison.not_equal'> = 'element.comparator.comparison.not_equal'> extends SubKindOf<V.Element.Comparator.Comparison<G, K>> {
+			export interface NotEqual<G extends GrammarMap, K extends Under<'element.comparator.comparison.not_equal'> = 'element.comparator.comparison.not_equal'> extends SubKindOf<V.Element.Comparator<G, K>> {
 				// claimed by p
 				readonly $path: K;
 			}
@@ -51,28 +48,22 @@ export namespace Element {
 				}
 			}
 		}
-		export interface Identity<G extends GrammarMap, K extends Under<'element.comparator.identity'> = 'element.comparator.identity'> extends SubKindOf<V.Element.Comparator<G, K>> {
-			readonly $path: K;
-		}
 		export namespace Identity {
-			export interface Is<G extends GrammarMap, K extends Under<'element.comparator.identity.is'> = 'element.comparator.identity.is'> extends SubKindOf<V.Element.Comparator.Identity<G, K>> {
+			export interface Is<G extends GrammarMap, K extends Under<'element.comparator.identity.is'> = 'element.comparator.identity.is'> extends SubKindOf<V.Element.Comparator<G, K>> {
 				// claimed by p
 				readonly $path: K;
 			}
-			export interface IsNot<G extends GrammarMap, K extends Under<'element.comparator.identity.is_not'> = 'element.comparator.identity.is_not'> extends SubKindOf<V.Element.Comparator.Identity<G, K>> {
+			export interface IsNot<G extends GrammarMap, K extends Under<'element.comparator.identity.is_not'> = 'element.comparator.identity.is_not'> extends SubKindOf<V.Element.Comparator<G, K>> {
 				// claimed by p
 				readonly $path: K;
 			}
-		}
-		export interface Membership<G extends GrammarMap, K extends Under<'element.comparator.membership'> = 'element.comparator.membership'> extends SubKindOf<V.Element.Comparator<G, K>> {
-			readonly $path: K;
 		}
 		export namespace Membership {
-			export interface In<G extends GrammarMap, K extends Under<'element.comparator.membership.in'> = 'element.comparator.membership.in'> extends SubKindOf<V.Element.Comparator.Membership<G, K>> {
+			export interface In<G extends GrammarMap, K extends Under<'element.comparator.membership.in'> = 'element.comparator.membership.in'> extends SubKindOf<V.Element.Comparator<G, K>> {
 				// claimed by p
 				readonly $path: K;
 			}
-			export interface NotIn<G extends GrammarMap, K extends Under<'element.comparator.membership.not_in'> = 'element.comparator.membership.not_in'> extends SubKindOf<V.Element.Comparator.Membership<G, K>> {
+			export interface NotIn<G extends GrammarMap, K extends Under<'element.comparator.membership.not_in'> = 'element.comparator.membership.not_in'> extends SubKindOf<V.Element.Comparator<G, K>> {
 				// claimed by p
 				readonly $path: K;
 			}

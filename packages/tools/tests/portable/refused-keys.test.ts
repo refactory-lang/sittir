@@ -10,7 +10,7 @@ const escaped = (text: string): string => text.replace(/[.$]/g, (c) => `\\${c}`)
 describe('a build refuses a key its arm routes no slot for, by what the key names', () => {
 	it.each([
 		['typescript', 'optionalChain', { $path: 'expression.call', function: 'f', arguments: [], optionalChain: true }],
-		['typescript', 'abstract', { $path: 'declaration.class', name: 'C', members: [], abstract: true }],
+		['typescript', 'abstract', { $path: 'declaration.type.class', name: 'C', members: [], abstract: true }],
 		['python', 'async', { $path: 'declaration.function', name: 'f', parameters: [], statements: [{ $path: 'statement.pass' }], async: true }]
 	] as const)('%s: %s, a flag the path declares, is stated in $flags', async (grammar, flag, structure) => {
 		using engine = await engineOf(grammar);

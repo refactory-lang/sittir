@@ -962,22 +962,22 @@ type clause_case_default$231_statements$Item =
 	| number
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
-	| BuildInput<TypeScriptMap, 'declaration.class'>
-	| TypeScriptMap['nodes']['declaration.class']
-	| BuildInput<TypeScriptMap, 'declaration.enum'>
-	| TypeScriptMap['nodes']['declaration.enum']
 	| BuildInput<TypeScriptMap, 'declaration.function'>
 	| TypeScriptMap['nodes']['declaration.function']
 	| BuildInput<TypeScriptMap, 'declaration.function.signature'>
 	| TypeScriptMap['nodes']['declaration.function.signature']
-	| BuildInput<TypeScriptMap, 'declaration.interface'>
-	| TypeScriptMap['nodes']['declaration.interface']
 	| BuildInput<TypeScriptMap, 'declaration.module'>
 	| TypeScriptMap['nodes']['declaration.module']
 	| BuildInput<TypeScriptMap, 'declaration.module.external'>
 	| TypeScriptMap['nodes']['declaration.module.external']
-	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
-	| TypeScriptMap['nodes']['declaration.type_alias']
+	| BuildInput<TypeScriptMap, 'declaration.type.class'>
+	| TypeScriptMap['nodes']['declaration.type.class']
+	| BuildInput<TypeScriptMap, 'declaration.type.enum'>
+	| TypeScriptMap['nodes']['declaration.type.enum']
+	| BuildInput<TypeScriptMap, 'declaration.type.interface'>
+	| TypeScriptMap['nodes']['declaration.type.interface']
+	| BuildInput<TypeScriptMap, 'declaration.type.type_alias'>
+	| TypeScriptMap['nodes']['declaration.type.type_alias']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -1276,22 +1276,22 @@ const clause_case_default$231_statements = (value: clause_case_default$231_state
 	switch (value.$path) {
 		case 'declaration.ambient':
 			return declaration_ambient$313(value);
-		case 'declaration.class':
-			return unbuilt('clause.case.default.statements', value);
-		case 'declaration.enum':
-			return declaration_enum$322(value);
 		case 'declaration.function':
 			return unbuilt('clause.case.default.statements', value);
 		case 'declaration.function.signature':
-			return unbuilt('clause.case.default.statements', value);
-		case 'declaration.interface':
 			return unbuilt('clause.case.default.statements', value);
 		case 'declaration.module':
 			return declaration_module$316(value);
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
-		case 'declaration.type_alias':
-			return declaration_type_alias$325(value);
+		case 'declaration.type.class':
+			return unbuilt('clause.case.default.statements', value);
+		case 'declaration.type.enum':
+			return declaration_type_enum$322(value);
+		case 'declaration.type.interface':
+			return unbuilt('clause.case.default.statements', value);
+		case 'declaration.type.type_alias':
+			return declaration_type_type_alias$325(value);
 		case 'declaration.variable.constant':
 			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
@@ -1639,22 +1639,22 @@ type clause_case_switch$230_statements$Item =
 	| number
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
-	| BuildInput<TypeScriptMap, 'declaration.class'>
-	| TypeScriptMap['nodes']['declaration.class']
-	| BuildInput<TypeScriptMap, 'declaration.enum'>
-	| TypeScriptMap['nodes']['declaration.enum']
 	| BuildInput<TypeScriptMap, 'declaration.function'>
 	| TypeScriptMap['nodes']['declaration.function']
 	| BuildInput<TypeScriptMap, 'declaration.function.signature'>
 	| TypeScriptMap['nodes']['declaration.function.signature']
-	| BuildInput<TypeScriptMap, 'declaration.interface'>
-	| TypeScriptMap['nodes']['declaration.interface']
 	| BuildInput<TypeScriptMap, 'declaration.module'>
 	| TypeScriptMap['nodes']['declaration.module']
 	| BuildInput<TypeScriptMap, 'declaration.module.external'>
 	| TypeScriptMap['nodes']['declaration.module.external']
-	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
-	| TypeScriptMap['nodes']['declaration.type_alias']
+	| BuildInput<TypeScriptMap, 'declaration.type.class'>
+	| TypeScriptMap['nodes']['declaration.type.class']
+	| BuildInput<TypeScriptMap, 'declaration.type.enum'>
+	| TypeScriptMap['nodes']['declaration.type.enum']
+	| BuildInput<TypeScriptMap, 'declaration.type.interface'>
+	| TypeScriptMap['nodes']['declaration.type.interface']
+	| BuildInput<TypeScriptMap, 'declaration.type.type_alias'>
+	| TypeScriptMap['nodes']['declaration.type.type_alias']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -1953,22 +1953,22 @@ const clause_case_switch$230_statements = (value: clause_case_switch$230_stateme
 	switch (value.$path) {
 		case 'declaration.ambient':
 			return declaration_ambient$313(value);
-		case 'declaration.class':
-			return unbuilt('clause.case.switch.statements', value);
-		case 'declaration.enum':
-			return declaration_enum$322(value);
 		case 'declaration.function':
 			return unbuilt('clause.case.switch.statements', value);
 		case 'declaration.function.signature':
-			return unbuilt('clause.case.switch.statements', value);
-		case 'declaration.interface':
 			return unbuilt('clause.case.switch.statements', value);
 		case 'declaration.module':
 			return declaration_module$316(value);
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
-		case 'declaration.type_alias':
-			return declaration_type_alias$325(value);
+		case 'declaration.type.class':
+			return unbuilt('clause.case.switch.statements', value);
+		case 'declaration.type.enum':
+			return declaration_type_enum$322(value);
+		case 'declaration.type.interface':
+			return unbuilt('clause.case.switch.statements', value);
+		case 'declaration.type.type_alias':
+			return declaration_type_type_alias$325(value);
 		case 'declaration.variable.constant':
 			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
@@ -3031,22 +3031,22 @@ type clause_else$212_statements$item$Item =
 	| number
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
-	| BuildInput<TypeScriptMap, 'declaration.class'>
-	| TypeScriptMap['nodes']['declaration.class']
-	| BuildInput<TypeScriptMap, 'declaration.enum'>
-	| TypeScriptMap['nodes']['declaration.enum']
 	| BuildInput<TypeScriptMap, 'declaration.function'>
 	| TypeScriptMap['nodes']['declaration.function']
 	| BuildInput<TypeScriptMap, 'declaration.function.signature'>
 	| TypeScriptMap['nodes']['declaration.function.signature']
-	| BuildInput<TypeScriptMap, 'declaration.interface'>
-	| TypeScriptMap['nodes']['declaration.interface']
 	| BuildInput<TypeScriptMap, 'declaration.module'>
 	| TypeScriptMap['nodes']['declaration.module']
 	| BuildInput<TypeScriptMap, 'declaration.module.external'>
 	| TypeScriptMap['nodes']['declaration.module.external']
-	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
-	| TypeScriptMap['nodes']['declaration.type_alias']
+	| BuildInput<TypeScriptMap, 'declaration.type.class'>
+	| TypeScriptMap['nodes']['declaration.type.class']
+	| BuildInput<TypeScriptMap, 'declaration.type.enum'>
+	| TypeScriptMap['nodes']['declaration.type.enum']
+	| BuildInput<TypeScriptMap, 'declaration.type.interface'>
+	| TypeScriptMap['nodes']['declaration.type.interface']
+	| BuildInput<TypeScriptMap, 'declaration.type.type_alias'>
+	| TypeScriptMap['nodes']['declaration.type.type_alias']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -3345,22 +3345,22 @@ const clause_else$212_statements$item = (value: clause_else$212_statements$item$
 	switch (value.$path) {
 		case 'declaration.ambient':
 			return declaration_ambient$313(value);
-		case 'declaration.class':
-			return unbuilt('clause.else.statements', value);
-		case 'declaration.enum':
-			return declaration_enum$322(value);
 		case 'declaration.function':
 			return unbuilt('clause.else.statements', value);
 		case 'declaration.function.signature':
-			return unbuilt('clause.else.statements', value);
-		case 'declaration.interface':
 			return unbuilt('clause.else.statements', value);
 		case 'declaration.module':
 			return declaration_module$316(value);
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
-		case 'declaration.type_alias':
-			return declaration_type_alias$325(value);
+		case 'declaration.type.class':
+			return unbuilt('clause.else.statements', value);
+		case 'declaration.type.enum':
+			return declaration_type_enum$322(value);
+		case 'declaration.type.interface':
+			return unbuilt('clause.else.statements', value);
+		case 'declaration.type.type_alias':
+			return declaration_type_type_alias$325(value);
 		case 'declaration.variable.constant':
 			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
@@ -4913,24 +4913,24 @@ const clause_mapped_type$361_type = (value: clause_mapped_type$361_type$Item) =>
 type declaration_ambient$313_body$Item =
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
-	| BuildInput<TypeScriptMap, 'declaration.class'>
-	| TypeScriptMap['nodes']['declaration.class']
-	| BuildInput<TypeScriptMap, 'declaration.enum'>
-	| TypeScriptMap['nodes']['declaration.enum']
 	| BuildInput<TypeScriptMap, 'declaration.function'>
 	| TypeScriptMap['nodes']['declaration.function']
 	| BuildInput<TypeScriptMap, 'declaration.function.signature'>
 	| TypeScriptMap['nodes']['declaration.function.signature']
-	| BuildInput<TypeScriptMap, 'declaration.interface'>
-	| TypeScriptMap['nodes']['declaration.interface']
 	| BuildInput<TypeScriptMap, 'declaration.module'>
 	| TypeScriptMap['nodes']['declaration.module']
 	| BuildInput<TypeScriptMap, 'declaration.module.external'>
 	| TypeScriptMap['nodes']['declaration.module.external']
 	| BuildInput<TypeScriptMap, 'declaration.module_property'>
 	| TypeScriptMap['nodes']['declaration.module_property']
-	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
-	| TypeScriptMap['nodes']['declaration.type_alias']
+	| BuildInput<TypeScriptMap, 'declaration.type.class'>
+	| TypeScriptMap['nodes']['declaration.type.class']
+	| BuildInput<TypeScriptMap, 'declaration.type.enum'>
+	| TypeScriptMap['nodes']['declaration.type.enum']
+	| BuildInput<TypeScriptMap, 'declaration.type.interface'>
+	| TypeScriptMap['nodes']['declaration.type.interface']
+	| BuildInput<TypeScriptMap, 'declaration.type.type_alias'>
+	| TypeScriptMap['nodes']['declaration.type.type_alias']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -4958,15 +4958,9 @@ const declaration_ambient$313_body = (value: declaration_ambient$313_body$Item) 
 	switch (value.$path) {
 		case 'declaration.ambient':
 			return declaration_ambient$313(value);
-		case 'declaration.class':
-			return unbuilt('declaration.ambient.body', value);
-		case 'declaration.enum':
-			return declaration_enum$322(value);
 		case 'declaration.function':
 			return unbuilt('declaration.ambient.body', value);
 		case 'declaration.function.signature':
-			return unbuilt('declaration.ambient.body', value);
-		case 'declaration.interface':
 			return unbuilt('declaration.ambient.body', value);
 		case 'declaration.module':
 			return declaration_module$316(value);
@@ -4974,8 +4968,14 @@ const declaration_ambient$313_body = (value: declaration_ambient$313_body$Item) 
 			return declaration_module_external$315(value);
 		case 'declaration.module_property':
 			return declaration_module_property$401(value);
-		case 'declaration.type_alias':
-			return declaration_type_alias$325(value);
+		case 'declaration.type.class':
+			return unbuilt('declaration.ambient.body', value);
+		case 'declaration.type.enum':
+			return declaration_type_enum$322(value);
+		case 'declaration.type.interface':
+			return unbuilt('declaration.ambient.body', value);
+		case 'declaration.type.type_alias':
+			return declaration_type_type_alias$325(value);
 		case 'declaration.variable.constant':
 			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
@@ -4992,7 +4992,7 @@ const declaration_ambient$313_body = (value: declaration_ambient$313_body$Item) 
 			return unbuilt('declaration.ambient.body', value);
 	}
 };
-type declaration_constructor$468_parameters$item$Item =
+type declaration_member_constructor$468_parameters$item$Item =
 	| BuildInput<TypeScriptMap, 'declaration.parameter'>
 	| TypeScriptMap['nodes']['declaration.parameter']
 	| BuildInput<TypeScriptMap, 'declaration.parameter.private'>
@@ -5003,14 +5003,16 @@ type declaration_constructor$468_parameters$item$Item =
 	| TypeScriptMap['nodes']['declaration.parameter.public']
 	| BuildInput<TypeScriptMap, 'declaration.parameter.receiver'>
 	| TypeScriptMap['nodes']['declaration.parameter.receiver'];
-const declaration_constructor$468_parameters$item = (value: declaration_constructor$468_parameters$item$Item) => {
+const declaration_member_constructor$468_parameters$item = (
+	value: declaration_member_constructor$468_parameters$item$Item
+) => {
 	if (typeof value === 'number') {
 		if (seated(value, [328, 329])) return value;
-		return unseated('declaration.constructor.parameters', value);
+		return unseated('declaration.member.constructor.parameters', value);
 	}
 	if (isNode(value)) {
 		if (seated(value, [328, 329])) return value;
-		return unseated('declaration.constructor.parameters', value);
+		return unseated('declaration.member.constructor.parameters', value);
 	}
 	switch (value.$path) {
 		case 'declaration.parameter':
@@ -5030,12 +5032,12 @@ const declaration_constructor$468_parameters$item = (value: declaration_construc
 				return declaration_parameter_public$329(value);
 			return declaration_parameter_public$328(value);
 		case 'declaration.parameter.receiver':
-			return unbuilt('declaration.constructor.parameters', value);
+			return unbuilt('declaration.member.constructor.parameters', value);
 		default:
-			return unbuilt('declaration.constructor.parameters', value);
+			return unbuilt('declaration.member.constructor.parameters', value);
 	}
 };
-type declaration_constructor$468_statements$item$Item =
+type declaration_member_constructor$468_statements$item$Item =
 	| ';'
 	| 'import.meta'
 	| 'new.target'
@@ -5051,22 +5053,22 @@ type declaration_constructor$468_statements$item$Item =
 	| number
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
-	| BuildInput<TypeScriptMap, 'declaration.class'>
-	| TypeScriptMap['nodes']['declaration.class']
-	| BuildInput<TypeScriptMap, 'declaration.enum'>
-	| TypeScriptMap['nodes']['declaration.enum']
 	| BuildInput<TypeScriptMap, 'declaration.function'>
 	| TypeScriptMap['nodes']['declaration.function']
 	| BuildInput<TypeScriptMap, 'declaration.function.signature'>
 	| TypeScriptMap['nodes']['declaration.function.signature']
-	| BuildInput<TypeScriptMap, 'declaration.interface'>
-	| TypeScriptMap['nodes']['declaration.interface']
 	| BuildInput<TypeScriptMap, 'declaration.module'>
 	| TypeScriptMap['nodes']['declaration.module']
 	| BuildInput<TypeScriptMap, 'declaration.module.external'>
 	| TypeScriptMap['nodes']['declaration.module.external']
-	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
-	| TypeScriptMap['nodes']['declaration.type_alias']
+	| BuildInput<TypeScriptMap, 'declaration.type.class'>
+	| TypeScriptMap['nodes']['declaration.type.class']
+	| BuildInput<TypeScriptMap, 'declaration.type.enum'>
+	| TypeScriptMap['nodes']['declaration.type.enum']
+	| BuildInput<TypeScriptMap, 'declaration.type.interface'>
+	| TypeScriptMap['nodes']['declaration.type.interface']
+	| BuildInput<TypeScriptMap, 'declaration.type.type_alias'>
+	| TypeScriptMap['nodes']['declaration.type.type_alias']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -5306,7 +5308,9 @@ type declaration_constructor$468_statements$item$Item =
 			readonly $value: number | bigint;
 	  }
 	| Unmapped<'typescript:using_declaration'>;
-const declaration_constructor$468_statements$item = (value: declaration_constructor$468_statements$item$Item) => {
+const declaration_member_constructor$468_statements$item = (
+	value: declaration_member_constructor$468_statements$item$Item
+) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case ';':
@@ -5360,27 +5364,27 @@ const declaration_constructor$468_statements$item = (value: declaration_construc
 			)
 		)
 			return b.expressionStatement(value);
-		return unseated('declaration.constructor.statements', value);
+		return unseated('declaration.member.constructor.statements', value);
 	}
 	switch (value.$path) {
 		case 'declaration.ambient':
 			return declaration_ambient$313(value);
-		case 'declaration.class':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'declaration.enum':
-			return declaration_enum$322(value);
 		case 'declaration.function':
-			return unbuilt('declaration.constructor.statements', value);
+			return unbuilt('declaration.member.constructor.statements', value);
 		case 'declaration.function.signature':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'declaration.interface':
-			return unbuilt('declaration.constructor.statements', value);
+			return unbuilt('declaration.member.constructor.statements', value);
 		case 'declaration.module':
 			return declaration_module$316(value);
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
-		case 'declaration.type_alias':
-			return declaration_type_alias$325(value);
+		case 'declaration.type.class':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'declaration.type.enum':
+			return declaration_type_enum$322(value);
+		case 'declaration.type.interface':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'declaration.type.type_alias':
+			return declaration_type_type_alias$325(value);
 		case 'declaration.variable.constant':
 			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
@@ -5464,7 +5468,7 @@ const declaration_constructor$468_statements$item = (value: declaration_construc
 		case 'expression.binary.logical.or':
 			return b.expressionStatement(expression_binary_logical_or$269(value));
 		case 'expression.binary.membership.in':
-			return unbuilt('declaration.constructor.statements', value);
+			return unbuilt('declaration.member.constructor.statements', value);
 		case 'expression.binary.membership.instanceof':
 			return b.expressionStatement(expression_binary_membership_instanceof$269(value));
 		case 'expression.binary.shift.left':
@@ -5486,7 +5490,7 @@ const declaration_constructor$468_statements$item = (value: declaration_construc
 		case 'expression.call.construct.bare':
 			return b.expressionStatement(expression_call_construct_bare$257(value));
 		case 'expression.call.member':
-			return unbuilt('declaration.constructor.statements', value);
+			return unbuilt('declaration.member.constructor.statements', value);
 		case 'expression.call.template':
 			return b.expressionStatement(expression_call_template$423(value));
 		case 'expression.cast.assertion':
@@ -5498,7 +5502,7 @@ const declaration_constructor$468_statements$item = (value: declaration_construc
 		case 'expression.cast.satisfies':
 			return b.expressionStatement(expression_cast_satisfies$307(value));
 		case 'expression.class':
-			return unbuilt('declaration.constructor.statements', value);
+			return unbuilt('declaration.member.constructor.statements', value);
 		case 'expression.collection.list':
 			return b.expressionStatement(expression_collection_list$242(value));
 		case 'expression.collection.object':
@@ -5506,13 +5510,13 @@ const declaration_constructor$468_statements$item = (value: declaration_construc
 		case 'expression.conditional':
 			return b.expressionStatement(expression_conditional$268(value));
 		case 'expression.function':
-			return unbuilt('declaration.constructor.statements', value);
+			return unbuilt('declaration.member.constructor.statements', value);
 		case 'expression.instantiation':
 			return b.expressionStatement(expression_instantiation$308(value));
 		case 'expression.lambda':
-			return unbuilt('declaration.constructor.statements', value);
+			return unbuilt('declaration.member.constructor.statements', value);
 		case 'expression.member':
-			return unbuilt('declaration.constructor.statements', value);
+			return unbuilt('declaration.member.constructor.statements', value);
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
@@ -5551,17 +5555,17 @@ const declaration_constructor$468_statements$item = (value: declaration_construc
 		case 'expression.yield':
 			return b.expressionStatement(expression_yield$237(value));
 		case 'expression.yield.delegate':
-			return unbuilt('declaration.constructor.statements', value);
+			return unbuilt('declaration.member.constructor.statements', value);
 		case 'identifier':
 			return b.expressionStatement(identifier$1(value));
 		case 'literal.boolean.false':
-			return unbuilt('declaration.constructor.statements', value);
+			return unbuilt('declaration.member.constructor.statements', value);
 		case 'literal.boolean.true':
-			return unbuilt('declaration.constructor.statements', value);
+			return unbuilt('declaration.member.constructor.statements', value);
 		case 'literal.null':
-			return unbuilt('declaration.constructor.statements', value);
+			return unbuilt('declaration.member.constructor.statements', value);
 		case 'literal.null.undefined':
-			return unbuilt('declaration.constructor.statements', value);
+			return unbuilt('declaration.member.constructor.statements', value);
 		case 'literal.number.float':
 			return b.expressionStatement(literal_number_float$156(value));
 		case 'literal.number.float.leading_point':
@@ -5632,19 +5636,19 @@ const declaration_constructor$468_statements$item = (value: declaration_construc
 				value.value === undefined
 			)
 				return statement_export$433(value);
-			return unbuilt('declaration.constructor.statements', value);
+			return unbuilt('declaration.member.constructor.statements', value);
 		case 'statement.export.all':
-			return unbuilt('declaration.constructor.statements', value);
+			return unbuilt('declaration.member.constructor.statements', value);
 		case 'statement.export.default':
-			return unbuilt('declaration.constructor.statements', value);
+			return unbuilt('declaration.member.constructor.statements', value);
 		case 'statement.if':
 			return statement_if$213(value);
 		case 'statement.import':
-			return unbuilt('declaration.constructor.statements', value);
+			return unbuilt('declaration.member.constructor.statements', value);
 		case 'statement.import.alias':
 			return statement_import_alias$318(value);
 		case 'statement.import.typeof':
-			return unbuilt('declaration.constructor.statements', value);
+			return unbuilt('declaration.member.constructor.statements', value);
 		case 'statement.labeled':
 			return statement_labeled$228(value);
 		case 'statement.loop.counted': {
@@ -5696,7 +5700,7 @@ const declaration_constructor$468_statements$item = (value: declaration_construc
 		case 'statement.throw':
 			return statement_throw$226(value);
 		case 'statement.try':
-			return unbuilt('declaration.constructor.statements', value);
+			return unbuilt('declaration.member.constructor.statements', value);
 		case 'literal.number':
 			if (typeof value.$value === 'bigint') {
 				return b.expressionStatement(literal_number$166({ $path: 'literal.number', $value: value.$value }));
@@ -5707,12 +5711,12 @@ const declaration_constructor$468_statements$item = (value: declaration_construc
 				}
 				return b.expressionStatement(literal_number$156({ $path: 'literal.number', $value: value.$value }));
 			}
-			return unbuilt('declaration.constructor.statements', value);
+			return unbuilt('declaration.member.constructor.statements', value);
 		default:
-			return unbuilt('declaration.constructor.statements', value);
+			return unbuilt('declaration.member.constructor.statements', value);
 	}
 };
-type declaration_constructor_private$468_parameters$item$Item =
+type declaration_member_constructor_private$468_parameters$item$Item =
 	| BuildInput<TypeScriptMap, 'declaration.parameter'>
 	| TypeScriptMap['nodes']['declaration.parameter']
 	| BuildInput<TypeScriptMap, 'declaration.parameter.private'>
@@ -5723,16 +5727,16 @@ type declaration_constructor_private$468_parameters$item$Item =
 	| TypeScriptMap['nodes']['declaration.parameter.public']
 	| BuildInput<TypeScriptMap, 'declaration.parameter.receiver'>
 	| TypeScriptMap['nodes']['declaration.parameter.receiver'];
-const declaration_constructor_private$468_parameters$item = (
-	value: declaration_constructor_private$468_parameters$item$Item
+const declaration_member_constructor_private$468_parameters$item = (
+	value: declaration_member_constructor_private$468_parameters$item$Item
 ) => {
 	if (typeof value === 'number') {
 		if (seated(value, [328, 329])) return value;
-		return unseated('declaration.constructor.private.parameters', value);
+		return unseated('declaration.member.constructor.private.parameters', value);
 	}
 	if (isNode(value)) {
 		if (seated(value, [328, 329])) return value;
-		return unseated('declaration.constructor.private.parameters', value);
+		return unseated('declaration.member.constructor.private.parameters', value);
 	}
 	switch (value.$path) {
 		case 'declaration.parameter':
@@ -5752,12 +5756,12 @@ const declaration_constructor_private$468_parameters$item = (
 				return declaration_parameter_public$329(value);
 			return declaration_parameter_public$328(value);
 		case 'declaration.parameter.receiver':
-			return unbuilt('declaration.constructor.private.parameters', value);
+			return unbuilt('declaration.member.constructor.private.parameters', value);
 		default:
-			return unbuilt('declaration.constructor.private.parameters', value);
+			return unbuilt('declaration.member.constructor.private.parameters', value);
 	}
 };
-type declaration_constructor_private$468_statements$item$Item =
+type declaration_member_constructor_private$468_statements$item$Item =
 	| ';'
 	| 'import.meta'
 	| 'new.target'
@@ -5773,22 +5777,22 @@ type declaration_constructor_private$468_statements$item$Item =
 	| number
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
-	| BuildInput<TypeScriptMap, 'declaration.class'>
-	| TypeScriptMap['nodes']['declaration.class']
-	| BuildInput<TypeScriptMap, 'declaration.enum'>
-	| TypeScriptMap['nodes']['declaration.enum']
 	| BuildInput<TypeScriptMap, 'declaration.function'>
 	| TypeScriptMap['nodes']['declaration.function']
 	| BuildInput<TypeScriptMap, 'declaration.function.signature'>
 	| TypeScriptMap['nodes']['declaration.function.signature']
-	| BuildInput<TypeScriptMap, 'declaration.interface'>
-	| TypeScriptMap['nodes']['declaration.interface']
 	| BuildInput<TypeScriptMap, 'declaration.module'>
 	| TypeScriptMap['nodes']['declaration.module']
 	| BuildInput<TypeScriptMap, 'declaration.module.external'>
 	| TypeScriptMap['nodes']['declaration.module.external']
-	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
-	| TypeScriptMap['nodes']['declaration.type_alias']
+	| BuildInput<TypeScriptMap, 'declaration.type.class'>
+	| TypeScriptMap['nodes']['declaration.type.class']
+	| BuildInput<TypeScriptMap, 'declaration.type.enum'>
+	| TypeScriptMap['nodes']['declaration.type.enum']
+	| BuildInput<TypeScriptMap, 'declaration.type.interface'>
+	| TypeScriptMap['nodes']['declaration.type.interface']
+	| BuildInput<TypeScriptMap, 'declaration.type.type_alias'>
+	| TypeScriptMap['nodes']['declaration.type.type_alias']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -6028,8 +6032,8 @@ type declaration_constructor_private$468_statements$item$Item =
 			readonly $value: number | bigint;
 	  }
 	| Unmapped<'typescript:using_declaration'>;
-const declaration_constructor_private$468_statements$item = (
-	value: declaration_constructor_private$468_statements$item$Item
+const declaration_member_constructor_private$468_statements$item = (
+	value: declaration_member_constructor_private$468_statements$item$Item
 ) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -6084,27 +6088,27 @@ const declaration_constructor_private$468_statements$item = (
 			)
 		)
 			return b.expressionStatement(value);
-		return unseated('declaration.constructor.private.statements', value);
+		return unseated('declaration.member.constructor.private.statements', value);
 	}
 	switch (value.$path) {
 		case 'declaration.ambient':
 			return declaration_ambient$313(value);
-		case 'declaration.class':
-			return unbuilt('declaration.constructor.private.statements', value);
-		case 'declaration.enum':
-			return declaration_enum$322(value);
 		case 'declaration.function':
-			return unbuilt('declaration.constructor.private.statements', value);
+			return unbuilt('declaration.member.constructor.private.statements', value);
 		case 'declaration.function.signature':
-			return unbuilt('declaration.constructor.private.statements', value);
-		case 'declaration.interface':
-			return unbuilt('declaration.constructor.private.statements', value);
+			return unbuilt('declaration.member.constructor.private.statements', value);
 		case 'declaration.module':
 			return declaration_module$316(value);
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
-		case 'declaration.type_alias':
-			return declaration_type_alias$325(value);
+		case 'declaration.type.class':
+			return unbuilt('declaration.member.constructor.private.statements', value);
+		case 'declaration.type.enum':
+			return declaration_type_enum$322(value);
+		case 'declaration.type.interface':
+			return unbuilt('declaration.member.constructor.private.statements', value);
+		case 'declaration.type.type_alias':
+			return declaration_type_type_alias$325(value);
 		case 'declaration.variable.constant':
 			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
@@ -6188,7 +6192,7 @@ const declaration_constructor_private$468_statements$item = (
 		case 'expression.binary.logical.or':
 			return b.expressionStatement(expression_binary_logical_or$269(value));
 		case 'expression.binary.membership.in':
-			return unbuilt('declaration.constructor.private.statements', value);
+			return unbuilt('declaration.member.constructor.private.statements', value);
 		case 'expression.binary.membership.instanceof':
 			return b.expressionStatement(expression_binary_membership_instanceof$269(value));
 		case 'expression.binary.shift.left':
@@ -6210,7 +6214,7 @@ const declaration_constructor_private$468_statements$item = (
 		case 'expression.call.construct.bare':
 			return b.expressionStatement(expression_call_construct_bare$257(value));
 		case 'expression.call.member':
-			return unbuilt('declaration.constructor.private.statements', value);
+			return unbuilt('declaration.member.constructor.private.statements', value);
 		case 'expression.call.template':
 			return b.expressionStatement(expression_call_template$423(value));
 		case 'expression.cast.assertion':
@@ -6222,7 +6226,7 @@ const declaration_constructor_private$468_statements$item = (
 		case 'expression.cast.satisfies':
 			return b.expressionStatement(expression_cast_satisfies$307(value));
 		case 'expression.class':
-			return unbuilt('declaration.constructor.private.statements', value);
+			return unbuilt('declaration.member.constructor.private.statements', value);
 		case 'expression.collection.list':
 			return b.expressionStatement(expression_collection_list$242(value));
 		case 'expression.collection.object':
@@ -6230,13 +6234,13 @@ const declaration_constructor_private$468_statements$item = (
 		case 'expression.conditional':
 			return b.expressionStatement(expression_conditional$268(value));
 		case 'expression.function':
-			return unbuilt('declaration.constructor.private.statements', value);
+			return unbuilt('declaration.member.constructor.private.statements', value);
 		case 'expression.instantiation':
 			return b.expressionStatement(expression_instantiation$308(value));
 		case 'expression.lambda':
-			return unbuilt('declaration.constructor.private.statements', value);
+			return unbuilt('declaration.member.constructor.private.statements', value);
 		case 'expression.member':
-			return unbuilt('declaration.constructor.private.statements', value);
+			return unbuilt('declaration.member.constructor.private.statements', value);
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
@@ -6275,17 +6279,17 @@ const declaration_constructor_private$468_statements$item = (
 		case 'expression.yield':
 			return b.expressionStatement(expression_yield$237(value));
 		case 'expression.yield.delegate':
-			return unbuilt('declaration.constructor.private.statements', value);
+			return unbuilt('declaration.member.constructor.private.statements', value);
 		case 'identifier':
 			return b.expressionStatement(identifier$1(value));
 		case 'literal.boolean.false':
-			return unbuilt('declaration.constructor.private.statements', value);
+			return unbuilt('declaration.member.constructor.private.statements', value);
 		case 'literal.boolean.true':
-			return unbuilt('declaration.constructor.private.statements', value);
+			return unbuilt('declaration.member.constructor.private.statements', value);
 		case 'literal.null':
-			return unbuilt('declaration.constructor.private.statements', value);
+			return unbuilt('declaration.member.constructor.private.statements', value);
 		case 'literal.null.undefined':
-			return unbuilt('declaration.constructor.private.statements', value);
+			return unbuilt('declaration.member.constructor.private.statements', value);
 		case 'literal.number.float':
 			return b.expressionStatement(literal_number_float$156(value));
 		case 'literal.number.float.leading_point':
@@ -6356,19 +6360,19 @@ const declaration_constructor_private$468_statements$item = (
 				value.value === undefined
 			)
 				return statement_export$433(value);
-			return unbuilt('declaration.constructor.private.statements', value);
+			return unbuilt('declaration.member.constructor.private.statements', value);
 		case 'statement.export.all':
-			return unbuilt('declaration.constructor.private.statements', value);
+			return unbuilt('declaration.member.constructor.private.statements', value);
 		case 'statement.export.default':
-			return unbuilt('declaration.constructor.private.statements', value);
+			return unbuilt('declaration.member.constructor.private.statements', value);
 		case 'statement.if':
 			return statement_if$213(value);
 		case 'statement.import':
-			return unbuilt('declaration.constructor.private.statements', value);
+			return unbuilt('declaration.member.constructor.private.statements', value);
 		case 'statement.import.alias':
 			return statement_import_alias$318(value);
 		case 'statement.import.typeof':
-			return unbuilt('declaration.constructor.private.statements', value);
+			return unbuilt('declaration.member.constructor.private.statements', value);
 		case 'statement.labeled':
 			return statement_labeled$228(value);
 		case 'statement.loop.counted': {
@@ -6420,7 +6424,7 @@ const declaration_constructor_private$468_statements$item = (
 		case 'statement.throw':
 			return statement_throw$226(value);
 		case 'statement.try':
-			return unbuilt('declaration.constructor.private.statements', value);
+			return unbuilt('declaration.member.constructor.private.statements', value);
 		case 'literal.number':
 			if (typeof value.$value === 'bigint') {
 				return b.expressionStatement(literal_number$166({ $path: 'literal.number', $value: value.$value }));
@@ -6431,12 +6435,12 @@ const declaration_constructor_private$468_statements$item = (
 				}
 				return b.expressionStatement(literal_number$156({ $path: 'literal.number', $value: value.$value }));
 			}
-			return unbuilt('declaration.constructor.private.statements', value);
+			return unbuilt('declaration.member.constructor.private.statements', value);
 		default:
-			return unbuilt('declaration.constructor.private.statements', value);
+			return unbuilt('declaration.member.constructor.private.statements', value);
 	}
 };
-type declaration_constructor_protected$468_parameters$item$Item =
+type declaration_member_constructor_protected$468_parameters$item$Item =
 	| BuildInput<TypeScriptMap, 'declaration.parameter'>
 	| TypeScriptMap['nodes']['declaration.parameter']
 	| BuildInput<TypeScriptMap, 'declaration.parameter.private'>
@@ -6447,16 +6451,16 @@ type declaration_constructor_protected$468_parameters$item$Item =
 	| TypeScriptMap['nodes']['declaration.parameter.public']
 	| BuildInput<TypeScriptMap, 'declaration.parameter.receiver'>
 	| TypeScriptMap['nodes']['declaration.parameter.receiver'];
-const declaration_constructor_protected$468_parameters$item = (
-	value: declaration_constructor_protected$468_parameters$item$Item
+const declaration_member_constructor_protected$468_parameters$item = (
+	value: declaration_member_constructor_protected$468_parameters$item$Item
 ) => {
 	if (typeof value === 'number') {
 		if (seated(value, [328, 329])) return value;
-		return unseated('declaration.constructor.protected.parameters', value);
+		return unseated('declaration.member.constructor.protected.parameters', value);
 	}
 	if (isNode(value)) {
 		if (seated(value, [328, 329])) return value;
-		return unseated('declaration.constructor.protected.parameters', value);
+		return unseated('declaration.member.constructor.protected.parameters', value);
 	}
 	switch (value.$path) {
 		case 'declaration.parameter':
@@ -6476,12 +6480,12 @@ const declaration_constructor_protected$468_parameters$item = (
 				return declaration_parameter_public$329(value);
 			return declaration_parameter_public$328(value);
 		case 'declaration.parameter.receiver':
-			return unbuilt('declaration.constructor.protected.parameters', value);
+			return unbuilt('declaration.member.constructor.protected.parameters', value);
 		default:
-			return unbuilt('declaration.constructor.protected.parameters', value);
+			return unbuilt('declaration.member.constructor.protected.parameters', value);
 	}
 };
-type declaration_constructor_protected$468_statements$item$Item =
+type declaration_member_constructor_protected$468_statements$item$Item =
 	| ';'
 	| 'import.meta'
 	| 'new.target'
@@ -6497,22 +6501,22 @@ type declaration_constructor_protected$468_statements$item$Item =
 	| number
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
-	| BuildInput<TypeScriptMap, 'declaration.class'>
-	| TypeScriptMap['nodes']['declaration.class']
-	| BuildInput<TypeScriptMap, 'declaration.enum'>
-	| TypeScriptMap['nodes']['declaration.enum']
 	| BuildInput<TypeScriptMap, 'declaration.function'>
 	| TypeScriptMap['nodes']['declaration.function']
 	| BuildInput<TypeScriptMap, 'declaration.function.signature'>
 	| TypeScriptMap['nodes']['declaration.function.signature']
-	| BuildInput<TypeScriptMap, 'declaration.interface'>
-	| TypeScriptMap['nodes']['declaration.interface']
 	| BuildInput<TypeScriptMap, 'declaration.module'>
 	| TypeScriptMap['nodes']['declaration.module']
 	| BuildInput<TypeScriptMap, 'declaration.module.external'>
 	| TypeScriptMap['nodes']['declaration.module.external']
-	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
-	| TypeScriptMap['nodes']['declaration.type_alias']
+	| BuildInput<TypeScriptMap, 'declaration.type.class'>
+	| TypeScriptMap['nodes']['declaration.type.class']
+	| BuildInput<TypeScriptMap, 'declaration.type.enum'>
+	| TypeScriptMap['nodes']['declaration.type.enum']
+	| BuildInput<TypeScriptMap, 'declaration.type.interface'>
+	| TypeScriptMap['nodes']['declaration.type.interface']
+	| BuildInput<TypeScriptMap, 'declaration.type.type_alias'>
+	| TypeScriptMap['nodes']['declaration.type.type_alias']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -6752,8 +6756,8 @@ type declaration_constructor_protected$468_statements$item$Item =
 			readonly $value: number | bigint;
 	  }
 	| Unmapped<'typescript:using_declaration'>;
-const declaration_constructor_protected$468_statements$item = (
-	value: declaration_constructor_protected$468_statements$item$Item
+const declaration_member_constructor_protected$468_statements$item = (
+	value: declaration_member_constructor_protected$468_statements$item$Item
 ) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -6808,27 +6812,27 @@ const declaration_constructor_protected$468_statements$item = (
 			)
 		)
 			return b.expressionStatement(value);
-		return unseated('declaration.constructor.protected.statements', value);
+		return unseated('declaration.member.constructor.protected.statements', value);
 	}
 	switch (value.$path) {
 		case 'declaration.ambient':
 			return declaration_ambient$313(value);
-		case 'declaration.class':
-			return unbuilt('declaration.constructor.protected.statements', value);
-		case 'declaration.enum':
-			return declaration_enum$322(value);
 		case 'declaration.function':
-			return unbuilt('declaration.constructor.protected.statements', value);
+			return unbuilt('declaration.member.constructor.protected.statements', value);
 		case 'declaration.function.signature':
-			return unbuilt('declaration.constructor.protected.statements', value);
-		case 'declaration.interface':
-			return unbuilt('declaration.constructor.protected.statements', value);
+			return unbuilt('declaration.member.constructor.protected.statements', value);
 		case 'declaration.module':
 			return declaration_module$316(value);
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
-		case 'declaration.type_alias':
-			return declaration_type_alias$325(value);
+		case 'declaration.type.class':
+			return unbuilt('declaration.member.constructor.protected.statements', value);
+		case 'declaration.type.enum':
+			return declaration_type_enum$322(value);
+		case 'declaration.type.interface':
+			return unbuilt('declaration.member.constructor.protected.statements', value);
+		case 'declaration.type.type_alias':
+			return declaration_type_type_alias$325(value);
 		case 'declaration.variable.constant':
 			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
@@ -6912,7 +6916,7 @@ const declaration_constructor_protected$468_statements$item = (
 		case 'expression.binary.logical.or':
 			return b.expressionStatement(expression_binary_logical_or$269(value));
 		case 'expression.binary.membership.in':
-			return unbuilt('declaration.constructor.protected.statements', value);
+			return unbuilt('declaration.member.constructor.protected.statements', value);
 		case 'expression.binary.membership.instanceof':
 			return b.expressionStatement(expression_binary_membership_instanceof$269(value));
 		case 'expression.binary.shift.left':
@@ -6934,7 +6938,7 @@ const declaration_constructor_protected$468_statements$item = (
 		case 'expression.call.construct.bare':
 			return b.expressionStatement(expression_call_construct_bare$257(value));
 		case 'expression.call.member':
-			return unbuilt('declaration.constructor.protected.statements', value);
+			return unbuilt('declaration.member.constructor.protected.statements', value);
 		case 'expression.call.template':
 			return b.expressionStatement(expression_call_template$423(value));
 		case 'expression.cast.assertion':
@@ -6946,7 +6950,7 @@ const declaration_constructor_protected$468_statements$item = (
 		case 'expression.cast.satisfies':
 			return b.expressionStatement(expression_cast_satisfies$307(value));
 		case 'expression.class':
-			return unbuilt('declaration.constructor.protected.statements', value);
+			return unbuilt('declaration.member.constructor.protected.statements', value);
 		case 'expression.collection.list':
 			return b.expressionStatement(expression_collection_list$242(value));
 		case 'expression.collection.object':
@@ -6954,13 +6958,13 @@ const declaration_constructor_protected$468_statements$item = (
 		case 'expression.conditional':
 			return b.expressionStatement(expression_conditional$268(value));
 		case 'expression.function':
-			return unbuilt('declaration.constructor.protected.statements', value);
+			return unbuilt('declaration.member.constructor.protected.statements', value);
 		case 'expression.instantiation':
 			return b.expressionStatement(expression_instantiation$308(value));
 		case 'expression.lambda':
-			return unbuilt('declaration.constructor.protected.statements', value);
+			return unbuilt('declaration.member.constructor.protected.statements', value);
 		case 'expression.member':
-			return unbuilt('declaration.constructor.protected.statements', value);
+			return unbuilt('declaration.member.constructor.protected.statements', value);
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
@@ -6999,17 +7003,17 @@ const declaration_constructor_protected$468_statements$item = (
 		case 'expression.yield':
 			return b.expressionStatement(expression_yield$237(value));
 		case 'expression.yield.delegate':
-			return unbuilt('declaration.constructor.protected.statements', value);
+			return unbuilt('declaration.member.constructor.protected.statements', value);
 		case 'identifier':
 			return b.expressionStatement(identifier$1(value));
 		case 'literal.boolean.false':
-			return unbuilt('declaration.constructor.protected.statements', value);
+			return unbuilt('declaration.member.constructor.protected.statements', value);
 		case 'literal.boolean.true':
-			return unbuilt('declaration.constructor.protected.statements', value);
+			return unbuilt('declaration.member.constructor.protected.statements', value);
 		case 'literal.null':
-			return unbuilt('declaration.constructor.protected.statements', value);
+			return unbuilt('declaration.member.constructor.protected.statements', value);
 		case 'literal.null.undefined':
-			return unbuilt('declaration.constructor.protected.statements', value);
+			return unbuilt('declaration.member.constructor.protected.statements', value);
 		case 'literal.number.float':
 			return b.expressionStatement(literal_number_float$156(value));
 		case 'literal.number.float.leading_point':
@@ -7080,19 +7084,19 @@ const declaration_constructor_protected$468_statements$item = (
 				value.value === undefined
 			)
 				return statement_export$433(value);
-			return unbuilt('declaration.constructor.protected.statements', value);
+			return unbuilt('declaration.member.constructor.protected.statements', value);
 		case 'statement.export.all':
-			return unbuilt('declaration.constructor.protected.statements', value);
+			return unbuilt('declaration.member.constructor.protected.statements', value);
 		case 'statement.export.default':
-			return unbuilt('declaration.constructor.protected.statements', value);
+			return unbuilt('declaration.member.constructor.protected.statements', value);
 		case 'statement.if':
 			return statement_if$213(value);
 		case 'statement.import':
-			return unbuilt('declaration.constructor.protected.statements', value);
+			return unbuilt('declaration.member.constructor.protected.statements', value);
 		case 'statement.import.alias':
 			return statement_import_alias$318(value);
 		case 'statement.import.typeof':
-			return unbuilt('declaration.constructor.protected.statements', value);
+			return unbuilt('declaration.member.constructor.protected.statements', value);
 		case 'statement.labeled':
 			return statement_labeled$228(value);
 		case 'statement.loop.counted': {
@@ -7144,7 +7148,7 @@ const declaration_constructor_protected$468_statements$item = (
 		case 'statement.throw':
 			return statement_throw$226(value);
 		case 'statement.try':
-			return unbuilt('declaration.constructor.protected.statements', value);
+			return unbuilt('declaration.member.constructor.protected.statements', value);
 		case 'literal.number':
 			if (typeof value.$value === 'bigint') {
 				return b.expressionStatement(literal_number$166({ $path: 'literal.number', $value: value.$value }));
@@ -7155,12 +7159,12 @@ const declaration_constructor_protected$468_statements$item = (
 				}
 				return b.expressionStatement(literal_number$156({ $path: 'literal.number', $value: value.$value }));
 			}
-			return unbuilt('declaration.constructor.protected.statements', value);
+			return unbuilt('declaration.member.constructor.protected.statements', value);
 		default:
-			return unbuilt('declaration.constructor.protected.statements', value);
+			return unbuilt('declaration.member.constructor.protected.statements', value);
 	}
 };
-type declaration_constructor_public$468_parameters$item$Item =
+type declaration_member_constructor_public$468_parameters$item$Item =
 	| BuildInput<TypeScriptMap, 'declaration.parameter'>
 	| TypeScriptMap['nodes']['declaration.parameter']
 	| BuildInput<TypeScriptMap, 'declaration.parameter.private'>
@@ -7171,16 +7175,16 @@ type declaration_constructor_public$468_parameters$item$Item =
 	| TypeScriptMap['nodes']['declaration.parameter.public']
 	| BuildInput<TypeScriptMap, 'declaration.parameter.receiver'>
 	| TypeScriptMap['nodes']['declaration.parameter.receiver'];
-const declaration_constructor_public$468_parameters$item = (
-	value: declaration_constructor_public$468_parameters$item$Item
+const declaration_member_constructor_public$468_parameters$item = (
+	value: declaration_member_constructor_public$468_parameters$item$Item
 ) => {
 	if (typeof value === 'number') {
 		if (seated(value, [328, 329])) return value;
-		return unseated('declaration.constructor.public.parameters', value);
+		return unseated('declaration.member.constructor.public.parameters', value);
 	}
 	if (isNode(value)) {
 		if (seated(value, [328, 329])) return value;
-		return unseated('declaration.constructor.public.parameters', value);
+		return unseated('declaration.member.constructor.public.parameters', value);
 	}
 	switch (value.$path) {
 		case 'declaration.parameter':
@@ -7200,12 +7204,12 @@ const declaration_constructor_public$468_parameters$item = (
 				return declaration_parameter_public$329(value);
 			return declaration_parameter_public$328(value);
 		case 'declaration.parameter.receiver':
-			return unbuilt('declaration.constructor.public.parameters', value);
+			return unbuilt('declaration.member.constructor.public.parameters', value);
 		default:
-			return unbuilt('declaration.constructor.public.parameters', value);
+			return unbuilt('declaration.member.constructor.public.parameters', value);
 	}
 };
-type declaration_constructor_public$468_statements$item$Item =
+type declaration_member_constructor_public$468_statements$item$Item =
 	| ';'
 	| 'import.meta'
 	| 'new.target'
@@ -7221,22 +7225,22 @@ type declaration_constructor_public$468_statements$item$Item =
 	| number
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
-	| BuildInput<TypeScriptMap, 'declaration.class'>
-	| TypeScriptMap['nodes']['declaration.class']
-	| BuildInput<TypeScriptMap, 'declaration.enum'>
-	| TypeScriptMap['nodes']['declaration.enum']
 	| BuildInput<TypeScriptMap, 'declaration.function'>
 	| TypeScriptMap['nodes']['declaration.function']
 	| BuildInput<TypeScriptMap, 'declaration.function.signature'>
 	| TypeScriptMap['nodes']['declaration.function.signature']
-	| BuildInput<TypeScriptMap, 'declaration.interface'>
-	| TypeScriptMap['nodes']['declaration.interface']
 	| BuildInput<TypeScriptMap, 'declaration.module'>
 	| TypeScriptMap['nodes']['declaration.module']
 	| BuildInput<TypeScriptMap, 'declaration.module.external'>
 	| TypeScriptMap['nodes']['declaration.module.external']
-	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
-	| TypeScriptMap['nodes']['declaration.type_alias']
+	| BuildInput<TypeScriptMap, 'declaration.type.class'>
+	| TypeScriptMap['nodes']['declaration.type.class']
+	| BuildInput<TypeScriptMap, 'declaration.type.enum'>
+	| TypeScriptMap['nodes']['declaration.type.enum']
+	| BuildInput<TypeScriptMap, 'declaration.type.interface'>
+	| TypeScriptMap['nodes']['declaration.type.interface']
+	| BuildInput<TypeScriptMap, 'declaration.type.type_alias'>
+	| TypeScriptMap['nodes']['declaration.type.type_alias']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -7476,8 +7480,8 @@ type declaration_constructor_public$468_statements$item$Item =
 			readonly $value: number | bigint;
 	  }
 	| Unmapped<'typescript:using_declaration'>;
-const declaration_constructor_public$468_statements$item = (
-	value: declaration_constructor_public$468_statements$item$Item
+const declaration_member_constructor_public$468_statements$item = (
+	value: declaration_member_constructor_public$468_statements$item$Item
 ) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -7532,27 +7536,27 @@ const declaration_constructor_public$468_statements$item = (
 			)
 		)
 			return b.expressionStatement(value);
-		return unseated('declaration.constructor.public.statements', value);
+		return unseated('declaration.member.constructor.public.statements', value);
 	}
 	switch (value.$path) {
 		case 'declaration.ambient':
 			return declaration_ambient$313(value);
-		case 'declaration.class':
-			return unbuilt('declaration.constructor.public.statements', value);
-		case 'declaration.enum':
-			return declaration_enum$322(value);
 		case 'declaration.function':
-			return unbuilt('declaration.constructor.public.statements', value);
+			return unbuilt('declaration.member.constructor.public.statements', value);
 		case 'declaration.function.signature':
-			return unbuilt('declaration.constructor.public.statements', value);
-		case 'declaration.interface':
-			return unbuilt('declaration.constructor.public.statements', value);
+			return unbuilt('declaration.member.constructor.public.statements', value);
 		case 'declaration.module':
 			return declaration_module$316(value);
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
-		case 'declaration.type_alias':
-			return declaration_type_alias$325(value);
+		case 'declaration.type.class':
+			return unbuilt('declaration.member.constructor.public.statements', value);
+		case 'declaration.type.enum':
+			return declaration_type_enum$322(value);
+		case 'declaration.type.interface':
+			return unbuilt('declaration.member.constructor.public.statements', value);
+		case 'declaration.type.type_alias':
+			return declaration_type_type_alias$325(value);
 		case 'declaration.variable.constant':
 			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
@@ -7636,7 +7640,7 @@ const declaration_constructor_public$468_statements$item = (
 		case 'expression.binary.logical.or':
 			return b.expressionStatement(expression_binary_logical_or$269(value));
 		case 'expression.binary.membership.in':
-			return unbuilt('declaration.constructor.public.statements', value);
+			return unbuilt('declaration.member.constructor.public.statements', value);
 		case 'expression.binary.membership.instanceof':
 			return b.expressionStatement(expression_binary_membership_instanceof$269(value));
 		case 'expression.binary.shift.left':
@@ -7658,7 +7662,7 @@ const declaration_constructor_public$468_statements$item = (
 		case 'expression.call.construct.bare':
 			return b.expressionStatement(expression_call_construct_bare$257(value));
 		case 'expression.call.member':
-			return unbuilt('declaration.constructor.public.statements', value);
+			return unbuilt('declaration.member.constructor.public.statements', value);
 		case 'expression.call.template':
 			return b.expressionStatement(expression_call_template$423(value));
 		case 'expression.cast.assertion':
@@ -7670,7 +7674,7 @@ const declaration_constructor_public$468_statements$item = (
 		case 'expression.cast.satisfies':
 			return b.expressionStatement(expression_cast_satisfies$307(value));
 		case 'expression.class':
-			return unbuilt('declaration.constructor.public.statements', value);
+			return unbuilt('declaration.member.constructor.public.statements', value);
 		case 'expression.collection.list':
 			return b.expressionStatement(expression_collection_list$242(value));
 		case 'expression.collection.object':
@@ -7678,13 +7682,13 @@ const declaration_constructor_public$468_statements$item = (
 		case 'expression.conditional':
 			return b.expressionStatement(expression_conditional$268(value));
 		case 'expression.function':
-			return unbuilt('declaration.constructor.public.statements', value);
+			return unbuilt('declaration.member.constructor.public.statements', value);
 		case 'expression.instantiation':
 			return b.expressionStatement(expression_instantiation$308(value));
 		case 'expression.lambda':
-			return unbuilt('declaration.constructor.public.statements', value);
+			return unbuilt('declaration.member.constructor.public.statements', value);
 		case 'expression.member':
-			return unbuilt('declaration.constructor.public.statements', value);
+			return unbuilt('declaration.member.constructor.public.statements', value);
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
@@ -7723,17 +7727,17 @@ const declaration_constructor_public$468_statements$item = (
 		case 'expression.yield':
 			return b.expressionStatement(expression_yield$237(value));
 		case 'expression.yield.delegate':
-			return unbuilt('declaration.constructor.public.statements', value);
+			return unbuilt('declaration.member.constructor.public.statements', value);
 		case 'identifier':
 			return b.expressionStatement(identifier$1(value));
 		case 'literal.boolean.false':
-			return unbuilt('declaration.constructor.public.statements', value);
+			return unbuilt('declaration.member.constructor.public.statements', value);
 		case 'literal.boolean.true':
-			return unbuilt('declaration.constructor.public.statements', value);
+			return unbuilt('declaration.member.constructor.public.statements', value);
 		case 'literal.null':
-			return unbuilt('declaration.constructor.public.statements', value);
+			return unbuilt('declaration.member.constructor.public.statements', value);
 		case 'literal.null.undefined':
-			return unbuilt('declaration.constructor.public.statements', value);
+			return unbuilt('declaration.member.constructor.public.statements', value);
 		case 'literal.number.float':
 			return b.expressionStatement(literal_number_float$156(value));
 		case 'literal.number.float.leading_point':
@@ -7804,19 +7808,19 @@ const declaration_constructor_public$468_statements$item = (
 				value.value === undefined
 			)
 				return statement_export$433(value);
-			return unbuilt('declaration.constructor.public.statements', value);
+			return unbuilt('declaration.member.constructor.public.statements', value);
 		case 'statement.export.all':
-			return unbuilt('declaration.constructor.public.statements', value);
+			return unbuilt('declaration.member.constructor.public.statements', value);
 		case 'statement.export.default':
-			return unbuilt('declaration.constructor.public.statements', value);
+			return unbuilt('declaration.member.constructor.public.statements', value);
 		case 'statement.if':
 			return statement_if$213(value);
 		case 'statement.import':
-			return unbuilt('declaration.constructor.public.statements', value);
+			return unbuilt('declaration.member.constructor.public.statements', value);
 		case 'statement.import.alias':
 			return statement_import_alias$318(value);
 		case 'statement.import.typeof':
-			return unbuilt('declaration.constructor.public.statements', value);
+			return unbuilt('declaration.member.constructor.public.statements', value);
 		case 'statement.labeled':
 			return statement_labeled$228(value);
 		case 'statement.loop.counted': {
@@ -7868,7 +7872,7 @@ const declaration_constructor_public$468_statements$item = (
 		case 'statement.throw':
 			return statement_throw$226(value);
 		case 'statement.try':
-			return unbuilt('declaration.constructor.public.statements', value);
+			return unbuilt('declaration.member.constructor.public.statements', value);
 		case 'literal.number':
 			if (typeof value.$value === 'bigint') {
 				return b.expressionStatement(literal_number$166({ $path: 'literal.number', $value: value.$value }));
@@ -7879,56 +7883,12 @@ const declaration_constructor_public$468_statements$item = (
 				}
 				return b.expressionStatement(literal_number$156({ $path: 'literal.number', $value: value.$value }));
 			}
-			return unbuilt('declaration.constructor.public.statements', value);
+			return unbuilt('declaration.member.constructor.public.statements', value);
 		default:
-			return unbuilt('declaration.constructor.public.statements', value);
+			return unbuilt('declaration.member.constructor.public.statements', value);
 	}
 };
-type declaration_enum$322_members$item$Item =
-	| PathInput<TypeScriptMap, 'declaration.enum_member'>
-	| TypeScriptMap['nodes']['declaration.enum_member'];
-const declaration_enum$322_members$item = (value: declaration_enum$322_members$item$Item) => {
-	if (typeof value === 'number') {
-		if (seated(value, [324, 388, 389])) return value;
-		return unseated('declaration.enum.members', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [324, 388, 389])) return value;
-		return unseated('declaration.enum.members', value);
-	}
-	if (value.name !== undefined && value.value === undefined) return declaration_enum_member$388(value);
-	return declaration_enum_member$324(value);
-};
-type declaration_enum$322_name$Item =
-	| Text<TypeScriptMap, 'identifier'>
-	| BuildInput<TypeScriptMap, 'identifier'>
-	| TypeScriptMap['nodes']['identifier'];
-const declaration_enum$322_name = (value: declaration_enum$322_name$Item) => {
-	if (typeof value === 'string') {
-		if (
-			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
-				value
-			)
-		)
-			return b.identifier(value);
-		return b.identifier(value);
-	}
-	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('declaration.enum.name', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [1])) return value;
-		return unseated('declaration.enum.name', value);
-	}
-	switch (value.$path) {
-		case 'identifier':
-			return identifier$1(value);
-		default:
-			return unbuilt('declaration.enum.name', value);
-	}
-};
-type declaration_enum_member$324_name$Item =
+type declaration_member_enum_member$324_name$Item =
 	| 'import.meta'
 	| 'new.target'
 	| 'super'
@@ -8128,7 +8088,7 @@ type declaration_enum_member$324_name$Item =
 			readonly $path: 'literal.number';
 			readonly $value: number | bigint;
 	  };
-const declaration_enum_member$324_name = (value: declaration_enum_member$324_name$Item) => {
+const declaration_member_enum_member$324_name = (value: declaration_member_enum_member$324_name$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
@@ -8178,7 +8138,7 @@ const declaration_enum_member$324_name = (value: declaration_enum_member$324_nam
 			)
 		)
 			return b.computedPropertyName(value);
-		return unseated('declaration.enum_member.name', value);
+		return unseated('declaration.member.enum_member.name', value);
 	}
 	switch (value.$path) {
 		case 'expression.assignment':
@@ -8258,7 +8218,7 @@ const declaration_enum_member$324_name = (value: declaration_enum_member$324_nam
 		case 'expression.binary.logical.or':
 			return b.computedPropertyName(expression_binary_logical_or$269(value));
 		case 'expression.binary.membership.in':
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 		case 'expression.binary.membership.instanceof':
 			return b.computedPropertyName(expression_binary_membership_instanceof$269(value));
 		case 'expression.binary.shift.left':
@@ -8280,7 +8240,7 @@ const declaration_enum_member$324_name = (value: declaration_enum_member$324_nam
 		case 'expression.call.construct.bare':
 			return b.computedPropertyName(expression_call_construct_bare$257(value));
 		case 'expression.call.member':
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 		case 'expression.call.template':
 			return b.computedPropertyName(expression_call_template$423(value));
 		case 'expression.cast.assertion':
@@ -8292,7 +8252,7 @@ const declaration_enum_member$324_name = (value: declaration_enum_member$324_nam
 		case 'expression.cast.satisfies':
 			return b.computedPropertyName(expression_cast_satisfies$307(value));
 		case 'expression.class':
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 		case 'expression.collection.list':
 			return b.computedPropertyName(expression_collection_list$242(value));
 		case 'expression.collection.object':
@@ -8300,13 +8260,13 @@ const declaration_enum_member$324_name = (value: declaration_enum_member$324_nam
 		case 'expression.conditional':
 			return b.computedPropertyName(expression_conditional$268(value));
 		case 'expression.function':
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 		case 'expression.instantiation':
 			return b.computedPropertyName(expression_instantiation$308(value));
 		case 'expression.lambda':
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 		case 'expression.member':
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
@@ -8343,17 +8303,17 @@ const declaration_enum_member$324_name = (value: declaration_enum_member$324_nam
 		case 'expression.yield':
 			return b.computedPropertyName(expression_yield$237(value));
 		case 'expression.yield.delegate':
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 		case 'identifier':
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 		case 'literal.boolean.false':
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 		case 'literal.boolean.true':
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 		case 'literal.null':
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 		case 'literal.null.undefined':
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 		case 'literal.number.float':
 			return literal_number_float$156(value);
 		case 'literal.number.float.leading_point':
@@ -8394,12 +8354,12 @@ const declaration_enum_member$324_name = (value: declaration_enum_member$324_nam
 				}
 				return literal_number$156({ $path: 'literal.number', $value: value.$value });
 			}
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 		default:
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 	}
 };
-type declaration_enum_member$324_value$Item =
+type declaration_member_enum_member$324_value$Item =
 	| 'import.meta'
 	| 'new.target'
 	| 'super'
@@ -8599,7 +8559,7 @@ type declaration_enum_member$324_value$Item =
 			readonly $path: 'literal.number';
 			readonly $value: number | bigint;
 	  };
-const declaration_enum_member$324_value = (value: declaration_enum_member$324_value$Item) => {
+const declaration_member_enum_member$324_value = (value: declaration_member_enum_member$324_value$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
@@ -8641,7 +8601,7 @@ const declaration_enum_member$324_value = (value: declaration_enum_member$324_va
 			)
 		)
 			return value;
-		return unseated('declaration.enum_member.value', value);
+		return unseated('declaration.member.enum_member.value', value);
 	}
 	switch (value.$path) {
 		case 'expression.assignment':
@@ -8721,7 +8681,7 @@ const declaration_enum_member$324_value = (value: declaration_enum_member$324_va
 		case 'expression.binary.logical.or':
 			return expression_binary_logical_or$269(value);
 		case 'expression.binary.membership.in':
-			return unbuilt('declaration.enum_member.value', value);
+			return unbuilt('declaration.member.enum_member.value', value);
 		case 'expression.binary.membership.instanceof':
 			return expression_binary_membership_instanceof$269(value);
 		case 'expression.binary.shift.left':
@@ -8743,7 +8703,7 @@ const declaration_enum_member$324_value = (value: declaration_enum_member$324_va
 		case 'expression.call.construct.bare':
 			return expression_call_construct_bare$257(value);
 		case 'expression.call.member':
-			return unbuilt('declaration.enum_member.value', value);
+			return unbuilt('declaration.member.enum_member.value', value);
 		case 'expression.call.template':
 			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
@@ -8755,7 +8715,7 @@ const declaration_enum_member$324_value = (value: declaration_enum_member$324_va
 		case 'expression.cast.satisfies':
 			return expression_cast_satisfies$307(value);
 		case 'expression.class':
-			return unbuilt('declaration.enum_member.value', value);
+			return unbuilt('declaration.member.enum_member.value', value);
 		case 'expression.collection.list':
 			return expression_collection_list$242(value);
 		case 'expression.collection.object':
@@ -8763,13 +8723,13 @@ const declaration_enum_member$324_value = (value: declaration_enum_member$324_va
 		case 'expression.conditional':
 			return expression_conditional$268(value);
 		case 'expression.function':
-			return unbuilt('declaration.enum_member.value', value);
+			return unbuilt('declaration.member.enum_member.value', value);
 		case 'expression.instantiation':
 			return expression_instantiation$308(value);
 		case 'expression.lambda':
-			return unbuilt('declaration.enum_member.value', value);
+			return unbuilt('declaration.member.enum_member.value', value);
 		case 'expression.member':
-			return unbuilt('declaration.enum_member.value', value);
+			return unbuilt('declaration.member.enum_member.value', value);
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
@@ -8806,17 +8766,17 @@ const declaration_enum_member$324_value = (value: declaration_enum_member$324_va
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
-			return unbuilt('declaration.enum_member.value', value);
+			return unbuilt('declaration.member.enum_member.value', value);
 		case 'identifier':
 			return identifier$1(value);
 		case 'literal.boolean.false':
-			return unbuilt('declaration.enum_member.value', value);
+			return unbuilt('declaration.member.enum_member.value', value);
 		case 'literal.boolean.true':
-			return unbuilt('declaration.enum_member.value', value);
+			return unbuilt('declaration.member.enum_member.value', value);
 		case 'literal.null':
-			return unbuilt('declaration.enum_member.value', value);
+			return unbuilt('declaration.member.enum_member.value', value);
 		case 'literal.null.undefined':
-			return unbuilt('declaration.enum_member.value', value);
+			return unbuilt('declaration.member.enum_member.value', value);
 		case 'literal.number.float':
 			return literal_number_float$156(value);
 		case 'literal.number.float.leading_point':
@@ -8857,12 +8817,12 @@ const declaration_enum_member$324_value = (value: declaration_enum_member$324_va
 				}
 				return literal_number$156({ $path: 'literal.number', $value: value.$value });
 			}
-			return unbuilt('declaration.enum_member.value', value);
+			return unbuilt('declaration.member.enum_member.value', value);
 		default:
-			return unbuilt('declaration.enum_member.value', value);
+			return unbuilt('declaration.member.enum_member.value', value);
 	}
 };
-type declaration_enum_member$388_name$Item =
+type declaration_member_enum_member$388_name$Item =
 	| 'import.meta'
 	| 'new.target'
 	| 'super'
@@ -9062,7 +9022,7 @@ type declaration_enum_member$388_name$Item =
 			readonly $path: 'literal.number';
 			readonly $value: number | bigint;
 	  };
-const declaration_enum_member$388_name = (value: declaration_enum_member$388_name$Item) => {
+const declaration_member_enum_member$388_name = (value: declaration_member_enum_member$388_name$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
@@ -9112,7 +9072,7 @@ const declaration_enum_member$388_name = (value: declaration_enum_member$388_nam
 			)
 		)
 			return b.computedPropertyName(value);
-		return unseated('declaration.enum_member.name', value);
+		return unseated('declaration.member.enum_member.name', value);
 	}
 	switch (value.$path) {
 		case 'expression.assignment':
@@ -9192,7 +9152,7 @@ const declaration_enum_member$388_name = (value: declaration_enum_member$388_nam
 		case 'expression.binary.logical.or':
 			return b.computedPropertyName(expression_binary_logical_or$269(value));
 		case 'expression.binary.membership.in':
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 		case 'expression.binary.membership.instanceof':
 			return b.computedPropertyName(expression_binary_membership_instanceof$269(value));
 		case 'expression.binary.shift.left':
@@ -9214,7 +9174,7 @@ const declaration_enum_member$388_name = (value: declaration_enum_member$388_nam
 		case 'expression.call.construct.bare':
 			return b.computedPropertyName(expression_call_construct_bare$257(value));
 		case 'expression.call.member':
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 		case 'expression.call.template':
 			return b.computedPropertyName(expression_call_template$423(value));
 		case 'expression.cast.assertion':
@@ -9226,7 +9186,7 @@ const declaration_enum_member$388_name = (value: declaration_enum_member$388_nam
 		case 'expression.cast.satisfies':
 			return b.computedPropertyName(expression_cast_satisfies$307(value));
 		case 'expression.class':
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 		case 'expression.collection.list':
 			return b.computedPropertyName(expression_collection_list$242(value));
 		case 'expression.collection.object':
@@ -9234,13 +9194,13 @@ const declaration_enum_member$388_name = (value: declaration_enum_member$388_nam
 		case 'expression.conditional':
 			return b.computedPropertyName(expression_conditional$268(value));
 		case 'expression.function':
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 		case 'expression.instantiation':
 			return b.computedPropertyName(expression_instantiation$308(value));
 		case 'expression.lambda':
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 		case 'expression.member':
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
@@ -9277,17 +9237,17 @@ const declaration_enum_member$388_name = (value: declaration_enum_member$388_nam
 		case 'expression.yield':
 			return b.computedPropertyName(expression_yield$237(value));
 		case 'expression.yield.delegate':
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 		case 'identifier':
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 		case 'literal.boolean.false':
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 		case 'literal.boolean.true':
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 		case 'literal.null':
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 		case 'literal.null.undefined':
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 		case 'literal.number.float':
 			return literal_number_float$156(value);
 		case 'literal.number.float.leading_point':
@@ -9328,9 +9288,1872 @@ const declaration_enum_member$388_name = (value: declaration_enum_member$388_nam
 				}
 				return literal_number$156({ $path: 'literal.number', $value: value.$value });
 			}
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
 		default:
-			return unbuilt('declaration.enum_member.name', value);
+			return unbuilt('declaration.member.enum_member.name', value);
+	}
+};
+type declaration_member_signature_construct$376_parameters$item$Item =
+	| BuildInput<TypeScriptMap, 'declaration.parameter'>
+	| TypeScriptMap['nodes']['declaration.parameter']
+	| BuildInput<TypeScriptMap, 'declaration.parameter.private'>
+	| TypeScriptMap['nodes']['declaration.parameter.private']
+	| BuildInput<TypeScriptMap, 'declaration.parameter.protected'>
+	| TypeScriptMap['nodes']['declaration.parameter.protected']
+	| BuildInput<TypeScriptMap, 'declaration.parameter.public'>
+	| TypeScriptMap['nodes']['declaration.parameter.public']
+	| BuildInput<TypeScriptMap, 'declaration.parameter.receiver'>
+	| TypeScriptMap['nodes']['declaration.parameter.receiver'];
+const declaration_member_signature_construct$376_parameters$item = (
+	value: declaration_member_signature_construct$376_parameters$item$Item
+) => {
+	if (typeof value === 'number') {
+		if (seated(value, [328, 329])) return value;
+		return unseated('declaration.member.signature.construct.parameters', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [328, 329])) return value;
+		return unseated('declaration.member.signature.construct.parameters', value);
+	}
+	switch (value.$path) {
+		case 'declaration.parameter':
+			if ((value.$flags ?? []).includes('optional') && value.name !== undefined)
+				return declaration_parameter$329(value);
+			return declaration_parameter$328(value);
+		case 'declaration.parameter.private':
+			if ((value.$flags ?? []).includes('optional') && value.name !== undefined)
+				return declaration_parameter_private$329(value);
+			return declaration_parameter_private$328(value);
+		case 'declaration.parameter.protected':
+			if ((value.$flags ?? []).includes('optional') && value.name !== undefined)
+				return declaration_parameter_protected$329(value);
+			return declaration_parameter_protected$328(value);
+		case 'declaration.parameter.public':
+			if ((value.$flags ?? []).includes('optional') && value.name !== undefined)
+				return declaration_parameter_public$329(value);
+			return declaration_parameter_public$328(value);
+		case 'declaration.parameter.receiver':
+			return unbuilt('declaration.member.signature.construct.parameters', value);
+		default:
+			return unbuilt('declaration.member.signature.construct.parameters', value);
+	}
+};
+type declaration_member_signature_construct$376_type$Item =
+	| '*'
+	| 'any'
+	| 'boolean'
+	| 'never'
+	| 'number'
+	| 'object'
+	| 'string'
+	| 'symbol'
+	| 'this'
+	| 'unique symbol'
+	| 'unknown'
+	| 'void'
+	| Text<TypeScriptMap, 'identifier'>
+	| Text<TypeScriptMap, 'type.existential'>
+	| Text<TypeScriptMap, 'type.primitive.boolean'>
+	| Text<TypeScriptMap, 'type.primitive.floating.float64'>
+	| Text<TypeScriptMap, 'type.primitive.never'>
+	| Text<TypeScriptMap, 'type.primitive.object'>
+	| Text<TypeScriptMap, 'type.primitive.string'>
+	| Text<TypeScriptMap, 'type.primitive.symbol'>
+	| Text<TypeScriptMap, 'type.primitive.unchecked'>
+	| Text<TypeScriptMap, 'type.primitive.unknown'>
+	| Text<TypeScriptMap, 'type.primitive.void'>
+	| Text<TypeScriptMap, 'type.receiver'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'identifier.qualified'>
+	| TypeScriptMap['nodes']['identifier.qualified']
+	| BuildInput<TypeScriptMap, 'type.array'>
+	| TypeScriptMap['nodes']['type.array']
+	| BuildInput<TypeScriptMap, 'type.conditional'>
+	| TypeScriptMap['nodes']['type.conditional']
+	| BuildInput<TypeScriptMap, 'type.function'>
+	| TypeScriptMap['nodes']['type.function']
+	| BuildInput<TypeScriptMap, 'type.function.constructor'>
+	| TypeScriptMap['nodes']['type.function.constructor']
+	| BuildInput<TypeScriptMap, 'type.generic'>
+	| TypeScriptMap['nodes']['type.generic']
+	| BuildInput<TypeScriptMap, 'type.import'>
+	| TypeScriptMap['nodes']['type.import']
+	| BuildInput<TypeScriptMap, 'type.index_query'>
+	| TypeScriptMap['nodes']['type.index_query']
+	| BuildInput<TypeScriptMap, 'type.infer'>
+	| TypeScriptMap['nodes']['type.infer']
+	| BuildInput<TypeScriptMap, 'type.intersection'>
+	| TypeScriptMap['nodes']['type.intersection']
+	| BuildInput<TypeScriptMap, 'type.literal'>
+	| TypeScriptMap['nodes']['type.literal']
+	| BuildInput<TypeScriptMap, 'type.lookup'>
+	| TypeScriptMap['nodes']['type.lookup']
+	| BuildInput<TypeScriptMap, 'type.nullable'>
+	| TypeScriptMap['nodes']['type.nullable']
+	| BuildInput<TypeScriptMap, 'type.object'>
+	| TypeScriptMap['nodes']['type.object']
+	| BuildInput<TypeScriptMap, 'type.parenthesized'>
+	| TypeScriptMap['nodes']['type.parenthesized']
+	| BuildInput<TypeScriptMap, 'type.query'>
+	| TypeScriptMap['nodes']['type.query']
+	| BuildInput<TypeScriptMap, 'type.readonly'>
+	| TypeScriptMap['nodes']['type.readonly']
+	| BuildInput<TypeScriptMap, 'type.template'>
+	| TypeScriptMap['nodes']['type.template']
+	| BuildInput<TypeScriptMap, 'type.tuple'>
+	| TypeScriptMap['nodes']['type.tuple']
+	| BuildInput<TypeScriptMap, 'type.union'>
+	| TypeScriptMap['nodes']['type.union'];
+const declaration_member_signature_construct$376_type = (
+	value: declaration_member_signature_construct$376_type$Item
+) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '*':
+				return b.typeAnnotation(364);
+			case 'any':
+				return b.typeAnnotation(40);
+			case 'boolean':
+				return b.typeAnnotation(42);
+			case 'never':
+				return b.typeAnnotation(146);
+			case 'number':
+				return b.typeAnnotation(41);
+			case 'object':
+				return b.typeAnnotation(46);
+			case 'string':
+				return b.typeAnnotation(43);
+			case 'symbol':
+				return b.typeAnnotation(44);
+			case 'this':
+				return b.typeAnnotation(508);
+			case 'unique symbol':
+				return b.typeAnnotation(144);
+			case 'unknown':
+				return b.typeAnnotation(145);
+			case 'void':
+				return b.typeAnnotation(78);
+			default:
+				if (
+					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+						value
+					)
+				)
+					return b.typeAnnotation(b.identifier(value));
+				return b.typeAnnotation(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (
+			seated(
+				value,
+				[
+					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
+					382, 383, 509
+				]
+			)
+		)
+			return b.typeAnnotation(value);
+		return unseated('declaration.member.signature.construct.type', value);
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+				]
+			)
+		)
+			return b.typeAnnotation(value);
+		return unseated('declaration.member.signature.construct.type', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('declaration.member.signature.construct.type', value);
+		case 'identifier.qualified':
+			if (
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				value.name !== undefined &&
+				value.qualifier !== undefined
+			)
+				return b.typeAnnotation(identifier_qualified$335(value));
+			return b.typeAnnotation(identifier_qualified$319(value));
+		case 'type.array':
+			return b.typeAnnotation(type_array$378(value));
+		case 'type.conditional':
+			return b.typeAnnotation(type_conditional$350(value));
+		case 'type.function':
+			return unbuilt('declaration.member.signature.construct.type', value);
+		case 'type.function.constructor':
+			return unbuilt('declaration.member.signature.construct.type', value);
+		case 'type.generic':
+			return b.typeAnnotation(type_generic$351(value));
+		case 'type.import':
+			return b.typeAnnotation(type_import$336(value));
+		case 'type.index_query':
+			return b.typeAnnotation(type_index_query$359(value));
+		case 'type.infer':
+			return b.typeAnnotation(type_infer$349(value));
+		case 'type.intersection':
+			return b.typeAnnotation(type_intersection$382(value));
+		case 'type.literal':
+			return b.typeAnnotation(type_literal$362(value));
+		case 'type.lookup':
+			return b.typeAnnotation(type_lookup$360(value));
+		case 'type.nullable':
+			return b.typeAnnotation(type_nullable$365(value));
+		case 'type.object':
+			return b.typeAnnotation(type_object$369(value));
+		case 'type.parenthesized':
+			return b.typeAnnotation(type_parenthesized$366(value));
+		case 'type.query':
+			return b.typeAnnotation(type_query$358(value));
+		case 'type.readonly':
+			return b.typeAnnotation(type_readonly$380(value));
+		case 'type.template':
+			return b.typeAnnotation(type_template$348(value));
+		case 'type.tuple':
+			return b.typeAnnotation(type_tuple$379(value));
+		case 'type.union':
+			return b.typeAnnotation(type_union$381(value));
+		default:
+			return unbuilt('declaration.member.signature.construct.type', value);
+	}
+};
+type declaration_member_signature_construct$376_typeParameters$item$Item =
+	| PathInput<TypeScriptMap, 'declaration.type_parameter'>
+	| TypeScriptMap['nodes']['declaration.type_parameter'];
+const declaration_member_signature_construct$376_typeParameters$item = (
+	value: declaration_member_signature_construct$376_typeParameters$item$Item
+) => {
+	if (typeof value === 'number') {
+		if (seated(value, [373])) return value;
+		return unseated('declaration.member.signature.construct.typeParameters', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [373])) return value;
+		return unseated('declaration.member.signature.construct.typeParameters', value);
+	}
+	return unbuilt('declaration.member.signature.construct.typeParameters', value);
+};
+type declaration_member_signature_index$410_indexType$Item =
+	| '*'
+	| 'any'
+	| 'boolean'
+	| 'never'
+	| 'number'
+	| 'object'
+	| 'string'
+	| 'symbol'
+	| 'this'
+	| 'unique symbol'
+	| 'unknown'
+	| 'void'
+	| Text<TypeScriptMap, 'identifier'>
+	| Text<TypeScriptMap, 'type.existential'>
+	| Text<TypeScriptMap, 'type.primitive.boolean'>
+	| Text<TypeScriptMap, 'type.primitive.floating.float64'>
+	| Text<TypeScriptMap, 'type.primitive.never'>
+	| Text<TypeScriptMap, 'type.primitive.object'>
+	| Text<TypeScriptMap, 'type.primitive.string'>
+	| Text<TypeScriptMap, 'type.primitive.symbol'>
+	| Text<TypeScriptMap, 'type.primitive.unchecked'>
+	| Text<TypeScriptMap, 'type.primitive.unknown'>
+	| Text<TypeScriptMap, 'type.primitive.void'>
+	| Text<TypeScriptMap, 'type.receiver'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'identifier.qualified'>
+	| TypeScriptMap['nodes']['identifier.qualified']
+	| BuildInput<TypeScriptMap, 'type.array'>
+	| TypeScriptMap['nodes']['type.array']
+	| BuildInput<TypeScriptMap, 'type.conditional'>
+	| TypeScriptMap['nodes']['type.conditional']
+	| BuildInput<TypeScriptMap, 'type.function'>
+	| TypeScriptMap['nodes']['type.function']
+	| BuildInput<TypeScriptMap, 'type.function.constructor'>
+	| TypeScriptMap['nodes']['type.function.constructor']
+	| BuildInput<TypeScriptMap, 'type.generic'>
+	| TypeScriptMap['nodes']['type.generic']
+	| BuildInput<TypeScriptMap, 'type.import'>
+	| TypeScriptMap['nodes']['type.import']
+	| BuildInput<TypeScriptMap, 'type.index_query'>
+	| TypeScriptMap['nodes']['type.index_query']
+	| BuildInput<TypeScriptMap, 'type.infer'>
+	| TypeScriptMap['nodes']['type.infer']
+	| BuildInput<TypeScriptMap, 'type.intersection'>
+	| TypeScriptMap['nodes']['type.intersection']
+	| BuildInput<TypeScriptMap, 'type.literal'>
+	| TypeScriptMap['nodes']['type.literal']
+	| BuildInput<TypeScriptMap, 'type.lookup'>
+	| TypeScriptMap['nodes']['type.lookup']
+	| BuildInput<TypeScriptMap, 'type.nullable'>
+	| TypeScriptMap['nodes']['type.nullable']
+	| BuildInput<TypeScriptMap, 'type.object'>
+	| TypeScriptMap['nodes']['type.object']
+	| BuildInput<TypeScriptMap, 'type.parenthesized'>
+	| TypeScriptMap['nodes']['type.parenthesized']
+	| BuildInput<TypeScriptMap, 'type.query'>
+	| TypeScriptMap['nodes']['type.query']
+	| BuildInput<TypeScriptMap, 'type.readonly'>
+	| TypeScriptMap['nodes']['type.readonly']
+	| BuildInput<TypeScriptMap, 'type.template'>
+	| TypeScriptMap['nodes']['type.template']
+	| BuildInput<TypeScriptMap, 'type.tuple'>
+	| TypeScriptMap['nodes']['type.tuple']
+	| BuildInput<TypeScriptMap, 'type.union'>
+	| TypeScriptMap['nodes']['type.union'];
+const declaration_member_signature_index$410_indexType = (
+	value: declaration_member_signature_index$410_indexType$Item
+) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '*':
+				return 364;
+			case 'any':
+				return 40;
+			case 'boolean':
+				return 42;
+			case 'never':
+				return 146;
+			case 'number':
+				return 41;
+			case 'object':
+				return 46;
+			case 'string':
+				return 43;
+			case 'symbol':
+				return 44;
+			case 'this':
+				return 508;
+			case 'unique symbol':
+				return 144;
+			case 'unknown':
+				return 145;
+			case 'void':
+				return 78;
+			default:
+				if (
+					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+						value
+					)
+				)
+					return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (
+			seated(
+				value,
+				[
+					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
+					382, 383, 509
+				]
+			)
+		)
+			return value;
+		return unseated('declaration.member.signature.index.indexType', value);
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+				]
+			)
+		)
+			return value;
+		return unseated('declaration.member.signature.index.indexType', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('declaration.member.signature.index.indexType', value);
+		case 'identifier.qualified':
+			if (
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				value.name !== undefined &&
+				value.qualifier !== undefined
+			)
+				return identifier_qualified$335(value);
+			return identifier_qualified$319(value);
+		case 'type.array':
+			return type_array$378(value);
+		case 'type.conditional':
+			return type_conditional$350(value);
+		case 'type.function':
+			return unbuilt('declaration.member.signature.index.indexType', value);
+		case 'type.function.constructor':
+			return unbuilt('declaration.member.signature.index.indexType', value);
+		case 'type.generic':
+			return type_generic$351(value);
+		case 'type.import':
+			return type_import$336(value);
+		case 'type.index_query':
+			return type_index_query$359(value);
+		case 'type.infer':
+			return type_infer$349(value);
+		case 'type.intersection':
+			return type_intersection$382(value);
+		case 'type.literal':
+			return type_literal$362(value);
+		case 'type.lookup':
+			return type_lookup$360(value);
+		case 'type.nullable':
+			return type_nullable$365(value);
+		case 'type.object':
+			return type_object$369(value);
+		case 'type.parenthesized':
+			return type_parenthesized$366(value);
+		case 'type.query':
+			return type_query$358(value);
+		case 'type.readonly':
+			return type_readonly$380(value);
+		case 'type.template':
+			return type_template$348(value);
+		case 'type.tuple':
+			return type_tuple$379(value);
+		case 'type.union':
+			return type_union$381(value);
+		default:
+			return unbuilt('declaration.member.signature.index.indexType', value);
+	}
+};
+type declaration_member_signature_index$410_name$Item =
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier'];
+const declaration_member_signature_index$410_name = (value: declaration_member_signature_index$410_name$Item) => {
+	if (typeof value === 'string') {
+		if (
+			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+				value
+			)
+		)
+			return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1])) return value;
+		return unseated('declaration.member.signature.index.name', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1])) return value;
+		return unseated('declaration.member.signature.index.name', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return identifier$1(value);
+		default:
+			return unbuilt('declaration.member.signature.index.name', value);
+	}
+};
+type declaration_member_signature_index$410_sign$Item = '+' | '-';
+const declaration_member_signature_index$410_sign = (value: declaration_member_signature_index$410_sign$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '+':
+				return 103;
+			case '-':
+				return 104;
+			default:
+				return untexted('declaration.member.signature.index.sign', value);
+		}
+	}
+	if (typeof value === 'number') {
+		return unseated('declaration.member.signature.index.sign', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [103, 104])) return value;
+		return unseated('declaration.member.signature.index.sign', value);
+	}
+	throw new Error('declaration.member.signature.index.sign takes no structure');
+};
+type declaration_member_signature_index$410_type$Item =
+	| '*'
+	| 'any'
+	| 'boolean'
+	| 'never'
+	| 'number'
+	| 'object'
+	| 'string'
+	| 'symbol'
+	| 'this'
+	| 'unique symbol'
+	| 'unknown'
+	| 'void'
+	| Text<TypeScriptMap, 'identifier'>
+	| Text<TypeScriptMap, 'type.existential'>
+	| Text<TypeScriptMap, 'type.primitive.boolean'>
+	| Text<TypeScriptMap, 'type.primitive.floating.float64'>
+	| Text<TypeScriptMap, 'type.primitive.never'>
+	| Text<TypeScriptMap, 'type.primitive.object'>
+	| Text<TypeScriptMap, 'type.primitive.string'>
+	| Text<TypeScriptMap, 'type.primitive.symbol'>
+	| Text<TypeScriptMap, 'type.primitive.unchecked'>
+	| Text<TypeScriptMap, 'type.primitive.unknown'>
+	| Text<TypeScriptMap, 'type.primitive.void'>
+	| Text<TypeScriptMap, 'type.receiver'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'identifier.qualified'>
+	| TypeScriptMap['nodes']['identifier.qualified']
+	| BuildInput<TypeScriptMap, 'type.array'>
+	| TypeScriptMap['nodes']['type.array']
+	| BuildInput<TypeScriptMap, 'type.conditional'>
+	| TypeScriptMap['nodes']['type.conditional']
+	| BuildInput<TypeScriptMap, 'type.function'>
+	| TypeScriptMap['nodes']['type.function']
+	| BuildInput<TypeScriptMap, 'type.function.constructor'>
+	| TypeScriptMap['nodes']['type.function.constructor']
+	| BuildInput<TypeScriptMap, 'type.generic'>
+	| TypeScriptMap['nodes']['type.generic']
+	| BuildInput<TypeScriptMap, 'type.import'>
+	| TypeScriptMap['nodes']['type.import']
+	| BuildInput<TypeScriptMap, 'type.index_query'>
+	| TypeScriptMap['nodes']['type.index_query']
+	| BuildInput<TypeScriptMap, 'type.infer'>
+	| TypeScriptMap['nodes']['type.infer']
+	| BuildInput<TypeScriptMap, 'type.intersection'>
+	| TypeScriptMap['nodes']['type.intersection']
+	| BuildInput<TypeScriptMap, 'type.literal'>
+	| TypeScriptMap['nodes']['type.literal']
+	| BuildInput<TypeScriptMap, 'type.lookup'>
+	| TypeScriptMap['nodes']['type.lookup']
+	| BuildInput<TypeScriptMap, 'type.nullable'>
+	| TypeScriptMap['nodes']['type.nullable']
+	| BuildInput<TypeScriptMap, 'type.object'>
+	| TypeScriptMap['nodes']['type.object']
+	| BuildInput<TypeScriptMap, 'type.parenthesized'>
+	| TypeScriptMap['nodes']['type.parenthesized']
+	| BuildInput<TypeScriptMap, 'type.query'>
+	| TypeScriptMap['nodes']['type.query']
+	| BuildInput<TypeScriptMap, 'type.readonly'>
+	| TypeScriptMap['nodes']['type.readonly']
+	| BuildInput<TypeScriptMap, 'type.template'>
+	| TypeScriptMap['nodes']['type.template']
+	| BuildInput<TypeScriptMap, 'type.tuple'>
+	| TypeScriptMap['nodes']['type.tuple']
+	| BuildInput<TypeScriptMap, 'type.union'>
+	| TypeScriptMap['nodes']['type.union'];
+const declaration_member_signature_index$410_type = (value: declaration_member_signature_index$410_type$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '*':
+				return b.typeAnnotation(364);
+			case 'any':
+				return b.typeAnnotation(40);
+			case 'boolean':
+				return b.typeAnnotation(42);
+			case 'never':
+				return b.typeAnnotation(146);
+			case 'number':
+				return b.typeAnnotation(41);
+			case 'object':
+				return b.typeAnnotation(46);
+			case 'string':
+				return b.typeAnnotation(43);
+			case 'symbol':
+				return b.typeAnnotation(44);
+			case 'this':
+				return b.typeAnnotation(508);
+			case 'unique symbol':
+				return b.typeAnnotation(144);
+			case 'unknown':
+				return b.typeAnnotation(145);
+			case 'void':
+				return b.typeAnnotation(78);
+			default:
+				if (
+					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+						value
+					)
+				)
+					return b.typeAnnotation(b.identifier(value));
+				if (
+					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+						value
+					)
+				)
+					return b.omittingTypeAnnotation(b.identifier(value));
+				if (
+					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+						value
+					)
+				)
+					return b.addingTypeAnnotation(b.identifier(value));
+				if (
+					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+						value
+					)
+				)
+					return b.optingTypeAnnotation(b.identifier(value));
+				return b.typeAnnotation(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (
+			seated(
+				value,
+				[
+					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
+					382, 383, 509
+				]
+			)
+		)
+			return b.typeAnnotation(value);
+		return unseated('declaration.member.signature.index.type', value);
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+				]
+			)
+		)
+			return b.typeAnnotation(value);
+		return unseated('declaration.member.signature.index.type', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('declaration.member.signature.index.type', value);
+		case 'identifier.qualified':
+			if (
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				value.name !== undefined &&
+				value.qualifier !== undefined
+			)
+				return b.typeAnnotation(identifier_qualified$335(value));
+			return b.typeAnnotation(identifier_qualified$319(value));
+		case 'type.array':
+			return b.typeAnnotation(type_array$378(value));
+		case 'type.conditional':
+			return b.typeAnnotation(type_conditional$350(value));
+		case 'type.function':
+			return unbuilt('declaration.member.signature.index.type', value);
+		case 'type.function.constructor':
+			return unbuilt('declaration.member.signature.index.type', value);
+		case 'type.generic':
+			return b.typeAnnotation(type_generic$351(value));
+		case 'type.import':
+			return b.typeAnnotation(type_import$336(value));
+		case 'type.index_query':
+			return b.typeAnnotation(type_index_query$359(value));
+		case 'type.infer':
+			return b.typeAnnotation(type_infer$349(value));
+		case 'type.intersection':
+			return b.typeAnnotation(type_intersection$382(value));
+		case 'type.literal':
+			return b.typeAnnotation(type_literal$362(value));
+		case 'type.lookup':
+			return b.typeAnnotation(type_lookup$360(value));
+		case 'type.nullable':
+			return b.typeAnnotation(type_nullable$365(value));
+		case 'type.object':
+			return b.typeAnnotation(type_object$369(value));
+		case 'type.parenthesized':
+			return b.typeAnnotation(type_parenthesized$366(value));
+		case 'type.query':
+			return b.typeAnnotation(type_query$358(value));
+		case 'type.readonly':
+			return b.typeAnnotation(type_readonly$380(value));
+		case 'type.template':
+			return b.typeAnnotation(type_template$348(value));
+		case 'type.tuple':
+			return b.typeAnnotation(type_tuple$379(value));
+		case 'type.union':
+			return b.typeAnnotation(type_union$381(value));
+		default:
+			return unbuilt('declaration.member.signature.index.type', value);
+	}
+};
+type declaration_member_signature_index_mapped$411_mappedTypeClause$Item =
+	| PathInput<TypeScriptMap, 'clause.mapped_type'>
+	| TypeScriptMap['nodes']['clause.mapped_type'];
+const declaration_member_signature_index_mapped$411_mappedTypeClause = (
+	value: declaration_member_signature_index_mapped$411_mappedTypeClause$Item
+) => {
+	if (typeof value === 'number') {
+		if (seated(value, [361])) return value;
+		return unseated('declaration.member.signature.index.mapped.mappedTypeClause', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [361])) return value;
+		return unseated('declaration.member.signature.index.mapped.mappedTypeClause', value);
+	}
+	return clause_mapped_type$361(value);
+};
+type declaration_member_signature_index_mapped$411_sign$Item = '+' | '-';
+const declaration_member_signature_index_mapped$411_sign = (
+	value: declaration_member_signature_index_mapped$411_sign$Item
+) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '+':
+				return 103;
+			case '-':
+				return 104;
+			default:
+				return untexted('declaration.member.signature.index.mapped.sign', value);
+		}
+	}
+	if (typeof value === 'number') {
+		return unseated('declaration.member.signature.index.mapped.sign', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [103, 104])) return value;
+		return unseated('declaration.member.signature.index.mapped.sign', value);
+	}
+	throw new Error('declaration.member.signature.index.mapped.sign takes no structure');
+};
+type declaration_member_signature_index_mapped$411_type$Item =
+	| '*'
+	| 'any'
+	| 'boolean'
+	| 'never'
+	| 'number'
+	| 'object'
+	| 'string'
+	| 'symbol'
+	| 'this'
+	| 'unique symbol'
+	| 'unknown'
+	| 'void'
+	| Text<TypeScriptMap, 'identifier'>
+	| Text<TypeScriptMap, 'type.existential'>
+	| Text<TypeScriptMap, 'type.primitive.boolean'>
+	| Text<TypeScriptMap, 'type.primitive.floating.float64'>
+	| Text<TypeScriptMap, 'type.primitive.never'>
+	| Text<TypeScriptMap, 'type.primitive.object'>
+	| Text<TypeScriptMap, 'type.primitive.string'>
+	| Text<TypeScriptMap, 'type.primitive.symbol'>
+	| Text<TypeScriptMap, 'type.primitive.unchecked'>
+	| Text<TypeScriptMap, 'type.primitive.unknown'>
+	| Text<TypeScriptMap, 'type.primitive.void'>
+	| Text<TypeScriptMap, 'type.receiver'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'identifier.qualified'>
+	| TypeScriptMap['nodes']['identifier.qualified']
+	| BuildInput<TypeScriptMap, 'type.array'>
+	| TypeScriptMap['nodes']['type.array']
+	| BuildInput<TypeScriptMap, 'type.conditional'>
+	| TypeScriptMap['nodes']['type.conditional']
+	| BuildInput<TypeScriptMap, 'type.function'>
+	| TypeScriptMap['nodes']['type.function']
+	| BuildInput<TypeScriptMap, 'type.function.constructor'>
+	| TypeScriptMap['nodes']['type.function.constructor']
+	| BuildInput<TypeScriptMap, 'type.generic'>
+	| TypeScriptMap['nodes']['type.generic']
+	| BuildInput<TypeScriptMap, 'type.import'>
+	| TypeScriptMap['nodes']['type.import']
+	| BuildInput<TypeScriptMap, 'type.index_query'>
+	| TypeScriptMap['nodes']['type.index_query']
+	| BuildInput<TypeScriptMap, 'type.infer'>
+	| TypeScriptMap['nodes']['type.infer']
+	| BuildInput<TypeScriptMap, 'type.intersection'>
+	| TypeScriptMap['nodes']['type.intersection']
+	| BuildInput<TypeScriptMap, 'type.literal'>
+	| TypeScriptMap['nodes']['type.literal']
+	| BuildInput<TypeScriptMap, 'type.lookup'>
+	| TypeScriptMap['nodes']['type.lookup']
+	| BuildInput<TypeScriptMap, 'type.nullable'>
+	| TypeScriptMap['nodes']['type.nullable']
+	| BuildInput<TypeScriptMap, 'type.object'>
+	| TypeScriptMap['nodes']['type.object']
+	| BuildInput<TypeScriptMap, 'type.parenthesized'>
+	| TypeScriptMap['nodes']['type.parenthesized']
+	| BuildInput<TypeScriptMap, 'type.query'>
+	| TypeScriptMap['nodes']['type.query']
+	| BuildInput<TypeScriptMap, 'type.readonly'>
+	| TypeScriptMap['nodes']['type.readonly']
+	| BuildInput<TypeScriptMap, 'type.template'>
+	| TypeScriptMap['nodes']['type.template']
+	| BuildInput<TypeScriptMap, 'type.tuple'>
+	| TypeScriptMap['nodes']['type.tuple']
+	| BuildInput<TypeScriptMap, 'type.union'>
+	| TypeScriptMap['nodes']['type.union'];
+const declaration_member_signature_index_mapped$411_type = (
+	value: declaration_member_signature_index_mapped$411_type$Item
+) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '*':
+				return b.typeAnnotation(364);
+			case 'any':
+				return b.typeAnnotation(40);
+			case 'boolean':
+				return b.typeAnnotation(42);
+			case 'never':
+				return b.typeAnnotation(146);
+			case 'number':
+				return b.typeAnnotation(41);
+			case 'object':
+				return b.typeAnnotation(46);
+			case 'string':
+				return b.typeAnnotation(43);
+			case 'symbol':
+				return b.typeAnnotation(44);
+			case 'this':
+				return b.typeAnnotation(508);
+			case 'unique symbol':
+				return b.typeAnnotation(144);
+			case 'unknown':
+				return b.typeAnnotation(145);
+			case 'void':
+				return b.typeAnnotation(78);
+			default:
+				if (
+					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+						value
+					)
+				)
+					return b.typeAnnotation(b.identifier(value));
+				if (
+					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+						value
+					)
+				)
+					return b.omittingTypeAnnotation(b.identifier(value));
+				if (
+					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+						value
+					)
+				)
+					return b.addingTypeAnnotation(b.identifier(value));
+				if (
+					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+						value
+					)
+				)
+					return b.optingTypeAnnotation(b.identifier(value));
+				return b.typeAnnotation(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (
+			seated(
+				value,
+				[
+					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
+					382, 383, 509
+				]
+			)
+		)
+			return b.typeAnnotation(value);
+		return unseated('declaration.member.signature.index.mapped.type', value);
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+				]
+			)
+		)
+			return b.typeAnnotation(value);
+		return unseated('declaration.member.signature.index.mapped.type', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('declaration.member.signature.index.mapped.type', value);
+		case 'identifier.qualified':
+			if (
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				value.name !== undefined &&
+				value.qualifier !== undefined
+			)
+				return b.typeAnnotation(identifier_qualified$335(value));
+			return b.typeAnnotation(identifier_qualified$319(value));
+		case 'type.array':
+			return b.typeAnnotation(type_array$378(value));
+		case 'type.conditional':
+			return b.typeAnnotation(type_conditional$350(value));
+		case 'type.function':
+			return unbuilt('declaration.member.signature.index.mapped.type', value);
+		case 'type.function.constructor':
+			return unbuilt('declaration.member.signature.index.mapped.type', value);
+		case 'type.generic':
+			return b.typeAnnotation(type_generic$351(value));
+		case 'type.import':
+			return b.typeAnnotation(type_import$336(value));
+		case 'type.index_query':
+			return b.typeAnnotation(type_index_query$359(value));
+		case 'type.infer':
+			return b.typeAnnotation(type_infer$349(value));
+		case 'type.intersection':
+			return b.typeAnnotation(type_intersection$382(value));
+		case 'type.literal':
+			return b.typeAnnotation(type_literal$362(value));
+		case 'type.lookup':
+			return b.typeAnnotation(type_lookup$360(value));
+		case 'type.nullable':
+			return b.typeAnnotation(type_nullable$365(value));
+		case 'type.object':
+			return b.typeAnnotation(type_object$369(value));
+		case 'type.parenthesized':
+			return b.typeAnnotation(type_parenthesized$366(value));
+		case 'type.query':
+			return b.typeAnnotation(type_query$358(value));
+		case 'type.readonly':
+			return b.typeAnnotation(type_readonly$380(value));
+		case 'type.template':
+			return b.typeAnnotation(type_template$348(value));
+		case 'type.tuple':
+			return b.typeAnnotation(type_tuple$379(value));
+		case 'type.union':
+			return b.typeAnnotation(type_union$381(value));
+		default:
+			return unbuilt('declaration.member.signature.index.mapped.type', value);
+	}
+};
+type declaration_member_static_block$290_statements$item$Item =
+	| ';'
+	| 'import.meta'
+	| 'new.target'
+	| 'super'
+	| 'this'
+	| Text<TypeScriptMap, 'expression.meta'>
+	| Text<TypeScriptMap, 'identifier'>
+	| Text<TypeScriptMap, 'identifier.receiver'>
+	| Text<TypeScriptMap, 'identifier.super'>
+	| Text<TypeScriptMap, 'literal.number.integer'>
+	| Text<TypeScriptMap, 'statement.empty'>
+	| bigint
+	| number
+	| BuildInput<TypeScriptMap, 'declaration.ambient'>
+	| TypeScriptMap['nodes']['declaration.ambient']
+	| BuildInput<TypeScriptMap, 'declaration.function'>
+	| TypeScriptMap['nodes']['declaration.function']
+	| BuildInput<TypeScriptMap, 'declaration.function.signature'>
+	| TypeScriptMap['nodes']['declaration.function.signature']
+	| BuildInput<TypeScriptMap, 'declaration.module'>
+	| TypeScriptMap['nodes']['declaration.module']
+	| BuildInput<TypeScriptMap, 'declaration.module.external'>
+	| TypeScriptMap['nodes']['declaration.module.external']
+	| BuildInput<TypeScriptMap, 'declaration.type.class'>
+	| TypeScriptMap['nodes']['declaration.type.class']
+	| BuildInput<TypeScriptMap, 'declaration.type.enum'>
+	| TypeScriptMap['nodes']['declaration.type.enum']
+	| BuildInput<TypeScriptMap, 'declaration.type.interface'>
+	| TypeScriptMap['nodes']['declaration.type.interface']
+	| BuildInput<TypeScriptMap, 'declaration.type.type_alias'>
+	| TypeScriptMap['nodes']['declaration.type.type_alias']
+	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
+	| TypeScriptMap['nodes']['declaration.variable.constant']
+	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
+	| TypeScriptMap['nodes']['declaration.variable.reassignable']
+	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
+	| TypeScriptMap['nodes']['declaration.variable.reassignable.function_scoped']
+	| BuildInput<TypeScriptMap, 'expression.assignment'>
+	| TypeScriptMap['nodes']['expression.assignment']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.add'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.and'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.and']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_or'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_xor'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.coalesce'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.coalesce']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.divide'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.exponent'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.exponent']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.modulo'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.multiply'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.or'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.or']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_left'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_right'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_right_unsigned']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.subtract'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<TypeScriptMap, 'expression.await'>
+	| TypeScriptMap['nodes']['expression.await']
+	| BuildInput<TypeScriptMap, 'expression.binary'>
+	| TypeScriptMap['nodes']['expression.binary']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.add'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.divide'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.modulo'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.multiply'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.subtract'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.and'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.or'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.xor'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<TypeScriptMap, 'expression.binary.coalesce'>
+	| TypeScriptMap['nodes']['expression.binary.coalesce']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.greater'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.greater_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.less'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.less_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.loose_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.loose_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.loose_not_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.loose_not_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.not_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.logical.and'>
+	| TypeScriptMap['nodes']['expression.binary.logical.and']
+	| BuildInput<TypeScriptMap, 'expression.binary.logical.or'>
+	| TypeScriptMap['nodes']['expression.binary.logical.or']
+	| BuildInput<TypeScriptMap, 'expression.binary.membership.in'>
+	| TypeScriptMap['nodes']['expression.binary.membership.in']
+	| BuildInput<TypeScriptMap, 'expression.binary.membership.instanceof'>
+	| TypeScriptMap['nodes']['expression.binary.membership.instanceof']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.left'>
+	| TypeScriptMap['nodes']['expression.binary.shift.left']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.right'>
+	| TypeScriptMap['nodes']['expression.binary.shift.right']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.right_unsigned'>
+	| TypeScriptMap['nodes']['expression.binary.shift.right_unsigned']
+	| BuildInput<TypeScriptMap, 'expression.call'>
+	| TypeScriptMap['nodes']['expression.call']
+	| BuildInput<TypeScriptMap, 'expression.call.construct'>
+	| TypeScriptMap['nodes']['expression.call.construct']
+	| BuildInput<TypeScriptMap, 'expression.call.construct.bare'>
+	| TypeScriptMap['nodes']['expression.call.construct.bare']
+	| BuildInput<TypeScriptMap, 'expression.call.member'>
+	| TypeScriptMap['nodes']['expression.call.member']
+	| BuildInput<TypeScriptMap, 'expression.call.template'>
+	| TypeScriptMap['nodes']['expression.call.template']
+	| BuildInput<TypeScriptMap, 'expression.cast.assertion'>
+	| TypeScriptMap['nodes']['expression.cast.assertion']
+	| BuildInput<TypeScriptMap, 'expression.cast.assertion.angle_bracket'>
+	| TypeScriptMap['nodes']['expression.cast.assertion.angle_bracket']
+	| BuildInput<TypeScriptMap, 'expression.cast.non_null'>
+	| TypeScriptMap['nodes']['expression.cast.non_null']
+	| BuildInput<TypeScriptMap, 'expression.cast.satisfies'>
+	| TypeScriptMap['nodes']['expression.cast.satisfies']
+	| BuildInput<TypeScriptMap, 'expression.class'>
+	| TypeScriptMap['nodes']['expression.class']
+	| BuildInput<TypeScriptMap, 'expression.collection.list'>
+	| TypeScriptMap['nodes']['expression.collection.list']
+	| BuildInput<TypeScriptMap, 'expression.collection.object'>
+	| TypeScriptMap['nodes']['expression.collection.object']
+	| BuildInput<TypeScriptMap, 'expression.conditional'>
+	| TypeScriptMap['nodes']['expression.conditional']
+	| BuildInput<TypeScriptMap, 'expression.function'>
+	| TypeScriptMap['nodes']['expression.function']
+	| BuildInput<TypeScriptMap, 'expression.instantiation'>
+	| TypeScriptMap['nodes']['expression.instantiation']
+	| BuildInput<TypeScriptMap, 'expression.lambda'>
+	| TypeScriptMap['nodes']['expression.lambda']
+	| BuildInput<TypeScriptMap, 'expression.member'>
+	| TypeScriptMap['nodes']['expression.member']
+	| BuildInput<TypeScriptMap, 'expression.parenthesized'>
+	| TypeScriptMap['nodes']['expression.parenthesized']
+	| BuildInput<TypeScriptMap, 'expression.sequence'>
+	| TypeScriptMap['nodes']['expression.sequence']
+	| BuildInput<TypeScriptMap, 'expression.subscript'>
+	| TypeScriptMap['nodes']['expression.subscript']
+	| BuildInput<TypeScriptMap, 'expression.unary.bitwise_not'>
+	| TypeScriptMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<TypeScriptMap, 'expression.unary.delete'>
+	| TypeScriptMap['nodes']['expression.unary.delete']
+	| BuildInput<TypeScriptMap, 'expression.unary.negation'>
+	| TypeScriptMap['nodes']['expression.unary.negation']
+	| BuildInput<TypeScriptMap, 'expression.unary.not'>
+	| TypeScriptMap['nodes']['expression.unary.not']
+	| BuildInput<TypeScriptMap, 'expression.unary.plus'>
+	| TypeScriptMap['nodes']['expression.unary.plus']
+	| BuildInput<TypeScriptMap, 'expression.unary.typeof'>
+	| TypeScriptMap['nodes']['expression.unary.typeof']
+	| BuildInput<TypeScriptMap, 'expression.unary.void'>
+	| TypeScriptMap['nodes']['expression.unary.void']
+	| BuildInput<TypeScriptMap, 'expression.update.decrement'>
+	| TypeScriptMap['nodes']['expression.update.decrement']
+	| BuildInput<TypeScriptMap, 'expression.update.increment'>
+	| TypeScriptMap['nodes']['expression.update.increment']
+	| BuildInput<TypeScriptMap, 'expression.yield'>
+	| TypeScriptMap['nodes']['expression.yield']
+	| BuildInput<TypeScriptMap, 'expression.yield.delegate'>
+	| TypeScriptMap['nodes']['expression.yield.delegate']
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'literal.boolean.false'>
+	| TypeScriptMap['nodes']['literal.boolean.false']
+	| BuildInput<TypeScriptMap, 'literal.boolean.true'>
+	| TypeScriptMap['nodes']['literal.boolean.true']
+	| BuildInput<TypeScriptMap, 'literal.null'>
+	| TypeScriptMap['nodes']['literal.null']
+	| BuildInput<TypeScriptMap, 'literal.null.undefined'>
+	| TypeScriptMap['nodes']['literal.null.undefined']
+	| BuildInput<TypeScriptMap, 'literal.number.float'>
+	| TypeScriptMap['nodes']['literal.number.float']
+	| BuildInput<TypeScriptMap, 'literal.number.float.leading_point'>
+	| TypeScriptMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<TypeScriptMap, 'literal.number.float.scientific'>
+	| TypeScriptMap['nodes']['literal.number.float.scientific']
+	| BuildInput<TypeScriptMap, 'literal.number.integer'>
+	| TypeScriptMap['nodes']['literal.number.integer']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big'>
+	| TypeScriptMap['nodes']['literal.number.integer.big']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.binary'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.hex'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.octal'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.binary'>
+	| TypeScriptMap['nodes']['literal.number.integer.binary']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.hex'>
+	| TypeScriptMap['nodes']['literal.number.integer.hex']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.octal'>
+	| TypeScriptMap['nodes']['literal.number.integer.octal']
+	| BuildInput<TypeScriptMap, 'literal.regex'>
+	| TypeScriptMap['nodes']['literal.regex']
+	| BuildInput<TypeScriptMap, 'literal.string'>
+	| TypeScriptMap['nodes']['literal.string']
+	| BuildInput<TypeScriptMap, 'literal.string.interpolated'>
+	| TypeScriptMap['nodes']['literal.string.interpolated']
+	| BuildInput<TypeScriptMap, 'statement.block'>
+	| TypeScriptMap['nodes']['statement.block']
+	| BuildInput<TypeScriptMap, 'statement.break'>
+	| TypeScriptMap['nodes']['statement.break']
+	| BuildInput<TypeScriptMap, 'statement.continue'>
+	| TypeScriptMap['nodes']['statement.continue']
+	| BuildInput<TypeScriptMap, 'statement.debugger'>
+	| TypeScriptMap['nodes']['statement.debugger']
+	| BuildInput<TypeScriptMap, 'statement.export'>
+	| TypeScriptMap['nodes']['statement.export']
+	| BuildInput<TypeScriptMap, 'statement.export.all'>
+	| TypeScriptMap['nodes']['statement.export.all']
+	| BuildInput<TypeScriptMap, 'statement.export.default'>
+	| TypeScriptMap['nodes']['statement.export.default']
+	| BuildInput<TypeScriptMap, 'statement.if'>
+	| TypeScriptMap['nodes']['statement.if']
+	| BuildInput<TypeScriptMap, 'statement.import'>
+	| TypeScriptMap['nodes']['statement.import']
+	| BuildInput<TypeScriptMap, 'statement.import.alias'>
+	| TypeScriptMap['nodes']['statement.import.alias']
+	| BuildInput<TypeScriptMap, 'statement.import.typeof'>
+	| TypeScriptMap['nodes']['statement.import.typeof']
+	| BuildInput<TypeScriptMap, 'statement.labeled'>
+	| TypeScriptMap['nodes']['statement.labeled']
+	| BuildInput<TypeScriptMap, 'statement.loop.counted'>
+	| TypeScriptMap['nodes']['statement.loop.counted']
+	| BuildInput<TypeScriptMap, 'statement.loop.do_while'>
+	| TypeScriptMap['nodes']['statement.loop.do_while']
+	| BuildInput<TypeScriptMap, 'statement.loop.for_each'>
+	| TypeScriptMap['nodes']['statement.loop.for_each']
+	| BuildInput<TypeScriptMap, 'statement.loop.while'>
+	| TypeScriptMap['nodes']['statement.loop.while']
+	| BuildInput<TypeScriptMap, 'statement.return'>
+	| TypeScriptMap['nodes']['statement.return']
+	| BuildInput<TypeScriptMap, 'statement.scope'>
+	| TypeScriptMap['nodes']['statement.scope']
+	| BuildInput<TypeScriptMap, 'statement.switch'>
+	| TypeScriptMap['nodes']['statement.switch']
+	| BuildInput<TypeScriptMap, 'statement.throw'>
+	| TypeScriptMap['nodes']['statement.throw']
+	| BuildInput<TypeScriptMap, 'statement.try'>
+	| TypeScriptMap['nodes']['statement.try']
+	| {
+			readonly $path: 'literal.number';
+			readonly $value: number | bigint;
+	  }
+	| Unmapped<'typescript:using_declaration'>;
+const declaration_member_static_block$290_statements$item = (
+	value: declaration_member_static_block$290_statements$item$Item
+) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case ';':
+				return 227;
+			case 'import.meta':
+				return b.expressionStatement(442);
+			case 'new.target':
+				return b.expressionStatement(441);
+			case 'super':
+				return b.expressionStatement(280);
+			case 'this':
+				return b.expressionStatement(279);
+			default:
+				if (
+					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+						value
+					)
+				)
+					return b.expressionStatement(b.identifier(value));
+				return b.expressionStatement(b.identifier(value));
+		}
+	}
+	if (typeof value === 'bigint') {
+		return b.expressionStatement(literal_number$166({ $path: 'literal.number', $value: value }));
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.expressionStatement(literal_number$160({ $path: 'literal.number', $value: value }));
+		}
+		return b.expressionStatement(literal_number$156({ $path: 'literal.number', $value: value }));
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227,
+					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
+				]
+			)
+		)
+			return value;
+		if (
+			seated(
+				value,
+				[
+					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
+					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
+				]
+			)
+		)
+			return b.expressionStatement(value);
+		return unseated('declaration.member.static_block.statements', value);
+	}
+	switch (value.$path) {
+		case 'declaration.ambient':
+			return declaration_ambient$313(value);
+		case 'declaration.function':
+			return unbuilt('declaration.member.static_block.statements', value);
+		case 'declaration.function.signature':
+			return unbuilt('declaration.member.static_block.statements', value);
+		case 'declaration.module':
+			return declaration_module$316(value);
+		case 'declaration.module.external':
+			return declaration_module_external$315(value);
+		case 'declaration.type.class':
+			return unbuilt('declaration.member.static_block.statements', value);
+		case 'declaration.type.enum':
+			return declaration_type_enum$322(value);
+		case 'declaration.type.interface':
+			return unbuilt('declaration.member.static_block.statements', value);
+		case 'declaration.type.type_alias':
+			return declaration_type_type_alias$325(value);
+		case 'declaration.variable.constant':
+			return declaration_variable_constant$208(value);
+		case 'declaration.variable.reassignable':
+			return declaration_variable_reassignable$208(value);
+		case 'declaration.variable.reassignable.function_scoped':
+			return declaration_variable_reassignable_function_scoped$207(value);
+		case 'expression.assignment':
+			return b.expressionStatement(expression_assignment$262(value));
+		case 'expression.assignment.compound.add':
+			return b.expressionStatement(expression_assignment_compound_add$264(value));
+		case 'expression.assignment.compound.and':
+			return b.expressionStatement(expression_assignment_compound_and$264(value));
+		case 'expression.assignment.compound.bitwise_and':
+			return b.expressionStatement(expression_assignment_compound_bitwise_and$264(value));
+		case 'expression.assignment.compound.bitwise_or':
+			return b.expressionStatement(expression_assignment_compound_bitwise_or$264(value));
+		case 'expression.assignment.compound.bitwise_xor':
+			return b.expressionStatement(expression_assignment_compound_bitwise_xor$264(value));
+		case 'expression.assignment.compound.coalesce':
+			return b.expressionStatement(expression_assignment_compound_coalesce$264(value));
+		case 'expression.assignment.compound.divide':
+			return b.expressionStatement(expression_assignment_compound_divide$264(value));
+		case 'expression.assignment.compound.exponent':
+			return b.expressionStatement(expression_assignment_compound_exponent$264(value));
+		case 'expression.assignment.compound.modulo':
+			return b.expressionStatement(expression_assignment_compound_modulo$264(value));
+		case 'expression.assignment.compound.multiply':
+			return b.expressionStatement(expression_assignment_compound_multiply$264(value));
+		case 'expression.assignment.compound.or':
+			return b.expressionStatement(expression_assignment_compound_or$264(value));
+		case 'expression.assignment.compound.shift_left':
+			return b.expressionStatement(expression_assignment_compound_shift_left$264(value));
+		case 'expression.assignment.compound.shift_right':
+			return b.expressionStatement(expression_assignment_compound_shift_right$264(value));
+		case 'expression.assignment.compound.shift_right_unsigned':
+			return b.expressionStatement(expression_assignment_compound_shift_right_unsigned$264(value));
+		case 'expression.assignment.compound.subtract':
+			return b.expressionStatement(expression_assignment_compound_subtract$264(value));
+		case 'expression.await':
+			return b.expressionStatement(expression_await$258(value));
+		case 'expression.binary':
+			return b.expressionStatement(expression_binary$269(value));
+		case 'expression.binary.arithmetic.add':
+			return b.expressionStatement(expression_binary_arithmetic_add$269(value));
+		case 'expression.binary.arithmetic.divide':
+			return b.expressionStatement(expression_binary_arithmetic_divide$269(value));
+		case 'expression.binary.arithmetic.exponent':
+			return b.expressionStatement(expression_binary_arithmetic_exponent$269(value));
+		case 'expression.binary.arithmetic.modulo':
+			return b.expressionStatement(expression_binary_arithmetic_modulo$269(value));
+		case 'expression.binary.arithmetic.multiply':
+			return b.expressionStatement(expression_binary_arithmetic_multiply$269(value));
+		case 'expression.binary.arithmetic.subtract':
+			return b.expressionStatement(expression_binary_arithmetic_subtract$269(value));
+		case 'expression.binary.bitwise.and':
+			return b.expressionStatement(expression_binary_bitwise_and$269(value));
+		case 'expression.binary.bitwise.or':
+			return b.expressionStatement(expression_binary_bitwise_or$269(value));
+		case 'expression.binary.bitwise.xor':
+			return b.expressionStatement(expression_binary_bitwise_xor$269(value));
+		case 'expression.binary.coalesce':
+			return b.expressionStatement(expression_binary_coalesce$269(value));
+		case 'expression.binary.comparison.equal':
+			return b.expressionStatement(expression_binary_comparison_equal$269(value));
+		case 'expression.binary.comparison.greater':
+			return b.expressionStatement(expression_binary_comparison_greater$269(value));
+		case 'expression.binary.comparison.greater_equal':
+			return b.expressionStatement(expression_binary_comparison_greater_equal$269(value));
+		case 'expression.binary.comparison.less':
+			return b.expressionStatement(expression_binary_comparison_less$269(value));
+		case 'expression.binary.comparison.less_equal':
+			return b.expressionStatement(expression_binary_comparison_less_equal$269(value));
+		case 'expression.binary.comparison.loose_equal':
+			return b.expressionStatement(expression_binary_comparison_loose_equal$269(value));
+		case 'expression.binary.comparison.loose_not_equal':
+			return b.expressionStatement(expression_binary_comparison_loose_not_equal$269(value));
+		case 'expression.binary.comparison.not_equal':
+			return b.expressionStatement(expression_binary_comparison_not_equal$269(value));
+		case 'expression.binary.logical.and':
+			return b.expressionStatement(expression_binary_logical_and$269(value));
+		case 'expression.binary.logical.or':
+			return b.expressionStatement(expression_binary_logical_or$269(value));
+		case 'expression.binary.membership.in':
+			return unbuilt('declaration.member.static_block.statements', value);
+		case 'expression.binary.membership.instanceof':
+			return b.expressionStatement(expression_binary_membership_instanceof$269(value));
+		case 'expression.binary.shift.left':
+			return b.expressionStatement(expression_binary_shift_left$269(value));
+		case 'expression.binary.shift.right':
+			return b.expressionStatement(expression_binary_shift_right$269(value));
+		case 'expression.binary.shift.right_unsigned':
+			return b.expressionStatement(expression_binary_shift_right_unsigned$269(value));
+		case 'expression.call':
+			if (
+				(value.$flags ?? []).includes('optionalChain') &&
+				value.arguments !== undefined &&
+				value.function !== undefined
+			)
+				return b.expressionStatement(expression_call$424(value));
+			return b.expressionStatement(expression_call$422(value));
+		case 'expression.call.construct':
+			return b.expressionStatement(expression_call_construct$257(value));
+		case 'expression.call.construct.bare':
+			return b.expressionStatement(expression_call_construct_bare$257(value));
+		case 'expression.call.member':
+			return unbuilt('declaration.member.static_block.statements', value);
+		case 'expression.call.template':
+			return b.expressionStatement(expression_call_template$423(value));
+		case 'expression.cast.assertion':
+			return b.expressionStatement(expression_cast_assertion$306(value));
+		case 'expression.cast.assertion.angle_bracket':
+			return b.expressionStatement(expression_cast_assertion_angle_bracket$305(value));
+		case 'expression.cast.non_null':
+			return b.expressionStatement(expression_cast_non_null$300(value));
+		case 'expression.cast.satisfies':
+			return b.expressionStatement(expression_cast_satisfies$307(value));
+		case 'expression.class':
+			return unbuilt('declaration.member.static_block.statements', value);
+		case 'expression.collection.list':
+			return b.expressionStatement(expression_collection_list$242(value));
+		case 'expression.collection.object':
+			return b.expressionStatement(expression_collection_object$238(value));
+		case 'expression.conditional':
+			return b.expressionStatement(expression_conditional$268(value));
+		case 'expression.function':
+			return unbuilt('declaration.member.static_block.statements', value);
+		case 'expression.instantiation':
+			return b.expressionStatement(expression_instantiation$308(value));
+		case 'expression.lambda':
+			return unbuilt('declaration.member.static_block.statements', value);
+		case 'expression.member':
+			return unbuilt('declaration.member.static_block.statements', value);
+		case 'expression.parenthesized':
+			if (
+				(value.expression === undefined ||
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
+				value.expression !== undefined &&
+				value.type === undefined
+			)
+				return b.expressionStatement(expression_parenthesized$418(value));
+			return b.expressionStatement(expression_parenthesized$417(value));
+		case 'expression.sequence':
+			return b.expressionStatement(expression_sequence$272(value));
+		case 'expression.subscript':
+			return b.expressionStatement(expression_subscript$260(value));
+		case 'expression.unary.bitwise_not':
+			return b.expressionStatement(expression_unary_bitwise_not$270(value));
+		case 'expression.unary.delete':
+			return b.expressionStatement(expression_unary_delete$270(value));
+		case 'expression.unary.negation':
+			return b.expressionStatement(expression_unary_negation$270(value));
+		case 'expression.unary.not':
+			return b.expressionStatement(expression_unary_not$270(value));
+		case 'expression.unary.plus':
+			return b.expressionStatement(expression_unary_plus$270(value));
+		case 'expression.unary.typeof':
+			return b.expressionStatement(expression_unary_typeof$270(value));
+		case 'expression.unary.void':
+			return b.expressionStatement(expression_unary_void$270(value));
+		case 'expression.update.decrement':
+			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
+				return b.expressionStatement(expression_update_decrement$428(value));
+			return b.expressionStatement(expression_update_decrement$427(value));
+		case 'expression.update.increment':
+			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
+				return b.expressionStatement(expression_update_increment$428(value));
+			return b.expressionStatement(expression_update_increment$427(value));
+		case 'expression.yield':
+			return b.expressionStatement(expression_yield$237(value));
+		case 'expression.yield.delegate':
+			return unbuilt('declaration.member.static_block.statements', value);
+		case 'identifier':
+			return b.expressionStatement(identifier$1(value));
+		case 'literal.boolean.false':
+			return unbuilt('declaration.member.static_block.statements', value);
+		case 'literal.boolean.true':
+			return unbuilt('declaration.member.static_block.statements', value);
+		case 'literal.null':
+			return unbuilt('declaration.member.static_block.statements', value);
+		case 'literal.null.undefined':
+			return unbuilt('declaration.member.static_block.statements', value);
+		case 'literal.number.float':
+			return b.expressionStatement(literal_number_float$156(value));
+		case 'literal.number.float.leading_point':
+			return b.expressionStatement(literal_number_float_leading_point$157(value));
+		case 'literal.number.float.scientific':
+			return b.expressionStatement(literal_number_float_scientific$158(value));
+		case 'literal.number.integer':
+			return b.expressionStatement(literal_number_integer$160(value));
+		case 'literal.number.integer.big':
+			return b.expressionStatement(literal_number_integer_big$166(value));
+		case 'literal.number.integer.big.binary':
+			return b.expressionStatement(literal_number_integer_big_binary$164(value));
+		case 'literal.number.integer.big.hex':
+			return b.expressionStatement(literal_number_integer_big_hex$163(value));
+		case 'literal.number.integer.big.octal':
+			return b.expressionStatement(literal_number_integer_big_octal$165(value));
+		case 'literal.number.integer.binary':
+			return b.expressionStatement(literal_number_integer_binary$161(value));
+		case 'literal.number.integer.hex':
+			return b.expressionStatement(literal_number_integer_hex$155(value));
+		case 'literal.number.integer.octal':
+			return b.expressionStatement(literal_number_integer_octal$162(value));
+		case 'literal.regex':
+			return b.expressionStatement(literal_regex$276(value));
+		case 'literal.string':
+			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
+				return b.expressionStatement(literal_string$425(value));
+			return b.expressionStatement(literal_string$426(value));
+		case 'literal.string.interpolated':
+			return b.expressionStatement(literal_string_interpolated$274(value));
+		case 'statement.block': {
+			if (value.label === undefined) return statement_block$211(value);
+			return b.labeledStatement({
+				body: statement_block$211(value),
+				label: value.label === undefined ? missing('statement.block.label') : statement_block$211_label(value.label)
+			});
+		}
+		case 'statement.break':
+			return statement_break$222(value);
+		case 'statement.continue':
+			return statement_continue$223(value);
+		case 'statement.debugger':
+			return statement_debugger$224(value);
+		case 'statement.export':
+			if (
+				value.value !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined
+			)
+				return statement_export$420(value);
+			if (
+				value.name !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$421(value);
+			if (
+				value.declaration !== undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$433(value);
+			return unbuilt('declaration.member.static_block.statements', value);
+		case 'statement.export.all':
+			return unbuilt('declaration.member.static_block.statements', value);
+		case 'statement.export.default':
+			return unbuilt('declaration.member.static_block.statements', value);
+		case 'statement.if':
+			return statement_if$213(value);
+		case 'statement.import':
+			return unbuilt('declaration.member.static_block.statements', value);
+		case 'statement.import.alias':
+			return statement_import_alias$318(value);
+		case 'statement.import.typeof':
+			return unbuilt('declaration.member.static_block.statements', value);
+		case 'statement.labeled':
+			return statement_labeled$228(value);
+		case 'statement.loop.counted': {
+			if (value.label === undefined) return statement_loop_counted$215(value);
+			return b.labeledStatement({
+				body: statement_loop_counted$215(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.counted.label')
+						: statement_loop_counted$215_label(value.label)
+			});
+		}
+		case 'statement.loop.do_while': {
+			if (value.label === undefined) return statement_loop_do_while$219(value);
+			return b.labeledStatement({
+				body: statement_loop_do_while$219(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.do_while.label')
+						: statement_loop_do_while$219_label(value.label)
+			});
+		}
+		case 'statement.loop.for_each': {
+			if (value.label === undefined) return statement_loop_for_each$216(value);
+			return b.labeledStatement({
+				body: statement_loop_for_each$216(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.for_each.label')
+						: statement_loop_for_each$216_label(value.label)
+			});
+		}
+		case 'statement.loop.while': {
+			if (value.label === undefined) return statement_loop_while$218(value);
+			return b.labeledStatement({
+				body: statement_loop_while$218(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.while.label')
+						: statement_loop_while$218_label(value.label)
+			});
+		}
+		case 'statement.return':
+			return statement_return$225(value);
+		case 'statement.scope':
+			return statement_scope$221(value);
+		case 'statement.switch':
+			return statement_switch$214(value);
+		case 'statement.throw':
+			return statement_throw$226(value);
+		case 'statement.try':
+			return unbuilt('declaration.member.static_block.statements', value);
+		case 'literal.number':
+			if (typeof value.$value === 'bigint') {
+				return b.expressionStatement(literal_number$166({ $path: 'literal.number', $value: value.$value }));
+			}
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) {
+					return b.expressionStatement(literal_number$160({ $path: 'literal.number', $value: value.$value }));
+				}
+				return b.expressionStatement(literal_number$156({ $path: 'literal.number', $value: value.$value }));
+			}
+			return unbuilt('declaration.member.static_block.statements', value);
+		default:
+			return unbuilt('declaration.member.static_block.statements', value);
 	}
 };
 type declaration_module$316_name$Item =
@@ -9388,22 +11211,22 @@ type declaration_module$316_statements$item$Item =
 	| number
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
-	| BuildInput<TypeScriptMap, 'declaration.class'>
-	| TypeScriptMap['nodes']['declaration.class']
-	| BuildInput<TypeScriptMap, 'declaration.enum'>
-	| TypeScriptMap['nodes']['declaration.enum']
 	| BuildInput<TypeScriptMap, 'declaration.function'>
 	| TypeScriptMap['nodes']['declaration.function']
 	| BuildInput<TypeScriptMap, 'declaration.function.signature'>
 	| TypeScriptMap['nodes']['declaration.function.signature']
-	| BuildInput<TypeScriptMap, 'declaration.interface'>
-	| TypeScriptMap['nodes']['declaration.interface']
 	| BuildInput<TypeScriptMap, 'declaration.module'>
 	| TypeScriptMap['nodes']['declaration.module']
 	| BuildInput<TypeScriptMap, 'declaration.module.external'>
 	| TypeScriptMap['nodes']['declaration.module.external']
-	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
-	| TypeScriptMap['nodes']['declaration.type_alias']
+	| BuildInput<TypeScriptMap, 'declaration.type.class'>
+	| TypeScriptMap['nodes']['declaration.type.class']
+	| BuildInput<TypeScriptMap, 'declaration.type.enum'>
+	| TypeScriptMap['nodes']['declaration.type.enum']
+	| BuildInput<TypeScriptMap, 'declaration.type.interface'>
+	| TypeScriptMap['nodes']['declaration.type.interface']
+	| BuildInput<TypeScriptMap, 'declaration.type.type_alias'>
+	| TypeScriptMap['nodes']['declaration.type.type_alias']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -9702,22 +11525,22 @@ const declaration_module$316_statements$item = (value: declaration_module$316_st
 	switch (value.$path) {
 		case 'declaration.ambient':
 			return declaration_ambient$313(value);
-		case 'declaration.class':
-			return unbuilt('declaration.module.statements', value);
-		case 'declaration.enum':
-			return declaration_enum$322(value);
 		case 'declaration.function':
 			return unbuilt('declaration.module.statements', value);
 		case 'declaration.function.signature':
-			return unbuilt('declaration.module.statements', value);
-		case 'declaration.interface':
 			return unbuilt('declaration.module.statements', value);
 		case 'declaration.module':
 			return declaration_module$316(value);
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
-		case 'declaration.type_alias':
-			return declaration_type_alias$325(value);
+		case 'declaration.type.class':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.type.enum':
+			return declaration_type_enum$322(value);
+		case 'declaration.type.interface':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.type.type_alias':
+			return declaration_type_type_alias$325(value);
 		case 'declaration.variable.constant':
 			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
@@ -10104,22 +11927,22 @@ type declaration_module_external$315_statements$item$Item =
 	| number
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
-	| BuildInput<TypeScriptMap, 'declaration.class'>
-	| TypeScriptMap['nodes']['declaration.class']
-	| BuildInput<TypeScriptMap, 'declaration.enum'>
-	| TypeScriptMap['nodes']['declaration.enum']
 	| BuildInput<TypeScriptMap, 'declaration.function'>
 	| TypeScriptMap['nodes']['declaration.function']
 	| BuildInput<TypeScriptMap, 'declaration.function.signature'>
 	| TypeScriptMap['nodes']['declaration.function.signature']
-	| BuildInput<TypeScriptMap, 'declaration.interface'>
-	| TypeScriptMap['nodes']['declaration.interface']
 	| BuildInput<TypeScriptMap, 'declaration.module'>
 	| TypeScriptMap['nodes']['declaration.module']
 	| BuildInput<TypeScriptMap, 'declaration.module.external'>
 	| TypeScriptMap['nodes']['declaration.module.external']
-	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
-	| TypeScriptMap['nodes']['declaration.type_alias']
+	| BuildInput<TypeScriptMap, 'declaration.type.class'>
+	| TypeScriptMap['nodes']['declaration.type.class']
+	| BuildInput<TypeScriptMap, 'declaration.type.enum'>
+	| TypeScriptMap['nodes']['declaration.type.enum']
+	| BuildInput<TypeScriptMap, 'declaration.type.interface'>
+	| TypeScriptMap['nodes']['declaration.type.interface']
+	| BuildInput<TypeScriptMap, 'declaration.type.type_alias'>
+	| TypeScriptMap['nodes']['declaration.type.type_alias']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -10420,22 +12243,22 @@ const declaration_module_external$315_statements$item = (
 	switch (value.$path) {
 		case 'declaration.ambient':
 			return declaration_ambient$313(value);
-		case 'declaration.class':
-			return unbuilt('declaration.module.external.statements', value);
-		case 'declaration.enum':
-			return declaration_enum$322(value);
 		case 'declaration.function':
 			return unbuilt('declaration.module.external.statements', value);
 		case 'declaration.function.signature':
-			return unbuilt('declaration.module.external.statements', value);
-		case 'declaration.interface':
 			return unbuilt('declaration.module.external.statements', value);
 		case 'declaration.module':
 			return declaration_module$316(value);
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
-		case 'declaration.type_alias':
-			return declaration_type_alias$325(value);
+		case 'declaration.type.class':
+			return unbuilt('declaration.module.external.statements', value);
+		case 'declaration.type.enum':
+			return declaration_type_enum$322(value);
+		case 'declaration.type.interface':
+			return unbuilt('declaration.module.external.statements', value);
+		case 'declaration.type.type_alias':
+			return declaration_type_type_alias$325(value);
 		case 'declaration.variable.constant':
 			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
@@ -18320,568 +20143,26 @@ const declaration_parameter_receiver$472_type = (value: declaration_parameter_re
 			return unbuilt('declaration.parameter.receiver.type', value);
 	}
 };
-type declaration_signature_construct$376_parameters$item$Item =
-	| BuildInput<TypeScriptMap, 'declaration.parameter'>
-	| TypeScriptMap['nodes']['declaration.parameter']
-	| BuildInput<TypeScriptMap, 'declaration.parameter.private'>
-	| TypeScriptMap['nodes']['declaration.parameter.private']
-	| BuildInput<TypeScriptMap, 'declaration.parameter.protected'>
-	| TypeScriptMap['nodes']['declaration.parameter.protected']
-	| BuildInput<TypeScriptMap, 'declaration.parameter.public'>
-	| TypeScriptMap['nodes']['declaration.parameter.public']
-	| BuildInput<TypeScriptMap, 'declaration.parameter.receiver'>
-	| TypeScriptMap['nodes']['declaration.parameter.receiver'];
-const declaration_signature_construct$376_parameters$item = (
-	value: declaration_signature_construct$376_parameters$item$Item
-) => {
+type declaration_type_enum$322_members$item$Item =
+	| PathInput<TypeScriptMap, 'declaration.member.enum_member'>
+	| TypeScriptMap['nodes']['declaration.member.enum_member'];
+const declaration_type_enum$322_members$item = (value: declaration_type_enum$322_members$item$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [328, 329])) return value;
-		return unseated('declaration.signature.construct.parameters', value);
+		if (seated(value, [324, 388, 389])) return value;
+		return unseated('declaration.type.enum.members', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [328, 329])) return value;
-		return unseated('declaration.signature.construct.parameters', value);
+		if (seated(value, [324, 388, 389])) return value;
+		return unseated('declaration.type.enum.members', value);
 	}
-	switch (value.$path) {
-		case 'declaration.parameter':
-			if ((value.$flags ?? []).includes('optional') && value.name !== undefined)
-				return declaration_parameter$329(value);
-			return declaration_parameter$328(value);
-		case 'declaration.parameter.private':
-			if ((value.$flags ?? []).includes('optional') && value.name !== undefined)
-				return declaration_parameter_private$329(value);
-			return declaration_parameter_private$328(value);
-		case 'declaration.parameter.protected':
-			if ((value.$flags ?? []).includes('optional') && value.name !== undefined)
-				return declaration_parameter_protected$329(value);
-			return declaration_parameter_protected$328(value);
-		case 'declaration.parameter.public':
-			if ((value.$flags ?? []).includes('optional') && value.name !== undefined)
-				return declaration_parameter_public$329(value);
-			return declaration_parameter_public$328(value);
-		case 'declaration.parameter.receiver':
-			return unbuilt('declaration.signature.construct.parameters', value);
-		default:
-			return unbuilt('declaration.signature.construct.parameters', value);
-	}
+	if (value.name !== undefined && value.value === undefined) return declaration_member_enum_member$388(value);
+	return declaration_member_enum_member$324(value);
 };
-type declaration_signature_construct$376_type$Item =
-	| '*'
-	| 'any'
-	| 'boolean'
-	| 'never'
-	| 'number'
-	| 'object'
-	| 'string'
-	| 'symbol'
-	| 'this'
-	| 'unique symbol'
-	| 'unknown'
-	| 'void'
-	| Text<TypeScriptMap, 'identifier'>
-	| Text<TypeScriptMap, 'type.existential'>
-	| Text<TypeScriptMap, 'type.primitive.boolean'>
-	| Text<TypeScriptMap, 'type.primitive.floating.float64'>
-	| Text<TypeScriptMap, 'type.primitive.never'>
-	| Text<TypeScriptMap, 'type.primitive.object'>
-	| Text<TypeScriptMap, 'type.primitive.string'>
-	| Text<TypeScriptMap, 'type.primitive.symbol'>
-	| Text<TypeScriptMap, 'type.primitive.unchecked'>
-	| Text<TypeScriptMap, 'type.primitive.unknown'>
-	| Text<TypeScriptMap, 'type.primitive.void'>
-	| Text<TypeScriptMap, 'type.receiver'>
-	| BuildInput<TypeScriptMap, 'identifier'>
-	| TypeScriptMap['nodes']['identifier']
-	| BuildInput<TypeScriptMap, 'identifier.qualified'>
-	| TypeScriptMap['nodes']['identifier.qualified']
-	| BuildInput<TypeScriptMap, 'type.array'>
-	| TypeScriptMap['nodes']['type.array']
-	| BuildInput<TypeScriptMap, 'type.conditional'>
-	| TypeScriptMap['nodes']['type.conditional']
-	| BuildInput<TypeScriptMap, 'type.function'>
-	| TypeScriptMap['nodes']['type.function']
-	| BuildInput<TypeScriptMap, 'type.function.constructor'>
-	| TypeScriptMap['nodes']['type.function.constructor']
-	| BuildInput<TypeScriptMap, 'type.generic'>
-	| TypeScriptMap['nodes']['type.generic']
-	| BuildInput<TypeScriptMap, 'type.import'>
-	| TypeScriptMap['nodes']['type.import']
-	| BuildInput<TypeScriptMap, 'type.index_query'>
-	| TypeScriptMap['nodes']['type.index_query']
-	| BuildInput<TypeScriptMap, 'type.infer'>
-	| TypeScriptMap['nodes']['type.infer']
-	| BuildInput<TypeScriptMap, 'type.intersection'>
-	| TypeScriptMap['nodes']['type.intersection']
-	| BuildInput<TypeScriptMap, 'type.literal'>
-	| TypeScriptMap['nodes']['type.literal']
-	| BuildInput<TypeScriptMap, 'type.lookup'>
-	| TypeScriptMap['nodes']['type.lookup']
-	| BuildInput<TypeScriptMap, 'type.nullable'>
-	| TypeScriptMap['nodes']['type.nullable']
-	| BuildInput<TypeScriptMap, 'type.object'>
-	| TypeScriptMap['nodes']['type.object']
-	| BuildInput<TypeScriptMap, 'type.parenthesized'>
-	| TypeScriptMap['nodes']['type.parenthesized']
-	| BuildInput<TypeScriptMap, 'type.query'>
-	| TypeScriptMap['nodes']['type.query']
-	| BuildInput<TypeScriptMap, 'type.readonly'>
-	| TypeScriptMap['nodes']['type.readonly']
-	| BuildInput<TypeScriptMap, 'type.template'>
-	| TypeScriptMap['nodes']['type.template']
-	| BuildInput<TypeScriptMap, 'type.tuple'>
-	| TypeScriptMap['nodes']['type.tuple']
-	| BuildInput<TypeScriptMap, 'type.union'>
-	| TypeScriptMap['nodes']['type.union'];
-const declaration_signature_construct$376_type = (value: declaration_signature_construct$376_type$Item) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case '*':
-				return b.typeAnnotation(364);
-			case 'any':
-				return b.typeAnnotation(40);
-			case 'boolean':
-				return b.typeAnnotation(42);
-			case 'never':
-				return b.typeAnnotation(146);
-			case 'number':
-				return b.typeAnnotation(41);
-			case 'object':
-				return b.typeAnnotation(46);
-			case 'string':
-				return b.typeAnnotation(43);
-			case 'symbol':
-				return b.typeAnnotation(44);
-			case 'this':
-				return b.typeAnnotation(508);
-			case 'unique symbol':
-				return b.typeAnnotation(144);
-			case 'unknown':
-				return b.typeAnnotation(145);
-			case 'void':
-				return b.typeAnnotation(78);
-			default:
-				if (
-					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
-						value
-					)
-				)
-					return b.typeAnnotation(b.identifier(value));
-				return b.typeAnnotation(b.identifier(value));
-		}
-	}
-	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 509
-				]
-			)
-		)
-			return b.typeAnnotation(value);
-		return unseated('declaration.signature.construct.type', value);
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-				]
-			)
-		)
-			return b.typeAnnotation(value);
-		return unseated('declaration.signature.construct.type', value);
-	}
-	switch (value.$path) {
-		case 'identifier':
-			return unbuilt('declaration.signature.construct.type', value);
-		case 'identifier.qualified':
-			if (
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				value.name !== undefined &&
-				value.qualifier !== undefined
-			)
-				return b.typeAnnotation(identifier_qualified$335(value));
-			return b.typeAnnotation(identifier_qualified$319(value));
-		case 'type.array':
-			return b.typeAnnotation(type_array$378(value));
-		case 'type.conditional':
-			return b.typeAnnotation(type_conditional$350(value));
-		case 'type.function':
-			return unbuilt('declaration.signature.construct.type', value);
-		case 'type.function.constructor':
-			return unbuilt('declaration.signature.construct.type', value);
-		case 'type.generic':
-			return b.typeAnnotation(type_generic$351(value));
-		case 'type.import':
-			return b.typeAnnotation(type_import$336(value));
-		case 'type.index_query':
-			return b.typeAnnotation(type_index_query$359(value));
-		case 'type.infer':
-			return b.typeAnnotation(type_infer$349(value));
-		case 'type.intersection':
-			return b.typeAnnotation(type_intersection$382(value));
-		case 'type.literal':
-			return b.typeAnnotation(type_literal$362(value));
-		case 'type.lookup':
-			return b.typeAnnotation(type_lookup$360(value));
-		case 'type.nullable':
-			return b.typeAnnotation(type_nullable$365(value));
-		case 'type.object':
-			return b.typeAnnotation(type_object$369(value));
-		case 'type.parenthesized':
-			return b.typeAnnotation(type_parenthesized$366(value));
-		case 'type.query':
-			return b.typeAnnotation(type_query$358(value));
-		case 'type.readonly':
-			return b.typeAnnotation(type_readonly$380(value));
-		case 'type.template':
-			return b.typeAnnotation(type_template$348(value));
-		case 'type.tuple':
-			return b.typeAnnotation(type_tuple$379(value));
-		case 'type.union':
-			return b.typeAnnotation(type_union$381(value));
-		default:
-			return unbuilt('declaration.signature.construct.type', value);
-	}
-};
-type declaration_signature_construct$376_typeParameters$item$Item =
-	| PathInput<TypeScriptMap, 'declaration.type_parameter'>
-	| TypeScriptMap['nodes']['declaration.type_parameter'];
-const declaration_signature_construct$376_typeParameters$item = (
-	value: declaration_signature_construct$376_typeParameters$item$Item
-) => {
-	if (typeof value === 'number') {
-		if (seated(value, [373])) return value;
-		return unseated('declaration.signature.construct.typeParameters', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [373])) return value;
-		return unseated('declaration.signature.construct.typeParameters', value);
-	}
-	return unbuilt('declaration.signature.construct.typeParameters', value);
-};
-type declaration_signature_index$410_indexType$Item =
-	| '*'
-	| 'any'
-	| 'boolean'
-	| 'never'
-	| 'number'
-	| 'object'
-	| 'string'
-	| 'symbol'
-	| 'this'
-	| 'unique symbol'
-	| 'unknown'
-	| 'void'
-	| Text<TypeScriptMap, 'identifier'>
-	| Text<TypeScriptMap, 'type.existential'>
-	| Text<TypeScriptMap, 'type.primitive.boolean'>
-	| Text<TypeScriptMap, 'type.primitive.floating.float64'>
-	| Text<TypeScriptMap, 'type.primitive.never'>
-	| Text<TypeScriptMap, 'type.primitive.object'>
-	| Text<TypeScriptMap, 'type.primitive.string'>
-	| Text<TypeScriptMap, 'type.primitive.symbol'>
-	| Text<TypeScriptMap, 'type.primitive.unchecked'>
-	| Text<TypeScriptMap, 'type.primitive.unknown'>
-	| Text<TypeScriptMap, 'type.primitive.void'>
-	| Text<TypeScriptMap, 'type.receiver'>
-	| BuildInput<TypeScriptMap, 'identifier'>
-	| TypeScriptMap['nodes']['identifier']
-	| BuildInput<TypeScriptMap, 'identifier.qualified'>
-	| TypeScriptMap['nodes']['identifier.qualified']
-	| BuildInput<TypeScriptMap, 'type.array'>
-	| TypeScriptMap['nodes']['type.array']
-	| BuildInput<TypeScriptMap, 'type.conditional'>
-	| TypeScriptMap['nodes']['type.conditional']
-	| BuildInput<TypeScriptMap, 'type.function'>
-	| TypeScriptMap['nodes']['type.function']
-	| BuildInput<TypeScriptMap, 'type.function.constructor'>
-	| TypeScriptMap['nodes']['type.function.constructor']
-	| BuildInput<TypeScriptMap, 'type.generic'>
-	| TypeScriptMap['nodes']['type.generic']
-	| BuildInput<TypeScriptMap, 'type.import'>
-	| TypeScriptMap['nodes']['type.import']
-	| BuildInput<TypeScriptMap, 'type.index_query'>
-	| TypeScriptMap['nodes']['type.index_query']
-	| BuildInput<TypeScriptMap, 'type.infer'>
-	| TypeScriptMap['nodes']['type.infer']
-	| BuildInput<TypeScriptMap, 'type.intersection'>
-	| TypeScriptMap['nodes']['type.intersection']
-	| BuildInput<TypeScriptMap, 'type.literal'>
-	| TypeScriptMap['nodes']['type.literal']
-	| BuildInput<TypeScriptMap, 'type.lookup'>
-	| TypeScriptMap['nodes']['type.lookup']
-	| BuildInput<TypeScriptMap, 'type.nullable'>
-	| TypeScriptMap['nodes']['type.nullable']
-	| BuildInput<TypeScriptMap, 'type.object'>
-	| TypeScriptMap['nodes']['type.object']
-	| BuildInput<TypeScriptMap, 'type.parenthesized'>
-	| TypeScriptMap['nodes']['type.parenthesized']
-	| BuildInput<TypeScriptMap, 'type.query'>
-	| TypeScriptMap['nodes']['type.query']
-	| BuildInput<TypeScriptMap, 'type.readonly'>
-	| TypeScriptMap['nodes']['type.readonly']
-	| BuildInput<TypeScriptMap, 'type.template'>
-	| TypeScriptMap['nodes']['type.template']
-	| BuildInput<TypeScriptMap, 'type.tuple'>
-	| TypeScriptMap['nodes']['type.tuple']
-	| BuildInput<TypeScriptMap, 'type.union'>
-	| TypeScriptMap['nodes']['type.union'];
-const declaration_signature_index$410_indexType = (value: declaration_signature_index$410_indexType$Item) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case '*':
-				return 364;
-			case 'any':
-				return 40;
-			case 'boolean':
-				return 42;
-			case 'never':
-				return 146;
-			case 'number':
-				return 41;
-			case 'object':
-				return 46;
-			case 'string':
-				return 43;
-			case 'symbol':
-				return 44;
-			case 'this':
-				return 508;
-			case 'unique symbol':
-				return 144;
-			case 'unknown':
-				return 145;
-			case 'void':
-				return 78;
-			default:
-				if (
-					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
-						value
-					)
-				)
-					return b.identifier(value);
-				return b.identifier(value);
-		}
-	}
-	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 509
-				]
-			)
-		)
-			return value;
-		return unseated('declaration.signature.index.indexType', value);
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-				]
-			)
-		)
-			return value;
-		return unseated('declaration.signature.index.indexType', value);
-	}
-	switch (value.$path) {
-		case 'identifier':
-			return unbuilt('declaration.signature.index.indexType', value);
-		case 'identifier.qualified':
-			if (
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				value.name !== undefined &&
-				value.qualifier !== undefined
-			)
-				return identifier_qualified$335(value);
-			return identifier_qualified$319(value);
-		case 'type.array':
-			return type_array$378(value);
-		case 'type.conditional':
-			return type_conditional$350(value);
-		case 'type.function':
-			return unbuilt('declaration.signature.index.indexType', value);
-		case 'type.function.constructor':
-			return unbuilt('declaration.signature.index.indexType', value);
-		case 'type.generic':
-			return type_generic$351(value);
-		case 'type.import':
-			return type_import$336(value);
-		case 'type.index_query':
-			return type_index_query$359(value);
-		case 'type.infer':
-			return type_infer$349(value);
-		case 'type.intersection':
-			return type_intersection$382(value);
-		case 'type.literal':
-			return type_literal$362(value);
-		case 'type.lookup':
-			return type_lookup$360(value);
-		case 'type.nullable':
-			return type_nullable$365(value);
-		case 'type.object':
-			return type_object$369(value);
-		case 'type.parenthesized':
-			return type_parenthesized$366(value);
-		case 'type.query':
-			return type_query$358(value);
-		case 'type.readonly':
-			return type_readonly$380(value);
-		case 'type.template':
-			return type_template$348(value);
-		case 'type.tuple':
-			return type_tuple$379(value);
-		case 'type.union':
-			return type_union$381(value);
-		default:
-			return unbuilt('declaration.signature.index.indexType', value);
-	}
-};
-type declaration_signature_index$410_name$Item =
+type declaration_type_enum$322_name$Item =
 	| Text<TypeScriptMap, 'identifier'>
 	| BuildInput<TypeScriptMap, 'identifier'>
 	| TypeScriptMap['nodes']['identifier'];
-const declaration_signature_index$410_name = (value: declaration_signature_index$410_name$Item) => {
+const declaration_type_enum$322_name = (value: declaration_type_enum$322_name$Item) => {
 	if (typeof value === 'string') {
 		if (
 			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
@@ -18893,614 +20174,24 @@ const declaration_signature_index$410_name = (value: declaration_signature_index
 	}
 	if (typeof value === 'number') {
 		if (seated(value, [1])) return value;
-		return unseated('declaration.signature.index.name', value);
+		return unseated('declaration.type.enum.name', value);
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
-		return unseated('declaration.signature.index.name', value);
+		return unseated('declaration.type.enum.name', value);
 	}
 	switch (value.$path) {
 		case 'identifier':
 			return identifier$1(value);
 		default:
-			return unbuilt('declaration.signature.index.name', value);
+			return unbuilt('declaration.type.enum.name', value);
 	}
 };
-type declaration_signature_index$410_sign$Item = '+' | '-';
-const declaration_signature_index$410_sign = (value: declaration_signature_index$410_sign$Item) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case '+':
-				return 103;
-			case '-':
-				return 104;
-			default:
-				return untexted('declaration.signature.index.sign', value);
-		}
-	}
-	if (typeof value === 'number') {
-		return unseated('declaration.signature.index.sign', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [103, 104])) return value;
-		return unseated('declaration.signature.index.sign', value);
-	}
-	throw new Error('declaration.signature.index.sign takes no structure');
-};
-type declaration_signature_index$410_type$Item =
-	| '*'
-	| 'any'
-	| 'boolean'
-	| 'never'
-	| 'number'
-	| 'object'
-	| 'string'
-	| 'symbol'
-	| 'this'
-	| 'unique symbol'
-	| 'unknown'
-	| 'void'
-	| Text<TypeScriptMap, 'identifier'>
-	| Text<TypeScriptMap, 'type.existential'>
-	| Text<TypeScriptMap, 'type.primitive.boolean'>
-	| Text<TypeScriptMap, 'type.primitive.floating.float64'>
-	| Text<TypeScriptMap, 'type.primitive.never'>
-	| Text<TypeScriptMap, 'type.primitive.object'>
-	| Text<TypeScriptMap, 'type.primitive.string'>
-	| Text<TypeScriptMap, 'type.primitive.symbol'>
-	| Text<TypeScriptMap, 'type.primitive.unchecked'>
-	| Text<TypeScriptMap, 'type.primitive.unknown'>
-	| Text<TypeScriptMap, 'type.primitive.void'>
-	| Text<TypeScriptMap, 'type.receiver'>
-	| BuildInput<TypeScriptMap, 'identifier'>
-	| TypeScriptMap['nodes']['identifier']
-	| BuildInput<TypeScriptMap, 'identifier.qualified'>
-	| TypeScriptMap['nodes']['identifier.qualified']
-	| BuildInput<TypeScriptMap, 'type.array'>
-	| TypeScriptMap['nodes']['type.array']
-	| BuildInput<TypeScriptMap, 'type.conditional'>
-	| TypeScriptMap['nodes']['type.conditional']
-	| BuildInput<TypeScriptMap, 'type.function'>
-	| TypeScriptMap['nodes']['type.function']
-	| BuildInput<TypeScriptMap, 'type.function.constructor'>
-	| TypeScriptMap['nodes']['type.function.constructor']
-	| BuildInput<TypeScriptMap, 'type.generic'>
-	| TypeScriptMap['nodes']['type.generic']
-	| BuildInput<TypeScriptMap, 'type.import'>
-	| TypeScriptMap['nodes']['type.import']
-	| BuildInput<TypeScriptMap, 'type.index_query'>
-	| TypeScriptMap['nodes']['type.index_query']
-	| BuildInput<TypeScriptMap, 'type.infer'>
-	| TypeScriptMap['nodes']['type.infer']
-	| BuildInput<TypeScriptMap, 'type.intersection'>
-	| TypeScriptMap['nodes']['type.intersection']
-	| BuildInput<TypeScriptMap, 'type.literal'>
-	| TypeScriptMap['nodes']['type.literal']
-	| BuildInput<TypeScriptMap, 'type.lookup'>
-	| TypeScriptMap['nodes']['type.lookup']
-	| BuildInput<TypeScriptMap, 'type.nullable'>
-	| TypeScriptMap['nodes']['type.nullable']
-	| BuildInput<TypeScriptMap, 'type.object'>
-	| TypeScriptMap['nodes']['type.object']
-	| BuildInput<TypeScriptMap, 'type.parenthesized'>
-	| TypeScriptMap['nodes']['type.parenthesized']
-	| BuildInput<TypeScriptMap, 'type.query'>
-	| TypeScriptMap['nodes']['type.query']
-	| BuildInput<TypeScriptMap, 'type.readonly'>
-	| TypeScriptMap['nodes']['type.readonly']
-	| BuildInput<TypeScriptMap, 'type.template'>
-	| TypeScriptMap['nodes']['type.template']
-	| BuildInput<TypeScriptMap, 'type.tuple'>
-	| TypeScriptMap['nodes']['type.tuple']
-	| BuildInput<TypeScriptMap, 'type.union'>
-	| TypeScriptMap['nodes']['type.union'];
-const declaration_signature_index$410_type = (value: declaration_signature_index$410_type$Item) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case '*':
-				return b.typeAnnotation(364);
-			case 'any':
-				return b.typeAnnotation(40);
-			case 'boolean':
-				return b.typeAnnotation(42);
-			case 'never':
-				return b.typeAnnotation(146);
-			case 'number':
-				return b.typeAnnotation(41);
-			case 'object':
-				return b.typeAnnotation(46);
-			case 'string':
-				return b.typeAnnotation(43);
-			case 'symbol':
-				return b.typeAnnotation(44);
-			case 'this':
-				return b.typeAnnotation(508);
-			case 'unique symbol':
-				return b.typeAnnotation(144);
-			case 'unknown':
-				return b.typeAnnotation(145);
-			case 'void':
-				return b.typeAnnotation(78);
-			default:
-				if (
-					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
-						value
-					)
-				)
-					return b.typeAnnotation(b.identifier(value));
-				if (
-					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
-						value
-					)
-				)
-					return b.omittingTypeAnnotation(b.identifier(value));
-				if (
-					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
-						value
-					)
-				)
-					return b.addingTypeAnnotation(b.identifier(value));
-				if (
-					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
-						value
-					)
-				)
-					return b.optingTypeAnnotation(b.identifier(value));
-				return b.typeAnnotation(b.identifier(value));
-		}
-	}
-	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 509
-				]
-			)
-		)
-			return b.typeAnnotation(value);
-		return unseated('declaration.signature.index.type', value);
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-				]
-			)
-		)
-			return b.typeAnnotation(value);
-		return unseated('declaration.signature.index.type', value);
-	}
-	switch (value.$path) {
-		case 'identifier':
-			return unbuilt('declaration.signature.index.type', value);
-		case 'identifier.qualified':
-			if (
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				value.name !== undefined &&
-				value.qualifier !== undefined
-			)
-				return b.typeAnnotation(identifier_qualified$335(value));
-			return b.typeAnnotation(identifier_qualified$319(value));
-		case 'type.array':
-			return b.typeAnnotation(type_array$378(value));
-		case 'type.conditional':
-			return b.typeAnnotation(type_conditional$350(value));
-		case 'type.function':
-			return unbuilt('declaration.signature.index.type', value);
-		case 'type.function.constructor':
-			return unbuilt('declaration.signature.index.type', value);
-		case 'type.generic':
-			return b.typeAnnotation(type_generic$351(value));
-		case 'type.import':
-			return b.typeAnnotation(type_import$336(value));
-		case 'type.index_query':
-			return b.typeAnnotation(type_index_query$359(value));
-		case 'type.infer':
-			return b.typeAnnotation(type_infer$349(value));
-		case 'type.intersection':
-			return b.typeAnnotation(type_intersection$382(value));
-		case 'type.literal':
-			return b.typeAnnotation(type_literal$362(value));
-		case 'type.lookup':
-			return b.typeAnnotation(type_lookup$360(value));
-		case 'type.nullable':
-			return b.typeAnnotation(type_nullable$365(value));
-		case 'type.object':
-			return b.typeAnnotation(type_object$369(value));
-		case 'type.parenthesized':
-			return b.typeAnnotation(type_parenthesized$366(value));
-		case 'type.query':
-			return b.typeAnnotation(type_query$358(value));
-		case 'type.readonly':
-			return b.typeAnnotation(type_readonly$380(value));
-		case 'type.template':
-			return b.typeAnnotation(type_template$348(value));
-		case 'type.tuple':
-			return b.typeAnnotation(type_tuple$379(value));
-		case 'type.union':
-			return b.typeAnnotation(type_union$381(value));
-		default:
-			return unbuilt('declaration.signature.index.type', value);
-	}
-};
-type declaration_signature_index_mapped$411_mappedTypeClause$Item =
-	| PathInput<TypeScriptMap, 'clause.mapped_type'>
-	| TypeScriptMap['nodes']['clause.mapped_type'];
-const declaration_signature_index_mapped$411_mappedTypeClause = (
-	value: declaration_signature_index_mapped$411_mappedTypeClause$Item
-) => {
-	if (typeof value === 'number') {
-		if (seated(value, [361])) return value;
-		return unseated('declaration.signature.index.mapped.mappedTypeClause', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [361])) return value;
-		return unseated('declaration.signature.index.mapped.mappedTypeClause', value);
-	}
-	return clause_mapped_type$361(value);
-};
-type declaration_signature_index_mapped$411_sign$Item = '+' | '-';
-const declaration_signature_index_mapped$411_sign = (value: declaration_signature_index_mapped$411_sign$Item) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case '+':
-				return 103;
-			case '-':
-				return 104;
-			default:
-				return untexted('declaration.signature.index.mapped.sign', value);
-		}
-	}
-	if (typeof value === 'number') {
-		return unseated('declaration.signature.index.mapped.sign', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [103, 104])) return value;
-		return unseated('declaration.signature.index.mapped.sign', value);
-	}
-	throw new Error('declaration.signature.index.mapped.sign takes no structure');
-};
-type declaration_signature_index_mapped$411_type$Item =
-	| '*'
-	| 'any'
-	| 'boolean'
-	| 'never'
-	| 'number'
-	| 'object'
-	| 'string'
-	| 'symbol'
-	| 'this'
-	| 'unique symbol'
-	| 'unknown'
-	| 'void'
-	| Text<TypeScriptMap, 'identifier'>
-	| Text<TypeScriptMap, 'type.existential'>
-	| Text<TypeScriptMap, 'type.primitive.boolean'>
-	| Text<TypeScriptMap, 'type.primitive.floating.float64'>
-	| Text<TypeScriptMap, 'type.primitive.never'>
-	| Text<TypeScriptMap, 'type.primitive.object'>
-	| Text<TypeScriptMap, 'type.primitive.string'>
-	| Text<TypeScriptMap, 'type.primitive.symbol'>
-	| Text<TypeScriptMap, 'type.primitive.unchecked'>
-	| Text<TypeScriptMap, 'type.primitive.unknown'>
-	| Text<TypeScriptMap, 'type.primitive.void'>
-	| Text<TypeScriptMap, 'type.receiver'>
-	| BuildInput<TypeScriptMap, 'identifier'>
-	| TypeScriptMap['nodes']['identifier']
-	| BuildInput<TypeScriptMap, 'identifier.qualified'>
-	| TypeScriptMap['nodes']['identifier.qualified']
-	| BuildInput<TypeScriptMap, 'type.array'>
-	| TypeScriptMap['nodes']['type.array']
-	| BuildInput<TypeScriptMap, 'type.conditional'>
-	| TypeScriptMap['nodes']['type.conditional']
-	| BuildInput<TypeScriptMap, 'type.function'>
-	| TypeScriptMap['nodes']['type.function']
-	| BuildInput<TypeScriptMap, 'type.function.constructor'>
-	| TypeScriptMap['nodes']['type.function.constructor']
-	| BuildInput<TypeScriptMap, 'type.generic'>
-	| TypeScriptMap['nodes']['type.generic']
-	| BuildInput<TypeScriptMap, 'type.import'>
-	| TypeScriptMap['nodes']['type.import']
-	| BuildInput<TypeScriptMap, 'type.index_query'>
-	| TypeScriptMap['nodes']['type.index_query']
-	| BuildInput<TypeScriptMap, 'type.infer'>
-	| TypeScriptMap['nodes']['type.infer']
-	| BuildInput<TypeScriptMap, 'type.intersection'>
-	| TypeScriptMap['nodes']['type.intersection']
-	| BuildInput<TypeScriptMap, 'type.literal'>
-	| TypeScriptMap['nodes']['type.literal']
-	| BuildInput<TypeScriptMap, 'type.lookup'>
-	| TypeScriptMap['nodes']['type.lookup']
-	| BuildInput<TypeScriptMap, 'type.nullable'>
-	| TypeScriptMap['nodes']['type.nullable']
-	| BuildInput<TypeScriptMap, 'type.object'>
-	| TypeScriptMap['nodes']['type.object']
-	| BuildInput<TypeScriptMap, 'type.parenthesized'>
-	| TypeScriptMap['nodes']['type.parenthesized']
-	| BuildInput<TypeScriptMap, 'type.query'>
-	| TypeScriptMap['nodes']['type.query']
-	| BuildInput<TypeScriptMap, 'type.readonly'>
-	| TypeScriptMap['nodes']['type.readonly']
-	| BuildInput<TypeScriptMap, 'type.template'>
-	| TypeScriptMap['nodes']['type.template']
-	| BuildInput<TypeScriptMap, 'type.tuple'>
-	| TypeScriptMap['nodes']['type.tuple']
-	| BuildInput<TypeScriptMap, 'type.union'>
-	| TypeScriptMap['nodes']['type.union'];
-const declaration_signature_index_mapped$411_type = (value: declaration_signature_index_mapped$411_type$Item) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case '*':
-				return b.typeAnnotation(364);
-			case 'any':
-				return b.typeAnnotation(40);
-			case 'boolean':
-				return b.typeAnnotation(42);
-			case 'never':
-				return b.typeAnnotation(146);
-			case 'number':
-				return b.typeAnnotation(41);
-			case 'object':
-				return b.typeAnnotation(46);
-			case 'string':
-				return b.typeAnnotation(43);
-			case 'symbol':
-				return b.typeAnnotation(44);
-			case 'this':
-				return b.typeAnnotation(508);
-			case 'unique symbol':
-				return b.typeAnnotation(144);
-			case 'unknown':
-				return b.typeAnnotation(145);
-			case 'void':
-				return b.typeAnnotation(78);
-			default:
-				if (
-					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
-						value
-					)
-				)
-					return b.typeAnnotation(b.identifier(value));
-				if (
-					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
-						value
-					)
-				)
-					return b.omittingTypeAnnotation(b.identifier(value));
-				if (
-					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
-						value
-					)
-				)
-					return b.addingTypeAnnotation(b.identifier(value));
-				if (
-					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
-						value
-					)
-				)
-					return b.optingTypeAnnotation(b.identifier(value));
-				return b.typeAnnotation(b.identifier(value));
-		}
-	}
-	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 509
-				]
-			)
-		)
-			return b.typeAnnotation(value);
-		return unseated('declaration.signature.index.mapped.type', value);
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-				]
-			)
-		)
-			return b.typeAnnotation(value);
-		return unseated('declaration.signature.index.mapped.type', value);
-	}
-	switch (value.$path) {
-		case 'identifier':
-			return unbuilt('declaration.signature.index.mapped.type', value);
-		case 'identifier.qualified':
-			if (
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				value.name !== undefined &&
-				value.qualifier !== undefined
-			)
-				return b.typeAnnotation(identifier_qualified$335(value));
-			return b.typeAnnotation(identifier_qualified$319(value));
-		case 'type.array':
-			return b.typeAnnotation(type_array$378(value));
-		case 'type.conditional':
-			return b.typeAnnotation(type_conditional$350(value));
-		case 'type.function':
-			return unbuilt('declaration.signature.index.mapped.type', value);
-		case 'type.function.constructor':
-			return unbuilt('declaration.signature.index.mapped.type', value);
-		case 'type.generic':
-			return b.typeAnnotation(type_generic$351(value));
-		case 'type.import':
-			return b.typeAnnotation(type_import$336(value));
-		case 'type.index_query':
-			return b.typeAnnotation(type_index_query$359(value));
-		case 'type.infer':
-			return b.typeAnnotation(type_infer$349(value));
-		case 'type.intersection':
-			return b.typeAnnotation(type_intersection$382(value));
-		case 'type.literal':
-			return b.typeAnnotation(type_literal$362(value));
-		case 'type.lookup':
-			return b.typeAnnotation(type_lookup$360(value));
-		case 'type.nullable':
-			return b.typeAnnotation(type_nullable$365(value));
-		case 'type.object':
-			return b.typeAnnotation(type_object$369(value));
-		case 'type.parenthesized':
-			return b.typeAnnotation(type_parenthesized$366(value));
-		case 'type.query':
-			return b.typeAnnotation(type_query$358(value));
-		case 'type.readonly':
-			return b.typeAnnotation(type_readonly$380(value));
-		case 'type.template':
-			return b.typeAnnotation(type_template$348(value));
-		case 'type.tuple':
-			return b.typeAnnotation(type_tuple$379(value));
-		case 'type.union':
-			return b.typeAnnotation(type_union$381(value));
-		default:
-			return unbuilt('declaration.signature.index.mapped.type', value);
-	}
-};
-type declaration_type_alias$325_name$Item =
+type declaration_type_type_alias$325_name$Item =
 	| Text<TypeScriptMap, 'identifier'>
 	| BuildInput<TypeScriptMap, 'identifier'>
 	| TypeScriptMap['nodes']['identifier'];
-const declaration_type_alias$325_name = (value: declaration_type_alias$325_name$Item) => {
+const declaration_type_type_alias$325_name = (value: declaration_type_type_alias$325_name$Item) => {
 	if (typeof value === 'string') {
 		if (
 			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
@@ -19512,34 +20203,36 @@ const declaration_type_alias$325_name = (value: declaration_type_alias$325_name$
 	}
 	if (typeof value === 'number') {
 		if (seated(value, [509])) return value;
-		return unseated('declaration.type_alias.name', value);
+		return unseated('declaration.type.type_alias.name', value);
 	}
 	if (isNode(value)) {
 		if (seated(value, [509])) return value;
-		return unseated('declaration.type_alias.name', value);
+		return unseated('declaration.type.type_alias.name', value);
 	}
 	switch (value.$path) {
 		case 'identifier':
-			return unbuilt('declaration.type_alias.name', value);
+			return unbuilt('declaration.type.type_alias.name', value);
 		default:
-			return unbuilt('declaration.type_alias.name', value);
+			return unbuilt('declaration.type.type_alias.name', value);
 	}
 };
-type declaration_type_alias$325_typeParameters$item$Item =
+type declaration_type_type_alias$325_typeParameters$item$Item =
 	| PathInput<TypeScriptMap, 'declaration.type_parameter'>
 	| TypeScriptMap['nodes']['declaration.type_parameter'];
-const declaration_type_alias$325_typeParameters$item = (value: declaration_type_alias$325_typeParameters$item$Item) => {
+const declaration_type_type_alias$325_typeParameters$item = (
+	value: declaration_type_type_alias$325_typeParameters$item$Item
+) => {
 	if (typeof value === 'number') {
 		if (seated(value, [373])) return value;
-		return unseated('declaration.type_alias.typeParameters', value);
+		return unseated('declaration.type.type_alias.typeParameters', value);
 	}
 	if (isNode(value)) {
 		if (seated(value, [373])) return value;
-		return unseated('declaration.type_alias.typeParameters', value);
+		return unseated('declaration.type.type_alias.typeParameters', value);
 	}
-	return unbuilt('declaration.type_alias.typeParameters', value);
+	return unbuilt('declaration.type.type_alias.typeParameters', value);
 };
-type declaration_type_alias$325_value$Item =
+type declaration_type_type_alias$325_value$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
@@ -19606,7 +20299,7 @@ type declaration_type_alias$325_value$Item =
 	| TypeScriptMap['nodes']['type.tuple']
 	| BuildInput<TypeScriptMap, 'type.union'>
 	| TypeScriptMap['nodes']['type.union'];
-const declaration_type_alias$325_value = (value: declaration_type_alias$325_value$Item) => {
+const declaration_type_type_alias$325_value = (value: declaration_type_type_alias$325_value$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '*':
@@ -19654,7 +20347,7 @@ const declaration_type_alias$325_value = (value: declaration_type_alias$325_valu
 			)
 		)
 			return value;
-		return unseated('declaration.type_alias.value', value);
+		return unseated('declaration.type.type_alias.value', value);
 	}
 	if (isNode(value)) {
 		if (
@@ -19667,11 +20360,11 @@ const declaration_type_alias$325_value = (value: declaration_type_alias$325_valu
 			)
 		)
 			return value;
-		return unseated('declaration.type_alias.value', value);
+		return unseated('declaration.type.type_alias.value', value);
 	}
 	switch (value.$path) {
 		case 'identifier':
-			return unbuilt('declaration.type_alias.value', value);
+			return unbuilt('declaration.type.type_alias.value', value);
 		case 'identifier.qualified':
 			if (
 				(value.qualifier === undefined ||
@@ -19750,9 +20443,9 @@ const declaration_type_alias$325_value = (value: declaration_type_alias$325_valu
 		case 'type.conditional':
 			return type_conditional$350(value);
 		case 'type.function':
-			return unbuilt('declaration.type_alias.value', value);
+			return unbuilt('declaration.type.type_alias.value', value);
 		case 'type.function.constructor':
-			return unbuilt('declaration.type_alias.value', value);
+			return unbuilt('declaration.type.type_alias.value', value);
 		case 'type.generic':
 			return type_generic$351(value);
 		case 'type.import':
@@ -19784,7 +20477,7 @@ const declaration_type_alias$325_value = (value: declaration_type_alias$325_valu
 		case 'type.union':
 			return type_union$381(value);
 		default:
-			return unbuilt('declaration.type_alias.value', value);
+			return unbuilt('declaration.type.type_alias.value', value);
 	}
 };
 type declaration_variable$439_name$Item =
@@ -63114,30 +63807,30 @@ const expression_collection_list$242_elements = (value: expression_collection_li
 };
 type expression_collection_object$238_properties$Item =
 	| Text<TypeScriptMap, 'identifier'>
-	| BuildInput<TypeScriptMap, 'declaration.method'>
-	| TypeScriptMap['nodes']['declaration.method']
-	| BuildInput<TypeScriptMap, 'declaration.method.private'>
-	| TypeScriptMap['nodes']['declaration.method.private']
-	| BuildInput<TypeScriptMap, 'declaration.method.protected'>
-	| TypeScriptMap['nodes']['declaration.method.protected']
-	| BuildInput<TypeScriptMap, 'declaration.method.public'>
-	| TypeScriptMap['nodes']['declaration.method.public']
-	| BuildInput<TypeScriptMap, 'declaration.property.getter'>
-	| TypeScriptMap['nodes']['declaration.property.getter']
-	| BuildInput<TypeScriptMap, 'declaration.property.getter.private'>
-	| TypeScriptMap['nodes']['declaration.property.getter.private']
-	| BuildInput<TypeScriptMap, 'declaration.property.getter.protected'>
-	| TypeScriptMap['nodes']['declaration.property.getter.protected']
-	| BuildInput<TypeScriptMap, 'declaration.property.getter.public'>
-	| TypeScriptMap['nodes']['declaration.property.getter.public']
-	| BuildInput<TypeScriptMap, 'declaration.property.setter'>
-	| TypeScriptMap['nodes']['declaration.property.setter']
-	| BuildInput<TypeScriptMap, 'declaration.property.setter.private'>
-	| TypeScriptMap['nodes']['declaration.property.setter.private']
-	| BuildInput<TypeScriptMap, 'declaration.property.setter.protected'>
-	| TypeScriptMap['nodes']['declaration.property.setter.protected']
-	| BuildInput<TypeScriptMap, 'declaration.property.setter.public'>
-	| TypeScriptMap['nodes']['declaration.property.setter.public']
+	| BuildInput<TypeScriptMap, 'declaration.member.method'>
+	| TypeScriptMap['nodes']['declaration.member.method']
+	| BuildInput<TypeScriptMap, 'declaration.member.method.private'>
+	| TypeScriptMap['nodes']['declaration.member.method.private']
+	| BuildInput<TypeScriptMap, 'declaration.member.method.protected'>
+	| TypeScriptMap['nodes']['declaration.member.method.protected']
+	| BuildInput<TypeScriptMap, 'declaration.member.method.public'>
+	| TypeScriptMap['nodes']['declaration.member.method.public']
+	| BuildInput<TypeScriptMap, 'declaration.member.property.getter'>
+	| TypeScriptMap['nodes']['declaration.member.property.getter']
+	| BuildInput<TypeScriptMap, 'declaration.member.property.getter.private'>
+	| TypeScriptMap['nodes']['declaration.member.property.getter.private']
+	| BuildInput<TypeScriptMap, 'declaration.member.property.getter.protected'>
+	| TypeScriptMap['nodes']['declaration.member.property.getter.protected']
+	| BuildInput<TypeScriptMap, 'declaration.member.property.getter.public'>
+	| TypeScriptMap['nodes']['declaration.member.property.getter.public']
+	| BuildInput<TypeScriptMap, 'declaration.member.property.setter'>
+	| TypeScriptMap['nodes']['declaration.member.property.setter']
+	| BuildInput<TypeScriptMap, 'declaration.member.property.setter.private'>
+	| TypeScriptMap['nodes']['declaration.member.property.setter.private']
+	| BuildInput<TypeScriptMap, 'declaration.member.property.setter.protected'>
+	| TypeScriptMap['nodes']['declaration.member.property.setter.protected']
+	| BuildInput<TypeScriptMap, 'declaration.member.property.setter.public'>
+	| TypeScriptMap['nodes']['declaration.member.property.setter.public']
 	| BuildInput<TypeScriptMap, 'element.pair'>
 	| TypeScriptMap['nodes']['element.pair']
 	| BuildInput<TypeScriptMap, 'element.spread'>
@@ -63164,29 +63857,29 @@ const expression_collection_object$238_properties = (value: expression_collectio
 		return unseated('expression.collection.object.properties', value);
 	}
 	switch (value.$path) {
-		case 'declaration.method':
+		case 'declaration.member.method':
 			return unbuilt('expression.collection.object.properties', value);
-		case 'declaration.method.private':
+		case 'declaration.member.method.private':
 			return unbuilt('expression.collection.object.properties', value);
-		case 'declaration.method.protected':
+		case 'declaration.member.method.protected':
 			return unbuilt('expression.collection.object.properties', value);
-		case 'declaration.method.public':
+		case 'declaration.member.method.public':
 			return unbuilt('expression.collection.object.properties', value);
-		case 'declaration.property.getter':
+		case 'declaration.member.property.getter':
 			return unbuilt('expression.collection.object.properties', value);
-		case 'declaration.property.getter.private':
+		case 'declaration.member.property.getter.private':
 			return unbuilt('expression.collection.object.properties', value);
-		case 'declaration.property.getter.protected':
+		case 'declaration.member.property.getter.protected':
 			return unbuilt('expression.collection.object.properties', value);
-		case 'declaration.property.getter.public':
+		case 'declaration.member.property.getter.public':
 			return unbuilt('expression.collection.object.properties', value);
-		case 'declaration.property.setter':
+		case 'declaration.member.property.setter':
 			return unbuilt('expression.collection.object.properties', value);
-		case 'declaration.property.setter.private':
+		case 'declaration.member.property.setter.private':
 			return unbuilt('expression.collection.object.properties', value);
-		case 'declaration.property.setter.protected':
+		case 'declaration.member.property.setter.protected':
 			return unbuilt('expression.collection.object.properties', value);
-		case 'declaration.property.setter.public':
+		case 'declaration.member.property.setter.public':
 			return unbuilt('expression.collection.object.properties', value);
 		case 'element.pair':
 			return unbuilt('expression.collection.object.properties', value);
@@ -76415,22 +77108,22 @@ type statement_block$211_statements$Item =
 	| number
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
-	| BuildInput<TypeScriptMap, 'declaration.class'>
-	| TypeScriptMap['nodes']['declaration.class']
-	| BuildInput<TypeScriptMap, 'declaration.enum'>
-	| TypeScriptMap['nodes']['declaration.enum']
 	| BuildInput<TypeScriptMap, 'declaration.function'>
 	| TypeScriptMap['nodes']['declaration.function']
 	| BuildInput<TypeScriptMap, 'declaration.function.signature'>
 	| TypeScriptMap['nodes']['declaration.function.signature']
-	| BuildInput<TypeScriptMap, 'declaration.interface'>
-	| TypeScriptMap['nodes']['declaration.interface']
 	| BuildInput<TypeScriptMap, 'declaration.module'>
 	| TypeScriptMap['nodes']['declaration.module']
 	| BuildInput<TypeScriptMap, 'declaration.module.external'>
 	| TypeScriptMap['nodes']['declaration.module.external']
-	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
-	| TypeScriptMap['nodes']['declaration.type_alias']
+	| BuildInput<TypeScriptMap, 'declaration.type.class'>
+	| TypeScriptMap['nodes']['declaration.type.class']
+	| BuildInput<TypeScriptMap, 'declaration.type.enum'>
+	| TypeScriptMap['nodes']['declaration.type.enum']
+	| BuildInput<TypeScriptMap, 'declaration.type.interface'>
+	| TypeScriptMap['nodes']['declaration.type.interface']
+	| BuildInput<TypeScriptMap, 'declaration.type.type_alias'>
+	| TypeScriptMap['nodes']['declaration.type.type_alias']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -76729,22 +77422,22 @@ const statement_block$211_statements = (value: statement_block$211_statements$It
 	switch (value.$path) {
 		case 'declaration.ambient':
 			return declaration_ambient$313(value);
-		case 'declaration.class':
-			return unbuilt('statement.block.statements', value);
-		case 'declaration.enum':
-			return declaration_enum$322(value);
 		case 'declaration.function':
 			return unbuilt('statement.block.statements', value);
 		case 'declaration.function.signature':
-			return unbuilt('statement.block.statements', value);
-		case 'declaration.interface':
 			return unbuilt('statement.block.statements', value);
 		case 'declaration.module':
 			return declaration_module$316(value);
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
-		case 'declaration.type_alias':
-			return declaration_type_alias$325(value);
+		case 'declaration.type.class':
+			return unbuilt('statement.block.statements', value);
+		case 'declaration.type.enum':
+			return declaration_type_enum$322(value);
+		case 'declaration.type.interface':
+			return unbuilt('statement.block.statements', value);
+		case 'declaration.type.type_alias':
+			return declaration_type_type_alias$325(value);
 		case 'declaration.variable.constant':
 			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
@@ -77074,683 +77767,6 @@ const statement_block$211_statements = (value: statement_block$211_statements$It
 			return unbuilt('statement.block.statements', value);
 		default:
 			return unbuilt('statement.block.statements', value);
-	}
-};
-type statement_block_static$290_statements$item$Item =
-	| ';'
-	| 'import.meta'
-	| 'new.target'
-	| 'super'
-	| 'this'
-	| Text<TypeScriptMap, 'expression.meta'>
-	| Text<TypeScriptMap, 'identifier'>
-	| Text<TypeScriptMap, 'identifier.receiver'>
-	| Text<TypeScriptMap, 'identifier.super'>
-	| Text<TypeScriptMap, 'literal.number.integer'>
-	| Text<TypeScriptMap, 'statement.empty'>
-	| bigint
-	| number
-	| BuildInput<TypeScriptMap, 'declaration.ambient'>
-	| TypeScriptMap['nodes']['declaration.ambient']
-	| BuildInput<TypeScriptMap, 'declaration.class'>
-	| TypeScriptMap['nodes']['declaration.class']
-	| BuildInput<TypeScriptMap, 'declaration.enum'>
-	| TypeScriptMap['nodes']['declaration.enum']
-	| BuildInput<TypeScriptMap, 'declaration.function'>
-	| TypeScriptMap['nodes']['declaration.function']
-	| BuildInput<TypeScriptMap, 'declaration.function.signature'>
-	| TypeScriptMap['nodes']['declaration.function.signature']
-	| BuildInput<TypeScriptMap, 'declaration.interface'>
-	| TypeScriptMap['nodes']['declaration.interface']
-	| BuildInput<TypeScriptMap, 'declaration.module'>
-	| TypeScriptMap['nodes']['declaration.module']
-	| BuildInput<TypeScriptMap, 'declaration.module.external'>
-	| TypeScriptMap['nodes']['declaration.module.external']
-	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
-	| TypeScriptMap['nodes']['declaration.type_alias']
-	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
-	| TypeScriptMap['nodes']['declaration.variable.constant']
-	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
-	| TypeScriptMap['nodes']['declaration.variable.reassignable']
-	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
-	| TypeScriptMap['nodes']['declaration.variable.reassignable.function_scoped']
-	| BuildInput<TypeScriptMap, 'expression.assignment'>
-	| TypeScriptMap['nodes']['expression.assignment']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.add'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.add']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.and'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.and']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_and']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_or'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_or']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_xor'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_xor']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.coalesce'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.coalesce']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.divide'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.divide']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.exponent'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.exponent']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.modulo'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.modulo']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.multiply'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.multiply']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.or'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.or']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_left'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.shift_left']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_right'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.shift_right']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.shift_right_unsigned']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.subtract'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.subtract']
-	| BuildInput<TypeScriptMap, 'expression.await'>
-	| TypeScriptMap['nodes']['expression.await']
-	| BuildInput<TypeScriptMap, 'expression.binary'>
-	| TypeScriptMap['nodes']['expression.binary']
-	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.add'>
-	| TypeScriptMap['nodes']['expression.binary.arithmetic.add']
-	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.divide'>
-	| TypeScriptMap['nodes']['expression.binary.arithmetic.divide']
-	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
-	| TypeScriptMap['nodes']['expression.binary.arithmetic.exponent']
-	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.modulo'>
-	| TypeScriptMap['nodes']['expression.binary.arithmetic.modulo']
-	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.multiply'>
-	| TypeScriptMap['nodes']['expression.binary.arithmetic.multiply']
-	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.subtract'>
-	| TypeScriptMap['nodes']['expression.binary.arithmetic.subtract']
-	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.and'>
-	| TypeScriptMap['nodes']['expression.binary.bitwise.and']
-	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.or'>
-	| TypeScriptMap['nodes']['expression.binary.bitwise.or']
-	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.xor'>
-	| TypeScriptMap['nodes']['expression.binary.bitwise.xor']
-	| BuildInput<TypeScriptMap, 'expression.binary.coalesce'>
-	| TypeScriptMap['nodes']['expression.binary.coalesce']
-	| BuildInput<TypeScriptMap, 'expression.binary.comparison.equal'>
-	| TypeScriptMap['nodes']['expression.binary.comparison.equal']
-	| BuildInput<TypeScriptMap, 'expression.binary.comparison.greater'>
-	| TypeScriptMap['nodes']['expression.binary.comparison.greater']
-	| BuildInput<TypeScriptMap, 'expression.binary.comparison.greater_equal'>
-	| TypeScriptMap['nodes']['expression.binary.comparison.greater_equal']
-	| BuildInput<TypeScriptMap, 'expression.binary.comparison.less'>
-	| TypeScriptMap['nodes']['expression.binary.comparison.less']
-	| BuildInput<TypeScriptMap, 'expression.binary.comparison.less_equal'>
-	| TypeScriptMap['nodes']['expression.binary.comparison.less_equal']
-	| BuildInput<TypeScriptMap, 'expression.binary.comparison.loose_equal'>
-	| TypeScriptMap['nodes']['expression.binary.comparison.loose_equal']
-	| BuildInput<TypeScriptMap, 'expression.binary.comparison.loose_not_equal'>
-	| TypeScriptMap['nodes']['expression.binary.comparison.loose_not_equal']
-	| BuildInput<TypeScriptMap, 'expression.binary.comparison.not_equal'>
-	| TypeScriptMap['nodes']['expression.binary.comparison.not_equal']
-	| BuildInput<TypeScriptMap, 'expression.binary.logical.and'>
-	| TypeScriptMap['nodes']['expression.binary.logical.and']
-	| BuildInput<TypeScriptMap, 'expression.binary.logical.or'>
-	| TypeScriptMap['nodes']['expression.binary.logical.or']
-	| BuildInput<TypeScriptMap, 'expression.binary.membership.in'>
-	| TypeScriptMap['nodes']['expression.binary.membership.in']
-	| BuildInput<TypeScriptMap, 'expression.binary.membership.instanceof'>
-	| TypeScriptMap['nodes']['expression.binary.membership.instanceof']
-	| BuildInput<TypeScriptMap, 'expression.binary.shift.left'>
-	| TypeScriptMap['nodes']['expression.binary.shift.left']
-	| BuildInput<TypeScriptMap, 'expression.binary.shift.right'>
-	| TypeScriptMap['nodes']['expression.binary.shift.right']
-	| BuildInput<TypeScriptMap, 'expression.binary.shift.right_unsigned'>
-	| TypeScriptMap['nodes']['expression.binary.shift.right_unsigned']
-	| BuildInput<TypeScriptMap, 'expression.call'>
-	| TypeScriptMap['nodes']['expression.call']
-	| BuildInput<TypeScriptMap, 'expression.call.construct'>
-	| TypeScriptMap['nodes']['expression.call.construct']
-	| BuildInput<TypeScriptMap, 'expression.call.construct.bare'>
-	| TypeScriptMap['nodes']['expression.call.construct.bare']
-	| BuildInput<TypeScriptMap, 'expression.call.member'>
-	| TypeScriptMap['nodes']['expression.call.member']
-	| BuildInput<TypeScriptMap, 'expression.call.template'>
-	| TypeScriptMap['nodes']['expression.call.template']
-	| BuildInput<TypeScriptMap, 'expression.cast.assertion'>
-	| TypeScriptMap['nodes']['expression.cast.assertion']
-	| BuildInput<TypeScriptMap, 'expression.cast.assertion.angle_bracket'>
-	| TypeScriptMap['nodes']['expression.cast.assertion.angle_bracket']
-	| BuildInput<TypeScriptMap, 'expression.cast.non_null'>
-	| TypeScriptMap['nodes']['expression.cast.non_null']
-	| BuildInput<TypeScriptMap, 'expression.cast.satisfies'>
-	| TypeScriptMap['nodes']['expression.cast.satisfies']
-	| BuildInput<TypeScriptMap, 'expression.class'>
-	| TypeScriptMap['nodes']['expression.class']
-	| BuildInput<TypeScriptMap, 'expression.collection.list'>
-	| TypeScriptMap['nodes']['expression.collection.list']
-	| BuildInput<TypeScriptMap, 'expression.collection.object'>
-	| TypeScriptMap['nodes']['expression.collection.object']
-	| BuildInput<TypeScriptMap, 'expression.conditional'>
-	| TypeScriptMap['nodes']['expression.conditional']
-	| BuildInput<TypeScriptMap, 'expression.function'>
-	| TypeScriptMap['nodes']['expression.function']
-	| BuildInput<TypeScriptMap, 'expression.instantiation'>
-	| TypeScriptMap['nodes']['expression.instantiation']
-	| BuildInput<TypeScriptMap, 'expression.lambda'>
-	| TypeScriptMap['nodes']['expression.lambda']
-	| BuildInput<TypeScriptMap, 'expression.member'>
-	| TypeScriptMap['nodes']['expression.member']
-	| BuildInput<TypeScriptMap, 'expression.parenthesized'>
-	| TypeScriptMap['nodes']['expression.parenthesized']
-	| BuildInput<TypeScriptMap, 'expression.sequence'>
-	| TypeScriptMap['nodes']['expression.sequence']
-	| BuildInput<TypeScriptMap, 'expression.subscript'>
-	| TypeScriptMap['nodes']['expression.subscript']
-	| BuildInput<TypeScriptMap, 'expression.unary.bitwise_not'>
-	| TypeScriptMap['nodes']['expression.unary.bitwise_not']
-	| BuildInput<TypeScriptMap, 'expression.unary.delete'>
-	| TypeScriptMap['nodes']['expression.unary.delete']
-	| BuildInput<TypeScriptMap, 'expression.unary.negation'>
-	| TypeScriptMap['nodes']['expression.unary.negation']
-	| BuildInput<TypeScriptMap, 'expression.unary.not'>
-	| TypeScriptMap['nodes']['expression.unary.not']
-	| BuildInput<TypeScriptMap, 'expression.unary.plus'>
-	| TypeScriptMap['nodes']['expression.unary.plus']
-	| BuildInput<TypeScriptMap, 'expression.unary.typeof'>
-	| TypeScriptMap['nodes']['expression.unary.typeof']
-	| BuildInput<TypeScriptMap, 'expression.unary.void'>
-	| TypeScriptMap['nodes']['expression.unary.void']
-	| BuildInput<TypeScriptMap, 'expression.update.decrement'>
-	| TypeScriptMap['nodes']['expression.update.decrement']
-	| BuildInput<TypeScriptMap, 'expression.update.increment'>
-	| TypeScriptMap['nodes']['expression.update.increment']
-	| BuildInput<TypeScriptMap, 'expression.yield'>
-	| TypeScriptMap['nodes']['expression.yield']
-	| BuildInput<TypeScriptMap, 'expression.yield.delegate'>
-	| TypeScriptMap['nodes']['expression.yield.delegate']
-	| BuildInput<TypeScriptMap, 'identifier'>
-	| TypeScriptMap['nodes']['identifier']
-	| BuildInput<TypeScriptMap, 'literal.boolean.false'>
-	| TypeScriptMap['nodes']['literal.boolean.false']
-	| BuildInput<TypeScriptMap, 'literal.boolean.true'>
-	| TypeScriptMap['nodes']['literal.boolean.true']
-	| BuildInput<TypeScriptMap, 'literal.null'>
-	| TypeScriptMap['nodes']['literal.null']
-	| BuildInput<TypeScriptMap, 'literal.null.undefined'>
-	| TypeScriptMap['nodes']['literal.null.undefined']
-	| BuildInput<TypeScriptMap, 'literal.number.float'>
-	| TypeScriptMap['nodes']['literal.number.float']
-	| BuildInput<TypeScriptMap, 'literal.number.float.leading_point'>
-	| TypeScriptMap['nodes']['literal.number.float.leading_point']
-	| BuildInput<TypeScriptMap, 'literal.number.float.scientific'>
-	| TypeScriptMap['nodes']['literal.number.float.scientific']
-	| BuildInput<TypeScriptMap, 'literal.number.integer'>
-	| TypeScriptMap['nodes']['literal.number.integer']
-	| BuildInput<TypeScriptMap, 'literal.number.integer.big'>
-	| TypeScriptMap['nodes']['literal.number.integer.big']
-	| BuildInput<TypeScriptMap, 'literal.number.integer.big.binary'>
-	| TypeScriptMap['nodes']['literal.number.integer.big.binary']
-	| BuildInput<TypeScriptMap, 'literal.number.integer.big.hex'>
-	| TypeScriptMap['nodes']['literal.number.integer.big.hex']
-	| BuildInput<TypeScriptMap, 'literal.number.integer.big.octal'>
-	| TypeScriptMap['nodes']['literal.number.integer.big.octal']
-	| BuildInput<TypeScriptMap, 'literal.number.integer.binary'>
-	| TypeScriptMap['nodes']['literal.number.integer.binary']
-	| BuildInput<TypeScriptMap, 'literal.number.integer.hex'>
-	| TypeScriptMap['nodes']['literal.number.integer.hex']
-	| BuildInput<TypeScriptMap, 'literal.number.integer.octal'>
-	| TypeScriptMap['nodes']['literal.number.integer.octal']
-	| BuildInput<TypeScriptMap, 'literal.regex'>
-	| TypeScriptMap['nodes']['literal.regex']
-	| BuildInput<TypeScriptMap, 'literal.string'>
-	| TypeScriptMap['nodes']['literal.string']
-	| BuildInput<TypeScriptMap, 'literal.string.interpolated'>
-	| TypeScriptMap['nodes']['literal.string.interpolated']
-	| BuildInput<TypeScriptMap, 'statement.block'>
-	| TypeScriptMap['nodes']['statement.block']
-	| BuildInput<TypeScriptMap, 'statement.break'>
-	| TypeScriptMap['nodes']['statement.break']
-	| BuildInput<TypeScriptMap, 'statement.continue'>
-	| TypeScriptMap['nodes']['statement.continue']
-	| BuildInput<TypeScriptMap, 'statement.debugger'>
-	| TypeScriptMap['nodes']['statement.debugger']
-	| BuildInput<TypeScriptMap, 'statement.export'>
-	| TypeScriptMap['nodes']['statement.export']
-	| BuildInput<TypeScriptMap, 'statement.export.all'>
-	| TypeScriptMap['nodes']['statement.export.all']
-	| BuildInput<TypeScriptMap, 'statement.export.default'>
-	| TypeScriptMap['nodes']['statement.export.default']
-	| BuildInput<TypeScriptMap, 'statement.if'>
-	| TypeScriptMap['nodes']['statement.if']
-	| BuildInput<TypeScriptMap, 'statement.import'>
-	| TypeScriptMap['nodes']['statement.import']
-	| BuildInput<TypeScriptMap, 'statement.import.alias'>
-	| TypeScriptMap['nodes']['statement.import.alias']
-	| BuildInput<TypeScriptMap, 'statement.import.typeof'>
-	| TypeScriptMap['nodes']['statement.import.typeof']
-	| BuildInput<TypeScriptMap, 'statement.labeled'>
-	| TypeScriptMap['nodes']['statement.labeled']
-	| BuildInput<TypeScriptMap, 'statement.loop.counted'>
-	| TypeScriptMap['nodes']['statement.loop.counted']
-	| BuildInput<TypeScriptMap, 'statement.loop.do_while'>
-	| TypeScriptMap['nodes']['statement.loop.do_while']
-	| BuildInput<TypeScriptMap, 'statement.loop.for_each'>
-	| TypeScriptMap['nodes']['statement.loop.for_each']
-	| BuildInput<TypeScriptMap, 'statement.loop.while'>
-	| TypeScriptMap['nodes']['statement.loop.while']
-	| BuildInput<TypeScriptMap, 'statement.return'>
-	| TypeScriptMap['nodes']['statement.return']
-	| BuildInput<TypeScriptMap, 'statement.scope'>
-	| TypeScriptMap['nodes']['statement.scope']
-	| BuildInput<TypeScriptMap, 'statement.switch'>
-	| TypeScriptMap['nodes']['statement.switch']
-	| BuildInput<TypeScriptMap, 'statement.throw'>
-	| TypeScriptMap['nodes']['statement.throw']
-	| BuildInput<TypeScriptMap, 'statement.try'>
-	| TypeScriptMap['nodes']['statement.try']
-	| {
-			readonly $path: 'literal.number';
-			readonly $value: number | bigint;
-	  }
-	| Unmapped<'typescript:using_declaration'>;
-const statement_block_static$290_statements$item = (value: statement_block_static$290_statements$item$Item) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case ';':
-				return 227;
-			case 'import.meta':
-				return b.expressionStatement(442);
-			case 'new.target':
-				return b.expressionStatement(441);
-			case 'super':
-				return b.expressionStatement(280);
-			case 'this':
-				return b.expressionStatement(279);
-			default:
-				if (
-					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
-						value
-					)
-				)
-					return b.expressionStatement(b.identifier(value));
-				return b.expressionStatement(b.identifier(value));
-		}
-	}
-	if (typeof value === 'bigint') {
-		return b.expressionStatement(literal_number$166({ $path: 'literal.number', $value: value }));
-	}
-	if (typeof value === 'number') {
-		if (Number.isSafeInteger(value)) {
-			return b.expressionStatement(literal_number$160({ $path: 'literal.number', $value: value }));
-		}
-		return b.expressionStatement(literal_number$156({ $path: 'literal.number', $value: value }));
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227,
-					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
-				]
-			)
-		)
-			return value;
-		if (
-			seated(
-				value,
-				[
-					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
-					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
-				]
-			)
-		)
-			return b.expressionStatement(value);
-		return unseated('statement.block.static.statements', value);
-	}
-	switch (value.$path) {
-		case 'declaration.ambient':
-			return declaration_ambient$313(value);
-		case 'declaration.class':
-			return unbuilt('statement.block.static.statements', value);
-		case 'declaration.enum':
-			return declaration_enum$322(value);
-		case 'declaration.function':
-			return unbuilt('statement.block.static.statements', value);
-		case 'declaration.function.signature':
-			return unbuilt('statement.block.static.statements', value);
-		case 'declaration.interface':
-			return unbuilt('statement.block.static.statements', value);
-		case 'declaration.module':
-			return declaration_module$316(value);
-		case 'declaration.module.external':
-			return declaration_module_external$315(value);
-		case 'declaration.type_alias':
-			return declaration_type_alias$325(value);
-		case 'declaration.variable.constant':
-			return declaration_variable_constant$208(value);
-		case 'declaration.variable.reassignable':
-			return declaration_variable_reassignable$208(value);
-		case 'declaration.variable.reassignable.function_scoped':
-			return declaration_variable_reassignable_function_scoped$207(value);
-		case 'expression.assignment':
-			return b.expressionStatement(expression_assignment$262(value));
-		case 'expression.assignment.compound.add':
-			return b.expressionStatement(expression_assignment_compound_add$264(value));
-		case 'expression.assignment.compound.and':
-			return b.expressionStatement(expression_assignment_compound_and$264(value));
-		case 'expression.assignment.compound.bitwise_and':
-			return b.expressionStatement(expression_assignment_compound_bitwise_and$264(value));
-		case 'expression.assignment.compound.bitwise_or':
-			return b.expressionStatement(expression_assignment_compound_bitwise_or$264(value));
-		case 'expression.assignment.compound.bitwise_xor':
-			return b.expressionStatement(expression_assignment_compound_bitwise_xor$264(value));
-		case 'expression.assignment.compound.coalesce':
-			return b.expressionStatement(expression_assignment_compound_coalesce$264(value));
-		case 'expression.assignment.compound.divide':
-			return b.expressionStatement(expression_assignment_compound_divide$264(value));
-		case 'expression.assignment.compound.exponent':
-			return b.expressionStatement(expression_assignment_compound_exponent$264(value));
-		case 'expression.assignment.compound.modulo':
-			return b.expressionStatement(expression_assignment_compound_modulo$264(value));
-		case 'expression.assignment.compound.multiply':
-			return b.expressionStatement(expression_assignment_compound_multiply$264(value));
-		case 'expression.assignment.compound.or':
-			return b.expressionStatement(expression_assignment_compound_or$264(value));
-		case 'expression.assignment.compound.shift_left':
-			return b.expressionStatement(expression_assignment_compound_shift_left$264(value));
-		case 'expression.assignment.compound.shift_right':
-			return b.expressionStatement(expression_assignment_compound_shift_right$264(value));
-		case 'expression.assignment.compound.shift_right_unsigned':
-			return b.expressionStatement(expression_assignment_compound_shift_right_unsigned$264(value));
-		case 'expression.assignment.compound.subtract':
-			return b.expressionStatement(expression_assignment_compound_subtract$264(value));
-		case 'expression.await':
-			return b.expressionStatement(expression_await$258(value));
-		case 'expression.binary':
-			return b.expressionStatement(expression_binary$269(value));
-		case 'expression.binary.arithmetic.add':
-			return b.expressionStatement(expression_binary_arithmetic_add$269(value));
-		case 'expression.binary.arithmetic.divide':
-			return b.expressionStatement(expression_binary_arithmetic_divide$269(value));
-		case 'expression.binary.arithmetic.exponent':
-			return b.expressionStatement(expression_binary_arithmetic_exponent$269(value));
-		case 'expression.binary.arithmetic.modulo':
-			return b.expressionStatement(expression_binary_arithmetic_modulo$269(value));
-		case 'expression.binary.arithmetic.multiply':
-			return b.expressionStatement(expression_binary_arithmetic_multiply$269(value));
-		case 'expression.binary.arithmetic.subtract':
-			return b.expressionStatement(expression_binary_arithmetic_subtract$269(value));
-		case 'expression.binary.bitwise.and':
-			return b.expressionStatement(expression_binary_bitwise_and$269(value));
-		case 'expression.binary.bitwise.or':
-			return b.expressionStatement(expression_binary_bitwise_or$269(value));
-		case 'expression.binary.bitwise.xor':
-			return b.expressionStatement(expression_binary_bitwise_xor$269(value));
-		case 'expression.binary.coalesce':
-			return b.expressionStatement(expression_binary_coalesce$269(value));
-		case 'expression.binary.comparison.equal':
-			return b.expressionStatement(expression_binary_comparison_equal$269(value));
-		case 'expression.binary.comparison.greater':
-			return b.expressionStatement(expression_binary_comparison_greater$269(value));
-		case 'expression.binary.comparison.greater_equal':
-			return b.expressionStatement(expression_binary_comparison_greater_equal$269(value));
-		case 'expression.binary.comparison.less':
-			return b.expressionStatement(expression_binary_comparison_less$269(value));
-		case 'expression.binary.comparison.less_equal':
-			return b.expressionStatement(expression_binary_comparison_less_equal$269(value));
-		case 'expression.binary.comparison.loose_equal':
-			return b.expressionStatement(expression_binary_comparison_loose_equal$269(value));
-		case 'expression.binary.comparison.loose_not_equal':
-			return b.expressionStatement(expression_binary_comparison_loose_not_equal$269(value));
-		case 'expression.binary.comparison.not_equal':
-			return b.expressionStatement(expression_binary_comparison_not_equal$269(value));
-		case 'expression.binary.logical.and':
-			return b.expressionStatement(expression_binary_logical_and$269(value));
-		case 'expression.binary.logical.or':
-			return b.expressionStatement(expression_binary_logical_or$269(value));
-		case 'expression.binary.membership.in':
-			return unbuilt('statement.block.static.statements', value);
-		case 'expression.binary.membership.instanceof':
-			return b.expressionStatement(expression_binary_membership_instanceof$269(value));
-		case 'expression.binary.shift.left':
-			return b.expressionStatement(expression_binary_shift_left$269(value));
-		case 'expression.binary.shift.right':
-			return b.expressionStatement(expression_binary_shift_right$269(value));
-		case 'expression.binary.shift.right_unsigned':
-			return b.expressionStatement(expression_binary_shift_right_unsigned$269(value));
-		case 'expression.call':
-			if (
-				(value.$flags ?? []).includes('optionalChain') &&
-				value.arguments !== undefined &&
-				value.function !== undefined
-			)
-				return b.expressionStatement(expression_call$424(value));
-			return b.expressionStatement(expression_call$422(value));
-		case 'expression.call.construct':
-			return b.expressionStatement(expression_call_construct$257(value));
-		case 'expression.call.construct.bare':
-			return b.expressionStatement(expression_call_construct_bare$257(value));
-		case 'expression.call.member':
-			return unbuilt('statement.block.static.statements', value);
-		case 'expression.call.template':
-			return b.expressionStatement(expression_call_template$423(value));
-		case 'expression.cast.assertion':
-			return b.expressionStatement(expression_cast_assertion$306(value));
-		case 'expression.cast.assertion.angle_bracket':
-			return b.expressionStatement(expression_cast_assertion_angle_bracket$305(value));
-		case 'expression.cast.non_null':
-			return b.expressionStatement(expression_cast_non_null$300(value));
-		case 'expression.cast.satisfies':
-			return b.expressionStatement(expression_cast_satisfies$307(value));
-		case 'expression.class':
-			return unbuilt('statement.block.static.statements', value);
-		case 'expression.collection.list':
-			return b.expressionStatement(expression_collection_list$242(value));
-		case 'expression.collection.object':
-			return b.expressionStatement(expression_collection_object$238(value));
-		case 'expression.conditional':
-			return b.expressionStatement(expression_conditional$268(value));
-		case 'expression.function':
-			return unbuilt('statement.block.static.statements', value);
-		case 'expression.instantiation':
-			return b.expressionStatement(expression_instantiation$308(value));
-		case 'expression.lambda':
-			return unbuilt('statement.block.static.statements', value);
-		case 'expression.member':
-			return unbuilt('statement.block.static.statements', value);
-		case 'expression.parenthesized':
-			if (
-				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
-				value.expression !== undefined &&
-				value.type === undefined
-			)
-				return b.expressionStatement(expression_parenthesized$418(value));
-			return b.expressionStatement(expression_parenthesized$417(value));
-		case 'expression.sequence':
-			return b.expressionStatement(expression_sequence$272(value));
-		case 'expression.subscript':
-			return b.expressionStatement(expression_subscript$260(value));
-		case 'expression.unary.bitwise_not':
-			return b.expressionStatement(expression_unary_bitwise_not$270(value));
-		case 'expression.unary.delete':
-			return b.expressionStatement(expression_unary_delete$270(value));
-		case 'expression.unary.negation':
-			return b.expressionStatement(expression_unary_negation$270(value));
-		case 'expression.unary.not':
-			return b.expressionStatement(expression_unary_not$270(value));
-		case 'expression.unary.plus':
-			return b.expressionStatement(expression_unary_plus$270(value));
-		case 'expression.unary.typeof':
-			return b.expressionStatement(expression_unary_typeof$270(value));
-		case 'expression.unary.void':
-			return b.expressionStatement(expression_unary_void$270(value));
-		case 'expression.update.decrement':
-			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_decrement$428(value));
-			return b.expressionStatement(expression_update_decrement$427(value));
-		case 'expression.update.increment':
-			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_increment$428(value));
-			return b.expressionStatement(expression_update_increment$427(value));
-		case 'expression.yield':
-			return b.expressionStatement(expression_yield$237(value));
-		case 'expression.yield.delegate':
-			return unbuilt('statement.block.static.statements', value);
-		case 'identifier':
-			return b.expressionStatement(identifier$1(value));
-		case 'literal.boolean.false':
-			return unbuilt('statement.block.static.statements', value);
-		case 'literal.boolean.true':
-			return unbuilt('statement.block.static.statements', value);
-		case 'literal.null':
-			return unbuilt('statement.block.static.statements', value);
-		case 'literal.null.undefined':
-			return unbuilt('statement.block.static.statements', value);
-		case 'literal.number.float':
-			return b.expressionStatement(literal_number_float$156(value));
-		case 'literal.number.float.leading_point':
-			return b.expressionStatement(literal_number_float_leading_point$157(value));
-		case 'literal.number.float.scientific':
-			return b.expressionStatement(literal_number_float_scientific$158(value));
-		case 'literal.number.integer':
-			return b.expressionStatement(literal_number_integer$160(value));
-		case 'literal.number.integer.big':
-			return b.expressionStatement(literal_number_integer_big$166(value));
-		case 'literal.number.integer.big.binary':
-			return b.expressionStatement(literal_number_integer_big_binary$164(value));
-		case 'literal.number.integer.big.hex':
-			return b.expressionStatement(literal_number_integer_big_hex$163(value));
-		case 'literal.number.integer.big.octal':
-			return b.expressionStatement(literal_number_integer_big_octal$165(value));
-		case 'literal.number.integer.binary':
-			return b.expressionStatement(literal_number_integer_binary$161(value));
-		case 'literal.number.integer.hex':
-			return b.expressionStatement(literal_number_integer_hex$155(value));
-		case 'literal.number.integer.octal':
-			return b.expressionStatement(literal_number_integer_octal$162(value));
-		case 'literal.regex':
-			return b.expressionStatement(literal_regex$276(value));
-		case 'literal.string':
-			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return b.expressionStatement(literal_string$425(value));
-			return b.expressionStatement(literal_string$426(value));
-		case 'literal.string.interpolated':
-			return b.expressionStatement(literal_string_interpolated$274(value));
-		case 'statement.block': {
-			if (value.label === undefined) return statement_block$211(value);
-			return b.labeledStatement({
-				body: statement_block$211(value),
-				label: value.label === undefined ? missing('statement.block.label') : statement_block$211_label(value.label)
-			});
-		}
-		case 'statement.break':
-			return statement_break$222(value);
-		case 'statement.continue':
-			return statement_continue$223(value);
-		case 'statement.debugger':
-			return statement_debugger$224(value);
-		case 'statement.export':
-			if (
-				value.value !== undefined &&
-				value.declaration === undefined &&
-				value.decorators === undefined &&
-				value.exportClause === undefined &&
-				value.name === undefined &&
-				value.source === undefined
-			)
-				return statement_export$420(value);
-			if (
-				value.name !== undefined &&
-				value.declaration === undefined &&
-				value.decorators === undefined &&
-				value.exportClause === undefined &&
-				value.source === undefined &&
-				value.value === undefined
-			)
-				return statement_export$421(value);
-			if (
-				value.declaration !== undefined &&
-				value.exportClause === undefined &&
-				value.name === undefined &&
-				value.source === undefined &&
-				value.value === undefined
-			)
-				return statement_export$433(value);
-			return unbuilt('statement.block.static.statements', value);
-		case 'statement.export.all':
-			return unbuilt('statement.block.static.statements', value);
-		case 'statement.export.default':
-			return unbuilt('statement.block.static.statements', value);
-		case 'statement.if':
-			return statement_if$213(value);
-		case 'statement.import':
-			return unbuilt('statement.block.static.statements', value);
-		case 'statement.import.alias':
-			return statement_import_alias$318(value);
-		case 'statement.import.typeof':
-			return unbuilt('statement.block.static.statements', value);
-		case 'statement.labeled':
-			return statement_labeled$228(value);
-		case 'statement.loop.counted': {
-			if (value.label === undefined) return statement_loop_counted$215(value);
-			return b.labeledStatement({
-				body: statement_loop_counted$215(value),
-				label:
-					value.label === undefined
-						? missing('statement.loop.counted.label')
-						: statement_loop_counted$215_label(value.label)
-			});
-		}
-		case 'statement.loop.do_while': {
-			if (value.label === undefined) return statement_loop_do_while$219(value);
-			return b.labeledStatement({
-				body: statement_loop_do_while$219(value),
-				label:
-					value.label === undefined
-						? missing('statement.loop.do_while.label')
-						: statement_loop_do_while$219_label(value.label)
-			});
-		}
-		case 'statement.loop.for_each': {
-			if (value.label === undefined) return statement_loop_for_each$216(value);
-			return b.labeledStatement({
-				body: statement_loop_for_each$216(value),
-				label:
-					value.label === undefined
-						? missing('statement.loop.for_each.label')
-						: statement_loop_for_each$216_label(value.label)
-			});
-		}
-		case 'statement.loop.while': {
-			if (value.label === undefined) return statement_loop_while$218(value);
-			return b.labeledStatement({
-				body: statement_loop_while$218(value),
-				label:
-					value.label === undefined
-						? missing('statement.loop.while.label')
-						: statement_loop_while$218_label(value.label)
-			});
-		}
-		case 'statement.return':
-			return statement_return$225(value);
-		case 'statement.scope':
-			return statement_scope$221(value);
-		case 'statement.switch':
-			return statement_switch$214(value);
-		case 'statement.throw':
-			return statement_throw$226(value);
-		case 'statement.try':
-			return unbuilt('statement.block.static.statements', value);
-		case 'literal.number':
-			if (typeof value.$value === 'bigint') {
-				return b.expressionStatement(literal_number$166({ $path: 'literal.number', $value: value.$value }));
-			}
-			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) {
-					return b.expressionStatement(literal_number$160({ $path: 'literal.number', $value: value.$value }));
-				}
-				return b.expressionStatement(literal_number$156({ $path: 'literal.number', $value: value.$value }));
-			}
-			return unbuilt('statement.block.static.statements', value);
-		default:
-			return unbuilt('statement.block.static.statements', value);
 	}
 };
 type statement_break$222_label$Item =
@@ -78296,22 +78312,22 @@ const statement_export$421_name = (value: statement_export$421_name$Item) => {
 type statement_export$433_declaration$Item =
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
-	| BuildInput<TypeScriptMap, 'declaration.class'>
-	| TypeScriptMap['nodes']['declaration.class']
-	| BuildInput<TypeScriptMap, 'declaration.enum'>
-	| TypeScriptMap['nodes']['declaration.enum']
 	| BuildInput<TypeScriptMap, 'declaration.function'>
 	| TypeScriptMap['nodes']['declaration.function']
 	| BuildInput<TypeScriptMap, 'declaration.function.signature'>
 	| TypeScriptMap['nodes']['declaration.function.signature']
-	| BuildInput<TypeScriptMap, 'declaration.interface'>
-	| TypeScriptMap['nodes']['declaration.interface']
 	| BuildInput<TypeScriptMap, 'declaration.module'>
 	| TypeScriptMap['nodes']['declaration.module']
 	| BuildInput<TypeScriptMap, 'declaration.module.external'>
 	| TypeScriptMap['nodes']['declaration.module.external']
-	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
-	| TypeScriptMap['nodes']['declaration.type_alias']
+	| BuildInput<TypeScriptMap, 'declaration.type.class'>
+	| TypeScriptMap['nodes']['declaration.type.class']
+	| BuildInput<TypeScriptMap, 'declaration.type.enum'>
+	| TypeScriptMap['nodes']['declaration.type.enum']
+	| BuildInput<TypeScriptMap, 'declaration.type.interface'>
+	| TypeScriptMap['nodes']['declaration.type.interface']
+	| BuildInput<TypeScriptMap, 'declaration.type.type_alias'>
+	| TypeScriptMap['nodes']['declaration.type.type_alias']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -78333,22 +78349,22 @@ const statement_export$433_declaration = (value: statement_export$433_declaratio
 	switch (value.$path) {
 		case 'declaration.ambient':
 			return declaration_ambient$313(value);
-		case 'declaration.class':
-			return unbuilt('statement.export.declaration', value);
-		case 'declaration.enum':
-			return declaration_enum$322(value);
 		case 'declaration.function':
 			return unbuilt('statement.export.declaration', value);
 		case 'declaration.function.signature':
-			return unbuilt('statement.export.declaration', value);
-		case 'declaration.interface':
 			return unbuilt('statement.export.declaration', value);
 		case 'declaration.module':
 			return declaration_module$316(value);
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
-		case 'declaration.type_alias':
-			return declaration_type_alias$325(value);
+		case 'declaration.type.class':
+			return unbuilt('statement.export.declaration', value);
+		case 'declaration.type.enum':
+			return declaration_type_enum$322(value);
+		case 'declaration.type.interface':
+			return unbuilt('statement.export.declaration', value);
+		case 'declaration.type.type_alias':
+			return declaration_type_type_alias$325(value);
 		case 'declaration.variable.constant':
 			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
@@ -78453,22 +78469,22 @@ type statement_if$213_statements$item$Item =
 	| number
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
-	| BuildInput<TypeScriptMap, 'declaration.class'>
-	| TypeScriptMap['nodes']['declaration.class']
-	| BuildInput<TypeScriptMap, 'declaration.enum'>
-	| TypeScriptMap['nodes']['declaration.enum']
 	| BuildInput<TypeScriptMap, 'declaration.function'>
 	| TypeScriptMap['nodes']['declaration.function']
 	| BuildInput<TypeScriptMap, 'declaration.function.signature'>
 	| TypeScriptMap['nodes']['declaration.function.signature']
-	| BuildInput<TypeScriptMap, 'declaration.interface'>
-	| TypeScriptMap['nodes']['declaration.interface']
 	| BuildInput<TypeScriptMap, 'declaration.module'>
 	| TypeScriptMap['nodes']['declaration.module']
 	| BuildInput<TypeScriptMap, 'declaration.module.external'>
 	| TypeScriptMap['nodes']['declaration.module.external']
-	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
-	| TypeScriptMap['nodes']['declaration.type_alias']
+	| BuildInput<TypeScriptMap, 'declaration.type.class'>
+	| TypeScriptMap['nodes']['declaration.type.class']
+	| BuildInput<TypeScriptMap, 'declaration.type.enum'>
+	| TypeScriptMap['nodes']['declaration.type.enum']
+	| BuildInput<TypeScriptMap, 'declaration.type.interface'>
+	| TypeScriptMap['nodes']['declaration.type.interface']
+	| BuildInput<TypeScriptMap, 'declaration.type.type_alias'>
+	| TypeScriptMap['nodes']['declaration.type.type_alias']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -78767,22 +78783,22 @@ const statement_if$213_statements$item = (value: statement_if$213_statements$ite
 	switch (value.$path) {
 		case 'declaration.ambient':
 			return declaration_ambient$313(value);
-		case 'declaration.class':
-			return unbuilt('statement.if.statements', value);
-		case 'declaration.enum':
-			return declaration_enum$322(value);
 		case 'declaration.function':
 			return unbuilt('statement.if.statements', value);
 		case 'declaration.function.signature':
-			return unbuilt('statement.if.statements', value);
-		case 'declaration.interface':
 			return unbuilt('statement.if.statements', value);
 		case 'declaration.module':
 			return declaration_module$316(value);
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
-		case 'declaration.type_alias':
-			return declaration_type_alias$325(value);
+		case 'declaration.type.class':
+			return unbuilt('statement.if.statements', value);
+		case 'declaration.type.enum':
+			return declaration_type_enum$322(value);
+		case 'declaration.type.interface':
+			return unbuilt('statement.if.statements', value);
+		case 'declaration.type.type_alias':
+			return declaration_type_type_alias$325(value);
 		case 'declaration.variable.constant':
 			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
@@ -79193,22 +79209,22 @@ type statement_labeled$228_body$Item =
 	| number
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
-	| BuildInput<TypeScriptMap, 'declaration.class'>
-	| TypeScriptMap['nodes']['declaration.class']
-	| BuildInput<TypeScriptMap, 'declaration.enum'>
-	| TypeScriptMap['nodes']['declaration.enum']
 	| BuildInput<TypeScriptMap, 'declaration.function'>
 	| TypeScriptMap['nodes']['declaration.function']
 	| BuildInput<TypeScriptMap, 'declaration.function.signature'>
 	| TypeScriptMap['nodes']['declaration.function.signature']
-	| BuildInput<TypeScriptMap, 'declaration.interface'>
-	| TypeScriptMap['nodes']['declaration.interface']
 	| BuildInput<TypeScriptMap, 'declaration.module'>
 	| TypeScriptMap['nodes']['declaration.module']
 	| BuildInput<TypeScriptMap, 'declaration.module.external'>
 	| TypeScriptMap['nodes']['declaration.module.external']
-	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
-	| TypeScriptMap['nodes']['declaration.type_alias']
+	| BuildInput<TypeScriptMap, 'declaration.type.class'>
+	| TypeScriptMap['nodes']['declaration.type.class']
+	| BuildInput<TypeScriptMap, 'declaration.type.enum'>
+	| TypeScriptMap['nodes']['declaration.type.enum']
+	| BuildInput<TypeScriptMap, 'declaration.type.interface'>
+	| TypeScriptMap['nodes']['declaration.type.interface']
+	| BuildInput<TypeScriptMap, 'declaration.type.type_alias'>
+	| TypeScriptMap['nodes']['declaration.type.type_alias']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -79507,22 +79523,22 @@ const statement_labeled$228_body = (value: statement_labeled$228_body$Item) => {
 	switch (value.$path) {
 		case 'declaration.ambient':
 			return declaration_ambient$313(value);
-		case 'declaration.class':
-			return unbuilt('statement.labeled.body', value);
-		case 'declaration.enum':
-			return declaration_enum$322(value);
 		case 'declaration.function':
 			return unbuilt('statement.labeled.body', value);
 		case 'declaration.function.signature':
-			return unbuilt('statement.labeled.body', value);
-		case 'declaration.interface':
 			return unbuilt('statement.labeled.body', value);
 		case 'declaration.module':
 			return declaration_module$316(value);
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
-		case 'declaration.type_alias':
-			return declaration_type_alias$325(value);
+		case 'declaration.type.class':
+			return unbuilt('statement.labeled.body', value);
+		case 'declaration.type.enum':
+			return declaration_type_enum$322(value);
+		case 'declaration.type.interface':
+			return unbuilt('statement.labeled.body', value);
+		case 'declaration.type.type_alias':
+			return declaration_type_type_alias$325(value);
 		case 'declaration.variable.constant':
 			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
@@ -81341,22 +81357,22 @@ type statement_loop_counted$215_statements$item$Item =
 	| number
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
-	| BuildInput<TypeScriptMap, 'declaration.class'>
-	| TypeScriptMap['nodes']['declaration.class']
-	| BuildInput<TypeScriptMap, 'declaration.enum'>
-	| TypeScriptMap['nodes']['declaration.enum']
 	| BuildInput<TypeScriptMap, 'declaration.function'>
 	| TypeScriptMap['nodes']['declaration.function']
 	| BuildInput<TypeScriptMap, 'declaration.function.signature'>
 	| TypeScriptMap['nodes']['declaration.function.signature']
-	| BuildInput<TypeScriptMap, 'declaration.interface'>
-	| TypeScriptMap['nodes']['declaration.interface']
 	| BuildInput<TypeScriptMap, 'declaration.module'>
 	| TypeScriptMap['nodes']['declaration.module']
 	| BuildInput<TypeScriptMap, 'declaration.module.external'>
 	| TypeScriptMap['nodes']['declaration.module.external']
-	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
-	| TypeScriptMap['nodes']['declaration.type_alias']
+	| BuildInput<TypeScriptMap, 'declaration.type.class'>
+	| TypeScriptMap['nodes']['declaration.type.class']
+	| BuildInput<TypeScriptMap, 'declaration.type.enum'>
+	| TypeScriptMap['nodes']['declaration.type.enum']
+	| BuildInput<TypeScriptMap, 'declaration.type.interface'>
+	| TypeScriptMap['nodes']['declaration.type.interface']
+	| BuildInput<TypeScriptMap, 'declaration.type.type_alias'>
+	| TypeScriptMap['nodes']['declaration.type.type_alias']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -81655,22 +81671,22 @@ const statement_loop_counted$215_statements$item = (value: statement_loop_counte
 	switch (value.$path) {
 		case 'declaration.ambient':
 			return declaration_ambient$313(value);
-		case 'declaration.class':
-			return unbuilt('statement.loop.counted.statements', value);
-		case 'declaration.enum':
-			return declaration_enum$322(value);
 		case 'declaration.function':
 			return unbuilt('statement.loop.counted.statements', value);
 		case 'declaration.function.signature':
-			return unbuilt('statement.loop.counted.statements', value);
-		case 'declaration.interface':
 			return unbuilt('statement.loop.counted.statements', value);
 		case 'declaration.module':
 			return declaration_module$316(value);
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
-		case 'declaration.type_alias':
-			return declaration_type_alias$325(value);
+		case 'declaration.type.class':
+			return unbuilt('statement.loop.counted.statements', value);
+		case 'declaration.type.enum':
+			return declaration_type_enum$322(value);
+		case 'declaration.type.interface':
+			return unbuilt('statement.loop.counted.statements', value);
+		case 'declaration.type.type_alias':
+			return declaration_type_type_alias$325(value);
 		case 'declaration.variable.constant':
 			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
@@ -82063,22 +82079,22 @@ type statement_loop_do_while$219_statements$item$Item =
 	| number
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
-	| BuildInput<TypeScriptMap, 'declaration.class'>
-	| TypeScriptMap['nodes']['declaration.class']
-	| BuildInput<TypeScriptMap, 'declaration.enum'>
-	| TypeScriptMap['nodes']['declaration.enum']
 	| BuildInput<TypeScriptMap, 'declaration.function'>
 	| TypeScriptMap['nodes']['declaration.function']
 	| BuildInput<TypeScriptMap, 'declaration.function.signature'>
 	| TypeScriptMap['nodes']['declaration.function.signature']
-	| BuildInput<TypeScriptMap, 'declaration.interface'>
-	| TypeScriptMap['nodes']['declaration.interface']
 	| BuildInput<TypeScriptMap, 'declaration.module'>
 	| TypeScriptMap['nodes']['declaration.module']
 	| BuildInput<TypeScriptMap, 'declaration.module.external'>
 	| TypeScriptMap['nodes']['declaration.module.external']
-	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
-	| TypeScriptMap['nodes']['declaration.type_alias']
+	| BuildInput<TypeScriptMap, 'declaration.type.class'>
+	| TypeScriptMap['nodes']['declaration.type.class']
+	| BuildInput<TypeScriptMap, 'declaration.type.enum'>
+	| TypeScriptMap['nodes']['declaration.type.enum']
+	| BuildInput<TypeScriptMap, 'declaration.type.interface'>
+	| TypeScriptMap['nodes']['declaration.type.interface']
+	| BuildInput<TypeScriptMap, 'declaration.type.type_alias'>
+	| TypeScriptMap['nodes']['declaration.type.type_alias']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -82377,22 +82393,22 @@ const statement_loop_do_while$219_statements$item = (value: statement_loop_do_wh
 	switch (value.$path) {
 		case 'declaration.ambient':
 			return declaration_ambient$313(value);
-		case 'declaration.class':
-			return unbuilt('statement.loop.do_while.statements', value);
-		case 'declaration.enum':
-			return declaration_enum$322(value);
 		case 'declaration.function':
 			return unbuilt('statement.loop.do_while.statements', value);
 		case 'declaration.function.signature':
-			return unbuilt('statement.loop.do_while.statements', value);
-		case 'declaration.interface':
 			return unbuilt('statement.loop.do_while.statements', value);
 		case 'declaration.module':
 			return declaration_module$316(value);
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
-		case 'declaration.type_alias':
-			return declaration_type_alias$325(value);
+		case 'declaration.type.class':
+			return unbuilt('statement.loop.do_while.statements', value);
+		case 'declaration.type.enum':
+			return declaration_type_enum$322(value);
+		case 'declaration.type.interface':
+			return unbuilt('statement.loop.do_while.statements', value);
+		case 'declaration.type.type_alias':
+			return declaration_type_type_alias$325(value);
 		case 'declaration.variable.constant':
 			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
@@ -82780,22 +82796,22 @@ type statement_loop_for_each$216_statements$item$Item =
 	| number
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
-	| BuildInput<TypeScriptMap, 'declaration.class'>
-	| TypeScriptMap['nodes']['declaration.class']
-	| BuildInput<TypeScriptMap, 'declaration.enum'>
-	| TypeScriptMap['nodes']['declaration.enum']
 	| BuildInput<TypeScriptMap, 'declaration.function'>
 	| TypeScriptMap['nodes']['declaration.function']
 	| BuildInput<TypeScriptMap, 'declaration.function.signature'>
 	| TypeScriptMap['nodes']['declaration.function.signature']
-	| BuildInput<TypeScriptMap, 'declaration.interface'>
-	| TypeScriptMap['nodes']['declaration.interface']
 	| BuildInput<TypeScriptMap, 'declaration.module'>
 	| TypeScriptMap['nodes']['declaration.module']
 	| BuildInput<TypeScriptMap, 'declaration.module.external'>
 	| TypeScriptMap['nodes']['declaration.module.external']
-	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
-	| TypeScriptMap['nodes']['declaration.type_alias']
+	| BuildInput<TypeScriptMap, 'declaration.type.class'>
+	| TypeScriptMap['nodes']['declaration.type.class']
+	| BuildInput<TypeScriptMap, 'declaration.type.enum'>
+	| TypeScriptMap['nodes']['declaration.type.enum']
+	| BuildInput<TypeScriptMap, 'declaration.type.interface'>
+	| TypeScriptMap['nodes']['declaration.type.interface']
+	| BuildInput<TypeScriptMap, 'declaration.type.type_alias'>
+	| TypeScriptMap['nodes']['declaration.type.type_alias']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -83094,22 +83110,22 @@ const statement_loop_for_each$216_statements$item = (value: statement_loop_for_e
 	switch (value.$path) {
 		case 'declaration.ambient':
 			return declaration_ambient$313(value);
-		case 'declaration.class':
-			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.enum':
-			return declaration_enum$322(value);
 		case 'declaration.function':
 			return unbuilt('statement.loop.for_each.statements', value);
 		case 'declaration.function.signature':
-			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.interface':
 			return unbuilt('statement.loop.for_each.statements', value);
 		case 'declaration.module':
 			return declaration_module$316(value);
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
-		case 'declaration.type_alias':
-			return declaration_type_alias$325(value);
+		case 'declaration.type.class':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'declaration.type.enum':
+			return declaration_type_enum$322(value);
+		case 'declaration.type.interface':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'declaration.type.type_alias':
+			return declaration_type_type_alias$325(value);
 		case 'declaration.variable.constant':
 			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
@@ -83502,22 +83518,22 @@ type statement_loop_while$218_statements$item$Item =
 	| number
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
-	| BuildInput<TypeScriptMap, 'declaration.class'>
-	| TypeScriptMap['nodes']['declaration.class']
-	| BuildInput<TypeScriptMap, 'declaration.enum'>
-	| TypeScriptMap['nodes']['declaration.enum']
 	| BuildInput<TypeScriptMap, 'declaration.function'>
 	| TypeScriptMap['nodes']['declaration.function']
 	| BuildInput<TypeScriptMap, 'declaration.function.signature'>
 	| TypeScriptMap['nodes']['declaration.function.signature']
-	| BuildInput<TypeScriptMap, 'declaration.interface'>
-	| TypeScriptMap['nodes']['declaration.interface']
 	| BuildInput<TypeScriptMap, 'declaration.module'>
 	| TypeScriptMap['nodes']['declaration.module']
 	| BuildInput<TypeScriptMap, 'declaration.module.external'>
 	| TypeScriptMap['nodes']['declaration.module.external']
-	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
-	| TypeScriptMap['nodes']['declaration.type_alias']
+	| BuildInput<TypeScriptMap, 'declaration.type.class'>
+	| TypeScriptMap['nodes']['declaration.type.class']
+	| BuildInput<TypeScriptMap, 'declaration.type.enum'>
+	| TypeScriptMap['nodes']['declaration.type.enum']
+	| BuildInput<TypeScriptMap, 'declaration.type.interface'>
+	| TypeScriptMap['nodes']['declaration.type.interface']
+	| BuildInput<TypeScriptMap, 'declaration.type.type_alias'>
+	| TypeScriptMap['nodes']['declaration.type.type_alias']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -83816,22 +83832,22 @@ const statement_loop_while$218_statements$item = (value: statement_loop_while$21
 	switch (value.$path) {
 		case 'declaration.ambient':
 			return declaration_ambient$313(value);
-		case 'declaration.class':
-			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.enum':
-			return declaration_enum$322(value);
 		case 'declaration.function':
 			return unbuilt('statement.loop.while.statements', value);
 		case 'declaration.function.signature':
-			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.interface':
 			return unbuilt('statement.loop.while.statements', value);
 		case 'declaration.module':
 			return declaration_module$316(value);
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
-		case 'declaration.type_alias':
-			return declaration_type_alias$325(value);
+		case 'declaration.type.class':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'declaration.type.enum':
+			return declaration_type_enum$322(value);
+		case 'declaration.type.interface':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'declaration.type.type_alias':
+			return declaration_type_type_alias$325(value);
 		case 'declaration.variable.constant':
 			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
@@ -84646,22 +84662,22 @@ type statement_scope$221_body$Item =
 	| number
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
-	| BuildInput<TypeScriptMap, 'declaration.class'>
-	| TypeScriptMap['nodes']['declaration.class']
-	| BuildInput<TypeScriptMap, 'declaration.enum'>
-	| TypeScriptMap['nodes']['declaration.enum']
 	| BuildInput<TypeScriptMap, 'declaration.function'>
 	| TypeScriptMap['nodes']['declaration.function']
 	| BuildInput<TypeScriptMap, 'declaration.function.signature'>
 	| TypeScriptMap['nodes']['declaration.function.signature']
-	| BuildInput<TypeScriptMap, 'declaration.interface'>
-	| TypeScriptMap['nodes']['declaration.interface']
 	| BuildInput<TypeScriptMap, 'declaration.module'>
 	| TypeScriptMap['nodes']['declaration.module']
 	| BuildInput<TypeScriptMap, 'declaration.module.external'>
 	| TypeScriptMap['nodes']['declaration.module.external']
-	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
-	| TypeScriptMap['nodes']['declaration.type_alias']
+	| BuildInput<TypeScriptMap, 'declaration.type.class'>
+	| TypeScriptMap['nodes']['declaration.type.class']
+	| BuildInput<TypeScriptMap, 'declaration.type.enum'>
+	| TypeScriptMap['nodes']['declaration.type.enum']
+	| BuildInput<TypeScriptMap, 'declaration.type.interface'>
+	| TypeScriptMap['nodes']['declaration.type.interface']
+	| BuildInput<TypeScriptMap, 'declaration.type.type_alias'>
+	| TypeScriptMap['nodes']['declaration.type.type_alias']
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
 	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
@@ -84960,22 +84976,22 @@ const statement_scope$221_body = (value: statement_scope$221_body$Item) => {
 	switch (value.$path) {
 		case 'declaration.ambient':
 			return declaration_ambient$313(value);
-		case 'declaration.class':
-			return unbuilt('statement.scope.body', value);
-		case 'declaration.enum':
-			return declaration_enum$322(value);
 		case 'declaration.function':
 			return unbuilt('statement.scope.body', value);
 		case 'declaration.function.signature':
-			return unbuilt('statement.scope.body', value);
-		case 'declaration.interface':
 			return unbuilt('statement.scope.body', value);
 		case 'declaration.module':
 			return declaration_module$316(value);
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
-		case 'declaration.type_alias':
-			return declaration_type_alias$325(value);
+		case 'declaration.type.class':
+			return unbuilt('statement.scope.body', value);
+		case 'declaration.type.enum':
+			return declaration_type_enum$322(value);
+		case 'declaration.type.interface':
+			return unbuilt('statement.scope.body', value);
+		case 'declaration.type.type_alias':
+			return declaration_type_type_alias$325(value);
 		case 'declaration.variable.constant':
 			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
@@ -88968,46 +88984,46 @@ const type_object$369_closing = (value: type_object$369_closing$Item) => {
 	throw new Error('type.object.closing takes no structure');
 };
 type type_object$369_members$item$Item =
-	| BuildInput<TypeScriptMap, 'declaration.field.signature'>
-	| TypeScriptMap['nodes']['declaration.field.signature']
-	| BuildInput<TypeScriptMap, 'declaration.field.signature.private'>
-	| TypeScriptMap['nodes']['declaration.field.signature.private']
-	| BuildInput<TypeScriptMap, 'declaration.field.signature.protected'>
-	| TypeScriptMap['nodes']['declaration.field.signature.protected']
-	| BuildInput<TypeScriptMap, 'declaration.field.signature.public'>
-	| TypeScriptMap['nodes']['declaration.field.signature.public']
-	| BuildInput<TypeScriptMap, 'declaration.method.signature'>
-	| TypeScriptMap['nodes']['declaration.method.signature']
-	| BuildInput<TypeScriptMap, 'declaration.method.signature.private'>
-	| TypeScriptMap['nodes']['declaration.method.signature.private']
-	| BuildInput<TypeScriptMap, 'declaration.method.signature.protected'>
-	| TypeScriptMap['nodes']['declaration.method.signature.protected']
-	| BuildInput<TypeScriptMap, 'declaration.method.signature.public'>
-	| TypeScriptMap['nodes']['declaration.method.signature.public']
-	| BuildInput<TypeScriptMap, 'declaration.property.signature.getter'>
-	| TypeScriptMap['nodes']['declaration.property.signature.getter']
-	| BuildInput<TypeScriptMap, 'declaration.property.signature.getter.private'>
-	| TypeScriptMap['nodes']['declaration.property.signature.getter.private']
-	| BuildInput<TypeScriptMap, 'declaration.property.signature.getter.protected'>
-	| TypeScriptMap['nodes']['declaration.property.signature.getter.protected']
-	| BuildInput<TypeScriptMap, 'declaration.property.signature.getter.public'>
-	| TypeScriptMap['nodes']['declaration.property.signature.getter.public']
-	| BuildInput<TypeScriptMap, 'declaration.property.signature.setter'>
-	| TypeScriptMap['nodes']['declaration.property.signature.setter']
-	| BuildInput<TypeScriptMap, 'declaration.property.signature.setter.private'>
-	| TypeScriptMap['nodes']['declaration.property.signature.setter.private']
-	| BuildInput<TypeScriptMap, 'declaration.property.signature.setter.protected'>
-	| TypeScriptMap['nodes']['declaration.property.signature.setter.protected']
-	| BuildInput<TypeScriptMap, 'declaration.property.signature.setter.public'>
-	| TypeScriptMap['nodes']['declaration.property.signature.setter.public']
-	| BuildInput<TypeScriptMap, 'declaration.signature.call'>
-	| TypeScriptMap['nodes']['declaration.signature.call']
-	| BuildInput<TypeScriptMap, 'declaration.signature.construct'>
-	| TypeScriptMap['nodes']['declaration.signature.construct']
-	| BuildInput<TypeScriptMap, 'declaration.signature.index'>
-	| TypeScriptMap['nodes']['declaration.signature.index']
-	| BuildInput<TypeScriptMap, 'declaration.signature.index.mapped'>
-	| TypeScriptMap['nodes']['declaration.signature.index.mapped']
+	| BuildInput<TypeScriptMap, 'declaration.member.field.signature'>
+	| TypeScriptMap['nodes']['declaration.member.field.signature']
+	| BuildInput<TypeScriptMap, 'declaration.member.field.signature.private'>
+	| TypeScriptMap['nodes']['declaration.member.field.signature.private']
+	| BuildInput<TypeScriptMap, 'declaration.member.field.signature.protected'>
+	| TypeScriptMap['nodes']['declaration.member.field.signature.protected']
+	| BuildInput<TypeScriptMap, 'declaration.member.field.signature.public'>
+	| TypeScriptMap['nodes']['declaration.member.field.signature.public']
+	| BuildInput<TypeScriptMap, 'declaration.member.method.signature'>
+	| TypeScriptMap['nodes']['declaration.member.method.signature']
+	| BuildInput<TypeScriptMap, 'declaration.member.method.signature.private'>
+	| TypeScriptMap['nodes']['declaration.member.method.signature.private']
+	| BuildInput<TypeScriptMap, 'declaration.member.method.signature.protected'>
+	| TypeScriptMap['nodes']['declaration.member.method.signature.protected']
+	| BuildInput<TypeScriptMap, 'declaration.member.method.signature.public'>
+	| TypeScriptMap['nodes']['declaration.member.method.signature.public']
+	| BuildInput<TypeScriptMap, 'declaration.member.property.signature.getter'>
+	| TypeScriptMap['nodes']['declaration.member.property.signature.getter']
+	| BuildInput<TypeScriptMap, 'declaration.member.property.signature.getter.private'>
+	| TypeScriptMap['nodes']['declaration.member.property.signature.getter.private']
+	| BuildInput<TypeScriptMap, 'declaration.member.property.signature.getter.protected'>
+	| TypeScriptMap['nodes']['declaration.member.property.signature.getter.protected']
+	| BuildInput<TypeScriptMap, 'declaration.member.property.signature.getter.public'>
+	| TypeScriptMap['nodes']['declaration.member.property.signature.getter.public']
+	| BuildInput<TypeScriptMap, 'declaration.member.property.signature.setter'>
+	| TypeScriptMap['nodes']['declaration.member.property.signature.setter']
+	| BuildInput<TypeScriptMap, 'declaration.member.property.signature.setter.private'>
+	| TypeScriptMap['nodes']['declaration.member.property.signature.setter.private']
+	| BuildInput<TypeScriptMap, 'declaration.member.property.signature.setter.protected'>
+	| TypeScriptMap['nodes']['declaration.member.property.signature.setter.protected']
+	| BuildInput<TypeScriptMap, 'declaration.member.property.signature.setter.public'>
+	| TypeScriptMap['nodes']['declaration.member.property.signature.setter.public']
+	| BuildInput<TypeScriptMap, 'declaration.member.signature.call'>
+	| TypeScriptMap['nodes']['declaration.member.signature.call']
+	| BuildInput<TypeScriptMap, 'declaration.member.signature.construct'>
+	| TypeScriptMap['nodes']['declaration.member.signature.construct']
+	| BuildInput<TypeScriptMap, 'declaration.member.signature.index'>
+	| TypeScriptMap['nodes']['declaration.member.signature.index']
+	| BuildInput<TypeScriptMap, 'declaration.member.signature.index.mapped'>
+	| TypeScriptMap['nodes']['declaration.member.signature.index.mapped']
 	| BuildInput<TypeScriptMap, 'statement.export'>
 	| TypeScriptMap['nodes']['statement.export']
 	| BuildInput<TypeScriptMap, 'statement.export.all'>
@@ -89024,46 +89040,46 @@ const type_object$369_members$item = (value: type_object$369_members$item$Item) 
 		return unseated('type.object.members', value);
 	}
 	switch (value.$path) {
-		case 'declaration.field.signature':
+		case 'declaration.member.field.signature':
 			return unbuilt('type.object.members', value);
-		case 'declaration.field.signature.private':
+		case 'declaration.member.field.signature.private':
 			return unbuilt('type.object.members', value);
-		case 'declaration.field.signature.protected':
+		case 'declaration.member.field.signature.protected':
 			return unbuilt('type.object.members', value);
-		case 'declaration.field.signature.public':
+		case 'declaration.member.field.signature.public':
 			return unbuilt('type.object.members', value);
-		case 'declaration.method.signature':
+		case 'declaration.member.method.signature':
 			return unbuilt('type.object.members', value);
-		case 'declaration.method.signature.private':
+		case 'declaration.member.method.signature.private':
 			return unbuilt('type.object.members', value);
-		case 'declaration.method.signature.protected':
+		case 'declaration.member.method.signature.protected':
 			return unbuilt('type.object.members', value);
-		case 'declaration.method.signature.public':
+		case 'declaration.member.method.signature.public':
 			return unbuilt('type.object.members', value);
-		case 'declaration.property.signature.getter':
+		case 'declaration.member.property.signature.getter':
 			return unbuilt('type.object.members', value);
-		case 'declaration.property.signature.getter.private':
+		case 'declaration.member.property.signature.getter.private':
 			return unbuilt('type.object.members', value);
-		case 'declaration.property.signature.getter.protected':
+		case 'declaration.member.property.signature.getter.protected':
 			return unbuilt('type.object.members', value);
-		case 'declaration.property.signature.getter.public':
+		case 'declaration.member.property.signature.getter.public':
 			return unbuilt('type.object.members', value);
-		case 'declaration.property.signature.setter':
+		case 'declaration.member.property.signature.setter':
 			return unbuilt('type.object.members', value);
-		case 'declaration.property.signature.setter.private':
+		case 'declaration.member.property.signature.setter.private':
 			return unbuilt('type.object.members', value);
-		case 'declaration.property.signature.setter.protected':
+		case 'declaration.member.property.signature.setter.protected':
 			return unbuilt('type.object.members', value);
-		case 'declaration.property.signature.setter.public':
+		case 'declaration.member.property.signature.setter.public':
 			return unbuilt('type.object.members', value);
-		case 'declaration.signature.call':
+		case 'declaration.member.signature.call':
 			return unbuilt('type.object.members', value);
-		case 'declaration.signature.construct':
-			return declaration_signature_construct$376(value);
-		case 'declaration.signature.index':
-			return declaration_signature_index$410(value);
-		case 'declaration.signature.index.mapped':
-			return declaration_signature_index_mapped$411(value);
+		case 'declaration.member.signature.construct':
+			return declaration_member_signature_construct$376(value);
+		case 'declaration.member.signature.index':
+			return declaration_member_signature_index$410(value);
+		case 'declaration.member.signature.index.mapped':
+			return declaration_member_signature_index_mapped$411(value);
 		case 'statement.export':
 			if (
 				value.value !== undefined &&
@@ -91535,11 +91551,11 @@ const declaration_ambient$313 = (
 	if (unroutedSlot !== undefined) return unrouted('declaration.ambient', unroutedSlot);
 	return b.ambientDeclaration(declaration_ambient$313_body(input.body));
 };
-const declaration_constructor$468 = (
-	input: PathInput<TypeScriptMap, 'declaration.constructor'>
+const declaration_member_constructor$468 = (
+	input: PathInput<TypeScriptMap, 'declaration.member.constructor'>
 ): ReturnType<typeof b.constructorDeclaration> => {
 	const unroutedSlot = unroutedIn(input, ['decorators', 'parameters', 'statements']);
-	if (unroutedSlot !== undefined) return unrouted('declaration.constructor', unroutedSlot);
+	if (unroutedSlot !== undefined) return unrouted('declaration.member.constructor', unroutedSlot);
 	const parameters$first = (input.parameters ?? [])[0];
 	const parameters$rest = (input.parameters ?? []).slice(1);
 	const statements$first = (input.statements ?? [])[0];
@@ -91550,24 +91566,24 @@ const declaration_constructor$468 = (
 				? b.formalParameters()
 				: b.formalParameters(
 						b.formalParametersElements(
-							declaration_constructor$468_parameters$item(parameters$first),
-							...parameters$rest.map(declaration_constructor$468_parameters$item)
+							declaration_member_constructor$468_parameters$item(parameters$first),
+							...parameters$rest.map(declaration_member_constructor$468_parameters$item)
 						)
 					),
 		body:
 			statements$first === undefined
 				? b.statementBlock()
 				: b.statementBlock(
-						declaration_constructor$468_statements$item(statements$first),
-						...statements$rest.map(declaration_constructor$468_statements$item)
+						declaration_member_constructor$468_statements$item(statements$first),
+						...statements$rest.map(declaration_member_constructor$468_statements$item)
 					)
 	});
 };
-const declaration_constructor_private$468 = (
-	input: PathInput<TypeScriptMap, 'declaration.constructor.private'>
+const declaration_member_constructor_private$468 = (
+	input: PathInput<TypeScriptMap, 'declaration.member.constructor.private'>
 ): ReturnType<typeof b.constructorDeclaration> => {
 	const unroutedSlot = unroutedIn(input, ['decorators', 'parameters', 'statements']);
-	if (unroutedSlot !== undefined) return unrouted('declaration.constructor.private', unroutedSlot);
+	if (unroutedSlot !== undefined) return unrouted('declaration.member.constructor.private', unroutedSlot);
 	const parameters$first = (input.parameters ?? [])[0];
 	const parameters$rest = (input.parameters ?? []).slice(1);
 	const statements$first = (input.statements ?? [])[0];
@@ -91578,25 +91594,25 @@ const declaration_constructor_private$468 = (
 				? b.formalParameters()
 				: b.formalParameters(
 						b.formalParametersElements(
-							declaration_constructor_private$468_parameters$item(parameters$first),
-							...parameters$rest.map(declaration_constructor_private$468_parameters$item)
+							declaration_member_constructor_private$468_parameters$item(parameters$first),
+							...parameters$rest.map(declaration_member_constructor_private$468_parameters$item)
 						)
 					),
 		body:
 			statements$first === undefined
 				? b.statementBlock()
 				: b.statementBlock(
-						declaration_constructor_private$468_statements$item(statements$first),
-						...statements$rest.map(declaration_constructor_private$468_statements$item)
+						declaration_member_constructor_private$468_statements$item(statements$first),
+						...statements$rest.map(declaration_member_constructor_private$468_statements$item)
 					),
 		accessibilityModifier: 35
 	});
 };
-const declaration_constructor_protected$468 = (
-	input: PathInput<TypeScriptMap, 'declaration.constructor.protected'>
+const declaration_member_constructor_protected$468 = (
+	input: PathInput<TypeScriptMap, 'declaration.member.constructor.protected'>
 ): ReturnType<typeof b.constructorDeclaration> => {
 	const unroutedSlot = unroutedIn(input, ['decorators', 'parameters', 'statements']);
-	if (unroutedSlot !== undefined) return unrouted('declaration.constructor.protected', unroutedSlot);
+	if (unroutedSlot !== undefined) return unrouted('declaration.member.constructor.protected', unroutedSlot);
 	const parameters$first = (input.parameters ?? [])[0];
 	const parameters$rest = (input.parameters ?? []).slice(1);
 	const statements$first = (input.statements ?? [])[0];
@@ -91607,25 +91623,25 @@ const declaration_constructor_protected$468 = (
 				? b.formalParameters()
 				: b.formalParameters(
 						b.formalParametersElements(
-							declaration_constructor_protected$468_parameters$item(parameters$first),
-							...parameters$rest.map(declaration_constructor_protected$468_parameters$item)
+							declaration_member_constructor_protected$468_parameters$item(parameters$first),
+							...parameters$rest.map(declaration_member_constructor_protected$468_parameters$item)
 						)
 					),
 		body:
 			statements$first === undefined
 				? b.statementBlock()
 				: b.statementBlock(
-						declaration_constructor_protected$468_statements$item(statements$first),
-						...statements$rest.map(declaration_constructor_protected$468_statements$item)
+						declaration_member_constructor_protected$468_statements$item(statements$first),
+						...statements$rest.map(declaration_member_constructor_protected$468_statements$item)
 					),
 		accessibilityModifier: 36
 	});
 };
-const declaration_constructor_public$468 = (
-	input: PathInput<TypeScriptMap, 'declaration.constructor.public'>
+const declaration_member_constructor_public$468 = (
+	input: PathInput<TypeScriptMap, 'declaration.member.constructor.public'>
 ): ReturnType<typeof b.constructorDeclaration> => {
 	const unroutedSlot = unroutedIn(input, ['decorators', 'parameters', 'statements']);
-	if (unroutedSlot !== undefined) return unrouted('declaration.constructor.public', unroutedSlot);
+	if (unroutedSlot !== undefined) return unrouted('declaration.member.constructor.public', unroutedSlot);
 	const parameters$first = (input.parameters ?? [])[0];
 	const parameters$rest = (input.parameters ?? []).slice(1);
 	const statements$first = (input.statements ?? [])[0];
@@ -91636,60 +91652,118 @@ const declaration_constructor_public$468 = (
 				? b.formalParameters()
 				: b.formalParameters(
 						b.formalParametersElements(
-							declaration_constructor_public$468_parameters$item(parameters$first),
-							...parameters$rest.map(declaration_constructor_public$468_parameters$item)
+							declaration_member_constructor_public$468_parameters$item(parameters$first),
+							...parameters$rest.map(declaration_member_constructor_public$468_parameters$item)
 						)
 					),
 		body:
 			statements$first === undefined
 				? b.statementBlock()
 				: b.statementBlock(
-						declaration_constructor_public$468_statements$item(statements$first),
-						...statements$rest.map(declaration_constructor_public$468_statements$item)
+						declaration_member_constructor_public$468_statements$item(statements$first),
+						...statements$rest.map(declaration_member_constructor_public$468_statements$item)
 					),
 		accessibilityModifier: 34
 	});
 };
-const declaration_enum$322 = (
-	input: PathInput<TypeScriptMap, 'declaration.enum'>
-): ReturnType<typeof b.enumDeclaration> => {
-	const unroutedSlot = unroutedIn(input, ['members', 'name']);
-	if (unroutedSlot !== undefined) return unrouted('declaration.enum', unroutedSlot);
-	const members$first = (input.members ?? [])[0];
-	const members$rest = (input.members ?? []).slice(1);
-	return b.enumDeclaration({
-		name: declaration_enum$322_name(input.name),
-		body:
-			members$first === undefined
-				? b.enumBody()
-				: b.enumBody(
-						b.enumBodyElements(
-							declaration_enum$322_members$item(members$first),
-							...members$rest.map(declaration_enum$322_members$item)
-						)
-					),
-		const: (input.$flags ?? []).includes('const')
-	});
-};
-const declaration_enum_member$324 = (
-	input: PathInput<TypeScriptMap, 'declaration.enum_member'>
+const declaration_member_enum_member$324 = (
+	input: PathInput<TypeScriptMap, 'declaration.member.enum_member'>
 ): ReturnType<typeof b.enumAssignment> => {
 	const unroutedSlot = unroutedIn(input, ['name', 'value']);
-	if (unroutedSlot !== undefined) return unrouted('declaration.enum_member', unroutedSlot);
+	if (unroutedSlot !== undefined) return unrouted('declaration.member.enum_member', unroutedSlot);
 	return b.enumAssignment({
-		name: declaration_enum_member$324_name(input.name),
+		name: declaration_member_enum_member$324_name(input.name),
 		value:
 			input.value === undefined
-				? missing('declaration.enum_member.value')
-				: declaration_enum_member$324_value(input.value)
+				? missing('declaration.member.enum_member.value')
+				: declaration_member_enum_member$324_value(input.value)
 	});
 };
-const declaration_enum_member$388 = (
-	input: PathInput<TypeScriptMap, 'declaration.enum_member'>
+const declaration_member_enum_member$388 = (
+	input: PathInput<TypeScriptMap, 'declaration.member.enum_member'>
 ): ReturnType<typeof b.enumBodyElementName> => {
 	const unroutedSlot = unroutedIn(input, ['name']);
-	if (unroutedSlot !== undefined) return unrouted('declaration.enum_member', unroutedSlot);
-	return b.enumBodyElementName(declaration_enum_member$388_name(input.name));
+	if (unroutedSlot !== undefined) return unrouted('declaration.member.enum_member', unroutedSlot);
+	return b.enumBodyElementName(declaration_member_enum_member$388_name(input.name));
+};
+const declaration_member_signature_construct$376 = (
+	input: PathInput<TypeScriptMap, 'declaration.member.signature.construct'>
+): ReturnType<typeof b.constructSignature> => {
+	const unroutedSlot = unroutedIn(input, ['parameters', 'type', 'typeParameters']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.member.signature.construct', unroutedSlot);
+	const typeParameters$first = (input.typeParameters ?? [])[0];
+	const typeParameters$rest = (input.typeParameters ?? []).slice(1);
+	const parameters$first = (input.parameters ?? [])[0];
+	const parameters$rest = (input.parameters ?? []).slice(1);
+	return b.constructSignature({
+		typeParameters:
+			typeParameters$first === undefined
+				? undefined
+				: b.typeParameters(
+						b.typeParametersElements(
+							declaration_member_signature_construct$376_typeParameters$item(typeParameters$first),
+							...typeParameters$rest.map(declaration_member_signature_construct$376_typeParameters$item)
+						)
+					),
+		type: input.type === undefined ? undefined : declaration_member_signature_construct$376_type(input.type),
+		parameters:
+			parameters$first === undefined
+				? b.formalParameters()
+				: b.formalParameters(
+						b.formalParametersElements(
+							declaration_member_signature_construct$376_parameters$item(parameters$first),
+							...parameters$rest.map(declaration_member_signature_construct$376_parameters$item)
+						)
+					),
+		abstract: (input.$flags ?? []).includes('abstract')
+	});
+};
+const declaration_member_signature_index$410 = (
+	input: PathInput<TypeScriptMap, 'declaration.member.signature.index'>
+): ReturnType<typeof b.indexSignatureColon> => {
+	const unroutedSlot = unroutedIn(input, ['indexType', 'name', 'sign', 'type']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.member.signature.index', unroutedSlot);
+	return b.indexSignatureColon({
+		sign: input.sign === undefined ? undefined : declaration_member_signature_index$410_sign(input.sign),
+		name:
+			input.name === undefined
+				? missing('declaration.member.signature.index.name')
+				: declaration_member_signature_index$410_name(input.name),
+		indexType:
+			input.indexType === undefined
+				? missing('declaration.member.signature.index.indexType')
+				: declaration_member_signature_index$410_indexType(input.indexType),
+		type: declaration_member_signature_index$410_type(input.type),
+		readonly: (input.$flags ?? []).includes('readonly')
+	});
+};
+const declaration_member_signature_index_mapped$411 = (
+	input: PathInput<TypeScriptMap, 'declaration.member.signature.index.mapped'>
+): ReturnType<typeof b.indexSignatureMappedTypeClause> => {
+	const unroutedSlot = unroutedIn(input, ['mappedTypeClause', 'sign', 'type']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.member.signature.index.mapped', unroutedSlot);
+	return b.indexSignatureMappedTypeClause({
+		sign: input.sign === undefined ? undefined : declaration_member_signature_index_mapped$411_sign(input.sign),
+		mappedTypeClause: declaration_member_signature_index_mapped$411_mappedTypeClause(input.mappedTypeClause),
+		type: declaration_member_signature_index_mapped$411_type(input.type),
+		readonly: (input.$flags ?? []).includes('readonly')
+	});
+};
+const declaration_member_static_block$290 = (
+	input: PathInput<TypeScriptMap, 'declaration.member.static_block'>
+): ReturnType<typeof b.classStaticBlock> => {
+	const unroutedSlot = unroutedIn(input, ['statements']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.member.static_block', unroutedSlot);
+	const statements$first = (input.statements ?? [])[0];
+	const statements$rest = (input.statements ?? []).slice(1);
+	return b.classStaticBlock(
+		statements$first === undefined
+			? b.statementBlock()
+			: b.statementBlock(
+					declaration_member_static_block$290_statements$item(statements$first),
+					...statements$rest.map(declaration_member_static_block$290_statements$item)
+				)
+	);
 };
 const declaration_module$316 = (
 	input: PathInput<TypeScriptMap, 'declaration.module'>
@@ -91880,92 +91954,52 @@ const declaration_parameter_receiver$472 = (
 		readonly: (input.$flags ?? []).includes('readonly')
 	});
 };
-const declaration_signature_construct$376 = (
-	input: PathInput<TypeScriptMap, 'declaration.signature.construct'>
-): ReturnType<typeof b.constructSignature> => {
-	const unroutedSlot = unroutedIn(input, ['parameters', 'type', 'typeParameters']);
-	if (unroutedSlot !== undefined) return unrouted('declaration.signature.construct', unroutedSlot);
-	const typeParameters$first = (input.typeParameters ?? [])[0];
-	const typeParameters$rest = (input.typeParameters ?? []).slice(1);
-	const parameters$first = (input.parameters ?? [])[0];
-	const parameters$rest = (input.parameters ?? []).slice(1);
-	return b.constructSignature({
-		typeParameters:
-			typeParameters$first === undefined
-				? undefined
-				: b.typeParameters(
-						b.typeParametersElements(
-							declaration_signature_construct$376_typeParameters$item(typeParameters$first),
-							...typeParameters$rest.map(declaration_signature_construct$376_typeParameters$item)
+const declaration_type_enum$322 = (
+	input: PathInput<TypeScriptMap, 'declaration.type.enum'>
+): ReturnType<typeof b.enumDeclaration> => {
+	const unroutedSlot = unroutedIn(input, ['members', 'name']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.type.enum', unroutedSlot);
+	const members$first = (input.members ?? [])[0];
+	const members$rest = (input.members ?? []).slice(1);
+	return b.enumDeclaration({
+		name: declaration_type_enum$322_name(input.name),
+		body:
+			members$first === undefined
+				? b.enumBody()
+				: b.enumBody(
+						b.enumBodyElements(
+							declaration_type_enum$322_members$item(members$first),
+							...members$rest.map(declaration_type_enum$322_members$item)
 						)
 					),
-		type: input.type === undefined ? undefined : declaration_signature_construct$376_type(input.type),
-		parameters:
-			parameters$first === undefined
-				? b.formalParameters()
-				: b.formalParameters(
-						b.formalParametersElements(
-							declaration_signature_construct$376_parameters$item(parameters$first),
-							...parameters$rest.map(declaration_signature_construct$376_parameters$item)
-						)
-					),
-		abstract: (input.$flags ?? []).includes('abstract')
+		const: (input.$flags ?? []).includes('const')
 	});
 };
-const declaration_signature_index$410 = (
-	input: PathInput<TypeScriptMap, 'declaration.signature.index'>
-): ReturnType<typeof b.indexSignatureColon> => {
-	const unroutedSlot = unroutedIn(input, ['indexType', 'name', 'sign', 'type']);
-	if (unroutedSlot !== undefined) return unrouted('declaration.signature.index', unroutedSlot);
-	return b.indexSignatureColon({
-		sign: input.sign === undefined ? undefined : declaration_signature_index$410_sign(input.sign),
-		name:
-			input.name === undefined
-				? missing('declaration.signature.index.name')
-				: declaration_signature_index$410_name(input.name),
-		indexType:
-			input.indexType === undefined
-				? missing('declaration.signature.index.indexType')
-				: declaration_signature_index$410_indexType(input.indexType),
-		type: declaration_signature_index$410_type(input.type),
-		readonly: (input.$flags ?? []).includes('readonly')
-	});
-};
-const declaration_signature_index_mapped$411 = (
-	input: PathInput<TypeScriptMap, 'declaration.signature.index.mapped'>
-): ReturnType<typeof b.indexSignatureMappedTypeClause> => {
-	const unroutedSlot = unroutedIn(input, ['mappedTypeClause', 'sign', 'type']);
-	if (unroutedSlot !== undefined) return unrouted('declaration.signature.index.mapped', unroutedSlot);
-	return b.indexSignatureMappedTypeClause({
-		sign: input.sign === undefined ? undefined : declaration_signature_index_mapped$411_sign(input.sign),
-		mappedTypeClause: declaration_signature_index_mapped$411_mappedTypeClause(input.mappedTypeClause),
-		type: declaration_signature_index_mapped$411_type(input.type),
-		readonly: (input.$flags ?? []).includes('readonly')
-	});
-};
-const declaration_type_alias$325 = (
-	input: PathInput<TypeScriptMap, 'declaration.type_alias'>
+const declaration_type_type_alias$325 = (
+	input: PathInput<TypeScriptMap, 'declaration.type.type_alias'>
 ): ReturnType<typeof b.typeAliasDeclaration> => {
 	const unroutedSlot = unroutedIn(input, ['name', 'typeParameters', 'value']);
-	if (unroutedSlot !== undefined) return unrouted('declaration.type_alias', unroutedSlot);
+	if (unroutedSlot !== undefined) return unrouted('declaration.type.type_alias', unroutedSlot);
 	const typeParameters$first = (input.typeParameters ?? [])[0];
 	const typeParameters$rest = (input.typeParameters ?? []).slice(1);
 	return b.typeAliasDeclaration({
 		name:
-			input.name === undefined ? missing('declaration.type_alias.name') : declaration_type_alias$325_name(input.name),
+			input.name === undefined
+				? missing('declaration.type.type_alias.name')
+				: declaration_type_type_alias$325_name(input.name),
 		typeParameters:
 			typeParameters$first === undefined
 				? undefined
 				: b.typeParameters(
 						b.typeParametersElements(
-							declaration_type_alias$325_typeParameters$item(typeParameters$first),
-							...typeParameters$rest.map(declaration_type_alias$325_typeParameters$item)
+							declaration_type_type_alias$325_typeParameters$item(typeParameters$first),
+							...typeParameters$rest.map(declaration_type_type_alias$325_typeParameters$item)
 						)
 					),
 		value:
 			input.value === undefined
-				? missing('declaration.type_alias.value')
-				: declaration_type_alias$325_value(input.value)
+				? missing('declaration.type.type_alias.value')
+				: declaration_type_type_alias$325_value(input.value)
 	});
 };
 const declaration_variable$439 = (
@@ -93251,22 +93285,6 @@ const statement_block$211 = (
 	if (unroutedSlot !== undefined) return unrouted('statement.block', unroutedSlot);
 	return b.statementBlock(...(input.statements ?? []).map(statement_block$211_statements));
 };
-const statement_block_static$290 = (
-	input: PathInput<TypeScriptMap, 'statement.block.static'>
-): ReturnType<typeof b.classStaticBlock> => {
-	const unroutedSlot = unroutedIn(input, ['statements']);
-	if (unroutedSlot !== undefined) return unrouted('statement.block.static', unroutedSlot);
-	const statements$first = (input.statements ?? [])[0];
-	const statements$rest = (input.statements ?? []).slice(1);
-	return b.classStaticBlock(
-		statements$first === undefined
-			? b.statementBlock()
-			: b.statementBlock(
-					statement_block_static$290_statements$item(statements$first),
-					...statements$rest.map(statement_block_static$290_statements$item)
-				)
-	);
-};
 const statement_break$222 = (
 	input: PathInput<TypeScriptMap, 'statement.break'>
 ): ReturnType<typeof b.breakStatement> => {
@@ -93720,28 +93738,47 @@ const comment_html = (input: PathInput<TypeScriptMap, 'comment.html'>) => {
 const declaration_ambient = (input: PathInput<TypeScriptMap, 'declaration.ambient'>) => {
 	return declaration_ambient$313(input);
 };
-const declaration_constructor = (input: PathInput<TypeScriptMap, 'declaration.constructor'>) => {
-	if (input.decorators !== undefined) return unrouted('declaration.constructor', 'decorators');
-	return declaration_constructor$468(input);
+const declaration_member_constructor = (input: PathInput<TypeScriptMap, 'declaration.member.constructor'>) => {
+	if (input.decorators !== undefined) return unrouted('declaration.member.constructor', 'decorators');
+	return declaration_member_constructor$468(input);
 };
-const declaration_constructor_private = (input: PathInput<TypeScriptMap, 'declaration.constructor.private'>) => {
-	if (input.decorators !== undefined) return unrouted('declaration.constructor.private', 'decorators');
-	return declaration_constructor_private$468(input);
+const declaration_member_constructor_private = (
+	input: PathInput<TypeScriptMap, 'declaration.member.constructor.private'>
+) => {
+	if (input.decorators !== undefined) return unrouted('declaration.member.constructor.private', 'decorators');
+	return declaration_member_constructor_private$468(input);
 };
-const declaration_constructor_protected = (input: PathInput<TypeScriptMap, 'declaration.constructor.protected'>) => {
-	if (input.decorators !== undefined) return unrouted('declaration.constructor.protected', 'decorators');
-	return declaration_constructor_protected$468(input);
+const declaration_member_constructor_protected = (
+	input: PathInput<TypeScriptMap, 'declaration.member.constructor.protected'>
+) => {
+	if (input.decorators !== undefined) return unrouted('declaration.member.constructor.protected', 'decorators');
+	return declaration_member_constructor_protected$468(input);
 };
-const declaration_constructor_public = (input: PathInput<TypeScriptMap, 'declaration.constructor.public'>) => {
-	if (input.decorators !== undefined) return unrouted('declaration.constructor.public', 'decorators');
-	return declaration_constructor_public$468(input);
+const declaration_member_constructor_public = (
+	input: PathInput<TypeScriptMap, 'declaration.member.constructor.public'>
+) => {
+	if (input.decorators !== undefined) return unrouted('declaration.member.constructor.public', 'decorators');
+	return declaration_member_constructor_public$468(input);
 };
-const declaration_enum = (input: PathInput<TypeScriptMap, 'declaration.enum'>) => {
-	return declaration_enum$322(input);
+const declaration_member_enum_member = (input: PathInput<TypeScriptMap, 'declaration.member.enum_member'>) => {
+	if (input.name !== undefined && input.value === undefined) return declaration_member_enum_member$388(input);
+	return declaration_member_enum_member$324(input);
 };
-const declaration_enum_member = (input: PathInput<TypeScriptMap, 'declaration.enum_member'>) => {
-	if (input.name !== undefined && input.value === undefined) return declaration_enum_member$388(input);
-	return declaration_enum_member$324(input);
+const declaration_member_signature_construct = (
+	input: PathInput<TypeScriptMap, 'declaration.member.signature.construct'>
+) => {
+	return declaration_member_signature_construct$376(input);
+};
+const declaration_member_signature_index = (input: PathInput<TypeScriptMap, 'declaration.member.signature.index'>) => {
+	return declaration_member_signature_index$410(input);
+};
+const declaration_member_signature_index_mapped = (
+	input: PathInput<TypeScriptMap, 'declaration.member.signature.index.mapped'>
+) => {
+	return declaration_member_signature_index_mapped$411(input);
+};
+const declaration_member_static_block = (input: PathInput<TypeScriptMap, 'declaration.member.static_block'>) => {
+	return declaration_member_static_block$290(input);
 };
 const declaration_module = (input: PathInput<TypeScriptMap, 'declaration.module'>) => {
 	return declaration_module$316(input);
@@ -93755,17 +93792,11 @@ const declaration_module_property = (input: PathInput<TypeScriptMap, 'declaratio
 const declaration_parameter_receiver = (input: PathInput<TypeScriptMap, 'declaration.parameter.receiver'>) => {
 	return declaration_parameter_receiver$472(input);
 };
-const declaration_signature_construct = (input: PathInput<TypeScriptMap, 'declaration.signature.construct'>) => {
-	return declaration_signature_construct$376(input);
+const declaration_type_enum = (input: PathInput<TypeScriptMap, 'declaration.type.enum'>) => {
+	return declaration_type_enum$322(input);
 };
-const declaration_signature_index = (input: PathInput<TypeScriptMap, 'declaration.signature.index'>) => {
-	return declaration_signature_index$410(input);
-};
-const declaration_signature_index_mapped = (input: PathInput<TypeScriptMap, 'declaration.signature.index.mapped'>) => {
-	return declaration_signature_index_mapped$411(input);
-};
-const declaration_type_alias = (input: PathInput<TypeScriptMap, 'declaration.type_alias'>) => {
-	return declaration_type_alias$325(input);
+const declaration_type_type_alias = (input: PathInput<TypeScriptMap, 'declaration.type.type_alias'>) => {
+	return declaration_type_type_alias$325(input);
 };
 const declaration_variable = (input: PathInput<TypeScriptMap, 'declaration.variable'>) => {
 	if (
@@ -94152,9 +94183,6 @@ const statement_block = (input: PathInput<TypeScriptMap, 'statement.block'>) => 
 	if (input.label !== undefined) return unrouted('statement.block', 'label');
 	return statement_block$211(input);
 };
-const statement_block_static = (input: PathInput<TypeScriptMap, 'statement.block.static'>) => {
-	return statement_block_static$290(input);
-};
 const statement_break = (input: PathInput<TypeScriptMap, 'statement.break'>) => {
 	return statement_break$222(input);
 };
@@ -94282,21 +94310,23 @@ export const portableBuild = {
 	comment: { html: comment_html },
 	declaration: {
 		ambient: declaration_ambient,
-		constructor: Object.assign(declaration_constructor, {
-			private: declaration_constructor_private,
-			protected: declaration_constructor_protected,
-			public: declaration_constructor_public
-		}),
-		enum: declaration_enum,
-		enum_member: declaration_enum_member,
+		member: {
+			constructor: Object.assign(declaration_member_constructor, {
+				private: declaration_member_constructor_private,
+				protected: declaration_member_constructor_protected,
+				public: declaration_member_constructor_public
+			}),
+			enum_member: declaration_member_enum_member,
+			signature: {
+				construct: declaration_member_signature_construct,
+				index: Object.assign(declaration_member_signature_index, { mapped: declaration_member_signature_index_mapped })
+			},
+			static_block: declaration_member_static_block
+		},
 		module: Object.assign(declaration_module, { external: declaration_module_external }),
 		module_property: declaration_module_property,
 		parameter: { receiver: declaration_parameter_receiver },
-		signature: {
-			construct: declaration_signature_construct,
-			index: Object.assign(declaration_signature_index, { mapped: declaration_signature_index_mapped })
-		},
-		type_alias: declaration_type_alias,
+		type: { enum: declaration_type_enum, type_alias: declaration_type_type_alias },
 		variable: Object.assign(declaration_variable, {
 			constant: declaration_variable_constant,
 			pattern: declaration_variable_pattern,
@@ -94419,7 +94449,7 @@ export const portableBuild = {
 		rest: pattern_rest
 	},
 	statement: {
-		block: Object.assign(statement_block, { static: statement_block_static }),
+		block: statement_block,
 		break: statement_break,
 		continue: statement_continue,
 		debugger: statement_debugger,

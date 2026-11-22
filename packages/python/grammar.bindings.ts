@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "2aed843773493110d855d2639b27e382fdd3e9dd420dfaf2969db45c3fef14a9";
+export const hash = "87a97cccb6b3d1fa28762cb6343a938e63a2ec97eca6c717c1b40c4c2ef9986d";
 
 export const renames = {
 	module: "file",
@@ -56,11 +56,11 @@ export const renames = {
 	set_comprehension: "set_comprehension_expression",
 	dictionary_comprehension: "map_comprehension_expression",
 	generator_expression: "generator_comprehension_expression",
-	list: "list_collection_expression",
-	tuple: "tuple_collection_expression",
-	expression_list: "bare_tuple_collection_expression",
-	set: "set_collection_expression",
-	dictionary: "map_collection_expression",
+	list: "list_expression",
+	tuple: "tuple_expression",
+	expression_list: "bare_tuple_expression",
+	set: "set_expression",
+	dictionary: "map_expression",
 	ellipsis: "ellipsis_literal",
 	format_specifier: "format_interpolation_expression",
 	type_conversion: "conversion_interpolation_expression",

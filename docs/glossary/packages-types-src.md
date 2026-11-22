@@ -674,7 +674,7 @@ The synonym that stands for the canonical `subscript` in this vocabulary: 'index
 
 The async-await declaration of the vocabulary.
 
-### `packages/types/src/vocabulary/features/async-await/declaration.ts::Declaration::Constructor`
+### `packages/types/src/vocabulary/features/async-await/declaration.ts::Declaration::Member::Constructor`
 
 The constructor of the async-await declaration.
 
@@ -682,11 +682,11 @@ The constructor of the async-await declaration.
 
 The decorators declaration of the vocabulary.
 
-### `packages/types/src/vocabulary/features/decorators/declaration.ts::Declaration::Constructor`
+### `packages/types/src/vocabulary/features/decorators/declaration.ts::Declaration::Member::Constructor`
 
 The constructor of the decorators declaration.
 
-### `packages/types/src/vocabulary/features/parametric-polymorphism/declaration.ts::Declaration::Constructor`
+### `packages/types/src/vocabulary/features/parametric-polymorphism/declaration.ts::Declaration::Member::Constructor`
 
 The constructor of the parametric-polymorphism declaration.
 
@@ -694,7 +694,7 @@ The constructor of the parametric-polymorphism declaration.
 
 The type-annotations declaration of the vocabulary.
 
-### `packages/types/src/vocabulary/features/type-annotations/declaration.ts::Declaration::Constructor`
+### `packages/types/src/vocabulary/features/type-annotations/declaration.ts::Declaration::Member::Constructor`
 
 The constructor of the type-annotations declaration.
 
@@ -1650,9 +1650,9 @@ The constrained-type-parameters feature marker: an interface extending `BoundedQ
 
 The `type.constrained` node: a type whose `constraint` slot holds the single type its parameter is restricted to. The slot takes any `Type.Any`.
 
-### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Enum`
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Type::Enum`
 
-The `declaration.enum` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
+The `declaration.type.enum` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Extension`
 
@@ -1662,21 +1662,21 @@ The `declaration.extension` arm under bounded quantification. It declares no slo
 
 The `declaration.function` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
 
-### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Method`
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Member::Method`
 
-The `declaration.method` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
+The `declaration.member.method` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
 
-### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::TypeAlias`
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Type::TypeAlias`
 
-The `declaration.type_alias` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
+The `declaration.type.type_alias` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::TypeParameter`
 
 The `declaration.type_parameter` node under bounded quantification. Its `bounds` slot lists the constraints on the parameter: a macro call, an identifier, a higher-ranked bound, a removed bound, or a type. Its `Parameters`, `Value` and `Variadic` arms set `bounds` to never.
 
-### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Union`
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Type::Union`
 
-The `declaration.union` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
+The `declaration.type.union` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration`
 
@@ -1706,7 +1706,7 @@ The `type.constrained` arm under bounded quantification. It declares no slots of
 
 The `clause.where` node: a where clause. Its `wherePredicates` slot lists the `Where.Predicate` nodes written after the signature. Each predicate has a `left` slot naming the constrained type and a `bounds` slot listing its constraints.
 
-### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Enum`
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Type::Enum`
 
 An enum declaration that carries a `whereClause` slot holding a `Clause.Where`.
 
@@ -1718,15 +1718,15 @@ An extension declaration that carries a `whereClause` slot holding a `Clause.Whe
 
 A function declaration that carries a `whereClause` slot holding a `Clause.Where`.
 
-### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Method`
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Member::Method`
 
 A method declaration that carries a `whereClause` slot holding a `Clause.Where`.
 
-### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::TypeAlias`
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Type::TypeAlias`
 
 A type alias declaration that carries a `whereClause` slot and a `trailingWhereClause` slot, each holding a `Clause.Where`. The trailing slot takes a where clause written after the aliased type.
 
-### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Union`
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Type::Union`
 
 A union type declaration that carries a `whereClause` slot holding a `Clause.Where`.
 
@@ -1758,9 +1758,9 @@ Python statements: an interface marked `'python-statements': true`. It covers Py
 
 The `clause.implements` node, claimed by the `t` claim tag. Its `types` slot lists the interfaces or types a class implements, each an identifier or a type.
 
-### `packages/types/src/vocabulary/features/interface-conformance/declaration.ts::Declaration::Class`
+### `packages/types/src/vocabulary/features/interface-conformance/declaration.ts::Declaration::Type::Class`
 
-The `declaration.class` node with an `implements` slot listing the interfaces or types the class conforms to, each an identifier or a type. The `t` claim tag claims the node.
+The `declaration.type.class` node with an `implements` slot listing the interfaces or types the class conforms to, each an identifier or a type. The `t` claim tag claims the node.
 
 ### `packages/types/src/vocabulary/features/interface-conformance/expression.ts::Expression::Class`
 
@@ -1950,15 +1950,15 @@ The namespace of module-visibility declarations. For each declaration kind it gi
 
 Constant declarations under module visibility. `Private` and `Public` refine the constant kind, and `Public` nests `Internal`, `Parent` and `Restricted`.
 
-### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Enum`
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Type::Enum`
 
 Enum declarations under module visibility. `Private` and `Public` refine the enum kind, and `Public` nests `Internal`, `Parent` and `Restricted`.
 
-### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::EnumMember`
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Member::EnumMember`
 
 Enum members under module visibility. The bare member takes `Private` or `Public` (with its `Internal`, `Parent` and `Restricted` refinements). The `Struct` and `Tuple` member shapes each repeat that set.
 
-### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Field`
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Member::Field`
 
 Field declarations under module visibility. Only `Public` is offered, and it nests `Internal`, `Parent` and `Restricted`; there is no `Private` field variant.
 
@@ -1966,11 +1966,11 @@ Field declarations under module visibility. Only `Public` is offered, and it nes
 
 Function declarations under module visibility. `Private` and `Public` refine the function kind, with `Public` nesting `Internal`, `Parent` and `Restricted`. The `Signature` shape (a function without a body) repeats that set.
 
-### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Interface`
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Type::Interface`
 
 Interface declarations under module visibility. Only the `Trait` shape carries visibility: it takes `Private` or `Public`, with `Public` nesting `Internal`, `Parent` and `Restricted`.
 
-### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Method`
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Member::Method`
 
 Method declarations under module visibility. Only `Public` is offered, nesting `Internal`, `Parent` and `Restricted`; there is no `Private` method variant. The `Signature` shape repeats the `Public` set.
 
@@ -1978,15 +1978,15 @@ Method declarations under module visibility. Only `Public` is offered, nesting `
 
 Module declarations under module visibility. `Private` and `Public` refine the module kind, and `Public` nests `Internal`, `Parent` and `Restricted`.
 
-### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Struct`
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Type::Struct`
 
 Struct declarations under module visibility. The bare struct takes `Private` or `Public` (with `Internal`, `Parent` and `Restricted`). The `Tuple` and `Unit` struct shapes each repeat that set.
 
-### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::TypeAlias`
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Type::TypeAlias`
 
 Type alias declarations under module visibility. `Private` and `Public` refine the alias kind, and `Public` nests `Internal`, `Parent` and `Restricted`.
 
-### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Union`
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Type::Union`
 
 Union declarations under module visibility. `Private` and `Public` refine the union kind, and `Public` nests `Internal`, `Parent` and `Restricted`.
 
@@ -2022,10 +2022,10 @@ The clauses valued blocks add slots to: `Clause.Else`, whose block may end with 
 
 The function's slot under valued blocks: an optional `trailingExpression`, the expression its statements end with that is no statement of its own, read through the function's block (rust's `fn f() { g(); 1 }`). The function's other contents are its `statements`. Rust only.
 
-### `packages/types/src/vocabulary/features/valued-blocks/declaration.ts::Declaration::Method`
+### `packages/types/src/vocabulary/features/valued-blocks/declaration.ts::Declaration::Member::Method`
 
 The method's slot under valued blocks: an optional `trailingExpression`, the expression its statements end with that is no statement of its own, read through the method's block (rust's `fn m(&self) { g(); 1 }`). The method's other contents are its `statements`. Rust only.
 
 ### `packages/types/src/vocabulary/features/valued-blocks/declaration.ts::Declaration`
 
-The declarations valued blocks add slots to: `Declaration.Function` and `Declaration.Method`, whose block may end with a value.
+The declarations valued blocks add slots to: `Declaration.Function` and `Declaration.Member.Method`, whose block may end with a value.

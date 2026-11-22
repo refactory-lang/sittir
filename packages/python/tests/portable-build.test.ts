@@ -16,10 +16,10 @@ describe('the portable build through the strict table', () => {
 		const source = ['class C:', '    def __init__(self):', '        a', '    def m(self):', '        b', '    @property', '    def p(self):', '        c', '    @p.setter', '    def p(self, v):', '        d', ''].join('\n');
 		const members = firstOf(source).members as readonly Readonly<Record<string, unknown>>[];
 		expect(members.map((member) => [member.$path, member.statements, 'body' in member])).toEqual([
-			['declaration.constructor', ['a'], false],
-			['declaration.method', ['b'], false],
-			['declaration.property.getter', ['c'], false],
-			['declaration.property.setter', ['d'], false]
+			['declaration.member.constructor', ['a'], false],
+			['declaration.member.method', ['b'], false],
+			['declaration.member.property.getter', ['c'], false],
+			['declaration.member.property.setter', ['d'], false]
 		]);
 	});
 	it("reads an if's, an elif's and an else's indented and inline suites alike as their statements, and builds each as the indented block", () => {
@@ -110,6 +110,6 @@ describe('the portable build through the strict table', () => {
 	});
 
 	it('refuses a path from a feature the grammar does not compose, naming the feature', () => {
-		expect(() => runtime.build({ $path: 'declaration.struct', name: 'S' })).toThrow(/declaration\.struct is a path of Structs, which python lacks/);
+		expect(() => runtime.build({ $path: 'declaration.type.struct', name: 'S' })).toThrow(/declaration\.type\.struct is a path of Structs, which python lacks/);
 	});
 });

@@ -5,7 +5,7 @@ import { builtReadsAs, classifierOf, factsOf, flagHolds, otherTested, portableTe
 import { languageGuardOf, type PortableLanguage } from './language-guard.ts';
 import { portableReader, type PortableCarried } from './read.ts';
 import { portableTrees, type LanguageGuard, type PortableGuardTree } from './tree.ts';
-import { vocabularyFlags, vocabularyPaths } from './vocabulary-paths.ts';
+import { vocabularyFlags, vocabularyNamespaces, vocabularyPaths } from './vocabulary-paths.ts';
 
 const flagOf = new Map<string, readonly [path: string, flag: string]>(vocabularyFlags.map(([path, segment, flag]) => [`${path}.${segment}`, [path, flag]]));
 
@@ -21,7 +21,7 @@ export function portableRuntimeTree(language: PortableLanguage): PortableGuardTr
 			const [path, flag] = flagged;
 			return languageGuardOf(language, ofLanguage, (rows, value) => readsAs(rows, path, value) && flagHolds(rows, value, flag));
 		};
-		runtimeTrees.set(language, (tree = portableTrees<string, LanguageGuard>([...vocabularyPaths, ...flagOf.keys()], guardOf).is));
+		runtimeTrees.set(language, (tree = portableTrees<string, LanguageGuard>([...vocabularyPaths, ...flagOf.keys()], vocabularyNamespaces, guardOf).is));
 	}
 	return tree;
 }

@@ -14,9 +14,11 @@ export namespace Declaration {
 			| V.Statement.Any<G>
 		>;
 	}
-	export interface Field<G extends GrammarMap, K extends Under<'declaration.field'> = 'declaration.field'> {
-		readonly declare?: Flag;
-		// t only
+	export namespace Member {
+		export interface Field<G extends GrammarMap, K extends Under<'declaration.member.field'> = 'declaration.member.field'> {
+			readonly declare?: Flag;
+			// t only
+		}
 	}
 	export interface ModuleProperty<G extends GrammarMap, K extends Under<'declaration.module_property'> = 'declaration.module_property'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by t

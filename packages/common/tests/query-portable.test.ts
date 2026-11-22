@@ -125,7 +125,7 @@ describe('ofType keeps exactly what the language guard holds for', () => {
 		const view = descendants(engine, source(file));
 		const all = [...view];
 		const disagreements: string[] = [];
-		for (const path of Object.keys(rows.table.paths)) {
+		for (const path of Object.keys(rows.table.paths).filter((path) => (kindAt(path) as { readonly $path?: string }).$path === path)) {
 			const selected = [...view.ofType(kindAt(path))].map(keyOf);
 			const held = all.filter(guardAt(path)).map(keyOf);
 			if (JSON.stringify(selected) !== JSON.stringify(held)) disagreements.push(`${path}: ofType ${selected.length}, guard ${held.length}`);

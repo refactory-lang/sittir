@@ -4,23 +4,23 @@ import type { PortableSeat } from '@sittir/types';
 
 describe('portablePathHasFacts', () => {
 	it('holds when the read path names every fact of the guard path, in order, other facts between', () => {
-		expect(portablePathHasFacts('declaration.method.public', 'declaration.method.getter.public')).toBe(true);
+		expect(portablePathHasFacts('declaration.member.method.public', 'declaration.member.method.getter.public')).toBe(true);
 		expect(
-			portablePathHasFacts('declaration.method.public.internal', 'declaration.method.getter.public.internal')
+			portablePathHasFacts('declaration.member.method.public.internal', 'declaration.member.method.getter.public.internal')
 		).toBe(true);
-		expect(portablePathHasFacts('declaration.method', 'declaration.method')).toBe(true);
+		expect(portablePathHasFacts('declaration.member.method', 'declaration.member.method')).toBe(true);
 	});
 
 	it('requires every fact, its whole segment, its order, and the same namespace', () => {
 		for (const read of [
-			'declaration.method.getter',
-			'declaration.method.getter.publicity',
+			'declaration.member.method.getter',
+			'declaration.member.method.getter.publicity',
 			'modifier.declaration.method.getter.public',
 			'expression.method.getter.public'
 		])
-			expect(portablePathHasFacts('declaration.method.public', read), read).toBe(false);
+			expect(portablePathHasFacts('declaration.member.method.public', read), read).toBe(false);
 		expect(
-			portablePathHasFacts('declaration.method.public.internal', 'declaration.method.internal.getter.public')
+			portablePathHasFacts('declaration.member.method.public.internal', 'declaration.member.method.internal.getter.public')
 		).toBe(false);
 	});
 
@@ -33,8 +33,8 @@ describe('portablePathHasFacts', () => {
 		['member', 'expression.member', 'expression.call.member'],
 		['object', 'type.object', 'type.primitive.object'],
 		['rest', 'pattern.rest', 'pattern.struct.rest'],
-		['signature', 'declaration.signature', 'declaration.method.signature'],
-		['struct', 'declaration.struct', 'declaration.enum_member.struct']
+		['signature', 'declaration.member.signature', 'declaration.member.method.signature'],
+		['struct', 'declaration.type.struct', 'declaration.member.enum_member.struct']
 	])('reads %s as the kind it names, never as a refinement of another kind spelled the same', (_, guard, read) => {
 		expect(portablePathHasFacts(guard, read)).toBe(false);
 		expect(portablePathHasFacts(guard, guard)).toBe(true);
@@ -43,11 +43,22 @@ describe('portablePathHasFacts', () => {
 	it('matches a refinement under its own kind across other refinements', () => {
 		expect(portablePathHasFacts('pattern.rest', 'pattern.rest.map')).toBe(true);
 		expect(portablePathHasFacts('pattern.rest.map', 'pattern.rest.map')).toBe(true);
-		expect(portablePathHasFacts('declaration.property.getter', 'declaration.property.signature.abstract.getter')).toBe(
+		expect(portablePathHasFacts('declaration.member.property.getter', 'declaration.member.property.signature.abstract.getter')).toBe(
 			true
 		);
 		expect(portablePathHasFacts('literal.number.integer.binary', 'literal.number.integer.big.binary')).toBe(true);
 		expect(portablePathHasFacts('literal.string.raw', 'literal.string.bytes.raw')).toBe(true);
+	});
+
+	it("takes a namespace's segment as part of the kind it holds, not as a fact of another", () => {
+		expect(portablePathHasFacts('declaration.member', 'declaration.member.method.signature')).toBe(true);
+		expect(portablePathHasFacts('declaration.member.signature', 'declaration.member.signature.index')).toBe(true);
+		expect(portablePathHasFacts('declaration.member.field', 'declaration.member.method')).toBe(false);
+		expect(portablePathHasFacts('declaration.type.enum', 'declaration.member.enum_member')).toBe(false);
+		expect(portablePathHasFacts('expression.collection', 'expression.collection.list.repeat')).toBe(true);
+		expect(portablePathHasFacts('expression.collection.tuple', 'expression.collection.list')).toBe(false);
+		expect(portablePathHasFacts('expression.binary.arithmetic', 'expression.binary.arithmetic.add')).toBe(true);
+		expect(portablePathHasFacts('expression.binary.arithmetic', 'expression.binary.comparison.equal')).toBe(false);
 	});
 
 	it('holds for no read path when there is none', () => {
@@ -78,7 +89,7 @@ describe('readableEntries', () => {
 	});
 
 	it('leaves out an entry that depends on where the node sits', () => {
-		expect(paths(readableEntries([entry('declaration.method', [], [7]), entry('declaration.function.inner', [{ up: 1 }]), entry('declaration.function')]))).toEqual([
+		expect(paths(readableEntries([entry('declaration.member.method', [], [7]), entry('declaration.function.inner', [{ up: 1 }]), entry('declaration.function')]))).toEqual([
 			'declaration.function'
 		]);
 	});

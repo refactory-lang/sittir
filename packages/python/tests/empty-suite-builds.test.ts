@@ -29,11 +29,11 @@ const emptied = (value: unknown, path: string, stated: boolean): unknown => {
 
 const holders = [
 	['declaration.function', 'def f():\n', 'built'],
-	['declaration.method', 'class A:\n    def f(self):\n', 'not generated'],
-	['declaration.method.special', 'class A:\n    def __eq__(self, other):\n', 'not generated'],
-	['declaration.constructor', 'class A:\n    def __init__(self):\n', 'built'],
-	['declaration.property.getter', 'class A:\n    @property\n    def x(self):\n', 'not generated'],
-	['declaration.property.setter', 'class A:\n    @x.setter\n    def x(self, value):\n', 'not generated'],
+	['declaration.member.method', 'class A:\n    def f(self):\n', 'not generated'],
+	['declaration.member.method.special', 'class A:\n    def __eq__(self, other):\n', 'not generated'],
+	['declaration.member.constructor', 'class A:\n    def __init__(self):\n', 'built'],
+	['declaration.member.property.getter', 'class A:\n    @property\n    def x(self):\n', 'not generated'],
+	['declaration.member.property.setter', 'class A:\n    @x.setter\n    def x(self, value):\n', 'not generated'],
 	['statement.if', 'if x:\n', 'built'],
 	['clause.else_if', 'if x:\n    pass\nelif y:\n', 'built'],
 	['clause.else', 'if x:\n    pass\nelse:\n', 'built'],

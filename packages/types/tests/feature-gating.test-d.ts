@@ -6,16 +6,16 @@ type Expect<T extends true> = T;
 type Lacking = V.Contract<V.PythonFeatures>;
 type Holding = V.Contract<V.RustFeatures>;
 
-export type LackedPathIsMissing = Expect<Equal<V.Paths<Lacking>['declaration.struct'], V.Missing<V.Structs>>>;
+export type LackedPathIsMissing = Expect<Equal<V.Paths<Lacking>['declaration.type.struct'], V.Missing<V.Structs>>>;
 
-export type HeldPathIsItsInterface = Expect<Equal<V.Paths<Holding>['declaration.struct'], V.Declaration.Struct<Holding>>>;
+export type HeldPathIsItsInterface = Expect<Equal<V.Paths<Holding>['declaration.type.struct'], V.Declaration.Type.Struct<Holding>>>;
 
 export type LackedSlotIsMissing = Expect<
 	Equal<V.Type.Reference<Lacking>['lifetime'], V.Missing<V.Lifetimes> | undefined>
 >;
 
 export type LevelHoldsAHeldPath = Expect<
-	Equal<Extract<V.Declaration.Any<Holding>, { readonly $path: 'declaration.struct' }>, V.Declaration.Struct<Holding>>
+	Equal<Extract<V.Declaration.Any<Holding>, { readonly $path: 'declaration.type.struct' }>, V.Declaration.Type.Struct<Holding>>
 >;
 
 declare const marker: V.Structs;
@@ -28,4 +28,4 @@ export const empty: V.Missing<V.Structs> = {};
 export type ReadsNoLackedPath = Expect<Equal<Extract<V.ReadOf<Lacking>, V.Missing<unknown>>, never>>;
 
 // @ts-expect-error a structure naming a path from a feature the map lacks has no input
-export const struct: V.InputOf<V.Paths<Lacking>['declaration.struct'], Lacking> = { $path: 'declaration.struct', name: 'S' };
+export const struct: V.InputOf<V.Paths<Lacking>['declaration.type.struct'], Lacking> = { $path: 'declaration.type.struct', name: 'S' };

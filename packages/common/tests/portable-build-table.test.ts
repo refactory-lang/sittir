@@ -62,9 +62,9 @@ describe('the portable build table', () => {
 	});
 
 	it('tells a struct form apart by the kinds its fields hold, through the list that holds them, or by the fields missing', () => {
-		const brace = armOf('rust', 'declaration.struct', rust.kinds.StructItemBrace);
-		const tuple = armOf('rust', 'declaration.struct', rust.kinds.StructItemTuple);
-		const unit = armOf('rust', 'declaration.struct', rust.kinds.StructItemUnit);
+		const brace = armOf('rust', 'declaration.type.struct', rust.kinds.StructItemBrace);
+		const tuple = armOf('rust', 'declaration.type.struct', rust.kinds.StructItemTuple);
+		const unit = armOf('rust', 'declaration.type.struct', rust.kinds.StructItemUnit);
 		expect(brace.builder).toBe('structItemBrace');
 		expect(brace.when).toContainEqual({ slot: 'fields', kinds: [rust.kinds.FieldDeclaration] });
 		expect(tuple.when).toContainEqual({ slot: 'fields', kinds: [rust.kinds.AttributedOrderedField] });
@@ -294,8 +294,8 @@ describe('the portable build table', () => {
 	});
 
 	it("writes the text a claim's predicate fixes, and spells a templated slot from its holes", () => {
-		expect(armOf('python', 'declaration.constructor', python.kinds.MethodDeclaration).presets).toContainEqual({ steps: [{ key: 'name' }], text: '__init__', builder: 'identifier' });
-		expect(armOf('python', 'declaration.method.special', python.kinds.MethodDeclaration).template).toEqual({ slot: 'name', pattern: '__${string}__', holes: ['stem'], match: '^__(?<stem>.*)__$' });
+		expect(armOf('python', 'declaration.member.constructor', python.kinds.MethodDeclaration).presets).toContainEqual({ steps: [{ key: 'name' }], text: '__init__', builder: 'identifier' });
+		expect(armOf('python', 'declaration.member.method.special', python.kinds.MethodDeclaration).template).toEqual({ slot: 'name', pattern: '__${string}__', holes: ['stem'], match: '^__(?<stem>.*)__$' });
 	});
 
 	it("writes the other token where a flag's slot must hold one of two, when the flag is unset", () => {

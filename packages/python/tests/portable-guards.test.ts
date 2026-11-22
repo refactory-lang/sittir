@@ -17,6 +17,6 @@ describe('the shared portable guards read a python node', () => {
 		const py = await createEngine(python);
 		const definition = py.parse('def f():\n    pass\n').statements()[0];
 		expect(guard('declaration.function')(definition)).toBe(true);
-		expect(guard('declaration.class')(definition)).toBe(false);
+		expect(guard('declaration.type.class')(definition)).toBe(false);
 	});
 });

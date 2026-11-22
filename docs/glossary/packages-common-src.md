@@ -788,7 +788,7 @@ A parsed arena's independent lookup, hydration, typed candidate enumeration, ren
 
 ### `packages/common/src/portable/facts.ts::portablePathHasFacts`
 
-Whether a read path names every fact in a guard path: the top-level namespace matches, and each remaining whole segment occurs in order, allowing other refinement facts between them. Shared by namespace kind admission, exact-guard derivation, and the portable guards' matching of a node's reading. An absent read path matches nothing.
+Whether a read path names every fact in a guard path: the guard's kind matches, that is its root segment, any vocabulary namespaces after the root (the generated `vocabularyNamespaces`) and the segment that names the kind, and each remaining whole segment occurs in order, allowing other refinement facts between them. So `declaration.member.signature` does not read `declaration.member.method.signature`, and a namespace guard such as `declaration.member` reads every kind beneath it. Shared by namespace kind admission, exact-guard derivation, and the portable guards' matching of a node's reading. An absent read path matches nothing.
 
 ### `packages/common/src/portable/facts.ts::textBuilt`
 
@@ -994,11 +994,15 @@ A language's kind test: the language check (`inLanguage`), then membership (`hol
 
 ### `packages/common/src/portable/tree.ts::ChildrenOf`
 
-The child segments of a path among a union of vocabulary paths: each path one segment below it, by its last segment. `RootsOf` is the same for the top level (the paths with no dot). With `string` for the union, both read as `string`, so a tree typed over arbitrary paths is an index signature.
+The child segments of a path among a union of vocabulary paths: the next segment of each path below it, whether the path that segment ends is a kind or a namespace. With `string` for the union, a tree typed over arbitrary paths is an index signature.
 
 ### `packages/common/src/portable/tree.ts::KindAt`
 
-The type of one node of the shared kind tree: its `$path` as a literal, and each child segment (`ChildrenOf`) as the node one level down. `GuardAt` is the same shape over the guards: each node is a `PortableGuard` holding its children. Both derive from the path union that `portableTrees` is given, which for the exported `portable` is `vocabularyPaths`'s element type, so the generated path list is the one source of the shared trees' types and values.
+The type of one node of the shared kind tree: a kind's `PortableKind` (its `$path` as a literal) at a kind's path, nothing of its own at a namespace, and each child segment (`ChildrenOf`) as the node one level down. `GuardAt` is the same shape over the guards, where every node, a namespace's too, is a `PortableGuard` holding its children. Both derive from the path union that `portableTrees` is given, which for the exported `portable` is `vocabularyPaths`'s element type, so the generated path list is the one source of the shared trees' types and values.
+
+### `packages/common/src/portable/tree.ts::RootsOf`
+
+The top-level segments of a union of vocabulary paths: each path's first segment, whether it names a kind (`declaration`) or a namespace. `PortableKindTree` and `PortableGuardTree` map over it, and `ChildrenOf` does the same one level down.
 
 ### `packages/common/src/record-cell.ts::cellFormatOf`
 

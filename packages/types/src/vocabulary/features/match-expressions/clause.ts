@@ -14,7 +14,7 @@ export namespace Clause {
 				| V.Identifier.Any<G>
 				| V.Literal.Any<G>
 				| V.Statement.Any<G>
-				| V.Declaration.TypeAlias<G>
+				| V.Declaration.Type.TypeAlias<G>
 				| V.Type.Primitive<G>
 			>;
 			readonly guard?: Slot<

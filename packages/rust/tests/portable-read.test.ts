@@ -36,7 +36,7 @@ describe('the portable read', () => {
 	});
 
 	it('reads a metavariable as its path with its name as the value, and builds the $ back', () => {
-		expect(readFirst('struct S<$t>;\n')).toMatchObject({ $path: 'declaration.struct.unit', typeParameters: [{ $path: 'identifier.metavariable', $value: 't' }] });
+		expect(readFirst('struct S<$t>;\n')).toMatchObject({ $path: 'declaration.type.struct.unit', typeParameters: [{ $path: 'identifier.metavariable', $value: 't' }] });
 		expect(runtime.build({ $path: 'identifier.metavariable', $value: 'x' } as never)).toBeDefined();
 		expect(String(runtime.engine.render(runtime.build({ $path: 'identifier.metavariable', $value: 'x' } as never) as never))).toBe('$x');
 		expect(roundTrip('struct S<$t>;\n')).toBe('struct S<$t>;\n');
@@ -54,14 +54,14 @@ describe('the portable read', () => {
 	] as const;
 	const holders = [
 		['declaration.function', (v: string) => `${v} fn f() {}`],
-		['declaration.field', (v: string) => `struct S {\n    ${v} a: u8,\n}`],
+		['declaration.member.field', (v: string) => `struct S {\n    ${v} a: u8,\n}`],
 		['statement.import', (v: string) => `${v} use a::b;`]
 	] as const;
 	it.each(holders.flatMap(([path, source]) => visibilities.map(([v, refinement, scope]) => [source(v), `${path}.${refinement}`, scope] as const)))(
 		'reads the visibility of %j as %s, and builds it back as written',
 		(source, path, scope) => {
 			const read = (runtime.read(runtime.engine.parse(source)) as Read).statements as readonly Read[];
-			const holder = path.startsWith('declaration.field') ? ((read[0]!.fields as readonly Read[])[0] as Read) : read[0]!;
+			const holder = path.startsWith('declaration.member.field') ? ((read[0]!.fields as readonly Read[])[0] as Read) : read[0]!;
 			expect(holder.$path).toBe(path);
 			expect(holder.scope).toEqual(scope);
 			expect(roundTrip(source)).toBe(`${source}\n`);
@@ -97,15 +97,15 @@ describe('the portable read', () => {
 	});
 
 	it('reads an empty list as an empty list, so its form builds back', () => {
-		expect(readFirst('struct S {}')).toEqual({ $path: 'declaration.struct', name: 'S', fields: [], typeParameters: [] });
+		expect(readFirst('struct S {}')).toEqual({ $path: 'declaration.type.struct', name: 'S', fields: [], typeParameters: [] });
 		expect(roundTrip('struct S {}')).toBe('struct S {}\n');
 		expect(roundTrip('f();')).toBe('f();\n');
 	});
 
 	it.each([
-		['struct P {\n    x: i32,\n    pub y: u8,\n}\n', { $path: 'declaration.struct', name: 'P', fields: [{ $path: 'declaration.field', name: 'x', type: 'i32' }, { $path: 'declaration.field.public', name: 'y', type: 'u8' }], typeParameters: [] }],
-		['struct T(i32);\n', { $path: 'declaration.struct.tuple', name: 'T', fields: [{ $path: 'declaration.field', type: 'i32', attributes: [] }], typeParameters: [] }],
-		['struct U;\n', { $path: 'declaration.struct.unit', name: 'U', typeParameters: [] }]
+		['struct P {\n    x: i32,\n    pub y: u8,\n}\n', { $path: 'declaration.type.struct', name: 'P', fields: [{ $path: 'declaration.member.field', name: 'x', type: 'i32' }, { $path: 'declaration.member.field.public', name: 'y', type: 'u8' }], typeParameters: [] }],
+		['struct T(i32);\n', { $path: 'declaration.type.struct.tuple', name: 'T', fields: [{ $path: 'declaration.member.field', type: 'i32', attributes: [] }], typeParameters: [] }],
+		['struct U;\n', { $path: 'declaration.type.struct.unit', name: 'U', typeParameters: [] }]
 	] as const)('reads the struct %j with its fields in fields, and builds it back', (source, read) => {
 		expect(readFirst(source)).toEqual(read);
 		expect(roundTrip(source)).toBe(source);
@@ -114,14 +114,14 @@ describe('the portable read', () => {
 	it('reads an enum variant with fields as its struct or tuple form holding them, and a unit variant with none', () => {
 		const source = 'enum E {\n    V {},\n    W(),\n    X,\n    Y {\n        a: i32,\n    },\n    Z(u8),\n}\n';
 		expect((readFirst(source).members as readonly Read[]).map((member) => ({ ...member }))).toEqual([
-			{ $path: 'declaration.enum_member.struct', name: 'V', fields: [] },
-			{ $path: 'declaration.enum_member.tuple', name: 'W', fields: [] },
-			{ $path: 'declaration.enum_member', name: 'X' },
-			{ $path: 'declaration.enum_member.struct', name: 'Y', fields: [{ $path: 'declaration.field', name: 'a', type: 'i32' }] },
-			{ $path: 'declaration.enum_member.tuple', name: 'Z', fields: [{ $path: 'declaration.field', type: 'u8', attributes: [] }] }
+			{ $path: 'declaration.member.enum_member.struct', name: 'V', fields: [] },
+			{ $path: 'declaration.member.enum_member.tuple', name: 'W', fields: [] },
+			{ $path: 'declaration.member.enum_member', name: 'X' },
+			{ $path: 'declaration.member.enum_member.struct', name: 'Y', fields: [{ $path: 'declaration.member.field', name: 'a', type: 'i32' }] },
+			{ $path: 'declaration.member.enum_member.tuple', name: 'Z', fields: [{ $path: 'declaration.member.field', type: 'u8', attributes: [] }] }
 		]);
 		expect(roundTrip(source)).toBe(source);
-		expect(String(runtime.engine.render(runtime.build({ $path: 'declaration.enum_member.struct', name: 'V' } as never) as never))).toBe('V {}');
+		expect(String(runtime.engine.render(runtime.build({ $path: 'declaration.member.enum_member.struct', name: 'V' } as never) as never))).toBe('V {}');
 	});
 
 	it('reads a list slot no route finds as an empty list, parsed and built alike', () => {
@@ -184,9 +184,9 @@ describe('the portable read', () => {
 	it('reads the attributes of an enum variant and of a field onto the element, and builds them back on their own lines', () => {
 		const attributes = [{ $path: 'attribute', path: 'a' }];
 		const sources = ['enum E {\n    #[a]\n    V,\n}\n', 'struct S {\n    #[a]\n    f: u8,\n}\n', 'struct S(#[a] u8);\n'];
-		expect(readFirst(sources[0]!)).toMatchObject({ members: [{ $path: 'declaration.enum_member', name: 'V', attributes }] });
-		expect(readFirst(sources[1]!)).toMatchObject({ fields: [{ $path: 'declaration.field', name: 'f', attributes }] });
-		expect(readFirst(sources[2]!)).toMatchObject({ fields: [{ $path: 'declaration.field', attributes }] });
+		expect(readFirst(sources[0]!)).toMatchObject({ members: [{ $path: 'declaration.member.enum_member', name: 'V', attributes }] });
+		expect(readFirst(sources[1]!)).toMatchObject({ fields: [{ $path: 'declaration.member.field', name: 'f', attributes }] });
+		expect(readFirst(sources[2]!)).toMatchObject({ fields: [{ $path: 'declaration.member.field', attributes }] });
 		for (const source of sources) expect(roundTrip(source)).toBe(source);
 	});
 

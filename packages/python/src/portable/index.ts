@@ -56,20 +56,22 @@ export interface PortableIds {
 		| TSKindId.TypeParamTypeVarTuple
 		| TSKindId.TypedDefaultParameter
 		| TSKindId.TypedParameter;
-	'declaration.class': TSKindId.ClassDefinition;
 	'declaration.constant': TSKindId.AssignmentEq | TSKindId.AssignmentType | TSKindId.AssignmentTyped;
-	'declaration.constructor': TSKindId.ConstructorDeclaration | TSKindId.MethodDeclaration;
 	'declaration.function': TSKindId.FunctionDefinition;
-	'declaration.method': TSKindId.MethodDeclaration;
-	'declaration.method.special': TSKindId.MethodDeclaration;
+	'declaration.member': TSKindId.ConstructorDeclaration | TSKindId.MethodDeclaration;
+	'declaration.member.constructor': TSKindId.ConstructorDeclaration | TSKindId.MethodDeclaration;
+	'declaration.member.method': TSKindId.MethodDeclaration;
+	'declaration.member.method.special': TSKindId.MethodDeclaration;
+	'declaration.member.property': TSKindId.MethodDeclaration;
+	'declaration.member.property.getter': TSKindId.MethodDeclaration;
+	'declaration.member.property.setter': TSKindId.MethodDeclaration;
 	'declaration.parameter': TSKindId.DefaultParameter | TSKindId.TypedDefaultParameter | TSKindId.TypedParameter;
 	'declaration.parameter.defaulted': TSKindId.DefaultParameter;
 	'declaration.parameter.typed': TSKindId.TypedParameter;
 	'declaration.parameter.typed_default': TSKindId.TypedDefaultParameter;
-	'declaration.property': TSKindId.MethodDeclaration;
-	'declaration.property.getter': TSKindId.MethodDeclaration;
-	'declaration.property.setter': TSKindId.MethodDeclaration;
-	'declaration.type_alias': TSKindId.TypeAliasStatement;
+	'declaration.type': TSKindId.ClassDefinition | TSKindId.TypeAliasStatement;
+	'declaration.type.class': TSKindId.ClassDefinition;
+	'declaration.type.type_alias': TSKindId.TypeAliasStatement;
 	'declaration.type_parameter':
 		| TSKindId.TypeParamParamSpec
 		| TSKindId.TypeParamTypeVar
@@ -483,20 +485,22 @@ export interface PortableTexts {
 	comment: never;
 	'comment.line': never;
 	declaration: never;
-	'declaration.class': never;
 	'declaration.constant': never;
-	'declaration.constructor': never;
 	'declaration.function': never;
-	'declaration.method': never;
-	'declaration.method.special': never;
+	'declaration.member': never;
+	'declaration.member.constructor': never;
+	'declaration.member.method': never;
+	'declaration.member.method.special': never;
+	'declaration.member.property': never;
+	'declaration.member.property.getter': never;
+	'declaration.member.property.setter': never;
 	'declaration.parameter': never;
 	'declaration.parameter.defaulted': never;
 	'declaration.parameter.typed': never;
 	'declaration.parameter.typed_default': never;
-	'declaration.property': never;
-	'declaration.property.getter': never;
-	'declaration.property.setter': never;
-	'declaration.type_alias': never;
+	'declaration.type': never;
+	'declaration.type.class': never;
+	'declaration.type.type_alias': never;
 	'declaration.type_parameter': never;
 	'declaration.type_parameter.parameters': never;
 	'declaration.type_parameter.variadic': never;
@@ -737,26 +741,34 @@ export interface PortableKindsAt {
 	'comment.line': { readonly $path: 'comment.line' };
 	declaration: {
 		readonly $path: 'declaration';
-		readonly class: PortableKindsAt['declaration.class'];
 		readonly constant: PortableKindsAt['declaration.constant'];
-		readonly constructor: PortableKindsAt['declaration.constructor'];
 		readonly function: PortableKindsAt['declaration.function'];
-		readonly method: PortableKindsAt['declaration.method'];
+		readonly member: PortableKindsAt['declaration.member'];
 		readonly parameter: PortableKindsAt['declaration.parameter'];
-		readonly property: PortableKindsAt['declaration.property'];
-		readonly type_alias: PortableKindsAt['declaration.type_alias'];
+		readonly type: PortableKindsAt['declaration.type'];
 		readonly type_parameter: PortableKindsAt['declaration.type_parameter'];
 		readonly variable: PortableKindsAt['declaration.variable'];
 	};
-	'declaration.class': { readonly $path: 'declaration.class' };
 	'declaration.constant': { readonly $path: 'declaration.constant' };
-	'declaration.constructor': { readonly $path: 'declaration.constructor' };
 	'declaration.function': { readonly $path: 'declaration.function' };
-	'declaration.method': {
-		readonly $path: 'declaration.method';
-		readonly special: PortableKindsAt['declaration.method.special'];
+	'declaration.member': {
+		readonly constructor: PortableKindsAt['declaration.member.constructor'];
+		readonly method: PortableKindsAt['declaration.member.method'];
+		readonly property: PortableKindsAt['declaration.member.property'];
 	};
-	'declaration.method.special': { readonly $path: 'declaration.method.special' };
+	'declaration.member.constructor': { readonly $path: 'declaration.member.constructor' };
+	'declaration.member.method': {
+		readonly $path: 'declaration.member.method';
+		readonly special: PortableKindsAt['declaration.member.method.special'];
+	};
+	'declaration.member.method.special': { readonly $path: 'declaration.member.method.special' };
+	'declaration.member.property': {
+		readonly $path: 'declaration.member.property';
+		readonly getter: PortableKindsAt['declaration.member.property.getter'];
+		readonly setter: PortableKindsAt['declaration.member.property.setter'];
+	};
+	'declaration.member.property.getter': { readonly $path: 'declaration.member.property.getter' };
+	'declaration.member.property.setter': { readonly $path: 'declaration.member.property.setter' };
 	'declaration.parameter': {
 		readonly $path: 'declaration.parameter';
 		readonly defaulted: PortableKindsAt['declaration.parameter.defaulted'];
@@ -766,14 +778,12 @@ export interface PortableKindsAt {
 	'declaration.parameter.defaulted': { readonly $path: 'declaration.parameter.defaulted' };
 	'declaration.parameter.typed': { readonly $path: 'declaration.parameter.typed' };
 	'declaration.parameter.typed_default': { readonly $path: 'declaration.parameter.typed_default' };
-	'declaration.property': {
-		readonly $path: 'declaration.property';
-		readonly getter: PortableKindsAt['declaration.property.getter'];
-		readonly setter: PortableKindsAt['declaration.property.setter'];
+	'declaration.type': {
+		readonly class: PortableKindsAt['declaration.type.class'];
+		readonly type_alias: PortableKindsAt['declaration.type.type_alias'];
 	};
-	'declaration.property.getter': { readonly $path: 'declaration.property.getter' };
-	'declaration.property.setter': { readonly $path: 'declaration.property.setter' };
-	'declaration.type_alias': { readonly $path: 'declaration.type_alias' };
+	'declaration.type.class': { readonly $path: 'declaration.type.class' };
+	'declaration.type.type_alias': { readonly $path: 'declaration.type.type_alias' };
 	'declaration.type_parameter': {
 		readonly $path: 'declaration.type_parameter';
 		readonly parameters: PortableKindsAt['declaration.type_parameter.parameters'];
@@ -795,7 +805,6 @@ export interface PortableKindsAt {
 		readonly membership: PortableKindsAt['element.comparator.membership'];
 	};
 	'element.comparator.comparison': {
-		readonly $path: 'element.comparator.comparison';
 		readonly equal: PortableKindsAt['element.comparator.comparison.equal'];
 		readonly greater: PortableKindsAt['element.comparator.comparison.greater'];
 		readonly greater_equal: PortableKindsAt['element.comparator.comparison.greater_equal'];
@@ -816,14 +825,12 @@ export interface PortableKindsAt {
 		readonly $path: 'element.comparator.comparison.not_equal.legacy';
 	};
 	'element.comparator.identity': {
-		readonly $path: 'element.comparator.identity';
 		readonly is: PortableKindsAt['element.comparator.identity.is'];
 		readonly is_not: PortableKindsAt['element.comparator.identity.is_not'];
 	};
 	'element.comparator.identity.is': { readonly $path: 'element.comparator.identity.is' };
 	'element.comparator.identity.is_not': { readonly $path: 'element.comparator.identity.is_not' };
 	'element.comparator.membership': {
-		readonly $path: 'element.comparator.membership';
 		readonly in: PortableKindsAt['element.comparator.membership.in'];
 		readonly not_in: PortableKindsAt['element.comparator.membership.not_in'];
 	};
@@ -903,7 +910,6 @@ export interface PortableKindsAt {
 		readonly shift: PortableKindsAt['expression.binary.shift'];
 	};
 	'expression.binary.arithmetic': {
-		readonly $path: 'expression.binary.arithmetic';
 		readonly add: PortableKindsAt['expression.binary.arithmetic.add'];
 		readonly divide: PortableKindsAt['expression.binary.arithmetic.divide'];
 		readonly exponent: PortableKindsAt['expression.binary.arithmetic.exponent'];
@@ -920,7 +926,6 @@ export interface PortableKindsAt {
 	'expression.binary.arithmetic.multiply': { readonly $path: 'expression.binary.arithmetic.multiply' };
 	'expression.binary.arithmetic.subtract': { readonly $path: 'expression.binary.arithmetic.subtract' };
 	'expression.binary.bitwise': {
-		readonly $path: 'expression.binary.bitwise';
 		readonly and: PortableKindsAt['expression.binary.bitwise.and'];
 		readonly or: PortableKindsAt['expression.binary.bitwise.or'];
 		readonly xor: PortableKindsAt['expression.binary.bitwise.xor'];
@@ -929,7 +934,6 @@ export interface PortableKindsAt {
 	'expression.binary.bitwise.or': { readonly $path: 'expression.binary.bitwise.or' };
 	'expression.binary.bitwise.xor': { readonly $path: 'expression.binary.bitwise.xor' };
 	'expression.binary.comparison': {
-		readonly $path: 'expression.binary.comparison';
 		readonly chain: PortableKindsAt['expression.binary.comparison.chain'];
 		readonly equal: PortableKindsAt['expression.binary.comparison.equal'];
 		readonly greater: PortableKindsAt['expression.binary.comparison.greater'];
@@ -972,7 +976,6 @@ export interface PortableKindsAt {
 	'expression.binary.membership.in': { readonly $path: 'expression.binary.membership.in' };
 	'expression.binary.membership.not_in': { readonly $path: 'expression.binary.membership.not_in' };
 	'expression.binary.shift': {
-		readonly $path: 'expression.binary.shift';
 		readonly left: PortableKindsAt['expression.binary.shift.left'];
 		readonly right: PortableKindsAt['expression.binary.shift.right'];
 	};
@@ -981,7 +984,6 @@ export interface PortableKindsAt {
 	'expression.call': { readonly $path: 'expression.call'; readonly member: PortableKindsAt['expression.call.member'] };
 	'expression.call.member': { readonly $path: 'expression.call.member' };
 	'expression.collection': {
-		readonly $path: 'expression.collection';
 		readonly list: PortableKindsAt['expression.collection.list'];
 		readonly map: PortableKindsAt['expression.collection.map'];
 		readonly set: PortableKindsAt['expression.collection.set'];
@@ -1352,34 +1354,19 @@ export interface PortableIsAt {
 	};
 	'comment.line': PortableGuard<PortableIds['comment.line'], PythonNode, TSKindId, PortableTexts['comment.line']> & {};
 	declaration: PortableGuard<PortableIds['declaration'], PythonNode, TSKindId, PortableTexts['declaration']> & {
-		readonly class: PortableIsAt['declaration.class'];
 		readonly constant: PortableIsAt['declaration.constant'];
-		readonly constructor: PortableIsAt['declaration.constructor'];
 		readonly function: PortableIsAt['declaration.function'];
-		readonly method: PortableIsAt['declaration.method'];
+		readonly member: PortableIsAt['declaration.member'];
 		readonly parameter: PortableIsAt['declaration.parameter'];
-		readonly property: PortableIsAt['declaration.property'];
-		readonly type_alias: PortableIsAt['declaration.type_alias'];
+		readonly type: PortableIsAt['declaration.type'];
 		readonly type_parameter: PortableIsAt['declaration.type_parameter'];
 		readonly variable: PortableIsAt['declaration.variable'];
 	};
-	'declaration.class': PortableGuard<
-		PortableIds['declaration.class'],
-		PythonNode,
-		TSKindId,
-		PortableTexts['declaration.class']
-	> & {};
 	'declaration.constant': PortableGuard<
 		PortableIds['declaration.constant'],
 		PythonNode,
 		TSKindId,
 		PortableTexts['declaration.constant']
-	> & {};
-	'declaration.constructor': PortableGuard<
-		PortableIds['declaration.constructor'],
-		PythonNode,
-		TSKindId,
-		PortableTexts['declaration.constructor']
 	> & {};
 	'declaration.function': PortableGuard<
 		PortableIds['declaration.function'],
@@ -1387,17 +1374,54 @@ export interface PortableIsAt {
 		TSKindId,
 		PortableTexts['declaration.function']
 	> & {};
-	'declaration.method': PortableGuard<
-		PortableIds['declaration.method'],
+	'declaration.member': PortableGuard<
+		PortableIds['declaration.member'],
 		PythonNode,
 		TSKindId,
-		PortableTexts['declaration.method']
-	> & { readonly special: PortableIsAt['declaration.method.special'] };
-	'declaration.method.special': PortableGuard<
-		PortableIds['declaration.method.special'],
+		PortableTexts['declaration.member']
+	> & {
+		readonly constructor: PortableIsAt['declaration.member.constructor'];
+		readonly method: PortableIsAt['declaration.member.method'];
+		readonly property: PortableIsAt['declaration.member.property'];
+	};
+	'declaration.member.constructor': PortableGuard<
+		PortableIds['declaration.member.constructor'],
 		PythonNode,
 		TSKindId,
-		PortableTexts['declaration.method.special']
+		PortableTexts['declaration.member.constructor']
+	> & {};
+	'declaration.member.method': PortableGuard<
+		PortableIds['declaration.member.method'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['declaration.member.method']
+	> & { readonly special: PortableIsAt['declaration.member.method.special'] };
+	'declaration.member.method.special': PortableGuard<
+		PortableIds['declaration.member.method.special'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['declaration.member.method.special']
+	> & {};
+	'declaration.member.property': PortableGuard<
+		PortableIds['declaration.member.property'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['declaration.member.property']
+	> & {
+		readonly getter: PortableIsAt['declaration.member.property.getter'];
+		readonly setter: PortableIsAt['declaration.member.property.setter'];
+	};
+	'declaration.member.property.getter': PortableGuard<
+		PortableIds['declaration.member.property.getter'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['declaration.member.property.getter']
+	> & {};
+	'declaration.member.property.setter': PortableGuard<
+		PortableIds['declaration.member.property.setter'],
+		PythonNode,
+		TSKindId,
+		PortableTexts['declaration.member.property.setter']
 	> & {};
 	'declaration.parameter': PortableGuard<
 		PortableIds['declaration.parameter'],
@@ -1427,32 +1451,26 @@ export interface PortableIsAt {
 		TSKindId,
 		PortableTexts['declaration.parameter.typed_default']
 	> & {};
-	'declaration.property': PortableGuard<
-		PortableIds['declaration.property'],
+	'declaration.type': PortableGuard<
+		PortableIds['declaration.type'],
 		PythonNode,
 		TSKindId,
-		PortableTexts['declaration.property']
+		PortableTexts['declaration.type']
 	> & {
-		readonly getter: PortableIsAt['declaration.property.getter'];
-		readonly setter: PortableIsAt['declaration.property.setter'];
+		readonly class: PortableIsAt['declaration.type.class'];
+		readonly type_alias: PortableIsAt['declaration.type.type_alias'];
 	};
-	'declaration.property.getter': PortableGuard<
-		PortableIds['declaration.property.getter'],
+	'declaration.type.class': PortableGuard<
+		PortableIds['declaration.type.class'],
 		PythonNode,
 		TSKindId,
-		PortableTexts['declaration.property.getter']
+		PortableTexts['declaration.type.class']
 	> & {};
-	'declaration.property.setter': PortableGuard<
-		PortableIds['declaration.property.setter'],
+	'declaration.type.type_alias': PortableGuard<
+		PortableIds['declaration.type.type_alias'],
 		PythonNode,
 		TSKindId,
-		PortableTexts['declaration.property.setter']
-	> & {};
-	'declaration.type_alias': PortableGuard<
-		PortableIds['declaration.type_alias'],
-		PythonNode,
-		TSKindId,
-		PortableTexts['declaration.type_alias']
+		PortableTexts['declaration.type.type_alias']
 	> & {};
 	'declaration.type_parameter': PortableGuard<
 		PortableIds['declaration.type_parameter'],
@@ -2809,15 +2827,21 @@ const table: PortableTable = {
 			],
 			exact: true
 		},
-		'declaration.class': { ids: [TSKindId.ClassDefinition], exact: true },
 		'declaration.constant': {
 			ids: [TSKindId.AssignmentEq, TSKindId.AssignmentType, TSKindId.AssignmentTyped],
 			exact: false
 		},
-		'declaration.constructor': { ids: [TSKindId.ConstructorDeclaration, TSKindId.MethodDeclaration], exact: false },
 		'declaration.function': { ids: [TSKindId.FunctionDefinition], exact: true },
-		'declaration.method': { ids: [TSKindId.MethodDeclaration], exact: false },
-		'declaration.method.special': { ids: [TSKindId.MethodDeclaration], exact: false },
+		'declaration.member': { ids: [TSKindId.ConstructorDeclaration, TSKindId.MethodDeclaration], exact: true },
+		'declaration.member.constructor': {
+			ids: [TSKindId.ConstructorDeclaration, TSKindId.MethodDeclaration],
+			exact: false
+		},
+		'declaration.member.method': { ids: [TSKindId.MethodDeclaration], exact: false },
+		'declaration.member.method.special': { ids: [TSKindId.MethodDeclaration], exact: false },
+		'declaration.member.property': { ids: [TSKindId.MethodDeclaration], exact: false },
+		'declaration.member.property.getter': { ids: [TSKindId.MethodDeclaration], exact: false },
+		'declaration.member.property.setter': { ids: [TSKindId.MethodDeclaration], exact: false },
 		'declaration.parameter': {
 			ids: [TSKindId.DefaultParameter, TSKindId.TypedDefaultParameter, TSKindId.TypedParameter],
 			exact: true
@@ -2825,10 +2849,9 @@ const table: PortableTable = {
 		'declaration.parameter.defaulted': { ids: [TSKindId.DefaultParameter], exact: true },
 		'declaration.parameter.typed': { ids: [TSKindId.TypedParameter], exact: true },
 		'declaration.parameter.typed_default': { ids: [TSKindId.TypedDefaultParameter], exact: true },
-		'declaration.property': { ids: [TSKindId.MethodDeclaration], exact: false },
-		'declaration.property.getter': { ids: [TSKindId.MethodDeclaration], exact: false },
-		'declaration.property.setter': { ids: [TSKindId.MethodDeclaration], exact: false },
-		'declaration.type_alias': { ids: [TSKindId.TypeAliasStatement], exact: true },
+		'declaration.type': { ids: [TSKindId.ClassDefinition, TSKindId.TypeAliasStatement], exact: true },
+		'declaration.type.class': { ids: [TSKindId.ClassDefinition], exact: true },
+		'declaration.type.type_alias': { ids: [TSKindId.TypeAliasStatement], exact: true },
 		'declaration.type_parameter': {
 			ids: [TSKindId.TypeParamParamSpec, TSKindId.TypeParamTypeVar, TSKindId.TypeParamTypeVarTuple],
 			exact: true
@@ -3513,7 +3536,7 @@ const table: PortableTable = {
 		[TSKindId.CaseListPattern]: [{ path: 'pattern.list', within: [], test: [] }],
 		[TSKindId.CasePatternList]: [{ path: 'pattern.tuple.bare', within: [], test: [] }],
 		[TSKindId.CaseTuplePattern]: [{ path: 'pattern.tuple', within: [], test: [] }],
-		[TSKindId.ClassDefinition]: [{ path: 'declaration.class', within: [], test: [] }],
+		[TSKindId.ClassDefinition]: [{ path: 'declaration.type.class', within: [], test: [] }],
 		[TSKindId.ClassPattern]: [{ path: 'pattern.struct', within: [], test: [] }],
 		[TSKindId.Comment]: [{ path: 'comment.line', within: [], test: [] }],
 		[TSKindId.ComparisonOperator]: [
@@ -3689,7 +3712,7 @@ const table: PortableTable = {
 		[TSKindId.ConcatenatedString]: [{ path: 'literal.string.concatenated', within: [], test: [] }],
 		[TSKindId.ConditionalExpression]: [{ path: 'expression.conditional', within: [], test: [] }],
 		[TSKindId.ConstrainedType]: [{ path: 'type.constrained', within: [], test: [] }],
-		[TSKindId.ConstructorDeclaration]: [{ path: 'declaration.constructor', within: [], test: [] }],
+		[TSKindId.ConstructorDeclaration]: [{ path: 'declaration.member.constructor', within: [], test: [] }],
 		[TSKindId.ContinueStatement]: [{ path: 'statement.continue', within: [], test: [] }],
 		[TSKindId.DefaultParameter]: [{ path: 'declaration.parameter.defaulted', within: [], test: [] }],
 		[TSKindId.DeleteStatement]: [{ path: 'statement.delete', within: [], test: [] }],
@@ -3791,21 +3814,21 @@ const table: PortableTable = {
 		[TSKindId.MemberType]: [{ path: 'identifier.qualified', within: [], test: [] }],
 		[TSKindId.MethodDeclaration]: [
 			{
-				path: 'declaration.method',
+				path: 'declaration.member.method',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<name>.*[^_]_?)$', slots: { '361': 1 } } }]
 			},
 			{
-				path: 'declaration.constructor',
+				path: 'declaration.member.constructor',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', slots: { '361': 1 } } }]
 			},
 			{
-				path: 'declaration.method.special',
+				path: 'declaration.member.method.special',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', slots: { '361': 1 } } }]
 			},
-			{ path: 'declaration.method', within: [], test: [] }
+			{ path: 'declaration.member.method', within: [], test: [] }
 		],
 		[TSKindId.Module]: [{ path: 'file', within: [], test: [] }],
 		[TSKindId.NamedExpression]: [{ path: 'expression.assignment', within: [], test: [] }],
@@ -3991,7 +4014,7 @@ const table: PortableTable = {
 		[TSKindId.TryStatement]: [{ path: 'statement.try', within: [], test: [] }],
 		[TSKindId.Tuple]: [{ path: 'expression.collection.tuple', within: [], test: [] }],
 		[TSKindId.TuplePattern]: [{ path: 'pattern.tuple', within: [], test: [] }],
-		[TSKindId.TypeAliasStatement]: [{ path: 'declaration.type_alias', within: [], test: [] }],
+		[TSKindId.TypeAliasStatement]: [{ path: 'declaration.type.type_alias', within: [], test: [] }],
 		[TSKindId.TypeConversion]: [{ path: 'expression.interpolation.conversion', within: [], test: [] }],
 		[TSKindId.TypeParamParamSpec]: [{ path: 'declaration.type_parameter.parameters', within: [], test: [] }],
 		[TSKindId.TypeParamTypeVar]: [{ path: 'declaration.type_parameter', within: [], test: [] }],
@@ -4039,7 +4062,7 @@ const table: PortableTable = {
 			{
 				container: TSKindId.DecoratedDefinitionClassDeclaration,
 				name: 'getter',
-				path: 'declaration.property.getter',
+				path: 'declaration.member.property.getter',
 				slot: 'decorators',
 				items: { slots: { '320': 0 } },
 				test: { op: 'eq', text: 'property', slots: { '184': 0 } },
@@ -4048,7 +4071,7 @@ const table: PortableTable = {
 			{
 				container: TSKindId.DecoratedDefinitionClassDeclaration,
 				name: 'setter',
-				path: 'declaration.property.setter',
+				path: 'declaration.member.property.setter',
 				slot: 'decorators',
 				items: { slots: { '320': 0 } },
 				test: { op: 'child', slots: { '184': 0 }, of: { op: 'eq', text: 'setter', slots: { '226': 1 } } },

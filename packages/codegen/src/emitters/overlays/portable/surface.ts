@@ -10,6 +10,7 @@ import { descendants, namespaceTree, type NamespaceNode } from './namespaces.ts'
 
 export interface PortableSurfaceConfig {
 	readonly nodeType: string;
+	readonly namespaces: ReadonlySet<string>;
 	readonly routes: GrammarRoutes;
 	readonly readTest: (entry: ReadEntry) => readonly PortableCondition[];
 	readonly factOf: (entry: ReadEntry) => PortableFactRecord | undefined;
@@ -23,7 +24,7 @@ export interface PortableSurfaceConfig {
 }
 
 
-export function emitPortableSurface({ nodeType, routes, readTest, factOf, kindIdOf, fixedText, literals, flags, flagTypes, slotFlags, slotFlagTypes }: PortableSurfaceConfig): string {
+export function emitPortableSurface({ nodeType, namespaces, routes, readTest, factOf, kindIdOf, fixedText, literals, flags, flagTypes, slotFlags, slotFlagTypes }: PortableSurfaceConfig): string {
 	const root = namespaceTree(routes.readEntries);
 	const nodes = descendants(root);
 	const byPath = new Map([root, ...nodes].map((n) => [n.path, n]));
@@ -77,7 +78,7 @@ export function emitPortableSurface({ nodeType, routes, readTest, factOf, kindId
 		'}',
 		'',
 		'export interface PortableKindsAt {',
-		...nodes.map((n) => `\t${q(n.path)}: ${braces([`readonly $path: ${q(n.path)}`, ...members(n.path, 'PortableKindsAt')])};`),
+		...nodes.map((n) => `\t${q(n.path)}: ${braces([...(namespaces.has(n.path) ? [] : [`readonly $path: ${q(n.path)}`]), ...members(n.path, 'PortableKindsAt')])};`),
 		'}',
 		'',
 		'export interface PortableIsAt {',

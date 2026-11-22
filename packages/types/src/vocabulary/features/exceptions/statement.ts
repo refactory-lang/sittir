@@ -31,7 +31,7 @@ export namespace Statement {
 		readonly $path: K;
 		readonly alternative?: Slot<G, K, 'alternative', V.Clause.Else<G>>;
 		// p only
-		readonly body: Slot<G, K, 'body', V.Declaration.TypeAlias<G> | V.Statement.Any<G>>;
+		readonly body: Slot<G, K, 'body', V.Declaration.Type.TypeAlias<G> | V.Statement.Any<G>>;
 		readonly finalizer?: Slot<G, K, 'finalizer', V.Clause.Finally<G>>;
 		readonly handlers?: Slot<G, K, 'handlers', V.Clause.Any<G>>[];
 	}

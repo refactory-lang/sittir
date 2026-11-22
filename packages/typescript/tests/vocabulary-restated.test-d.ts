@@ -20,19 +20,6 @@ export declare namespace Comment.Html {
 	}
 }
 
-export declare namespace Declaration.Field.Signature {
-	type Child = V.Declaration.Field.Signature<TypeScriptMap>;
-	type Parent = V.Declaration.Field<TypeScriptMap, 'declaration.field.signature'>;
-	interface Restated {
-		readonly name: Fit<Child['name'], Parent['name']>;
-		readonly optional: Fit<Child['optional'], Parent['optional']>;
-		readonly override: Fit<Child['override'], Parent['override']>;
-		readonly readonly: Fit<Child['readonly'], Parent['readonly']>;
-		readonly static: Fit<Child['static'], Parent['static']>;
-		readonly type: Fit<Child['type'], Parent['type']>;
-	}
-}
-
 export declare namespace Declaration.Function.Signature {
 	type Child = V.Declaration.Function.Signature<TypeScriptMap>;
 	type Parent = V.Declaration.Function<TypeScriptMap, 'declaration.function.signature'>;
@@ -46,9 +33,22 @@ export declare namespace Declaration.Function.Signature {
 	}
 }
 
-export declare namespace Declaration.Method.Signature {
-	type Child = V.Declaration.Method.Signature<TypeScriptMap>;
-	type Parent = V.Declaration.Method<TypeScriptMap, 'declaration.method.signature'>;
+export declare namespace Declaration.Member.Field.Signature {
+	type Child = V.Declaration.Member.Field.Signature<TypeScriptMap>;
+	type Parent = V.Declaration.Member.Field<TypeScriptMap, 'declaration.member.field.signature'>;
+	interface Restated {
+		readonly name: Fit<Child['name'], Parent['name']>;
+		readonly optional: Fit<Child['optional'], Parent['optional']>;
+		readonly override: Fit<Child['override'], Parent['override']>;
+		readonly readonly: Fit<Child['readonly'], Parent['readonly']>;
+		readonly static: Fit<Child['static'], Parent['static']>;
+		readonly type: Fit<Child['type'], Parent['type']>;
+	}
+}
+
+export declare namespace Declaration.Member.Method.Signature {
+	type Child = V.Declaration.Member.Method.Signature<TypeScriptMap>;
+	type Parent = V.Declaration.Member.Method<TypeScriptMap, 'declaration.member.method.signature'>;
 	interface Restated {
 		readonly async: Fit<Child['async'], Parent['async']>;
 		readonly name: Fit<Child['name'], Parent['name']>;
@@ -63,9 +63,9 @@ export declare namespace Declaration.Method.Signature {
 	}
 }
 
-export declare namespace Declaration.Method.Signature.Abstract {
-	type Child = V.Declaration.Method.Signature.Abstract<TypeScriptMap>;
-	type Parent = V.Declaration.Method.Signature<TypeScriptMap, 'declaration.method.signature.abstract'>;
+export declare namespace Declaration.Member.Method.Signature.Abstract {
+	type Child = V.Declaration.Member.Method.Signature.Abstract<TypeScriptMap>;
+	type Parent = V.Declaration.Member.Method.Signature<TypeScriptMap, 'declaration.member.method.signature.abstract'>;
 	interface Restated {
 		readonly name: Fit<Child['name'], Parent['name']>;
 		readonly optional: Fit<Child['optional'], Parent['optional']>;
@@ -511,14 +511,6 @@ export declare namespace Literal.Regex.Pattern {
 	interface Restated {
 		readonly flags: Fit<Child['flags'], Parent['flags']>;
 		readonly pattern: Fit<Child['pattern'], Parent['pattern']>;
-	}
-}
-
-export declare namespace Statement.Block.Static {
-	type Child = V.Statement.Block.Static<TypeScriptMap>;
-	type Parent = V.Statement.Block<TypeScriptMap, 'statement.block.static'>;
-	interface Restated {
-		readonly statements: Fit<Child['statements'], Parent['statements']>;
 	}
 }
 

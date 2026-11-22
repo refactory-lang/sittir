@@ -309,18 +309,6 @@ type clause_else$291_statements$Item =
 	| RustMap['nodes']['declaration.constant.public.parent']
 	| BuildInput<RustMap, 'declaration.constant.public.restricted'>
 	| RustMap['nodes']['declaration.constant.public.restricted']
-	| BuildInput<RustMap, 'declaration.enum'>
-	| RustMap['nodes']['declaration.enum']
-	| BuildInput<RustMap, 'declaration.enum.private'>
-	| RustMap['nodes']['declaration.enum.private']
-	| BuildInput<RustMap, 'declaration.enum.public'>
-	| RustMap['nodes']['declaration.enum.public']
-	| BuildInput<RustMap, 'declaration.enum.public.internal'>
-	| RustMap['nodes']['declaration.enum.public.internal']
-	| BuildInput<RustMap, 'declaration.enum.public.parent'>
-	| RustMap['nodes']['declaration.enum.public.parent']
-	| BuildInput<RustMap, 'declaration.enum.public.restricted'>
-	| RustMap['nodes']['declaration.enum.public.restricted']
 	| BuildInput<RustMap, 'declaration.extension'>
 	| RustMap['nodes']['declaration.extension']
 	| BuildInput<RustMap, 'declaration.extension.conformance'>
@@ -349,18 +337,6 @@ type clause_else$291_statements$Item =
 	| RustMap['nodes']['declaration.function.signature.public.parent']
 	| BuildInput<RustMap, 'declaration.function.signature.public.restricted'>
 	| RustMap['nodes']['declaration.function.signature.public.restricted']
-	| BuildInput<RustMap, 'declaration.interface.trait'>
-	| RustMap['nodes']['declaration.interface.trait']
-	| BuildInput<RustMap, 'declaration.interface.trait.private'>
-	| RustMap['nodes']['declaration.interface.trait.private']
-	| BuildInput<RustMap, 'declaration.interface.trait.public'>
-	| RustMap['nodes']['declaration.interface.trait.public']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.internal'>
-	| RustMap['nodes']['declaration.interface.trait.public.internal']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.parent'>
-	| RustMap['nodes']['declaration.interface.trait.public.parent']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.restricted'>
-	| RustMap['nodes']['declaration.interface.trait.public.restricted']
 	| BuildInput<RustMap, 'declaration.macro.brace'>
 	| RustMap['nodes']['declaration.macro.brace']
 	| BuildInput<RustMap, 'declaration.macro.bracket'>
@@ -381,68 +357,92 @@ type clause_else$291_statements$Item =
 	| RustMap['nodes']['declaration.module.public.parent']
 	| BuildInput<RustMap, 'declaration.module.public.restricted'>
 	| RustMap['nodes']['declaration.module.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct'>
-	| RustMap['nodes']['declaration.struct']
-	| BuildInput<RustMap, 'declaration.struct.private'>
-	| RustMap['nodes']['declaration.struct.private']
-	| BuildInput<RustMap, 'declaration.struct.public'>
-	| RustMap['nodes']['declaration.struct.public']
-	| BuildInput<RustMap, 'declaration.struct.public.internal'>
-	| RustMap['nodes']['declaration.struct.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.public.parent'>
-	| RustMap['nodes']['declaration.struct.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.public.restricted'>
-	| RustMap['nodes']['declaration.struct.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.tuple'>
-	| RustMap['nodes']['declaration.struct.tuple']
-	| BuildInput<RustMap, 'declaration.struct.tuple.private'>
-	| RustMap['nodes']['declaration.struct.tuple.private']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public'>
-	| RustMap['nodes']['declaration.struct.tuple.public']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.internal'>
-	| RustMap['nodes']['declaration.struct.tuple.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.parent'>
-	| RustMap['nodes']['declaration.struct.tuple.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.restricted'>
-	| RustMap['nodes']['declaration.struct.tuple.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.unit'>
-	| RustMap['nodes']['declaration.struct.unit']
-	| BuildInput<RustMap, 'declaration.struct.unit.private'>
-	| RustMap['nodes']['declaration.struct.unit.private']
-	| BuildInput<RustMap, 'declaration.struct.unit.public'>
-	| RustMap['nodes']['declaration.struct.unit.public']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.internal'>
-	| RustMap['nodes']['declaration.struct.unit.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.parent'>
-	| RustMap['nodes']['declaration.struct.unit.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.restricted'>
-	| RustMap['nodes']['declaration.struct.unit.public.restricted']
-	| BuildInput<RustMap, 'declaration.type_alias'>
-	| RustMap['nodes']['declaration.type_alias']
-	| BuildInput<RustMap, 'declaration.type_alias.associated'>
-	| RustMap['nodes']['declaration.type_alias.associated']
-	| BuildInput<RustMap, 'declaration.type_alias.private'>
-	| RustMap['nodes']['declaration.type_alias.private']
-	| BuildInput<RustMap, 'declaration.type_alias.public'>
-	| RustMap['nodes']['declaration.type_alias.public']
-	| BuildInput<RustMap, 'declaration.type_alias.public.internal'>
-	| RustMap['nodes']['declaration.type_alias.public.internal']
-	| BuildInput<RustMap, 'declaration.type_alias.public.parent'>
-	| RustMap['nodes']['declaration.type_alias.public.parent']
-	| BuildInput<RustMap, 'declaration.type_alias.public.restricted'>
-	| RustMap['nodes']['declaration.type_alias.public.restricted']
-	| BuildInput<RustMap, 'declaration.union'>
-	| RustMap['nodes']['declaration.union']
-	| BuildInput<RustMap, 'declaration.union.private'>
-	| RustMap['nodes']['declaration.union.private']
-	| BuildInput<RustMap, 'declaration.union.public'>
-	| RustMap['nodes']['declaration.union.public']
-	| BuildInput<RustMap, 'declaration.union.public.internal'>
-	| RustMap['nodes']['declaration.union.public.internal']
-	| BuildInput<RustMap, 'declaration.union.public.parent'>
-	| RustMap['nodes']['declaration.union.public.parent']
-	| BuildInput<RustMap, 'declaration.union.public.restricted'>
-	| RustMap['nodes']['declaration.union.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.enum'>
+	| RustMap['nodes']['declaration.type.enum']
+	| BuildInput<RustMap, 'declaration.type.enum.private'>
+	| RustMap['nodes']['declaration.type.enum.private']
+	| BuildInput<RustMap, 'declaration.type.enum.public'>
+	| RustMap['nodes']['declaration.type.enum.public']
+	| BuildInput<RustMap, 'declaration.type.enum.public.internal'>
+	| RustMap['nodes']['declaration.type.enum.public.internal']
+	| BuildInput<RustMap, 'declaration.type.enum.public.parent'>
+	| RustMap['nodes']['declaration.type.enum.public.parent']
+	| BuildInput<RustMap, 'declaration.type.enum.public.restricted'>
+	| RustMap['nodes']['declaration.type.enum.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.interface.trait'>
+	| RustMap['nodes']['declaration.type.interface.trait']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.private'>
+	| RustMap['nodes']['declaration.type.interface.trait.private']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public'>
+	| RustMap['nodes']['declaration.type.interface.trait.public']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.internal'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.internal']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.parent'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.parent']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.restricted'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct'>
+	| RustMap['nodes']['declaration.type.struct']
+	| BuildInput<RustMap, 'declaration.type.struct.private'>
+	| RustMap['nodes']['declaration.type.struct.private']
+	| BuildInput<RustMap, 'declaration.type.struct.public'>
+	| RustMap['nodes']['declaration.type.struct.public']
+	| BuildInput<RustMap, 'declaration.type.struct.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple'>
+	| RustMap['nodes']['declaration.type.struct.tuple']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.private'>
+	| RustMap['nodes']['declaration.type.struct.tuple.private']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.unit'>
+	| RustMap['nodes']['declaration.type.struct.unit']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.private'>
+	| RustMap['nodes']['declaration.type.struct.unit.private']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public'>
+	| RustMap['nodes']['declaration.type.struct.unit.public']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.type_alias'>
+	| RustMap['nodes']['declaration.type.type_alias']
+	| BuildInput<RustMap, 'declaration.type.type_alias.associated'>
+	| RustMap['nodes']['declaration.type.type_alias.associated']
+	| BuildInput<RustMap, 'declaration.type.type_alias.private'>
+	| RustMap['nodes']['declaration.type.type_alias.private']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public'>
+	| RustMap['nodes']['declaration.type.type_alias.public']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.internal'>
+	| RustMap['nodes']['declaration.type.type_alias.public.internal']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.parent'>
+	| RustMap['nodes']['declaration.type.type_alias.public.parent']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.restricted'>
+	| RustMap['nodes']['declaration.type.type_alias.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.union'>
+	| RustMap['nodes']['declaration.type.union']
+	| BuildInput<RustMap, 'declaration.type.union.private'>
+	| RustMap['nodes']['declaration.type.union.private']
+	| BuildInput<RustMap, 'declaration.type.union.public'>
+	| RustMap['nodes']['declaration.type.union.public']
+	| BuildInput<RustMap, 'declaration.type.union.public.internal'>
+	| RustMap['nodes']['declaration.type.union.public.internal']
+	| BuildInput<RustMap, 'declaration.type.union.public.parent'>
+	| RustMap['nodes']['declaration.type.union.public.parent']
+	| BuildInput<RustMap, 'declaration.type.union.public.restricted'>
+	| RustMap['nodes']['declaration.type.union.public.restricted']
 	| BuildInput<RustMap, 'declaration.variable'>
 	| RustMap['nodes']['declaration.variable']
 	| BuildInput<RustMap, 'declaration.variable.private'>
@@ -711,18 +711,6 @@ const clause_else$291_statements = (value: clause_else$291_statements$Item) => {
 			return unbuilt('clause.else.statements', value);
 		case 'declaration.constant.public.restricted':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.enum':
-			return unbuilt('clause.else.statements', value);
-		case 'declaration.enum.private':
-			return unbuilt('clause.else.statements', value);
-		case 'declaration.enum.public':
-			return unbuilt('clause.else.statements', value);
-		case 'declaration.enum.public.internal':
-			return unbuilt('clause.else.statements', value);
-		case 'declaration.enum.public.parent':
-			return unbuilt('clause.else.statements', value);
-		case 'declaration.enum.public.restricted':
-			return unbuilt('clause.else.statements', value);
 		case 'declaration.extension':
 			return unbuilt('clause.else.statements', value);
 		case 'declaration.extension.conformance':
@@ -751,18 +739,6 @@ const clause_else$291_statements = (value: clause_else$291_statements$Item) => {
 			return unbuilt('clause.else.statements', value);
 		case 'declaration.function.signature.public.restricted':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.interface.trait':
-			return unbuilt('clause.else.statements', value);
-		case 'declaration.interface.trait.private':
-			return unbuilt('clause.else.statements', value);
-		case 'declaration.interface.trait.public':
-			return unbuilt('clause.else.statements', value);
-		case 'declaration.interface.trait.public.internal':
-			return unbuilt('clause.else.statements', value);
-		case 'declaration.interface.trait.public.parent':
-			return unbuilt('clause.else.statements', value);
-		case 'declaration.interface.trait.public.restricted':
-			return unbuilt('clause.else.statements', value);
 		case 'declaration.macro.brace':
 			return declaration_macro_brace$418(value);
 		case 'declaration.macro.bracket':
@@ -785,67 +761,91 @@ const clause_else$291_statements = (value: clause_else$291_statements$Item) => {
 			return unbuilt('clause.else.statements', value);
 		case 'declaration.module.public.restricted':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.struct':
+		case 'declaration.type.enum':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.struct.private':
+		case 'declaration.type.enum.private':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.struct.public':
+		case 'declaration.type.enum.public':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.struct.public.internal':
+		case 'declaration.type.enum.public.internal':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.struct.public.parent':
+		case 'declaration.type.enum.public.parent':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.struct.public.restricted':
+		case 'declaration.type.enum.public.restricted':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.struct.tuple':
+		case 'declaration.type.interface.trait':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.struct.tuple.private':
+		case 'declaration.type.interface.trait.private':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.struct.tuple.public':
+		case 'declaration.type.interface.trait.public':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.struct.tuple.public.internal':
+		case 'declaration.type.interface.trait.public.internal':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.struct.tuple.public.parent':
+		case 'declaration.type.interface.trait.public.parent':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.struct.tuple.public.restricted':
+		case 'declaration.type.interface.trait.public.restricted':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.struct.unit':
+		case 'declaration.type.struct':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.struct.unit.private':
+		case 'declaration.type.struct.private':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.struct.unit.public':
+		case 'declaration.type.struct.public':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.struct.unit.public.internal':
+		case 'declaration.type.struct.public.internal':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.struct.unit.public.parent':
+		case 'declaration.type.struct.public.parent':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.struct.unit.public.restricted':
+		case 'declaration.type.struct.public.restricted':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.type_alias':
+		case 'declaration.type.struct.tuple':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.type_alias.associated':
+		case 'declaration.type.struct.tuple.private':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.type_alias.private':
+		case 'declaration.type.struct.tuple.public':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.type_alias.public':
+		case 'declaration.type.struct.tuple.public.internal':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.type_alias.public.internal':
+		case 'declaration.type.struct.tuple.public.parent':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.type_alias.public.parent':
+		case 'declaration.type.struct.tuple.public.restricted':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.type_alias.public.restricted':
+		case 'declaration.type.struct.unit':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.union':
+		case 'declaration.type.struct.unit.private':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.union.private':
+		case 'declaration.type.struct.unit.public':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.union.public':
+		case 'declaration.type.struct.unit.public.internal':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.union.public.internal':
+		case 'declaration.type.struct.unit.public.parent':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.union.public.parent':
+		case 'declaration.type.struct.unit.public.restricted':
 			return unbuilt('clause.else.statements', value);
-		case 'declaration.union.public.restricted':
+		case 'declaration.type.type_alias':
+			return unbuilt('clause.else.statements', value);
+		case 'declaration.type.type_alias.associated':
+			return unbuilt('clause.else.statements', value);
+		case 'declaration.type.type_alias.private':
+			return unbuilt('clause.else.statements', value);
+		case 'declaration.type.type_alias.public':
+			return unbuilt('clause.else.statements', value);
+		case 'declaration.type.type_alias.public.internal':
+			return unbuilt('clause.else.statements', value);
+		case 'declaration.type.type_alias.public.parent':
+			return unbuilt('clause.else.statements', value);
+		case 'declaration.type.type_alias.public.restricted':
+			return unbuilt('clause.else.statements', value);
+		case 'declaration.type.union':
+			return unbuilt('clause.else.statements', value);
+		case 'declaration.type.union.private':
+			return unbuilt('clause.else.statements', value);
+		case 'declaration.type.union.public':
+			return unbuilt('clause.else.statements', value);
+		case 'declaration.type.union.public.internal':
+			return unbuilt('clause.else.statements', value);
+		case 'declaration.type.union.public.parent':
+			return unbuilt('clause.else.statements', value);
+		case 'declaration.type.union.public.restricted':
 			return unbuilt('clause.else.statements', value);
 		case 'declaration.variable':
 			if (
@@ -4260,462 +4260,6 @@ const declaration_constant$205_value = (value: declaration_constant$205_value$It
 			return unbuilt('declaration.constant.value', value);
 	}
 };
-type declaration_enum_member$200_name$Item =
-	| Text<RustMap, 'identifier'>
-	| BuildInput<RustMap, 'identifier'>
-	| RustMap['nodes']['identifier'];
-const declaration_enum_member$200_name = (value: declaration_enum_member$200_name$Item) => {
-	if (typeof value === 'string') {
-		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
-		return b.identifier(value);
-	}
-	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('declaration.enum_member.name', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [1])) return value;
-		return unseated('declaration.enum_member.name', value);
-	}
-	switch (value.$path) {
-		case 'identifier':
-			return identifier$1(value);
-		default:
-			return unbuilt('declaration.enum_member.name', value);
-	}
-};
-type declaration_enum_member$200_value$Item =
-	| '()'
-	| 'false'
-	| 'self'
-	| 'true'
-	| Text<RustMap, 'expression.unit'>
-	| Text<RustMap, 'identifier'>
-	| Text<RustMap, 'identifier.receiver'>
-	| Text<RustMap, 'literal.character'>
-	| Text<RustMap, 'literal.number.float'>
-	| number
-	| BuildInput<RustMap, 'expression.assignment'>
-	| RustMap['nodes']['expression.assignment']
-	| BuildInput<RustMap, 'expression.assignment.compound.add'>
-	| RustMap['nodes']['expression.assignment.compound.add']
-	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_and'>
-	| RustMap['nodes']['expression.assignment.compound.bitwise_and']
-	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_or'>
-	| RustMap['nodes']['expression.assignment.compound.bitwise_or']
-	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_xor'>
-	| RustMap['nodes']['expression.assignment.compound.bitwise_xor']
-	| BuildInput<RustMap, 'expression.assignment.compound.divide'>
-	| RustMap['nodes']['expression.assignment.compound.divide']
-	| BuildInput<RustMap, 'expression.assignment.compound.modulo'>
-	| RustMap['nodes']['expression.assignment.compound.modulo']
-	| BuildInput<RustMap, 'expression.assignment.compound.multiply'>
-	| RustMap['nodes']['expression.assignment.compound.multiply']
-	| BuildInput<RustMap, 'expression.assignment.compound.shift_left'>
-	| RustMap['nodes']['expression.assignment.compound.shift_left']
-	| BuildInput<RustMap, 'expression.assignment.compound.shift_right'>
-	| RustMap['nodes']['expression.assignment.compound.shift_right']
-	| BuildInput<RustMap, 'expression.assignment.compound.subtract'>
-	| RustMap['nodes']['expression.assignment.compound.subtract']
-	| BuildInput<RustMap, 'expression.await'>
-	| RustMap['nodes']['expression.await']
-	| BuildInput<RustMap, 'expression.binary.arithmetic.add'>
-	| RustMap['nodes']['expression.binary.arithmetic.add']
-	| BuildInput<RustMap, 'expression.binary.arithmetic.divide'>
-	| RustMap['nodes']['expression.binary.arithmetic.divide']
-	| BuildInput<RustMap, 'expression.binary.arithmetic.modulo'>
-	| RustMap['nodes']['expression.binary.arithmetic.modulo']
-	| BuildInput<RustMap, 'expression.binary.arithmetic.multiply'>
-	| RustMap['nodes']['expression.binary.arithmetic.multiply']
-	| BuildInput<RustMap, 'expression.binary.arithmetic.subtract'>
-	| RustMap['nodes']['expression.binary.arithmetic.subtract']
-	| BuildInput<RustMap, 'expression.binary.bitwise.and'>
-	| RustMap['nodes']['expression.binary.bitwise.and']
-	| BuildInput<RustMap, 'expression.binary.bitwise.or'>
-	| RustMap['nodes']['expression.binary.bitwise.or']
-	| BuildInput<RustMap, 'expression.binary.bitwise.xor'>
-	| RustMap['nodes']['expression.binary.bitwise.xor']
-	| BuildInput<RustMap, 'expression.binary.comparison.equal'>
-	| RustMap['nodes']['expression.binary.comparison.equal']
-	| BuildInput<RustMap, 'expression.binary.comparison.greater'>
-	| RustMap['nodes']['expression.binary.comparison.greater']
-	| BuildInput<RustMap, 'expression.binary.comparison.greater_equal'>
-	| RustMap['nodes']['expression.binary.comparison.greater_equal']
-	| BuildInput<RustMap, 'expression.binary.comparison.less'>
-	| RustMap['nodes']['expression.binary.comparison.less']
-	| BuildInput<RustMap, 'expression.binary.comparison.less_equal'>
-	| RustMap['nodes']['expression.binary.comparison.less_equal']
-	| BuildInput<RustMap, 'expression.binary.comparison.not_equal'>
-	| RustMap['nodes']['expression.binary.comparison.not_equal']
-	| BuildInput<RustMap, 'expression.binary.logical.and'>
-	| RustMap['nodes']['expression.binary.logical.and']
-	| BuildInput<RustMap, 'expression.binary.logical.or'>
-	| RustMap['nodes']['expression.binary.logical.or']
-	| BuildInput<RustMap, 'expression.binary.shift.left'>
-	| RustMap['nodes']['expression.binary.shift.left']
-	| BuildInput<RustMap, 'expression.binary.shift.right'>
-	| RustMap['nodes']['expression.binary.shift.right']
-	| BuildInput<RustMap, 'expression.block.async'>
-	| RustMap['nodes']['expression.block.async']
-	| BuildInput<RustMap, 'expression.block.const'>
-	| RustMap['nodes']['expression.block.const']
-	| BuildInput<RustMap, 'expression.block.generator'>
-	| RustMap['nodes']['expression.block.generator']
-	| BuildInput<RustMap, 'expression.block.try'>
-	| RustMap['nodes']['expression.block.try']
-	| BuildInput<RustMap, 'expression.block.unsafe'>
-	| RustMap['nodes']['expression.block.unsafe']
-	| BuildInput<RustMap, 'expression.call'>
-	| RustMap['nodes']['expression.call']
-	| BuildInput<RustMap, 'expression.call.macro'>
-	| RustMap['nodes']['expression.call.macro']
-	| BuildInput<RustMap, 'expression.call.member'>
-	| RustMap['nodes']['expression.call.member']
-	| BuildInput<RustMap, 'expression.call.qualified'>
-	| RustMap['nodes']['expression.call.qualified']
-	| BuildInput<RustMap, 'expression.cast.conversion'>
-	| RustMap['nodes']['expression.cast.conversion']
-	| BuildInput<RustMap, 'expression.collection.list'>
-	| RustMap['nodes']['expression.collection.list']
-	| BuildInput<RustMap, 'expression.collection.list.repeat'>
-	| RustMap['nodes']['expression.collection.list.repeat']
-	| BuildInput<RustMap, 'expression.collection.struct'>
-	| RustMap['nodes']['expression.collection.struct']
-	| BuildInput<RustMap, 'expression.collection.tuple'>
-	| RustMap['nodes']['expression.collection.tuple']
-	| BuildInput<RustMap, 'expression.instantiation'>
-	| RustMap['nodes']['expression.instantiation']
-	| BuildInput<RustMap, 'expression.lambda'>
-	| RustMap['nodes']['expression.lambda']
-	| BuildInput<RustMap, 'expression.member'>
-	| RustMap['nodes']['expression.member']
-	| BuildInput<RustMap, 'expression.parenthesized'>
-	| RustMap['nodes']['expression.parenthesized']
-	| BuildInput<RustMap, 'expression.propagate'>
-	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range.exclusive'>
-	| RustMap['nodes']['expression.range.exclusive']
-	| BuildInput<RustMap, 'expression.range.inclusive'>
-	| RustMap['nodes']['expression.range.inclusive']
-	| BuildInput<RustMap, 'expression.range.inclusive.legacy'>
-	| RustMap['nodes']['expression.range.inclusive.legacy']
-	| BuildInput<RustMap, 'expression.reference'>
-	| RustMap['nodes']['expression.reference']
-	| BuildInput<RustMap, 'expression.subscript'>
-	| RustMap['nodes']['expression.subscript']
-	| BuildInput<RustMap, 'expression.unary.deref'>
-	| RustMap['nodes']['expression.unary.deref']
-	| BuildInput<RustMap, 'expression.unary.negation'>
-	| RustMap['nodes']['expression.unary.negation']
-	| BuildInput<RustMap, 'expression.unary.not'>
-	| RustMap['nodes']['expression.unary.not']
-	| BuildInput<RustMap, 'expression.yield'>
-	| RustMap['nodes']['expression.yield']
-	| BuildInput<RustMap, 'identifier'>
-	| RustMap['nodes']['identifier']
-	| BuildInput<RustMap, 'identifier.metavariable'>
-	| RustMap['nodes']['identifier.metavariable']
-	| BuildInput<RustMap, 'identifier.qualified'>
-	| RustMap['nodes']['identifier.qualified']
-	| BuildInput<RustMap, 'literal.boolean.false'>
-	| RustMap['nodes']['literal.boolean.false']
-	| BuildInput<RustMap, 'literal.boolean.true'>
-	| RustMap['nodes']['literal.boolean.true']
-	| BuildInput<RustMap, 'literal.character'>
-	| RustMap['nodes']['literal.character']
-	| BuildInput<RustMap, 'literal.number.float'>
-	| RustMap['nodes']['literal.number.float']
-	| BuildInput<RustMap, 'literal.number.integer'>
-	| RustMap['nodes']['literal.number.integer']
-	| BuildInput<RustMap, 'literal.number.integer.binary'>
-	| RustMap['nodes']['literal.number.integer.binary']
-	| BuildInput<RustMap, 'literal.number.integer.hex'>
-	| RustMap['nodes']['literal.number.integer.hex']
-	| BuildInput<RustMap, 'literal.number.integer.octal'>
-	| RustMap['nodes']['literal.number.integer.octal']
-	| BuildInput<RustMap, 'literal.string'>
-	| RustMap['nodes']['literal.string']
-	| BuildInput<RustMap, 'literal.string.bytes'>
-	| RustMap['nodes']['literal.string.bytes']
-	| BuildInput<RustMap, 'literal.string.bytes.raw'>
-	| RustMap['nodes']['literal.string.bytes.raw']
-	| BuildInput<RustMap, 'literal.string.c'>
-	| RustMap['nodes']['literal.string.c']
-	| BuildInput<RustMap, 'literal.string.c.raw'>
-	| RustMap['nodes']['literal.string.c.raw']
-	| BuildInput<RustMap, 'literal.string.raw'>
-	| RustMap['nodes']['literal.string.raw']
-	| BuildInput<RustMap, 'statement.block'>
-	| RustMap['nodes']['statement.block']
-	| BuildInput<RustMap, 'statement.break'>
-	| RustMap['nodes']['statement.break']
-	| BuildInput<RustMap, 'statement.continue'>
-	| RustMap['nodes']['statement.continue']
-	| BuildInput<RustMap, 'statement.if'>
-	| RustMap['nodes']['statement.if']
-	| BuildInput<RustMap, 'statement.loop'>
-	| RustMap['nodes']['statement.loop']
-	| BuildInput<RustMap, 'statement.loop.for_each'>
-	| RustMap['nodes']['statement.loop.for_each']
-	| BuildInput<RustMap, 'statement.loop.while'>
-	| RustMap['nodes']['statement.loop.while']
-	| BuildInput<RustMap, 'statement.match'>
-	| RustMap['nodes']['statement.match']
-	| BuildInput<RustMap, 'statement.return'>
-	| RustMap['nodes']['statement.return'];
-const declaration_enum_member$200_value = (value: declaration_enum_member$200_value$Item) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case '()':
-				return 281;
-			case 'self':
-				return 124;
-			default:
-				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
-				return b.identifier(value);
-		}
-	}
-	if (typeof value === 'number') {
-		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
-		}
-		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
-					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
-					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
-				]
-			)
-		)
-			return value;
-		return unseated('declaration.enum_member.value', value);
-	}
-	switch (value.$path) {
-		case 'expression.assignment':
-			return expression_assignment$271(value);
-		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$272(value);
-		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$272(value);
-		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$272(value);
-		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$272(value);
-		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$272(value);
-		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$272(value);
-		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$272(value);
-		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$272(value);
-		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$272(value);
-		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$272(value);
-		case 'expression.await':
-			return expression_await$307(value);
-		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$270(value);
-		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$270(value);
-		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$270(value);
-		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$270(value);
-		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$270(value);
-		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$270(value);
-		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$270(value);
-		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$270(value);
-		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$270(value);
-		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$270(value);
-		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$270(value);
-		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$270(value);
-		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$270(value);
-		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$270(value);
-		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$270(value);
-		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$270(value);
-		case 'expression.binary.shift.left':
-			return expression_binary_shift_left$270(value);
-		case 'expression.binary.shift.right':
-			return expression_binary_shift_right$270(value);
-		case 'expression.block.async':
-			return expression_block_async$310(value);
-		case 'expression.block.const':
-			return expression_block_const$300(value);
-		case 'expression.block.generator':
-			return expression_block_generator$311(value);
-		case 'expression.block.try':
-			return expression_block_try$312(value);
-		case 'expression.block.unsafe':
-			return expression_block_unsafe$309(value);
-		case 'expression.call':
-			return unbuilt('declaration.enum_member.value', value);
-		case 'expression.call.macro':
-			return expression_call_macro$259(value);
-		case 'expression.call.member':
-			return unbuilt('declaration.enum_member.value', value);
-		case 'expression.call.qualified':
-			return unbuilt('declaration.enum_member.value', value);
-		case 'expression.cast.conversion':
-			return expression_cast_conversion$273(value);
-		case 'expression.collection.list':
-			return expression_collection_list$436(value);
-		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
-		case 'expression.collection.struct':
-			return expression_collection_struct$282(value);
-		case 'expression.collection.tuple':
-			return expression_collection_tuple$280(value);
-		case 'expression.instantiation':
-			return expression_instantiation$245(value);
-		case 'expression.lambda':
-			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
-			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
-		case 'expression.member':
-			return expression_member$308(value);
-		case 'expression.parenthesized':
-			return expression_parenthesized$279(value);
-		case 'expression.propagate':
-			return expression_propagate$268(value);
-		case 'expression.range.exclusive':
-			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
-			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
-			if (value.end !== undefined && value.start === undefined) return expression_range_exclusive$392(value);
-			return expression_range_exclusive$390(value);
-		case 'expression.range.inclusive':
-			return expression_range_inclusive$390(value);
-		case 'expression.range.inclusive.legacy':
-			return expression_range_inclusive_legacy$390(value);
-		case 'expression.reference':
-			if ((value.$flags ?? []).includes('exclusive') && value.argument !== undefined)
-				return expression_reference$373(value);
-			if (
-				!(value.$flags ?? []).includes('exclusive') &&
-				(value.$flags ?? []).includes('raw') &&
-				(value.$flags ?? []).includes('writable') &&
-				value.argument !== undefined
-			)
-				return expression_reference$372(value);
-			if (
-				!(value.$flags ?? []).includes('exclusive') &&
-				(value.$flags ?? []).includes('raw') &&
-				!(value.$flags ?? []).includes('writable') &&
-				value.argument !== undefined
-			)
-				return expression_reference$371(value);
-			return expression_reference$374(value);
-		case 'expression.subscript':
-			return expression_subscript$306(value);
-		case 'expression.unary.deref':
-			return expression_unary_deref$267(value);
-		case 'expression.unary.negation':
-			return expression_unary_negation$267(value);
-		case 'expression.unary.not':
-			return expression_unary_not$267(value);
-		case 'expression.yield':
-			return expression_yield$275(value);
-		case 'identifier':
-			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('declaration.enum_member.value', value);
-		case 'identifier.qualified':
-			return identifier_qualified$263(value);
-		case 'literal.boolean.false':
-			return unbuilt('declaration.enum_member.value', value);
-		case 'literal.boolean.true':
-			return unbuilt('declaration.enum_member.value', value);
-		case 'literal.character':
-			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$145(value);
-			if (
-				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
-				value.content !== undefined
-			)
-				return literal_character$150(value);
-			if (
-				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
-				value.content !== undefined
-			)
-				return literal_character$147(value);
-			if (
-				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
-				value.content !== undefined
-			)
-				return literal_character$149(value);
-			if (
-				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
-				value.content !== undefined
-			)
-				return literal_character$148(value);
-			return unbuilt('declaration.enum_member.value', value);
-		case 'literal.number.float':
-			return literal_number_float$162(value);
-		case 'literal.number.integer':
-			return literal_number_integer$141(value);
-		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$143(value);
-		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$142(value);
-		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$144(value);
-		case 'literal.string':
-			return unbuilt('declaration.enum_member.value', value);
-		case 'literal.string.bytes':
-			return unbuilt('declaration.enum_member.value', value);
-		case 'literal.string.bytes.raw':
-			return unbuilt('declaration.enum_member.value', value);
-		case 'literal.string.c':
-			return unbuilt('declaration.enum_member.value', value);
-		case 'literal.string.c.raw':
-			return unbuilt('declaration.enum_member.value', value);
-		case 'literal.string.raw':
-			return unbuilt('declaration.enum_member.value', value);
-		case 'statement.block':
-			return statement_block$313(value);
-		case 'statement.break':
-			return statement_break$304(value);
-		case 'statement.continue':
-			return statement_continue$305(value);
-		case 'statement.if':
-			return statement_if$287(value);
-		case 'statement.loop':
-			return statement_loop$298(value);
-		case 'statement.loop.for_each':
-			return statement_loop_for_each$299(value);
-		case 'statement.loop.while':
-			return statement_loop_while$297(value);
-		case 'statement.match':
-			return unbuilt('declaration.enum_member.value', value);
-		case 'statement.return':
-			return statement_return$274(value);
-		default:
-			return unbuilt('declaration.enum_member.value', value);
-	}
-};
 type declaration_macro$416_name$Item =
 	| Text<RustMap, 'identifier'>
 	| BuildInput<RustMap, 'identifier'>
@@ -4944,6 +4488,462 @@ const declaration_macro_paren$416_rules$item = (value: declaration_macro_paren$4
 	}
 	return clause_macro_rule$181(value);
 };
+type declaration_member_enum_member$200_name$Item =
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier'];
+const declaration_member_enum_member$200_name = (value: declaration_member_enum_member$200_name$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1])) return value;
+		return unseated('declaration.member.enum_member.name', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1])) return value;
+		return unseated('declaration.member.enum_member.name', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return identifier$1(value);
+		default:
+			return unbuilt('declaration.member.enum_member.name', value);
+	}
+};
+type declaration_member_enum_member$200_value$Item =
+	| '()'
+	| 'false'
+	| 'self'
+	| 'true'
+	| Text<RustMap, 'expression.unit'>
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| number
+	| BuildInput<RustMap, 'expression.assignment'>
+	| RustMap['nodes']['expression.assignment']
+	| BuildInput<RustMap, 'expression.assignment.compound.add'>
+	| RustMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_and'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_or'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_xor'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<RustMap, 'expression.assignment.compound.divide'>
+	| RustMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<RustMap, 'expression.assignment.compound.modulo'>
+	| RustMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<RustMap, 'expression.assignment.compound.multiply'>
+	| RustMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_left'>
+	| RustMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_right'>
+	| RustMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<RustMap, 'expression.assignment.compound.subtract'>
+	| RustMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<RustMap, 'expression.await'>
+	| RustMap['nodes']['expression.await']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.add'>
+	| RustMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.divide'>
+	| RustMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.modulo'>
+	| RustMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.multiply'>
+	| RustMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.subtract'>
+	| RustMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<RustMap, 'expression.binary.bitwise.and'>
+	| RustMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<RustMap, 'expression.binary.bitwise.or'>
+	| RustMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<RustMap, 'expression.binary.bitwise.xor'>
+	| RustMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<RustMap, 'expression.binary.comparison.equal'>
+	| RustMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater'>
+	| RustMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater_equal'>
+	| RustMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.less'>
+	| RustMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<RustMap, 'expression.binary.comparison.less_equal'>
+	| RustMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.not_equal'>
+	| RustMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<RustMap, 'expression.binary.logical.and'>
+	| RustMap['nodes']['expression.binary.logical.and']
+	| BuildInput<RustMap, 'expression.binary.logical.or'>
+	| RustMap['nodes']['expression.binary.logical.or']
+	| BuildInput<RustMap, 'expression.binary.shift.left'>
+	| RustMap['nodes']['expression.binary.shift.left']
+	| BuildInput<RustMap, 'expression.binary.shift.right'>
+	| RustMap['nodes']['expression.binary.shift.right']
+	| BuildInput<RustMap, 'expression.block.async'>
+	| RustMap['nodes']['expression.block.async']
+	| BuildInput<RustMap, 'expression.block.const'>
+	| RustMap['nodes']['expression.block.const']
+	| BuildInput<RustMap, 'expression.block.generator'>
+	| RustMap['nodes']['expression.block.generator']
+	| BuildInput<RustMap, 'expression.block.try'>
+	| RustMap['nodes']['expression.block.try']
+	| BuildInput<RustMap, 'expression.block.unsafe'>
+	| RustMap['nodes']['expression.block.unsafe']
+	| BuildInput<RustMap, 'expression.call'>
+	| RustMap['nodes']['expression.call']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'expression.call.member'>
+	| RustMap['nodes']['expression.call.member']
+	| BuildInput<RustMap, 'expression.call.qualified'>
+	| RustMap['nodes']['expression.call.qualified']
+	| BuildInput<RustMap, 'expression.cast.conversion'>
+	| RustMap['nodes']['expression.cast.conversion']
+	| BuildInput<RustMap, 'expression.collection.list'>
+	| RustMap['nodes']['expression.collection.list']
+	| BuildInput<RustMap, 'expression.collection.list.repeat'>
+	| RustMap['nodes']['expression.collection.list.repeat']
+	| BuildInput<RustMap, 'expression.collection.struct'>
+	| RustMap['nodes']['expression.collection.struct']
+	| BuildInput<RustMap, 'expression.collection.tuple'>
+	| RustMap['nodes']['expression.collection.tuple']
+	| BuildInput<RustMap, 'expression.instantiation'>
+	| RustMap['nodes']['expression.instantiation']
+	| BuildInput<RustMap, 'expression.lambda'>
+	| RustMap['nodes']['expression.lambda']
+	| BuildInput<RustMap, 'expression.member'>
+	| RustMap['nodes']['expression.member']
+	| BuildInput<RustMap, 'expression.parenthesized'>
+	| RustMap['nodes']['expression.parenthesized']
+	| BuildInput<RustMap, 'expression.propagate'>
+	| RustMap['nodes']['expression.propagate']
+	| BuildInput<RustMap, 'expression.range.exclusive'>
+	| RustMap['nodes']['expression.range.exclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive'>
+	| RustMap['nodes']['expression.range.inclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive.legacy'>
+	| RustMap['nodes']['expression.range.inclusive.legacy']
+	| BuildInput<RustMap, 'expression.reference'>
+	| RustMap['nodes']['expression.reference']
+	| BuildInput<RustMap, 'expression.subscript'>
+	| RustMap['nodes']['expression.subscript']
+	| BuildInput<RustMap, 'expression.unary.deref'>
+	| RustMap['nodes']['expression.unary.deref']
+	| BuildInput<RustMap, 'expression.unary.negation'>
+	| RustMap['nodes']['expression.unary.negation']
+	| BuildInput<RustMap, 'expression.unary.not'>
+	| RustMap['nodes']['expression.unary.not']
+	| BuildInput<RustMap, 'expression.yield'>
+	| RustMap['nodes']['expression.yield']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw']
+	| BuildInput<RustMap, 'statement.block'>
+	| RustMap['nodes']['statement.block']
+	| BuildInput<RustMap, 'statement.break'>
+	| RustMap['nodes']['statement.break']
+	| BuildInput<RustMap, 'statement.continue'>
+	| RustMap['nodes']['statement.continue']
+	| BuildInput<RustMap, 'statement.if'>
+	| RustMap['nodes']['statement.if']
+	| BuildInput<RustMap, 'statement.loop'>
+	| RustMap['nodes']['statement.loop']
+	| BuildInput<RustMap, 'statement.loop.for_each'>
+	| RustMap['nodes']['statement.loop.for_each']
+	| BuildInput<RustMap, 'statement.loop.while'>
+	| RustMap['nodes']['statement.loop.while']
+	| BuildInput<RustMap, 'statement.match'>
+	| RustMap['nodes']['statement.match']
+	| BuildInput<RustMap, 'statement.return'>
+	| RustMap['nodes']['statement.return'];
+const declaration_member_enum_member$200_value = (value: declaration_member_enum_member$200_value$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '()':
+				return 281;
+			case 'self':
+				return 124;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
+					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
+					390, 391, 392, 393, 435, 436
+				]
+			)
+		)
+			return value;
+		return unseated('declaration.member.enum_member.value', value);
+	}
+	switch (value.$path) {
+		case 'expression.assignment':
+			return expression_assignment$271(value);
+		case 'expression.assignment.compound.add':
+			return expression_assignment_compound_add$272(value);
+		case 'expression.assignment.compound.bitwise_and':
+			return expression_assignment_compound_bitwise_and$272(value);
+		case 'expression.assignment.compound.bitwise_or':
+			return expression_assignment_compound_bitwise_or$272(value);
+		case 'expression.assignment.compound.bitwise_xor':
+			return expression_assignment_compound_bitwise_xor$272(value);
+		case 'expression.assignment.compound.divide':
+			return expression_assignment_compound_divide$272(value);
+		case 'expression.assignment.compound.modulo':
+			return expression_assignment_compound_modulo$272(value);
+		case 'expression.assignment.compound.multiply':
+			return expression_assignment_compound_multiply$272(value);
+		case 'expression.assignment.compound.shift_left':
+			return expression_assignment_compound_shift_left$272(value);
+		case 'expression.assignment.compound.shift_right':
+			return expression_assignment_compound_shift_right$272(value);
+		case 'expression.assignment.compound.subtract':
+			return expression_assignment_compound_subtract$272(value);
+		case 'expression.await':
+			return expression_await$307(value);
+		case 'expression.binary.arithmetic.add':
+			return expression_binary_arithmetic_add$270(value);
+		case 'expression.binary.arithmetic.divide':
+			return expression_binary_arithmetic_divide$270(value);
+		case 'expression.binary.arithmetic.modulo':
+			return expression_binary_arithmetic_modulo$270(value);
+		case 'expression.binary.arithmetic.multiply':
+			return expression_binary_arithmetic_multiply$270(value);
+		case 'expression.binary.arithmetic.subtract':
+			return expression_binary_arithmetic_subtract$270(value);
+		case 'expression.binary.bitwise.and':
+			return expression_binary_bitwise_and$270(value);
+		case 'expression.binary.bitwise.or':
+			return expression_binary_bitwise_or$270(value);
+		case 'expression.binary.bitwise.xor':
+			return expression_binary_bitwise_xor$270(value);
+		case 'expression.binary.comparison.equal':
+			return expression_binary_comparison_equal$270(value);
+		case 'expression.binary.comparison.greater':
+			return expression_binary_comparison_greater$270(value);
+		case 'expression.binary.comparison.greater_equal':
+			return expression_binary_comparison_greater_equal$270(value);
+		case 'expression.binary.comparison.less':
+			return expression_binary_comparison_less$270(value);
+		case 'expression.binary.comparison.less_equal':
+			return expression_binary_comparison_less_equal$270(value);
+		case 'expression.binary.comparison.not_equal':
+			return expression_binary_comparison_not_equal$270(value);
+		case 'expression.binary.logical.and':
+			return expression_binary_logical_and$270(value);
+		case 'expression.binary.logical.or':
+			return expression_binary_logical_or$270(value);
+		case 'expression.binary.shift.left':
+			return expression_binary_shift_left$270(value);
+		case 'expression.binary.shift.right':
+			return expression_binary_shift_right$270(value);
+		case 'expression.block.async':
+			return expression_block_async$310(value);
+		case 'expression.block.const':
+			return expression_block_const$300(value);
+		case 'expression.block.generator':
+			return expression_block_generator$311(value);
+		case 'expression.block.try':
+			return expression_block_try$312(value);
+		case 'expression.block.unsafe':
+			return expression_block_unsafe$309(value);
+		case 'expression.call':
+			return unbuilt('declaration.member.enum_member.value', value);
+		case 'expression.call.macro':
+			return expression_call_macro$259(value);
+		case 'expression.call.member':
+			return unbuilt('declaration.member.enum_member.value', value);
+		case 'expression.call.qualified':
+			return unbuilt('declaration.member.enum_member.value', value);
+		case 'expression.cast.conversion':
+			return expression_cast_conversion$273(value);
+		case 'expression.collection.list':
+			return expression_collection_list$436(value);
+		case 'expression.collection.list.repeat':
+			return expression_collection_list_repeat$435(value);
+		case 'expression.collection.struct':
+			return expression_collection_struct$282(value);
+		case 'expression.collection.tuple':
+			return expression_collection_tuple$280(value);
+		case 'expression.instantiation':
+			return expression_instantiation$245(value);
+		case 'expression.lambda':
+			if (
+				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
+				value.body !== undefined &&
+				value.parameters !== undefined
+			)
+				return expression_lambda$369(value);
+			return expression_lambda$370(value);
+		case 'expression.member':
+			return expression_member$308(value);
+		case 'expression.parenthesized':
+			return expression_parenthesized$279(value);
+		case 'expression.propagate':
+			return expression_propagate$268(value);
+		case 'expression.range.exclusive':
+			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
+			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
+			if (value.end !== undefined && value.start === undefined) return expression_range_exclusive$392(value);
+			return expression_range_exclusive$390(value);
+		case 'expression.range.inclusive':
+			return expression_range_inclusive$390(value);
+		case 'expression.range.inclusive.legacy':
+			return expression_range_inclusive_legacy$390(value);
+		case 'expression.reference':
+			if ((value.$flags ?? []).includes('exclusive') && value.argument !== undefined)
+				return expression_reference$373(value);
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return expression_reference$372(value);
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				!(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return expression_reference$371(value);
+			return expression_reference$374(value);
+		case 'expression.subscript':
+			return expression_subscript$306(value);
+		case 'expression.unary.deref':
+			return expression_unary_deref$267(value);
+		case 'expression.unary.negation':
+			return expression_unary_negation$267(value);
+		case 'expression.unary.not':
+			return expression_unary_not$267(value);
+		case 'expression.yield':
+			return expression_yield$275(value);
+		case 'identifier':
+			return identifier$1(value);
+		case 'identifier.metavariable':
+			return unbuilt('declaration.member.enum_member.value', value);
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		case 'literal.boolean.false':
+			return unbuilt('declaration.member.enum_member.value', value);
+		case 'literal.boolean.true':
+			return unbuilt('declaration.member.enum_member.value', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return literal_character$145(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$150(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$147(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$149(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$148(value);
+			return unbuilt('declaration.member.enum_member.value', value);
+		case 'literal.number.float':
+			return literal_number_float$162(value);
+		case 'literal.number.integer':
+			return literal_number_integer$141(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$143(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$142(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$144(value);
+		case 'literal.string':
+			return unbuilt('declaration.member.enum_member.value', value);
+		case 'literal.string.bytes':
+			return unbuilt('declaration.member.enum_member.value', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('declaration.member.enum_member.value', value);
+		case 'literal.string.c':
+			return unbuilt('declaration.member.enum_member.value', value);
+		case 'literal.string.c.raw':
+			return unbuilt('declaration.member.enum_member.value', value);
+		case 'literal.string.raw':
+			return unbuilt('declaration.member.enum_member.value', value);
+		case 'statement.block':
+			return statement_block$313(value);
+		case 'statement.break':
+			return statement_break$304(value);
+		case 'statement.continue':
+			return statement_continue$305(value);
+		case 'statement.if':
+			return statement_if$287(value);
+		case 'statement.loop':
+			return statement_loop$298(value);
+		case 'statement.loop.for_each':
+			return statement_loop_for_each$299(value);
+		case 'statement.loop.while':
+			return statement_loop_while$297(value);
+		case 'statement.match':
+			return unbuilt('declaration.member.enum_member.value', value);
+		case 'statement.return':
+			return statement_return$274(value);
+		default:
+			return unbuilt('declaration.member.enum_member.value', value);
+	}
+};
 type declaration_module$384_name$Item =
 	| Text<RustMap, 'identifier'>
 	| BuildInput<RustMap, 'identifier'>
@@ -5009,18 +5009,6 @@ type declaration_module$385_statements$item$Item =
 	| RustMap['nodes']['declaration.constant.public.parent']
 	| BuildInput<RustMap, 'declaration.constant.public.restricted'>
 	| RustMap['nodes']['declaration.constant.public.restricted']
-	| BuildInput<RustMap, 'declaration.enum'>
-	| RustMap['nodes']['declaration.enum']
-	| BuildInput<RustMap, 'declaration.enum.private'>
-	| RustMap['nodes']['declaration.enum.private']
-	| BuildInput<RustMap, 'declaration.enum.public'>
-	| RustMap['nodes']['declaration.enum.public']
-	| BuildInput<RustMap, 'declaration.enum.public.internal'>
-	| RustMap['nodes']['declaration.enum.public.internal']
-	| BuildInput<RustMap, 'declaration.enum.public.parent'>
-	| RustMap['nodes']['declaration.enum.public.parent']
-	| BuildInput<RustMap, 'declaration.enum.public.restricted'>
-	| RustMap['nodes']['declaration.enum.public.restricted']
 	| BuildInput<RustMap, 'declaration.extension'>
 	| RustMap['nodes']['declaration.extension']
 	| BuildInput<RustMap, 'declaration.extension.conformance'>
@@ -5049,18 +5037,6 @@ type declaration_module$385_statements$item$Item =
 	| RustMap['nodes']['declaration.function.signature.public.parent']
 	| BuildInput<RustMap, 'declaration.function.signature.public.restricted'>
 	| RustMap['nodes']['declaration.function.signature.public.restricted']
-	| BuildInput<RustMap, 'declaration.interface.trait'>
-	| RustMap['nodes']['declaration.interface.trait']
-	| BuildInput<RustMap, 'declaration.interface.trait.private'>
-	| RustMap['nodes']['declaration.interface.trait.private']
-	| BuildInput<RustMap, 'declaration.interface.trait.public'>
-	| RustMap['nodes']['declaration.interface.trait.public']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.internal'>
-	| RustMap['nodes']['declaration.interface.trait.public.internal']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.parent'>
-	| RustMap['nodes']['declaration.interface.trait.public.parent']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.restricted'>
-	| RustMap['nodes']['declaration.interface.trait.public.restricted']
 	| BuildInput<RustMap, 'declaration.macro.brace'>
 	| RustMap['nodes']['declaration.macro.brace']
 	| BuildInput<RustMap, 'declaration.macro.bracket'>
@@ -5081,68 +5057,92 @@ type declaration_module$385_statements$item$Item =
 	| RustMap['nodes']['declaration.module.public.parent']
 	| BuildInput<RustMap, 'declaration.module.public.restricted'>
 	| RustMap['nodes']['declaration.module.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct'>
-	| RustMap['nodes']['declaration.struct']
-	| BuildInput<RustMap, 'declaration.struct.private'>
-	| RustMap['nodes']['declaration.struct.private']
-	| BuildInput<RustMap, 'declaration.struct.public'>
-	| RustMap['nodes']['declaration.struct.public']
-	| BuildInput<RustMap, 'declaration.struct.public.internal'>
-	| RustMap['nodes']['declaration.struct.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.public.parent'>
-	| RustMap['nodes']['declaration.struct.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.public.restricted'>
-	| RustMap['nodes']['declaration.struct.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.tuple'>
-	| RustMap['nodes']['declaration.struct.tuple']
-	| BuildInput<RustMap, 'declaration.struct.tuple.private'>
-	| RustMap['nodes']['declaration.struct.tuple.private']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public'>
-	| RustMap['nodes']['declaration.struct.tuple.public']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.internal'>
-	| RustMap['nodes']['declaration.struct.tuple.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.parent'>
-	| RustMap['nodes']['declaration.struct.tuple.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.restricted'>
-	| RustMap['nodes']['declaration.struct.tuple.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.unit'>
-	| RustMap['nodes']['declaration.struct.unit']
-	| BuildInput<RustMap, 'declaration.struct.unit.private'>
-	| RustMap['nodes']['declaration.struct.unit.private']
-	| BuildInput<RustMap, 'declaration.struct.unit.public'>
-	| RustMap['nodes']['declaration.struct.unit.public']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.internal'>
-	| RustMap['nodes']['declaration.struct.unit.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.parent'>
-	| RustMap['nodes']['declaration.struct.unit.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.restricted'>
-	| RustMap['nodes']['declaration.struct.unit.public.restricted']
-	| BuildInput<RustMap, 'declaration.type_alias'>
-	| RustMap['nodes']['declaration.type_alias']
-	| BuildInput<RustMap, 'declaration.type_alias.associated'>
-	| RustMap['nodes']['declaration.type_alias.associated']
-	| BuildInput<RustMap, 'declaration.type_alias.private'>
-	| RustMap['nodes']['declaration.type_alias.private']
-	| BuildInput<RustMap, 'declaration.type_alias.public'>
-	| RustMap['nodes']['declaration.type_alias.public']
-	| BuildInput<RustMap, 'declaration.type_alias.public.internal'>
-	| RustMap['nodes']['declaration.type_alias.public.internal']
-	| BuildInput<RustMap, 'declaration.type_alias.public.parent'>
-	| RustMap['nodes']['declaration.type_alias.public.parent']
-	| BuildInput<RustMap, 'declaration.type_alias.public.restricted'>
-	| RustMap['nodes']['declaration.type_alias.public.restricted']
-	| BuildInput<RustMap, 'declaration.union'>
-	| RustMap['nodes']['declaration.union']
-	| BuildInput<RustMap, 'declaration.union.private'>
-	| RustMap['nodes']['declaration.union.private']
-	| BuildInput<RustMap, 'declaration.union.public'>
-	| RustMap['nodes']['declaration.union.public']
-	| BuildInput<RustMap, 'declaration.union.public.internal'>
-	| RustMap['nodes']['declaration.union.public.internal']
-	| BuildInput<RustMap, 'declaration.union.public.parent'>
-	| RustMap['nodes']['declaration.union.public.parent']
-	| BuildInput<RustMap, 'declaration.union.public.restricted'>
-	| RustMap['nodes']['declaration.union.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.enum'>
+	| RustMap['nodes']['declaration.type.enum']
+	| BuildInput<RustMap, 'declaration.type.enum.private'>
+	| RustMap['nodes']['declaration.type.enum.private']
+	| BuildInput<RustMap, 'declaration.type.enum.public'>
+	| RustMap['nodes']['declaration.type.enum.public']
+	| BuildInput<RustMap, 'declaration.type.enum.public.internal'>
+	| RustMap['nodes']['declaration.type.enum.public.internal']
+	| BuildInput<RustMap, 'declaration.type.enum.public.parent'>
+	| RustMap['nodes']['declaration.type.enum.public.parent']
+	| BuildInput<RustMap, 'declaration.type.enum.public.restricted'>
+	| RustMap['nodes']['declaration.type.enum.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.interface.trait'>
+	| RustMap['nodes']['declaration.type.interface.trait']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.private'>
+	| RustMap['nodes']['declaration.type.interface.trait.private']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public'>
+	| RustMap['nodes']['declaration.type.interface.trait.public']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.internal'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.internal']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.parent'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.parent']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.restricted'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct'>
+	| RustMap['nodes']['declaration.type.struct']
+	| BuildInput<RustMap, 'declaration.type.struct.private'>
+	| RustMap['nodes']['declaration.type.struct.private']
+	| BuildInput<RustMap, 'declaration.type.struct.public'>
+	| RustMap['nodes']['declaration.type.struct.public']
+	| BuildInput<RustMap, 'declaration.type.struct.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple'>
+	| RustMap['nodes']['declaration.type.struct.tuple']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.private'>
+	| RustMap['nodes']['declaration.type.struct.tuple.private']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.unit'>
+	| RustMap['nodes']['declaration.type.struct.unit']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.private'>
+	| RustMap['nodes']['declaration.type.struct.unit.private']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public'>
+	| RustMap['nodes']['declaration.type.struct.unit.public']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.type_alias'>
+	| RustMap['nodes']['declaration.type.type_alias']
+	| BuildInput<RustMap, 'declaration.type.type_alias.associated'>
+	| RustMap['nodes']['declaration.type.type_alias.associated']
+	| BuildInput<RustMap, 'declaration.type.type_alias.private'>
+	| RustMap['nodes']['declaration.type.type_alias.private']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public'>
+	| RustMap['nodes']['declaration.type.type_alias.public']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.internal'>
+	| RustMap['nodes']['declaration.type.type_alias.public.internal']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.parent'>
+	| RustMap['nodes']['declaration.type.type_alias.public.parent']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.restricted'>
+	| RustMap['nodes']['declaration.type.type_alias.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.union'>
+	| RustMap['nodes']['declaration.type.union']
+	| BuildInput<RustMap, 'declaration.type.union.private'>
+	| RustMap['nodes']['declaration.type.union.private']
+	| BuildInput<RustMap, 'declaration.type.union.public'>
+	| RustMap['nodes']['declaration.type.union.public']
+	| BuildInput<RustMap, 'declaration.type.union.public.internal'>
+	| RustMap['nodes']['declaration.type.union.public.internal']
+	| BuildInput<RustMap, 'declaration.type.union.public.parent'>
+	| RustMap['nodes']['declaration.type.union.public.parent']
+	| BuildInput<RustMap, 'declaration.type.union.public.restricted'>
+	| RustMap['nodes']['declaration.type.union.public.restricted']
 	| BuildInput<RustMap, 'declaration.variable'>
 	| RustMap['nodes']['declaration.variable']
 	| BuildInput<RustMap, 'declaration.variable.private'>
@@ -5233,18 +5233,6 @@ const declaration_module$385_statements$item = (value: declaration_module$385_st
 			return unbuilt('declaration.module.statements', value);
 		case 'declaration.constant.public.restricted':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.enum':
-			return unbuilt('declaration.module.statements', value);
-		case 'declaration.enum.private':
-			return unbuilt('declaration.module.statements', value);
-		case 'declaration.enum.public':
-			return unbuilt('declaration.module.statements', value);
-		case 'declaration.enum.public.internal':
-			return unbuilt('declaration.module.statements', value);
-		case 'declaration.enum.public.parent':
-			return unbuilt('declaration.module.statements', value);
-		case 'declaration.enum.public.restricted':
-			return unbuilt('declaration.module.statements', value);
 		case 'declaration.extension':
 			return unbuilt('declaration.module.statements', value);
 		case 'declaration.extension.conformance':
@@ -5273,18 +5261,6 @@ const declaration_module$385_statements$item = (value: declaration_module$385_st
 			return unbuilt('declaration.module.statements', value);
 		case 'declaration.function.signature.public.restricted':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.interface.trait':
-			return unbuilt('declaration.module.statements', value);
-		case 'declaration.interface.trait.private':
-			return unbuilt('declaration.module.statements', value);
-		case 'declaration.interface.trait.public':
-			return unbuilt('declaration.module.statements', value);
-		case 'declaration.interface.trait.public.internal':
-			return unbuilt('declaration.module.statements', value);
-		case 'declaration.interface.trait.public.parent':
-			return unbuilt('declaration.module.statements', value);
-		case 'declaration.interface.trait.public.restricted':
-			return unbuilt('declaration.module.statements', value);
 		case 'declaration.macro.brace':
 			return declaration_macro_brace$418(value);
 		case 'declaration.macro.bracket':
@@ -5307,67 +5283,91 @@ const declaration_module$385_statements$item = (value: declaration_module$385_st
 			return unbuilt('declaration.module.statements', value);
 		case 'declaration.module.public.restricted':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.struct':
+		case 'declaration.type.enum':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.struct.private':
+		case 'declaration.type.enum.private':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.struct.public':
+		case 'declaration.type.enum.public':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.struct.public.internal':
+		case 'declaration.type.enum.public.internal':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.struct.public.parent':
+		case 'declaration.type.enum.public.parent':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.struct.public.restricted':
+		case 'declaration.type.enum.public.restricted':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.struct.tuple':
+		case 'declaration.type.interface.trait':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.struct.tuple.private':
+		case 'declaration.type.interface.trait.private':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.struct.tuple.public':
+		case 'declaration.type.interface.trait.public':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.struct.tuple.public.internal':
+		case 'declaration.type.interface.trait.public.internal':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.struct.tuple.public.parent':
+		case 'declaration.type.interface.trait.public.parent':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.struct.tuple.public.restricted':
+		case 'declaration.type.interface.trait.public.restricted':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.struct.unit':
+		case 'declaration.type.struct':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.struct.unit.private':
+		case 'declaration.type.struct.private':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.struct.unit.public':
+		case 'declaration.type.struct.public':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.struct.unit.public.internal':
+		case 'declaration.type.struct.public.internal':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.struct.unit.public.parent':
+		case 'declaration.type.struct.public.parent':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.struct.unit.public.restricted':
+		case 'declaration.type.struct.public.restricted':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.type_alias':
+		case 'declaration.type.struct.tuple':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.type_alias.associated':
+		case 'declaration.type.struct.tuple.private':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.type_alias.private':
+		case 'declaration.type.struct.tuple.public':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.type_alias.public':
+		case 'declaration.type.struct.tuple.public.internal':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.type_alias.public.internal':
+		case 'declaration.type.struct.tuple.public.parent':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.type_alias.public.parent':
+		case 'declaration.type.struct.tuple.public.restricted':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.type_alias.public.restricted':
+		case 'declaration.type.struct.unit':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.union':
+		case 'declaration.type.struct.unit.private':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.union.private':
+		case 'declaration.type.struct.unit.public':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.union.public':
+		case 'declaration.type.struct.unit.public.internal':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.union.public.internal':
+		case 'declaration.type.struct.unit.public.parent':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.union.public.parent':
+		case 'declaration.type.struct.unit.public.restricted':
 			return unbuilt('declaration.module.statements', value);
-		case 'declaration.union.public.restricted':
+		case 'declaration.type.type_alias':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.type.type_alias.associated':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.type.type_alias.private':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.type.type_alias.public':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.type.type_alias.public.internal':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.type.type_alias.public.parent':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.type.type_alias.public.restricted':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.type.union':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.type.union.private':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.type.union.public':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.type.union.public.internal':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.type.union.public.parent':
+			return unbuilt('declaration.module.statements', value);
+		case 'declaration.type.union.public.restricted':
 			return unbuilt('declaration.module.statements', value);
 		case 'declaration.variable':
 			if (
@@ -5463,18 +5463,6 @@ type declaration_module_foreign$396_statements$item$Item =
 	| RustMap['nodes']['declaration.constant.public.parent']
 	| BuildInput<RustMap, 'declaration.constant.public.restricted'>
 	| RustMap['nodes']['declaration.constant.public.restricted']
-	| BuildInput<RustMap, 'declaration.enum'>
-	| RustMap['nodes']['declaration.enum']
-	| BuildInput<RustMap, 'declaration.enum.private'>
-	| RustMap['nodes']['declaration.enum.private']
-	| BuildInput<RustMap, 'declaration.enum.public'>
-	| RustMap['nodes']['declaration.enum.public']
-	| BuildInput<RustMap, 'declaration.enum.public.internal'>
-	| RustMap['nodes']['declaration.enum.public.internal']
-	| BuildInput<RustMap, 'declaration.enum.public.parent'>
-	| RustMap['nodes']['declaration.enum.public.parent']
-	| BuildInput<RustMap, 'declaration.enum.public.restricted'>
-	| RustMap['nodes']['declaration.enum.public.restricted']
 	| BuildInput<RustMap, 'declaration.extension'>
 	| RustMap['nodes']['declaration.extension']
 	| BuildInput<RustMap, 'declaration.extension.conformance'>
@@ -5503,18 +5491,6 @@ type declaration_module_foreign$396_statements$item$Item =
 	| RustMap['nodes']['declaration.function.signature.public.parent']
 	| BuildInput<RustMap, 'declaration.function.signature.public.restricted'>
 	| RustMap['nodes']['declaration.function.signature.public.restricted']
-	| BuildInput<RustMap, 'declaration.interface.trait'>
-	| RustMap['nodes']['declaration.interface.trait']
-	| BuildInput<RustMap, 'declaration.interface.trait.private'>
-	| RustMap['nodes']['declaration.interface.trait.private']
-	| BuildInput<RustMap, 'declaration.interface.trait.public'>
-	| RustMap['nodes']['declaration.interface.trait.public']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.internal'>
-	| RustMap['nodes']['declaration.interface.trait.public.internal']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.parent'>
-	| RustMap['nodes']['declaration.interface.trait.public.parent']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.restricted'>
-	| RustMap['nodes']['declaration.interface.trait.public.restricted']
 	| BuildInput<RustMap, 'declaration.macro.brace'>
 	| RustMap['nodes']['declaration.macro.brace']
 	| BuildInput<RustMap, 'declaration.macro.bracket'>
@@ -5535,68 +5511,92 @@ type declaration_module_foreign$396_statements$item$Item =
 	| RustMap['nodes']['declaration.module.public.parent']
 	| BuildInput<RustMap, 'declaration.module.public.restricted'>
 	| RustMap['nodes']['declaration.module.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct'>
-	| RustMap['nodes']['declaration.struct']
-	| BuildInput<RustMap, 'declaration.struct.private'>
-	| RustMap['nodes']['declaration.struct.private']
-	| BuildInput<RustMap, 'declaration.struct.public'>
-	| RustMap['nodes']['declaration.struct.public']
-	| BuildInput<RustMap, 'declaration.struct.public.internal'>
-	| RustMap['nodes']['declaration.struct.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.public.parent'>
-	| RustMap['nodes']['declaration.struct.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.public.restricted'>
-	| RustMap['nodes']['declaration.struct.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.tuple'>
-	| RustMap['nodes']['declaration.struct.tuple']
-	| BuildInput<RustMap, 'declaration.struct.tuple.private'>
-	| RustMap['nodes']['declaration.struct.tuple.private']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public'>
-	| RustMap['nodes']['declaration.struct.tuple.public']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.internal'>
-	| RustMap['nodes']['declaration.struct.tuple.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.parent'>
-	| RustMap['nodes']['declaration.struct.tuple.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.restricted'>
-	| RustMap['nodes']['declaration.struct.tuple.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.unit'>
-	| RustMap['nodes']['declaration.struct.unit']
-	| BuildInput<RustMap, 'declaration.struct.unit.private'>
-	| RustMap['nodes']['declaration.struct.unit.private']
-	| BuildInput<RustMap, 'declaration.struct.unit.public'>
-	| RustMap['nodes']['declaration.struct.unit.public']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.internal'>
-	| RustMap['nodes']['declaration.struct.unit.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.parent'>
-	| RustMap['nodes']['declaration.struct.unit.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.restricted'>
-	| RustMap['nodes']['declaration.struct.unit.public.restricted']
-	| BuildInput<RustMap, 'declaration.type_alias'>
-	| RustMap['nodes']['declaration.type_alias']
-	| BuildInput<RustMap, 'declaration.type_alias.associated'>
-	| RustMap['nodes']['declaration.type_alias.associated']
-	| BuildInput<RustMap, 'declaration.type_alias.private'>
-	| RustMap['nodes']['declaration.type_alias.private']
-	| BuildInput<RustMap, 'declaration.type_alias.public'>
-	| RustMap['nodes']['declaration.type_alias.public']
-	| BuildInput<RustMap, 'declaration.type_alias.public.internal'>
-	| RustMap['nodes']['declaration.type_alias.public.internal']
-	| BuildInput<RustMap, 'declaration.type_alias.public.parent'>
-	| RustMap['nodes']['declaration.type_alias.public.parent']
-	| BuildInput<RustMap, 'declaration.type_alias.public.restricted'>
-	| RustMap['nodes']['declaration.type_alias.public.restricted']
-	| BuildInput<RustMap, 'declaration.union'>
-	| RustMap['nodes']['declaration.union']
-	| BuildInput<RustMap, 'declaration.union.private'>
-	| RustMap['nodes']['declaration.union.private']
-	| BuildInput<RustMap, 'declaration.union.public'>
-	| RustMap['nodes']['declaration.union.public']
-	| BuildInput<RustMap, 'declaration.union.public.internal'>
-	| RustMap['nodes']['declaration.union.public.internal']
-	| BuildInput<RustMap, 'declaration.union.public.parent'>
-	| RustMap['nodes']['declaration.union.public.parent']
-	| BuildInput<RustMap, 'declaration.union.public.restricted'>
-	| RustMap['nodes']['declaration.union.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.enum'>
+	| RustMap['nodes']['declaration.type.enum']
+	| BuildInput<RustMap, 'declaration.type.enum.private'>
+	| RustMap['nodes']['declaration.type.enum.private']
+	| BuildInput<RustMap, 'declaration.type.enum.public'>
+	| RustMap['nodes']['declaration.type.enum.public']
+	| BuildInput<RustMap, 'declaration.type.enum.public.internal'>
+	| RustMap['nodes']['declaration.type.enum.public.internal']
+	| BuildInput<RustMap, 'declaration.type.enum.public.parent'>
+	| RustMap['nodes']['declaration.type.enum.public.parent']
+	| BuildInput<RustMap, 'declaration.type.enum.public.restricted'>
+	| RustMap['nodes']['declaration.type.enum.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.interface.trait'>
+	| RustMap['nodes']['declaration.type.interface.trait']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.private'>
+	| RustMap['nodes']['declaration.type.interface.trait.private']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public'>
+	| RustMap['nodes']['declaration.type.interface.trait.public']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.internal'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.internal']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.parent'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.parent']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.restricted'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct'>
+	| RustMap['nodes']['declaration.type.struct']
+	| BuildInput<RustMap, 'declaration.type.struct.private'>
+	| RustMap['nodes']['declaration.type.struct.private']
+	| BuildInput<RustMap, 'declaration.type.struct.public'>
+	| RustMap['nodes']['declaration.type.struct.public']
+	| BuildInput<RustMap, 'declaration.type.struct.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple'>
+	| RustMap['nodes']['declaration.type.struct.tuple']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.private'>
+	| RustMap['nodes']['declaration.type.struct.tuple.private']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.unit'>
+	| RustMap['nodes']['declaration.type.struct.unit']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.private'>
+	| RustMap['nodes']['declaration.type.struct.unit.private']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public'>
+	| RustMap['nodes']['declaration.type.struct.unit.public']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.type_alias'>
+	| RustMap['nodes']['declaration.type.type_alias']
+	| BuildInput<RustMap, 'declaration.type.type_alias.associated'>
+	| RustMap['nodes']['declaration.type.type_alias.associated']
+	| BuildInput<RustMap, 'declaration.type.type_alias.private'>
+	| RustMap['nodes']['declaration.type.type_alias.private']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public'>
+	| RustMap['nodes']['declaration.type.type_alias.public']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.internal'>
+	| RustMap['nodes']['declaration.type.type_alias.public.internal']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.parent'>
+	| RustMap['nodes']['declaration.type.type_alias.public.parent']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.restricted'>
+	| RustMap['nodes']['declaration.type.type_alias.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.union'>
+	| RustMap['nodes']['declaration.type.union']
+	| BuildInput<RustMap, 'declaration.type.union.private'>
+	| RustMap['nodes']['declaration.type.union.private']
+	| BuildInput<RustMap, 'declaration.type.union.public'>
+	| RustMap['nodes']['declaration.type.union.public']
+	| BuildInput<RustMap, 'declaration.type.union.public.internal'>
+	| RustMap['nodes']['declaration.type.union.public.internal']
+	| BuildInput<RustMap, 'declaration.type.union.public.parent'>
+	| RustMap['nodes']['declaration.type.union.public.parent']
+	| BuildInput<RustMap, 'declaration.type.union.public.restricted'>
+	| RustMap['nodes']['declaration.type.union.public.restricted']
 	| BuildInput<RustMap, 'declaration.variable'>
 	| RustMap['nodes']['declaration.variable']
 	| BuildInput<RustMap, 'declaration.variable.private'>
@@ -5687,18 +5687,6 @@ const declaration_module_foreign$396_statements$item = (value: declaration_modul
 			return unbuilt('declaration.module.foreign.statements', value);
 		case 'declaration.constant.public.restricted':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.enum':
-			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.enum.private':
-			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.enum.public':
-			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.enum.public.internal':
-			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.enum.public.parent':
-			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.enum.public.restricted':
-			return unbuilt('declaration.module.foreign.statements', value);
 		case 'declaration.extension':
 			return unbuilt('declaration.module.foreign.statements', value);
 		case 'declaration.extension.conformance':
@@ -5727,18 +5715,6 @@ const declaration_module_foreign$396_statements$item = (value: declaration_modul
 			return unbuilt('declaration.module.foreign.statements', value);
 		case 'declaration.function.signature.public.restricted':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.interface.trait':
-			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.interface.trait.private':
-			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.interface.trait.public':
-			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.interface.trait.public.internal':
-			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.interface.trait.public.parent':
-			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.interface.trait.public.restricted':
-			return unbuilt('declaration.module.foreign.statements', value);
 		case 'declaration.macro.brace':
 			return declaration_macro_brace$418(value);
 		case 'declaration.macro.bracket':
@@ -5761,67 +5737,91 @@ const declaration_module_foreign$396_statements$item = (value: declaration_modul
 			return unbuilt('declaration.module.foreign.statements', value);
 		case 'declaration.module.public.restricted':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.struct':
+		case 'declaration.type.enum':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.struct.private':
+		case 'declaration.type.enum.private':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.struct.public':
+		case 'declaration.type.enum.public':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.struct.public.internal':
+		case 'declaration.type.enum.public.internal':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.struct.public.parent':
+		case 'declaration.type.enum.public.parent':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.struct.public.restricted':
+		case 'declaration.type.enum.public.restricted':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.struct.tuple':
+		case 'declaration.type.interface.trait':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.struct.tuple.private':
+		case 'declaration.type.interface.trait.private':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.struct.tuple.public':
+		case 'declaration.type.interface.trait.public':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.struct.tuple.public.internal':
+		case 'declaration.type.interface.trait.public.internal':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.struct.tuple.public.parent':
+		case 'declaration.type.interface.trait.public.parent':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.struct.tuple.public.restricted':
+		case 'declaration.type.interface.trait.public.restricted':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.struct.unit':
+		case 'declaration.type.struct':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.struct.unit.private':
+		case 'declaration.type.struct.private':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.struct.unit.public':
+		case 'declaration.type.struct.public':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.struct.unit.public.internal':
+		case 'declaration.type.struct.public.internal':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.struct.unit.public.parent':
+		case 'declaration.type.struct.public.parent':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.struct.unit.public.restricted':
+		case 'declaration.type.struct.public.restricted':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.type_alias':
+		case 'declaration.type.struct.tuple':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.type_alias.associated':
+		case 'declaration.type.struct.tuple.private':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.type_alias.private':
+		case 'declaration.type.struct.tuple.public':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.type_alias.public':
+		case 'declaration.type.struct.tuple.public.internal':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.type_alias.public.internal':
+		case 'declaration.type.struct.tuple.public.parent':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.type_alias.public.parent':
+		case 'declaration.type.struct.tuple.public.restricted':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.type_alias.public.restricted':
+		case 'declaration.type.struct.unit':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.union':
+		case 'declaration.type.struct.unit.private':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.union.private':
+		case 'declaration.type.struct.unit.public':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.union.public':
+		case 'declaration.type.struct.unit.public.internal':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.union.public.internal':
+		case 'declaration.type.struct.unit.public.parent':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.union.public.parent':
+		case 'declaration.type.struct.unit.public.restricted':
 			return unbuilt('declaration.module.foreign.statements', value);
-		case 'declaration.union.public.restricted':
+		case 'declaration.type.type_alias':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.type.type_alias.associated':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.type.type_alias.private':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.type.type_alias.public':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.type.type_alias.public.internal':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.type.type_alias.public.parent':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.type.type_alias.public.restricted':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.type.union':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.type.union.private':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.type.union.public':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.type.union.public.internal':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.type.union.public.parent':
+			return unbuilt('declaration.module.foreign.statements', value);
+		case 'declaration.type.union.public.restricted':
 			return unbuilt('declaration.module.foreign.statements', value);
 		case 'declaration.variable':
 			if (
@@ -44809,18 +44809,6 @@ type expression_block_async$310_statements$Item =
 	| RustMap['nodes']['declaration.constant.public.parent']
 	| BuildInput<RustMap, 'declaration.constant.public.restricted'>
 	| RustMap['nodes']['declaration.constant.public.restricted']
-	| BuildInput<RustMap, 'declaration.enum'>
-	| RustMap['nodes']['declaration.enum']
-	| BuildInput<RustMap, 'declaration.enum.private'>
-	| RustMap['nodes']['declaration.enum.private']
-	| BuildInput<RustMap, 'declaration.enum.public'>
-	| RustMap['nodes']['declaration.enum.public']
-	| BuildInput<RustMap, 'declaration.enum.public.internal'>
-	| RustMap['nodes']['declaration.enum.public.internal']
-	| BuildInput<RustMap, 'declaration.enum.public.parent'>
-	| RustMap['nodes']['declaration.enum.public.parent']
-	| BuildInput<RustMap, 'declaration.enum.public.restricted'>
-	| RustMap['nodes']['declaration.enum.public.restricted']
 	| BuildInput<RustMap, 'declaration.extension'>
 	| RustMap['nodes']['declaration.extension']
 	| BuildInput<RustMap, 'declaration.extension.conformance'>
@@ -44849,18 +44837,6 @@ type expression_block_async$310_statements$Item =
 	| RustMap['nodes']['declaration.function.signature.public.parent']
 	| BuildInput<RustMap, 'declaration.function.signature.public.restricted'>
 	| RustMap['nodes']['declaration.function.signature.public.restricted']
-	| BuildInput<RustMap, 'declaration.interface.trait'>
-	| RustMap['nodes']['declaration.interface.trait']
-	| BuildInput<RustMap, 'declaration.interface.trait.private'>
-	| RustMap['nodes']['declaration.interface.trait.private']
-	| BuildInput<RustMap, 'declaration.interface.trait.public'>
-	| RustMap['nodes']['declaration.interface.trait.public']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.internal'>
-	| RustMap['nodes']['declaration.interface.trait.public.internal']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.parent'>
-	| RustMap['nodes']['declaration.interface.trait.public.parent']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.restricted'>
-	| RustMap['nodes']['declaration.interface.trait.public.restricted']
 	| BuildInput<RustMap, 'declaration.macro.brace'>
 	| RustMap['nodes']['declaration.macro.brace']
 	| BuildInput<RustMap, 'declaration.macro.bracket'>
@@ -44881,68 +44857,92 @@ type expression_block_async$310_statements$Item =
 	| RustMap['nodes']['declaration.module.public.parent']
 	| BuildInput<RustMap, 'declaration.module.public.restricted'>
 	| RustMap['nodes']['declaration.module.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct'>
-	| RustMap['nodes']['declaration.struct']
-	| BuildInput<RustMap, 'declaration.struct.private'>
-	| RustMap['nodes']['declaration.struct.private']
-	| BuildInput<RustMap, 'declaration.struct.public'>
-	| RustMap['nodes']['declaration.struct.public']
-	| BuildInput<RustMap, 'declaration.struct.public.internal'>
-	| RustMap['nodes']['declaration.struct.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.public.parent'>
-	| RustMap['nodes']['declaration.struct.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.public.restricted'>
-	| RustMap['nodes']['declaration.struct.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.tuple'>
-	| RustMap['nodes']['declaration.struct.tuple']
-	| BuildInput<RustMap, 'declaration.struct.tuple.private'>
-	| RustMap['nodes']['declaration.struct.tuple.private']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public'>
-	| RustMap['nodes']['declaration.struct.tuple.public']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.internal'>
-	| RustMap['nodes']['declaration.struct.tuple.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.parent'>
-	| RustMap['nodes']['declaration.struct.tuple.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.restricted'>
-	| RustMap['nodes']['declaration.struct.tuple.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.unit'>
-	| RustMap['nodes']['declaration.struct.unit']
-	| BuildInput<RustMap, 'declaration.struct.unit.private'>
-	| RustMap['nodes']['declaration.struct.unit.private']
-	| BuildInput<RustMap, 'declaration.struct.unit.public'>
-	| RustMap['nodes']['declaration.struct.unit.public']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.internal'>
-	| RustMap['nodes']['declaration.struct.unit.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.parent'>
-	| RustMap['nodes']['declaration.struct.unit.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.restricted'>
-	| RustMap['nodes']['declaration.struct.unit.public.restricted']
-	| BuildInput<RustMap, 'declaration.type_alias'>
-	| RustMap['nodes']['declaration.type_alias']
-	| BuildInput<RustMap, 'declaration.type_alias.associated'>
-	| RustMap['nodes']['declaration.type_alias.associated']
-	| BuildInput<RustMap, 'declaration.type_alias.private'>
-	| RustMap['nodes']['declaration.type_alias.private']
-	| BuildInput<RustMap, 'declaration.type_alias.public'>
-	| RustMap['nodes']['declaration.type_alias.public']
-	| BuildInput<RustMap, 'declaration.type_alias.public.internal'>
-	| RustMap['nodes']['declaration.type_alias.public.internal']
-	| BuildInput<RustMap, 'declaration.type_alias.public.parent'>
-	| RustMap['nodes']['declaration.type_alias.public.parent']
-	| BuildInput<RustMap, 'declaration.type_alias.public.restricted'>
-	| RustMap['nodes']['declaration.type_alias.public.restricted']
-	| BuildInput<RustMap, 'declaration.union'>
-	| RustMap['nodes']['declaration.union']
-	| BuildInput<RustMap, 'declaration.union.private'>
-	| RustMap['nodes']['declaration.union.private']
-	| BuildInput<RustMap, 'declaration.union.public'>
-	| RustMap['nodes']['declaration.union.public']
-	| BuildInput<RustMap, 'declaration.union.public.internal'>
-	| RustMap['nodes']['declaration.union.public.internal']
-	| BuildInput<RustMap, 'declaration.union.public.parent'>
-	| RustMap['nodes']['declaration.union.public.parent']
-	| BuildInput<RustMap, 'declaration.union.public.restricted'>
-	| RustMap['nodes']['declaration.union.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.enum'>
+	| RustMap['nodes']['declaration.type.enum']
+	| BuildInput<RustMap, 'declaration.type.enum.private'>
+	| RustMap['nodes']['declaration.type.enum.private']
+	| BuildInput<RustMap, 'declaration.type.enum.public'>
+	| RustMap['nodes']['declaration.type.enum.public']
+	| BuildInput<RustMap, 'declaration.type.enum.public.internal'>
+	| RustMap['nodes']['declaration.type.enum.public.internal']
+	| BuildInput<RustMap, 'declaration.type.enum.public.parent'>
+	| RustMap['nodes']['declaration.type.enum.public.parent']
+	| BuildInput<RustMap, 'declaration.type.enum.public.restricted'>
+	| RustMap['nodes']['declaration.type.enum.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.interface.trait'>
+	| RustMap['nodes']['declaration.type.interface.trait']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.private'>
+	| RustMap['nodes']['declaration.type.interface.trait.private']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public'>
+	| RustMap['nodes']['declaration.type.interface.trait.public']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.internal'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.internal']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.parent'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.parent']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.restricted'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct'>
+	| RustMap['nodes']['declaration.type.struct']
+	| BuildInput<RustMap, 'declaration.type.struct.private'>
+	| RustMap['nodes']['declaration.type.struct.private']
+	| BuildInput<RustMap, 'declaration.type.struct.public'>
+	| RustMap['nodes']['declaration.type.struct.public']
+	| BuildInput<RustMap, 'declaration.type.struct.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple'>
+	| RustMap['nodes']['declaration.type.struct.tuple']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.private'>
+	| RustMap['nodes']['declaration.type.struct.tuple.private']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.unit'>
+	| RustMap['nodes']['declaration.type.struct.unit']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.private'>
+	| RustMap['nodes']['declaration.type.struct.unit.private']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public'>
+	| RustMap['nodes']['declaration.type.struct.unit.public']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.type_alias'>
+	| RustMap['nodes']['declaration.type.type_alias']
+	| BuildInput<RustMap, 'declaration.type.type_alias.associated'>
+	| RustMap['nodes']['declaration.type.type_alias.associated']
+	| BuildInput<RustMap, 'declaration.type.type_alias.private'>
+	| RustMap['nodes']['declaration.type.type_alias.private']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public'>
+	| RustMap['nodes']['declaration.type.type_alias.public']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.internal'>
+	| RustMap['nodes']['declaration.type.type_alias.public.internal']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.parent'>
+	| RustMap['nodes']['declaration.type.type_alias.public.parent']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.restricted'>
+	| RustMap['nodes']['declaration.type.type_alias.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.union'>
+	| RustMap['nodes']['declaration.type.union']
+	| BuildInput<RustMap, 'declaration.type.union.private'>
+	| RustMap['nodes']['declaration.type.union.private']
+	| BuildInput<RustMap, 'declaration.type.union.public'>
+	| RustMap['nodes']['declaration.type.union.public']
+	| BuildInput<RustMap, 'declaration.type.union.public.internal'>
+	| RustMap['nodes']['declaration.type.union.public.internal']
+	| BuildInput<RustMap, 'declaration.type.union.public.parent'>
+	| RustMap['nodes']['declaration.type.union.public.parent']
+	| BuildInput<RustMap, 'declaration.type.union.public.restricted'>
+	| RustMap['nodes']['declaration.type.union.public.restricted']
 	| BuildInput<RustMap, 'declaration.variable'>
 	| RustMap['nodes']['declaration.variable']
 	| BuildInput<RustMap, 'declaration.variable.private'>
@@ -45211,18 +45211,6 @@ const expression_block_async$310_statements = (value: expression_block_async$310
 			return unbuilt('expression.block.async.statements', value);
 		case 'declaration.constant.public.restricted':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.enum':
-			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.enum.private':
-			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.enum.public':
-			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.enum.public.internal':
-			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.enum.public.parent':
-			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.enum.public.restricted':
-			return unbuilt('expression.block.async.statements', value);
 		case 'declaration.extension':
 			return unbuilt('expression.block.async.statements', value);
 		case 'declaration.extension.conformance':
@@ -45251,18 +45239,6 @@ const expression_block_async$310_statements = (value: expression_block_async$310
 			return unbuilt('expression.block.async.statements', value);
 		case 'declaration.function.signature.public.restricted':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.interface.trait':
-			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.interface.trait.private':
-			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.interface.trait.public':
-			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.interface.trait.public.internal':
-			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.interface.trait.public.parent':
-			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.interface.trait.public.restricted':
-			return unbuilt('expression.block.async.statements', value);
 		case 'declaration.macro.brace':
 			return declaration_macro_brace$418(value);
 		case 'declaration.macro.bracket':
@@ -45285,67 +45261,91 @@ const expression_block_async$310_statements = (value: expression_block_async$310
 			return unbuilt('expression.block.async.statements', value);
 		case 'declaration.module.public.restricted':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.struct':
+		case 'declaration.type.enum':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.struct.private':
+		case 'declaration.type.enum.private':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.struct.public':
+		case 'declaration.type.enum.public':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.struct.public.internal':
+		case 'declaration.type.enum.public.internal':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.struct.public.parent':
+		case 'declaration.type.enum.public.parent':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.struct.public.restricted':
+		case 'declaration.type.enum.public.restricted':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.struct.tuple':
+		case 'declaration.type.interface.trait':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.struct.tuple.private':
+		case 'declaration.type.interface.trait.private':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.struct.tuple.public':
+		case 'declaration.type.interface.trait.public':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.struct.tuple.public.internal':
+		case 'declaration.type.interface.trait.public.internal':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.struct.tuple.public.parent':
+		case 'declaration.type.interface.trait.public.parent':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.struct.tuple.public.restricted':
+		case 'declaration.type.interface.trait.public.restricted':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.struct.unit':
+		case 'declaration.type.struct':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.struct.unit.private':
+		case 'declaration.type.struct.private':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.struct.unit.public':
+		case 'declaration.type.struct.public':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.struct.unit.public.internal':
+		case 'declaration.type.struct.public.internal':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.struct.unit.public.parent':
+		case 'declaration.type.struct.public.parent':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.struct.unit.public.restricted':
+		case 'declaration.type.struct.public.restricted':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.type_alias':
+		case 'declaration.type.struct.tuple':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.type_alias.associated':
+		case 'declaration.type.struct.tuple.private':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.type_alias.private':
+		case 'declaration.type.struct.tuple.public':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.type_alias.public':
+		case 'declaration.type.struct.tuple.public.internal':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.type_alias.public.internal':
+		case 'declaration.type.struct.tuple.public.parent':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.type_alias.public.parent':
+		case 'declaration.type.struct.tuple.public.restricted':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.type_alias.public.restricted':
+		case 'declaration.type.struct.unit':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.union':
+		case 'declaration.type.struct.unit.private':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.union.private':
+		case 'declaration.type.struct.unit.public':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.union.public':
+		case 'declaration.type.struct.unit.public.internal':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.union.public.internal':
+		case 'declaration.type.struct.unit.public.parent':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.union.public.parent':
+		case 'declaration.type.struct.unit.public.restricted':
 			return unbuilt('expression.block.async.statements', value);
-		case 'declaration.union.public.restricted':
+		case 'declaration.type.type_alias':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.type.type_alias.associated':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.type.type_alias.private':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.type.type_alias.public':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.type.type_alias.public.internal':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.type.type_alias.public.parent':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.type.type_alias.public.restricted':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.type.union':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.type.union.private':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.type.union.public':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.type.union.public.internal':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.type.union.public.parent':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.type.union.public.restricted':
 			return unbuilt('expression.block.async.statements', value);
 		case 'declaration.variable':
 			if (
@@ -46075,18 +46075,6 @@ type expression_block_const$300_statements$Item =
 	| RustMap['nodes']['declaration.constant.public.parent']
 	| BuildInput<RustMap, 'declaration.constant.public.restricted'>
 	| RustMap['nodes']['declaration.constant.public.restricted']
-	| BuildInput<RustMap, 'declaration.enum'>
-	| RustMap['nodes']['declaration.enum']
-	| BuildInput<RustMap, 'declaration.enum.private'>
-	| RustMap['nodes']['declaration.enum.private']
-	| BuildInput<RustMap, 'declaration.enum.public'>
-	| RustMap['nodes']['declaration.enum.public']
-	| BuildInput<RustMap, 'declaration.enum.public.internal'>
-	| RustMap['nodes']['declaration.enum.public.internal']
-	| BuildInput<RustMap, 'declaration.enum.public.parent'>
-	| RustMap['nodes']['declaration.enum.public.parent']
-	| BuildInput<RustMap, 'declaration.enum.public.restricted'>
-	| RustMap['nodes']['declaration.enum.public.restricted']
 	| BuildInput<RustMap, 'declaration.extension'>
 	| RustMap['nodes']['declaration.extension']
 	| BuildInput<RustMap, 'declaration.extension.conformance'>
@@ -46115,18 +46103,6 @@ type expression_block_const$300_statements$Item =
 	| RustMap['nodes']['declaration.function.signature.public.parent']
 	| BuildInput<RustMap, 'declaration.function.signature.public.restricted'>
 	| RustMap['nodes']['declaration.function.signature.public.restricted']
-	| BuildInput<RustMap, 'declaration.interface.trait'>
-	| RustMap['nodes']['declaration.interface.trait']
-	| BuildInput<RustMap, 'declaration.interface.trait.private'>
-	| RustMap['nodes']['declaration.interface.trait.private']
-	| BuildInput<RustMap, 'declaration.interface.trait.public'>
-	| RustMap['nodes']['declaration.interface.trait.public']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.internal'>
-	| RustMap['nodes']['declaration.interface.trait.public.internal']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.parent'>
-	| RustMap['nodes']['declaration.interface.trait.public.parent']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.restricted'>
-	| RustMap['nodes']['declaration.interface.trait.public.restricted']
 	| BuildInput<RustMap, 'declaration.macro.brace'>
 	| RustMap['nodes']['declaration.macro.brace']
 	| BuildInput<RustMap, 'declaration.macro.bracket'>
@@ -46147,68 +46123,92 @@ type expression_block_const$300_statements$Item =
 	| RustMap['nodes']['declaration.module.public.parent']
 	| BuildInput<RustMap, 'declaration.module.public.restricted'>
 	| RustMap['nodes']['declaration.module.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct'>
-	| RustMap['nodes']['declaration.struct']
-	| BuildInput<RustMap, 'declaration.struct.private'>
-	| RustMap['nodes']['declaration.struct.private']
-	| BuildInput<RustMap, 'declaration.struct.public'>
-	| RustMap['nodes']['declaration.struct.public']
-	| BuildInput<RustMap, 'declaration.struct.public.internal'>
-	| RustMap['nodes']['declaration.struct.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.public.parent'>
-	| RustMap['nodes']['declaration.struct.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.public.restricted'>
-	| RustMap['nodes']['declaration.struct.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.tuple'>
-	| RustMap['nodes']['declaration.struct.tuple']
-	| BuildInput<RustMap, 'declaration.struct.tuple.private'>
-	| RustMap['nodes']['declaration.struct.tuple.private']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public'>
-	| RustMap['nodes']['declaration.struct.tuple.public']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.internal'>
-	| RustMap['nodes']['declaration.struct.tuple.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.parent'>
-	| RustMap['nodes']['declaration.struct.tuple.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.restricted'>
-	| RustMap['nodes']['declaration.struct.tuple.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.unit'>
-	| RustMap['nodes']['declaration.struct.unit']
-	| BuildInput<RustMap, 'declaration.struct.unit.private'>
-	| RustMap['nodes']['declaration.struct.unit.private']
-	| BuildInput<RustMap, 'declaration.struct.unit.public'>
-	| RustMap['nodes']['declaration.struct.unit.public']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.internal'>
-	| RustMap['nodes']['declaration.struct.unit.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.parent'>
-	| RustMap['nodes']['declaration.struct.unit.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.restricted'>
-	| RustMap['nodes']['declaration.struct.unit.public.restricted']
-	| BuildInput<RustMap, 'declaration.type_alias'>
-	| RustMap['nodes']['declaration.type_alias']
-	| BuildInput<RustMap, 'declaration.type_alias.associated'>
-	| RustMap['nodes']['declaration.type_alias.associated']
-	| BuildInput<RustMap, 'declaration.type_alias.private'>
-	| RustMap['nodes']['declaration.type_alias.private']
-	| BuildInput<RustMap, 'declaration.type_alias.public'>
-	| RustMap['nodes']['declaration.type_alias.public']
-	| BuildInput<RustMap, 'declaration.type_alias.public.internal'>
-	| RustMap['nodes']['declaration.type_alias.public.internal']
-	| BuildInput<RustMap, 'declaration.type_alias.public.parent'>
-	| RustMap['nodes']['declaration.type_alias.public.parent']
-	| BuildInput<RustMap, 'declaration.type_alias.public.restricted'>
-	| RustMap['nodes']['declaration.type_alias.public.restricted']
-	| BuildInput<RustMap, 'declaration.union'>
-	| RustMap['nodes']['declaration.union']
-	| BuildInput<RustMap, 'declaration.union.private'>
-	| RustMap['nodes']['declaration.union.private']
-	| BuildInput<RustMap, 'declaration.union.public'>
-	| RustMap['nodes']['declaration.union.public']
-	| BuildInput<RustMap, 'declaration.union.public.internal'>
-	| RustMap['nodes']['declaration.union.public.internal']
-	| BuildInput<RustMap, 'declaration.union.public.parent'>
-	| RustMap['nodes']['declaration.union.public.parent']
-	| BuildInput<RustMap, 'declaration.union.public.restricted'>
-	| RustMap['nodes']['declaration.union.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.enum'>
+	| RustMap['nodes']['declaration.type.enum']
+	| BuildInput<RustMap, 'declaration.type.enum.private'>
+	| RustMap['nodes']['declaration.type.enum.private']
+	| BuildInput<RustMap, 'declaration.type.enum.public'>
+	| RustMap['nodes']['declaration.type.enum.public']
+	| BuildInput<RustMap, 'declaration.type.enum.public.internal'>
+	| RustMap['nodes']['declaration.type.enum.public.internal']
+	| BuildInput<RustMap, 'declaration.type.enum.public.parent'>
+	| RustMap['nodes']['declaration.type.enum.public.parent']
+	| BuildInput<RustMap, 'declaration.type.enum.public.restricted'>
+	| RustMap['nodes']['declaration.type.enum.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.interface.trait'>
+	| RustMap['nodes']['declaration.type.interface.trait']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.private'>
+	| RustMap['nodes']['declaration.type.interface.trait.private']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public'>
+	| RustMap['nodes']['declaration.type.interface.trait.public']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.internal'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.internal']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.parent'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.parent']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.restricted'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct'>
+	| RustMap['nodes']['declaration.type.struct']
+	| BuildInput<RustMap, 'declaration.type.struct.private'>
+	| RustMap['nodes']['declaration.type.struct.private']
+	| BuildInput<RustMap, 'declaration.type.struct.public'>
+	| RustMap['nodes']['declaration.type.struct.public']
+	| BuildInput<RustMap, 'declaration.type.struct.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple'>
+	| RustMap['nodes']['declaration.type.struct.tuple']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.private'>
+	| RustMap['nodes']['declaration.type.struct.tuple.private']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.unit'>
+	| RustMap['nodes']['declaration.type.struct.unit']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.private'>
+	| RustMap['nodes']['declaration.type.struct.unit.private']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public'>
+	| RustMap['nodes']['declaration.type.struct.unit.public']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.type_alias'>
+	| RustMap['nodes']['declaration.type.type_alias']
+	| BuildInput<RustMap, 'declaration.type.type_alias.associated'>
+	| RustMap['nodes']['declaration.type.type_alias.associated']
+	| BuildInput<RustMap, 'declaration.type.type_alias.private'>
+	| RustMap['nodes']['declaration.type.type_alias.private']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public'>
+	| RustMap['nodes']['declaration.type.type_alias.public']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.internal'>
+	| RustMap['nodes']['declaration.type.type_alias.public.internal']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.parent'>
+	| RustMap['nodes']['declaration.type.type_alias.public.parent']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.restricted'>
+	| RustMap['nodes']['declaration.type.type_alias.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.union'>
+	| RustMap['nodes']['declaration.type.union']
+	| BuildInput<RustMap, 'declaration.type.union.private'>
+	| RustMap['nodes']['declaration.type.union.private']
+	| BuildInput<RustMap, 'declaration.type.union.public'>
+	| RustMap['nodes']['declaration.type.union.public']
+	| BuildInput<RustMap, 'declaration.type.union.public.internal'>
+	| RustMap['nodes']['declaration.type.union.public.internal']
+	| BuildInput<RustMap, 'declaration.type.union.public.parent'>
+	| RustMap['nodes']['declaration.type.union.public.parent']
+	| BuildInput<RustMap, 'declaration.type.union.public.restricted'>
+	| RustMap['nodes']['declaration.type.union.public.restricted']
 	| BuildInput<RustMap, 'declaration.variable'>
 	| RustMap['nodes']['declaration.variable']
 	| BuildInput<RustMap, 'declaration.variable.private'>
@@ -46477,18 +46477,6 @@ const expression_block_const$300_statements = (value: expression_block_const$300
 			return unbuilt('expression.block.const.statements', value);
 		case 'declaration.constant.public.restricted':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.enum':
-			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.enum.private':
-			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.enum.public':
-			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.enum.public.internal':
-			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.enum.public.parent':
-			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.enum.public.restricted':
-			return unbuilt('expression.block.const.statements', value);
 		case 'declaration.extension':
 			return unbuilt('expression.block.const.statements', value);
 		case 'declaration.extension.conformance':
@@ -46517,18 +46505,6 @@ const expression_block_const$300_statements = (value: expression_block_const$300
 			return unbuilt('expression.block.const.statements', value);
 		case 'declaration.function.signature.public.restricted':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.interface.trait':
-			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.interface.trait.private':
-			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.interface.trait.public':
-			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.interface.trait.public.internal':
-			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.interface.trait.public.parent':
-			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.interface.trait.public.restricted':
-			return unbuilt('expression.block.const.statements', value);
 		case 'declaration.macro.brace':
 			return declaration_macro_brace$418(value);
 		case 'declaration.macro.bracket':
@@ -46551,67 +46527,91 @@ const expression_block_const$300_statements = (value: expression_block_const$300
 			return unbuilt('expression.block.const.statements', value);
 		case 'declaration.module.public.restricted':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.struct':
+		case 'declaration.type.enum':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.struct.private':
+		case 'declaration.type.enum.private':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.struct.public':
+		case 'declaration.type.enum.public':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.struct.public.internal':
+		case 'declaration.type.enum.public.internal':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.struct.public.parent':
+		case 'declaration.type.enum.public.parent':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.struct.public.restricted':
+		case 'declaration.type.enum.public.restricted':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.struct.tuple':
+		case 'declaration.type.interface.trait':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.struct.tuple.private':
+		case 'declaration.type.interface.trait.private':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.struct.tuple.public':
+		case 'declaration.type.interface.trait.public':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.struct.tuple.public.internal':
+		case 'declaration.type.interface.trait.public.internal':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.struct.tuple.public.parent':
+		case 'declaration.type.interface.trait.public.parent':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.struct.tuple.public.restricted':
+		case 'declaration.type.interface.trait.public.restricted':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.struct.unit':
+		case 'declaration.type.struct':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.struct.unit.private':
+		case 'declaration.type.struct.private':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.struct.unit.public':
+		case 'declaration.type.struct.public':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.struct.unit.public.internal':
+		case 'declaration.type.struct.public.internal':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.struct.unit.public.parent':
+		case 'declaration.type.struct.public.parent':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.struct.unit.public.restricted':
+		case 'declaration.type.struct.public.restricted':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.type_alias':
+		case 'declaration.type.struct.tuple':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.type_alias.associated':
+		case 'declaration.type.struct.tuple.private':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.type_alias.private':
+		case 'declaration.type.struct.tuple.public':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.type_alias.public':
+		case 'declaration.type.struct.tuple.public.internal':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.type_alias.public.internal':
+		case 'declaration.type.struct.tuple.public.parent':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.type_alias.public.parent':
+		case 'declaration.type.struct.tuple.public.restricted':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.type_alias.public.restricted':
+		case 'declaration.type.struct.unit':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.union':
+		case 'declaration.type.struct.unit.private':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.union.private':
+		case 'declaration.type.struct.unit.public':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.union.public':
+		case 'declaration.type.struct.unit.public.internal':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.union.public.internal':
+		case 'declaration.type.struct.unit.public.parent':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.union.public.parent':
+		case 'declaration.type.struct.unit.public.restricted':
 			return unbuilt('expression.block.const.statements', value);
-		case 'declaration.union.public.restricted':
+		case 'declaration.type.type_alias':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.type.type_alias.associated':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.type.type_alias.private':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.type.type_alias.public':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.type.type_alias.public.internal':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.type.type_alias.public.parent':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.type.type_alias.public.restricted':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.type.union':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.type.union.private':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.type.union.public':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.type.union.public.internal':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.type.union.public.parent':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.type.union.public.restricted':
 			return unbuilt('expression.block.const.statements', value);
 		case 'declaration.variable':
 			if (
@@ -47341,18 +47341,6 @@ type expression_block_generator$311_statements$Item =
 	| RustMap['nodes']['declaration.constant.public.parent']
 	| BuildInput<RustMap, 'declaration.constant.public.restricted'>
 	| RustMap['nodes']['declaration.constant.public.restricted']
-	| BuildInput<RustMap, 'declaration.enum'>
-	| RustMap['nodes']['declaration.enum']
-	| BuildInput<RustMap, 'declaration.enum.private'>
-	| RustMap['nodes']['declaration.enum.private']
-	| BuildInput<RustMap, 'declaration.enum.public'>
-	| RustMap['nodes']['declaration.enum.public']
-	| BuildInput<RustMap, 'declaration.enum.public.internal'>
-	| RustMap['nodes']['declaration.enum.public.internal']
-	| BuildInput<RustMap, 'declaration.enum.public.parent'>
-	| RustMap['nodes']['declaration.enum.public.parent']
-	| BuildInput<RustMap, 'declaration.enum.public.restricted'>
-	| RustMap['nodes']['declaration.enum.public.restricted']
 	| BuildInput<RustMap, 'declaration.extension'>
 	| RustMap['nodes']['declaration.extension']
 	| BuildInput<RustMap, 'declaration.extension.conformance'>
@@ -47381,18 +47369,6 @@ type expression_block_generator$311_statements$Item =
 	| RustMap['nodes']['declaration.function.signature.public.parent']
 	| BuildInput<RustMap, 'declaration.function.signature.public.restricted'>
 	| RustMap['nodes']['declaration.function.signature.public.restricted']
-	| BuildInput<RustMap, 'declaration.interface.trait'>
-	| RustMap['nodes']['declaration.interface.trait']
-	| BuildInput<RustMap, 'declaration.interface.trait.private'>
-	| RustMap['nodes']['declaration.interface.trait.private']
-	| BuildInput<RustMap, 'declaration.interface.trait.public'>
-	| RustMap['nodes']['declaration.interface.trait.public']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.internal'>
-	| RustMap['nodes']['declaration.interface.trait.public.internal']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.parent'>
-	| RustMap['nodes']['declaration.interface.trait.public.parent']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.restricted'>
-	| RustMap['nodes']['declaration.interface.trait.public.restricted']
 	| BuildInput<RustMap, 'declaration.macro.brace'>
 	| RustMap['nodes']['declaration.macro.brace']
 	| BuildInput<RustMap, 'declaration.macro.bracket'>
@@ -47413,68 +47389,92 @@ type expression_block_generator$311_statements$Item =
 	| RustMap['nodes']['declaration.module.public.parent']
 	| BuildInput<RustMap, 'declaration.module.public.restricted'>
 	| RustMap['nodes']['declaration.module.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct'>
-	| RustMap['nodes']['declaration.struct']
-	| BuildInput<RustMap, 'declaration.struct.private'>
-	| RustMap['nodes']['declaration.struct.private']
-	| BuildInput<RustMap, 'declaration.struct.public'>
-	| RustMap['nodes']['declaration.struct.public']
-	| BuildInput<RustMap, 'declaration.struct.public.internal'>
-	| RustMap['nodes']['declaration.struct.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.public.parent'>
-	| RustMap['nodes']['declaration.struct.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.public.restricted'>
-	| RustMap['nodes']['declaration.struct.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.tuple'>
-	| RustMap['nodes']['declaration.struct.tuple']
-	| BuildInput<RustMap, 'declaration.struct.tuple.private'>
-	| RustMap['nodes']['declaration.struct.tuple.private']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public'>
-	| RustMap['nodes']['declaration.struct.tuple.public']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.internal'>
-	| RustMap['nodes']['declaration.struct.tuple.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.parent'>
-	| RustMap['nodes']['declaration.struct.tuple.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.restricted'>
-	| RustMap['nodes']['declaration.struct.tuple.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.unit'>
-	| RustMap['nodes']['declaration.struct.unit']
-	| BuildInput<RustMap, 'declaration.struct.unit.private'>
-	| RustMap['nodes']['declaration.struct.unit.private']
-	| BuildInput<RustMap, 'declaration.struct.unit.public'>
-	| RustMap['nodes']['declaration.struct.unit.public']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.internal'>
-	| RustMap['nodes']['declaration.struct.unit.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.parent'>
-	| RustMap['nodes']['declaration.struct.unit.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.restricted'>
-	| RustMap['nodes']['declaration.struct.unit.public.restricted']
-	| BuildInput<RustMap, 'declaration.type_alias'>
-	| RustMap['nodes']['declaration.type_alias']
-	| BuildInput<RustMap, 'declaration.type_alias.associated'>
-	| RustMap['nodes']['declaration.type_alias.associated']
-	| BuildInput<RustMap, 'declaration.type_alias.private'>
-	| RustMap['nodes']['declaration.type_alias.private']
-	| BuildInput<RustMap, 'declaration.type_alias.public'>
-	| RustMap['nodes']['declaration.type_alias.public']
-	| BuildInput<RustMap, 'declaration.type_alias.public.internal'>
-	| RustMap['nodes']['declaration.type_alias.public.internal']
-	| BuildInput<RustMap, 'declaration.type_alias.public.parent'>
-	| RustMap['nodes']['declaration.type_alias.public.parent']
-	| BuildInput<RustMap, 'declaration.type_alias.public.restricted'>
-	| RustMap['nodes']['declaration.type_alias.public.restricted']
-	| BuildInput<RustMap, 'declaration.union'>
-	| RustMap['nodes']['declaration.union']
-	| BuildInput<RustMap, 'declaration.union.private'>
-	| RustMap['nodes']['declaration.union.private']
-	| BuildInput<RustMap, 'declaration.union.public'>
-	| RustMap['nodes']['declaration.union.public']
-	| BuildInput<RustMap, 'declaration.union.public.internal'>
-	| RustMap['nodes']['declaration.union.public.internal']
-	| BuildInput<RustMap, 'declaration.union.public.parent'>
-	| RustMap['nodes']['declaration.union.public.parent']
-	| BuildInput<RustMap, 'declaration.union.public.restricted'>
-	| RustMap['nodes']['declaration.union.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.enum'>
+	| RustMap['nodes']['declaration.type.enum']
+	| BuildInput<RustMap, 'declaration.type.enum.private'>
+	| RustMap['nodes']['declaration.type.enum.private']
+	| BuildInput<RustMap, 'declaration.type.enum.public'>
+	| RustMap['nodes']['declaration.type.enum.public']
+	| BuildInput<RustMap, 'declaration.type.enum.public.internal'>
+	| RustMap['nodes']['declaration.type.enum.public.internal']
+	| BuildInput<RustMap, 'declaration.type.enum.public.parent'>
+	| RustMap['nodes']['declaration.type.enum.public.parent']
+	| BuildInput<RustMap, 'declaration.type.enum.public.restricted'>
+	| RustMap['nodes']['declaration.type.enum.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.interface.trait'>
+	| RustMap['nodes']['declaration.type.interface.trait']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.private'>
+	| RustMap['nodes']['declaration.type.interface.trait.private']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public'>
+	| RustMap['nodes']['declaration.type.interface.trait.public']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.internal'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.internal']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.parent'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.parent']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.restricted'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct'>
+	| RustMap['nodes']['declaration.type.struct']
+	| BuildInput<RustMap, 'declaration.type.struct.private'>
+	| RustMap['nodes']['declaration.type.struct.private']
+	| BuildInput<RustMap, 'declaration.type.struct.public'>
+	| RustMap['nodes']['declaration.type.struct.public']
+	| BuildInput<RustMap, 'declaration.type.struct.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple'>
+	| RustMap['nodes']['declaration.type.struct.tuple']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.private'>
+	| RustMap['nodes']['declaration.type.struct.tuple.private']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.unit'>
+	| RustMap['nodes']['declaration.type.struct.unit']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.private'>
+	| RustMap['nodes']['declaration.type.struct.unit.private']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public'>
+	| RustMap['nodes']['declaration.type.struct.unit.public']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.type_alias'>
+	| RustMap['nodes']['declaration.type.type_alias']
+	| BuildInput<RustMap, 'declaration.type.type_alias.associated'>
+	| RustMap['nodes']['declaration.type.type_alias.associated']
+	| BuildInput<RustMap, 'declaration.type.type_alias.private'>
+	| RustMap['nodes']['declaration.type.type_alias.private']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public'>
+	| RustMap['nodes']['declaration.type.type_alias.public']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.internal'>
+	| RustMap['nodes']['declaration.type.type_alias.public.internal']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.parent'>
+	| RustMap['nodes']['declaration.type.type_alias.public.parent']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.restricted'>
+	| RustMap['nodes']['declaration.type.type_alias.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.union'>
+	| RustMap['nodes']['declaration.type.union']
+	| BuildInput<RustMap, 'declaration.type.union.private'>
+	| RustMap['nodes']['declaration.type.union.private']
+	| BuildInput<RustMap, 'declaration.type.union.public'>
+	| RustMap['nodes']['declaration.type.union.public']
+	| BuildInput<RustMap, 'declaration.type.union.public.internal'>
+	| RustMap['nodes']['declaration.type.union.public.internal']
+	| BuildInput<RustMap, 'declaration.type.union.public.parent'>
+	| RustMap['nodes']['declaration.type.union.public.parent']
+	| BuildInput<RustMap, 'declaration.type.union.public.restricted'>
+	| RustMap['nodes']['declaration.type.union.public.restricted']
 	| BuildInput<RustMap, 'declaration.variable'>
 	| RustMap['nodes']['declaration.variable']
 	| BuildInput<RustMap, 'declaration.variable.private'>
@@ -47743,18 +47743,6 @@ const expression_block_generator$311_statements = (value: expression_block_gener
 			return unbuilt('expression.block.generator.statements', value);
 		case 'declaration.constant.public.restricted':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.enum':
-			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.enum.private':
-			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.enum.public':
-			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.enum.public.internal':
-			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.enum.public.parent':
-			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.enum.public.restricted':
-			return unbuilt('expression.block.generator.statements', value);
 		case 'declaration.extension':
 			return unbuilt('expression.block.generator.statements', value);
 		case 'declaration.extension.conformance':
@@ -47783,18 +47771,6 @@ const expression_block_generator$311_statements = (value: expression_block_gener
 			return unbuilt('expression.block.generator.statements', value);
 		case 'declaration.function.signature.public.restricted':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.interface.trait':
-			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.interface.trait.private':
-			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.interface.trait.public':
-			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.interface.trait.public.internal':
-			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.interface.trait.public.parent':
-			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.interface.trait.public.restricted':
-			return unbuilt('expression.block.generator.statements', value);
 		case 'declaration.macro.brace':
 			return declaration_macro_brace$418(value);
 		case 'declaration.macro.bracket':
@@ -47817,67 +47793,91 @@ const expression_block_generator$311_statements = (value: expression_block_gener
 			return unbuilt('expression.block.generator.statements', value);
 		case 'declaration.module.public.restricted':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.struct':
+		case 'declaration.type.enum':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.struct.private':
+		case 'declaration.type.enum.private':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.struct.public':
+		case 'declaration.type.enum.public':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.struct.public.internal':
+		case 'declaration.type.enum.public.internal':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.struct.public.parent':
+		case 'declaration.type.enum.public.parent':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.struct.public.restricted':
+		case 'declaration.type.enum.public.restricted':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.struct.tuple':
+		case 'declaration.type.interface.trait':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.struct.tuple.private':
+		case 'declaration.type.interface.trait.private':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.struct.tuple.public':
+		case 'declaration.type.interface.trait.public':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.struct.tuple.public.internal':
+		case 'declaration.type.interface.trait.public.internal':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.struct.tuple.public.parent':
+		case 'declaration.type.interface.trait.public.parent':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.struct.tuple.public.restricted':
+		case 'declaration.type.interface.trait.public.restricted':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.struct.unit':
+		case 'declaration.type.struct':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.struct.unit.private':
+		case 'declaration.type.struct.private':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.struct.unit.public':
+		case 'declaration.type.struct.public':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.struct.unit.public.internal':
+		case 'declaration.type.struct.public.internal':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.struct.unit.public.parent':
+		case 'declaration.type.struct.public.parent':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.struct.unit.public.restricted':
+		case 'declaration.type.struct.public.restricted':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.type_alias':
+		case 'declaration.type.struct.tuple':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.type_alias.associated':
+		case 'declaration.type.struct.tuple.private':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.type_alias.private':
+		case 'declaration.type.struct.tuple.public':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.type_alias.public':
+		case 'declaration.type.struct.tuple.public.internal':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.type_alias.public.internal':
+		case 'declaration.type.struct.tuple.public.parent':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.type_alias.public.parent':
+		case 'declaration.type.struct.tuple.public.restricted':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.type_alias.public.restricted':
+		case 'declaration.type.struct.unit':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.union':
+		case 'declaration.type.struct.unit.private':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.union.private':
+		case 'declaration.type.struct.unit.public':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.union.public':
+		case 'declaration.type.struct.unit.public.internal':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.union.public.internal':
+		case 'declaration.type.struct.unit.public.parent':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.union.public.parent':
+		case 'declaration.type.struct.unit.public.restricted':
 			return unbuilt('expression.block.generator.statements', value);
-		case 'declaration.union.public.restricted':
+		case 'declaration.type.type_alias':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.type.type_alias.associated':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.type.type_alias.private':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.type.type_alias.public':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.type.type_alias.public.internal':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.type.type_alias.public.parent':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.type.type_alias.public.restricted':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.type.union':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.type.union.private':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.type.union.public':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.type.union.public.internal':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.type.union.public.parent':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.type.union.public.restricted':
 			return unbuilt('expression.block.generator.statements', value);
 		case 'declaration.variable':
 			if (
@@ -48609,18 +48609,6 @@ type expression_block_try$312_statements$Item =
 	| RustMap['nodes']['declaration.constant.public.parent']
 	| BuildInput<RustMap, 'declaration.constant.public.restricted'>
 	| RustMap['nodes']['declaration.constant.public.restricted']
-	| BuildInput<RustMap, 'declaration.enum'>
-	| RustMap['nodes']['declaration.enum']
-	| BuildInput<RustMap, 'declaration.enum.private'>
-	| RustMap['nodes']['declaration.enum.private']
-	| BuildInput<RustMap, 'declaration.enum.public'>
-	| RustMap['nodes']['declaration.enum.public']
-	| BuildInput<RustMap, 'declaration.enum.public.internal'>
-	| RustMap['nodes']['declaration.enum.public.internal']
-	| BuildInput<RustMap, 'declaration.enum.public.parent'>
-	| RustMap['nodes']['declaration.enum.public.parent']
-	| BuildInput<RustMap, 'declaration.enum.public.restricted'>
-	| RustMap['nodes']['declaration.enum.public.restricted']
 	| BuildInput<RustMap, 'declaration.extension'>
 	| RustMap['nodes']['declaration.extension']
 	| BuildInput<RustMap, 'declaration.extension.conformance'>
@@ -48649,18 +48637,6 @@ type expression_block_try$312_statements$Item =
 	| RustMap['nodes']['declaration.function.signature.public.parent']
 	| BuildInput<RustMap, 'declaration.function.signature.public.restricted'>
 	| RustMap['nodes']['declaration.function.signature.public.restricted']
-	| BuildInput<RustMap, 'declaration.interface.trait'>
-	| RustMap['nodes']['declaration.interface.trait']
-	| BuildInput<RustMap, 'declaration.interface.trait.private'>
-	| RustMap['nodes']['declaration.interface.trait.private']
-	| BuildInput<RustMap, 'declaration.interface.trait.public'>
-	| RustMap['nodes']['declaration.interface.trait.public']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.internal'>
-	| RustMap['nodes']['declaration.interface.trait.public.internal']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.parent'>
-	| RustMap['nodes']['declaration.interface.trait.public.parent']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.restricted'>
-	| RustMap['nodes']['declaration.interface.trait.public.restricted']
 	| BuildInput<RustMap, 'declaration.macro.brace'>
 	| RustMap['nodes']['declaration.macro.brace']
 	| BuildInput<RustMap, 'declaration.macro.bracket'>
@@ -48681,68 +48657,92 @@ type expression_block_try$312_statements$Item =
 	| RustMap['nodes']['declaration.module.public.parent']
 	| BuildInput<RustMap, 'declaration.module.public.restricted'>
 	| RustMap['nodes']['declaration.module.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct'>
-	| RustMap['nodes']['declaration.struct']
-	| BuildInput<RustMap, 'declaration.struct.private'>
-	| RustMap['nodes']['declaration.struct.private']
-	| BuildInput<RustMap, 'declaration.struct.public'>
-	| RustMap['nodes']['declaration.struct.public']
-	| BuildInput<RustMap, 'declaration.struct.public.internal'>
-	| RustMap['nodes']['declaration.struct.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.public.parent'>
-	| RustMap['nodes']['declaration.struct.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.public.restricted'>
-	| RustMap['nodes']['declaration.struct.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.tuple'>
-	| RustMap['nodes']['declaration.struct.tuple']
-	| BuildInput<RustMap, 'declaration.struct.tuple.private'>
-	| RustMap['nodes']['declaration.struct.tuple.private']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public'>
-	| RustMap['nodes']['declaration.struct.tuple.public']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.internal'>
-	| RustMap['nodes']['declaration.struct.tuple.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.parent'>
-	| RustMap['nodes']['declaration.struct.tuple.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.restricted'>
-	| RustMap['nodes']['declaration.struct.tuple.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.unit'>
-	| RustMap['nodes']['declaration.struct.unit']
-	| BuildInput<RustMap, 'declaration.struct.unit.private'>
-	| RustMap['nodes']['declaration.struct.unit.private']
-	| BuildInput<RustMap, 'declaration.struct.unit.public'>
-	| RustMap['nodes']['declaration.struct.unit.public']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.internal'>
-	| RustMap['nodes']['declaration.struct.unit.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.parent'>
-	| RustMap['nodes']['declaration.struct.unit.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.restricted'>
-	| RustMap['nodes']['declaration.struct.unit.public.restricted']
-	| BuildInput<RustMap, 'declaration.type_alias'>
-	| RustMap['nodes']['declaration.type_alias']
-	| BuildInput<RustMap, 'declaration.type_alias.associated'>
-	| RustMap['nodes']['declaration.type_alias.associated']
-	| BuildInput<RustMap, 'declaration.type_alias.private'>
-	| RustMap['nodes']['declaration.type_alias.private']
-	| BuildInput<RustMap, 'declaration.type_alias.public'>
-	| RustMap['nodes']['declaration.type_alias.public']
-	| BuildInput<RustMap, 'declaration.type_alias.public.internal'>
-	| RustMap['nodes']['declaration.type_alias.public.internal']
-	| BuildInput<RustMap, 'declaration.type_alias.public.parent'>
-	| RustMap['nodes']['declaration.type_alias.public.parent']
-	| BuildInput<RustMap, 'declaration.type_alias.public.restricted'>
-	| RustMap['nodes']['declaration.type_alias.public.restricted']
-	| BuildInput<RustMap, 'declaration.union'>
-	| RustMap['nodes']['declaration.union']
-	| BuildInput<RustMap, 'declaration.union.private'>
-	| RustMap['nodes']['declaration.union.private']
-	| BuildInput<RustMap, 'declaration.union.public'>
-	| RustMap['nodes']['declaration.union.public']
-	| BuildInput<RustMap, 'declaration.union.public.internal'>
-	| RustMap['nodes']['declaration.union.public.internal']
-	| BuildInput<RustMap, 'declaration.union.public.parent'>
-	| RustMap['nodes']['declaration.union.public.parent']
-	| BuildInput<RustMap, 'declaration.union.public.restricted'>
-	| RustMap['nodes']['declaration.union.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.enum'>
+	| RustMap['nodes']['declaration.type.enum']
+	| BuildInput<RustMap, 'declaration.type.enum.private'>
+	| RustMap['nodes']['declaration.type.enum.private']
+	| BuildInput<RustMap, 'declaration.type.enum.public'>
+	| RustMap['nodes']['declaration.type.enum.public']
+	| BuildInput<RustMap, 'declaration.type.enum.public.internal'>
+	| RustMap['nodes']['declaration.type.enum.public.internal']
+	| BuildInput<RustMap, 'declaration.type.enum.public.parent'>
+	| RustMap['nodes']['declaration.type.enum.public.parent']
+	| BuildInput<RustMap, 'declaration.type.enum.public.restricted'>
+	| RustMap['nodes']['declaration.type.enum.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.interface.trait'>
+	| RustMap['nodes']['declaration.type.interface.trait']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.private'>
+	| RustMap['nodes']['declaration.type.interface.trait.private']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public'>
+	| RustMap['nodes']['declaration.type.interface.trait.public']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.internal'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.internal']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.parent'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.parent']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.restricted'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct'>
+	| RustMap['nodes']['declaration.type.struct']
+	| BuildInput<RustMap, 'declaration.type.struct.private'>
+	| RustMap['nodes']['declaration.type.struct.private']
+	| BuildInput<RustMap, 'declaration.type.struct.public'>
+	| RustMap['nodes']['declaration.type.struct.public']
+	| BuildInput<RustMap, 'declaration.type.struct.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple'>
+	| RustMap['nodes']['declaration.type.struct.tuple']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.private'>
+	| RustMap['nodes']['declaration.type.struct.tuple.private']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.unit'>
+	| RustMap['nodes']['declaration.type.struct.unit']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.private'>
+	| RustMap['nodes']['declaration.type.struct.unit.private']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public'>
+	| RustMap['nodes']['declaration.type.struct.unit.public']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.type_alias'>
+	| RustMap['nodes']['declaration.type.type_alias']
+	| BuildInput<RustMap, 'declaration.type.type_alias.associated'>
+	| RustMap['nodes']['declaration.type.type_alias.associated']
+	| BuildInput<RustMap, 'declaration.type.type_alias.private'>
+	| RustMap['nodes']['declaration.type.type_alias.private']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public'>
+	| RustMap['nodes']['declaration.type.type_alias.public']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.internal'>
+	| RustMap['nodes']['declaration.type.type_alias.public.internal']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.parent'>
+	| RustMap['nodes']['declaration.type.type_alias.public.parent']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.restricted'>
+	| RustMap['nodes']['declaration.type.type_alias.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.union'>
+	| RustMap['nodes']['declaration.type.union']
+	| BuildInput<RustMap, 'declaration.type.union.private'>
+	| RustMap['nodes']['declaration.type.union.private']
+	| BuildInput<RustMap, 'declaration.type.union.public'>
+	| RustMap['nodes']['declaration.type.union.public']
+	| BuildInput<RustMap, 'declaration.type.union.public.internal'>
+	| RustMap['nodes']['declaration.type.union.public.internal']
+	| BuildInput<RustMap, 'declaration.type.union.public.parent'>
+	| RustMap['nodes']['declaration.type.union.public.parent']
+	| BuildInput<RustMap, 'declaration.type.union.public.restricted'>
+	| RustMap['nodes']['declaration.type.union.public.restricted']
 	| BuildInput<RustMap, 'declaration.variable'>
 	| RustMap['nodes']['declaration.variable']
 	| BuildInput<RustMap, 'declaration.variable.private'>
@@ -49011,18 +49011,6 @@ const expression_block_try$312_statements = (value: expression_block_try$312_sta
 			return unbuilt('expression.block.try.statements', value);
 		case 'declaration.constant.public.restricted':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.enum':
-			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.enum.private':
-			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.enum.public':
-			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.enum.public.internal':
-			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.enum.public.parent':
-			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.enum.public.restricted':
-			return unbuilt('expression.block.try.statements', value);
 		case 'declaration.extension':
 			return unbuilt('expression.block.try.statements', value);
 		case 'declaration.extension.conformance':
@@ -49051,18 +49039,6 @@ const expression_block_try$312_statements = (value: expression_block_try$312_sta
 			return unbuilt('expression.block.try.statements', value);
 		case 'declaration.function.signature.public.restricted':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.interface.trait':
-			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.interface.trait.private':
-			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.interface.trait.public':
-			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.interface.trait.public.internal':
-			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.interface.trait.public.parent':
-			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.interface.trait.public.restricted':
-			return unbuilt('expression.block.try.statements', value);
 		case 'declaration.macro.brace':
 			return declaration_macro_brace$418(value);
 		case 'declaration.macro.bracket':
@@ -49085,67 +49061,91 @@ const expression_block_try$312_statements = (value: expression_block_try$312_sta
 			return unbuilt('expression.block.try.statements', value);
 		case 'declaration.module.public.restricted':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.struct':
+		case 'declaration.type.enum':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.struct.private':
+		case 'declaration.type.enum.private':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.struct.public':
+		case 'declaration.type.enum.public':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.struct.public.internal':
+		case 'declaration.type.enum.public.internal':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.struct.public.parent':
+		case 'declaration.type.enum.public.parent':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.struct.public.restricted':
+		case 'declaration.type.enum.public.restricted':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.struct.tuple':
+		case 'declaration.type.interface.trait':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.struct.tuple.private':
+		case 'declaration.type.interface.trait.private':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.struct.tuple.public':
+		case 'declaration.type.interface.trait.public':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.struct.tuple.public.internal':
+		case 'declaration.type.interface.trait.public.internal':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.struct.tuple.public.parent':
+		case 'declaration.type.interface.trait.public.parent':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.struct.tuple.public.restricted':
+		case 'declaration.type.interface.trait.public.restricted':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.struct.unit':
+		case 'declaration.type.struct':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.struct.unit.private':
+		case 'declaration.type.struct.private':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.struct.unit.public':
+		case 'declaration.type.struct.public':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.struct.unit.public.internal':
+		case 'declaration.type.struct.public.internal':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.struct.unit.public.parent':
+		case 'declaration.type.struct.public.parent':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.struct.unit.public.restricted':
+		case 'declaration.type.struct.public.restricted':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.type_alias':
+		case 'declaration.type.struct.tuple':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.type_alias.associated':
+		case 'declaration.type.struct.tuple.private':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.type_alias.private':
+		case 'declaration.type.struct.tuple.public':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.type_alias.public':
+		case 'declaration.type.struct.tuple.public.internal':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.type_alias.public.internal':
+		case 'declaration.type.struct.tuple.public.parent':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.type_alias.public.parent':
+		case 'declaration.type.struct.tuple.public.restricted':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.type_alias.public.restricted':
+		case 'declaration.type.struct.unit':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.union':
+		case 'declaration.type.struct.unit.private':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.union.private':
+		case 'declaration.type.struct.unit.public':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.union.public':
+		case 'declaration.type.struct.unit.public.internal':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.union.public.internal':
+		case 'declaration.type.struct.unit.public.parent':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.union.public.parent':
+		case 'declaration.type.struct.unit.public.restricted':
 			return unbuilt('expression.block.try.statements', value);
-		case 'declaration.union.public.restricted':
+		case 'declaration.type.type_alias':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.type.type_alias.associated':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.type.type_alias.private':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.type.type_alias.public':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.type.type_alias.public.internal':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.type.type_alias.public.parent':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.type.type_alias.public.restricted':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.type.union':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.type.union.private':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.type.union.public':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.type.union.public.internal':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.type.union.public.parent':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.type.union.public.restricted':
 			return unbuilt('expression.block.try.statements', value);
 		case 'declaration.variable':
 			if (
@@ -49875,18 +49875,6 @@ type expression_block_unsafe$309_statements$Item =
 	| RustMap['nodes']['declaration.constant.public.parent']
 	| BuildInput<RustMap, 'declaration.constant.public.restricted'>
 	| RustMap['nodes']['declaration.constant.public.restricted']
-	| BuildInput<RustMap, 'declaration.enum'>
-	| RustMap['nodes']['declaration.enum']
-	| BuildInput<RustMap, 'declaration.enum.private'>
-	| RustMap['nodes']['declaration.enum.private']
-	| BuildInput<RustMap, 'declaration.enum.public'>
-	| RustMap['nodes']['declaration.enum.public']
-	| BuildInput<RustMap, 'declaration.enum.public.internal'>
-	| RustMap['nodes']['declaration.enum.public.internal']
-	| BuildInput<RustMap, 'declaration.enum.public.parent'>
-	| RustMap['nodes']['declaration.enum.public.parent']
-	| BuildInput<RustMap, 'declaration.enum.public.restricted'>
-	| RustMap['nodes']['declaration.enum.public.restricted']
 	| BuildInput<RustMap, 'declaration.extension'>
 	| RustMap['nodes']['declaration.extension']
 	| BuildInput<RustMap, 'declaration.extension.conformance'>
@@ -49915,18 +49903,6 @@ type expression_block_unsafe$309_statements$Item =
 	| RustMap['nodes']['declaration.function.signature.public.parent']
 	| BuildInput<RustMap, 'declaration.function.signature.public.restricted'>
 	| RustMap['nodes']['declaration.function.signature.public.restricted']
-	| BuildInput<RustMap, 'declaration.interface.trait'>
-	| RustMap['nodes']['declaration.interface.trait']
-	| BuildInput<RustMap, 'declaration.interface.trait.private'>
-	| RustMap['nodes']['declaration.interface.trait.private']
-	| BuildInput<RustMap, 'declaration.interface.trait.public'>
-	| RustMap['nodes']['declaration.interface.trait.public']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.internal'>
-	| RustMap['nodes']['declaration.interface.trait.public.internal']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.parent'>
-	| RustMap['nodes']['declaration.interface.trait.public.parent']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.restricted'>
-	| RustMap['nodes']['declaration.interface.trait.public.restricted']
 	| BuildInput<RustMap, 'declaration.macro.brace'>
 	| RustMap['nodes']['declaration.macro.brace']
 	| BuildInput<RustMap, 'declaration.macro.bracket'>
@@ -49947,68 +49923,92 @@ type expression_block_unsafe$309_statements$Item =
 	| RustMap['nodes']['declaration.module.public.parent']
 	| BuildInput<RustMap, 'declaration.module.public.restricted'>
 	| RustMap['nodes']['declaration.module.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct'>
-	| RustMap['nodes']['declaration.struct']
-	| BuildInput<RustMap, 'declaration.struct.private'>
-	| RustMap['nodes']['declaration.struct.private']
-	| BuildInput<RustMap, 'declaration.struct.public'>
-	| RustMap['nodes']['declaration.struct.public']
-	| BuildInput<RustMap, 'declaration.struct.public.internal'>
-	| RustMap['nodes']['declaration.struct.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.public.parent'>
-	| RustMap['nodes']['declaration.struct.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.public.restricted'>
-	| RustMap['nodes']['declaration.struct.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.tuple'>
-	| RustMap['nodes']['declaration.struct.tuple']
-	| BuildInput<RustMap, 'declaration.struct.tuple.private'>
-	| RustMap['nodes']['declaration.struct.tuple.private']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public'>
-	| RustMap['nodes']['declaration.struct.tuple.public']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.internal'>
-	| RustMap['nodes']['declaration.struct.tuple.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.parent'>
-	| RustMap['nodes']['declaration.struct.tuple.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.restricted'>
-	| RustMap['nodes']['declaration.struct.tuple.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.unit'>
-	| RustMap['nodes']['declaration.struct.unit']
-	| BuildInput<RustMap, 'declaration.struct.unit.private'>
-	| RustMap['nodes']['declaration.struct.unit.private']
-	| BuildInput<RustMap, 'declaration.struct.unit.public'>
-	| RustMap['nodes']['declaration.struct.unit.public']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.internal'>
-	| RustMap['nodes']['declaration.struct.unit.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.parent'>
-	| RustMap['nodes']['declaration.struct.unit.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.restricted'>
-	| RustMap['nodes']['declaration.struct.unit.public.restricted']
-	| BuildInput<RustMap, 'declaration.type_alias'>
-	| RustMap['nodes']['declaration.type_alias']
-	| BuildInput<RustMap, 'declaration.type_alias.associated'>
-	| RustMap['nodes']['declaration.type_alias.associated']
-	| BuildInput<RustMap, 'declaration.type_alias.private'>
-	| RustMap['nodes']['declaration.type_alias.private']
-	| BuildInput<RustMap, 'declaration.type_alias.public'>
-	| RustMap['nodes']['declaration.type_alias.public']
-	| BuildInput<RustMap, 'declaration.type_alias.public.internal'>
-	| RustMap['nodes']['declaration.type_alias.public.internal']
-	| BuildInput<RustMap, 'declaration.type_alias.public.parent'>
-	| RustMap['nodes']['declaration.type_alias.public.parent']
-	| BuildInput<RustMap, 'declaration.type_alias.public.restricted'>
-	| RustMap['nodes']['declaration.type_alias.public.restricted']
-	| BuildInput<RustMap, 'declaration.union'>
-	| RustMap['nodes']['declaration.union']
-	| BuildInput<RustMap, 'declaration.union.private'>
-	| RustMap['nodes']['declaration.union.private']
-	| BuildInput<RustMap, 'declaration.union.public'>
-	| RustMap['nodes']['declaration.union.public']
-	| BuildInput<RustMap, 'declaration.union.public.internal'>
-	| RustMap['nodes']['declaration.union.public.internal']
-	| BuildInput<RustMap, 'declaration.union.public.parent'>
-	| RustMap['nodes']['declaration.union.public.parent']
-	| BuildInput<RustMap, 'declaration.union.public.restricted'>
-	| RustMap['nodes']['declaration.union.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.enum'>
+	| RustMap['nodes']['declaration.type.enum']
+	| BuildInput<RustMap, 'declaration.type.enum.private'>
+	| RustMap['nodes']['declaration.type.enum.private']
+	| BuildInput<RustMap, 'declaration.type.enum.public'>
+	| RustMap['nodes']['declaration.type.enum.public']
+	| BuildInput<RustMap, 'declaration.type.enum.public.internal'>
+	| RustMap['nodes']['declaration.type.enum.public.internal']
+	| BuildInput<RustMap, 'declaration.type.enum.public.parent'>
+	| RustMap['nodes']['declaration.type.enum.public.parent']
+	| BuildInput<RustMap, 'declaration.type.enum.public.restricted'>
+	| RustMap['nodes']['declaration.type.enum.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.interface.trait'>
+	| RustMap['nodes']['declaration.type.interface.trait']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.private'>
+	| RustMap['nodes']['declaration.type.interface.trait.private']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public'>
+	| RustMap['nodes']['declaration.type.interface.trait.public']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.internal'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.internal']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.parent'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.parent']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.restricted'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct'>
+	| RustMap['nodes']['declaration.type.struct']
+	| BuildInput<RustMap, 'declaration.type.struct.private'>
+	| RustMap['nodes']['declaration.type.struct.private']
+	| BuildInput<RustMap, 'declaration.type.struct.public'>
+	| RustMap['nodes']['declaration.type.struct.public']
+	| BuildInput<RustMap, 'declaration.type.struct.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple'>
+	| RustMap['nodes']['declaration.type.struct.tuple']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.private'>
+	| RustMap['nodes']['declaration.type.struct.tuple.private']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.unit'>
+	| RustMap['nodes']['declaration.type.struct.unit']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.private'>
+	| RustMap['nodes']['declaration.type.struct.unit.private']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public'>
+	| RustMap['nodes']['declaration.type.struct.unit.public']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.type_alias'>
+	| RustMap['nodes']['declaration.type.type_alias']
+	| BuildInput<RustMap, 'declaration.type.type_alias.associated'>
+	| RustMap['nodes']['declaration.type.type_alias.associated']
+	| BuildInput<RustMap, 'declaration.type.type_alias.private'>
+	| RustMap['nodes']['declaration.type.type_alias.private']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public'>
+	| RustMap['nodes']['declaration.type.type_alias.public']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.internal'>
+	| RustMap['nodes']['declaration.type.type_alias.public.internal']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.parent'>
+	| RustMap['nodes']['declaration.type.type_alias.public.parent']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.restricted'>
+	| RustMap['nodes']['declaration.type.type_alias.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.union'>
+	| RustMap['nodes']['declaration.type.union']
+	| BuildInput<RustMap, 'declaration.type.union.private'>
+	| RustMap['nodes']['declaration.type.union.private']
+	| BuildInput<RustMap, 'declaration.type.union.public'>
+	| RustMap['nodes']['declaration.type.union.public']
+	| BuildInput<RustMap, 'declaration.type.union.public.internal'>
+	| RustMap['nodes']['declaration.type.union.public.internal']
+	| BuildInput<RustMap, 'declaration.type.union.public.parent'>
+	| RustMap['nodes']['declaration.type.union.public.parent']
+	| BuildInput<RustMap, 'declaration.type.union.public.restricted'>
+	| RustMap['nodes']['declaration.type.union.public.restricted']
 	| BuildInput<RustMap, 'declaration.variable'>
 	| RustMap['nodes']['declaration.variable']
 	| BuildInput<RustMap, 'declaration.variable.private'>
@@ -50277,18 +50277,6 @@ const expression_block_unsafe$309_statements = (value: expression_block_unsafe$3
 			return unbuilt('expression.block.unsafe.statements', value);
 		case 'declaration.constant.public.restricted':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.enum':
-			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.enum.private':
-			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.enum.public':
-			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.enum.public.internal':
-			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.enum.public.parent':
-			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.enum.public.restricted':
-			return unbuilt('expression.block.unsafe.statements', value);
 		case 'declaration.extension':
 			return unbuilt('expression.block.unsafe.statements', value);
 		case 'declaration.extension.conformance':
@@ -50317,18 +50305,6 @@ const expression_block_unsafe$309_statements = (value: expression_block_unsafe$3
 			return unbuilt('expression.block.unsafe.statements', value);
 		case 'declaration.function.signature.public.restricted':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.interface.trait':
-			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.interface.trait.private':
-			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.interface.trait.public':
-			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.interface.trait.public.internal':
-			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.interface.trait.public.parent':
-			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.interface.trait.public.restricted':
-			return unbuilt('expression.block.unsafe.statements', value);
 		case 'declaration.macro.brace':
 			return declaration_macro_brace$418(value);
 		case 'declaration.macro.bracket':
@@ -50351,67 +50327,91 @@ const expression_block_unsafe$309_statements = (value: expression_block_unsafe$3
 			return unbuilt('expression.block.unsafe.statements', value);
 		case 'declaration.module.public.restricted':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.struct':
+		case 'declaration.type.enum':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.struct.private':
+		case 'declaration.type.enum.private':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.struct.public':
+		case 'declaration.type.enum.public':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.struct.public.internal':
+		case 'declaration.type.enum.public.internal':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.struct.public.parent':
+		case 'declaration.type.enum.public.parent':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.struct.public.restricted':
+		case 'declaration.type.enum.public.restricted':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.struct.tuple':
+		case 'declaration.type.interface.trait':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.struct.tuple.private':
+		case 'declaration.type.interface.trait.private':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.struct.tuple.public':
+		case 'declaration.type.interface.trait.public':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.struct.tuple.public.internal':
+		case 'declaration.type.interface.trait.public.internal':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.struct.tuple.public.parent':
+		case 'declaration.type.interface.trait.public.parent':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.struct.tuple.public.restricted':
+		case 'declaration.type.interface.trait.public.restricted':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.struct.unit':
+		case 'declaration.type.struct':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.struct.unit.private':
+		case 'declaration.type.struct.private':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.struct.unit.public':
+		case 'declaration.type.struct.public':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.struct.unit.public.internal':
+		case 'declaration.type.struct.public.internal':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.struct.unit.public.parent':
+		case 'declaration.type.struct.public.parent':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.struct.unit.public.restricted':
+		case 'declaration.type.struct.public.restricted':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.type_alias':
+		case 'declaration.type.struct.tuple':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.type_alias.associated':
+		case 'declaration.type.struct.tuple.private':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.type_alias.private':
+		case 'declaration.type.struct.tuple.public':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.type_alias.public':
+		case 'declaration.type.struct.tuple.public.internal':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.type_alias.public.internal':
+		case 'declaration.type.struct.tuple.public.parent':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.type_alias.public.parent':
+		case 'declaration.type.struct.tuple.public.restricted':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.type_alias.public.restricted':
+		case 'declaration.type.struct.unit':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.union':
+		case 'declaration.type.struct.unit.private':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.union.private':
+		case 'declaration.type.struct.unit.public':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.union.public':
+		case 'declaration.type.struct.unit.public.internal':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.union.public.internal':
+		case 'declaration.type.struct.unit.public.parent':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.union.public.parent':
+		case 'declaration.type.struct.unit.public.restricted':
 			return unbuilt('expression.block.unsafe.statements', value);
-		case 'declaration.union.public.restricted':
+		case 'declaration.type.type_alias':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.type.type_alias.associated':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.type.type_alias.private':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.type.type_alias.public':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.type.type_alias.public.internal':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.type.type_alias.public.parent':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.type.type_alias.public.restricted':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.type.union':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.type.union.private':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.type.union.public':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.type.union.public.internal':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.type.union.public.parent':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.type.union.public.restricted':
 			return unbuilt('expression.block.unsafe.statements', value);
 		case 'declaration.variable':
 			if (
@@ -68304,18 +68304,6 @@ type statement_block$313_statements$Item =
 	| RustMap['nodes']['declaration.constant.public.parent']
 	| BuildInput<RustMap, 'declaration.constant.public.restricted'>
 	| RustMap['nodes']['declaration.constant.public.restricted']
-	| BuildInput<RustMap, 'declaration.enum'>
-	| RustMap['nodes']['declaration.enum']
-	| BuildInput<RustMap, 'declaration.enum.private'>
-	| RustMap['nodes']['declaration.enum.private']
-	| BuildInput<RustMap, 'declaration.enum.public'>
-	| RustMap['nodes']['declaration.enum.public']
-	| BuildInput<RustMap, 'declaration.enum.public.internal'>
-	| RustMap['nodes']['declaration.enum.public.internal']
-	| BuildInput<RustMap, 'declaration.enum.public.parent'>
-	| RustMap['nodes']['declaration.enum.public.parent']
-	| BuildInput<RustMap, 'declaration.enum.public.restricted'>
-	| RustMap['nodes']['declaration.enum.public.restricted']
 	| BuildInput<RustMap, 'declaration.extension'>
 	| RustMap['nodes']['declaration.extension']
 	| BuildInput<RustMap, 'declaration.extension.conformance'>
@@ -68344,18 +68332,6 @@ type statement_block$313_statements$Item =
 	| RustMap['nodes']['declaration.function.signature.public.parent']
 	| BuildInput<RustMap, 'declaration.function.signature.public.restricted'>
 	| RustMap['nodes']['declaration.function.signature.public.restricted']
-	| BuildInput<RustMap, 'declaration.interface.trait'>
-	| RustMap['nodes']['declaration.interface.trait']
-	| BuildInput<RustMap, 'declaration.interface.trait.private'>
-	| RustMap['nodes']['declaration.interface.trait.private']
-	| BuildInput<RustMap, 'declaration.interface.trait.public'>
-	| RustMap['nodes']['declaration.interface.trait.public']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.internal'>
-	| RustMap['nodes']['declaration.interface.trait.public.internal']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.parent'>
-	| RustMap['nodes']['declaration.interface.trait.public.parent']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.restricted'>
-	| RustMap['nodes']['declaration.interface.trait.public.restricted']
 	| BuildInput<RustMap, 'declaration.macro.brace'>
 	| RustMap['nodes']['declaration.macro.brace']
 	| BuildInput<RustMap, 'declaration.macro.bracket'>
@@ -68376,68 +68352,92 @@ type statement_block$313_statements$Item =
 	| RustMap['nodes']['declaration.module.public.parent']
 	| BuildInput<RustMap, 'declaration.module.public.restricted'>
 	| RustMap['nodes']['declaration.module.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct'>
-	| RustMap['nodes']['declaration.struct']
-	| BuildInput<RustMap, 'declaration.struct.private'>
-	| RustMap['nodes']['declaration.struct.private']
-	| BuildInput<RustMap, 'declaration.struct.public'>
-	| RustMap['nodes']['declaration.struct.public']
-	| BuildInput<RustMap, 'declaration.struct.public.internal'>
-	| RustMap['nodes']['declaration.struct.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.public.parent'>
-	| RustMap['nodes']['declaration.struct.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.public.restricted'>
-	| RustMap['nodes']['declaration.struct.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.tuple'>
-	| RustMap['nodes']['declaration.struct.tuple']
-	| BuildInput<RustMap, 'declaration.struct.tuple.private'>
-	| RustMap['nodes']['declaration.struct.tuple.private']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public'>
-	| RustMap['nodes']['declaration.struct.tuple.public']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.internal'>
-	| RustMap['nodes']['declaration.struct.tuple.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.parent'>
-	| RustMap['nodes']['declaration.struct.tuple.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.restricted'>
-	| RustMap['nodes']['declaration.struct.tuple.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.unit'>
-	| RustMap['nodes']['declaration.struct.unit']
-	| BuildInput<RustMap, 'declaration.struct.unit.private'>
-	| RustMap['nodes']['declaration.struct.unit.private']
-	| BuildInput<RustMap, 'declaration.struct.unit.public'>
-	| RustMap['nodes']['declaration.struct.unit.public']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.internal'>
-	| RustMap['nodes']['declaration.struct.unit.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.parent'>
-	| RustMap['nodes']['declaration.struct.unit.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.restricted'>
-	| RustMap['nodes']['declaration.struct.unit.public.restricted']
-	| BuildInput<RustMap, 'declaration.type_alias'>
-	| RustMap['nodes']['declaration.type_alias']
-	| BuildInput<RustMap, 'declaration.type_alias.associated'>
-	| RustMap['nodes']['declaration.type_alias.associated']
-	| BuildInput<RustMap, 'declaration.type_alias.private'>
-	| RustMap['nodes']['declaration.type_alias.private']
-	| BuildInput<RustMap, 'declaration.type_alias.public'>
-	| RustMap['nodes']['declaration.type_alias.public']
-	| BuildInput<RustMap, 'declaration.type_alias.public.internal'>
-	| RustMap['nodes']['declaration.type_alias.public.internal']
-	| BuildInput<RustMap, 'declaration.type_alias.public.parent'>
-	| RustMap['nodes']['declaration.type_alias.public.parent']
-	| BuildInput<RustMap, 'declaration.type_alias.public.restricted'>
-	| RustMap['nodes']['declaration.type_alias.public.restricted']
-	| BuildInput<RustMap, 'declaration.union'>
-	| RustMap['nodes']['declaration.union']
-	| BuildInput<RustMap, 'declaration.union.private'>
-	| RustMap['nodes']['declaration.union.private']
-	| BuildInput<RustMap, 'declaration.union.public'>
-	| RustMap['nodes']['declaration.union.public']
-	| BuildInput<RustMap, 'declaration.union.public.internal'>
-	| RustMap['nodes']['declaration.union.public.internal']
-	| BuildInput<RustMap, 'declaration.union.public.parent'>
-	| RustMap['nodes']['declaration.union.public.parent']
-	| BuildInput<RustMap, 'declaration.union.public.restricted'>
-	| RustMap['nodes']['declaration.union.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.enum'>
+	| RustMap['nodes']['declaration.type.enum']
+	| BuildInput<RustMap, 'declaration.type.enum.private'>
+	| RustMap['nodes']['declaration.type.enum.private']
+	| BuildInput<RustMap, 'declaration.type.enum.public'>
+	| RustMap['nodes']['declaration.type.enum.public']
+	| BuildInput<RustMap, 'declaration.type.enum.public.internal'>
+	| RustMap['nodes']['declaration.type.enum.public.internal']
+	| BuildInput<RustMap, 'declaration.type.enum.public.parent'>
+	| RustMap['nodes']['declaration.type.enum.public.parent']
+	| BuildInput<RustMap, 'declaration.type.enum.public.restricted'>
+	| RustMap['nodes']['declaration.type.enum.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.interface.trait'>
+	| RustMap['nodes']['declaration.type.interface.trait']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.private'>
+	| RustMap['nodes']['declaration.type.interface.trait.private']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public'>
+	| RustMap['nodes']['declaration.type.interface.trait.public']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.internal'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.internal']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.parent'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.parent']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.restricted'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct'>
+	| RustMap['nodes']['declaration.type.struct']
+	| BuildInput<RustMap, 'declaration.type.struct.private'>
+	| RustMap['nodes']['declaration.type.struct.private']
+	| BuildInput<RustMap, 'declaration.type.struct.public'>
+	| RustMap['nodes']['declaration.type.struct.public']
+	| BuildInput<RustMap, 'declaration.type.struct.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple'>
+	| RustMap['nodes']['declaration.type.struct.tuple']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.private'>
+	| RustMap['nodes']['declaration.type.struct.tuple.private']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.unit'>
+	| RustMap['nodes']['declaration.type.struct.unit']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.private'>
+	| RustMap['nodes']['declaration.type.struct.unit.private']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public'>
+	| RustMap['nodes']['declaration.type.struct.unit.public']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.type_alias'>
+	| RustMap['nodes']['declaration.type.type_alias']
+	| BuildInput<RustMap, 'declaration.type.type_alias.associated'>
+	| RustMap['nodes']['declaration.type.type_alias.associated']
+	| BuildInput<RustMap, 'declaration.type.type_alias.private'>
+	| RustMap['nodes']['declaration.type.type_alias.private']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public'>
+	| RustMap['nodes']['declaration.type.type_alias.public']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.internal'>
+	| RustMap['nodes']['declaration.type.type_alias.public.internal']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.parent'>
+	| RustMap['nodes']['declaration.type.type_alias.public.parent']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.restricted'>
+	| RustMap['nodes']['declaration.type.type_alias.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.union'>
+	| RustMap['nodes']['declaration.type.union']
+	| BuildInput<RustMap, 'declaration.type.union.private'>
+	| RustMap['nodes']['declaration.type.union.private']
+	| BuildInput<RustMap, 'declaration.type.union.public'>
+	| RustMap['nodes']['declaration.type.union.public']
+	| BuildInput<RustMap, 'declaration.type.union.public.internal'>
+	| RustMap['nodes']['declaration.type.union.public.internal']
+	| BuildInput<RustMap, 'declaration.type.union.public.parent'>
+	| RustMap['nodes']['declaration.type.union.public.parent']
+	| BuildInput<RustMap, 'declaration.type.union.public.restricted'>
+	| RustMap['nodes']['declaration.type.union.public.restricted']
 	| BuildInput<RustMap, 'declaration.variable'>
 	| RustMap['nodes']['declaration.variable']
 	| BuildInput<RustMap, 'declaration.variable.private'>
@@ -68706,18 +68706,6 @@ const statement_block$313_statements = (value: statement_block$313_statements$It
 			return unbuilt('statement.block.statements', value);
 		case 'declaration.constant.public.restricted':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.enum':
-			return unbuilt('statement.block.statements', value);
-		case 'declaration.enum.private':
-			return unbuilt('statement.block.statements', value);
-		case 'declaration.enum.public':
-			return unbuilt('statement.block.statements', value);
-		case 'declaration.enum.public.internal':
-			return unbuilt('statement.block.statements', value);
-		case 'declaration.enum.public.parent':
-			return unbuilt('statement.block.statements', value);
-		case 'declaration.enum.public.restricted':
-			return unbuilt('statement.block.statements', value);
 		case 'declaration.extension':
 			return unbuilt('statement.block.statements', value);
 		case 'declaration.extension.conformance':
@@ -68746,18 +68734,6 @@ const statement_block$313_statements = (value: statement_block$313_statements$It
 			return unbuilt('statement.block.statements', value);
 		case 'declaration.function.signature.public.restricted':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.interface.trait':
-			return unbuilt('statement.block.statements', value);
-		case 'declaration.interface.trait.private':
-			return unbuilt('statement.block.statements', value);
-		case 'declaration.interface.trait.public':
-			return unbuilt('statement.block.statements', value);
-		case 'declaration.interface.trait.public.internal':
-			return unbuilt('statement.block.statements', value);
-		case 'declaration.interface.trait.public.parent':
-			return unbuilt('statement.block.statements', value);
-		case 'declaration.interface.trait.public.restricted':
-			return unbuilt('statement.block.statements', value);
 		case 'declaration.macro.brace':
 			return declaration_macro_brace$418(value);
 		case 'declaration.macro.bracket':
@@ -68780,67 +68756,91 @@ const statement_block$313_statements = (value: statement_block$313_statements$It
 			return unbuilt('statement.block.statements', value);
 		case 'declaration.module.public.restricted':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.struct':
+		case 'declaration.type.enum':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.struct.private':
+		case 'declaration.type.enum.private':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.struct.public':
+		case 'declaration.type.enum.public':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.struct.public.internal':
+		case 'declaration.type.enum.public.internal':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.struct.public.parent':
+		case 'declaration.type.enum.public.parent':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.struct.public.restricted':
+		case 'declaration.type.enum.public.restricted':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.struct.tuple':
+		case 'declaration.type.interface.trait':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.struct.tuple.private':
+		case 'declaration.type.interface.trait.private':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.struct.tuple.public':
+		case 'declaration.type.interface.trait.public':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.struct.tuple.public.internal':
+		case 'declaration.type.interface.trait.public.internal':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.struct.tuple.public.parent':
+		case 'declaration.type.interface.trait.public.parent':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.struct.tuple.public.restricted':
+		case 'declaration.type.interface.trait.public.restricted':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.struct.unit':
+		case 'declaration.type.struct':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.struct.unit.private':
+		case 'declaration.type.struct.private':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.struct.unit.public':
+		case 'declaration.type.struct.public':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.struct.unit.public.internal':
+		case 'declaration.type.struct.public.internal':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.struct.unit.public.parent':
+		case 'declaration.type.struct.public.parent':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.struct.unit.public.restricted':
+		case 'declaration.type.struct.public.restricted':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.type_alias':
+		case 'declaration.type.struct.tuple':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.type_alias.associated':
+		case 'declaration.type.struct.tuple.private':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.type_alias.private':
+		case 'declaration.type.struct.tuple.public':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.type_alias.public':
+		case 'declaration.type.struct.tuple.public.internal':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.type_alias.public.internal':
+		case 'declaration.type.struct.tuple.public.parent':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.type_alias.public.parent':
+		case 'declaration.type.struct.tuple.public.restricted':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.type_alias.public.restricted':
+		case 'declaration.type.struct.unit':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.union':
+		case 'declaration.type.struct.unit.private':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.union.private':
+		case 'declaration.type.struct.unit.public':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.union.public':
+		case 'declaration.type.struct.unit.public.internal':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.union.public.internal':
+		case 'declaration.type.struct.unit.public.parent':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.union.public.parent':
+		case 'declaration.type.struct.unit.public.restricted':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.union.public.restricted':
+		case 'declaration.type.type_alias':
+			return unbuilt('statement.block.statements', value);
+		case 'declaration.type.type_alias.associated':
+			return unbuilt('statement.block.statements', value);
+		case 'declaration.type.type_alias.private':
+			return unbuilt('statement.block.statements', value);
+		case 'declaration.type.type_alias.public':
+			return unbuilt('statement.block.statements', value);
+		case 'declaration.type.type_alias.public.internal':
+			return unbuilt('statement.block.statements', value);
+		case 'declaration.type.type_alias.public.parent':
+			return unbuilt('statement.block.statements', value);
+		case 'declaration.type.type_alias.public.restricted':
+			return unbuilt('statement.block.statements', value);
+		case 'declaration.type.union':
+			return unbuilt('statement.block.statements', value);
+		case 'declaration.type.union.private':
+			return unbuilt('statement.block.statements', value);
+		case 'declaration.type.union.public':
+			return unbuilt('statement.block.statements', value);
+		case 'declaration.type.union.public.internal':
+			return unbuilt('statement.block.statements', value);
+		case 'declaration.type.union.public.parent':
+			return unbuilt('statement.block.statements', value);
+		case 'declaration.type.union.public.restricted':
 			return unbuilt('statement.block.statements', value);
 		case 'declaration.variable':
 			if (
@@ -70478,18 +70478,6 @@ type statement_if$287_statements$Item =
 	| RustMap['nodes']['declaration.constant.public.parent']
 	| BuildInput<RustMap, 'declaration.constant.public.restricted'>
 	| RustMap['nodes']['declaration.constant.public.restricted']
-	| BuildInput<RustMap, 'declaration.enum'>
-	| RustMap['nodes']['declaration.enum']
-	| BuildInput<RustMap, 'declaration.enum.private'>
-	| RustMap['nodes']['declaration.enum.private']
-	| BuildInput<RustMap, 'declaration.enum.public'>
-	| RustMap['nodes']['declaration.enum.public']
-	| BuildInput<RustMap, 'declaration.enum.public.internal'>
-	| RustMap['nodes']['declaration.enum.public.internal']
-	| BuildInput<RustMap, 'declaration.enum.public.parent'>
-	| RustMap['nodes']['declaration.enum.public.parent']
-	| BuildInput<RustMap, 'declaration.enum.public.restricted'>
-	| RustMap['nodes']['declaration.enum.public.restricted']
 	| BuildInput<RustMap, 'declaration.extension'>
 	| RustMap['nodes']['declaration.extension']
 	| BuildInput<RustMap, 'declaration.extension.conformance'>
@@ -70518,18 +70506,6 @@ type statement_if$287_statements$Item =
 	| RustMap['nodes']['declaration.function.signature.public.parent']
 	| BuildInput<RustMap, 'declaration.function.signature.public.restricted'>
 	| RustMap['nodes']['declaration.function.signature.public.restricted']
-	| BuildInput<RustMap, 'declaration.interface.trait'>
-	| RustMap['nodes']['declaration.interface.trait']
-	| BuildInput<RustMap, 'declaration.interface.trait.private'>
-	| RustMap['nodes']['declaration.interface.trait.private']
-	| BuildInput<RustMap, 'declaration.interface.trait.public'>
-	| RustMap['nodes']['declaration.interface.trait.public']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.internal'>
-	| RustMap['nodes']['declaration.interface.trait.public.internal']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.parent'>
-	| RustMap['nodes']['declaration.interface.trait.public.parent']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.restricted'>
-	| RustMap['nodes']['declaration.interface.trait.public.restricted']
 	| BuildInput<RustMap, 'declaration.macro.brace'>
 	| RustMap['nodes']['declaration.macro.brace']
 	| BuildInput<RustMap, 'declaration.macro.bracket'>
@@ -70550,68 +70526,92 @@ type statement_if$287_statements$Item =
 	| RustMap['nodes']['declaration.module.public.parent']
 	| BuildInput<RustMap, 'declaration.module.public.restricted'>
 	| RustMap['nodes']['declaration.module.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct'>
-	| RustMap['nodes']['declaration.struct']
-	| BuildInput<RustMap, 'declaration.struct.private'>
-	| RustMap['nodes']['declaration.struct.private']
-	| BuildInput<RustMap, 'declaration.struct.public'>
-	| RustMap['nodes']['declaration.struct.public']
-	| BuildInput<RustMap, 'declaration.struct.public.internal'>
-	| RustMap['nodes']['declaration.struct.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.public.parent'>
-	| RustMap['nodes']['declaration.struct.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.public.restricted'>
-	| RustMap['nodes']['declaration.struct.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.tuple'>
-	| RustMap['nodes']['declaration.struct.tuple']
-	| BuildInput<RustMap, 'declaration.struct.tuple.private'>
-	| RustMap['nodes']['declaration.struct.tuple.private']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public'>
-	| RustMap['nodes']['declaration.struct.tuple.public']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.internal'>
-	| RustMap['nodes']['declaration.struct.tuple.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.parent'>
-	| RustMap['nodes']['declaration.struct.tuple.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.restricted'>
-	| RustMap['nodes']['declaration.struct.tuple.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.unit'>
-	| RustMap['nodes']['declaration.struct.unit']
-	| BuildInput<RustMap, 'declaration.struct.unit.private'>
-	| RustMap['nodes']['declaration.struct.unit.private']
-	| BuildInput<RustMap, 'declaration.struct.unit.public'>
-	| RustMap['nodes']['declaration.struct.unit.public']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.internal'>
-	| RustMap['nodes']['declaration.struct.unit.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.parent'>
-	| RustMap['nodes']['declaration.struct.unit.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.restricted'>
-	| RustMap['nodes']['declaration.struct.unit.public.restricted']
-	| BuildInput<RustMap, 'declaration.type_alias'>
-	| RustMap['nodes']['declaration.type_alias']
-	| BuildInput<RustMap, 'declaration.type_alias.associated'>
-	| RustMap['nodes']['declaration.type_alias.associated']
-	| BuildInput<RustMap, 'declaration.type_alias.private'>
-	| RustMap['nodes']['declaration.type_alias.private']
-	| BuildInput<RustMap, 'declaration.type_alias.public'>
-	| RustMap['nodes']['declaration.type_alias.public']
-	| BuildInput<RustMap, 'declaration.type_alias.public.internal'>
-	| RustMap['nodes']['declaration.type_alias.public.internal']
-	| BuildInput<RustMap, 'declaration.type_alias.public.parent'>
-	| RustMap['nodes']['declaration.type_alias.public.parent']
-	| BuildInput<RustMap, 'declaration.type_alias.public.restricted'>
-	| RustMap['nodes']['declaration.type_alias.public.restricted']
-	| BuildInput<RustMap, 'declaration.union'>
-	| RustMap['nodes']['declaration.union']
-	| BuildInput<RustMap, 'declaration.union.private'>
-	| RustMap['nodes']['declaration.union.private']
-	| BuildInput<RustMap, 'declaration.union.public'>
-	| RustMap['nodes']['declaration.union.public']
-	| BuildInput<RustMap, 'declaration.union.public.internal'>
-	| RustMap['nodes']['declaration.union.public.internal']
-	| BuildInput<RustMap, 'declaration.union.public.parent'>
-	| RustMap['nodes']['declaration.union.public.parent']
-	| BuildInput<RustMap, 'declaration.union.public.restricted'>
-	| RustMap['nodes']['declaration.union.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.enum'>
+	| RustMap['nodes']['declaration.type.enum']
+	| BuildInput<RustMap, 'declaration.type.enum.private'>
+	| RustMap['nodes']['declaration.type.enum.private']
+	| BuildInput<RustMap, 'declaration.type.enum.public'>
+	| RustMap['nodes']['declaration.type.enum.public']
+	| BuildInput<RustMap, 'declaration.type.enum.public.internal'>
+	| RustMap['nodes']['declaration.type.enum.public.internal']
+	| BuildInput<RustMap, 'declaration.type.enum.public.parent'>
+	| RustMap['nodes']['declaration.type.enum.public.parent']
+	| BuildInput<RustMap, 'declaration.type.enum.public.restricted'>
+	| RustMap['nodes']['declaration.type.enum.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.interface.trait'>
+	| RustMap['nodes']['declaration.type.interface.trait']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.private'>
+	| RustMap['nodes']['declaration.type.interface.trait.private']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public'>
+	| RustMap['nodes']['declaration.type.interface.trait.public']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.internal'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.internal']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.parent'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.parent']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.restricted'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct'>
+	| RustMap['nodes']['declaration.type.struct']
+	| BuildInput<RustMap, 'declaration.type.struct.private'>
+	| RustMap['nodes']['declaration.type.struct.private']
+	| BuildInput<RustMap, 'declaration.type.struct.public'>
+	| RustMap['nodes']['declaration.type.struct.public']
+	| BuildInput<RustMap, 'declaration.type.struct.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple'>
+	| RustMap['nodes']['declaration.type.struct.tuple']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.private'>
+	| RustMap['nodes']['declaration.type.struct.tuple.private']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.unit'>
+	| RustMap['nodes']['declaration.type.struct.unit']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.private'>
+	| RustMap['nodes']['declaration.type.struct.unit.private']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public'>
+	| RustMap['nodes']['declaration.type.struct.unit.public']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.type_alias'>
+	| RustMap['nodes']['declaration.type.type_alias']
+	| BuildInput<RustMap, 'declaration.type.type_alias.associated'>
+	| RustMap['nodes']['declaration.type.type_alias.associated']
+	| BuildInput<RustMap, 'declaration.type.type_alias.private'>
+	| RustMap['nodes']['declaration.type.type_alias.private']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public'>
+	| RustMap['nodes']['declaration.type.type_alias.public']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.internal'>
+	| RustMap['nodes']['declaration.type.type_alias.public.internal']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.parent'>
+	| RustMap['nodes']['declaration.type.type_alias.public.parent']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.restricted'>
+	| RustMap['nodes']['declaration.type.type_alias.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.union'>
+	| RustMap['nodes']['declaration.type.union']
+	| BuildInput<RustMap, 'declaration.type.union.private'>
+	| RustMap['nodes']['declaration.type.union.private']
+	| BuildInput<RustMap, 'declaration.type.union.public'>
+	| RustMap['nodes']['declaration.type.union.public']
+	| BuildInput<RustMap, 'declaration.type.union.public.internal'>
+	| RustMap['nodes']['declaration.type.union.public.internal']
+	| BuildInput<RustMap, 'declaration.type.union.public.parent'>
+	| RustMap['nodes']['declaration.type.union.public.parent']
+	| BuildInput<RustMap, 'declaration.type.union.public.restricted'>
+	| RustMap['nodes']['declaration.type.union.public.restricted']
 	| BuildInput<RustMap, 'declaration.variable'>
 	| RustMap['nodes']['declaration.variable']
 	| BuildInput<RustMap, 'declaration.variable.private'>
@@ -70880,18 +70880,6 @@ const statement_if$287_statements = (value: statement_if$287_statements$Item) =>
 			return unbuilt('statement.if.statements', value);
 		case 'declaration.constant.public.restricted':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.enum':
-			return unbuilt('statement.if.statements', value);
-		case 'declaration.enum.private':
-			return unbuilt('statement.if.statements', value);
-		case 'declaration.enum.public':
-			return unbuilt('statement.if.statements', value);
-		case 'declaration.enum.public.internal':
-			return unbuilt('statement.if.statements', value);
-		case 'declaration.enum.public.parent':
-			return unbuilt('statement.if.statements', value);
-		case 'declaration.enum.public.restricted':
-			return unbuilt('statement.if.statements', value);
 		case 'declaration.extension':
 			return unbuilt('statement.if.statements', value);
 		case 'declaration.extension.conformance':
@@ -70920,18 +70908,6 @@ const statement_if$287_statements = (value: statement_if$287_statements$Item) =>
 			return unbuilt('statement.if.statements', value);
 		case 'declaration.function.signature.public.restricted':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.interface.trait':
-			return unbuilt('statement.if.statements', value);
-		case 'declaration.interface.trait.private':
-			return unbuilt('statement.if.statements', value);
-		case 'declaration.interface.trait.public':
-			return unbuilt('statement.if.statements', value);
-		case 'declaration.interface.trait.public.internal':
-			return unbuilt('statement.if.statements', value);
-		case 'declaration.interface.trait.public.parent':
-			return unbuilt('statement.if.statements', value);
-		case 'declaration.interface.trait.public.restricted':
-			return unbuilt('statement.if.statements', value);
 		case 'declaration.macro.brace':
 			return declaration_macro_brace$418(value);
 		case 'declaration.macro.bracket':
@@ -70954,67 +70930,91 @@ const statement_if$287_statements = (value: statement_if$287_statements$Item) =>
 			return unbuilt('statement.if.statements', value);
 		case 'declaration.module.public.restricted':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.struct':
+		case 'declaration.type.enum':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.struct.private':
+		case 'declaration.type.enum.private':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.struct.public':
+		case 'declaration.type.enum.public':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.struct.public.internal':
+		case 'declaration.type.enum.public.internal':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.struct.public.parent':
+		case 'declaration.type.enum.public.parent':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.struct.public.restricted':
+		case 'declaration.type.enum.public.restricted':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.struct.tuple':
+		case 'declaration.type.interface.trait':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.struct.tuple.private':
+		case 'declaration.type.interface.trait.private':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.struct.tuple.public':
+		case 'declaration.type.interface.trait.public':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.struct.tuple.public.internal':
+		case 'declaration.type.interface.trait.public.internal':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.struct.tuple.public.parent':
+		case 'declaration.type.interface.trait.public.parent':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.struct.tuple.public.restricted':
+		case 'declaration.type.interface.trait.public.restricted':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.struct.unit':
+		case 'declaration.type.struct':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.struct.unit.private':
+		case 'declaration.type.struct.private':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.struct.unit.public':
+		case 'declaration.type.struct.public':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.struct.unit.public.internal':
+		case 'declaration.type.struct.public.internal':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.struct.unit.public.parent':
+		case 'declaration.type.struct.public.parent':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.struct.unit.public.restricted':
+		case 'declaration.type.struct.public.restricted':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.type_alias':
+		case 'declaration.type.struct.tuple':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.type_alias.associated':
+		case 'declaration.type.struct.tuple.private':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.type_alias.private':
+		case 'declaration.type.struct.tuple.public':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.type_alias.public':
+		case 'declaration.type.struct.tuple.public.internal':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.type_alias.public.internal':
+		case 'declaration.type.struct.tuple.public.parent':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.type_alias.public.parent':
+		case 'declaration.type.struct.tuple.public.restricted':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.type_alias.public.restricted':
+		case 'declaration.type.struct.unit':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.union':
+		case 'declaration.type.struct.unit.private':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.union.private':
+		case 'declaration.type.struct.unit.public':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.union.public':
+		case 'declaration.type.struct.unit.public.internal':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.union.public.internal':
+		case 'declaration.type.struct.unit.public.parent':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.union.public.parent':
+		case 'declaration.type.struct.unit.public.restricted':
 			return unbuilt('statement.if.statements', value);
-		case 'declaration.union.public.restricted':
+		case 'declaration.type.type_alias':
+			return unbuilt('statement.if.statements', value);
+		case 'declaration.type.type_alias.associated':
+			return unbuilt('statement.if.statements', value);
+		case 'declaration.type.type_alias.private':
+			return unbuilt('statement.if.statements', value);
+		case 'declaration.type.type_alias.public':
+			return unbuilt('statement.if.statements', value);
+		case 'declaration.type.type_alias.public.internal':
+			return unbuilt('statement.if.statements', value);
+		case 'declaration.type.type_alias.public.parent':
+			return unbuilt('statement.if.statements', value);
+		case 'declaration.type.type_alias.public.restricted':
+			return unbuilt('statement.if.statements', value);
+		case 'declaration.type.union':
+			return unbuilt('statement.if.statements', value);
+		case 'declaration.type.union.private':
+			return unbuilt('statement.if.statements', value);
+		case 'declaration.type.union.public':
+			return unbuilt('statement.if.statements', value);
+		case 'declaration.type.union.public.internal':
+			return unbuilt('statement.if.statements', value);
+		case 'declaration.type.union.public.parent':
+			return unbuilt('statement.if.statements', value);
+		case 'declaration.type.union.public.restricted':
 			return unbuilt('statement.if.statements', value);
 		case 'declaration.variable':
 			if (
@@ -71864,18 +71864,6 @@ type statement_loop$298_statements$Item =
 	| RustMap['nodes']['declaration.constant.public.parent']
 	| BuildInput<RustMap, 'declaration.constant.public.restricted'>
 	| RustMap['nodes']['declaration.constant.public.restricted']
-	| BuildInput<RustMap, 'declaration.enum'>
-	| RustMap['nodes']['declaration.enum']
-	| BuildInput<RustMap, 'declaration.enum.private'>
-	| RustMap['nodes']['declaration.enum.private']
-	| BuildInput<RustMap, 'declaration.enum.public'>
-	| RustMap['nodes']['declaration.enum.public']
-	| BuildInput<RustMap, 'declaration.enum.public.internal'>
-	| RustMap['nodes']['declaration.enum.public.internal']
-	| BuildInput<RustMap, 'declaration.enum.public.parent'>
-	| RustMap['nodes']['declaration.enum.public.parent']
-	| BuildInput<RustMap, 'declaration.enum.public.restricted'>
-	| RustMap['nodes']['declaration.enum.public.restricted']
 	| BuildInput<RustMap, 'declaration.extension'>
 	| RustMap['nodes']['declaration.extension']
 	| BuildInput<RustMap, 'declaration.extension.conformance'>
@@ -71904,18 +71892,6 @@ type statement_loop$298_statements$Item =
 	| RustMap['nodes']['declaration.function.signature.public.parent']
 	| BuildInput<RustMap, 'declaration.function.signature.public.restricted'>
 	| RustMap['nodes']['declaration.function.signature.public.restricted']
-	| BuildInput<RustMap, 'declaration.interface.trait'>
-	| RustMap['nodes']['declaration.interface.trait']
-	| BuildInput<RustMap, 'declaration.interface.trait.private'>
-	| RustMap['nodes']['declaration.interface.trait.private']
-	| BuildInput<RustMap, 'declaration.interface.trait.public'>
-	| RustMap['nodes']['declaration.interface.trait.public']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.internal'>
-	| RustMap['nodes']['declaration.interface.trait.public.internal']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.parent'>
-	| RustMap['nodes']['declaration.interface.trait.public.parent']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.restricted'>
-	| RustMap['nodes']['declaration.interface.trait.public.restricted']
 	| BuildInput<RustMap, 'declaration.macro.brace'>
 	| RustMap['nodes']['declaration.macro.brace']
 	| BuildInput<RustMap, 'declaration.macro.bracket'>
@@ -71936,68 +71912,92 @@ type statement_loop$298_statements$Item =
 	| RustMap['nodes']['declaration.module.public.parent']
 	| BuildInput<RustMap, 'declaration.module.public.restricted'>
 	| RustMap['nodes']['declaration.module.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct'>
-	| RustMap['nodes']['declaration.struct']
-	| BuildInput<RustMap, 'declaration.struct.private'>
-	| RustMap['nodes']['declaration.struct.private']
-	| BuildInput<RustMap, 'declaration.struct.public'>
-	| RustMap['nodes']['declaration.struct.public']
-	| BuildInput<RustMap, 'declaration.struct.public.internal'>
-	| RustMap['nodes']['declaration.struct.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.public.parent'>
-	| RustMap['nodes']['declaration.struct.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.public.restricted'>
-	| RustMap['nodes']['declaration.struct.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.tuple'>
-	| RustMap['nodes']['declaration.struct.tuple']
-	| BuildInput<RustMap, 'declaration.struct.tuple.private'>
-	| RustMap['nodes']['declaration.struct.tuple.private']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public'>
-	| RustMap['nodes']['declaration.struct.tuple.public']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.internal'>
-	| RustMap['nodes']['declaration.struct.tuple.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.parent'>
-	| RustMap['nodes']['declaration.struct.tuple.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.restricted'>
-	| RustMap['nodes']['declaration.struct.tuple.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.unit'>
-	| RustMap['nodes']['declaration.struct.unit']
-	| BuildInput<RustMap, 'declaration.struct.unit.private'>
-	| RustMap['nodes']['declaration.struct.unit.private']
-	| BuildInput<RustMap, 'declaration.struct.unit.public'>
-	| RustMap['nodes']['declaration.struct.unit.public']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.internal'>
-	| RustMap['nodes']['declaration.struct.unit.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.parent'>
-	| RustMap['nodes']['declaration.struct.unit.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.restricted'>
-	| RustMap['nodes']['declaration.struct.unit.public.restricted']
-	| BuildInput<RustMap, 'declaration.type_alias'>
-	| RustMap['nodes']['declaration.type_alias']
-	| BuildInput<RustMap, 'declaration.type_alias.associated'>
-	| RustMap['nodes']['declaration.type_alias.associated']
-	| BuildInput<RustMap, 'declaration.type_alias.private'>
-	| RustMap['nodes']['declaration.type_alias.private']
-	| BuildInput<RustMap, 'declaration.type_alias.public'>
-	| RustMap['nodes']['declaration.type_alias.public']
-	| BuildInput<RustMap, 'declaration.type_alias.public.internal'>
-	| RustMap['nodes']['declaration.type_alias.public.internal']
-	| BuildInput<RustMap, 'declaration.type_alias.public.parent'>
-	| RustMap['nodes']['declaration.type_alias.public.parent']
-	| BuildInput<RustMap, 'declaration.type_alias.public.restricted'>
-	| RustMap['nodes']['declaration.type_alias.public.restricted']
-	| BuildInput<RustMap, 'declaration.union'>
-	| RustMap['nodes']['declaration.union']
-	| BuildInput<RustMap, 'declaration.union.private'>
-	| RustMap['nodes']['declaration.union.private']
-	| BuildInput<RustMap, 'declaration.union.public'>
-	| RustMap['nodes']['declaration.union.public']
-	| BuildInput<RustMap, 'declaration.union.public.internal'>
-	| RustMap['nodes']['declaration.union.public.internal']
-	| BuildInput<RustMap, 'declaration.union.public.parent'>
-	| RustMap['nodes']['declaration.union.public.parent']
-	| BuildInput<RustMap, 'declaration.union.public.restricted'>
-	| RustMap['nodes']['declaration.union.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.enum'>
+	| RustMap['nodes']['declaration.type.enum']
+	| BuildInput<RustMap, 'declaration.type.enum.private'>
+	| RustMap['nodes']['declaration.type.enum.private']
+	| BuildInput<RustMap, 'declaration.type.enum.public'>
+	| RustMap['nodes']['declaration.type.enum.public']
+	| BuildInput<RustMap, 'declaration.type.enum.public.internal'>
+	| RustMap['nodes']['declaration.type.enum.public.internal']
+	| BuildInput<RustMap, 'declaration.type.enum.public.parent'>
+	| RustMap['nodes']['declaration.type.enum.public.parent']
+	| BuildInput<RustMap, 'declaration.type.enum.public.restricted'>
+	| RustMap['nodes']['declaration.type.enum.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.interface.trait'>
+	| RustMap['nodes']['declaration.type.interface.trait']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.private'>
+	| RustMap['nodes']['declaration.type.interface.trait.private']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public'>
+	| RustMap['nodes']['declaration.type.interface.trait.public']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.internal'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.internal']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.parent'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.parent']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.restricted'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct'>
+	| RustMap['nodes']['declaration.type.struct']
+	| BuildInput<RustMap, 'declaration.type.struct.private'>
+	| RustMap['nodes']['declaration.type.struct.private']
+	| BuildInput<RustMap, 'declaration.type.struct.public'>
+	| RustMap['nodes']['declaration.type.struct.public']
+	| BuildInput<RustMap, 'declaration.type.struct.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple'>
+	| RustMap['nodes']['declaration.type.struct.tuple']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.private'>
+	| RustMap['nodes']['declaration.type.struct.tuple.private']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.unit'>
+	| RustMap['nodes']['declaration.type.struct.unit']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.private'>
+	| RustMap['nodes']['declaration.type.struct.unit.private']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public'>
+	| RustMap['nodes']['declaration.type.struct.unit.public']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.type_alias'>
+	| RustMap['nodes']['declaration.type.type_alias']
+	| BuildInput<RustMap, 'declaration.type.type_alias.associated'>
+	| RustMap['nodes']['declaration.type.type_alias.associated']
+	| BuildInput<RustMap, 'declaration.type.type_alias.private'>
+	| RustMap['nodes']['declaration.type.type_alias.private']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public'>
+	| RustMap['nodes']['declaration.type.type_alias.public']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.internal'>
+	| RustMap['nodes']['declaration.type.type_alias.public.internal']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.parent'>
+	| RustMap['nodes']['declaration.type.type_alias.public.parent']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.restricted'>
+	| RustMap['nodes']['declaration.type.type_alias.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.union'>
+	| RustMap['nodes']['declaration.type.union']
+	| BuildInput<RustMap, 'declaration.type.union.private'>
+	| RustMap['nodes']['declaration.type.union.private']
+	| BuildInput<RustMap, 'declaration.type.union.public'>
+	| RustMap['nodes']['declaration.type.union.public']
+	| BuildInput<RustMap, 'declaration.type.union.public.internal'>
+	| RustMap['nodes']['declaration.type.union.public.internal']
+	| BuildInput<RustMap, 'declaration.type.union.public.parent'>
+	| RustMap['nodes']['declaration.type.union.public.parent']
+	| BuildInput<RustMap, 'declaration.type.union.public.restricted'>
+	| RustMap['nodes']['declaration.type.union.public.restricted']
 	| BuildInput<RustMap, 'declaration.variable'>
 	| RustMap['nodes']['declaration.variable']
 	| BuildInput<RustMap, 'declaration.variable.private'>
@@ -72266,18 +72266,6 @@ const statement_loop$298_statements = (value: statement_loop$298_statements$Item
 			return unbuilt('statement.loop.statements', value);
 		case 'declaration.constant.public.restricted':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.enum':
-			return unbuilt('statement.loop.statements', value);
-		case 'declaration.enum.private':
-			return unbuilt('statement.loop.statements', value);
-		case 'declaration.enum.public':
-			return unbuilt('statement.loop.statements', value);
-		case 'declaration.enum.public.internal':
-			return unbuilt('statement.loop.statements', value);
-		case 'declaration.enum.public.parent':
-			return unbuilt('statement.loop.statements', value);
-		case 'declaration.enum.public.restricted':
-			return unbuilt('statement.loop.statements', value);
 		case 'declaration.extension':
 			return unbuilt('statement.loop.statements', value);
 		case 'declaration.extension.conformance':
@@ -72306,18 +72294,6 @@ const statement_loop$298_statements = (value: statement_loop$298_statements$Item
 			return unbuilt('statement.loop.statements', value);
 		case 'declaration.function.signature.public.restricted':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.interface.trait':
-			return unbuilt('statement.loop.statements', value);
-		case 'declaration.interface.trait.private':
-			return unbuilt('statement.loop.statements', value);
-		case 'declaration.interface.trait.public':
-			return unbuilt('statement.loop.statements', value);
-		case 'declaration.interface.trait.public.internal':
-			return unbuilt('statement.loop.statements', value);
-		case 'declaration.interface.trait.public.parent':
-			return unbuilt('statement.loop.statements', value);
-		case 'declaration.interface.trait.public.restricted':
-			return unbuilt('statement.loop.statements', value);
 		case 'declaration.macro.brace':
 			return declaration_macro_brace$418(value);
 		case 'declaration.macro.bracket':
@@ -72340,67 +72316,91 @@ const statement_loop$298_statements = (value: statement_loop$298_statements$Item
 			return unbuilt('statement.loop.statements', value);
 		case 'declaration.module.public.restricted':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.struct':
+		case 'declaration.type.enum':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.struct.private':
+		case 'declaration.type.enum.private':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.struct.public':
+		case 'declaration.type.enum.public':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.struct.public.internal':
+		case 'declaration.type.enum.public.internal':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.struct.public.parent':
+		case 'declaration.type.enum.public.parent':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.struct.public.restricted':
+		case 'declaration.type.enum.public.restricted':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.struct.tuple':
+		case 'declaration.type.interface.trait':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.struct.tuple.private':
+		case 'declaration.type.interface.trait.private':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.struct.tuple.public':
+		case 'declaration.type.interface.trait.public':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.struct.tuple.public.internal':
+		case 'declaration.type.interface.trait.public.internal':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.struct.tuple.public.parent':
+		case 'declaration.type.interface.trait.public.parent':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.struct.tuple.public.restricted':
+		case 'declaration.type.interface.trait.public.restricted':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.struct.unit':
+		case 'declaration.type.struct':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.struct.unit.private':
+		case 'declaration.type.struct.private':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.struct.unit.public':
+		case 'declaration.type.struct.public':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.struct.unit.public.internal':
+		case 'declaration.type.struct.public.internal':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.struct.unit.public.parent':
+		case 'declaration.type.struct.public.parent':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.struct.unit.public.restricted':
+		case 'declaration.type.struct.public.restricted':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.type_alias':
+		case 'declaration.type.struct.tuple':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.type_alias.associated':
+		case 'declaration.type.struct.tuple.private':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.type_alias.private':
+		case 'declaration.type.struct.tuple.public':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.type_alias.public':
+		case 'declaration.type.struct.tuple.public.internal':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.type_alias.public.internal':
+		case 'declaration.type.struct.tuple.public.parent':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.type_alias.public.parent':
+		case 'declaration.type.struct.tuple.public.restricted':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.type_alias.public.restricted':
+		case 'declaration.type.struct.unit':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.union':
+		case 'declaration.type.struct.unit.private':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.union.private':
+		case 'declaration.type.struct.unit.public':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.union.public':
+		case 'declaration.type.struct.unit.public.internal':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.union.public.internal':
+		case 'declaration.type.struct.unit.public.parent':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.union.public.parent':
+		case 'declaration.type.struct.unit.public.restricted':
 			return unbuilt('statement.loop.statements', value);
-		case 'declaration.union.public.restricted':
+		case 'declaration.type.type_alias':
+			return unbuilt('statement.loop.statements', value);
+		case 'declaration.type.type_alias.associated':
+			return unbuilt('statement.loop.statements', value);
+		case 'declaration.type.type_alias.private':
+			return unbuilt('statement.loop.statements', value);
+		case 'declaration.type.type_alias.public':
+			return unbuilt('statement.loop.statements', value);
+		case 'declaration.type.type_alias.public.internal':
+			return unbuilt('statement.loop.statements', value);
+		case 'declaration.type.type_alias.public.parent':
+			return unbuilt('statement.loop.statements', value);
+		case 'declaration.type.type_alias.public.restricted':
+			return unbuilt('statement.loop.statements', value);
+		case 'declaration.type.union':
+			return unbuilt('statement.loop.statements', value);
+		case 'declaration.type.union.private':
+			return unbuilt('statement.loop.statements', value);
+		case 'declaration.type.union.public':
+			return unbuilt('statement.loop.statements', value);
+		case 'declaration.type.union.public.internal':
+			return unbuilt('statement.loop.statements', value);
+		case 'declaration.type.union.public.parent':
+			return unbuilt('statement.loop.statements', value);
+		case 'declaration.type.union.public.restricted':
 			return unbuilt('statement.loop.statements', value);
 		case 'declaration.variable':
 			if (
@@ -73777,18 +73777,6 @@ type statement_loop_for_each$299_statements$Item =
 	| RustMap['nodes']['declaration.constant.public.parent']
 	| BuildInput<RustMap, 'declaration.constant.public.restricted'>
 	| RustMap['nodes']['declaration.constant.public.restricted']
-	| BuildInput<RustMap, 'declaration.enum'>
-	| RustMap['nodes']['declaration.enum']
-	| BuildInput<RustMap, 'declaration.enum.private'>
-	| RustMap['nodes']['declaration.enum.private']
-	| BuildInput<RustMap, 'declaration.enum.public'>
-	| RustMap['nodes']['declaration.enum.public']
-	| BuildInput<RustMap, 'declaration.enum.public.internal'>
-	| RustMap['nodes']['declaration.enum.public.internal']
-	| BuildInput<RustMap, 'declaration.enum.public.parent'>
-	| RustMap['nodes']['declaration.enum.public.parent']
-	| BuildInput<RustMap, 'declaration.enum.public.restricted'>
-	| RustMap['nodes']['declaration.enum.public.restricted']
 	| BuildInput<RustMap, 'declaration.extension'>
 	| RustMap['nodes']['declaration.extension']
 	| BuildInput<RustMap, 'declaration.extension.conformance'>
@@ -73817,18 +73805,6 @@ type statement_loop_for_each$299_statements$Item =
 	| RustMap['nodes']['declaration.function.signature.public.parent']
 	| BuildInput<RustMap, 'declaration.function.signature.public.restricted'>
 	| RustMap['nodes']['declaration.function.signature.public.restricted']
-	| BuildInput<RustMap, 'declaration.interface.trait'>
-	| RustMap['nodes']['declaration.interface.trait']
-	| BuildInput<RustMap, 'declaration.interface.trait.private'>
-	| RustMap['nodes']['declaration.interface.trait.private']
-	| BuildInput<RustMap, 'declaration.interface.trait.public'>
-	| RustMap['nodes']['declaration.interface.trait.public']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.internal'>
-	| RustMap['nodes']['declaration.interface.trait.public.internal']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.parent'>
-	| RustMap['nodes']['declaration.interface.trait.public.parent']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.restricted'>
-	| RustMap['nodes']['declaration.interface.trait.public.restricted']
 	| BuildInput<RustMap, 'declaration.macro.brace'>
 	| RustMap['nodes']['declaration.macro.brace']
 	| BuildInput<RustMap, 'declaration.macro.bracket'>
@@ -73849,68 +73825,92 @@ type statement_loop_for_each$299_statements$Item =
 	| RustMap['nodes']['declaration.module.public.parent']
 	| BuildInput<RustMap, 'declaration.module.public.restricted'>
 	| RustMap['nodes']['declaration.module.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct'>
-	| RustMap['nodes']['declaration.struct']
-	| BuildInput<RustMap, 'declaration.struct.private'>
-	| RustMap['nodes']['declaration.struct.private']
-	| BuildInput<RustMap, 'declaration.struct.public'>
-	| RustMap['nodes']['declaration.struct.public']
-	| BuildInput<RustMap, 'declaration.struct.public.internal'>
-	| RustMap['nodes']['declaration.struct.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.public.parent'>
-	| RustMap['nodes']['declaration.struct.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.public.restricted'>
-	| RustMap['nodes']['declaration.struct.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.tuple'>
-	| RustMap['nodes']['declaration.struct.tuple']
-	| BuildInput<RustMap, 'declaration.struct.tuple.private'>
-	| RustMap['nodes']['declaration.struct.tuple.private']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public'>
-	| RustMap['nodes']['declaration.struct.tuple.public']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.internal'>
-	| RustMap['nodes']['declaration.struct.tuple.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.parent'>
-	| RustMap['nodes']['declaration.struct.tuple.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.restricted'>
-	| RustMap['nodes']['declaration.struct.tuple.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.unit'>
-	| RustMap['nodes']['declaration.struct.unit']
-	| BuildInput<RustMap, 'declaration.struct.unit.private'>
-	| RustMap['nodes']['declaration.struct.unit.private']
-	| BuildInput<RustMap, 'declaration.struct.unit.public'>
-	| RustMap['nodes']['declaration.struct.unit.public']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.internal'>
-	| RustMap['nodes']['declaration.struct.unit.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.parent'>
-	| RustMap['nodes']['declaration.struct.unit.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.restricted'>
-	| RustMap['nodes']['declaration.struct.unit.public.restricted']
-	| BuildInput<RustMap, 'declaration.type_alias'>
-	| RustMap['nodes']['declaration.type_alias']
-	| BuildInput<RustMap, 'declaration.type_alias.associated'>
-	| RustMap['nodes']['declaration.type_alias.associated']
-	| BuildInput<RustMap, 'declaration.type_alias.private'>
-	| RustMap['nodes']['declaration.type_alias.private']
-	| BuildInput<RustMap, 'declaration.type_alias.public'>
-	| RustMap['nodes']['declaration.type_alias.public']
-	| BuildInput<RustMap, 'declaration.type_alias.public.internal'>
-	| RustMap['nodes']['declaration.type_alias.public.internal']
-	| BuildInput<RustMap, 'declaration.type_alias.public.parent'>
-	| RustMap['nodes']['declaration.type_alias.public.parent']
-	| BuildInput<RustMap, 'declaration.type_alias.public.restricted'>
-	| RustMap['nodes']['declaration.type_alias.public.restricted']
-	| BuildInput<RustMap, 'declaration.union'>
-	| RustMap['nodes']['declaration.union']
-	| BuildInput<RustMap, 'declaration.union.private'>
-	| RustMap['nodes']['declaration.union.private']
-	| BuildInput<RustMap, 'declaration.union.public'>
-	| RustMap['nodes']['declaration.union.public']
-	| BuildInput<RustMap, 'declaration.union.public.internal'>
-	| RustMap['nodes']['declaration.union.public.internal']
-	| BuildInput<RustMap, 'declaration.union.public.parent'>
-	| RustMap['nodes']['declaration.union.public.parent']
-	| BuildInput<RustMap, 'declaration.union.public.restricted'>
-	| RustMap['nodes']['declaration.union.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.enum'>
+	| RustMap['nodes']['declaration.type.enum']
+	| BuildInput<RustMap, 'declaration.type.enum.private'>
+	| RustMap['nodes']['declaration.type.enum.private']
+	| BuildInput<RustMap, 'declaration.type.enum.public'>
+	| RustMap['nodes']['declaration.type.enum.public']
+	| BuildInput<RustMap, 'declaration.type.enum.public.internal'>
+	| RustMap['nodes']['declaration.type.enum.public.internal']
+	| BuildInput<RustMap, 'declaration.type.enum.public.parent'>
+	| RustMap['nodes']['declaration.type.enum.public.parent']
+	| BuildInput<RustMap, 'declaration.type.enum.public.restricted'>
+	| RustMap['nodes']['declaration.type.enum.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.interface.trait'>
+	| RustMap['nodes']['declaration.type.interface.trait']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.private'>
+	| RustMap['nodes']['declaration.type.interface.trait.private']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public'>
+	| RustMap['nodes']['declaration.type.interface.trait.public']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.internal'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.internal']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.parent'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.parent']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.restricted'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct'>
+	| RustMap['nodes']['declaration.type.struct']
+	| BuildInput<RustMap, 'declaration.type.struct.private'>
+	| RustMap['nodes']['declaration.type.struct.private']
+	| BuildInput<RustMap, 'declaration.type.struct.public'>
+	| RustMap['nodes']['declaration.type.struct.public']
+	| BuildInput<RustMap, 'declaration.type.struct.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple'>
+	| RustMap['nodes']['declaration.type.struct.tuple']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.private'>
+	| RustMap['nodes']['declaration.type.struct.tuple.private']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.unit'>
+	| RustMap['nodes']['declaration.type.struct.unit']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.private'>
+	| RustMap['nodes']['declaration.type.struct.unit.private']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public'>
+	| RustMap['nodes']['declaration.type.struct.unit.public']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.type_alias'>
+	| RustMap['nodes']['declaration.type.type_alias']
+	| BuildInput<RustMap, 'declaration.type.type_alias.associated'>
+	| RustMap['nodes']['declaration.type.type_alias.associated']
+	| BuildInput<RustMap, 'declaration.type.type_alias.private'>
+	| RustMap['nodes']['declaration.type.type_alias.private']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public'>
+	| RustMap['nodes']['declaration.type.type_alias.public']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.internal'>
+	| RustMap['nodes']['declaration.type.type_alias.public.internal']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.parent'>
+	| RustMap['nodes']['declaration.type.type_alias.public.parent']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.restricted'>
+	| RustMap['nodes']['declaration.type.type_alias.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.union'>
+	| RustMap['nodes']['declaration.type.union']
+	| BuildInput<RustMap, 'declaration.type.union.private'>
+	| RustMap['nodes']['declaration.type.union.private']
+	| BuildInput<RustMap, 'declaration.type.union.public'>
+	| RustMap['nodes']['declaration.type.union.public']
+	| BuildInput<RustMap, 'declaration.type.union.public.internal'>
+	| RustMap['nodes']['declaration.type.union.public.internal']
+	| BuildInput<RustMap, 'declaration.type.union.public.parent'>
+	| RustMap['nodes']['declaration.type.union.public.parent']
+	| BuildInput<RustMap, 'declaration.type.union.public.restricted'>
+	| RustMap['nodes']['declaration.type.union.public.restricted']
 	| BuildInput<RustMap, 'declaration.variable'>
 	| RustMap['nodes']['declaration.variable']
 	| BuildInput<RustMap, 'declaration.variable.private'>
@@ -74179,18 +74179,6 @@ const statement_loop_for_each$299_statements = (value: statement_loop_for_each$2
 			return unbuilt('statement.loop.for_each.statements', value);
 		case 'declaration.constant.public.restricted':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.enum':
-			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.enum.private':
-			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.enum.public':
-			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.enum.public.internal':
-			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.enum.public.parent':
-			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.enum.public.restricted':
-			return unbuilt('statement.loop.for_each.statements', value);
 		case 'declaration.extension':
 			return unbuilt('statement.loop.for_each.statements', value);
 		case 'declaration.extension.conformance':
@@ -74219,18 +74207,6 @@ const statement_loop_for_each$299_statements = (value: statement_loop_for_each$2
 			return unbuilt('statement.loop.for_each.statements', value);
 		case 'declaration.function.signature.public.restricted':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.interface.trait':
-			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.interface.trait.private':
-			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.interface.trait.public':
-			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.interface.trait.public.internal':
-			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.interface.trait.public.parent':
-			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.interface.trait.public.restricted':
-			return unbuilt('statement.loop.for_each.statements', value);
 		case 'declaration.macro.brace':
 			return declaration_macro_brace$418(value);
 		case 'declaration.macro.bracket':
@@ -74253,67 +74229,91 @@ const statement_loop_for_each$299_statements = (value: statement_loop_for_each$2
 			return unbuilt('statement.loop.for_each.statements', value);
 		case 'declaration.module.public.restricted':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.struct':
+		case 'declaration.type.enum':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.struct.private':
+		case 'declaration.type.enum.private':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.struct.public':
+		case 'declaration.type.enum.public':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.struct.public.internal':
+		case 'declaration.type.enum.public.internal':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.struct.public.parent':
+		case 'declaration.type.enum.public.parent':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.struct.public.restricted':
+		case 'declaration.type.enum.public.restricted':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.struct.tuple':
+		case 'declaration.type.interface.trait':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.struct.tuple.private':
+		case 'declaration.type.interface.trait.private':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.struct.tuple.public':
+		case 'declaration.type.interface.trait.public':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.struct.tuple.public.internal':
+		case 'declaration.type.interface.trait.public.internal':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.struct.tuple.public.parent':
+		case 'declaration.type.interface.trait.public.parent':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.struct.tuple.public.restricted':
+		case 'declaration.type.interface.trait.public.restricted':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.struct.unit':
+		case 'declaration.type.struct':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.struct.unit.private':
+		case 'declaration.type.struct.private':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.struct.unit.public':
+		case 'declaration.type.struct.public':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.struct.unit.public.internal':
+		case 'declaration.type.struct.public.internal':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.struct.unit.public.parent':
+		case 'declaration.type.struct.public.parent':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.struct.unit.public.restricted':
+		case 'declaration.type.struct.public.restricted':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.type_alias':
+		case 'declaration.type.struct.tuple':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.type_alias.associated':
+		case 'declaration.type.struct.tuple.private':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.type_alias.private':
+		case 'declaration.type.struct.tuple.public':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.type_alias.public':
+		case 'declaration.type.struct.tuple.public.internal':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.type_alias.public.internal':
+		case 'declaration.type.struct.tuple.public.parent':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.type_alias.public.parent':
+		case 'declaration.type.struct.tuple.public.restricted':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.type_alias.public.restricted':
+		case 'declaration.type.struct.unit':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.union':
+		case 'declaration.type.struct.unit.private':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.union.private':
+		case 'declaration.type.struct.unit.public':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.union.public':
+		case 'declaration.type.struct.unit.public.internal':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.union.public.internal':
+		case 'declaration.type.struct.unit.public.parent':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.union.public.parent':
+		case 'declaration.type.struct.unit.public.restricted':
 			return unbuilt('statement.loop.for_each.statements', value);
-		case 'declaration.union.public.restricted':
+		case 'declaration.type.type_alias':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'declaration.type.type_alias.associated':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'declaration.type.type_alias.private':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'declaration.type.type_alias.public':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'declaration.type.type_alias.public.internal':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'declaration.type.type_alias.public.parent':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'declaration.type.type_alias.public.restricted':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'declaration.type.union':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'declaration.type.union.private':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'declaration.type.union.public':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'declaration.type.union.public.internal':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'declaration.type.union.public.parent':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'declaration.type.union.public.restricted':
 			return unbuilt('statement.loop.for_each.statements', value);
 		case 'declaration.variable':
 			if (
@@ -75497,18 +75497,6 @@ type statement_loop_while$297_statements$Item =
 	| RustMap['nodes']['declaration.constant.public.parent']
 	| BuildInput<RustMap, 'declaration.constant.public.restricted'>
 	| RustMap['nodes']['declaration.constant.public.restricted']
-	| BuildInput<RustMap, 'declaration.enum'>
-	| RustMap['nodes']['declaration.enum']
-	| BuildInput<RustMap, 'declaration.enum.private'>
-	| RustMap['nodes']['declaration.enum.private']
-	| BuildInput<RustMap, 'declaration.enum.public'>
-	| RustMap['nodes']['declaration.enum.public']
-	| BuildInput<RustMap, 'declaration.enum.public.internal'>
-	| RustMap['nodes']['declaration.enum.public.internal']
-	| BuildInput<RustMap, 'declaration.enum.public.parent'>
-	| RustMap['nodes']['declaration.enum.public.parent']
-	| BuildInput<RustMap, 'declaration.enum.public.restricted'>
-	| RustMap['nodes']['declaration.enum.public.restricted']
 	| BuildInput<RustMap, 'declaration.extension'>
 	| RustMap['nodes']['declaration.extension']
 	| BuildInput<RustMap, 'declaration.extension.conformance'>
@@ -75537,18 +75525,6 @@ type statement_loop_while$297_statements$Item =
 	| RustMap['nodes']['declaration.function.signature.public.parent']
 	| BuildInput<RustMap, 'declaration.function.signature.public.restricted'>
 	| RustMap['nodes']['declaration.function.signature.public.restricted']
-	| BuildInput<RustMap, 'declaration.interface.trait'>
-	| RustMap['nodes']['declaration.interface.trait']
-	| BuildInput<RustMap, 'declaration.interface.trait.private'>
-	| RustMap['nodes']['declaration.interface.trait.private']
-	| BuildInput<RustMap, 'declaration.interface.trait.public'>
-	| RustMap['nodes']['declaration.interface.trait.public']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.internal'>
-	| RustMap['nodes']['declaration.interface.trait.public.internal']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.parent'>
-	| RustMap['nodes']['declaration.interface.trait.public.parent']
-	| BuildInput<RustMap, 'declaration.interface.trait.public.restricted'>
-	| RustMap['nodes']['declaration.interface.trait.public.restricted']
 	| BuildInput<RustMap, 'declaration.macro.brace'>
 	| RustMap['nodes']['declaration.macro.brace']
 	| BuildInput<RustMap, 'declaration.macro.bracket'>
@@ -75569,68 +75545,92 @@ type statement_loop_while$297_statements$Item =
 	| RustMap['nodes']['declaration.module.public.parent']
 	| BuildInput<RustMap, 'declaration.module.public.restricted'>
 	| RustMap['nodes']['declaration.module.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct'>
-	| RustMap['nodes']['declaration.struct']
-	| BuildInput<RustMap, 'declaration.struct.private'>
-	| RustMap['nodes']['declaration.struct.private']
-	| BuildInput<RustMap, 'declaration.struct.public'>
-	| RustMap['nodes']['declaration.struct.public']
-	| BuildInput<RustMap, 'declaration.struct.public.internal'>
-	| RustMap['nodes']['declaration.struct.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.public.parent'>
-	| RustMap['nodes']['declaration.struct.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.public.restricted'>
-	| RustMap['nodes']['declaration.struct.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.tuple'>
-	| RustMap['nodes']['declaration.struct.tuple']
-	| BuildInput<RustMap, 'declaration.struct.tuple.private'>
-	| RustMap['nodes']['declaration.struct.tuple.private']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public'>
-	| RustMap['nodes']['declaration.struct.tuple.public']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.internal'>
-	| RustMap['nodes']['declaration.struct.tuple.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.parent'>
-	| RustMap['nodes']['declaration.struct.tuple.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.tuple.public.restricted'>
-	| RustMap['nodes']['declaration.struct.tuple.public.restricted']
-	| BuildInput<RustMap, 'declaration.struct.unit'>
-	| RustMap['nodes']['declaration.struct.unit']
-	| BuildInput<RustMap, 'declaration.struct.unit.private'>
-	| RustMap['nodes']['declaration.struct.unit.private']
-	| BuildInput<RustMap, 'declaration.struct.unit.public'>
-	| RustMap['nodes']['declaration.struct.unit.public']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.internal'>
-	| RustMap['nodes']['declaration.struct.unit.public.internal']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.parent'>
-	| RustMap['nodes']['declaration.struct.unit.public.parent']
-	| BuildInput<RustMap, 'declaration.struct.unit.public.restricted'>
-	| RustMap['nodes']['declaration.struct.unit.public.restricted']
-	| BuildInput<RustMap, 'declaration.type_alias'>
-	| RustMap['nodes']['declaration.type_alias']
-	| BuildInput<RustMap, 'declaration.type_alias.associated'>
-	| RustMap['nodes']['declaration.type_alias.associated']
-	| BuildInput<RustMap, 'declaration.type_alias.private'>
-	| RustMap['nodes']['declaration.type_alias.private']
-	| BuildInput<RustMap, 'declaration.type_alias.public'>
-	| RustMap['nodes']['declaration.type_alias.public']
-	| BuildInput<RustMap, 'declaration.type_alias.public.internal'>
-	| RustMap['nodes']['declaration.type_alias.public.internal']
-	| BuildInput<RustMap, 'declaration.type_alias.public.parent'>
-	| RustMap['nodes']['declaration.type_alias.public.parent']
-	| BuildInput<RustMap, 'declaration.type_alias.public.restricted'>
-	| RustMap['nodes']['declaration.type_alias.public.restricted']
-	| BuildInput<RustMap, 'declaration.union'>
-	| RustMap['nodes']['declaration.union']
-	| BuildInput<RustMap, 'declaration.union.private'>
-	| RustMap['nodes']['declaration.union.private']
-	| BuildInput<RustMap, 'declaration.union.public'>
-	| RustMap['nodes']['declaration.union.public']
-	| BuildInput<RustMap, 'declaration.union.public.internal'>
-	| RustMap['nodes']['declaration.union.public.internal']
-	| BuildInput<RustMap, 'declaration.union.public.parent'>
-	| RustMap['nodes']['declaration.union.public.parent']
-	| BuildInput<RustMap, 'declaration.union.public.restricted'>
-	| RustMap['nodes']['declaration.union.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.enum'>
+	| RustMap['nodes']['declaration.type.enum']
+	| BuildInput<RustMap, 'declaration.type.enum.private'>
+	| RustMap['nodes']['declaration.type.enum.private']
+	| BuildInput<RustMap, 'declaration.type.enum.public'>
+	| RustMap['nodes']['declaration.type.enum.public']
+	| BuildInput<RustMap, 'declaration.type.enum.public.internal'>
+	| RustMap['nodes']['declaration.type.enum.public.internal']
+	| BuildInput<RustMap, 'declaration.type.enum.public.parent'>
+	| RustMap['nodes']['declaration.type.enum.public.parent']
+	| BuildInput<RustMap, 'declaration.type.enum.public.restricted'>
+	| RustMap['nodes']['declaration.type.enum.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.interface.trait'>
+	| RustMap['nodes']['declaration.type.interface.trait']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.private'>
+	| RustMap['nodes']['declaration.type.interface.trait.private']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public'>
+	| RustMap['nodes']['declaration.type.interface.trait.public']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.internal'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.internal']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.parent'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.parent']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.restricted'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct'>
+	| RustMap['nodes']['declaration.type.struct']
+	| BuildInput<RustMap, 'declaration.type.struct.private'>
+	| RustMap['nodes']['declaration.type.struct.private']
+	| BuildInput<RustMap, 'declaration.type.struct.public'>
+	| RustMap['nodes']['declaration.type.struct.public']
+	| BuildInput<RustMap, 'declaration.type.struct.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple'>
+	| RustMap['nodes']['declaration.type.struct.tuple']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.private'>
+	| RustMap['nodes']['declaration.type.struct.tuple.private']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.unit'>
+	| RustMap['nodes']['declaration.type.struct.unit']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.private'>
+	| RustMap['nodes']['declaration.type.struct.unit.private']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public'>
+	| RustMap['nodes']['declaration.type.struct.unit.public']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.type_alias'>
+	| RustMap['nodes']['declaration.type.type_alias']
+	| BuildInput<RustMap, 'declaration.type.type_alias.associated'>
+	| RustMap['nodes']['declaration.type.type_alias.associated']
+	| BuildInput<RustMap, 'declaration.type.type_alias.private'>
+	| RustMap['nodes']['declaration.type.type_alias.private']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public'>
+	| RustMap['nodes']['declaration.type.type_alias.public']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.internal'>
+	| RustMap['nodes']['declaration.type.type_alias.public.internal']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.parent'>
+	| RustMap['nodes']['declaration.type.type_alias.public.parent']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.restricted'>
+	| RustMap['nodes']['declaration.type.type_alias.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.union'>
+	| RustMap['nodes']['declaration.type.union']
+	| BuildInput<RustMap, 'declaration.type.union.private'>
+	| RustMap['nodes']['declaration.type.union.private']
+	| BuildInput<RustMap, 'declaration.type.union.public'>
+	| RustMap['nodes']['declaration.type.union.public']
+	| BuildInput<RustMap, 'declaration.type.union.public.internal'>
+	| RustMap['nodes']['declaration.type.union.public.internal']
+	| BuildInput<RustMap, 'declaration.type.union.public.parent'>
+	| RustMap['nodes']['declaration.type.union.public.parent']
+	| BuildInput<RustMap, 'declaration.type.union.public.restricted'>
+	| RustMap['nodes']['declaration.type.union.public.restricted']
 	| BuildInput<RustMap, 'declaration.variable'>
 	| RustMap['nodes']['declaration.variable']
 	| BuildInput<RustMap, 'declaration.variable.private'>
@@ -75899,18 +75899,6 @@ const statement_loop_while$297_statements = (value: statement_loop_while$297_sta
 			return unbuilt('statement.loop.while.statements', value);
 		case 'declaration.constant.public.restricted':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.enum':
-			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.enum.private':
-			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.enum.public':
-			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.enum.public.internal':
-			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.enum.public.parent':
-			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.enum.public.restricted':
-			return unbuilt('statement.loop.while.statements', value);
 		case 'declaration.extension':
 			return unbuilt('statement.loop.while.statements', value);
 		case 'declaration.extension.conformance':
@@ -75939,18 +75927,6 @@ const statement_loop_while$297_statements = (value: statement_loop_while$297_sta
 			return unbuilt('statement.loop.while.statements', value);
 		case 'declaration.function.signature.public.restricted':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.interface.trait':
-			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.interface.trait.private':
-			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.interface.trait.public':
-			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.interface.trait.public.internal':
-			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.interface.trait.public.parent':
-			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.interface.trait.public.restricted':
-			return unbuilt('statement.loop.while.statements', value);
 		case 'declaration.macro.brace':
 			return declaration_macro_brace$418(value);
 		case 'declaration.macro.bracket':
@@ -75973,67 +75949,91 @@ const statement_loop_while$297_statements = (value: statement_loop_while$297_sta
 			return unbuilt('statement.loop.while.statements', value);
 		case 'declaration.module.public.restricted':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.struct':
+		case 'declaration.type.enum':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.struct.private':
+		case 'declaration.type.enum.private':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.struct.public':
+		case 'declaration.type.enum.public':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.struct.public.internal':
+		case 'declaration.type.enum.public.internal':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.struct.public.parent':
+		case 'declaration.type.enum.public.parent':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.struct.public.restricted':
+		case 'declaration.type.enum.public.restricted':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.struct.tuple':
+		case 'declaration.type.interface.trait':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.struct.tuple.private':
+		case 'declaration.type.interface.trait.private':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.struct.tuple.public':
+		case 'declaration.type.interface.trait.public':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.struct.tuple.public.internal':
+		case 'declaration.type.interface.trait.public.internal':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.struct.tuple.public.parent':
+		case 'declaration.type.interface.trait.public.parent':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.struct.tuple.public.restricted':
+		case 'declaration.type.interface.trait.public.restricted':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.struct.unit':
+		case 'declaration.type.struct':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.struct.unit.private':
+		case 'declaration.type.struct.private':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.struct.unit.public':
+		case 'declaration.type.struct.public':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.struct.unit.public.internal':
+		case 'declaration.type.struct.public.internal':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.struct.unit.public.parent':
+		case 'declaration.type.struct.public.parent':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.struct.unit.public.restricted':
+		case 'declaration.type.struct.public.restricted':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.type_alias':
+		case 'declaration.type.struct.tuple':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.type_alias.associated':
+		case 'declaration.type.struct.tuple.private':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.type_alias.private':
+		case 'declaration.type.struct.tuple.public':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.type_alias.public':
+		case 'declaration.type.struct.tuple.public.internal':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.type_alias.public.internal':
+		case 'declaration.type.struct.tuple.public.parent':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.type_alias.public.parent':
+		case 'declaration.type.struct.tuple.public.restricted':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.type_alias.public.restricted':
+		case 'declaration.type.struct.unit':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.union':
+		case 'declaration.type.struct.unit.private':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.union.private':
+		case 'declaration.type.struct.unit.public':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.union.public':
+		case 'declaration.type.struct.unit.public.internal':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.union.public.internal':
+		case 'declaration.type.struct.unit.public.parent':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.union.public.parent':
+		case 'declaration.type.struct.unit.public.restricted':
 			return unbuilt('statement.loop.while.statements', value);
-		case 'declaration.union.public.restricted':
+		case 'declaration.type.type_alias':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'declaration.type.type_alias.associated':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'declaration.type.type_alias.private':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'declaration.type.type_alias.public':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'declaration.type.type_alias.public.internal':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'declaration.type.type_alias.public.parent':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'declaration.type.type_alias.public.restricted':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'declaration.type.union':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'declaration.type.union.private':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'declaration.type.union.public':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'declaration.type.union.public.internal':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'declaration.type.union.public.parent':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'declaration.type.union.public.restricted':
 			return unbuilt('statement.loop.while.statements', value);
 		case 'declaration.variable':
 			if (
@@ -79515,16 +79515,6 @@ const declaration_constant$205 = (
 		value: input.value === undefined ? undefined : declaration_constant$205_value(input.value)
 	});
 };
-const declaration_enum_member$200 = (
-	input: PathInput<RustMap, 'declaration.enum_member'>
-): ReturnType<typeof b.enumVariant> => {
-	const unroutedSlot = unroutedIn(input, ['attributes', 'name', 'value']);
-	if (unroutedSlot !== undefined) return unrouted('declaration.enum_member', unroutedSlot);
-	return b.enumVariant({
-		name: declaration_enum_member$200_name(input.name),
-		value: input.value === undefined ? undefined : declaration_enum_member$200_value(input.value)
-	});
-};
 const declaration_macro$416 = (
 	input: PathInput<RustMap, 'declaration.macro'>
 ): ReturnType<typeof b.macroDefinitionParen> => {
@@ -79631,6 +79621,16 @@ const declaration_macro_paren$416 = (
 						declaration_macro_paren$416_rules$item(rules$first),
 						...rules$rest.map(declaration_macro_paren$416_rules$item)
 					)
+	});
+};
+const declaration_member_enum_member$200 = (
+	input: PathInput<RustMap, 'declaration.member.enum_member'>
+): ReturnType<typeof b.enumVariant> => {
+	const unroutedSlot = unroutedIn(input, ['attributes', 'name', 'value']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.member.enum_member', unroutedSlot);
+	return b.enumVariant({
+		name: declaration_member_enum_member$200_name(input.name),
+		value: input.value === undefined ? undefined : declaration_member_enum_member$200_value(input.value)
 	});
 };
 const declaration_module$384 = (
@@ -81438,10 +81438,6 @@ const clause_where_predicate = (input: PathInput<RustMap, 'clause.where.predicat
 const declaration_constant = (input: PathInput<RustMap, 'declaration.constant'>) => {
 	return declaration_constant$205(input);
 };
-const declaration_enum_member = (input: PathInput<RustMap, 'declaration.enum_member'>) => {
-	if (input.attributes !== undefined) return unrouted('declaration.enum_member', 'attributes');
-	return declaration_enum_member$200(input);
-};
 const declaration_macro = (input: PathInput<RustMap, 'declaration.macro'>) => {
 	if (
 		(typeof input.name !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(input.name)) &&
@@ -81465,6 +81461,10 @@ const declaration_macro_bracket = (input: PathInput<RustMap, 'declaration.macro.
 };
 const declaration_macro_paren = (input: PathInput<RustMap, 'declaration.macro.paren'>) => {
 	return declaration_macro_paren$416(input);
+};
+const declaration_member_enum_member = (input: PathInput<RustMap, 'declaration.member.enum_member'>) => {
+	if (input.attributes !== undefined) return unrouted('declaration.member.enum_member', 'attributes');
+	return declaration_member_enum_member$200(input);
 };
 const declaration_module = (input: PathInput<RustMap, 'declaration.module'>) => {
 	if (input.name !== undefined && input.statements === undefined) return declaration_module$384(input);
@@ -82561,12 +82561,12 @@ export const portableBuild = {
 	},
 	declaration: {
 		constant: declaration_constant,
-		enum_member: declaration_enum_member,
 		macro: Object.assign(declaration_macro, {
 			brace: declaration_macro_brace,
 			bracket: declaration_macro_bracket,
 			paren: declaration_macro_paren
 		}),
+		member: { enum_member: declaration_member_enum_member },
 		module: Object.assign(declaration_module, { foreign: declaration_module_foreign }),
 		parameter: { receiver: declaration_parameter_receiver, variadic: declaration_parameter_variadic },
 		type_parameter: Object.assign(declaration_type_parameter, {

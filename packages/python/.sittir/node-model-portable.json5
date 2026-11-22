@@ -1722,10 +1722,10 @@
       }
     },
     "class_definition": {
-      "vocab": "declaration.class",
+      "vocab": "declaration.type.class",
       "read": [
         {
-          "vocab": "declaration.class",
+          "vocab": "declaration.type.class",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2918,10 +2918,10 @@
       ]
     },
     "constructor_declaration": {
-      "vocab": "declaration.constructor",
+      "vocab": "declaration.member.constructor",
       "read": [
         {
-          "vocab": "declaration.constructor",
+          "vocab": "declaration.member.constructor",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5723,10 +5723,10 @@
       ]
     },
     "method_declaration": {
-      "vocab": "declaration.method",
+      "vocab": "declaration.member.method",
       "read": [
         {
-          "vocab": "declaration.method",
+          "vocab": "declaration.member.method",
           "toplevel": false,
           "within": [
             "decorated_definition_class_declaration"
@@ -5780,7 +5780,7 @@
           ]
         },
         {
-          "vocab": "declaration.method",
+          "vocab": "declaration.member.method",
           "toplevel": false,
           "within": [
             "decorated_definition_class_declaration"
@@ -5807,7 +5807,7 @@
           ]
         },
         {
-          "vocab": "declaration.method",
+          "vocab": "declaration.member.method",
           "toplevel": false,
           "within": [
             "decorated_definition_class_declaration"
@@ -5834,7 +5834,7 @@
           ]
         },
         {
-          "vocab": "declaration.property.setter",
+          "vocab": "declaration.member.property.setter",
           "toplevel": false,
           "within": [
             "decorated_definition_class_declaration"
@@ -5866,7 +5866,7 @@
           ]
         },
         {
-          "vocab": "declaration.property.getter",
+          "vocab": "declaration.member.property.getter",
           "toplevel": false,
           "within": [
             "decorated_definition_class_declaration"
@@ -5893,7 +5893,7 @@
           ]
         },
         {
-          "vocab": "declaration.method",
+          "vocab": "declaration.member.method",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5919,7 +5919,7 @@
           }
         },
         {
-          "vocab": "declaration.constructor",
+          "vocab": "declaration.member.constructor",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5938,7 +5938,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.special",
+          "vocab": "declaration.member.method.special",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5964,14 +5964,14 @@
           }
         },
         {
-          "vocab": "declaration.method",
+          "vocab": "declaration.member.method",
           "toplevel": true,
           "within": [],
           "pins": [],
           "test": []
         },
         {
-          "vocab": "declaration.method",
+          "vocab": "declaration.member.method",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -8025,10 +8025,10 @@
       }
     },
     "type_alias_statement": {
-      "vocab": "declaration.type_alias",
+      "vocab": "declaration.type.type_alias",
       "read": [
         {
-          "vocab": "declaration.type_alias",
+          "vocab": "declaration.type.type_alias",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -8917,21 +8917,21 @@
       },
       {
         "depth": 2,
-        "paths": 76,
-        "kinds": 78,
+        "paths": 73,
+        "kinds": 74,
         "refinements": 1
       },
       {
         "depth": 3,
-        "paths": 67,
-        "kinds": 58,
-        "refinements": 41
+        "paths": 69,
+        "kinds": 61,
+        "refinements": 40
       },
       {
         "depth": 4,
-        "paths": 63,
-        "kinds": 19,
-        "refinements": 30
+        "paths": 66,
+        "kinds": 20,
+        "refinements": 31
       },
       {
         "depth": 5,

@@ -123,7 +123,7 @@ describe('deriveVocabulary', () => {
 		const fn = levelSlots(d, 'declaration.function');
 		expect(fn.get('name')?.optional).toBe(false);
 		expect(fn.get('parameters')?.optional).toBe(false);
-		const method = levelSlots(d, 'declaration.method');
+		const method = levelSlots(d, 'declaration.member.method');
 		expect(method.get('name')?.optional).toBe(false);
 		expect(method.get('parameters')?.optional).toBe(false);
 		expect(method.get('decorators')?.optional).toBe(true);
@@ -138,12 +138,12 @@ describe('deriveVocabulary', () => {
 		expect([...(constant?.literals.values() ?? [])].flatMap((texts) => [...texts])).toEqual(['const']);
 	});
 	it('lands a container pattern capture only on the kinds its element slot names directly', () => {
-		expect(levelSlots(d, 'declaration.class').get('decorators')?.grammars.has('python')).toBe(true);
+		expect(levelSlots(d, 'declaration.type.class').get('decorators')?.grammars.has('python')).toBe(true);
 		expect(levelSlots(d, 'declaration.function').get('decorators')?.grammars.has('python')).toBe(true);
-		expect(levelSlots(d, 'declaration.method').get('decorators')?.grammars.has('typescript')).toBe(true);
+		expect(levelSlots(d, 'declaration.member.method').get('decorators')?.grammars.has('typescript')).toBe(true);
 		for (const v of [
-			'declaration.enum_member',
-			'declaration.field',
+			'declaration.member.enum_member',
+			'declaration.member.field',
 			'declaration.parameter',
 			'declaration.parameter.receiver',
 			'declaration.parameter.variadic',
@@ -152,7 +152,7 @@ describe('deriveVocabulary', () => {
 			'declaration.type_parameter.value'
 		])
 			expect(d.slots.get(v)?.get('attributes')?.grammars.has('rust'), v).toBe(true);
-		for (const v of ['statement.block', 'declaration.function', 'declaration.class', 'declaration.variable'])
+		for (const v of ['statement.block', 'declaration.function', 'declaration.type.class', 'declaration.variable'])
 			expect(d.slots.get(v)?.has('declare') ?? false, v).toBe(false);
 		expect(d.untargeted).toEqual([]);
 		expect(d.uncaptured).toEqual([]);
@@ -193,7 +193,7 @@ describe('deriveVocabulary', () => {
 			expect(d.slots.get(v)?.get('label')?.grammars.has('typescript') ?? false, v).toBe(true);
 	});
 	it('lifts a capture nested inside a container child onto the claimed kind', () => {
-		const cls = levelSlots(d, 'declaration.class');
+		const cls = levelSlots(d, 'declaration.type.class');
 		expect(cls.has('extends')).toBe(true);
 		expect(cls.has('implements')).toBe(true);
 		expect(cls.has('heritage')).toBe(false);
@@ -209,21 +209,21 @@ describe('deriveVocabulary', () => {
 		expect([...parameters].filter((k) => k.startsWith('<'))).toEqual([]);
 		const members = d.slots.get('expression.class')?.get('members');
 		expect([...(members?.kinds ?? [])].sort()).toEqual([
-			'declaration.constructor',
-			'declaration.field',
-			'declaration.method',
-			'declaration.method.signature',
-			'declaration.method.signature.abstract',
-			'declaration.property',
-			'declaration.property.getter',
-			'declaration.property.setter',
-			'declaration.property.signature.abstract.getter',
-			'declaration.property.signature.abstract.setter',
-			'declaration.property.signature.getter',
-			'declaration.property.signature.setter',
-			'declaration.signature.index',
-			'declaration.signature.index.mapped',
-			'statement.block.static'
+			'declaration.member.constructor',
+			'declaration.member.field',
+			'declaration.member.method',
+			'declaration.member.method.signature',
+			'declaration.member.method.signature.abstract',
+			'declaration.member.property',
+			'declaration.member.property.getter',
+			'declaration.member.property.setter',
+			'declaration.member.property.signature.abstract.getter',
+			'declaration.member.property.signature.abstract.setter',
+			'declaration.member.property.signature.getter',
+			'declaration.member.property.signature.setter',
+			'declaration.member.signature.index',
+			'declaration.member.signature.index.mapped',
+			'declaration.member.static_block'
 		]);
 		expect(members?.multiple).toBe(true);
 	});

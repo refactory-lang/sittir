@@ -43,10 +43,10 @@ describe('a wrapper around one slot reads as that slot', () => {
 	it.each([
 		['python', '@cache\ndef f():\n    pass\n', 'declaration.function', { decorators: ['cache'] }],
 		['python', '@functools.cache\ndef f():\n    pass\n', 'declaration.function', { decorators: [{ $path: 'expression.member', object: 'functools', property: 'cache' }] }],
-		['typescript', '@x\nclass A {}\n', 'declaration.class', { decorators: ['x'] }],
+		['typescript', '@x\nclass A {}\n', 'declaration.type.class', { decorators: ['x'] }],
 		['python', 'def f(x: int) -> int:\n    pass\n', 'declaration.function', { returnType: 'int', parameters: [expect.objectContaining({ type: 'int' })] }],
 		['python', 'x: int\n', 'declaration.variable', { type: 'int' }],
-		['rust', 'struct S {\n    #[a]\n    x: u8,\n}\n', 'declaration.field', { attributes: [{ $path: 'attribute', path: 'a' }] }]
+		['rust', 'struct S {\n    #[a]\n    x: u8,\n}\n', 'declaration.member.field', { attributes: [{ $path: 'attribute', path: 'a' }] }]
 	] as const)('%s reads %j as %s holding %j, and builds it back', (grammar, source, path, slots) => {
 		const runtime = runtimes[grammar];
 		expect(found(runtime, source, path)).toMatchObject(slots);

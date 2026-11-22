@@ -105,38 +105,8 @@ export interface PortableIds {
 	'declaration.constant.public.internal': TSKindId.ConstItem;
 	'declaration.constant.public.parent': TSKindId.ConstItem;
 	'declaration.constant.public.restricted': TSKindId.ConstItem;
-	'declaration.enum': TSKindId.EnumItem;
-	'declaration.enum.private': TSKindId.EnumItem;
-	'declaration.enum.public': TSKindId.EnumItem;
-	'declaration.enum.public.internal': TSKindId.EnumItem;
-	'declaration.enum.public.parent': TSKindId.EnumItem;
-	'declaration.enum.public.restricted': TSKindId.EnumItem;
-	'declaration.enum_member': TSKindId.EnumVariant;
-	'declaration.enum_member.private': TSKindId.EnumVariant;
-	'declaration.enum_member.public': TSKindId.EnumVariant;
-	'declaration.enum_member.public.internal': TSKindId.EnumVariant;
-	'declaration.enum_member.public.parent': TSKindId.EnumVariant;
-	'declaration.enum_member.public.restricted': TSKindId.EnumVariant;
-	'declaration.enum_member.struct': TSKindId.EnumVariant;
-	'declaration.enum_member.struct.private': TSKindId.EnumVariant;
-	'declaration.enum_member.struct.public': TSKindId.EnumVariant;
-	'declaration.enum_member.struct.public.internal': TSKindId.EnumVariant;
-	'declaration.enum_member.struct.public.parent': TSKindId.EnumVariant;
-	'declaration.enum_member.struct.public.restricted': TSKindId.EnumVariant;
-	'declaration.enum_member.tuple': TSKindId.EnumVariant;
-	'declaration.enum_member.tuple.private': TSKindId.EnumVariant;
-	'declaration.enum_member.tuple.public': TSKindId.EnumVariant;
-	'declaration.enum_member.tuple.public.internal': TSKindId.EnumVariant;
-	'declaration.enum_member.tuple.public.parent': TSKindId.EnumVariant;
-	'declaration.enum_member.tuple.public.restricted': TSKindId.EnumVariant;
 	'declaration.extension': TSKindId.ImplItemBody | TSKindId.ImplItemSemi;
 	'declaration.extension.conformance': TSKindId.ImplItemBody;
-	'declaration.field': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
-	'declaration.field.private': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
-	'declaration.field.public': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
-	'declaration.field.public.internal': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
-	'declaration.field.public.parent': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
-	'declaration.field.public.restricted': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
 	'declaration.function': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
 	'declaration.function.private': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
 	'declaration.function.public': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
@@ -149,29 +119,52 @@ export interface PortableIds {
 	'declaration.function.signature.public.internal': TSKindId.FunctionSignatureItem;
 	'declaration.function.signature.public.parent': TSKindId.FunctionSignatureItem;
 	'declaration.function.signature.public.restricted': TSKindId.FunctionSignatureItem;
-	'declaration.interface': TSKindId.TraitItem;
-	'declaration.interface.trait': TSKindId.TraitItem;
-	'declaration.interface.trait.private': TSKindId.TraitItem;
-	'declaration.interface.trait.public': TSKindId.TraitItem;
-	'declaration.interface.trait.public.internal': TSKindId.TraitItem;
-	'declaration.interface.trait.public.parent': TSKindId.TraitItem;
-	'declaration.interface.trait.public.restricted': TSKindId.TraitItem;
 	'declaration.macro': TSKindId.MacroDefinitionBrace | TSKindId.MacroDefinitionBracket | TSKindId.MacroDefinitionParen;
 	'declaration.macro.brace': TSKindId.MacroDefinitionBrace;
 	'declaration.macro.bracket': TSKindId.MacroDefinitionBracket;
 	'declaration.macro.paren': TSKindId.MacroDefinitionParen;
-	'declaration.method': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
-	'declaration.method.private': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
-	'declaration.method.public': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
-	'declaration.method.public.internal': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
-	'declaration.method.public.parent': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
-	'declaration.method.public.restricted': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
-	'declaration.method.signature': TSKindId.SignatureMethodDeclaration;
-	'declaration.method.signature.private': TSKindId.SignatureMethodDeclaration;
-	'declaration.method.signature.public': TSKindId.SignatureMethodDeclaration;
-	'declaration.method.signature.public.internal': TSKindId.SignatureMethodDeclaration;
-	'declaration.method.signature.public.parent': TSKindId.SignatureMethodDeclaration;
-	'declaration.method.signature.public.restricted': TSKindId.SignatureMethodDeclaration;
+	'declaration.member':
+		| TSKindId.AttributedOrderedField
+		| TSKindId.EnumVariant
+		| TSKindId.FieldDeclaration
+		| TSKindId.MethodDeclaration
+		| TSKindId.SignatureMethodDeclaration;
+	'declaration.member.enum_member': TSKindId.EnumVariant;
+	'declaration.member.enum_member.private': TSKindId.EnumVariant;
+	'declaration.member.enum_member.public': TSKindId.EnumVariant;
+	'declaration.member.enum_member.public.internal': TSKindId.EnumVariant;
+	'declaration.member.enum_member.public.parent': TSKindId.EnumVariant;
+	'declaration.member.enum_member.public.restricted': TSKindId.EnumVariant;
+	'declaration.member.enum_member.struct': TSKindId.EnumVariant;
+	'declaration.member.enum_member.struct.private': TSKindId.EnumVariant;
+	'declaration.member.enum_member.struct.public': TSKindId.EnumVariant;
+	'declaration.member.enum_member.struct.public.internal': TSKindId.EnumVariant;
+	'declaration.member.enum_member.struct.public.parent': TSKindId.EnumVariant;
+	'declaration.member.enum_member.struct.public.restricted': TSKindId.EnumVariant;
+	'declaration.member.enum_member.tuple': TSKindId.EnumVariant;
+	'declaration.member.enum_member.tuple.private': TSKindId.EnumVariant;
+	'declaration.member.enum_member.tuple.public': TSKindId.EnumVariant;
+	'declaration.member.enum_member.tuple.public.internal': TSKindId.EnumVariant;
+	'declaration.member.enum_member.tuple.public.parent': TSKindId.EnumVariant;
+	'declaration.member.enum_member.tuple.public.restricted': TSKindId.EnumVariant;
+	'declaration.member.field': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
+	'declaration.member.field.private': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
+	'declaration.member.field.public': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
+	'declaration.member.field.public.internal': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
+	'declaration.member.field.public.parent': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
+	'declaration.member.field.public.restricted': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
+	'declaration.member.method': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
+	'declaration.member.method.private': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
+	'declaration.member.method.public': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
+	'declaration.member.method.public.internal': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
+	'declaration.member.method.public.parent': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
+	'declaration.member.method.public.restricted': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
+	'declaration.member.method.signature': TSKindId.SignatureMethodDeclaration;
+	'declaration.member.method.signature.private': TSKindId.SignatureMethodDeclaration;
+	'declaration.member.method.signature.public': TSKindId.SignatureMethodDeclaration;
+	'declaration.member.method.signature.public.internal': TSKindId.SignatureMethodDeclaration;
+	'declaration.member.method.signature.public.parent': TSKindId.SignatureMethodDeclaration;
+	'declaration.member.method.signature.public.restricted': TSKindId.SignatureMethodDeclaration;
 	'declaration.module':
 		| TSKindId.ForeignModItemBody
 		| TSKindId.ForeignModItemSemi
@@ -191,40 +184,71 @@ export interface PortableIds {
 		| TSKindId.VariadicParameter;
 	'declaration.parameter.receiver': TSKindId.Parameter | TSKindId.ReceiverParameterDeclaration | TSKindId.SelfParameter;
 	'declaration.parameter.variadic': TSKindId.VariadicParameter;
-	'declaration.struct': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
-	'declaration.struct.private': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
-	'declaration.struct.public': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
-	'declaration.struct.public.internal': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
-	'declaration.struct.public.parent': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
-	'declaration.struct.public.restricted': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
-	'declaration.struct.tuple': TSKindId.StructItemTuple;
-	'declaration.struct.tuple.private': TSKindId.StructItemTuple;
-	'declaration.struct.tuple.public': TSKindId.StructItemTuple;
-	'declaration.struct.tuple.public.internal': TSKindId.StructItemTuple;
-	'declaration.struct.tuple.public.parent': TSKindId.StructItemTuple;
-	'declaration.struct.tuple.public.restricted': TSKindId.StructItemTuple;
-	'declaration.struct.unit': TSKindId.StructItemUnit;
-	'declaration.struct.unit.private': TSKindId.StructItemUnit;
-	'declaration.struct.unit.public': TSKindId.StructItemUnit;
-	'declaration.struct.unit.public.internal': TSKindId.StructItemUnit;
-	'declaration.struct.unit.public.parent': TSKindId.StructItemUnit;
-	'declaration.struct.unit.public.restricted': TSKindId.StructItemUnit;
-	'declaration.type_alias': TSKindId.AssociatedType | TSKindId.TypeItem;
-	'declaration.type_alias.associated': TSKindId.AssociatedType;
-	'declaration.type_alias.private': TSKindId.TypeItem;
-	'declaration.type_alias.public': TSKindId.TypeItem;
-	'declaration.type_alias.public.internal': TSKindId.TypeItem;
-	'declaration.type_alias.public.parent': TSKindId.TypeItem;
-	'declaration.type_alias.public.restricted': TSKindId.TypeItem;
+	'declaration.type':
+		| TSKindId.AssociatedType
+		| TSKindId.EnumItem
+		| TSKindId.StructItemBrace
+		| TSKindId.StructItemTuple
+		| TSKindId.StructItemUnit
+		| TSKindId.TraitItem
+		| TSKindId.TypeItem
+		| TSKindId.UnionItem;
+	'declaration.type.enum': TSKindId.EnumItem;
+	'declaration.type.enum.private': TSKindId.EnumItem;
+	'declaration.type.enum.public': TSKindId.EnumItem;
+	'declaration.type.enum.public.internal': TSKindId.EnumItem;
+	'declaration.type.enum.public.parent': TSKindId.EnumItem;
+	'declaration.type.enum.public.restricted': TSKindId.EnumItem;
+	'declaration.type.interface': TSKindId.TraitItem;
+	'declaration.type.interface.trait': TSKindId.TraitItem;
+	'declaration.type.interface.trait.private': TSKindId.TraitItem;
+	'declaration.type.interface.trait.public': TSKindId.TraitItem;
+	'declaration.type.interface.trait.public.internal': TSKindId.TraitItem;
+	'declaration.type.interface.trait.public.parent': TSKindId.TraitItem;
+	'declaration.type.interface.trait.public.restricted': TSKindId.TraitItem;
+	'declaration.type.struct': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
+	'declaration.type.struct.private': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
+	'declaration.type.struct.public': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
+	'declaration.type.struct.public.internal':
+		| TSKindId.StructItemBrace
+		| TSKindId.StructItemTuple
+		| TSKindId.StructItemUnit;
+	'declaration.type.struct.public.parent':
+		| TSKindId.StructItemBrace
+		| TSKindId.StructItemTuple
+		| TSKindId.StructItemUnit;
+	'declaration.type.struct.public.restricted':
+		| TSKindId.StructItemBrace
+		| TSKindId.StructItemTuple
+		| TSKindId.StructItemUnit;
+	'declaration.type.struct.tuple': TSKindId.StructItemTuple;
+	'declaration.type.struct.tuple.private': TSKindId.StructItemTuple;
+	'declaration.type.struct.tuple.public': TSKindId.StructItemTuple;
+	'declaration.type.struct.tuple.public.internal': TSKindId.StructItemTuple;
+	'declaration.type.struct.tuple.public.parent': TSKindId.StructItemTuple;
+	'declaration.type.struct.tuple.public.restricted': TSKindId.StructItemTuple;
+	'declaration.type.struct.unit': TSKindId.StructItemUnit;
+	'declaration.type.struct.unit.private': TSKindId.StructItemUnit;
+	'declaration.type.struct.unit.public': TSKindId.StructItemUnit;
+	'declaration.type.struct.unit.public.internal': TSKindId.StructItemUnit;
+	'declaration.type.struct.unit.public.parent': TSKindId.StructItemUnit;
+	'declaration.type.struct.unit.public.restricted': TSKindId.StructItemUnit;
+	'declaration.type.type_alias': TSKindId.AssociatedType | TSKindId.TypeItem;
+	'declaration.type.type_alias.associated': TSKindId.AssociatedType;
+	'declaration.type.type_alias.private': TSKindId.TypeItem;
+	'declaration.type.type_alias.public': TSKindId.TypeItem;
+	'declaration.type.type_alias.public.internal': TSKindId.TypeItem;
+	'declaration.type.type_alias.public.parent': TSKindId.TypeItem;
+	'declaration.type.type_alias.public.restricted': TSKindId.TypeItem;
+	'declaration.type.union': TSKindId.UnionItem;
+	'declaration.type.union.private': TSKindId.UnionItem;
+	'declaration.type.union.public': TSKindId.UnionItem;
+	'declaration.type.union.public.internal': TSKindId.UnionItem;
+	'declaration.type.union.public.parent': TSKindId.UnionItem;
+	'declaration.type.union.public.restricted': TSKindId.UnionItem;
 	'declaration.type_parameter': TSKindId.ConstParameter | TSKindId.LifetimeParameter | TSKindId.TypeParameter;
 	'declaration.type_parameter.lifetime': TSKindId.LifetimeParameter;
 	'declaration.type_parameter.value': TSKindId.ConstParameter;
-	'declaration.union': TSKindId.UnionItem;
-	'declaration.union.private': TSKindId.UnionItem;
-	'declaration.union.public': TSKindId.UnionItem;
-	'declaration.union.public.internal': TSKindId.UnionItem;
-	'declaration.union.public.parent': TSKindId.UnionItem;
-	'declaration.union.public.restricted': TSKindId.UnionItem;
 	'declaration.variable': TSKindId.LetDeclaration | TSKindId.StaticItem;
 	'declaration.variable.private': TSKindId.StaticItem;
 	'declaration.variable.public': TSKindId.StaticItem;
@@ -787,38 +811,8 @@ export interface PortableTexts {
 	'declaration.constant.public.internal': never;
 	'declaration.constant.public.parent': never;
 	'declaration.constant.public.restricted': never;
-	'declaration.enum': never;
-	'declaration.enum.private': never;
-	'declaration.enum.public': never;
-	'declaration.enum.public.internal': never;
-	'declaration.enum.public.parent': never;
-	'declaration.enum.public.restricted': never;
-	'declaration.enum_member': never;
-	'declaration.enum_member.private': never;
-	'declaration.enum_member.public': never;
-	'declaration.enum_member.public.internal': never;
-	'declaration.enum_member.public.parent': never;
-	'declaration.enum_member.public.restricted': never;
-	'declaration.enum_member.struct': never;
-	'declaration.enum_member.struct.private': never;
-	'declaration.enum_member.struct.public': never;
-	'declaration.enum_member.struct.public.internal': never;
-	'declaration.enum_member.struct.public.parent': never;
-	'declaration.enum_member.struct.public.restricted': never;
-	'declaration.enum_member.tuple': never;
-	'declaration.enum_member.tuple.private': never;
-	'declaration.enum_member.tuple.public': never;
-	'declaration.enum_member.tuple.public.internal': never;
-	'declaration.enum_member.tuple.public.parent': never;
-	'declaration.enum_member.tuple.public.restricted': never;
 	'declaration.extension': never;
 	'declaration.extension.conformance': never;
-	'declaration.field': never;
-	'declaration.field.private': never;
-	'declaration.field.public': never;
-	'declaration.field.public.internal': never;
-	'declaration.field.public.parent': never;
-	'declaration.field.public.restricted': never;
 	'declaration.function': never;
 	'declaration.function.private': never;
 	'declaration.function.public': never;
@@ -831,29 +825,47 @@ export interface PortableTexts {
 	'declaration.function.signature.public.internal': never;
 	'declaration.function.signature.public.parent': never;
 	'declaration.function.signature.public.restricted': never;
-	'declaration.interface': never;
-	'declaration.interface.trait': never;
-	'declaration.interface.trait.private': never;
-	'declaration.interface.trait.public': never;
-	'declaration.interface.trait.public.internal': never;
-	'declaration.interface.trait.public.parent': never;
-	'declaration.interface.trait.public.restricted': never;
 	'declaration.macro': never;
 	'declaration.macro.brace': never;
 	'declaration.macro.bracket': never;
 	'declaration.macro.paren': never;
-	'declaration.method': never;
-	'declaration.method.private': never;
-	'declaration.method.public': never;
-	'declaration.method.public.internal': never;
-	'declaration.method.public.parent': never;
-	'declaration.method.public.restricted': never;
-	'declaration.method.signature': never;
-	'declaration.method.signature.private': never;
-	'declaration.method.signature.public': never;
-	'declaration.method.signature.public.internal': never;
-	'declaration.method.signature.public.parent': never;
-	'declaration.method.signature.public.restricted': never;
+	'declaration.member': never;
+	'declaration.member.enum_member': never;
+	'declaration.member.enum_member.private': never;
+	'declaration.member.enum_member.public': never;
+	'declaration.member.enum_member.public.internal': never;
+	'declaration.member.enum_member.public.parent': never;
+	'declaration.member.enum_member.public.restricted': never;
+	'declaration.member.enum_member.struct': never;
+	'declaration.member.enum_member.struct.private': never;
+	'declaration.member.enum_member.struct.public': never;
+	'declaration.member.enum_member.struct.public.internal': never;
+	'declaration.member.enum_member.struct.public.parent': never;
+	'declaration.member.enum_member.struct.public.restricted': never;
+	'declaration.member.enum_member.tuple': never;
+	'declaration.member.enum_member.tuple.private': never;
+	'declaration.member.enum_member.tuple.public': never;
+	'declaration.member.enum_member.tuple.public.internal': never;
+	'declaration.member.enum_member.tuple.public.parent': never;
+	'declaration.member.enum_member.tuple.public.restricted': never;
+	'declaration.member.field': never;
+	'declaration.member.field.private': never;
+	'declaration.member.field.public': never;
+	'declaration.member.field.public.internal': never;
+	'declaration.member.field.public.parent': never;
+	'declaration.member.field.public.restricted': never;
+	'declaration.member.method': never;
+	'declaration.member.method.private': never;
+	'declaration.member.method.public': never;
+	'declaration.member.method.public.internal': never;
+	'declaration.member.method.public.parent': never;
+	'declaration.member.method.public.restricted': never;
+	'declaration.member.method.signature': never;
+	'declaration.member.method.signature.private': never;
+	'declaration.member.method.signature.public': never;
+	'declaration.member.method.signature.public.internal': never;
+	'declaration.member.method.signature.public.parent': never;
+	'declaration.member.method.signature.public.restricted': never;
 	'declaration.module': never;
 	'declaration.module.foreign': never;
 	'declaration.module.private': never;
@@ -864,40 +876,54 @@ export interface PortableTexts {
 	'declaration.parameter': never;
 	'declaration.parameter.receiver': never;
 	'declaration.parameter.variadic': never;
-	'declaration.struct': never;
-	'declaration.struct.private': never;
-	'declaration.struct.public': never;
-	'declaration.struct.public.internal': never;
-	'declaration.struct.public.parent': never;
-	'declaration.struct.public.restricted': never;
-	'declaration.struct.tuple': never;
-	'declaration.struct.tuple.private': never;
-	'declaration.struct.tuple.public': never;
-	'declaration.struct.tuple.public.internal': never;
-	'declaration.struct.tuple.public.parent': never;
-	'declaration.struct.tuple.public.restricted': never;
-	'declaration.struct.unit': never;
-	'declaration.struct.unit.private': never;
-	'declaration.struct.unit.public': never;
-	'declaration.struct.unit.public.internal': never;
-	'declaration.struct.unit.public.parent': never;
-	'declaration.struct.unit.public.restricted': never;
-	'declaration.type_alias': never;
-	'declaration.type_alias.associated': never;
-	'declaration.type_alias.private': never;
-	'declaration.type_alias.public': never;
-	'declaration.type_alias.public.internal': never;
-	'declaration.type_alias.public.parent': never;
-	'declaration.type_alias.public.restricted': never;
+	'declaration.type': never;
+	'declaration.type.enum': never;
+	'declaration.type.enum.private': never;
+	'declaration.type.enum.public': never;
+	'declaration.type.enum.public.internal': never;
+	'declaration.type.enum.public.parent': never;
+	'declaration.type.enum.public.restricted': never;
+	'declaration.type.interface': never;
+	'declaration.type.interface.trait': never;
+	'declaration.type.interface.trait.private': never;
+	'declaration.type.interface.trait.public': never;
+	'declaration.type.interface.trait.public.internal': never;
+	'declaration.type.interface.trait.public.parent': never;
+	'declaration.type.interface.trait.public.restricted': never;
+	'declaration.type.struct': never;
+	'declaration.type.struct.private': never;
+	'declaration.type.struct.public': never;
+	'declaration.type.struct.public.internal': never;
+	'declaration.type.struct.public.parent': never;
+	'declaration.type.struct.public.restricted': never;
+	'declaration.type.struct.tuple': never;
+	'declaration.type.struct.tuple.private': never;
+	'declaration.type.struct.tuple.public': never;
+	'declaration.type.struct.tuple.public.internal': never;
+	'declaration.type.struct.tuple.public.parent': never;
+	'declaration.type.struct.tuple.public.restricted': never;
+	'declaration.type.struct.unit': never;
+	'declaration.type.struct.unit.private': never;
+	'declaration.type.struct.unit.public': never;
+	'declaration.type.struct.unit.public.internal': never;
+	'declaration.type.struct.unit.public.parent': never;
+	'declaration.type.struct.unit.public.restricted': never;
+	'declaration.type.type_alias': never;
+	'declaration.type.type_alias.associated': never;
+	'declaration.type.type_alias.private': never;
+	'declaration.type.type_alias.public': never;
+	'declaration.type.type_alias.public.internal': never;
+	'declaration.type.type_alias.public.parent': never;
+	'declaration.type.type_alias.public.restricted': never;
+	'declaration.type.union': never;
+	'declaration.type.union.private': never;
+	'declaration.type.union.public': never;
+	'declaration.type.union.public.internal': never;
+	'declaration.type.union.public.parent': never;
+	'declaration.type.union.public.restricted': never;
 	'declaration.type_parameter': never;
 	'declaration.type_parameter.lifetime': never;
 	'declaration.type_parameter.value': never;
-	'declaration.union': never;
-	'declaration.union.private': never;
-	'declaration.union.public': never;
-	'declaration.union.public.internal': never;
-	'declaration.union.public.parent': never;
-	'declaration.union.public.restricted': never;
 	'declaration.variable': never;
 	'declaration.variable.private': never;
 	'declaration.variable.public': never;
@@ -1263,20 +1289,14 @@ export interface PortableKindsAt {
 	declaration: {
 		readonly $path: 'declaration';
 		readonly constant: PortableKindsAt['declaration.constant'];
-		readonly enum: PortableKindsAt['declaration.enum'];
-		readonly enum_member: PortableKindsAt['declaration.enum_member'];
 		readonly extension: PortableKindsAt['declaration.extension'];
-		readonly field: PortableKindsAt['declaration.field'];
 		readonly function: PortableKindsAt['declaration.function'];
-		readonly interface: PortableKindsAt['declaration.interface'];
 		readonly macro: PortableKindsAt['declaration.macro'];
-		readonly method: PortableKindsAt['declaration.method'];
+		readonly member: PortableKindsAt['declaration.member'];
 		readonly module: PortableKindsAt['declaration.module'];
 		readonly parameter: PortableKindsAt['declaration.parameter'];
-		readonly struct: PortableKindsAt['declaration.struct'];
-		readonly type_alias: PortableKindsAt['declaration.type_alias'];
+		readonly type: PortableKindsAt['declaration.type'];
 		readonly type_parameter: PortableKindsAt['declaration.type_parameter'];
-		readonly union: PortableKindsAt['declaration.union'];
 		readonly variable: PortableKindsAt['declaration.variable'];
 	};
 	'declaration.constant': {
@@ -1294,94 +1314,11 @@ export interface PortableKindsAt {
 	'declaration.constant.public.internal': { readonly $path: 'declaration.constant.public.internal' };
 	'declaration.constant.public.parent': { readonly $path: 'declaration.constant.public.parent' };
 	'declaration.constant.public.restricted': { readonly $path: 'declaration.constant.public.restricted' };
-	'declaration.enum': {
-		readonly $path: 'declaration.enum';
-		readonly private: PortableKindsAt['declaration.enum.private'];
-		readonly public: PortableKindsAt['declaration.enum.public'];
-	};
-	'declaration.enum.private': { readonly $path: 'declaration.enum.private' };
-	'declaration.enum.public': {
-		readonly $path: 'declaration.enum.public';
-		readonly internal: PortableKindsAt['declaration.enum.public.internal'];
-		readonly parent: PortableKindsAt['declaration.enum.public.parent'];
-		readonly restricted: PortableKindsAt['declaration.enum.public.restricted'];
-	};
-	'declaration.enum.public.internal': { readonly $path: 'declaration.enum.public.internal' };
-	'declaration.enum.public.parent': { readonly $path: 'declaration.enum.public.parent' };
-	'declaration.enum.public.restricted': { readonly $path: 'declaration.enum.public.restricted' };
-	'declaration.enum_member': {
-		readonly $path: 'declaration.enum_member';
-		readonly private: PortableKindsAt['declaration.enum_member.private'];
-		readonly public: PortableKindsAt['declaration.enum_member.public'];
-		readonly struct: PortableKindsAt['declaration.enum_member.struct'];
-		readonly tuple: PortableKindsAt['declaration.enum_member.tuple'];
-	};
-	'declaration.enum_member.private': { readonly $path: 'declaration.enum_member.private' };
-	'declaration.enum_member.public': {
-		readonly $path: 'declaration.enum_member.public';
-		readonly internal: PortableKindsAt['declaration.enum_member.public.internal'];
-		readonly parent: PortableKindsAt['declaration.enum_member.public.parent'];
-		readonly restricted: PortableKindsAt['declaration.enum_member.public.restricted'];
-	};
-	'declaration.enum_member.public.internal': { readonly $path: 'declaration.enum_member.public.internal' };
-	'declaration.enum_member.public.parent': { readonly $path: 'declaration.enum_member.public.parent' };
-	'declaration.enum_member.public.restricted': { readonly $path: 'declaration.enum_member.public.restricted' };
-	'declaration.enum_member.struct': {
-		readonly $path: 'declaration.enum_member.struct';
-		readonly private: PortableKindsAt['declaration.enum_member.struct.private'];
-		readonly public: PortableKindsAt['declaration.enum_member.struct.public'];
-	};
-	'declaration.enum_member.struct.private': { readonly $path: 'declaration.enum_member.struct.private' };
-	'declaration.enum_member.struct.public': {
-		readonly $path: 'declaration.enum_member.struct.public';
-		readonly internal: PortableKindsAt['declaration.enum_member.struct.public.internal'];
-		readonly parent: PortableKindsAt['declaration.enum_member.struct.public.parent'];
-		readonly restricted: PortableKindsAt['declaration.enum_member.struct.public.restricted'];
-	};
-	'declaration.enum_member.struct.public.internal': {
-		readonly $path: 'declaration.enum_member.struct.public.internal';
-	};
-	'declaration.enum_member.struct.public.parent': { readonly $path: 'declaration.enum_member.struct.public.parent' };
-	'declaration.enum_member.struct.public.restricted': {
-		readonly $path: 'declaration.enum_member.struct.public.restricted';
-	};
-	'declaration.enum_member.tuple': {
-		readonly $path: 'declaration.enum_member.tuple';
-		readonly private: PortableKindsAt['declaration.enum_member.tuple.private'];
-		readonly public: PortableKindsAt['declaration.enum_member.tuple.public'];
-	};
-	'declaration.enum_member.tuple.private': { readonly $path: 'declaration.enum_member.tuple.private' };
-	'declaration.enum_member.tuple.public': {
-		readonly $path: 'declaration.enum_member.tuple.public';
-		readonly internal: PortableKindsAt['declaration.enum_member.tuple.public.internal'];
-		readonly parent: PortableKindsAt['declaration.enum_member.tuple.public.parent'];
-		readonly restricted: PortableKindsAt['declaration.enum_member.tuple.public.restricted'];
-	};
-	'declaration.enum_member.tuple.public.internal': { readonly $path: 'declaration.enum_member.tuple.public.internal' };
-	'declaration.enum_member.tuple.public.parent': { readonly $path: 'declaration.enum_member.tuple.public.parent' };
-	'declaration.enum_member.tuple.public.restricted': {
-		readonly $path: 'declaration.enum_member.tuple.public.restricted';
-	};
 	'declaration.extension': {
 		readonly $path: 'declaration.extension';
 		readonly conformance: PortableKindsAt['declaration.extension.conformance'];
 	};
 	'declaration.extension.conformance': { readonly $path: 'declaration.extension.conformance' };
-	'declaration.field': {
-		readonly $path: 'declaration.field';
-		readonly private: PortableKindsAt['declaration.field.private'];
-		readonly public: PortableKindsAt['declaration.field.public'];
-	};
-	'declaration.field.private': { readonly $path: 'declaration.field.private' };
-	'declaration.field.public': {
-		readonly $path: 'declaration.field.public';
-		readonly internal: PortableKindsAt['declaration.field.public.internal'];
-		readonly parent: PortableKindsAt['declaration.field.public.parent'];
-		readonly restricted: PortableKindsAt['declaration.field.public.restricted'];
-	};
-	'declaration.field.public.internal': { readonly $path: 'declaration.field.public.internal' };
-	'declaration.field.public.parent': { readonly $path: 'declaration.field.public.parent' };
-	'declaration.field.public.restricted': { readonly $path: 'declaration.field.public.restricted' };
 	'declaration.function': {
 		readonly $path: 'declaration.function';
 		readonly private: PortableKindsAt['declaration.function.private'];
@@ -1417,25 +1354,6 @@ export interface PortableKindsAt {
 	'declaration.function.signature.public.restricted': {
 		readonly $path: 'declaration.function.signature.public.restricted';
 	};
-	'declaration.interface': {
-		readonly $path: 'declaration.interface';
-		readonly trait: PortableKindsAt['declaration.interface.trait'];
-	};
-	'declaration.interface.trait': {
-		readonly $path: 'declaration.interface.trait';
-		readonly private: PortableKindsAt['declaration.interface.trait.private'];
-		readonly public: PortableKindsAt['declaration.interface.trait.public'];
-	};
-	'declaration.interface.trait.private': { readonly $path: 'declaration.interface.trait.private' };
-	'declaration.interface.trait.public': {
-		readonly $path: 'declaration.interface.trait.public';
-		readonly internal: PortableKindsAt['declaration.interface.trait.public.internal'];
-		readonly parent: PortableKindsAt['declaration.interface.trait.public.parent'];
-		readonly restricted: PortableKindsAt['declaration.interface.trait.public.restricted'];
-	};
-	'declaration.interface.trait.public.internal': { readonly $path: 'declaration.interface.trait.public.internal' };
-	'declaration.interface.trait.public.parent': { readonly $path: 'declaration.interface.trait.public.parent' };
-	'declaration.interface.trait.public.restricted': { readonly $path: 'declaration.interface.trait.public.restricted' };
 	'declaration.macro': {
 		readonly $path: 'declaration.macro';
 		readonly brace: PortableKindsAt['declaration.macro.brace'];
@@ -1445,38 +1363,125 @@ export interface PortableKindsAt {
 	'declaration.macro.brace': { readonly $path: 'declaration.macro.brace' };
 	'declaration.macro.bracket': { readonly $path: 'declaration.macro.bracket' };
 	'declaration.macro.paren': { readonly $path: 'declaration.macro.paren' };
-	'declaration.method': {
-		readonly $path: 'declaration.method';
-		readonly private: PortableKindsAt['declaration.method.private'];
-		readonly public: PortableKindsAt['declaration.method.public'];
-		readonly signature: PortableKindsAt['declaration.method.signature'];
+	'declaration.member': {
+		readonly enum_member: PortableKindsAt['declaration.member.enum_member'];
+		readonly field: PortableKindsAt['declaration.member.field'];
+		readonly method: PortableKindsAt['declaration.member.method'];
 	};
-	'declaration.method.private': { readonly $path: 'declaration.method.private' };
-	'declaration.method.public': {
-		readonly $path: 'declaration.method.public';
-		readonly internal: PortableKindsAt['declaration.method.public.internal'];
-		readonly parent: PortableKindsAt['declaration.method.public.parent'];
-		readonly restricted: PortableKindsAt['declaration.method.public.restricted'];
+	'declaration.member.enum_member': {
+		readonly $path: 'declaration.member.enum_member';
+		readonly private: PortableKindsAt['declaration.member.enum_member.private'];
+		readonly public: PortableKindsAt['declaration.member.enum_member.public'];
+		readonly struct: PortableKindsAt['declaration.member.enum_member.struct'];
+		readonly tuple: PortableKindsAt['declaration.member.enum_member.tuple'];
 	};
-	'declaration.method.public.internal': { readonly $path: 'declaration.method.public.internal' };
-	'declaration.method.public.parent': { readonly $path: 'declaration.method.public.parent' };
-	'declaration.method.public.restricted': { readonly $path: 'declaration.method.public.restricted' };
-	'declaration.method.signature': {
-		readonly $path: 'declaration.method.signature';
-		readonly private: PortableKindsAt['declaration.method.signature.private'];
-		readonly public: PortableKindsAt['declaration.method.signature.public'];
+	'declaration.member.enum_member.private': { readonly $path: 'declaration.member.enum_member.private' };
+	'declaration.member.enum_member.public': {
+		readonly $path: 'declaration.member.enum_member.public';
+		readonly internal: PortableKindsAt['declaration.member.enum_member.public.internal'];
+		readonly parent: PortableKindsAt['declaration.member.enum_member.public.parent'];
+		readonly restricted: PortableKindsAt['declaration.member.enum_member.public.restricted'];
 	};
-	'declaration.method.signature.private': { readonly $path: 'declaration.method.signature.private' };
-	'declaration.method.signature.public': {
-		readonly $path: 'declaration.method.signature.public';
-		readonly internal: PortableKindsAt['declaration.method.signature.public.internal'];
-		readonly parent: PortableKindsAt['declaration.method.signature.public.parent'];
-		readonly restricted: PortableKindsAt['declaration.method.signature.public.restricted'];
+	'declaration.member.enum_member.public.internal': {
+		readonly $path: 'declaration.member.enum_member.public.internal';
 	};
-	'declaration.method.signature.public.internal': { readonly $path: 'declaration.method.signature.public.internal' };
-	'declaration.method.signature.public.parent': { readonly $path: 'declaration.method.signature.public.parent' };
-	'declaration.method.signature.public.restricted': {
-		readonly $path: 'declaration.method.signature.public.restricted';
+	'declaration.member.enum_member.public.parent': { readonly $path: 'declaration.member.enum_member.public.parent' };
+	'declaration.member.enum_member.public.restricted': {
+		readonly $path: 'declaration.member.enum_member.public.restricted';
+	};
+	'declaration.member.enum_member.struct': {
+		readonly $path: 'declaration.member.enum_member.struct';
+		readonly private: PortableKindsAt['declaration.member.enum_member.struct.private'];
+		readonly public: PortableKindsAt['declaration.member.enum_member.struct.public'];
+	};
+	'declaration.member.enum_member.struct.private': { readonly $path: 'declaration.member.enum_member.struct.private' };
+	'declaration.member.enum_member.struct.public': {
+		readonly $path: 'declaration.member.enum_member.struct.public';
+		readonly internal: PortableKindsAt['declaration.member.enum_member.struct.public.internal'];
+		readonly parent: PortableKindsAt['declaration.member.enum_member.struct.public.parent'];
+		readonly restricted: PortableKindsAt['declaration.member.enum_member.struct.public.restricted'];
+	};
+	'declaration.member.enum_member.struct.public.internal': {
+		readonly $path: 'declaration.member.enum_member.struct.public.internal';
+	};
+	'declaration.member.enum_member.struct.public.parent': {
+		readonly $path: 'declaration.member.enum_member.struct.public.parent';
+	};
+	'declaration.member.enum_member.struct.public.restricted': {
+		readonly $path: 'declaration.member.enum_member.struct.public.restricted';
+	};
+	'declaration.member.enum_member.tuple': {
+		readonly $path: 'declaration.member.enum_member.tuple';
+		readonly private: PortableKindsAt['declaration.member.enum_member.tuple.private'];
+		readonly public: PortableKindsAt['declaration.member.enum_member.tuple.public'];
+	};
+	'declaration.member.enum_member.tuple.private': { readonly $path: 'declaration.member.enum_member.tuple.private' };
+	'declaration.member.enum_member.tuple.public': {
+		readonly $path: 'declaration.member.enum_member.tuple.public';
+		readonly internal: PortableKindsAt['declaration.member.enum_member.tuple.public.internal'];
+		readonly parent: PortableKindsAt['declaration.member.enum_member.tuple.public.parent'];
+		readonly restricted: PortableKindsAt['declaration.member.enum_member.tuple.public.restricted'];
+	};
+	'declaration.member.enum_member.tuple.public.internal': {
+		readonly $path: 'declaration.member.enum_member.tuple.public.internal';
+	};
+	'declaration.member.enum_member.tuple.public.parent': {
+		readonly $path: 'declaration.member.enum_member.tuple.public.parent';
+	};
+	'declaration.member.enum_member.tuple.public.restricted': {
+		readonly $path: 'declaration.member.enum_member.tuple.public.restricted';
+	};
+	'declaration.member.field': {
+		readonly $path: 'declaration.member.field';
+		readonly private: PortableKindsAt['declaration.member.field.private'];
+		readonly public: PortableKindsAt['declaration.member.field.public'];
+	};
+	'declaration.member.field.private': { readonly $path: 'declaration.member.field.private' };
+	'declaration.member.field.public': {
+		readonly $path: 'declaration.member.field.public';
+		readonly internal: PortableKindsAt['declaration.member.field.public.internal'];
+		readonly parent: PortableKindsAt['declaration.member.field.public.parent'];
+		readonly restricted: PortableKindsAt['declaration.member.field.public.restricted'];
+	};
+	'declaration.member.field.public.internal': { readonly $path: 'declaration.member.field.public.internal' };
+	'declaration.member.field.public.parent': { readonly $path: 'declaration.member.field.public.parent' };
+	'declaration.member.field.public.restricted': { readonly $path: 'declaration.member.field.public.restricted' };
+	'declaration.member.method': {
+		readonly $path: 'declaration.member.method';
+		readonly private: PortableKindsAt['declaration.member.method.private'];
+		readonly public: PortableKindsAt['declaration.member.method.public'];
+		readonly signature: PortableKindsAt['declaration.member.method.signature'];
+	};
+	'declaration.member.method.private': { readonly $path: 'declaration.member.method.private' };
+	'declaration.member.method.public': {
+		readonly $path: 'declaration.member.method.public';
+		readonly internal: PortableKindsAt['declaration.member.method.public.internal'];
+		readonly parent: PortableKindsAt['declaration.member.method.public.parent'];
+		readonly restricted: PortableKindsAt['declaration.member.method.public.restricted'];
+	};
+	'declaration.member.method.public.internal': { readonly $path: 'declaration.member.method.public.internal' };
+	'declaration.member.method.public.parent': { readonly $path: 'declaration.member.method.public.parent' };
+	'declaration.member.method.public.restricted': { readonly $path: 'declaration.member.method.public.restricted' };
+	'declaration.member.method.signature': {
+		readonly $path: 'declaration.member.method.signature';
+		readonly private: PortableKindsAt['declaration.member.method.signature.private'];
+		readonly public: PortableKindsAt['declaration.member.method.signature.public'];
+	};
+	'declaration.member.method.signature.private': { readonly $path: 'declaration.member.method.signature.private' };
+	'declaration.member.method.signature.public': {
+		readonly $path: 'declaration.member.method.signature.public';
+		readonly internal: PortableKindsAt['declaration.member.method.signature.public.internal'];
+		readonly parent: PortableKindsAt['declaration.member.method.signature.public.parent'];
+		readonly restricted: PortableKindsAt['declaration.member.method.signature.public.restricted'];
+	};
+	'declaration.member.method.signature.public.internal': {
+		readonly $path: 'declaration.member.method.signature.public.internal';
+	};
+	'declaration.member.method.signature.public.parent': {
+		readonly $path: 'declaration.member.method.signature.public.parent';
+	};
+	'declaration.member.method.signature.public.restricted': {
+		readonly $path: 'declaration.member.method.signature.public.restricted';
 	};
 	'declaration.module': {
 		readonly $path: 'declaration.module';
@@ -1502,70 +1507,136 @@ export interface PortableKindsAt {
 	};
 	'declaration.parameter.receiver': { readonly $path: 'declaration.parameter.receiver' };
 	'declaration.parameter.variadic': { readonly $path: 'declaration.parameter.variadic' };
-	'declaration.struct': {
-		readonly $path: 'declaration.struct';
-		readonly private: PortableKindsAt['declaration.struct.private'];
-		readonly public: PortableKindsAt['declaration.struct.public'];
-		readonly tuple: PortableKindsAt['declaration.struct.tuple'];
-		readonly unit: PortableKindsAt['declaration.struct.unit'];
+	'declaration.type': {
+		readonly enum: PortableKindsAt['declaration.type.enum'];
+		readonly interface: PortableKindsAt['declaration.type.interface'];
+		readonly struct: PortableKindsAt['declaration.type.struct'];
+		readonly type_alias: PortableKindsAt['declaration.type.type_alias'];
+		readonly union: PortableKindsAt['declaration.type.union'];
 	};
-	'declaration.struct.private': { readonly $path: 'declaration.struct.private' };
-	'declaration.struct.public': {
-		readonly $path: 'declaration.struct.public';
-		readonly internal: PortableKindsAt['declaration.struct.public.internal'];
-		readonly parent: PortableKindsAt['declaration.struct.public.parent'];
-		readonly restricted: PortableKindsAt['declaration.struct.public.restricted'];
+	'declaration.type.enum': {
+		readonly $path: 'declaration.type.enum';
+		readonly private: PortableKindsAt['declaration.type.enum.private'];
+		readonly public: PortableKindsAt['declaration.type.enum.public'];
 	};
-	'declaration.struct.public.internal': { readonly $path: 'declaration.struct.public.internal' };
-	'declaration.struct.public.parent': { readonly $path: 'declaration.struct.public.parent' };
-	'declaration.struct.public.restricted': { readonly $path: 'declaration.struct.public.restricted' };
-	'declaration.struct.tuple': {
-		readonly $path: 'declaration.struct.tuple';
-		readonly private: PortableKindsAt['declaration.struct.tuple.private'];
-		readonly public: PortableKindsAt['declaration.struct.tuple.public'];
+	'declaration.type.enum.private': { readonly $path: 'declaration.type.enum.private' };
+	'declaration.type.enum.public': {
+		readonly $path: 'declaration.type.enum.public';
+		readonly internal: PortableKindsAt['declaration.type.enum.public.internal'];
+		readonly parent: PortableKindsAt['declaration.type.enum.public.parent'];
+		readonly restricted: PortableKindsAt['declaration.type.enum.public.restricted'];
 	};
-	'declaration.struct.tuple.private': { readonly $path: 'declaration.struct.tuple.private' };
-	'declaration.struct.tuple.public': {
-		readonly $path: 'declaration.struct.tuple.public';
-		readonly internal: PortableKindsAt['declaration.struct.tuple.public.internal'];
-		readonly parent: PortableKindsAt['declaration.struct.tuple.public.parent'];
-		readonly restricted: PortableKindsAt['declaration.struct.tuple.public.restricted'];
+	'declaration.type.enum.public.internal': { readonly $path: 'declaration.type.enum.public.internal' };
+	'declaration.type.enum.public.parent': { readonly $path: 'declaration.type.enum.public.parent' };
+	'declaration.type.enum.public.restricted': { readonly $path: 'declaration.type.enum.public.restricted' };
+	'declaration.type.interface': {
+		readonly $path: 'declaration.type.interface';
+		readonly trait: PortableKindsAt['declaration.type.interface.trait'];
 	};
-	'declaration.struct.tuple.public.internal': { readonly $path: 'declaration.struct.tuple.public.internal' };
-	'declaration.struct.tuple.public.parent': { readonly $path: 'declaration.struct.tuple.public.parent' };
-	'declaration.struct.tuple.public.restricted': { readonly $path: 'declaration.struct.tuple.public.restricted' };
-	'declaration.struct.unit': {
-		readonly $path: 'declaration.struct.unit';
-		readonly private: PortableKindsAt['declaration.struct.unit.private'];
-		readonly public: PortableKindsAt['declaration.struct.unit.public'];
+	'declaration.type.interface.trait': {
+		readonly $path: 'declaration.type.interface.trait';
+		readonly private: PortableKindsAt['declaration.type.interface.trait.private'];
+		readonly public: PortableKindsAt['declaration.type.interface.trait.public'];
 	};
-	'declaration.struct.unit.private': { readonly $path: 'declaration.struct.unit.private' };
-	'declaration.struct.unit.public': {
-		readonly $path: 'declaration.struct.unit.public';
-		readonly internal: PortableKindsAt['declaration.struct.unit.public.internal'];
-		readonly parent: PortableKindsAt['declaration.struct.unit.public.parent'];
-		readonly restricted: PortableKindsAt['declaration.struct.unit.public.restricted'];
+	'declaration.type.interface.trait.private': { readonly $path: 'declaration.type.interface.trait.private' };
+	'declaration.type.interface.trait.public': {
+		readonly $path: 'declaration.type.interface.trait.public';
+		readonly internal: PortableKindsAt['declaration.type.interface.trait.public.internal'];
+		readonly parent: PortableKindsAt['declaration.type.interface.trait.public.parent'];
+		readonly restricted: PortableKindsAt['declaration.type.interface.trait.public.restricted'];
 	};
-	'declaration.struct.unit.public.internal': { readonly $path: 'declaration.struct.unit.public.internal' };
-	'declaration.struct.unit.public.parent': { readonly $path: 'declaration.struct.unit.public.parent' };
-	'declaration.struct.unit.public.restricted': { readonly $path: 'declaration.struct.unit.public.restricted' };
-	'declaration.type_alias': {
-		readonly $path: 'declaration.type_alias';
-		readonly associated: PortableKindsAt['declaration.type_alias.associated'];
-		readonly private: PortableKindsAt['declaration.type_alias.private'];
-		readonly public: PortableKindsAt['declaration.type_alias.public'];
+	'declaration.type.interface.trait.public.internal': {
+		readonly $path: 'declaration.type.interface.trait.public.internal';
 	};
-	'declaration.type_alias.associated': { readonly $path: 'declaration.type_alias.associated' };
-	'declaration.type_alias.private': { readonly $path: 'declaration.type_alias.private' };
-	'declaration.type_alias.public': {
-		readonly $path: 'declaration.type_alias.public';
-		readonly internal: PortableKindsAt['declaration.type_alias.public.internal'];
-		readonly parent: PortableKindsAt['declaration.type_alias.public.parent'];
-		readonly restricted: PortableKindsAt['declaration.type_alias.public.restricted'];
+	'declaration.type.interface.trait.public.parent': {
+		readonly $path: 'declaration.type.interface.trait.public.parent';
 	};
-	'declaration.type_alias.public.internal': { readonly $path: 'declaration.type_alias.public.internal' };
-	'declaration.type_alias.public.parent': { readonly $path: 'declaration.type_alias.public.parent' };
-	'declaration.type_alias.public.restricted': { readonly $path: 'declaration.type_alias.public.restricted' };
+	'declaration.type.interface.trait.public.restricted': {
+		readonly $path: 'declaration.type.interface.trait.public.restricted';
+	};
+	'declaration.type.struct': {
+		readonly $path: 'declaration.type.struct';
+		readonly private: PortableKindsAt['declaration.type.struct.private'];
+		readonly public: PortableKindsAt['declaration.type.struct.public'];
+		readonly tuple: PortableKindsAt['declaration.type.struct.tuple'];
+		readonly unit: PortableKindsAt['declaration.type.struct.unit'];
+	};
+	'declaration.type.struct.private': { readonly $path: 'declaration.type.struct.private' };
+	'declaration.type.struct.public': {
+		readonly $path: 'declaration.type.struct.public';
+		readonly internal: PortableKindsAt['declaration.type.struct.public.internal'];
+		readonly parent: PortableKindsAt['declaration.type.struct.public.parent'];
+		readonly restricted: PortableKindsAt['declaration.type.struct.public.restricted'];
+	};
+	'declaration.type.struct.public.internal': { readonly $path: 'declaration.type.struct.public.internal' };
+	'declaration.type.struct.public.parent': { readonly $path: 'declaration.type.struct.public.parent' };
+	'declaration.type.struct.public.restricted': { readonly $path: 'declaration.type.struct.public.restricted' };
+	'declaration.type.struct.tuple': {
+		readonly $path: 'declaration.type.struct.tuple';
+		readonly private: PortableKindsAt['declaration.type.struct.tuple.private'];
+		readonly public: PortableKindsAt['declaration.type.struct.tuple.public'];
+	};
+	'declaration.type.struct.tuple.private': { readonly $path: 'declaration.type.struct.tuple.private' };
+	'declaration.type.struct.tuple.public': {
+		readonly $path: 'declaration.type.struct.tuple.public';
+		readonly internal: PortableKindsAt['declaration.type.struct.tuple.public.internal'];
+		readonly parent: PortableKindsAt['declaration.type.struct.tuple.public.parent'];
+		readonly restricted: PortableKindsAt['declaration.type.struct.tuple.public.restricted'];
+	};
+	'declaration.type.struct.tuple.public.internal': { readonly $path: 'declaration.type.struct.tuple.public.internal' };
+	'declaration.type.struct.tuple.public.parent': { readonly $path: 'declaration.type.struct.tuple.public.parent' };
+	'declaration.type.struct.tuple.public.restricted': {
+		readonly $path: 'declaration.type.struct.tuple.public.restricted';
+	};
+	'declaration.type.struct.unit': {
+		readonly $path: 'declaration.type.struct.unit';
+		readonly private: PortableKindsAt['declaration.type.struct.unit.private'];
+		readonly public: PortableKindsAt['declaration.type.struct.unit.public'];
+	};
+	'declaration.type.struct.unit.private': { readonly $path: 'declaration.type.struct.unit.private' };
+	'declaration.type.struct.unit.public': {
+		readonly $path: 'declaration.type.struct.unit.public';
+		readonly internal: PortableKindsAt['declaration.type.struct.unit.public.internal'];
+		readonly parent: PortableKindsAt['declaration.type.struct.unit.public.parent'];
+		readonly restricted: PortableKindsAt['declaration.type.struct.unit.public.restricted'];
+	};
+	'declaration.type.struct.unit.public.internal': { readonly $path: 'declaration.type.struct.unit.public.internal' };
+	'declaration.type.struct.unit.public.parent': { readonly $path: 'declaration.type.struct.unit.public.parent' };
+	'declaration.type.struct.unit.public.restricted': {
+		readonly $path: 'declaration.type.struct.unit.public.restricted';
+	};
+	'declaration.type.type_alias': {
+		readonly $path: 'declaration.type.type_alias';
+		readonly associated: PortableKindsAt['declaration.type.type_alias.associated'];
+		readonly private: PortableKindsAt['declaration.type.type_alias.private'];
+		readonly public: PortableKindsAt['declaration.type.type_alias.public'];
+	};
+	'declaration.type.type_alias.associated': { readonly $path: 'declaration.type.type_alias.associated' };
+	'declaration.type.type_alias.private': { readonly $path: 'declaration.type.type_alias.private' };
+	'declaration.type.type_alias.public': {
+		readonly $path: 'declaration.type.type_alias.public';
+		readonly internal: PortableKindsAt['declaration.type.type_alias.public.internal'];
+		readonly parent: PortableKindsAt['declaration.type.type_alias.public.parent'];
+		readonly restricted: PortableKindsAt['declaration.type.type_alias.public.restricted'];
+	};
+	'declaration.type.type_alias.public.internal': { readonly $path: 'declaration.type.type_alias.public.internal' };
+	'declaration.type.type_alias.public.parent': { readonly $path: 'declaration.type.type_alias.public.parent' };
+	'declaration.type.type_alias.public.restricted': { readonly $path: 'declaration.type.type_alias.public.restricted' };
+	'declaration.type.union': {
+		readonly $path: 'declaration.type.union';
+		readonly private: PortableKindsAt['declaration.type.union.private'];
+		readonly public: PortableKindsAt['declaration.type.union.public'];
+	};
+	'declaration.type.union.private': { readonly $path: 'declaration.type.union.private' };
+	'declaration.type.union.public': {
+		readonly $path: 'declaration.type.union.public';
+		readonly internal: PortableKindsAt['declaration.type.union.public.internal'];
+		readonly parent: PortableKindsAt['declaration.type.union.public.parent'];
+		readonly restricted: PortableKindsAt['declaration.type.union.public.restricted'];
+	};
+	'declaration.type.union.public.internal': { readonly $path: 'declaration.type.union.public.internal' };
+	'declaration.type.union.public.parent': { readonly $path: 'declaration.type.union.public.parent' };
+	'declaration.type.union.public.restricted': { readonly $path: 'declaration.type.union.public.restricted' };
 	'declaration.type_parameter': {
 		readonly $path: 'declaration.type_parameter';
 		readonly lifetime: PortableKindsAt['declaration.type_parameter.lifetime'];
@@ -1573,21 +1644,6 @@ export interface PortableKindsAt {
 	};
 	'declaration.type_parameter.lifetime': { readonly $path: 'declaration.type_parameter.lifetime' };
 	'declaration.type_parameter.value': { readonly $path: 'declaration.type_parameter.value' };
-	'declaration.union': {
-		readonly $path: 'declaration.union';
-		readonly private: PortableKindsAt['declaration.union.private'];
-		readonly public: PortableKindsAt['declaration.union.public'];
-	};
-	'declaration.union.private': { readonly $path: 'declaration.union.private' };
-	'declaration.union.public': {
-		readonly $path: 'declaration.union.public';
-		readonly internal: PortableKindsAt['declaration.union.public.internal'];
-		readonly parent: PortableKindsAt['declaration.union.public.parent'];
-		readonly restricted: PortableKindsAt['declaration.union.public.restricted'];
-	};
-	'declaration.union.public.internal': { readonly $path: 'declaration.union.public.internal' };
-	'declaration.union.public.parent': { readonly $path: 'declaration.union.public.parent' };
-	'declaration.union.public.restricted': { readonly $path: 'declaration.union.public.restricted' };
 	'declaration.variable': {
 		readonly $path: 'declaration.variable';
 		readonly private: PortableKindsAt['declaration.variable.private'];
@@ -1722,7 +1778,6 @@ export interface PortableKindsAt {
 		readonly shift: PortableKindsAt['expression.binary.shift'];
 	};
 	'expression.binary.arithmetic': {
-		readonly $path: 'expression.binary.arithmetic';
 		readonly add: PortableKindsAt['expression.binary.arithmetic.add'];
 		readonly divide: PortableKindsAt['expression.binary.arithmetic.divide'];
 		readonly modulo: PortableKindsAt['expression.binary.arithmetic.modulo'];
@@ -1735,7 +1790,6 @@ export interface PortableKindsAt {
 	'expression.binary.arithmetic.multiply': { readonly $path: 'expression.binary.arithmetic.multiply' };
 	'expression.binary.arithmetic.subtract': { readonly $path: 'expression.binary.arithmetic.subtract' };
 	'expression.binary.bitwise': {
-		readonly $path: 'expression.binary.bitwise';
 		readonly and: PortableKindsAt['expression.binary.bitwise.and'];
 		readonly or: PortableKindsAt['expression.binary.bitwise.or'];
 		readonly xor: PortableKindsAt['expression.binary.bitwise.xor'];
@@ -1744,7 +1798,6 @@ export interface PortableKindsAt {
 	'expression.binary.bitwise.or': { readonly $path: 'expression.binary.bitwise.or' };
 	'expression.binary.bitwise.xor': { readonly $path: 'expression.binary.bitwise.xor' };
 	'expression.binary.comparison': {
-		readonly $path: 'expression.binary.comparison';
 		readonly equal: PortableKindsAt['expression.binary.comparison.equal'];
 		readonly greater: PortableKindsAt['expression.binary.comparison.greater'];
 		readonly greater_equal: PortableKindsAt['expression.binary.comparison.greater_equal'];
@@ -1766,7 +1819,6 @@ export interface PortableKindsAt {
 	'expression.binary.logical.and': { readonly $path: 'expression.binary.logical.and' };
 	'expression.binary.logical.or': { readonly $path: 'expression.binary.logical.or' };
 	'expression.binary.shift': {
-		readonly $path: 'expression.binary.shift';
 		readonly left: PortableKindsAt['expression.binary.shift.left'];
 		readonly right: PortableKindsAt['expression.binary.shift.right'];
 	};
@@ -1800,7 +1852,6 @@ export interface PortableKindsAt {
 	};
 	'expression.cast.conversion': { readonly $path: 'expression.cast.conversion' };
 	'expression.collection': {
-		readonly $path: 'expression.collection';
 		readonly list: PortableKindsAt['expression.collection.list'];
 		readonly struct: PortableKindsAt['expression.collection.struct'];
 		readonly tuple: PortableKindsAt['expression.collection.tuple'];
@@ -2231,20 +2282,14 @@ export interface PortableIsAt {
 	'comment.text': PortableGuard<PortableIds['comment.text'], RustNode, TSKindId, PortableTexts['comment.text']> & {};
 	declaration: PortableGuard<PortableIds['declaration'], RustNode, TSKindId, PortableTexts['declaration']> & {
 		readonly constant: PortableIsAt['declaration.constant'];
-		readonly enum: PortableIsAt['declaration.enum'];
-		readonly enum_member: PortableIsAt['declaration.enum_member'];
 		readonly extension: PortableIsAt['declaration.extension'];
-		readonly field: PortableIsAt['declaration.field'];
 		readonly function: PortableIsAt['declaration.function'];
-		readonly interface: PortableIsAt['declaration.interface'];
 		readonly macro: PortableIsAt['declaration.macro'];
-		readonly method: PortableIsAt['declaration.method'];
+		readonly member: PortableIsAt['declaration.member'];
 		readonly module: PortableIsAt['declaration.module'];
 		readonly parameter: PortableIsAt['declaration.parameter'];
-		readonly struct: PortableIsAt['declaration.struct'];
-		readonly type_alias: PortableIsAt['declaration.type_alias'];
+		readonly type: PortableIsAt['declaration.type'];
 		readonly type_parameter: PortableIsAt['declaration.type_parameter'];
-		readonly union: PortableIsAt['declaration.union'];
 		readonly variable: PortableIsAt['declaration.variable'];
 	};
 	'declaration.constant': PortableGuard<
@@ -2290,180 +2335,6 @@ export interface PortableIsAt {
 		TSKindId,
 		PortableTexts['declaration.constant.public.restricted']
 	> & {};
-	'declaration.enum': PortableGuard<
-		PortableIds['declaration.enum'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.enum']
-	> & {
-		readonly private: PortableIsAt['declaration.enum.private'];
-		readonly public: PortableIsAt['declaration.enum.public'];
-	};
-	'declaration.enum.private': PortableGuard<
-		PortableIds['declaration.enum.private'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.enum.private']
-	> & {};
-	'declaration.enum.public': PortableGuard<
-		PortableIds['declaration.enum.public'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.enum.public']
-	> & {
-		readonly internal: PortableIsAt['declaration.enum.public.internal'];
-		readonly parent: PortableIsAt['declaration.enum.public.parent'];
-		readonly restricted: PortableIsAt['declaration.enum.public.restricted'];
-	};
-	'declaration.enum.public.internal': PortableGuard<
-		PortableIds['declaration.enum.public.internal'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.enum.public.internal']
-	> & {};
-	'declaration.enum.public.parent': PortableGuard<
-		PortableIds['declaration.enum.public.parent'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.enum.public.parent']
-	> & {};
-	'declaration.enum.public.restricted': PortableGuard<
-		PortableIds['declaration.enum.public.restricted'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.enum.public.restricted']
-	> & {};
-	'declaration.enum_member': PortableGuard<
-		PortableIds['declaration.enum_member'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.enum_member']
-	> & {
-		readonly private: PortableIsAt['declaration.enum_member.private'];
-		readonly public: PortableIsAt['declaration.enum_member.public'];
-		readonly struct: PortableIsAt['declaration.enum_member.struct'];
-		readonly tuple: PortableIsAt['declaration.enum_member.tuple'];
-	};
-	'declaration.enum_member.private': PortableGuard<
-		PortableIds['declaration.enum_member.private'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.enum_member.private']
-	> & {};
-	'declaration.enum_member.public': PortableGuard<
-		PortableIds['declaration.enum_member.public'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.enum_member.public']
-	> & {
-		readonly internal: PortableIsAt['declaration.enum_member.public.internal'];
-		readonly parent: PortableIsAt['declaration.enum_member.public.parent'];
-		readonly restricted: PortableIsAt['declaration.enum_member.public.restricted'];
-	};
-	'declaration.enum_member.public.internal': PortableGuard<
-		PortableIds['declaration.enum_member.public.internal'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.enum_member.public.internal']
-	> & {};
-	'declaration.enum_member.public.parent': PortableGuard<
-		PortableIds['declaration.enum_member.public.parent'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.enum_member.public.parent']
-	> & {};
-	'declaration.enum_member.public.restricted': PortableGuard<
-		PortableIds['declaration.enum_member.public.restricted'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.enum_member.public.restricted']
-	> & {};
-	'declaration.enum_member.struct': PortableGuard<
-		PortableIds['declaration.enum_member.struct'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.enum_member.struct']
-	> & {
-		readonly private: PortableIsAt['declaration.enum_member.struct.private'];
-		readonly public: PortableIsAt['declaration.enum_member.struct.public'];
-	};
-	'declaration.enum_member.struct.private': PortableGuard<
-		PortableIds['declaration.enum_member.struct.private'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.enum_member.struct.private']
-	> & {};
-	'declaration.enum_member.struct.public': PortableGuard<
-		PortableIds['declaration.enum_member.struct.public'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.enum_member.struct.public']
-	> & {
-		readonly internal: PortableIsAt['declaration.enum_member.struct.public.internal'];
-		readonly parent: PortableIsAt['declaration.enum_member.struct.public.parent'];
-		readonly restricted: PortableIsAt['declaration.enum_member.struct.public.restricted'];
-	};
-	'declaration.enum_member.struct.public.internal': PortableGuard<
-		PortableIds['declaration.enum_member.struct.public.internal'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.enum_member.struct.public.internal']
-	> & {};
-	'declaration.enum_member.struct.public.parent': PortableGuard<
-		PortableIds['declaration.enum_member.struct.public.parent'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.enum_member.struct.public.parent']
-	> & {};
-	'declaration.enum_member.struct.public.restricted': PortableGuard<
-		PortableIds['declaration.enum_member.struct.public.restricted'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.enum_member.struct.public.restricted']
-	> & {};
-	'declaration.enum_member.tuple': PortableGuard<
-		PortableIds['declaration.enum_member.tuple'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.enum_member.tuple']
-	> & {
-		readonly private: PortableIsAt['declaration.enum_member.tuple.private'];
-		readonly public: PortableIsAt['declaration.enum_member.tuple.public'];
-	};
-	'declaration.enum_member.tuple.private': PortableGuard<
-		PortableIds['declaration.enum_member.tuple.private'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.enum_member.tuple.private']
-	> & {};
-	'declaration.enum_member.tuple.public': PortableGuard<
-		PortableIds['declaration.enum_member.tuple.public'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.enum_member.tuple.public']
-	> & {
-		readonly internal: PortableIsAt['declaration.enum_member.tuple.public.internal'];
-		readonly parent: PortableIsAt['declaration.enum_member.tuple.public.parent'];
-		readonly restricted: PortableIsAt['declaration.enum_member.tuple.public.restricted'];
-	};
-	'declaration.enum_member.tuple.public.internal': PortableGuard<
-		PortableIds['declaration.enum_member.tuple.public.internal'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.enum_member.tuple.public.internal']
-	> & {};
-	'declaration.enum_member.tuple.public.parent': PortableGuard<
-		PortableIds['declaration.enum_member.tuple.public.parent'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.enum_member.tuple.public.parent']
-	> & {};
-	'declaration.enum_member.tuple.public.restricted': PortableGuard<
-		PortableIds['declaration.enum_member.tuple.public.restricted'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.enum_member.tuple.public.restricted']
-	> & {};
 	'declaration.extension': PortableGuard<
 		PortableIds['declaration.extension'],
 		RustNode,
@@ -2475,49 +2346,6 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['declaration.extension.conformance']
-	> & {};
-	'declaration.field': PortableGuard<
-		PortableIds['declaration.field'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.field']
-	> & {
-		readonly private: PortableIsAt['declaration.field.private'];
-		readonly public: PortableIsAt['declaration.field.public'];
-	};
-	'declaration.field.private': PortableGuard<
-		PortableIds['declaration.field.private'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.field.private']
-	> & {};
-	'declaration.field.public': PortableGuard<
-		PortableIds['declaration.field.public'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.field.public']
-	> & {
-		readonly internal: PortableIsAt['declaration.field.public.internal'];
-		readonly parent: PortableIsAt['declaration.field.public.parent'];
-		readonly restricted: PortableIsAt['declaration.field.public.restricted'];
-	};
-	'declaration.field.public.internal': PortableGuard<
-		PortableIds['declaration.field.public.internal'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.field.public.internal']
-	> & {};
-	'declaration.field.public.parent': PortableGuard<
-		PortableIds['declaration.field.public.parent'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.field.public.parent']
-	> & {};
-	'declaration.field.public.restricted': PortableGuard<
-		PortableIds['declaration.field.public.restricted'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.field.public.restricted']
 	> & {};
 	'declaration.function': PortableGuard<
 		PortableIds['declaration.function'],
@@ -2606,55 +2434,6 @@ export interface PortableIsAt {
 		TSKindId,
 		PortableTexts['declaration.function.signature.public.restricted']
 	> & {};
-	'declaration.interface': PortableGuard<
-		PortableIds['declaration.interface'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.interface']
-	> & { readonly trait: PortableIsAt['declaration.interface.trait'] };
-	'declaration.interface.trait': PortableGuard<
-		PortableIds['declaration.interface.trait'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.interface.trait']
-	> & {
-		readonly private: PortableIsAt['declaration.interface.trait.private'];
-		readonly public: PortableIsAt['declaration.interface.trait.public'];
-	};
-	'declaration.interface.trait.private': PortableGuard<
-		PortableIds['declaration.interface.trait.private'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.interface.trait.private']
-	> & {};
-	'declaration.interface.trait.public': PortableGuard<
-		PortableIds['declaration.interface.trait.public'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.interface.trait.public']
-	> & {
-		readonly internal: PortableIsAt['declaration.interface.trait.public.internal'];
-		readonly parent: PortableIsAt['declaration.interface.trait.public.parent'];
-		readonly restricted: PortableIsAt['declaration.interface.trait.public.restricted'];
-	};
-	'declaration.interface.trait.public.internal': PortableGuard<
-		PortableIds['declaration.interface.trait.public.internal'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.interface.trait.public.internal']
-	> & {};
-	'declaration.interface.trait.public.parent': PortableGuard<
-		PortableIds['declaration.interface.trait.public.parent'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.interface.trait.public.parent']
-	> & {};
-	'declaration.interface.trait.public.restricted': PortableGuard<
-		PortableIds['declaration.interface.trait.public.restricted'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.interface.trait.public.restricted']
-	> & {};
 	'declaration.macro': PortableGuard<
 		PortableIds['declaration.macro'],
 		RustNode,
@@ -2683,92 +2462,276 @@ export interface PortableIsAt {
 		TSKindId,
 		PortableTexts['declaration.macro.paren']
 	> & {};
-	'declaration.method': PortableGuard<
-		PortableIds['declaration.method'],
+	'declaration.member': PortableGuard<
+		PortableIds['declaration.member'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.method']
+		PortableTexts['declaration.member']
 	> & {
-		readonly private: PortableIsAt['declaration.method.private'];
-		readonly public: PortableIsAt['declaration.method.public'];
-		readonly signature: PortableIsAt['declaration.method.signature'];
+		readonly enum_member: PortableIsAt['declaration.member.enum_member'];
+		readonly field: PortableIsAt['declaration.member.field'];
+		readonly method: PortableIsAt['declaration.member.method'];
 	};
-	'declaration.method.private': PortableGuard<
-		PortableIds['declaration.method.private'],
+	'declaration.member.enum_member': PortableGuard<
+		PortableIds['declaration.member.enum_member'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.method.private']
-	> & {};
-	'declaration.method.public': PortableGuard<
-		PortableIds['declaration.method.public'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.method.public']
+		PortableTexts['declaration.member.enum_member']
 	> & {
-		readonly internal: PortableIsAt['declaration.method.public.internal'];
-		readonly parent: PortableIsAt['declaration.method.public.parent'];
-		readonly restricted: PortableIsAt['declaration.method.public.restricted'];
+		readonly private: PortableIsAt['declaration.member.enum_member.private'];
+		readonly public: PortableIsAt['declaration.member.enum_member.public'];
+		readonly struct: PortableIsAt['declaration.member.enum_member.struct'];
+		readonly tuple: PortableIsAt['declaration.member.enum_member.tuple'];
 	};
-	'declaration.method.public.internal': PortableGuard<
-		PortableIds['declaration.method.public.internal'],
+	'declaration.member.enum_member.private': PortableGuard<
+		PortableIds['declaration.member.enum_member.private'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.method.public.internal']
+		PortableTexts['declaration.member.enum_member.private']
 	> & {};
-	'declaration.method.public.parent': PortableGuard<
-		PortableIds['declaration.method.public.parent'],
+	'declaration.member.enum_member.public': PortableGuard<
+		PortableIds['declaration.member.enum_member.public'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.method.public.parent']
-	> & {};
-	'declaration.method.public.restricted': PortableGuard<
-		PortableIds['declaration.method.public.restricted'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.method.public.restricted']
-	> & {};
-	'declaration.method.signature': PortableGuard<
-		PortableIds['declaration.method.signature'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.method.signature']
+		PortableTexts['declaration.member.enum_member.public']
 	> & {
-		readonly private: PortableIsAt['declaration.method.signature.private'];
-		readonly public: PortableIsAt['declaration.method.signature.public'];
+		readonly internal: PortableIsAt['declaration.member.enum_member.public.internal'];
+		readonly parent: PortableIsAt['declaration.member.enum_member.public.parent'];
+		readonly restricted: PortableIsAt['declaration.member.enum_member.public.restricted'];
 	};
-	'declaration.method.signature.private': PortableGuard<
-		PortableIds['declaration.method.signature.private'],
+	'declaration.member.enum_member.public.internal': PortableGuard<
+		PortableIds['declaration.member.enum_member.public.internal'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.method.signature.private']
+		PortableTexts['declaration.member.enum_member.public.internal']
 	> & {};
-	'declaration.method.signature.public': PortableGuard<
-		PortableIds['declaration.method.signature.public'],
+	'declaration.member.enum_member.public.parent': PortableGuard<
+		PortableIds['declaration.member.enum_member.public.parent'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.method.signature.public']
+		PortableTexts['declaration.member.enum_member.public.parent']
+	> & {};
+	'declaration.member.enum_member.public.restricted': PortableGuard<
+		PortableIds['declaration.member.enum_member.public.restricted'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.enum_member.public.restricted']
+	> & {};
+	'declaration.member.enum_member.struct': PortableGuard<
+		PortableIds['declaration.member.enum_member.struct'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.enum_member.struct']
 	> & {
-		readonly internal: PortableIsAt['declaration.method.signature.public.internal'];
-		readonly parent: PortableIsAt['declaration.method.signature.public.parent'];
-		readonly restricted: PortableIsAt['declaration.method.signature.public.restricted'];
+		readonly private: PortableIsAt['declaration.member.enum_member.struct.private'];
+		readonly public: PortableIsAt['declaration.member.enum_member.struct.public'];
 	};
-	'declaration.method.signature.public.internal': PortableGuard<
-		PortableIds['declaration.method.signature.public.internal'],
+	'declaration.member.enum_member.struct.private': PortableGuard<
+		PortableIds['declaration.member.enum_member.struct.private'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.method.signature.public.internal']
+		PortableTexts['declaration.member.enum_member.struct.private']
 	> & {};
-	'declaration.method.signature.public.parent': PortableGuard<
-		PortableIds['declaration.method.signature.public.parent'],
+	'declaration.member.enum_member.struct.public': PortableGuard<
+		PortableIds['declaration.member.enum_member.struct.public'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.method.signature.public.parent']
+		PortableTexts['declaration.member.enum_member.struct.public']
+	> & {
+		readonly internal: PortableIsAt['declaration.member.enum_member.struct.public.internal'];
+		readonly parent: PortableIsAt['declaration.member.enum_member.struct.public.parent'];
+		readonly restricted: PortableIsAt['declaration.member.enum_member.struct.public.restricted'];
+	};
+	'declaration.member.enum_member.struct.public.internal': PortableGuard<
+		PortableIds['declaration.member.enum_member.struct.public.internal'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.enum_member.struct.public.internal']
 	> & {};
-	'declaration.method.signature.public.restricted': PortableGuard<
-		PortableIds['declaration.method.signature.public.restricted'],
+	'declaration.member.enum_member.struct.public.parent': PortableGuard<
+		PortableIds['declaration.member.enum_member.struct.public.parent'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.method.signature.public.restricted']
+		PortableTexts['declaration.member.enum_member.struct.public.parent']
+	> & {};
+	'declaration.member.enum_member.struct.public.restricted': PortableGuard<
+		PortableIds['declaration.member.enum_member.struct.public.restricted'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.enum_member.struct.public.restricted']
+	> & {};
+	'declaration.member.enum_member.tuple': PortableGuard<
+		PortableIds['declaration.member.enum_member.tuple'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.enum_member.tuple']
+	> & {
+		readonly private: PortableIsAt['declaration.member.enum_member.tuple.private'];
+		readonly public: PortableIsAt['declaration.member.enum_member.tuple.public'];
+	};
+	'declaration.member.enum_member.tuple.private': PortableGuard<
+		PortableIds['declaration.member.enum_member.tuple.private'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.enum_member.tuple.private']
+	> & {};
+	'declaration.member.enum_member.tuple.public': PortableGuard<
+		PortableIds['declaration.member.enum_member.tuple.public'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.enum_member.tuple.public']
+	> & {
+		readonly internal: PortableIsAt['declaration.member.enum_member.tuple.public.internal'];
+		readonly parent: PortableIsAt['declaration.member.enum_member.tuple.public.parent'];
+		readonly restricted: PortableIsAt['declaration.member.enum_member.tuple.public.restricted'];
+	};
+	'declaration.member.enum_member.tuple.public.internal': PortableGuard<
+		PortableIds['declaration.member.enum_member.tuple.public.internal'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.enum_member.tuple.public.internal']
+	> & {};
+	'declaration.member.enum_member.tuple.public.parent': PortableGuard<
+		PortableIds['declaration.member.enum_member.tuple.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.enum_member.tuple.public.parent']
+	> & {};
+	'declaration.member.enum_member.tuple.public.restricted': PortableGuard<
+		PortableIds['declaration.member.enum_member.tuple.public.restricted'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.enum_member.tuple.public.restricted']
+	> & {};
+	'declaration.member.field': PortableGuard<
+		PortableIds['declaration.member.field'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.field']
+	> & {
+		readonly private: PortableIsAt['declaration.member.field.private'];
+		readonly public: PortableIsAt['declaration.member.field.public'];
+	};
+	'declaration.member.field.private': PortableGuard<
+		PortableIds['declaration.member.field.private'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.field.private']
+	> & {};
+	'declaration.member.field.public': PortableGuard<
+		PortableIds['declaration.member.field.public'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.field.public']
+	> & {
+		readonly internal: PortableIsAt['declaration.member.field.public.internal'];
+		readonly parent: PortableIsAt['declaration.member.field.public.parent'];
+		readonly restricted: PortableIsAt['declaration.member.field.public.restricted'];
+	};
+	'declaration.member.field.public.internal': PortableGuard<
+		PortableIds['declaration.member.field.public.internal'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.field.public.internal']
+	> & {};
+	'declaration.member.field.public.parent': PortableGuard<
+		PortableIds['declaration.member.field.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.field.public.parent']
+	> & {};
+	'declaration.member.field.public.restricted': PortableGuard<
+		PortableIds['declaration.member.field.public.restricted'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.field.public.restricted']
+	> & {};
+	'declaration.member.method': PortableGuard<
+		PortableIds['declaration.member.method'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.method']
+	> & {
+		readonly private: PortableIsAt['declaration.member.method.private'];
+		readonly public: PortableIsAt['declaration.member.method.public'];
+		readonly signature: PortableIsAt['declaration.member.method.signature'];
+	};
+	'declaration.member.method.private': PortableGuard<
+		PortableIds['declaration.member.method.private'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.method.private']
+	> & {};
+	'declaration.member.method.public': PortableGuard<
+		PortableIds['declaration.member.method.public'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.method.public']
+	> & {
+		readonly internal: PortableIsAt['declaration.member.method.public.internal'];
+		readonly parent: PortableIsAt['declaration.member.method.public.parent'];
+		readonly restricted: PortableIsAt['declaration.member.method.public.restricted'];
+	};
+	'declaration.member.method.public.internal': PortableGuard<
+		PortableIds['declaration.member.method.public.internal'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.method.public.internal']
+	> & {};
+	'declaration.member.method.public.parent': PortableGuard<
+		PortableIds['declaration.member.method.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.method.public.parent']
+	> & {};
+	'declaration.member.method.public.restricted': PortableGuard<
+		PortableIds['declaration.member.method.public.restricted'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.method.public.restricted']
+	> & {};
+	'declaration.member.method.signature': PortableGuard<
+		PortableIds['declaration.member.method.signature'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.method.signature']
+	> & {
+		readonly private: PortableIsAt['declaration.member.method.signature.private'];
+		readonly public: PortableIsAt['declaration.member.method.signature.public'];
+	};
+	'declaration.member.method.signature.private': PortableGuard<
+		PortableIds['declaration.member.method.signature.private'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.method.signature.private']
+	> & {};
+	'declaration.member.method.signature.public': PortableGuard<
+		PortableIds['declaration.member.method.signature.public'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.method.signature.public']
+	> & {
+		readonly internal: PortableIsAt['declaration.member.method.signature.public.internal'];
+		readonly parent: PortableIsAt['declaration.member.method.signature.public.parent'];
+		readonly restricted: PortableIsAt['declaration.member.method.signature.public.restricted'];
+	};
+	'declaration.member.method.signature.public.internal': PortableGuard<
+		PortableIds['declaration.member.method.signature.public.internal'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.method.signature.public.internal']
+	> & {};
+	'declaration.member.method.signature.public.parent': PortableGuard<
+		PortableIds['declaration.member.method.signature.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.method.signature.public.parent']
+	> & {};
+	'declaration.member.method.signature.public.restricted': PortableGuard<
+		PortableIds['declaration.member.method.signature.public.restricted'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.member.method.signature.public.restricted']
 	> & {};
 	'declaration.module': PortableGuard<
 		PortableIds['declaration.module'],
@@ -2841,186 +2804,333 @@ export interface PortableIsAt {
 		TSKindId,
 		PortableTexts['declaration.parameter.variadic']
 	> & {};
-	'declaration.struct': PortableGuard<
-		PortableIds['declaration.struct'],
+	'declaration.type': PortableGuard<
+		PortableIds['declaration.type'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.struct']
+		PortableTexts['declaration.type']
 	> & {
-		readonly private: PortableIsAt['declaration.struct.private'];
-		readonly public: PortableIsAt['declaration.struct.public'];
-		readonly tuple: PortableIsAt['declaration.struct.tuple'];
-		readonly unit: PortableIsAt['declaration.struct.unit'];
+		readonly enum: PortableIsAt['declaration.type.enum'];
+		readonly interface: PortableIsAt['declaration.type.interface'];
+		readonly struct: PortableIsAt['declaration.type.struct'];
+		readonly type_alias: PortableIsAt['declaration.type.type_alias'];
+		readonly union: PortableIsAt['declaration.type.union'];
 	};
-	'declaration.struct.private': PortableGuard<
-		PortableIds['declaration.struct.private'],
+	'declaration.type.enum': PortableGuard<
+		PortableIds['declaration.type.enum'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.struct.private']
-	> & {};
-	'declaration.struct.public': PortableGuard<
-		PortableIds['declaration.struct.public'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.struct.public']
+		PortableTexts['declaration.type.enum']
 	> & {
-		readonly internal: PortableIsAt['declaration.struct.public.internal'];
-		readonly parent: PortableIsAt['declaration.struct.public.parent'];
-		readonly restricted: PortableIsAt['declaration.struct.public.restricted'];
+		readonly private: PortableIsAt['declaration.type.enum.private'];
+		readonly public: PortableIsAt['declaration.type.enum.public'];
 	};
-	'declaration.struct.public.internal': PortableGuard<
-		PortableIds['declaration.struct.public.internal'],
+	'declaration.type.enum.private': PortableGuard<
+		PortableIds['declaration.type.enum.private'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.struct.public.internal']
+		PortableTexts['declaration.type.enum.private']
 	> & {};
-	'declaration.struct.public.parent': PortableGuard<
-		PortableIds['declaration.struct.public.parent'],
+	'declaration.type.enum.public': PortableGuard<
+		PortableIds['declaration.type.enum.public'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.struct.public.parent']
-	> & {};
-	'declaration.struct.public.restricted': PortableGuard<
-		PortableIds['declaration.struct.public.restricted'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.struct.public.restricted']
-	> & {};
-	'declaration.struct.tuple': PortableGuard<
-		PortableIds['declaration.struct.tuple'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.struct.tuple']
+		PortableTexts['declaration.type.enum.public']
 	> & {
-		readonly private: PortableIsAt['declaration.struct.tuple.private'];
-		readonly public: PortableIsAt['declaration.struct.tuple.public'];
+		readonly internal: PortableIsAt['declaration.type.enum.public.internal'];
+		readonly parent: PortableIsAt['declaration.type.enum.public.parent'];
+		readonly restricted: PortableIsAt['declaration.type.enum.public.restricted'];
 	};
-	'declaration.struct.tuple.private': PortableGuard<
-		PortableIds['declaration.struct.tuple.private'],
+	'declaration.type.enum.public.internal': PortableGuard<
+		PortableIds['declaration.type.enum.public.internal'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.struct.tuple.private']
+		PortableTexts['declaration.type.enum.public.internal']
 	> & {};
-	'declaration.struct.tuple.public': PortableGuard<
-		PortableIds['declaration.struct.tuple.public'],
+	'declaration.type.enum.public.parent': PortableGuard<
+		PortableIds['declaration.type.enum.public.parent'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.struct.tuple.public']
+		PortableTexts['declaration.type.enum.public.parent']
+	> & {};
+	'declaration.type.enum.public.restricted': PortableGuard<
+		PortableIds['declaration.type.enum.public.restricted'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.enum.public.restricted']
+	> & {};
+	'declaration.type.interface': PortableGuard<
+		PortableIds['declaration.type.interface'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.interface']
+	> & { readonly trait: PortableIsAt['declaration.type.interface.trait'] };
+	'declaration.type.interface.trait': PortableGuard<
+		PortableIds['declaration.type.interface.trait'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.interface.trait']
 	> & {
-		readonly internal: PortableIsAt['declaration.struct.tuple.public.internal'];
-		readonly parent: PortableIsAt['declaration.struct.tuple.public.parent'];
-		readonly restricted: PortableIsAt['declaration.struct.tuple.public.restricted'];
+		readonly private: PortableIsAt['declaration.type.interface.trait.private'];
+		readonly public: PortableIsAt['declaration.type.interface.trait.public'];
 	};
-	'declaration.struct.tuple.public.internal': PortableGuard<
-		PortableIds['declaration.struct.tuple.public.internal'],
+	'declaration.type.interface.trait.private': PortableGuard<
+		PortableIds['declaration.type.interface.trait.private'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.struct.tuple.public.internal']
+		PortableTexts['declaration.type.interface.trait.private']
 	> & {};
-	'declaration.struct.tuple.public.parent': PortableGuard<
-		PortableIds['declaration.struct.tuple.public.parent'],
+	'declaration.type.interface.trait.public': PortableGuard<
+		PortableIds['declaration.type.interface.trait.public'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.struct.tuple.public.parent']
-	> & {};
-	'declaration.struct.tuple.public.restricted': PortableGuard<
-		PortableIds['declaration.struct.tuple.public.restricted'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.struct.tuple.public.restricted']
-	> & {};
-	'declaration.struct.unit': PortableGuard<
-		PortableIds['declaration.struct.unit'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.struct.unit']
+		PortableTexts['declaration.type.interface.trait.public']
 	> & {
-		readonly private: PortableIsAt['declaration.struct.unit.private'];
-		readonly public: PortableIsAt['declaration.struct.unit.public'];
+		readonly internal: PortableIsAt['declaration.type.interface.trait.public.internal'];
+		readonly parent: PortableIsAt['declaration.type.interface.trait.public.parent'];
+		readonly restricted: PortableIsAt['declaration.type.interface.trait.public.restricted'];
 	};
-	'declaration.struct.unit.private': PortableGuard<
-		PortableIds['declaration.struct.unit.private'],
+	'declaration.type.interface.trait.public.internal': PortableGuard<
+		PortableIds['declaration.type.interface.trait.public.internal'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.struct.unit.private']
+		PortableTexts['declaration.type.interface.trait.public.internal']
 	> & {};
-	'declaration.struct.unit.public': PortableGuard<
-		PortableIds['declaration.struct.unit.public'],
+	'declaration.type.interface.trait.public.parent': PortableGuard<
+		PortableIds['declaration.type.interface.trait.public.parent'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.struct.unit.public']
+		PortableTexts['declaration.type.interface.trait.public.parent']
+	> & {};
+	'declaration.type.interface.trait.public.restricted': PortableGuard<
+		PortableIds['declaration.type.interface.trait.public.restricted'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.interface.trait.public.restricted']
+	> & {};
+	'declaration.type.struct': PortableGuard<
+		PortableIds['declaration.type.struct'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.struct']
 	> & {
-		readonly internal: PortableIsAt['declaration.struct.unit.public.internal'];
-		readonly parent: PortableIsAt['declaration.struct.unit.public.parent'];
-		readonly restricted: PortableIsAt['declaration.struct.unit.public.restricted'];
+		readonly private: PortableIsAt['declaration.type.struct.private'];
+		readonly public: PortableIsAt['declaration.type.struct.public'];
+		readonly tuple: PortableIsAt['declaration.type.struct.tuple'];
+		readonly unit: PortableIsAt['declaration.type.struct.unit'];
 	};
-	'declaration.struct.unit.public.internal': PortableGuard<
-		PortableIds['declaration.struct.unit.public.internal'],
+	'declaration.type.struct.private': PortableGuard<
+		PortableIds['declaration.type.struct.private'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.struct.unit.public.internal']
+		PortableTexts['declaration.type.struct.private']
 	> & {};
-	'declaration.struct.unit.public.parent': PortableGuard<
-		PortableIds['declaration.struct.unit.public.parent'],
+	'declaration.type.struct.public': PortableGuard<
+		PortableIds['declaration.type.struct.public'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.struct.unit.public.parent']
-	> & {};
-	'declaration.struct.unit.public.restricted': PortableGuard<
-		PortableIds['declaration.struct.unit.public.restricted'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.struct.unit.public.restricted']
-	> & {};
-	'declaration.type_alias': PortableGuard<
-		PortableIds['declaration.type_alias'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.type_alias']
+		PortableTexts['declaration.type.struct.public']
 	> & {
-		readonly associated: PortableIsAt['declaration.type_alias.associated'];
-		readonly private: PortableIsAt['declaration.type_alias.private'];
-		readonly public: PortableIsAt['declaration.type_alias.public'];
+		readonly internal: PortableIsAt['declaration.type.struct.public.internal'];
+		readonly parent: PortableIsAt['declaration.type.struct.public.parent'];
+		readonly restricted: PortableIsAt['declaration.type.struct.public.restricted'];
 	};
-	'declaration.type_alias.associated': PortableGuard<
-		PortableIds['declaration.type_alias.associated'],
+	'declaration.type.struct.public.internal': PortableGuard<
+		PortableIds['declaration.type.struct.public.internal'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.type_alias.associated']
+		PortableTexts['declaration.type.struct.public.internal']
 	> & {};
-	'declaration.type_alias.private': PortableGuard<
-		PortableIds['declaration.type_alias.private'],
+	'declaration.type.struct.public.parent': PortableGuard<
+		PortableIds['declaration.type.struct.public.parent'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.type_alias.private']
+		PortableTexts['declaration.type.struct.public.parent']
 	> & {};
-	'declaration.type_alias.public': PortableGuard<
-		PortableIds['declaration.type_alias.public'],
+	'declaration.type.struct.public.restricted': PortableGuard<
+		PortableIds['declaration.type.struct.public.restricted'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.type_alias.public']
+		PortableTexts['declaration.type.struct.public.restricted']
+	> & {};
+	'declaration.type.struct.tuple': PortableGuard<
+		PortableIds['declaration.type.struct.tuple'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.struct.tuple']
 	> & {
-		readonly internal: PortableIsAt['declaration.type_alias.public.internal'];
-		readonly parent: PortableIsAt['declaration.type_alias.public.parent'];
-		readonly restricted: PortableIsAt['declaration.type_alias.public.restricted'];
+		readonly private: PortableIsAt['declaration.type.struct.tuple.private'];
+		readonly public: PortableIsAt['declaration.type.struct.tuple.public'];
 	};
-	'declaration.type_alias.public.internal': PortableGuard<
-		PortableIds['declaration.type_alias.public.internal'],
+	'declaration.type.struct.tuple.private': PortableGuard<
+		PortableIds['declaration.type.struct.tuple.private'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.type_alias.public.internal']
+		PortableTexts['declaration.type.struct.tuple.private']
 	> & {};
-	'declaration.type_alias.public.parent': PortableGuard<
-		PortableIds['declaration.type_alias.public.parent'],
+	'declaration.type.struct.tuple.public': PortableGuard<
+		PortableIds['declaration.type.struct.tuple.public'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.type_alias.public.parent']
+		PortableTexts['declaration.type.struct.tuple.public']
+	> & {
+		readonly internal: PortableIsAt['declaration.type.struct.tuple.public.internal'];
+		readonly parent: PortableIsAt['declaration.type.struct.tuple.public.parent'];
+		readonly restricted: PortableIsAt['declaration.type.struct.tuple.public.restricted'];
+	};
+	'declaration.type.struct.tuple.public.internal': PortableGuard<
+		PortableIds['declaration.type.struct.tuple.public.internal'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.struct.tuple.public.internal']
 	> & {};
-	'declaration.type_alias.public.restricted': PortableGuard<
-		PortableIds['declaration.type_alias.public.restricted'],
+	'declaration.type.struct.tuple.public.parent': PortableGuard<
+		PortableIds['declaration.type.struct.tuple.public.parent'],
 		RustNode,
 		TSKindId,
-		PortableTexts['declaration.type_alias.public.restricted']
+		PortableTexts['declaration.type.struct.tuple.public.parent']
+	> & {};
+	'declaration.type.struct.tuple.public.restricted': PortableGuard<
+		PortableIds['declaration.type.struct.tuple.public.restricted'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.struct.tuple.public.restricted']
+	> & {};
+	'declaration.type.struct.unit': PortableGuard<
+		PortableIds['declaration.type.struct.unit'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.struct.unit']
+	> & {
+		readonly private: PortableIsAt['declaration.type.struct.unit.private'];
+		readonly public: PortableIsAt['declaration.type.struct.unit.public'];
+	};
+	'declaration.type.struct.unit.private': PortableGuard<
+		PortableIds['declaration.type.struct.unit.private'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.struct.unit.private']
+	> & {};
+	'declaration.type.struct.unit.public': PortableGuard<
+		PortableIds['declaration.type.struct.unit.public'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.struct.unit.public']
+	> & {
+		readonly internal: PortableIsAt['declaration.type.struct.unit.public.internal'];
+		readonly parent: PortableIsAt['declaration.type.struct.unit.public.parent'];
+		readonly restricted: PortableIsAt['declaration.type.struct.unit.public.restricted'];
+	};
+	'declaration.type.struct.unit.public.internal': PortableGuard<
+		PortableIds['declaration.type.struct.unit.public.internal'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.struct.unit.public.internal']
+	> & {};
+	'declaration.type.struct.unit.public.parent': PortableGuard<
+		PortableIds['declaration.type.struct.unit.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.struct.unit.public.parent']
+	> & {};
+	'declaration.type.struct.unit.public.restricted': PortableGuard<
+		PortableIds['declaration.type.struct.unit.public.restricted'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.struct.unit.public.restricted']
+	> & {};
+	'declaration.type.type_alias': PortableGuard<
+		PortableIds['declaration.type.type_alias'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.type_alias']
+	> & {
+		readonly associated: PortableIsAt['declaration.type.type_alias.associated'];
+		readonly private: PortableIsAt['declaration.type.type_alias.private'];
+		readonly public: PortableIsAt['declaration.type.type_alias.public'];
+	};
+	'declaration.type.type_alias.associated': PortableGuard<
+		PortableIds['declaration.type.type_alias.associated'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.type_alias.associated']
+	> & {};
+	'declaration.type.type_alias.private': PortableGuard<
+		PortableIds['declaration.type.type_alias.private'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.type_alias.private']
+	> & {};
+	'declaration.type.type_alias.public': PortableGuard<
+		PortableIds['declaration.type.type_alias.public'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.type_alias.public']
+	> & {
+		readonly internal: PortableIsAt['declaration.type.type_alias.public.internal'];
+		readonly parent: PortableIsAt['declaration.type.type_alias.public.parent'];
+		readonly restricted: PortableIsAt['declaration.type.type_alias.public.restricted'];
+	};
+	'declaration.type.type_alias.public.internal': PortableGuard<
+		PortableIds['declaration.type.type_alias.public.internal'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.type_alias.public.internal']
+	> & {};
+	'declaration.type.type_alias.public.parent': PortableGuard<
+		PortableIds['declaration.type.type_alias.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.type_alias.public.parent']
+	> & {};
+	'declaration.type.type_alias.public.restricted': PortableGuard<
+		PortableIds['declaration.type.type_alias.public.restricted'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.type_alias.public.restricted']
+	> & {};
+	'declaration.type.union': PortableGuard<
+		PortableIds['declaration.type.union'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.union']
+	> & {
+		readonly private: PortableIsAt['declaration.type.union.private'];
+		readonly public: PortableIsAt['declaration.type.union.public'];
+	};
+	'declaration.type.union.private': PortableGuard<
+		PortableIds['declaration.type.union.private'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.union.private']
+	> & {};
+	'declaration.type.union.public': PortableGuard<
+		PortableIds['declaration.type.union.public'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.union.public']
+	> & {
+		readonly internal: PortableIsAt['declaration.type.union.public.internal'];
+		readonly parent: PortableIsAt['declaration.type.union.public.parent'];
+		readonly restricted: PortableIsAt['declaration.type.union.public.restricted'];
+	};
+	'declaration.type.union.public.internal': PortableGuard<
+		PortableIds['declaration.type.union.public.internal'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.union.public.internal']
+	> & {};
+	'declaration.type.union.public.parent': PortableGuard<
+		PortableIds['declaration.type.union.public.parent'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.union.public.parent']
+	> & {};
+	'declaration.type.union.public.restricted': PortableGuard<
+		PortableIds['declaration.type.union.public.restricted'],
+		RustNode,
+		TSKindId,
+		PortableTexts['declaration.type.union.public.restricted']
 	> & {};
 	'declaration.type_parameter': PortableGuard<
 		PortableIds['declaration.type_parameter'],
@@ -3042,49 +3152,6 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['declaration.type_parameter.value']
-	> & {};
-	'declaration.union': PortableGuard<
-		PortableIds['declaration.union'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.union']
-	> & {
-		readonly private: PortableIsAt['declaration.union.private'];
-		readonly public: PortableIsAt['declaration.union.public'];
-	};
-	'declaration.union.private': PortableGuard<
-		PortableIds['declaration.union.private'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.union.private']
-	> & {};
-	'declaration.union.public': PortableGuard<
-		PortableIds['declaration.union.public'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.union.public']
-	> & {
-		readonly internal: PortableIsAt['declaration.union.public.internal'];
-		readonly parent: PortableIsAt['declaration.union.public.parent'];
-		readonly restricted: PortableIsAt['declaration.union.public.restricted'];
-	};
-	'declaration.union.public.internal': PortableGuard<
-		PortableIds['declaration.union.public.internal'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.union.public.internal']
-	> & {};
-	'declaration.union.public.parent': PortableGuard<
-		PortableIds['declaration.union.public.parent'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.union.public.parent']
-	> & {};
-	'declaration.union.public.restricted': PortableGuard<
-		PortableIds['declaration.union.public.restricted'],
-		RustNode,
-		TSKindId,
-		PortableTexts['declaration.union.public.restricted']
 	> & {};
 	'declaration.variable': PortableGuard<
 		PortableIds['declaration.variable'],
@@ -4584,47 +4651,8 @@ const table: PortableTable = {
 		'declaration.constant.public.internal': { ids: [TSKindId.ConstItem], exact: false },
 		'declaration.constant.public.parent': { ids: [TSKindId.ConstItem], exact: false },
 		'declaration.constant.public.restricted': { ids: [TSKindId.ConstItem], exact: false },
-		'declaration.enum': { ids: [TSKindId.EnumItem], exact: true },
-		'declaration.enum.private': { ids: [TSKindId.EnumItem], exact: false },
-		'declaration.enum.public': { ids: [TSKindId.EnumItem], exact: false },
-		'declaration.enum.public.internal': { ids: [TSKindId.EnumItem], exact: false },
-		'declaration.enum.public.parent': { ids: [TSKindId.EnumItem], exact: false },
-		'declaration.enum.public.restricted': { ids: [TSKindId.EnumItem], exact: false },
-		'declaration.enum_member': { ids: [TSKindId.EnumVariant], exact: true },
-		'declaration.enum_member.private': { ids: [TSKindId.EnumVariant], exact: false },
-		'declaration.enum_member.public': { ids: [TSKindId.EnumVariant], exact: false },
-		'declaration.enum_member.public.internal': { ids: [TSKindId.EnumVariant], exact: false },
-		'declaration.enum_member.public.parent': { ids: [TSKindId.EnumVariant], exact: false },
-		'declaration.enum_member.public.restricted': { ids: [TSKindId.EnumVariant], exact: false },
-		'declaration.enum_member.struct': { ids: [TSKindId.EnumVariant], exact: false },
-		'declaration.enum_member.struct.private': { ids: [TSKindId.EnumVariant], exact: false },
-		'declaration.enum_member.struct.public': { ids: [TSKindId.EnumVariant], exact: false },
-		'declaration.enum_member.struct.public.internal': { ids: [TSKindId.EnumVariant], exact: false },
-		'declaration.enum_member.struct.public.parent': { ids: [TSKindId.EnumVariant], exact: false },
-		'declaration.enum_member.struct.public.restricted': { ids: [TSKindId.EnumVariant], exact: false },
-		'declaration.enum_member.tuple': { ids: [TSKindId.EnumVariant], exact: false },
-		'declaration.enum_member.tuple.private': { ids: [TSKindId.EnumVariant], exact: false },
-		'declaration.enum_member.tuple.public': { ids: [TSKindId.EnumVariant], exact: false },
-		'declaration.enum_member.tuple.public.internal': { ids: [TSKindId.EnumVariant], exact: false },
-		'declaration.enum_member.tuple.public.parent': { ids: [TSKindId.EnumVariant], exact: false },
-		'declaration.enum_member.tuple.public.restricted': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.extension': { ids: [TSKindId.ImplItemBody, TSKindId.ImplItemSemi], exact: true },
 		'declaration.extension.conformance': { ids: [TSKindId.ImplItemBody], exact: false },
-		'declaration.field': { ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration], exact: true },
-		'declaration.field.private': { ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration], exact: false },
-		'declaration.field.public': { ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration], exact: false },
-		'declaration.field.public.internal': {
-			ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration],
-			exact: false
-		},
-		'declaration.field.public.parent': {
-			ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration],
-			exact: false
-		},
-		'declaration.field.public.restricted': {
-			ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration],
-			exact: false
-		},
 		'declaration.function': { ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem], exact: true },
 		'declaration.function.private': { ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem], exact: false },
 		'declaration.function.public': { ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem], exact: false },
@@ -4646,13 +4674,6 @@ const table: PortableTable = {
 		'declaration.function.signature.public.internal': { ids: [TSKindId.FunctionSignatureItem], exact: false },
 		'declaration.function.signature.public.parent': { ids: [TSKindId.FunctionSignatureItem], exact: false },
 		'declaration.function.signature.public.restricted': { ids: [TSKindId.FunctionSignatureItem], exact: false },
-		'declaration.interface': { ids: [TSKindId.TraitItem], exact: true },
-		'declaration.interface.trait': { ids: [TSKindId.TraitItem], exact: true },
-		'declaration.interface.trait.private': { ids: [TSKindId.TraitItem], exact: false },
-		'declaration.interface.trait.public': { ids: [TSKindId.TraitItem], exact: false },
-		'declaration.interface.trait.public.internal': { ids: [TSKindId.TraitItem], exact: false },
-		'declaration.interface.trait.public.parent': { ids: [TSKindId.TraitItem], exact: false },
-		'declaration.interface.trait.public.restricted': { ids: [TSKindId.TraitItem], exact: false },
 		'declaration.macro': {
 			ids: [TSKindId.MacroDefinitionBrace, TSKindId.MacroDefinitionBracket, TSKindId.MacroDefinitionParen],
 			exact: true
@@ -4660,33 +4681,88 @@ const table: PortableTable = {
 		'declaration.macro.brace': { ids: [TSKindId.MacroDefinitionBrace], exact: true },
 		'declaration.macro.bracket': { ids: [TSKindId.MacroDefinitionBracket], exact: true },
 		'declaration.macro.paren': { ids: [TSKindId.MacroDefinitionParen], exact: true },
-		'declaration.method': { ids: [TSKindId.MethodDeclaration, TSKindId.SignatureMethodDeclaration], exact: true },
-		'declaration.method.private': {
+		'declaration.member': {
+			ids: [
+				TSKindId.AttributedOrderedField,
+				TSKindId.EnumVariant,
+				TSKindId.FieldDeclaration,
+				TSKindId.MethodDeclaration,
+				TSKindId.SignatureMethodDeclaration
+			],
+			exact: true
+		},
+		'declaration.member.enum_member': { ids: [TSKindId.EnumVariant], exact: true },
+		'declaration.member.enum_member.private': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.member.enum_member.public': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.member.enum_member.public.internal': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.member.enum_member.public.parent': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.member.enum_member.public.restricted': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.member.enum_member.struct': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.member.enum_member.struct.private': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.member.enum_member.struct.public': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.member.enum_member.struct.public.internal': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.member.enum_member.struct.public.parent': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.member.enum_member.struct.public.restricted': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.member.enum_member.tuple': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.member.enum_member.tuple.private': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.member.enum_member.tuple.public': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.member.enum_member.tuple.public.internal': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.member.enum_member.tuple.public.parent': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.member.enum_member.tuple.public.restricted': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.member.field': { ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration], exact: true },
+		'declaration.member.field.private': {
+			ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration],
+			exact: false
+		},
+		'declaration.member.field.public': {
+			ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration],
+			exact: false
+		},
+		'declaration.member.field.public.internal': {
+			ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration],
+			exact: false
+		},
+		'declaration.member.field.public.parent': {
+			ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration],
+			exact: false
+		},
+		'declaration.member.field.public.restricted': {
+			ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration],
+			exact: false
+		},
+		'declaration.member.method': {
+			ids: [TSKindId.MethodDeclaration, TSKindId.SignatureMethodDeclaration],
+			exact: true
+		},
+		'declaration.member.method.private': {
 			ids: [TSKindId.MethodDeclaration, TSKindId.SignatureMethodDeclaration],
 			exact: false
 		},
-		'declaration.method.public': {
+		'declaration.member.method.public': {
 			ids: [TSKindId.MethodDeclaration, TSKindId.SignatureMethodDeclaration],
 			exact: false
 		},
-		'declaration.method.public.internal': {
+		'declaration.member.method.public.internal': {
 			ids: [TSKindId.MethodDeclaration, TSKindId.SignatureMethodDeclaration],
 			exact: false
 		},
-		'declaration.method.public.parent': {
+		'declaration.member.method.public.parent': {
 			ids: [TSKindId.MethodDeclaration, TSKindId.SignatureMethodDeclaration],
 			exact: false
 		},
-		'declaration.method.public.restricted': {
+		'declaration.member.method.public.restricted': {
 			ids: [TSKindId.MethodDeclaration, TSKindId.SignatureMethodDeclaration],
 			exact: false
 		},
-		'declaration.method.signature': { ids: [TSKindId.SignatureMethodDeclaration], exact: true },
-		'declaration.method.signature.private': { ids: [TSKindId.SignatureMethodDeclaration], exact: false },
-		'declaration.method.signature.public': { ids: [TSKindId.SignatureMethodDeclaration], exact: false },
-		'declaration.method.signature.public.internal': { ids: [TSKindId.SignatureMethodDeclaration], exact: false },
-		'declaration.method.signature.public.parent': { ids: [TSKindId.SignatureMethodDeclaration], exact: false },
-		'declaration.method.signature.public.restricted': { ids: [TSKindId.SignatureMethodDeclaration], exact: false },
+		'declaration.member.method.signature': { ids: [TSKindId.SignatureMethodDeclaration], exact: true },
+		'declaration.member.method.signature.private': { ids: [TSKindId.SignatureMethodDeclaration], exact: false },
+		'declaration.member.method.signature.public': { ids: [TSKindId.SignatureMethodDeclaration], exact: false },
+		'declaration.member.method.signature.public.internal': { ids: [TSKindId.SignatureMethodDeclaration], exact: false },
+		'declaration.member.method.signature.public.parent': { ids: [TSKindId.SignatureMethodDeclaration], exact: false },
+		'declaration.member.method.signature.public.restricted': {
+			ids: [TSKindId.SignatureMethodDeclaration],
+			exact: false
+		},
 		'declaration.module': {
 			ids: [TSKindId.ForeignModItemBody, TSKindId.ForeignModItemSemi, TSKindId.ModItemExternal, TSKindId.ModItemInline],
 			exact: true
@@ -4712,61 +4788,87 @@ const table: PortableTable = {
 			exact: false
 		},
 		'declaration.parameter.variadic': { ids: [TSKindId.VariadicParameter], exact: true },
-		'declaration.struct': {
+		'declaration.type': {
+			ids: [
+				TSKindId.AssociatedType,
+				TSKindId.EnumItem,
+				TSKindId.StructItemBrace,
+				TSKindId.StructItemTuple,
+				TSKindId.StructItemUnit,
+				TSKindId.TraitItem,
+				TSKindId.TypeItem,
+				TSKindId.UnionItem
+			],
+			exact: true
+		},
+		'declaration.type.enum': { ids: [TSKindId.EnumItem], exact: true },
+		'declaration.type.enum.private': { ids: [TSKindId.EnumItem], exact: false },
+		'declaration.type.enum.public': { ids: [TSKindId.EnumItem], exact: false },
+		'declaration.type.enum.public.internal': { ids: [TSKindId.EnumItem], exact: false },
+		'declaration.type.enum.public.parent': { ids: [TSKindId.EnumItem], exact: false },
+		'declaration.type.enum.public.restricted': { ids: [TSKindId.EnumItem], exact: false },
+		'declaration.type.interface': { ids: [TSKindId.TraitItem], exact: true },
+		'declaration.type.interface.trait': { ids: [TSKindId.TraitItem], exact: true },
+		'declaration.type.interface.trait.private': { ids: [TSKindId.TraitItem], exact: false },
+		'declaration.type.interface.trait.public': { ids: [TSKindId.TraitItem], exact: false },
+		'declaration.type.interface.trait.public.internal': { ids: [TSKindId.TraitItem], exact: false },
+		'declaration.type.interface.trait.public.parent': { ids: [TSKindId.TraitItem], exact: false },
+		'declaration.type.interface.trait.public.restricted': { ids: [TSKindId.TraitItem], exact: false },
+		'declaration.type.struct': {
 			ids: [TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
 			exact: true
 		},
-		'declaration.struct.private': {
+		'declaration.type.struct.private': {
 			ids: [TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
 			exact: false
 		},
-		'declaration.struct.public': {
+		'declaration.type.struct.public': {
 			ids: [TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
 			exact: false
 		},
-		'declaration.struct.public.internal': {
+		'declaration.type.struct.public.internal': {
 			ids: [TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
 			exact: false
 		},
-		'declaration.struct.public.parent': {
+		'declaration.type.struct.public.parent': {
 			ids: [TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
 			exact: false
 		},
-		'declaration.struct.public.restricted': {
+		'declaration.type.struct.public.restricted': {
 			ids: [TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
 			exact: false
 		},
-		'declaration.struct.tuple': { ids: [TSKindId.StructItemTuple], exact: true },
-		'declaration.struct.tuple.private': { ids: [TSKindId.StructItemTuple], exact: false },
-		'declaration.struct.tuple.public': { ids: [TSKindId.StructItemTuple], exact: false },
-		'declaration.struct.tuple.public.internal': { ids: [TSKindId.StructItemTuple], exact: false },
-		'declaration.struct.tuple.public.parent': { ids: [TSKindId.StructItemTuple], exact: false },
-		'declaration.struct.tuple.public.restricted': { ids: [TSKindId.StructItemTuple], exact: false },
-		'declaration.struct.unit': { ids: [TSKindId.StructItemUnit], exact: true },
-		'declaration.struct.unit.private': { ids: [TSKindId.StructItemUnit], exact: false },
-		'declaration.struct.unit.public': { ids: [TSKindId.StructItemUnit], exact: false },
-		'declaration.struct.unit.public.internal': { ids: [TSKindId.StructItemUnit], exact: false },
-		'declaration.struct.unit.public.parent': { ids: [TSKindId.StructItemUnit], exact: false },
-		'declaration.struct.unit.public.restricted': { ids: [TSKindId.StructItemUnit], exact: false },
-		'declaration.type_alias': { ids: [TSKindId.AssociatedType, TSKindId.TypeItem], exact: true },
-		'declaration.type_alias.associated': { ids: [TSKindId.AssociatedType], exact: true },
-		'declaration.type_alias.private': { ids: [TSKindId.TypeItem], exact: false },
-		'declaration.type_alias.public': { ids: [TSKindId.TypeItem], exact: false },
-		'declaration.type_alias.public.internal': { ids: [TSKindId.TypeItem], exact: false },
-		'declaration.type_alias.public.parent': { ids: [TSKindId.TypeItem], exact: false },
-		'declaration.type_alias.public.restricted': { ids: [TSKindId.TypeItem], exact: false },
+		'declaration.type.struct.tuple': { ids: [TSKindId.StructItemTuple], exact: true },
+		'declaration.type.struct.tuple.private': { ids: [TSKindId.StructItemTuple], exact: false },
+		'declaration.type.struct.tuple.public': { ids: [TSKindId.StructItemTuple], exact: false },
+		'declaration.type.struct.tuple.public.internal': { ids: [TSKindId.StructItemTuple], exact: false },
+		'declaration.type.struct.tuple.public.parent': { ids: [TSKindId.StructItemTuple], exact: false },
+		'declaration.type.struct.tuple.public.restricted': { ids: [TSKindId.StructItemTuple], exact: false },
+		'declaration.type.struct.unit': { ids: [TSKindId.StructItemUnit], exact: true },
+		'declaration.type.struct.unit.private': { ids: [TSKindId.StructItemUnit], exact: false },
+		'declaration.type.struct.unit.public': { ids: [TSKindId.StructItemUnit], exact: false },
+		'declaration.type.struct.unit.public.internal': { ids: [TSKindId.StructItemUnit], exact: false },
+		'declaration.type.struct.unit.public.parent': { ids: [TSKindId.StructItemUnit], exact: false },
+		'declaration.type.struct.unit.public.restricted': { ids: [TSKindId.StructItemUnit], exact: false },
+		'declaration.type.type_alias': { ids: [TSKindId.AssociatedType, TSKindId.TypeItem], exact: true },
+		'declaration.type.type_alias.associated': { ids: [TSKindId.AssociatedType], exact: true },
+		'declaration.type.type_alias.private': { ids: [TSKindId.TypeItem], exact: false },
+		'declaration.type.type_alias.public': { ids: [TSKindId.TypeItem], exact: false },
+		'declaration.type.type_alias.public.internal': { ids: [TSKindId.TypeItem], exact: false },
+		'declaration.type.type_alias.public.parent': { ids: [TSKindId.TypeItem], exact: false },
+		'declaration.type.type_alias.public.restricted': { ids: [TSKindId.TypeItem], exact: false },
+		'declaration.type.union': { ids: [TSKindId.UnionItem], exact: true },
+		'declaration.type.union.private': { ids: [TSKindId.UnionItem], exact: false },
+		'declaration.type.union.public': { ids: [TSKindId.UnionItem], exact: false },
+		'declaration.type.union.public.internal': { ids: [TSKindId.UnionItem], exact: false },
+		'declaration.type.union.public.parent': { ids: [TSKindId.UnionItem], exact: false },
+		'declaration.type.union.public.restricted': { ids: [TSKindId.UnionItem], exact: false },
 		'declaration.type_parameter': {
 			ids: [TSKindId.ConstParameter, TSKindId.LifetimeParameter, TSKindId.TypeParameter],
 			exact: true
 		},
 		'declaration.type_parameter.lifetime': { ids: [TSKindId.LifetimeParameter], exact: true },
 		'declaration.type_parameter.value': { ids: [TSKindId.ConstParameter], exact: true },
-		'declaration.union': { ids: [TSKindId.UnionItem], exact: true },
-		'declaration.union.private': { ids: [TSKindId.UnionItem], exact: false },
-		'declaration.union.public': { ids: [TSKindId.UnionItem], exact: false },
-		'declaration.union.public.internal': { ids: [TSKindId.UnionItem], exact: false },
-		'declaration.union.public.parent': { ids: [TSKindId.UnionItem], exact: false },
-		'declaration.union.public.restricted': { ids: [TSKindId.UnionItem], exact: false },
 		'declaration.variable': { ids: [TSKindId.LetDeclaration, TSKindId.StaticItem], exact: true },
 		'declaration.variable.private': { ids: [TSKindId.StaticItem], exact: false },
 		'declaration.variable.public': { ids: [TSKindId.StaticItem], exact: false },
@@ -5417,13 +5519,13 @@ const table: PortableTable = {
 		],
 		[TSKindId.ArrayType]: [{ path: 'type.array', within: [], test: [] }],
 		[TSKindId.AssignmentExpression]: [{ path: 'expression.assignment', within: [], test: [] }],
-		[TSKindId.AssociatedType]: [{ path: 'declaration.type_alias.associated', within: [], test: [] }],
+		[TSKindId.AssociatedType]: [{ path: 'declaration.type.type_alias.associated', within: [], test: [] }],
 		[TSKindId.AsyncBlock]: [{ path: 'expression.block.async', within: [], test: [] }],
 		[TSKindId.Attribute]: [{ path: 'attribute', within: [], test: [] }],
 		[TSKindId.AttributedElement]: [{ path: 'element.attributed', within: [], test: [] }],
 		[TSKindId.AttributedOrderedField]: [
 			{
-				path: 'declaration.field.private',
+				path: 'declaration.member.field.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '432': 1 } } },
@@ -5441,7 +5543,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.field.public.internal',
+				path: 'declaration.member.field.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '432': 1 } } },
@@ -5459,7 +5561,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.field.public.parent',
+				path: 'declaration.member.field.public.parent',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '432': 1 } } },
@@ -5477,7 +5579,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.field.public.restricted',
+				path: 'declaration.member.field.public.restricted',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '432': 1 } } },
@@ -5495,7 +5597,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.field.public',
+				path: 'declaration.member.field.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '432': 1 } } },
@@ -5503,14 +5605,14 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.field.public.internal',
+				path: 'declaration.member.field.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '432': 1 } } },
 					{ up: 0, via: [{ slots: { '432': 1 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
 			},
-			{ path: 'declaration.field', within: [], test: [] }
+			{ path: 'declaration.member.field', within: [], test: [] }
 		],
 		[TSKindId.AwaitExpression]: [{ path: 'expression.await', within: [], test: [] }],
 		[TSKindId.BaseFieldInitializer]: [{ path: 'element.struct.base', within: [], test: [] }],
@@ -5840,7 +5942,7 @@ const table: PortableTable = {
 		[TSKindId.EmptyStatement]: [{ path: 'statement.empty', within: [], test: [] }],
 		[TSKindId.EnumItem]: [
 			{
-				path: 'declaration.enum.private',
+				path: 'declaration.type.enum.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '198': 0 } } },
@@ -5858,7 +5960,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.enum.public.internal',
+				path: 'declaration.type.enum.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '198': 0 } } },
@@ -5876,7 +5978,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.enum.public.parent',
+				path: 'declaration.type.enum.public.parent',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '198': 0 } } },
@@ -5894,7 +5996,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.enum.public.restricted',
+				path: 'declaration.type.enum.public.restricted',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '198': 0 } } },
@@ -5912,7 +6014,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.enum.public',
+				path: 'declaration.type.enum.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '198': 0 } } },
@@ -5920,18 +6022,18 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.enum.public.internal',
+				path: 'declaration.type.enum.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '198': 0 } } },
 					{ up: 0, via: [{ slots: { '198': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
 			},
-			{ path: 'declaration.enum', within: [], test: [] }
+			{ path: 'declaration.type.enum', within: [], test: [] }
 		],
 		[TSKindId.EnumVariant]: [
 			{
-				path: 'declaration.enum_member.tuple.private',
+				path: 'declaration.member.enum_member.tuple.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
@@ -5950,7 +6052,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.enum_member.tuple.public.internal',
+				path: 'declaration.member.enum_member.tuple.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
@@ -5969,7 +6071,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.enum_member.tuple.public.parent',
+				path: 'declaration.member.enum_member.tuple.public.parent',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
@@ -5988,7 +6090,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.enum_member.tuple.public.restricted',
+				path: 'declaration.member.enum_member.tuple.public.restricted',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
@@ -6007,7 +6109,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.enum_member.struct.private',
+				path: 'declaration.member.enum_member.struct.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
@@ -6026,7 +6128,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.enum_member.struct.public.internal',
+				path: 'declaration.member.enum_member.struct.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
@@ -6045,7 +6147,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.enum_member.struct.public.parent',
+				path: 'declaration.member.enum_member.struct.public.parent',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
@@ -6064,7 +6166,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.enum_member.struct.public.restricted',
+				path: 'declaration.member.enum_member.struct.public.restricted',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
@@ -6083,7 +6185,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.enum_member.private',
+				path: 'declaration.member.enum_member.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
@@ -6101,7 +6203,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.enum_member.public.internal',
+				path: 'declaration.member.enum_member.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
@@ -6119,7 +6221,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.enum_member.public.parent',
+				path: 'declaration.member.enum_member.public.parent',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
@@ -6137,7 +6239,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.enum_member.public.restricted',
+				path: 'declaration.member.enum_member.public.restricted',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
@@ -6155,7 +6257,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.enum_member.tuple.public',
+				path: 'declaration.member.enum_member.tuple.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
@@ -6164,7 +6266,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.enum_member.tuple.public.internal',
+				path: 'declaration.member.enum_member.tuple.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
@@ -6173,7 +6275,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.enum_member.struct.public',
+				path: 'declaration.member.enum_member.struct.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
@@ -6182,7 +6284,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.enum_member.struct.public.internal',
+				path: 'declaration.member.enum_member.struct.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
@@ -6191,7 +6293,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.enum_member.public',
+				path: 'declaration.member.enum_member.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
@@ -6199,7 +6301,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.enum_member.public.internal',
+				path: 'declaration.member.enum_member.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
@@ -6207,16 +6309,16 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.enum_member.tuple',
+				path: 'declaration.member.enum_member.tuple',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'is', types: [203], slots: { '200': 2 } } }]
 			},
 			{
-				path: 'declaration.enum_member.struct',
+				path: 'declaration.member.enum_member.struct',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'is', types: [201], slots: { '200': 2 } } }]
 			},
-			{ path: 'declaration.enum_member', within: [], test: [] }
+			{ path: 'declaration.member.enum_member', within: [], test: [] }
 		],
 		[TSKindId.EscapeSequenceHex]: [{ path: 'literal.string.escape', within: [], test: [] }],
 		[TSKindId.EscapeSequenceSimple]: [{ path: 'literal.string.escape', within: [], test: [] }],
@@ -6329,9 +6431,9 @@ const table: PortableTable = {
 			{ path: 'literal.boolean', within: [], test: [] }
 		],
 		[TSKindId.FieldDeclaration]: [
-			{ path: 'declaration.field', within: [], test: [] },
+			{ path: 'declaration.member.field', within: [], test: [] },
 			{
-				path: 'declaration.field.private',
+				path: 'declaration.member.field.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '202': 0 } } },
@@ -6349,7 +6451,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.field.public.internal',
+				path: 'declaration.member.field.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '202': 0 } } },
@@ -6367,7 +6469,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.field.public.parent',
+				path: 'declaration.member.field.public.parent',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '202': 0 } } },
@@ -6385,7 +6487,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.field.public.restricted',
+				path: 'declaration.member.field.public.restricted',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '202': 0 } } },
@@ -6403,7 +6505,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.field.public',
+				path: 'declaration.member.field.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '202': 0 } } },
@@ -6411,7 +6513,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.field.public.internal',
+				path: 'declaration.member.field.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '202': 0 } } },
@@ -6704,7 +6806,7 @@ const table: PortableTable = {
 		[TSKindId.Metavariable]: [{ path: 'identifier.metavariable', within: [], test: [] }],
 		[TSKindId.MethodDeclaration]: [
 			{
-				path: 'declaration.method',
+				path: 'declaration.member.method',
 				within: [],
 				test: [
 					{
@@ -6715,7 +6817,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method',
+				path: 'declaration.member.method',
 				within: [],
 				test: [
 					{ up: 0, via: [{ slots: { '480': 4 } }], plan: { op: 'is', types: [441], slots: { '230': 0 } } },
@@ -6726,9 +6828,9 @@ const table: PortableTable = {
 					}
 				]
 			},
-			{ path: 'declaration.method', within: [], test: [] },
+			{ path: 'declaration.member.method', within: [], test: [] },
 			{
-				path: 'declaration.method.private',
+				path: 'declaration.member.method.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '480': 0 } } },
@@ -6746,7 +6848,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.public.internal',
+				path: 'declaration.member.method.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '480': 0 } } },
@@ -6764,7 +6866,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.public.parent',
+				path: 'declaration.member.method.public.parent',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '480': 0 } } },
@@ -6782,7 +6884,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.public.restricted',
+				path: 'declaration.member.method.public.restricted',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '480': 0 } } },
@@ -6800,7 +6902,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.public',
+				path: 'declaration.member.method.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '480': 0 } } },
@@ -6808,7 +6910,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.public.internal',
+				path: 'declaration.member.method.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '480': 0 } } },
@@ -7132,7 +7234,7 @@ const table: PortableTable = {
 		[TSKindId.ShorthandFieldInitializer]: [{ path: 'element.struct.field', within: [], test: [] }],
 		[TSKindId.SignatureMethodDeclaration]: [
 			{
-				path: 'declaration.method.signature',
+				path: 'declaration.member.method.signature',
 				within: [],
 				test: [
 					{
@@ -7142,9 +7244,9 @@ const table: PortableTable = {
 					}
 				]
 			},
-			{ path: 'declaration.method.signature', within: [], test: [] },
+			{ path: 'declaration.member.method.signature', within: [], test: [] },
 			{
-				path: 'declaration.method.signature.private',
+				path: 'declaration.member.method.signature.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '483': 0 } } },
@@ -7162,7 +7264,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.signature.public.internal',
+				path: 'declaration.member.method.signature.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '483': 0 } } },
@@ -7180,7 +7282,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.signature.public.parent',
+				path: 'declaration.member.method.signature.public.parent',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '483': 0 } } },
@@ -7198,7 +7300,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.signature.public.restricted',
+				path: 'declaration.member.method.signature.public.restricted',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '483': 0 } } },
@@ -7216,7 +7318,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.signature.public',
+				path: 'declaration.member.method.signature.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '483': 0 } } },
@@ -7224,7 +7326,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.signature.public.internal',
+				path: 'declaration.member.method.signature.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '483': 0 } } },
@@ -7352,7 +7454,7 @@ const table: PortableTable = {
 		[TSKindId.StructExpression]: [{ path: 'expression.collection.struct', within: [], test: [] }],
 		[TSKindId.StructItemBrace]: [
 			{
-				path: 'declaration.struct.private',
+				path: 'declaration.type.struct.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '423': 0 } } },
@@ -7370,7 +7472,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.struct.public.internal',
+				path: 'declaration.type.struct.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '423': 0 } } },
@@ -7388,7 +7490,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.struct.public.parent',
+				path: 'declaration.type.struct.public.parent',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '423': 0 } } },
@@ -7406,7 +7508,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.struct.public.restricted',
+				path: 'declaration.type.struct.public.restricted',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '423': 0 } } },
@@ -7424,7 +7526,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.struct.public',
+				path: 'declaration.type.struct.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '423': 0 } } },
@@ -7432,18 +7534,18 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.struct.public.internal',
+				path: 'declaration.type.struct.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '423': 0 } } },
 					{ up: 0, via: [{ slots: { '423': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
 			},
-			{ path: 'declaration.struct', within: [], test: [] }
+			{ path: 'declaration.type.struct', within: [], test: [] }
 		],
 		[TSKindId.StructItemTuple]: [
 			{
-				path: 'declaration.struct.tuple.private',
+				path: 'declaration.type.struct.tuple.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '424': 0 } } },
@@ -7461,7 +7563,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.struct.tuple.public.internal',
+				path: 'declaration.type.struct.tuple.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '424': 0 } } },
@@ -7479,7 +7581,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.struct.tuple.public.parent',
+				path: 'declaration.type.struct.tuple.public.parent',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '424': 0 } } },
@@ -7497,7 +7599,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.struct.tuple.public.restricted',
+				path: 'declaration.type.struct.tuple.public.restricted',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '424': 0 } } },
@@ -7515,7 +7617,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.struct.tuple.public',
+				path: 'declaration.type.struct.tuple.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '424': 0 } } },
@@ -7523,19 +7625,19 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.struct.tuple.public.internal',
+				path: 'declaration.type.struct.tuple.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '424': 0 } } },
 					{ up: 0, via: [{ slots: { '424': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
 			},
-			{ path: 'declaration.struct.tuple', within: [], test: [] },
-			{ path: 'declaration.struct', within: [], test: [] }
+			{ path: 'declaration.type.struct.tuple', within: [], test: [] },
+			{ path: 'declaration.type.struct', within: [], test: [] }
 		],
 		[TSKindId.StructItemUnit]: [
 			{
-				path: 'declaration.struct.unit.private',
+				path: 'declaration.type.struct.unit.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '425': 0 } } },
@@ -7553,7 +7655,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.struct.unit.public.internal',
+				path: 'declaration.type.struct.unit.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '425': 0 } } },
@@ -7571,7 +7673,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.struct.unit.public.parent',
+				path: 'declaration.type.struct.unit.public.parent',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '425': 0 } } },
@@ -7589,7 +7691,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.struct.unit.public.restricted',
+				path: 'declaration.type.struct.unit.public.restricted',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '425': 0 } } },
@@ -7607,7 +7709,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.struct.unit.public',
+				path: 'declaration.type.struct.unit.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '425': 0 } } },
@@ -7615,15 +7717,15 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.struct.unit.public.internal',
+				path: 'declaration.type.struct.unit.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '425': 0 } } },
 					{ up: 0, via: [{ slots: { '425': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
 			},
-			{ path: 'declaration.struct.unit', within: [], test: [] },
-			{ path: 'declaration.struct', within: [], test: [] }
+			{ path: 'declaration.type.struct.unit', within: [], test: [] },
+			{ path: 'declaration.type.struct', within: [], test: [] }
 		],
 		[TSKindId.StructPattern]: [{ path: 'pattern.struct', within: [], test: [] }],
 		[TSKindId.Super]: [{ path: 'identifier', within: [], test: [] }],
@@ -7656,7 +7758,7 @@ const table: PortableTable = {
 		],
 		[TSKindId.TraitItem]: [
 			{
-				path: 'declaration.interface.trait.private',
+				path: 'declaration.type.interface.trait.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '214': 0 } } },
@@ -7674,7 +7776,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.interface.trait.public.internal',
+				path: 'declaration.type.interface.trait.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '214': 0 } } },
@@ -7692,7 +7794,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.interface.trait.public.parent',
+				path: 'declaration.type.interface.trait.public.parent',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '214': 0 } } },
@@ -7710,7 +7812,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.interface.trait.public.restricted',
+				path: 'declaration.type.interface.trait.public.restricted',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '214': 0 } } },
@@ -7728,7 +7830,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.interface.trait.public',
+				path: 'declaration.type.interface.trait.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '214': 0 } } },
@@ -7736,14 +7838,14 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.interface.trait.public.internal',
+				path: 'declaration.type.interface.trait.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '214': 0 } } },
 					{ up: 0, via: [{ slots: { '214': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
 			},
-			{ path: 'declaration.interface.trait', within: [], test: [] }
+			{ path: 'declaration.type.interface.trait', within: [], test: [] }
 		],
 		[TSKindId.TrueKeyword]: [
 			{ path: 'literal.boolean.true', within: [], test: [] },
@@ -7763,7 +7865,7 @@ const table: PortableTable = {
 		[TSKindId.TypeIdentifier]: [{ path: 'identifier', within: [], test: [] }],
 		[TSKindId.TypeItem]: [
 			{
-				path: 'declaration.type_alias.private',
+				path: 'declaration.type.type_alias.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '207': 0 } } },
@@ -7781,7 +7883,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.type_alias.public.internal',
+				path: 'declaration.type.type_alias.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '207': 0 } } },
@@ -7799,7 +7901,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.type_alias.public.parent',
+				path: 'declaration.type.type_alias.public.parent',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '207': 0 } } },
@@ -7817,7 +7919,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.type_alias.public.restricted',
+				path: 'declaration.type.type_alias.public.restricted',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '207': 0 } } },
@@ -7835,7 +7937,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.type_alias.public',
+				path: 'declaration.type.type_alias.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '207': 0 } } },
@@ -7843,14 +7945,14 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.type_alias.public.internal',
+				path: 'declaration.type.type_alias.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '207': 0 } } },
 					{ up: 0, via: [{ slots: { '207': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
 			},
-			{ path: 'declaration.type_alias', within: [], test: [] }
+			{ path: 'declaration.type.type_alias', within: [], test: [] }
 		],
 		[TSKindId.TypeParameter]: [{ path: 'declaration.type_parameter', within: [], test: [] }],
 		[TSKindId.U128Keyword]: [
@@ -7893,7 +7995,7 @@ const table: PortableTable = {
 		],
 		[TSKindId.UnionItem]: [
 			{
-				path: 'declaration.union.private',
+				path: 'declaration.type.union.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '197': 0 } } },
@@ -7911,7 +8013,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.union.public.internal',
+				path: 'declaration.type.union.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '197': 0 } } },
@@ -7929,7 +8031,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.union.public.parent',
+				path: 'declaration.type.union.public.parent',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '197': 0 } } },
@@ -7947,7 +8049,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.union.public.restricted',
+				path: 'declaration.type.union.public.restricted',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '197': 0 } } },
@@ -7965,7 +8067,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.union.public',
+				path: 'declaration.type.union.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '197': 0 } } },
@@ -7973,14 +8075,14 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.union.public.internal',
+				path: 'declaration.type.union.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '197': 0 } } },
 					{ up: 0, via: [{ slots: { '197': 0 } }], plan: { op: 'is', types: [477], slots: { '235': 0 } } }
 				]
 			},
-			{ path: 'declaration.union', within: [], test: [] }
+			{ path: 'declaration.type.union', within: [], test: [] }
 		],
 		[TSKindId.UnitExpression]: [{ path: 'expression.unit', within: [], test: [] }],
 		[TSKindId.UnitType]: [{ path: 'type.unit', within: [], test: [] }],

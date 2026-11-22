@@ -12,9 +12,9 @@ export declare namespace Argument.Named {
 	}
 }
 
-export declare namespace Declaration.Method.Special {
-	type Child = V.Declaration.Method.Special<PythonMap>;
-	type Parent = V.Declaration.Method<PythonMap, 'declaration.method.special'>;
+export declare namespace Declaration.Member.Method.Special {
+	type Child = V.Declaration.Member.Method.Special<PythonMap>;
+	type Parent = V.Declaration.Member.Method<PythonMap, 'declaration.member.method.special'>;
 	interface Restated {
 		readonly name: Fit<Child['name'], Parent['name']>;
 	}

@@ -2,17 +2,19 @@ import type { GrammarMap, Slot } from '../../map.ts';
 import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Declaration {
-	export interface Field<G extends GrammarMap, K extends Under<'declaration.field'> = 'declaration.field'> {
-		readonly value?: Slot<
-			G,
-			K,
-			'value',
-			| V.Declaration.Module<G>
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-		>;
-		// t only
+	export namespace Member {
+		export interface Field<G extends GrammarMap, K extends Under<'declaration.member.field'> = 'declaration.member.field'> {
+			readonly value?: Slot<
+				G,
+				K,
+				'value',
+				| V.Declaration.Module<G>
+				| V.Expression.Any<G>
+				| V.Identifier.Any<G>
+				| V.Literal.Any<G>
+			>;
+			// t only
+		}
 	}
 	export interface Variable<G extends GrammarMap, K extends Under<'declaration.variable'> = 'declaration.variable'> {
 		readonly declarators?: Slot<

@@ -123,7 +123,7 @@ describe('emitGrammarMap, python', () => {
 	});
 
 	it('reads a capture by the kind its pattern pins, not by the whole slot it sits in', () => {
-		const doc = armsAt(map, 'declaration.class', 'doc');
+		const doc = armsAt(map, 'declaration.type.class', 'doc');
 		expect(doc.some((arm) => arm.includes('"literal.string'))).toBe(true);
 		expect(doc.filter((arm) => /"(declaration|expression|statement)\./.test(arm))).toEqual([]);
 	});
@@ -159,7 +159,7 @@ describe('emitGrammarMap, python', () => {
 		expect(nodes).toContain('\t\treadonly "identifier": TSKindId.Identifier;');
 		expect(nodes).toContain('\t\treadonly "identifier.qualified": TSKindId.DottedName | TSKindId.MemberType;');
 		const flags = map.slice(map.indexOf('\treadonly flags: {\n'), map.indexOf('\n\t};\n}', map.indexOf('\treadonly flags: {\n')));
-		expect(flags).toContain('\t\treadonly "declaration.property.getter": "async" | "override";');
+		expect(flags).toContain('\t\treadonly "declaration.member.property.getter": "async" | "override";');
 		expect(flags).toContain('\t\treadonly "declaration.constant": never;');
 	});
 

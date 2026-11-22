@@ -20,7 +20,7 @@ export namespace Expression {
 			}
 		}
 		export namespace Comparison {
-			export interface Chain<G extends GrammarMap, K extends Under<'expression.binary.comparison.chain'> = 'expression.binary.comparison.chain'> extends SubKindOf<V.Expression.Binary.Comparison<G, K>> {
+			export interface Chain<G extends GrammarMap, K extends Under<'expression.binary.comparison.chain'> = 'expression.binary.comparison.chain'> extends SubKindOf<V.Expression.Binary<G, K>> {
 				// claimed by p
 				readonly $path: K;
 				readonly comparators: Slot<

@@ -44,7 +44,7 @@ A claim's `#…?` predicate: its operator, the capture it tests (`null` for a pr
 
 ### `packages/codegen/src/bindings/facts.ts::CaptureSite`
 
-Where a predicate's capture sits, relative to the node a claim captures: `up` enclosing named nodes of the pattern (0 is the claimed node itself; 1 its nearest enclosing node, the first kind in the claim's `within`), then the `down` selectors from that node to the capture, outermost first. A self-text test is `{ up: 0, down: [] }`; a hidden capture under the claimed node, such as python's `(string (string_start) @_p)`, steps down through the slot holding it; and python's `(decorated_definition (decorator (identifier) @_d) (function_definition) @declaration.method.static)` places `@_d` one node up, then `decorator`, then `identifier`. Groups are not nodes, so they count neither up nor down.
+Where a predicate's capture sits, relative to the node a claim captures: `up` enclosing named nodes of the pattern (0 is the claimed node itself; 1 its nearest enclosing node, the first kind in the claim's `within`), then the `down` selectors from that node to the capture, outermost first. A self-text test is `{ up: 0, down: [] }`; a hidden capture under the claimed node, such as python's `(string (string_start) @_p)`, steps down through the slot holding it; and python's `(decorated_definition (decorator (identifier) @_d) (function_definition) @declaration.member.method.static)` places `@_d` one node up, then `decorator`, then `identifier`. Groups are not nodes, so they count neither up nor down.
 
 ### `packages/codegen/src/bindings/facts.ts::KNOWN_PREDICATE_OPERATORS`
 
@@ -251,7 +251,7 @@ Where the vocabulary path list is written: `packages/common/src/portable/vocabul
 
 ### `packages/codegen/src/bindings/vocabulary-paths.ts::emitVocabularyPaths`
 
-The source of the vocabulary path list: every kind path of the vocabulary (`readVocabulary`'s `kinds`, which includes the kinds features declare), sorted by code point, one quoted path per line, in a frozen `vocabularyPaths` array declared `as const`, so its element type is the union of the paths and types the shared portable trees (`portable/tree.ts::PortableKindTree`). The text is already in the repository's format, so the committed file and this emitter's output compare byte for byte.
+The source of the vocabulary path list: every kind path of the vocabulary (`readVocabulary`'s `kinds`, which includes the kinds features declare), sorted by code point, one quoted path per line, in a frozen `vocabularyPaths` array declared `as const`, so its element type is the union of the paths and types the shared portable trees (`portable/tree.ts::PortableKindTree`). After it, the same way, `vocabularyNamespaces`: the vocabulary's namespaces (`Vocabulary::namespaces`), which `portableTrees` gives nodes with no `$path`. The text is already in the repository's format, so the committed file and this emitter's output compare byte for byte.
 
 ### `packages/codegen/src/bindings/vocabulary-paths.ts::writeVocabularyPaths`
 
@@ -316,7 +316,7 @@ Every vocabulary source (`isVocabularySource`), as posix paths relative to the d
 
 ### `packages/codegen/src/bindings/vocabulary.ts::flagSegment`
 
-Reads a claim path whose last segment is a flag of the path before it as that parent path and the flag: `declaration.method.static` claims `declaration.method` with its flag `static`. The segment is matched in snake case against the camel-case member name. A path whose last segment is a kind, a member that is data, or nothing the parent declares is no flag. A path that names a vocabulary kind and is also a flag of its parent is refused: one name names one thing.
+Reads a claim path whose last segment is a flag of the path before it as that parent path and the flag: `declaration.member.method.static` claims `declaration.member.method` with its flag `static`. The segment is matched in snake case against the camel-case member name. A path whose last segment is a kind, a member that is data, or nothing the parent declares is no flag. A path that names a vocabulary kind and is also a flag of its parent is refused: one name names one thing.
 
 ### `packages/codegen/src/bindings/vocabulary.ts::resolveFlags`
 
@@ -893,7 +893,7 @@ The `SlotFact` for a member capture on a visit. The capture belongs to its home:
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::claimedHome`
 
-The node a member capture belongs to: walking up from the capture's parent, the first node that carries a claim, or the pattern's top when no node below it does. A capture below a placed claim (`(impl_item_body (declaration_list (function_item … @scope) @declaration.method))`) is a member of the claimed `function_item`, not of the `impl_item_body` the pattern starts at.
+The node a member capture belongs to: walking up from the capture's parent, the first node that carries a claim, or the pattern's top when no node below it does. A capture below a placed claim (`(impl_item_body (declaration_list (function_item … @scope) @declaration.member.method))`) is a member of the claimed `function_item`, not of the `impl_item_body` the pattern starts at.
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::refuseAnchoredPlacement`
 
@@ -1125,11 +1125,11 @@ A kind's container unwrap: a kind the bindings declare with `@element` unwraps t
 
 ### `packages/codegen/src/bindings/routes.ts::specificity`
 
-The order read entries are tried in: a claim both placed (made below enclosing kinds) and tested by a predicate, then a predicate claim, then a placed claim, then a claim that pins a literal or tests the nodes below it (a pin, a token the claimed node holds, or a child test), then the plain claim. `resolveRoutes` breaks a tie first by trying a form's own entry before one a supertype's claim gives it, then by more tests the claim states (`testCount`), then by position in `bindings.scm`. Python's `__init__` inside a class reads as `declaration.constructor` (a predicate claim) before `declaration.method` (a placed one).
+The order read entries are tried in: a claim both placed (made below enclosing kinds) and tested by a predicate, then a predicate claim, then a placed claim, then a claim that pins a literal or tests the nodes below it (a pin, a token the claimed node holds, or a child test), then the plain claim. `resolveRoutes` breaks a tie first by trying a form's own entry before one a supertype's claim gives it, then by more tests the claim states (`testCount`), then by position in `bindings.scm`. Python's `__init__` inside a class reads as `declaration.member.constructor` (a predicate claim) before `declaration.member.method` (a placed one).
 
 ### `packages/codegen/src/bindings/routes.ts::testCount`
 
-The tests a read entry's claim states: its field literals, held tokens, child facts, predicates and placement steps. Among entries of one `specificity`, more tests go first, so a read classifies to the deepest kind: a claim whose tests include another's (a refinement that adds a child test, as `declaration.property.getter.public` adds the accessibility modifier to `declaration.property.getter`) has strictly more of them, and the count never puts it after the claim it refines. The count is a total order, where including is only partial: a comparator that asked "includes?" and otherwise fell back to file order would not be transitive. Inclusion never crosses classes, since an including claim keeps the other's placement and predicates. The count reads the claim's own facts, not the entry's derived pins and child tests, because a derived test the model guarantees drops out and would break the strict count. Two claims no node matches together (a single comparison against a chain, a method in a class body against one under a decorator) may swap by the count; neither order changes a read.
+The tests a read entry's claim states: its field literals, held tokens, child facts, predicates and placement steps. Among entries of one `specificity`, more tests go first, so a read classifies to the deepest kind: a claim whose tests include another's (a refinement that adds a child test, as `declaration.member.property.getter.public` adds the accessibility modifier to `declaration.member.property.getter`) has strictly more of them, and the count never puts it after the claim it refines. The count is a total order, where including is only partial: a comparator that asked "includes?" and otherwise fell back to file order would not be transitive. Inclusion never crosses classes, since an including claim keeps the other's placement and predicates. The count reads the claim's own facts, not the entry's derived pins and child tests, because a derived test the model guarantees drops out and would break the strict count. Two claims no node matches together (a single comparison against a chain, a method in a class body against one under a decorator) may swap by the count; neither order changes a read.
 
 ### `packages/codegen/src/bindings/routes.ts::isLeafAlias`
 
@@ -1884,10 +1884,6 @@ Whether the vocabulary declares a path a text kind: its type is `Text<G, P>`, so
 
 The features a composition holds, read from a vocabulary source: the features its heritage names, each composition it names in turn, and every feature those extend. `readVocabulary`'s `featuresOf` is this function over the source it read; the vocabulary-features tool calls it on the source it has already read. It throws on a composition `compositions.ts` does not declare, and on a name that is neither a feature nor a composition.
 
-### `packages/codegen/src/bindings/vocabulary.ts::vocabularyNamespaces`
-
-The namespaces among a set of kind paths: every proper prefix of a kind path that is itself no kind, such as `declaration.member` where the vocabulary declares `declaration.member.method` and nothing at `declaration.member`. A level is a kind, so it is never one. `readVocabulary` stamps the set on the vocabulary once (`Vocabulary::namespaces`), and `boundKindName` leaves each of these segments out of a bound name. Give it every kind path of the vocabulary: a partial set makes a level or any other undeclared parent look like a namespace.
-
 ### `packages/codegen/src/bindings/vocabulary.ts::BoundNameCollision`
 
 Two vocabulary kinds that bind to one name: the `name`, the `kind` the refusal is on, and the `other` kind that has the name too.
@@ -1895,6 +1891,10 @@ Two vocabulary kinds that bind to one name: the `name`, the `kind` the refusal i
 ### `packages/codegen/src/bindings/vocabulary.ts::boundNameCollisions`
 
 The kinds of the whole vocabulary whose bound name another kind has too, by the names `boundKindName` gives with the vocabulary's namespaces. A kind's name must never depend on a language's composition, so the check spans every kind, not one grammar's. A collision is on a kind whose name the namespaces shortened: a shortened name may not take one another kind already has, and the other kind keeps it. Where no kind sharing a name was shortened, each one after the first by code point is refused. `deriveGrammarBindings` turns each into a `bound-name-collision` diagnostic that stops generation.
+
+### `packages/codegen/src/bindings/vocabulary.ts::vocabularyNamespaces`
+
+The namespaces among a set of kind paths: every proper prefix of a kind path that is itself no kind, such as `declaration.member` where the vocabulary declares `declaration.member.method` and nothing at `declaration.member`. A level is a kind, so it is never one. `readVocabulary` stamps the set on the vocabulary once (`Vocabulary::namespaces`). `boundKindName` leaves each of these segments out of a bound name, `emitPortableSurface` gives a namespace's kinds node no `$path`, and `emitVocabularyPaths` writes the set into the generated path list, where `portableTrees` reads it rather than deriving it again. Give it every kind path of the vocabulary: a partial set makes a level or any other undeclared parent look like a namespace.
 
 ### `packages/codegen/src/bindings/facts.ts::ModelNode::unit`
 

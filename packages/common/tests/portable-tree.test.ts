@@ -11,7 +11,9 @@ const PATHS = [
 	'expression.call.member'
 ];
 
-const trees = () => portableTrees(PATHS, (path) => (node): node is { readonly $type: number } => node === path);
+const guardOf = (path: string) => (node: unknown): node is { readonly $type: number } => node === path;
+
+const trees = () => portableTrees(PATHS, [], guardOf);
 
 type Tree = Record<string, unknown>;
 const at = (root: unknown, path: string): Tree =>
@@ -64,8 +66,29 @@ describe('portableTrees', () => {
 		).toBe(true);
 	});
 
-	it('refuses a path whose parent is not listed', () => {
-		expect(() => portableTrees(['a.b'], () => (_node): _node is { readonly $type: number } => false)).toThrow(/a\.b.*a/);
+	it('gives a namespace a node in each tree: no $path among the kinds, the guard for its path among the guards', () => {
+		const { kinds, is } = portableTrees(['a', 'a.n.k', 'a.n.j'], ['a.n'], guardOf);
+		expect(at(kinds, 'a.n').$path).toBeUndefined();
+		expect(ownKeys(at(kinds, 'a.n'))).toEqual(['j', 'k']);
+		expect(at(kinds, 'a.n.k').$path).toBe('a.n.k');
+		const guard = at(is, 'a.n') as unknown as (node: unknown) => boolean;
+		expect(guard('a.n')).toBe(true);
+		expect(guard('a.n.k')).toBe(false);
+		expect(ownKeys(at(is, 'a.n'))).toEqual(['j', 'k']);
+		for (const root of [kinds, is]) expect(Object.isFrozen(at(root, 'a.n'))).toBe(true);
+	});
+
+	it('gives a namespace at the root a node under no kind', () => {
+		const { kinds, is } = portableTrees(['a.b'], ['a'], guardOf);
+		expect(ownKeys(kinds)).toEqual(['a']);
+		expect(at(kinds, 'a').$path).toBeUndefined();
+		expect(at(kinds, 'a.b').$path).toBe('a.b');
+		expect((at(is, 'a') as unknown as (node: unknown) => boolean)('a')).toBe(true);
+	});
+
+	it('refuses a path whose parent is neither a listed path nor a namespace', () => {
+		expect(() => portableTrees(['a.b'], [], guardOf)).toThrow(/a\.b.*a/);
+		expect(() => portableTrees(['a', 'a.n.k'], [], guardOf)).toThrow(/a\.n\.k.*a\.n/);
 	});
 });
 
@@ -81,5 +104,12 @@ describe('portable', () => {
 		expect(typeof at(portable.is, 'declaration.function')).toBe('function');
 		expect(at(portable.is, 'expression.call')).not.toBe(Function.prototype.call);
 		expect(Object.isFrozen(portable)).toBe(true);
+	});
+
+	it('serves a node at each vocabulary namespace: no $path among the kinds, a guard among the guards', () => {
+		expect(at(portable.kinds, 'declaration.member').$path).toBeUndefined();
+		expect(at(portable.kinds, 'declaration.member.method').$path).toBe('declaration.member.method');
+		expect(typeof at(portable.is, 'declaration.member')).toBe('function');
+		expect(typeof at(portable.is, 'expression.collection.list')).toBe('function');
 	});
 });

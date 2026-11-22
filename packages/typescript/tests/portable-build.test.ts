@@ -16,10 +16,10 @@ describe('the portable build through the strict table', () => {
 		expect(firstOf('function* g() { yield 1; }')).toMatchObject({ $path: 'declaration.function', statements: [{ $path: 'expression.yield' }] });
 		const members = firstOf('class C { constructor() { a(); } m() { b(); } get p() { return 1; } set p(v) { c(); } }').members as readonly Readonly<Record<string, unknown>>[];
 		expect(members.map((member) => [member.$path, (member.statements as readonly unknown[] | undefined)?.length, 'body' in member])).toEqual([
-			['declaration.constructor', 1, false],
-			['declaration.method', 1, false],
-			['declaration.property.getter', 1, false],
-			['declaration.property.setter', 1, false]
+			['declaration.member.constructor', 1, false],
+			['declaration.member.method', 1, false],
+			['declaration.member.property.getter', 1, false],
+			['declaration.member.property.setter', 1, false]
 		]);
 	});
 	it("reads an if's and an else's bare statement and block alike as their statements, an else's bare if included, and builds them in blocks, but for an else holding one if", () => {
@@ -77,7 +77,7 @@ describe('the portable build through the strict table', () => {
 	});
 
 	it('builds an exported declaration in the plain form at statement.export and through the default keyword at statement.export.default, each reading back as its path', () => {
-		const declaration = { $path: 'declaration.class', name: 'C', members: [], decorators: [] };
+		const declaration = { $path: 'declaration.type.class', name: 'C', members: [], decorators: [] };
 		for (const [path, text] of [['statement.export', 'export class C {}'], ['statement.export.default', 'export default class C {}']] as const) {
 			const built = runtime.build({ $path: path, declaration });
 			expect(render(built)).toBe(text);

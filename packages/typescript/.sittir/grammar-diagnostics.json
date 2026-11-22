@@ -4436,7 +4436,7 @@
     "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.signature.construct.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
+    "message": "declaration.member.signature.construct.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
   },
   {
     "scope": "grammar",
@@ -4540,110 +4540,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.class: arm 314 builds implements through more than one form"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.constructor.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.constructor.private.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.constructor.protected.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.constructor.public.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.field: a seat at name with flag-built contents"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.field.private: a seat at name with flag-built contents"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.field.protected: a seat at name with flag-built contents"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.field.public: a seat at name with flag-built contents"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.field.signature: a seat at name with flag-built contents"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.field.signature.private: a seat at name with flag-built contents"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.field.signature.protected: a seat at name with flag-built contents"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.field.signature.public: a seat at name with flag-built contents"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "declaration.function: arm 251 builds parameters through more than one form"
   },
   {
@@ -4657,10 +4553,34 @@
   {
     "scope": "grammar",
     "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface: a preset at body.opening that is not one keyword or text"
+    "message": "declaration.member.constructor.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.member.constructor.private.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.member.constructor.protected.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.member.constructor.public.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
   },
   {
     "scope": "grammar",
@@ -4668,7 +4588,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method: arm 457 builds parameters through more than one form"
+    "message": "declaration.member.field: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4676,7 +4596,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.private: arm 457 builds parameters through more than one form"
+    "message": "declaration.member.field.private: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4684,7 +4604,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.protected: arm 457 builds parameters through more than one form"
+    "message": "declaration.member.field.protected: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4692,7 +4612,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.public: arm 457 builds parameters through more than one form"
+    "message": "declaration.member.field.public: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4700,7 +4620,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature: arm 460 builds parameters through more than one form"
+    "message": "declaration.member.field.signature: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4708,7 +4628,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.abstract: arm 463 builds parameters through more than one form"
+    "message": "declaration.member.field.signature.private: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4716,7 +4636,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.abstract.private: arm 463 builds parameters through more than one form"
+    "message": "declaration.member.field.signature.protected: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4724,7 +4644,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.abstract.protected: arm 463 builds parameters through more than one form"
+    "message": "declaration.member.field.signature.public: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4732,7 +4652,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.abstract.public: arm 463 builds parameters through more than one form"
+    "message": "declaration.member.method: arm 457 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4740,7 +4660,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.private: arm 460 builds parameters through more than one form"
+    "message": "declaration.member.method.private: arm 457 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4748,7 +4668,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.protected: arm 460 builds parameters through more than one form"
+    "message": "declaration.member.method.protected: arm 457 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4756,7 +4676,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.public: arm 460 builds parameters through more than one form"
+    "message": "declaration.member.method.public: arm 457 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4764,7 +4684,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property: a seat at name with flag-built contents"
+    "message": "declaration.member.method.signature: arm 460 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4772,7 +4692,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.getter: a seat at name with flag-built contents"
+    "message": "declaration.member.method.signature.abstract: arm 463 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4780,7 +4700,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.getter.private: a seat at name with flag-built contents"
+    "message": "declaration.member.method.signature.abstract.private: arm 463 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4788,7 +4708,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.getter.protected: a seat at name with flag-built contents"
+    "message": "declaration.member.method.signature.abstract.protected: arm 463 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4796,7 +4716,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.getter.public: a seat at name with flag-built contents"
+    "message": "declaration.member.method.signature.abstract.public: arm 463 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4804,7 +4724,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.private: a seat at name with flag-built contents"
+    "message": "declaration.member.method.signature.private: arm 460 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4812,7 +4732,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.protected: a seat at name with flag-built contents"
+    "message": "declaration.member.method.signature.protected: arm 460 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4820,7 +4740,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.public: a seat at name with flag-built contents"
+    "message": "declaration.member.method.signature.public: arm 460 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4828,7 +4748,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.setter: a seat at name with flag-built contents"
+    "message": "declaration.member.property: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4836,7 +4756,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.setter.private: a seat at name with flag-built contents"
+    "message": "declaration.member.property.getter: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4844,7 +4764,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.setter.protected: a seat at name with flag-built contents"
+    "message": "declaration.member.property.getter.private: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4852,7 +4772,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.setter.public: a seat at name with flag-built contents"
+    "message": "declaration.member.property.getter.protected: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4860,7 +4780,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.signature.abstract: a seat at name with flag-built contents"
+    "message": "declaration.member.property.getter.public: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4868,7 +4788,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.signature.abstract.getter: a seat at name with flag-built contents"
+    "message": "declaration.member.property.private: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4876,7 +4796,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.signature.abstract.getter.private: a seat at name with flag-built contents"
+    "message": "declaration.member.property.protected: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4884,7 +4804,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.signature.abstract.getter.protected: a seat at name with flag-built contents"
+    "message": "declaration.member.property.public: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4892,7 +4812,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.signature.abstract.getter.public: a seat at name with flag-built contents"
+    "message": "declaration.member.property.setter: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4900,7 +4820,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.signature.abstract.setter: a seat at name with flag-built contents"
+    "message": "declaration.member.property.setter.private: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4908,7 +4828,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.signature.abstract.setter.private: a seat at name with flag-built contents"
+    "message": "declaration.member.property.setter.protected: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4916,7 +4836,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.signature.abstract.setter.protected: a seat at name with flag-built contents"
+    "message": "declaration.member.property.setter.public: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4924,7 +4844,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.signature.abstract.setter.public: a seat at name with flag-built contents"
+    "message": "declaration.member.property.signature.abstract: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4932,7 +4852,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.signature.getter: a seat at name with flag-built contents"
+    "message": "declaration.member.property.signature.abstract.getter: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4940,7 +4860,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.signature.getter.private: a seat at name with flag-built contents"
+    "message": "declaration.member.property.signature.abstract.getter.private: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4948,7 +4868,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.signature.getter.protected: a seat at name with flag-built contents"
+    "message": "declaration.member.property.signature.abstract.getter.protected: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4956,7 +4876,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.signature.getter.public: a seat at name with flag-built contents"
+    "message": "declaration.member.property.signature.abstract.getter.public: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4964,7 +4884,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.signature.setter: a seat at name with flag-built contents"
+    "message": "declaration.member.property.signature.abstract.setter: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4972,7 +4892,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.signature.setter.private: a seat at name with flag-built contents"
+    "message": "declaration.member.property.signature.abstract.setter.private: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4980,7 +4900,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.signature.setter.protected: a seat at name with flag-built contents"
+    "message": "declaration.member.property.signature.abstract.setter.protected: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4988,7 +4908,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.property.signature.setter.public: a seat at name with flag-built contents"
+    "message": "declaration.member.property.signature.abstract.setter.public: a seat at name with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4996,7 +4916,87 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.signature.call: arm 370 builds parameters through more than one form"
+    "message": "declaration.member.property.signature.getter: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.member.property.signature.getter.private: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.member.property.signature.getter.protected: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.member.property.signature.getter.public: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.member.property.signature.setter: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.member.property.signature.setter.private: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.member.property.signature.setter.protected: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.member.property.signature.setter.public: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.member.signature.call: arm 370 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.class: arm 314 builds implements through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.interface: a preset at body.opening that is not one keyword or text"
   },
   {
     "scope": "grammar",

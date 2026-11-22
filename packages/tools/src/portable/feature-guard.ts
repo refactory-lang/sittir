@@ -18,8 +18,8 @@ export interface Held {
 const slotKey = (path: string, slot: string): string => `${path}.${slot}`;
 
 export const UNHELD_SLOTS: readonly string[] = [
-	'declaration.property.definite',
-	'declaration.property.optionality',
+	'declaration.member.property.definite',
+	'declaration.member.property.optionality',
 	'declaration.type_parameter.parameters.bounds',
 	'declaration.type_parameter.value.bounds',
 	'declaration.type_parameter.variadic.bounds'

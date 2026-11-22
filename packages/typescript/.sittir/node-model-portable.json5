@@ -51,10 +51,10 @@
       "slots": []
     },
     "abstract_class_declaration": {
-      "vocab": "declaration.class",
+      "vocab": "declaration.type.class",
       "read": [
         {
-          "vocab": "declaration.class",
+          "vocab": "declaration.type.class",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -233,10 +233,10 @@
       ]
     },
     "abstract_method_signature_getter": {
-      "vocab": "declaration.property.signature.abstract.getter",
+      "vocab": "declaration.member.property.signature.abstract.getter",
       "read": [
         {
-          "vocab": "declaration.property.signature.abstract.getter.private",
+          "vocab": "declaration.member.property.signature.abstract.getter.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -271,7 +271,7 @@
           ]
         },
         {
-          "vocab": "declaration.property.signature.abstract.getter.protected",
+          "vocab": "declaration.member.property.signature.abstract.getter.protected",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -306,7 +306,7 @@
           ]
         },
         {
-          "vocab": "declaration.property.signature.abstract.getter.public",
+          "vocab": "declaration.member.property.signature.abstract.getter.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -341,7 +341,7 @@
           ]
         },
         {
-          "vocab": "declaration.property.signature.abstract.getter",
+          "vocab": "declaration.member.property.signature.abstract.getter",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -410,10 +410,10 @@
       ]
     },
     "abstract_method_signature_plain": {
-      "vocab": "declaration.method.signature.abstract",
+      "vocab": "declaration.member.method.signature.abstract",
       "read": [
         {
-          "vocab": "declaration.method.signature.abstract.private",
+          "vocab": "declaration.member.method.signature.abstract.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -448,7 +448,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature.abstract.protected",
+          "vocab": "declaration.member.method.signature.abstract.protected",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -483,7 +483,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature.abstract.public",
+          "vocab": "declaration.member.method.signature.abstract.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -518,7 +518,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature.abstract",
+          "vocab": "declaration.member.method.signature.abstract",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -748,10 +748,10 @@
       ]
     },
     "abstract_method_signature_setter": {
-      "vocab": "declaration.property.signature.abstract.setter",
+      "vocab": "declaration.member.property.signature.abstract.setter",
       "read": [
         {
-          "vocab": "declaration.property.signature.abstract.setter.private",
+          "vocab": "declaration.member.property.signature.abstract.setter.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -786,7 +786,7 @@
           ]
         },
         {
-          "vocab": "declaration.property.signature.abstract.setter.protected",
+          "vocab": "declaration.member.property.signature.abstract.setter.protected",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -821,7 +821,7 @@
           ]
         },
         {
-          "vocab": "declaration.property.signature.abstract.setter.public",
+          "vocab": "declaration.member.property.signature.abstract.setter.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -856,7 +856,7 @@
           ]
         },
         {
-          "vocab": "declaration.property.signature.abstract.setter",
+          "vocab": "declaration.member.property.signature.abstract.setter",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2948,10 +2948,10 @@
       ]
     },
     "call_signature": {
-      "vocab": "declaration.signature.call",
+      "vocab": "declaration.member.signature.call",
       "read": [
         {
-          "vocab": "declaration.signature.call",
+          "vocab": "declaration.member.signature.call",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3426,10 +3426,10 @@
       }
     },
     "class_declaration": {
-      "vocab": "declaration.class",
+      "vocab": "declaration.type.class",
       "read": [
         {
-          "vocab": "declaration.class",
+          "vocab": "declaration.type.class",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3610,10 +3610,10 @@
       }
     },
     "class_static_block": {
-      "vocab": "statement.block.static",
+      "vocab": "declaration.member.static_block",
       "read": [
         {
-          "vocab": "statement.block.static",
+          "vocab": "declaration.member.static_block",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3760,10 +3760,10 @@
       ]
     },
     "construct_signature": {
-      "vocab": "declaration.signature.construct",
+      "vocab": "declaration.member.signature.construct",
       "read": [
         {
-          "vocab": "declaration.signature.construct",
+          "vocab": "declaration.member.signature.construct",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3898,24 +3898,24 @@
       ]
     },
     "constructor_declaration": {
-      "vocab": "declaration.constructor",
+      "vocab": "declaration.member.constructor",
       "read": [
         {
-          "vocab": "declaration.constructor",
+          "vocab": "declaration.member.constructor",
           "toplevel": true,
           "within": [],
           "pins": [],
           "test": []
         },
         {
-          "vocab": "declaration.constructor",
+          "vocab": "declaration.member.constructor",
           "toplevel": true,
           "within": [],
           "pins": [],
           "test": []
         },
         {
-          "vocab": "declaration.constructor.private",
+          "vocab": "declaration.member.constructor.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3950,7 +3950,7 @@
           ]
         },
         {
-          "vocab": "declaration.constructor.protected",
+          "vocab": "declaration.member.constructor.protected",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3985,7 +3985,7 @@
           ]
         },
         {
-          "vocab": "declaration.constructor.public",
+          "vocab": "declaration.member.constructor.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4701,10 +4701,10 @@
       "slots": []
     },
     "enum_assignment": {
-      "vocab": "declaration.enum_member",
+      "vocab": "declaration.member.enum_member",
       "read": [
         {
-          "vocab": "declaration.enum_member",
+          "vocab": "declaration.member.enum_member",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4747,10 +4747,10 @@
       }
     },
     "enum_body_element_name": {
-      "vocab": "declaration.enum_member",
+      "vocab": "declaration.member.enum_member",
       "read": [
         {
-          "vocab": "declaration.enum_member",
+          "vocab": "declaration.member.enum_member",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4782,10 +4782,10 @@
       }
     },
     "enum_declaration": {
-      "vocab": "declaration.enum",
+      "vocab": "declaration.type.enum",
       "read": [
         {
-          "vocab": "declaration.enum",
+          "vocab": "declaration.type.enum",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -7670,10 +7670,10 @@
       ]
     },
     "index_signature_colon": {
-      "vocab": "declaration.signature.index",
+      "vocab": "declaration.member.signature.index",
       "read": [
         {
-          "vocab": "declaration.signature.index",
+          "vocab": "declaration.member.signature.index",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -7740,17 +7740,17 @@
       ]
     },
     "index_signature_mapped_type_clause": {
-      "vocab": "declaration.signature.index.mapped",
+      "vocab": "declaration.member.signature.index.mapped",
       "read": [
         {
-          "vocab": "declaration.signature.index.mapped",
+          "vocab": "declaration.member.signature.index.mapped",
           "toplevel": true,
           "within": [],
           "pins": [],
           "test": []
         },
         {
-          "vocab": "declaration.signature.index",
+          "vocab": "declaration.member.signature.index",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -7911,10 +7911,10 @@
       ]
     },
     "interface_declaration": {
-      "vocab": "declaration",
+      "vocab": "declaration.type",
       "read": [
         {
-          "vocab": "declaration.interface",
+          "vocab": "declaration.type.interface",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -8541,10 +8541,10 @@
       "slots": []
     },
     "method_definition_getter": {
-      "vocab": "declaration.property.getter",
+      "vocab": "declaration.member.property.getter",
       "read": [
         {
-          "vocab": "declaration.property.getter.private",
+          "vocab": "declaration.member.property.getter.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -8579,7 +8579,7 @@
           ]
         },
         {
-          "vocab": "declaration.property.getter.protected",
+          "vocab": "declaration.member.property.getter.protected",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -8614,7 +8614,7 @@
           ]
         },
         {
-          "vocab": "declaration.property.getter.public",
+          "vocab": "declaration.member.property.getter.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -8649,7 +8649,7 @@
           ]
         },
         {
-          "vocab": "declaration.property.getter",
+          "vocab": "declaration.member.property.getter",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -8755,10 +8755,10 @@
       ]
     },
     "method_definition_plain": {
-      "vocab": "declaration.method",
+      "vocab": "declaration.member.method",
       "read": [
         {
-          "vocab": "declaration.method.private",
+          "vocab": "declaration.member.method.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -8793,7 +8793,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.protected",
+          "vocab": "declaration.member.method.protected",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -8828,7 +8828,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.public",
+          "vocab": "declaration.member.method.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -8863,7 +8863,7 @@
           ]
         },
         {
-          "vocab": "declaration.method",
+          "vocab": "declaration.member.method",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -9167,10 +9167,10 @@
       ]
     },
     "method_definition_setter": {
-      "vocab": "declaration.property.setter",
+      "vocab": "declaration.member.property.setter",
       "read": [
         {
-          "vocab": "declaration.property.setter.private",
+          "vocab": "declaration.member.property.setter.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -9205,7 +9205,7 @@
           ]
         },
         {
-          "vocab": "declaration.property.setter.protected",
+          "vocab": "declaration.member.property.setter.protected",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -9240,7 +9240,7 @@
           ]
         },
         {
-          "vocab": "declaration.property.setter.public",
+          "vocab": "declaration.member.property.setter.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -9275,7 +9275,7 @@
           ]
         },
         {
-          "vocab": "declaration.property.setter",
+          "vocab": "declaration.member.property.setter",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -9405,10 +9405,10 @@
       ]
     },
     "method_signature_getter": {
-      "vocab": "declaration.property.signature.getter",
+      "vocab": "declaration.member.property.signature.getter",
       "read": [
         {
-          "vocab": "declaration.property.signature.getter.private",
+          "vocab": "declaration.member.property.signature.getter.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -9443,7 +9443,7 @@
           ]
         },
         {
-          "vocab": "declaration.property.signature.getter.protected",
+          "vocab": "declaration.member.property.signature.getter.protected",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -9478,7 +9478,7 @@
           ]
         },
         {
-          "vocab": "declaration.property.signature.getter.public",
+          "vocab": "declaration.member.property.signature.getter.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -9513,7 +9513,7 @@
           ]
         },
         {
-          "vocab": "declaration.property.signature.getter",
+          "vocab": "declaration.member.property.signature.getter",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -9594,10 +9594,10 @@
       ]
     },
     "method_signature_plain": {
-      "vocab": "declaration.method.signature",
+      "vocab": "declaration.member.method.signature",
       "read": [
         {
-          "vocab": "declaration.method.signature.private",
+          "vocab": "declaration.member.method.signature.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -9632,7 +9632,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature.protected",
+          "vocab": "declaration.member.method.signature.protected",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -9667,7 +9667,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature.public",
+          "vocab": "declaration.member.method.signature.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -9702,7 +9702,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature",
+          "vocab": "declaration.member.method.signature",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -9968,10 +9968,10 @@
       ]
     },
     "method_signature_setter": {
-      "vocab": "declaration.property.signature.setter",
+      "vocab": "declaration.member.property.signature.setter",
       "read": [
         {
-          "vocab": "declaration.property.signature.setter.private",
+          "vocab": "declaration.member.property.signature.setter.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -10006,7 +10006,7 @@
           ]
         },
         {
-          "vocab": "declaration.property.signature.setter.protected",
+          "vocab": "declaration.member.property.signature.setter.protected",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -10041,7 +10041,7 @@
           ]
         },
         {
-          "vocab": "declaration.property.signature.setter.public",
+          "vocab": "declaration.member.property.signature.setter.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -10076,7 +10076,7 @@
           ]
         },
         {
-          "vocab": "declaration.property.signature.setter",
+          "vocab": "declaration.member.property.signature.setter",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -11557,10 +11557,10 @@
       }
     },
     "property_signature": {
-      "vocab": "declaration.field.signature",
+      "vocab": "declaration.member.field.signature",
       "read": [
         {
-          "vocab": "declaration.field.signature.private",
+          "vocab": "declaration.member.field.signature.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -11595,7 +11595,7 @@
           ]
         },
         {
-          "vocab": "declaration.field.signature.protected",
+          "vocab": "declaration.member.field.signature.protected",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -11630,7 +11630,7 @@
           ]
         },
         {
-          "vocab": "declaration.field.signature.public",
+          "vocab": "declaration.member.field.signature.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -11665,7 +11665,7 @@
           ]
         },
         {
-          "vocab": "declaration.field.signature",
+          "vocab": "declaration.member.field.signature",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -11790,10 +11790,10 @@
       "slots": []
     },
     "public_field_definition_accessor": {
-      "vocab": "declaration.property",
+      "vocab": "declaration.member.property",
       "read": [
         {
-          "vocab": "declaration.property.private",
+          "vocab": "declaration.member.property.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -11828,7 +11828,7 @@
           ]
         },
         {
-          "vocab": "declaration.property.protected",
+          "vocab": "declaration.member.property.protected",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -11863,7 +11863,7 @@
           ]
         },
         {
-          "vocab": "declaration.property.public",
+          "vocab": "declaration.member.property.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -11898,7 +11898,7 @@
           ]
         },
         {
-          "vocab": "declaration.property.signature.abstract",
+          "vocab": "declaration.member.property.signature.abstract",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -11922,7 +11922,7 @@
           ]
         },
         {
-          "vocab": "declaration.property",
+          "vocab": "declaration.member.property",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -12025,10 +12025,10 @@
       ]
     },
     "public_field_definition_plain": {
-      "vocab": "declaration.field",
+      "vocab": "declaration.member.field",
       "read": [
         {
-          "vocab": "declaration.field.private",
+          "vocab": "declaration.member.field.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -12063,7 +12063,7 @@
           ]
         },
         {
-          "vocab": "declaration.field.protected",
+          "vocab": "declaration.member.field.protected",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -12098,7 +12098,7 @@
           ]
         },
         {
-          "vocab": "declaration.field.public",
+          "vocab": "declaration.member.field.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -12133,7 +12133,7 @@
           ]
         },
         {
-          "vocab": "declaration.field",
+          "vocab": "declaration.member.field",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -13923,10 +13923,10 @@
       }
     },
     "type_alias_declaration": {
-      "vocab": "declaration.type_alias",
+      "vocab": "declaration.type.type_alias",
       "read": [
         {
-          "vocab": "declaration.type_alias",
+          "vocab": "declaration.type.type_alias",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15378,30 +15378,36 @@
       },
       {
         "depth": 2,
-        "paths": 110,
-        "kinds": 146,
+        "paths": 102,
+        "kinds": 135,
         "refinements": 4
       },
       {
         "depth": 3,
-        "paths": 105,
-        "kinds": 88,
-        "refinements": 82
+        "paths": 95,
+        "kinds": 87,
+        "refinements": 64
       },
       {
         "depth": 4,
-        "paths": 69,
-        "kinds": 27,
-        "refinements": 41
+        "paths": 72,
+        "kinds": 30,
+        "refinements": 44
       },
       {
         "depth": 5,
-        "paths": 14,
-        "kinds": 8,
-        "refinements": 14
+        "paths": 20,
+        "kinds": 12,
+        "refinements": 17
       },
       {
         "depth": 6,
+        "paths": 11,
+        "kinds": 5,
+        "refinements": 11
+      },
+      {
+        "depth": 7,
         "paths": 6,
         "kinds": 2,
         "refinements": 6

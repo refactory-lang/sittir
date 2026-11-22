@@ -643,22 +643,6 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.block.statements: declaration.class is a path the slot's type admits that arm 308's seats don't place, though another arm of statement.block does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.block.statements: declaration.constructor is a path the slot's type admits that arm 308's seats don't place, though another arm of statement.block does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
     "message": "statement.block.statements: declaration.function is a path the slot's type admits that arm 308's seats don't place, though another arm of statement.block does"
   },
   {
@@ -667,7 +651,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.block.statements: declaration.method is a path the slot's type admits that arm 308's seats don't place, though another arm of statement.block does"
+    "message": "statement.block.statements: declaration.member.constructor is a path the slot's type admits that arm 308's seats don't place, though another arm of statement.block does"
   },
   {
     "scope": "grammar",
@@ -675,7 +659,23 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.block.statements: declaration.method.special is a path the slot's type admits that arm 308's seats don't place, though another arm of statement.block does"
+    "message": "statement.block.statements: declaration.member.method is a path the slot's type admits that arm 308's seats don't place, though another arm of statement.block does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.block.statements: declaration.member.method.special is a path the slot's type admits that arm 308's seats don't place, though another arm of statement.block does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.block.statements: declaration.type.class is a path the slot's type admits that arm 308's seats don't place, though another arm of statement.block does"
   },
   {
     "scope": "grammar",
@@ -731,7 +731,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.block.statements: declaration.constructor is a path the slot's type admits that arm 185's seats don't place, though another arm of statement.block does"
+    "message": "statement.block.statements: declaration.member.constructor is a path the slot's type admits that arm 185's seats don't place, though another arm of statement.block does"
   },
   {
     "scope": "grammar",
@@ -739,7 +739,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.block.statements: declaration.method is a path the slot's type admits that arm 185's seats don't place, though another arm of statement.block does"
+    "message": "statement.block.statements: declaration.member.method is a path the slot's type admits that arm 185's seats don't place, though another arm of statement.block does"
   },
   {
     "scope": "grammar",
@@ -747,7 +747,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.block.statements: declaration.method.special is a path the slot's type admits that arm 185's seats don't place, though another arm of statement.block does"
+    "message": "statement.block.statements: declaration.member.method.special is a path the slot's type admits that arm 185's seats don't place, though another arm of statement.block does"
   },
   {
     "scope": "grammar",
@@ -795,7 +795,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constructor: name has no exact set"
+    "message": "declaration.member.constructor: name has no exact set"
   },
   {
     "scope": "grammar",
@@ -803,7 +803,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method: flag privateName spells text, a delimiter of a list in a slot or an unset preset"
+    "message": "declaration.member.method: flag privateName spells text, a delimiter of a list in a slot or an unset preset"
   },
   {
     "scope": "grammar",
@@ -811,7 +811,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.special: a template-spelled slot (name)"
+    "message": "declaration.member.method.special: a template-spelled slot (name)"
   },
   {
     "scope": "grammar",

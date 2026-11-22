@@ -38,7 +38,7 @@ describe('a fact a container spells on a path that does not declare it', () => {
 	const source = 'class A:\n    @override\n    def f(self):\n        pass\n';
 
 	it('keeps the node whole and names the flag, never dropping the fact', () => {
-		expect(carriesOf(withoutFact('declaration.method', 'override'), source)).toEqual([{ reason: 'flags', flags: ['override'] }]);
+		expect(carriesOf(withoutFact('declaration.member.method', 'override'), source)).toEqual([{ reason: 'flags', flags: ['override'] }]);
 	});
 
 	it('carries nothing when the path declares it', () => {

@@ -1,11 +1,20 @@
 import type { PortableBuildArm, PortableBuildTable, PortableCondition, PortableContainer, PortableSlotRoute, PortableReadEntry, PortableSeat } from '@sittir/types';
 import { conditionHolds, type PlanItems } from '../query-holds.ts';
+import { vocabularyNamespaces } from './vocabulary-paths.ts';
+
+const namespaces: ReadonlySet<string> = new Set(vocabularyNamespaces);
+
+const kindLength = (facts: readonly string[]): number => {
+	let end = 1;
+	while (end < facts.length && namespaces.has(facts.slice(0, end + 1).join('.'))) end++;
+	return Math.min(end + 1, facts.length);
+};
 
 export function portablePathHasFacts(path: string, read: string | undefined): boolean {
 	if (read === undefined) return false;
 	const facts = path.split('.');
 	const segments = read.split('.');
-	const kind = Math.min(2, facts.length);
+	const kind = kindLength(facts);
 	for (let i = 0; i < kind; i++) if (facts[i] !== segments[i]) return false;
 	let at = kind;
 	for (let i = kind; i < segments.length && at < facts.length; i++) if (segments[i] === facts[at]) at++;

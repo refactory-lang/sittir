@@ -3412,5540 +3412,6 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.enum': {
-			root: true,
-			arms: [
-				{
-					kind: 198,
-					builder: 'enumItem',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [198, 'name'],
-									kinds: [484],
-									leaf: 'identifier',
-									texts: [1, 484],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [198, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [347, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [430, 'content'],
-									kinds: [127, 220, 221, 222],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										},
-										{
-											key: 'content',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [430, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'whereClause',
-							steps: [
-								{
-									key: 'whereClause',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [198, 'whereClause'],
-									kinds: [211]
-								}
-							]
-						},
-						{
-							name: 'members',
-							steps: [
-								{
-									key: 'body',
-									stored: '_body'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [198, 'body'],
-									kinds: []
-								},
-								{
-									at: [343, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'enumVariantList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'enumVariantListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [428, 'enumVariant'],
-									kinds: [200],
-									within: [
-										{
-											builder: 'enumVariantList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'enumVariantListElements',
-											key: 'items'
-										},
-										{
-											key: 'enumVariant',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [428, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['members', 'name']
-						}
-					]
-				}
-			],
-			flags: ['const']
-		},
-		'declaration.enum.private': {
-			root: true,
-			arms: [
-				{
-					kind: 198,
-					builder: 'enumItem',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [198, 'name'],
-									kinds: [484],
-									leaf: 'identifier',
-									texts: [1, 484],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [198, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [347, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [430, 'content'],
-									kinds: [127, 220, 221, 222],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										},
-										{
-											key: 'content',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [430, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'whereClause',
-							steps: [
-								{
-									key: 'whereClause',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [198, 'whereClause'],
-									kinds: [211]
-								}
-							]
-						},
-						{
-							name: 'members',
-							steps: [
-								{
-									key: 'body',
-									stored: '_body'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [198, 'body'],
-									kinds: []
-								},
-								{
-									at: [343, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'enumVariantList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'enumVariantListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [428, 'enumVariant'],
-									kinds: [200],
-									within: [
-										{
-											builder: 'enumVariantList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'enumVariantListElements',
-											key: 'items'
-										},
-										{
-											key: 'enumVariant',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [428, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content'
-								}
-							],
-							kind: 481
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['members', 'name']
-						}
-					]
-				}
-			],
-			flags: ['const']
-		},
-		'declaration.enum.public': {
-			root: true,
-			arms: [
-				{
-					kind: 198,
-					builder: 'enumItem',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [198, 'name'],
-									kinds: [484],
-									leaf: 'identifier',
-									texts: [1, 484],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [198, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [347, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [430, 'content'],
-									kinds: [127, 220, 221, 222],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										},
-										{
-											key: 'content',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [430, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'whereClause',
-							steps: [
-								{
-									key: 'whereClause',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [198, 'whereClause'],
-									kinds: [211]
-								}
-							]
-						},
-						{
-							name: 'members',
-							steps: [
-								{
-									key: 'body',
-									stored: '_body'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [198, 'body'],
-									kinds: []
-								},
-								{
-									at: [343, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'enumVariantList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'enumVariantListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [428, 'enumVariant'],
-									kinds: [200],
-									within: [
-										{
-											builder: 'enumVariantList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'enumVariantListElements',
-											key: 'items'
-										},
-										{
-											key: 'enumVariant',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [428, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									}
-								}
-							]
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['members', 'name']
-						}
-					]
-				}
-			],
-			flags: ['const']
-		},
-		'declaration.enum.public.internal': {
-			root: true,
-			arms: [
-				{
-					kind: 198,
-					builder: 'enumItem',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [198, 'name'],
-									kinds: [484],
-									leaf: 'identifier',
-									texts: [1, 484],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [198, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [347, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [430, 'content'],
-									kinds: [127, 220, 221, 222],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										},
-										{
-											key: 'content',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [430, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'whereClause',
-							steps: [
-								{
-									key: 'whereClause',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [198, 'whereClause'],
-									kinds: [211]
-								}
-							]
-						},
-						{
-							name: 'members',
-							steps: [
-								{
-									key: 'body',
-									stored: '_body'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [198, 'body'],
-									kinds: []
-								},
-								{
-									at: [343, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'enumVariantList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'enumVariantListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [428, 'enumVariant'],
-									kinds: [200],
-									within: [
-										{
-											builder: 'enumVariantList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'enumVariantListElements',
-											key: 'items'
-										},
-										{
-											key: 'enumVariant',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [428, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content'
-								}
-							],
-							kind: 126
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['members', 'name']
-						}
-					]
-				}
-			],
-			flags: ['const']
-		},
-		'declaration.enum.public.parent': {
-			root: true,
-			arms: [
-				{
-					kind: 198,
-					builder: 'enumItem',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [198, 'name'],
-									kinds: [484],
-									leaf: 'identifier',
-									texts: [1, 484],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [198, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [347, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [430, 'content'],
-									kinds: [127, 220, 221, 222],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										},
-										{
-											key: 'content',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [430, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'whereClause',
-							steps: [
-								{
-									key: 'whereClause',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [198, 'whereClause'],
-									kinds: [211]
-								}
-							]
-						},
-						{
-							name: 'members',
-							steps: [
-								{
-									key: 'body',
-									stored: '_body'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [198, 'body'],
-									kinds: []
-								},
-								{
-									at: [343, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'enumVariantList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'enumVariantListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [428, 'enumVariant'],
-									kinds: [200],
-									within: [
-										{
-											builder: 'enumVariantList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'enumVariantListElements',
-											key: 'items'
-										},
-										{
-											key: 'enumVariant',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [428, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content'
-								}
-							],
-							kind: 125
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['members', 'name']
-						}
-					]
-				}
-			],
-			flags: ['const']
-		},
-		'declaration.enum.public.restricted': {
-			root: true,
-			arms: [
-				{
-					kind: 198,
-					builder: 'enumItem',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [198, 'name'],
-									kinds: [484],
-									leaf: 'identifier',
-									texts: [1, 484],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [198, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [347, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [430, 'content'],
-									kinds: [127, 220, 221, 222],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										},
-										{
-											key: 'content',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [430, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'whereClause',
-							steps: [
-								{
-									key: 'whereClause',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [198, 'whereClause'],
-									kinds: [211]
-								}
-							]
-						},
-						{
-							name: 'members',
-							steps: [
-								{
-									key: 'body',
-									stored: '_body'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [198, 'body'],
-									kinds: []
-								},
-								{
-									at: [343, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'enumVariantList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'enumVariantListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [428, 'enumVariant'],
-									kinds: [200],
-									within: [
-										{
-											builder: 'enumVariantList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'enumVariantListElements',
-											key: 'items'
-										},
-										{
-											key: 'enumVariant',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [428, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'scope',
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier'
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub.scope.inPath',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [379]
-								},
-								{
-									key: 'path'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [379, 'path'],
-									kinds: [1, 125, 126, 127, 263, 481],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub.scope.inPath',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									}
-								}
-							]
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['members', 'name', 'scope']
-						}
-					]
-				}
-			],
-			flags: ['const']
-		},
-		'declaration.enum_member': {
-			root: true,
-			arms: [
-				{
-					kind: 200,
-					builder: 'enumVariant',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			]
-		},
-		'declaration.enum_member.private': {
-			root: true,
-			arms: [
-				{
-					kind: 200,
-					builder: 'enumVariant',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'fieldDeclarationList',
-									optional: true,
-									kinds: [201]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [201, 'elements'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'orderedFieldDeclarationList',
-									optional: true,
-									kinds: [203]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [203, 'elements'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					owners: [
-						[0, 1, 2],
-						[0, 1, 3]
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content'
-								}
-							],
-							kind: 481
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			]
-		},
-		'declaration.enum_member.public': {
-			root: true,
-			arms: [
-				{
-					kind: 200,
-					builder: 'enumVariant',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'fieldDeclarationList',
-									optional: true,
-									kinds: [201]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [201, 'elements'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'orderedFieldDeclarationList',
-									optional: true,
-									kinds: [203]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [203, 'elements'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					owners: [
-						[0, 1, 2],
-						[0, 1, 3]
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									}
-								}
-							]
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			]
-		},
-		'declaration.enum_member.public.internal': {
-			root: true,
-			arms: [
-				{
-					kind: 200,
-					builder: 'enumVariant',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'fieldDeclarationList',
-									optional: true,
-									kinds: [201]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [201, 'elements'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'orderedFieldDeclarationList',
-									optional: true,
-									kinds: [203]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [203, 'elements'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					owners: [
-						[0, 1, 2],
-						[0, 1, 3]
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content'
-								}
-							],
-							kind: 126
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			]
-		},
-		'declaration.enum_member.public.parent': {
-			root: true,
-			arms: [
-				{
-					kind: 200,
-					builder: 'enumVariant',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'fieldDeclarationList',
-									optional: true,
-									kinds: [201]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [201, 'elements'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'orderedFieldDeclarationList',
-									optional: true,
-									kinds: [203]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [203, 'elements'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					owners: [
-						[0, 1, 2],
-						[0, 1, 3]
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content'
-								}
-							],
-							kind: 125
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			]
-		},
-		'declaration.enum_member.public.restricted': {
-			root: true,
-			arms: [
-				{
-					kind: 200,
-					builder: 'enumVariant',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
-						},
-						{
-							name: 'scope',
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier'
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub.scope.inPath',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [379]
-								},
-								{
-									key: 'path'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [379, 'path'],
-									kinds: [1, 125, 126, 127, 263, 481],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'fieldDeclarationList',
-									optional: true,
-									kinds: [201]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [201, 'elements'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'orderedFieldDeclarationList',
-									optional: true,
-									kinds: [203]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [203, 'elements'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					owners: [
-						[0, 1, 2, 3],
-						[0, 1, 2, 4]
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub.scope.inPath',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									}
-								}
-							]
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['name', 'scope']
-						}
-					]
-				}
-			]
-		},
-		'declaration.enum_member.struct': {
-			root: true,
-			arms: [
-				{
-					kind: 200,
-					builder: 'enumVariant',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'fieldDeclarationList',
-									kinds: [201]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [201, 'elements'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'body',
-									optional: true
-								}
-							],
-							builder: 'fieldDeclarationList'
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			]
-		},
-		'declaration.enum_member.struct.private': {
-			root: true,
-			arms: [
-				{
-					kind: 200,
-					builder: 'enumVariant',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'fieldDeclarationList',
-									kinds: [201]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [201, 'elements'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'orderedFieldDeclarationList',
-									kinds: [203]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [203, 'elements'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					owners: [
-						[0, 1, 2],
-						[0, 1, 3]
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content'
-								}
-							],
-							kind: 481
-						},
-						{
-							steps: [
-								{
-									key: 'body',
-									optional: true
-								}
-							],
-							builder: 'fieldDeclarationList'
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			]
-		},
-		'declaration.enum_member.struct.public': {
-			root: true,
-			arms: [
-				{
-					kind: 200,
-					builder: 'enumVariant',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'fieldDeclarationList',
-									kinds: [201]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [201, 'elements'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'orderedFieldDeclarationList',
-									kinds: [203]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [203, 'elements'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					owners: [
-						[0, 1, 2],
-						[0, 1, 3]
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									}
-								}
-							]
-						},
-						{
-							steps: [
-								{
-									key: 'body',
-									optional: true
-								}
-							],
-							builder: 'fieldDeclarationList'
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			]
-		},
-		'declaration.enum_member.struct.public.internal': {
-			root: true,
-			arms: [
-				{
-					kind: 200,
-					builder: 'enumVariant',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'fieldDeclarationList',
-									kinds: [201]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [201, 'elements'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'orderedFieldDeclarationList',
-									kinds: [203]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [203, 'elements'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					owners: [
-						[0, 1, 2],
-						[0, 1, 3]
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content'
-								}
-							],
-							kind: 126
-						},
-						{
-							steps: [
-								{
-									key: 'body',
-									optional: true
-								}
-							],
-							builder: 'fieldDeclarationList'
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			]
-		},
-		'declaration.enum_member.struct.public.parent': {
-			root: true,
-			arms: [
-				{
-					kind: 200,
-					builder: 'enumVariant',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'fieldDeclarationList',
-									kinds: [201]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [201, 'elements'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'orderedFieldDeclarationList',
-									kinds: [203]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [203, 'elements'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					owners: [
-						[0, 1, 2],
-						[0, 1, 3]
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content'
-								}
-							],
-							kind: 125
-						},
-						{
-							steps: [
-								{
-									key: 'body',
-									optional: true
-								}
-							],
-							builder: 'fieldDeclarationList'
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			]
-		},
-		'declaration.enum_member.struct.public.restricted': {
-			root: true,
-			arms: [
-				{
-					kind: 200,
-					builder: 'enumVariant',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
-						},
-						{
-							name: 'scope',
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier'
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub.scope.inPath',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [379]
-								},
-								{
-									key: 'path'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [379, 'path'],
-									kinds: [1, 125, 126, 127, 263, 481],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'fieldDeclarationList',
-									kinds: [201]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [201, 'elements'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'orderedFieldDeclarationList',
-									kinds: [203]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [203, 'elements'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					owners: [
-						[0, 1, 2, 3],
-						[0, 1, 2, 4]
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub.scope.inPath',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									}
-								}
-							]
-						},
-						{
-							steps: [
-								{
-									key: 'body',
-									optional: true
-								}
-							],
-							builder: 'fieldDeclarationList'
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['name', 'scope']
-						}
-					]
-				}
-			]
-		},
-		'declaration.enum_member.tuple': {
-			root: true,
-			arms: [
-				{
-					kind: 200,
-					builder: 'enumVariant',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'orderedFieldDeclarationList',
-									kinds: [203]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [203, 'elements'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'body',
-									optional: true
-								}
-							],
-							builder: 'orderedFieldDeclarationList'
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			]
-		},
-		'declaration.enum_member.tuple.private': {
-			root: true,
-			arms: [
-				{
-					kind: 200,
-					builder: 'enumVariant',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'fieldDeclarationList',
-									kinds: [201]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [201, 'elements'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'orderedFieldDeclarationList',
-									kinds: [203]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [203, 'elements'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					owners: [
-						[0, 1, 2],
-						[0, 1, 3]
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content'
-								}
-							],
-							kind: 481
-						},
-						{
-							steps: [
-								{
-									key: 'body',
-									optional: true
-								}
-							],
-							builder: 'orderedFieldDeclarationList'
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			]
-		},
-		'declaration.enum_member.tuple.public': {
-			root: true,
-			arms: [
-				{
-					kind: 200,
-					builder: 'enumVariant',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'fieldDeclarationList',
-									kinds: [201]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [201, 'elements'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'orderedFieldDeclarationList',
-									kinds: [203]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [203, 'elements'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					owners: [
-						[0, 1, 2],
-						[0, 1, 3]
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									}
-								}
-							]
-						},
-						{
-							steps: [
-								{
-									key: 'body',
-									optional: true
-								}
-							],
-							builder: 'orderedFieldDeclarationList'
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			]
-		},
-		'declaration.enum_member.tuple.public.internal': {
-			root: true,
-			arms: [
-				{
-					kind: 200,
-					builder: 'enumVariant',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'fieldDeclarationList',
-									kinds: [201]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [201, 'elements'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'orderedFieldDeclarationList',
-									kinds: [203]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [203, 'elements'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					owners: [
-						[0, 1, 2],
-						[0, 1, 3]
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content'
-								}
-							],
-							kind: 126
-						},
-						{
-							steps: [
-								{
-									key: 'body',
-									optional: true
-								}
-							],
-							builder: 'orderedFieldDeclarationList'
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			]
-		},
-		'declaration.enum_member.tuple.public.parent': {
-			root: true,
-			arms: [
-				{
-					kind: 200,
-					builder: 'enumVariant',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'fieldDeclarationList',
-									kinds: [201]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [201, 'elements'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'orderedFieldDeclarationList',
-									kinds: [203]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [203, 'elements'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					owners: [
-						[0, 1, 2],
-						[0, 1, 3]
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content'
-								}
-							],
-							kind: 125
-						},
-						{
-							steps: [
-								{
-									key: 'body',
-									optional: true
-								}
-							],
-							builder: 'orderedFieldDeclarationList'
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			]
-		},
-		'declaration.enum_member.tuple.public.restricted': {
-			root: true,
-			arms: [
-				{
-					kind: 200,
-					builder: 'enumVariant',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
-						},
-						{
-							name: 'scope',
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier'
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub.scope.inPath',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [379]
-								},
-								{
-									key: 'path'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [379, 'path'],
-									kinds: [1, 125, 126, 127, 263, 481],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'fieldDeclarationList',
-									kinds: [201]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [201, 'elements'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'orderedFieldDeclarationList',
-									kinds: [203]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [203, 'elements'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					owners: [
-						[0, 1, 2, 3],
-						[0, 1, 2, 4]
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub.scope.inPath',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									}
-								}
-							]
-						},
-						{
-							steps: [
-								{
-									key: 'body',
-									optional: true
-								}
-							],
-							builder: 'orderedFieldDeclarationList'
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['name', 'scope']
-						}
-					]
-				}
-			]
-		},
 		'declaration.extension': {
 			root: true,
 			arms: [
@@ -9714,1504 +4180,6 @@ export const build: PortableBuildTable = {
 				}
 			],
 			flags: ['unsafe']
-		},
-		'declaration.field': {
-			root: false,
-			arms: [
-				{
-					kind: 202,
-					builder: 'fieldDeclaration',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [202, 'name'],
-									kinds: [478],
-									leaf: 'identifier',
-									texts: [1, 478],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [202, 'type'],
-									kinds: [
-										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
-										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
-									],
-									leaf: 'identifier',
-									texts: [1, 484],
-									tokens: {
-										'!': 254,
-										'()': 244,
-										bool: 72,
-										char: 74,
-										f32: 70,
-										f64: 71,
-										i128: 67,
-										i16: 61,
-										i32: 63,
-										i64: 65,
-										i8: 59,
-										isize: 68,
-										str: 73,
-										u128: 66,
-										u16: 60,
-										u32: 62,
-										u64: 64,
-										u8: 58,
-										usize: 69
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: ['attributes'],
-							required: ['name', 'type']
-						}
-					],
-					holders: [[427, 'fieldDeclaration']]
-				},
-				{
-					kind: 432,
-					seated: 'config',
-					slots: [
-						{
-							name: 'attributes',
-							steps: [
-								{
-									key: 'attributeItems',
-									optional: true
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [432, 'attributeItems'],
-									kinds: [],
-									many: true
-								},
-								{
-									at: [190, 'attribute'],
-									kinds: [192],
-									within: [
-										{
-											builder: 'attributeItem',
-											key: 'attribute'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [432, 'type'],
-									kinds: [
-										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
-										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
-									],
-									leaf: 'identifier',
-									texts: [1, 484],
-									tokens: {
-										'!': 254,
-										'()': 244,
-										bool: 72,
-										char: 74,
-										f32: 70,
-										f64: 71,
-										i128: 67,
-										i16: 61,
-										i32: 63,
-										i64: 65,
-										i8: 59,
-										isize: 68,
-										str: 73,
-										u128: 66,
-										u16: 60,
-										u32: 62,
-										u64: 64,
-										u8: 58,
-										usize: 69
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: ['name'],
-							required: ['type']
-						}
-					],
-					holders: [[345, 'items']]
-				}
-			]
-		},
-		'declaration.field.private': {
-			root: false,
-			arms: [
-				{
-					kind: 202,
-					builder: 'fieldDeclaration',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [202, 'name'],
-									kinds: [478],
-									leaf: 'identifier',
-									texts: [1, 478],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [202, 'type'],
-									kinds: [
-										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
-										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
-									],
-									leaf: 'identifier',
-									texts: [1, 484],
-									tokens: {
-										'!': 254,
-										'()': 244,
-										bool: 72,
-										char: 74,
-										f32: 70,
-										f64: 71,
-										i128: 67,
-										i16: 61,
-										i32: 63,
-										i64: 65,
-										i8: 59,
-										isize: 68,
-										str: 73,
-										u128: 66,
-										u16: 60,
-										u32: 62,
-										u64: 64,
-										u8: 58,
-										usize: 69
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content'
-								}
-							],
-							kind: 481
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: ['attributes'],
-							required: ['name', 'type']
-						}
-					],
-					holders: [[427, 'fieldDeclaration']]
-				},
-				{
-					kind: 432,
-					seated: 'config',
-					slots: [
-						{
-							name: 'attributes',
-							steps: [
-								{
-									key: 'attributeItems',
-									optional: true
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [432, 'attributeItems'],
-									kinds: [],
-									many: true
-								},
-								{
-									at: [190, 'attribute'],
-									kinds: [192],
-									within: [
-										{
-											builder: 'attributeItem',
-											key: 'attribute'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [432, 'type'],
-									kinds: [
-										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
-										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
-									],
-									leaf: 'identifier',
-									texts: [1, 484],
-									tokens: {
-										'!': 254,
-										'()': 244,
-										bool: 72,
-										char: 74,
-										f32: 70,
-										f64: 71,
-										i128: 67,
-										i16: 61,
-										i32: 63,
-										i64: 65,
-										i8: 59,
-										isize: 68,
-										str: 73,
-										u128: 66,
-										u16: 60,
-										u32: 62,
-										u64: 64,
-										u8: 58,
-										usize: 69
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content'
-								}
-							],
-							kind: 481
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: ['name'],
-							required: ['type']
-						}
-					],
-					holders: [[345, 'items']]
-				}
-			]
-		},
-		'declaration.field.public': {
-			root: false,
-			arms: [
-				{
-					kind: 202,
-					builder: 'fieldDeclaration',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [202, 'name'],
-									kinds: [478],
-									leaf: 'identifier',
-									texts: [1, 478],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [202, 'type'],
-									kinds: [
-										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
-										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
-									],
-									leaf: 'identifier',
-									texts: [1, 484],
-									tokens: {
-										'!': 254,
-										'()': 244,
-										bool: 72,
-										char: 74,
-										f32: 70,
-										f64: 71,
-										i128: 67,
-										i16: 61,
-										i32: 63,
-										i64: 65,
-										i8: 59,
-										isize: 68,
-										str: 73,
-										u128: 66,
-										u16: 60,
-										u32: 62,
-										u64: 64,
-										u8: 58,
-										usize: 69
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									}
-								}
-							]
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: ['attributes'],
-							required: ['name', 'type']
-						}
-					],
-					holders: [[427, 'fieldDeclaration']]
-				},
-				{
-					kind: 432,
-					seated: 'config',
-					slots: [
-						{
-							name: 'attributes',
-							steps: [
-								{
-									key: 'attributeItems',
-									optional: true
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [432, 'attributeItems'],
-									kinds: [],
-									many: true
-								},
-								{
-									at: [190, 'attribute'],
-									kinds: [192],
-									within: [
-										{
-											builder: 'attributeItem',
-											key: 'attribute'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [432, 'type'],
-									kinds: [
-										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
-										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
-									],
-									leaf: 'identifier',
-									texts: [1, 484],
-									tokens: {
-										'!': 254,
-										'()': 244,
-										bool: 72,
-										char: 74,
-										f32: 70,
-										f64: 71,
-										i128: 67,
-										i16: 61,
-										i32: 63,
-										i64: 65,
-										i8: 59,
-										isize: 68,
-										str: 73,
-										u128: 66,
-										u16: 60,
-										u32: 62,
-										u64: 64,
-										u8: 58,
-										usize: 69
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									}
-								}
-							]
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: ['name'],
-							required: ['type']
-						}
-					],
-					holders: [[345, 'items']]
-				}
-			]
-		},
-		'declaration.field.public.internal': {
-			root: false,
-			arms: [
-				{
-					kind: 202,
-					builder: 'fieldDeclaration',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [202, 'name'],
-									kinds: [478],
-									leaf: 'identifier',
-									texts: [1, 478],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [202, 'type'],
-									kinds: [
-										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
-										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
-									],
-									leaf: 'identifier',
-									texts: [1, 484],
-									tokens: {
-										'!': 254,
-										'()': 244,
-										bool: 72,
-										char: 74,
-										f32: 70,
-										f64: 71,
-										i128: 67,
-										i16: 61,
-										i32: 63,
-										i64: 65,
-										i8: 59,
-										isize: 68,
-										str: 73,
-										u128: 66,
-										u16: 60,
-										u32: 62,
-										u64: 64,
-										u8: 58,
-										usize: 69
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content'
-								}
-							],
-							kind: 126
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: ['attributes'],
-							required: ['name', 'type']
-						}
-					],
-					holders: [[427, 'fieldDeclaration']]
-				},
-				{
-					kind: 432,
-					seated: 'config',
-					slots: [
-						{
-							name: 'attributes',
-							steps: [
-								{
-									key: 'attributeItems',
-									optional: true
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [432, 'attributeItems'],
-									kinds: [],
-									many: true
-								},
-								{
-									at: [190, 'attribute'],
-									kinds: [192],
-									within: [
-										{
-											builder: 'attributeItem',
-											key: 'attribute'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [432, 'type'],
-									kinds: [
-										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
-										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
-									],
-									leaf: 'identifier',
-									texts: [1, 484],
-									tokens: {
-										'!': 254,
-										'()': 244,
-										bool: 72,
-										char: 74,
-										f32: 70,
-										f64: 71,
-										i128: 67,
-										i16: 61,
-										i32: 63,
-										i64: 65,
-										i8: 59,
-										isize: 68,
-										str: 73,
-										u128: 66,
-										u16: 60,
-										u32: 62,
-										u64: 64,
-										u8: 58,
-										usize: 69
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content'
-								}
-							],
-							kind: 126
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: ['name'],
-							required: ['type']
-						}
-					],
-					holders: [[345, 'items']]
-				}
-			]
-		},
-		'declaration.field.public.parent': {
-			root: false,
-			arms: [
-				{
-					kind: 202,
-					builder: 'fieldDeclaration',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [202, 'name'],
-									kinds: [478],
-									leaf: 'identifier',
-									texts: [1, 478],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [202, 'type'],
-									kinds: [
-										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
-										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
-									],
-									leaf: 'identifier',
-									texts: [1, 484],
-									tokens: {
-										'!': 254,
-										'()': 244,
-										bool: 72,
-										char: 74,
-										f32: 70,
-										f64: 71,
-										i128: 67,
-										i16: 61,
-										i32: 63,
-										i64: 65,
-										i8: 59,
-										isize: 68,
-										str: 73,
-										u128: 66,
-										u16: 60,
-										u32: 62,
-										u64: 64,
-										u8: 58,
-										usize: 69
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content'
-								}
-							],
-							kind: 125
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: ['attributes'],
-							required: ['name', 'type']
-						}
-					],
-					holders: [[427, 'fieldDeclaration']]
-				},
-				{
-					kind: 432,
-					seated: 'config',
-					slots: [
-						{
-							name: 'attributes',
-							steps: [
-								{
-									key: 'attributeItems',
-									optional: true
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [432, 'attributeItems'],
-									kinds: [],
-									many: true
-								},
-								{
-									at: [190, 'attribute'],
-									kinds: [192],
-									within: [
-										{
-											builder: 'attributeItem',
-											key: 'attribute'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [432, 'type'],
-									kinds: [
-										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
-										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
-									],
-									leaf: 'identifier',
-									texts: [1, 484],
-									tokens: {
-										'!': 254,
-										'()': 244,
-										bool: 72,
-										char: 74,
-										f32: 70,
-										f64: 71,
-										i128: 67,
-										i16: 61,
-										i32: 63,
-										i64: 65,
-										i8: 59,
-										isize: 68,
-										str: 73,
-										u128: 66,
-										u16: 60,
-										u32: 62,
-										u64: 64,
-										u8: 58,
-										usize: 69
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content'
-								}
-							],
-							kind: 125
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: ['name'],
-							required: ['type']
-						}
-					],
-					holders: [[345, 'items']]
-				}
-			]
-		},
-		'declaration.field.public.restricted': {
-			root: false,
-			arms: [
-				{
-					kind: 202,
-					builder: 'fieldDeclaration',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [202, 'name'],
-									kinds: [478],
-									leaf: 'identifier',
-									texts: [1, 478],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [202, 'type'],
-									kinds: [
-										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
-										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
-									],
-									leaf: 'identifier',
-									texts: [1, 484],
-									tokens: {
-										'!': 254,
-										'()': 244,
-										bool: 72,
-										char: 74,
-										f32: 70,
-										f64: 71,
-										i128: 67,
-										i16: 61,
-										i32: 63,
-										i64: 65,
-										i8: 59,
-										isize: 68,
-										str: 73,
-										u128: 66,
-										u16: 60,
-										u32: 62,
-										u64: 64,
-										u8: 58,
-										usize: 69
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'scope',
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier'
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub.scope.inPath',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [379]
-								},
-								{
-									key: 'path'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [379, 'path'],
-									kinds: [1, 125, 126, 127, 263, 481],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub.scope.inPath',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									}
-								}
-							]
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: ['attributes'],
-							required: ['name', 'scope', 'type']
-						}
-					],
-					holders: [[427, 'fieldDeclaration']]
-				},
-				{
-					kind: 432,
-					seated: 'config',
-					slots: [
-						{
-							name: 'attributes',
-							steps: [
-								{
-									key: 'attributeItems',
-									optional: true
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [432, 'attributeItems'],
-									kinds: [],
-									many: true
-								},
-								{
-									at: [190, 'attribute'],
-									kinds: [192],
-									within: [
-										{
-											builder: 'attributeItem',
-											key: 'attribute'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [432, 'type'],
-									kinds: [
-										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
-										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
-									],
-									leaf: 'identifier',
-									texts: [1, 484],
-									tokens: {
-										'!': 254,
-										'()': 244,
-										bool: 72,
-										char: 74,
-										f32: 70,
-										f64: 71,
-										i128: 67,
-										i16: 61,
-										i32: 63,
-										i64: 65,
-										i8: 59,
-										isize: 68,
-										str: 73,
-										u128: 66,
-										u16: 60,
-										u32: 62,
-										u64: 64,
-										u8: 58,
-										usize: 69
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'scope',
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier'
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub.scope.inPath',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [379]
-								},
-								{
-									key: 'path'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [379, 'path'],
-									kinds: [1, 125, 126, 127, 263, 481],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub.scope.inPath',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									}
-								}
-							]
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: ['name'],
-							required: ['scope', 'type']
-						}
-					],
-					holders: [[345, 'items']]
-				}
-			]
 		},
 		'declaration.function': {
 			root: true,
@@ -19221,1916 +12189,6 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['async', 'const', 'default', 'unsafe']
 		},
-		'declaration.interface.trait': {
-			root: true,
-			arms: [
-				{
-					kind: 214,
-					builder: 'traitItem',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [214, 'name'],
-									kinds: [484],
-									leaf: 'identifier',
-									texts: [1, 484],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [214, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [347, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [430, 'content'],
-									kinds: [127, 220, 221, 222],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										},
-										{
-											key: 'content',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [430, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'extends',
-							steps: [
-								{
-									key: 'bounds',
-									stored: '_bounds',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [214, 'bounds'],
-									kinds: []
-								},
-								{
-									at: [216, 'bounds'],
-									kinds: [
-										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
-										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
-									],
-									leaf: 'identifier',
-									texts: [1, 484],
-									tokens: {
-										'!': 254,
-										'()': 244,
-										bool: 72,
-										char: 74,
-										f32: 70,
-										f64: 71,
-										i128: 67,
-										i16: 61,
-										i32: 63,
-										i64: 65,
-										i8: 59,
-										isize: 68,
-										str: 73,
-										u128: 66,
-										u16: 60,
-										u32: 62,
-										u64: 64,
-										u8: 58,
-										usize: 69
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'traitBounds',
-											key: 'bounds'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'whereClause',
-							steps: [
-								{
-									key: 'whereClause',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [214, 'whereClause'],
-									kinds: [211]
-								}
-							]
-						},
-						{
-							name: 'members',
-							steps: [
-								{
-									key: 'body',
-									stored: '_body'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [214, 'body'],
-									kinds: []
-								},
-								{
-									at: [437, 'declarations'],
-									kinds: [
-										178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 213, 214, 215, 223, 224, 259, 377, 378, 384,
-										385, 395, 396, 416, 417, 418, 423, 424, 425, 480, 483
-									],
-									tokens: {
-										';': 178
-									},
-									within: [
-										{
-											builder: 'traitInterfaceDeclarationBody',
-											key: 'declarations',
-											optional: true
-										}
-									],
-									many: true
-								},
-								{
-									at: [190, 'attribute'],
-									kinds: [192],
-									within: [
-										{
-											builder: 'traitInterfaceDeclarationBody',
-											key: 'declarations',
-											optional: true
-										},
-										{
-											builder: 'attributeItem',
-											key: 'attribute'
-										}
-									]
-								},
-								{
-									at: [191, 'attribute'],
-									kinds: [192],
-									within: [
-										{
-											builder: 'traitInterfaceDeclarationBody',
-											key: 'declarations',
-											optional: true
-										},
-										{
-											builder: 'innerAttributeItem',
-											key: 'attribute',
-											sets: {
-												kind: 191,
-												flags: ['inner']
-											}
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {
-						unsafe: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'unsafe',
-											optional: true
-										}
-									],
-									kind: 111,
-									presence: true
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['members', 'name']
-						}
-					]
-				}
-			],
-			flags: ['unsafe']
-		},
-		'declaration.interface.trait.private': {
-			root: true,
-			arms: [
-				{
-					kind: 214,
-					builder: 'traitItem',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [214, 'name'],
-									kinds: [484],
-									leaf: 'identifier',
-									texts: [1, 484],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [214, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [347, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [430, 'content'],
-									kinds: [127, 220, 221, 222],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										},
-										{
-											key: 'content',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [430, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'extends',
-							steps: [
-								{
-									key: 'bounds',
-									stored: '_bounds',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [214, 'bounds'],
-									kinds: []
-								},
-								{
-									at: [216, 'bounds'],
-									kinds: [
-										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
-										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
-									],
-									leaf: 'identifier',
-									texts: [1, 484],
-									tokens: {
-										'!': 254,
-										'()': 244,
-										bool: 72,
-										char: 74,
-										f32: 70,
-										f64: 71,
-										i128: 67,
-										i16: 61,
-										i32: 63,
-										i64: 65,
-										i8: 59,
-										isize: 68,
-										str: 73,
-										u128: 66,
-										u16: 60,
-										u32: 62,
-										u64: 64,
-										u8: 58,
-										usize: 69
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'traitBounds',
-											key: 'bounds'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'whereClause',
-							steps: [
-								{
-									key: 'whereClause',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [214, 'whereClause'],
-									kinds: [211]
-								}
-							]
-						},
-						{
-							name: 'members',
-							steps: [
-								{
-									key: 'body',
-									stored: '_body'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [214, 'body'],
-									kinds: []
-								},
-								{
-									at: [437, 'declarations'],
-									kinds: [
-										178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 213, 214, 215, 223, 224, 259, 377, 378, 384,
-										385, 395, 396, 416, 417, 418, 423, 424, 425, 480, 483
-									],
-									tokens: {
-										';': 178
-									},
-									within: [
-										{
-											builder: 'traitInterfaceDeclarationBody',
-											key: 'declarations',
-											optional: true
-										}
-									],
-									many: true
-								},
-								{
-									at: [190, 'attribute'],
-									kinds: [192],
-									within: [
-										{
-											builder: 'traitInterfaceDeclarationBody',
-											key: 'declarations',
-											optional: true
-										},
-										{
-											builder: 'attributeItem',
-											key: 'attribute'
-										}
-									]
-								},
-								{
-									at: [191, 'attribute'],
-									kinds: [192],
-									within: [
-										{
-											builder: 'traitInterfaceDeclarationBody',
-											key: 'declarations',
-											optional: true
-										},
-										{
-											builder: 'innerAttributeItem',
-											key: 'attribute',
-											sets: {
-												kind: 191,
-												flags: ['inner']
-											}
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content'
-								}
-							],
-							kind: 481
-						}
-					],
-					flags: {
-						unsafe: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'unsafe',
-											optional: true
-										}
-									],
-									kind: 111,
-									presence: true
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['members', 'name']
-						}
-					]
-				}
-			],
-			flags: ['unsafe']
-		},
-		'declaration.interface.trait.public': {
-			root: true,
-			arms: [
-				{
-					kind: 214,
-					builder: 'traitItem',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [214, 'name'],
-									kinds: [484],
-									leaf: 'identifier',
-									texts: [1, 484],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [214, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [347, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [430, 'content'],
-									kinds: [127, 220, 221, 222],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										},
-										{
-											key: 'content',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [430, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'extends',
-							steps: [
-								{
-									key: 'bounds',
-									stored: '_bounds',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [214, 'bounds'],
-									kinds: []
-								},
-								{
-									at: [216, 'bounds'],
-									kinds: [
-										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
-										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
-									],
-									leaf: 'identifier',
-									texts: [1, 484],
-									tokens: {
-										'!': 254,
-										'()': 244,
-										bool: 72,
-										char: 74,
-										f32: 70,
-										f64: 71,
-										i128: 67,
-										i16: 61,
-										i32: 63,
-										i64: 65,
-										i8: 59,
-										isize: 68,
-										str: 73,
-										u128: 66,
-										u16: 60,
-										u32: 62,
-										u64: 64,
-										u8: 58,
-										usize: 69
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'traitBounds',
-											key: 'bounds'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'whereClause',
-							steps: [
-								{
-									key: 'whereClause',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [214, 'whereClause'],
-									kinds: [211]
-								}
-							]
-						},
-						{
-							name: 'members',
-							steps: [
-								{
-									key: 'body',
-									stored: '_body'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [214, 'body'],
-									kinds: []
-								},
-								{
-									at: [437, 'declarations'],
-									kinds: [
-										178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 213, 214, 215, 223, 224, 259, 377, 378, 384,
-										385, 395, 396, 416, 417, 418, 423, 424, 425, 480, 483
-									],
-									tokens: {
-										';': 178
-									},
-									within: [
-										{
-											builder: 'traitInterfaceDeclarationBody',
-											key: 'declarations',
-											optional: true
-										}
-									],
-									many: true
-								},
-								{
-									at: [190, 'attribute'],
-									kinds: [192],
-									within: [
-										{
-											builder: 'traitInterfaceDeclarationBody',
-											key: 'declarations',
-											optional: true
-										},
-										{
-											builder: 'attributeItem',
-											key: 'attribute'
-										}
-									]
-								},
-								{
-									at: [191, 'attribute'],
-									kinds: [192],
-									within: [
-										{
-											builder: 'traitInterfaceDeclarationBody',
-											key: 'declarations',
-											optional: true
-										},
-										{
-											builder: 'innerAttributeItem',
-											key: 'attribute',
-											sets: {
-												kind: 191,
-												flags: ['inner']
-											}
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									}
-								}
-							]
-						}
-					],
-					flags: {
-						unsafe: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'unsafe',
-											optional: true
-										}
-									],
-									kind: 111,
-									presence: true
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['members', 'name']
-						}
-					]
-				}
-			],
-			flags: ['unsafe']
-		},
-		'declaration.interface.trait.public.internal': {
-			root: true,
-			arms: [
-				{
-					kind: 214,
-					builder: 'traitItem',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [214, 'name'],
-									kinds: [484],
-									leaf: 'identifier',
-									texts: [1, 484],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [214, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [347, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [430, 'content'],
-									kinds: [127, 220, 221, 222],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										},
-										{
-											key: 'content',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [430, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'extends',
-							steps: [
-								{
-									key: 'bounds',
-									stored: '_bounds',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [214, 'bounds'],
-									kinds: []
-								},
-								{
-									at: [216, 'bounds'],
-									kinds: [
-										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
-										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
-									],
-									leaf: 'identifier',
-									texts: [1, 484],
-									tokens: {
-										'!': 254,
-										'()': 244,
-										bool: 72,
-										char: 74,
-										f32: 70,
-										f64: 71,
-										i128: 67,
-										i16: 61,
-										i32: 63,
-										i64: 65,
-										i8: 59,
-										isize: 68,
-										str: 73,
-										u128: 66,
-										u16: 60,
-										u32: 62,
-										u64: 64,
-										u8: 58,
-										usize: 69
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'traitBounds',
-											key: 'bounds'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'whereClause',
-							steps: [
-								{
-									key: 'whereClause',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [214, 'whereClause'],
-									kinds: [211]
-								}
-							]
-						},
-						{
-							name: 'members',
-							steps: [
-								{
-									key: 'body',
-									stored: '_body'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [214, 'body'],
-									kinds: []
-								},
-								{
-									at: [437, 'declarations'],
-									kinds: [
-										178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 213, 214, 215, 223, 224, 259, 377, 378, 384,
-										385, 395, 396, 416, 417, 418, 423, 424, 425, 480, 483
-									],
-									tokens: {
-										';': 178
-									},
-									within: [
-										{
-											builder: 'traitInterfaceDeclarationBody',
-											key: 'declarations',
-											optional: true
-										}
-									],
-									many: true
-								},
-								{
-									at: [190, 'attribute'],
-									kinds: [192],
-									within: [
-										{
-											builder: 'traitInterfaceDeclarationBody',
-											key: 'declarations',
-											optional: true
-										},
-										{
-											builder: 'attributeItem',
-											key: 'attribute'
-										}
-									]
-								},
-								{
-									at: [191, 'attribute'],
-									kinds: [192],
-									within: [
-										{
-											builder: 'traitInterfaceDeclarationBody',
-											key: 'declarations',
-											optional: true
-										},
-										{
-											builder: 'innerAttributeItem',
-											key: 'attribute',
-											sets: {
-												kind: 191,
-												flags: ['inner']
-											}
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content'
-								}
-							],
-							kind: 126
-						}
-					],
-					flags: {
-						unsafe: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'unsafe',
-											optional: true
-										}
-									],
-									kind: 111,
-									presence: true
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['members', 'name']
-						}
-					]
-				}
-			],
-			flags: ['unsafe']
-		},
-		'declaration.interface.trait.public.parent': {
-			root: true,
-			arms: [
-				{
-					kind: 214,
-					builder: 'traitItem',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [214, 'name'],
-									kinds: [484],
-									leaf: 'identifier',
-									texts: [1, 484],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [214, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [347, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [430, 'content'],
-									kinds: [127, 220, 221, 222],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										},
-										{
-											key: 'content',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [430, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'extends',
-							steps: [
-								{
-									key: 'bounds',
-									stored: '_bounds',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [214, 'bounds'],
-									kinds: []
-								},
-								{
-									at: [216, 'bounds'],
-									kinds: [
-										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
-										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
-									],
-									leaf: 'identifier',
-									texts: [1, 484],
-									tokens: {
-										'!': 254,
-										'()': 244,
-										bool: 72,
-										char: 74,
-										f32: 70,
-										f64: 71,
-										i128: 67,
-										i16: 61,
-										i32: 63,
-										i64: 65,
-										i8: 59,
-										isize: 68,
-										str: 73,
-										u128: 66,
-										u16: 60,
-										u32: 62,
-										u64: 64,
-										u8: 58,
-										usize: 69
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'traitBounds',
-											key: 'bounds'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'whereClause',
-							steps: [
-								{
-									key: 'whereClause',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [214, 'whereClause'],
-									kinds: [211]
-								}
-							]
-						},
-						{
-							name: 'members',
-							steps: [
-								{
-									key: 'body',
-									stored: '_body'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [214, 'body'],
-									kinds: []
-								},
-								{
-									at: [437, 'declarations'],
-									kinds: [
-										178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 213, 214, 215, 223, 224, 259, 377, 378, 384,
-										385, 395, 396, 416, 417, 418, 423, 424, 425, 480, 483
-									],
-									tokens: {
-										';': 178
-									},
-									within: [
-										{
-											builder: 'traitInterfaceDeclarationBody',
-											key: 'declarations',
-											optional: true
-										}
-									],
-									many: true
-								},
-								{
-									at: [190, 'attribute'],
-									kinds: [192],
-									within: [
-										{
-											builder: 'traitInterfaceDeclarationBody',
-											key: 'declarations',
-											optional: true
-										},
-										{
-											builder: 'attributeItem',
-											key: 'attribute'
-										}
-									]
-								},
-								{
-									at: [191, 'attribute'],
-									kinds: [192],
-									within: [
-										{
-											builder: 'traitInterfaceDeclarationBody',
-											key: 'declarations',
-											optional: true
-										},
-										{
-											builder: 'innerAttributeItem',
-											key: 'attribute',
-											sets: {
-												kind: 191,
-												flags: ['inner']
-											}
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content'
-								}
-							],
-							kind: 125
-						}
-					],
-					flags: {
-						unsafe: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'unsafe',
-											optional: true
-										}
-									],
-									kind: 111,
-									presence: true
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['members', 'name']
-						}
-					]
-				}
-			],
-			flags: ['unsafe']
-		},
-		'declaration.interface.trait.public.restricted': {
-			root: true,
-			arms: [
-				{
-					kind: 214,
-					builder: 'traitItem',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [214, 'name'],
-									kinds: [484],
-									leaf: 'identifier',
-									texts: [1, 484],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [214, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [347, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [430, 'content'],
-									kinds: [127, 220, 221, 222],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										},
-										{
-											key: 'content',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [430, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'extends',
-							steps: [
-								{
-									key: 'bounds',
-									stored: '_bounds',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [214, 'bounds'],
-									kinds: []
-								},
-								{
-									at: [216, 'bounds'],
-									kinds: [
-										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
-										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
-									],
-									leaf: 'identifier',
-									texts: [1, 484],
-									tokens: {
-										'!': 254,
-										'()': 244,
-										bool: 72,
-										char: 74,
-										f32: 70,
-										f64: 71,
-										i128: 67,
-										i16: 61,
-										i32: 63,
-										i64: 65,
-										i8: 59,
-										isize: 68,
-										str: 73,
-										u128: 66,
-										u16: 60,
-										u32: 62,
-										u64: 64,
-										u8: 58,
-										usize: 69
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'traitBounds',
-											key: 'bounds'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'whereClause',
-							steps: [
-								{
-									key: 'whereClause',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [214, 'whereClause'],
-									kinds: [211]
-								}
-							]
-						},
-						{
-							name: 'members',
-							steps: [
-								{
-									key: 'body',
-									stored: '_body'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [214, 'body'],
-									kinds: []
-								},
-								{
-									at: [437, 'declarations'],
-									kinds: [
-										178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 213, 214, 215, 223, 224, 259, 377, 378, 384,
-										385, 395, 396, 416, 417, 418, 423, 424, 425, 480, 483
-									],
-									tokens: {
-										';': 178
-									},
-									within: [
-										{
-											builder: 'traitInterfaceDeclarationBody',
-											key: 'declarations',
-											optional: true
-										}
-									],
-									many: true
-								},
-								{
-									at: [190, 'attribute'],
-									kinds: [192],
-									within: [
-										{
-											builder: 'traitInterfaceDeclarationBody',
-											key: 'declarations',
-											optional: true
-										},
-										{
-											builder: 'attributeItem',
-											key: 'attribute'
-										}
-									]
-								},
-								{
-									at: [191, 'attribute'],
-									kinds: [192],
-									within: [
-										{
-											builder: 'traitInterfaceDeclarationBody',
-											key: 'declarations',
-											optional: true
-										},
-										{
-											builder: 'innerAttributeItem',
-											key: 'attribute',
-											sets: {
-												kind: 191,
-												flags: ['inner']
-											}
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'scope',
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier'
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub.scope.inPath',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [379]
-								},
-								{
-									key: 'path'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [379, 'path'],
-									kinds: [1, 125, 126, 127, 263, 481],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub.scope.inPath',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									}
-								}
-							]
-						}
-					],
-					flags: {
-						unsafe: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'unsafe',
-											optional: true
-										}
-									],
-									kind: 111,
-									presence: true
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['members', 'name', 'scope']
-						}
-					]
-				}
-			],
-			flags: ['unsafe']
-		},
 		'declaration.macro': {
 			root: true,
 			arms: [
@@ -21554,7 +12612,5501 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.method': {
+		'declaration.member.enum_member': {
+			root: true,
+			arms: [
+				{
+					kind: 200,
+					builder: 'enumVariant',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						}
+					],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			]
+		},
+		'declaration.member.enum_member.private': {
+			root: true,
+			arms: [
+				{
+					kind: 200,
+					builder: 'enumVariant',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList',
+									optional: true,
+									kinds: [201]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [201, 'elements'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList',
+									optional: true,
+									kinds: [203]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
+								},
+								{
+									at: [345, 'items'],
+									kinds: [432],
+									within: [
+										{
+											builder: 'orderedFieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3]
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 481
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			]
+		},
+		'declaration.member.enum_member.public': {
+			root: true,
+			arms: [
+				{
+					kind: 200,
+					builder: 'enumVariant',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList',
+									optional: true,
+									kinds: [201]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [201, 'elements'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList',
+									optional: true,
+									kinds: [203]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
+								},
+								{
+									at: [345, 'items'],
+									kinds: [432],
+									within: [
+										{
+											builder: 'orderedFieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3]
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								}
+							]
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			]
+		},
+		'declaration.member.enum_member.public.internal': {
+			root: true,
+			arms: [
+				{
+					kind: 200,
+					builder: 'enumVariant',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList',
+									optional: true,
+									kinds: [201]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [201, 'elements'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList',
+									optional: true,
+									kinds: [203]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
+								},
+								{
+									at: [345, 'items'],
+									kinds: [432],
+									within: [
+										{
+											builder: 'orderedFieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3]
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 126
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			]
+		},
+		'declaration.member.enum_member.public.parent': {
+			root: true,
+			arms: [
+				{
+					kind: 200,
+					builder: 'enumVariant',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList',
+									optional: true,
+									kinds: [201]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [201, 'elements'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList',
+									optional: true,
+									kinds: [203]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
+								},
+								{
+									at: [345, 'items'],
+									kinds: [432],
+									within: [
+										{
+											builder: 'orderedFieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3]
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			]
+		},
+		'declaration.member.enum_member.public.restricted': {
+			root: true,
+			arms: [
+				{
+					kind: 200,
+					builder: 'enumVariant',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'scope',
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier'
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [379]
+								},
+								{
+									key: 'path'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [379, 'path'],
+									kinds: [1, 125, 126, 127, 263, 481],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										crate: 126,
+										self: 481,
+										super: 125
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList',
+									optional: true,
+									kinds: [201]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [201, 'elements'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList',
+									optional: true,
+									kinds: [203]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
+								},
+								{
+									at: [345, 'items'],
+									kinds: [432],
+									within: [
+										{
+											builder: 'orderedFieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					owners: [
+						[0, 1, 2, 3],
+						[0, 1, 2, 4]
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								}
+							]
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'scope']
+						}
+					]
+				}
+			]
+		},
+		'declaration.member.enum_member.struct': {
+			root: true,
+			arms: [
+				{
+					kind: 200,
+					builder: 'enumVariant',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList',
+									kinds: [201]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [201, 'elements'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'body',
+									optional: true
+								}
+							],
+							builder: 'fieldDeclarationList'
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			]
+		},
+		'declaration.member.enum_member.struct.private': {
+			root: true,
+			arms: [
+				{
+					kind: 200,
+					builder: 'enumVariant',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList',
+									kinds: [201]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [201, 'elements'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList',
+									kinds: [203]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
+								},
+								{
+									at: [345, 'items'],
+									kinds: [432],
+									within: [
+										{
+											builder: 'orderedFieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3]
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 481
+						},
+						{
+							steps: [
+								{
+									key: 'body',
+									optional: true
+								}
+							],
+							builder: 'fieldDeclarationList'
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			]
+		},
+		'declaration.member.enum_member.struct.public': {
+			root: true,
+			arms: [
+				{
+					kind: 200,
+					builder: 'enumVariant',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList',
+									kinds: [201]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [201, 'elements'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList',
+									kinds: [203]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
+								},
+								{
+									at: [345, 'items'],
+									kinds: [432],
+									within: [
+										{
+											builder: 'orderedFieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3]
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								}
+							]
+						},
+						{
+							steps: [
+								{
+									key: 'body',
+									optional: true
+								}
+							],
+							builder: 'fieldDeclarationList'
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			]
+		},
+		'declaration.member.enum_member.struct.public.internal': {
+			root: true,
+			arms: [
+				{
+					kind: 200,
+					builder: 'enumVariant',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList',
+									kinds: [201]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [201, 'elements'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList',
+									kinds: [203]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
+								},
+								{
+									at: [345, 'items'],
+									kinds: [432],
+									within: [
+										{
+											builder: 'orderedFieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3]
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 126
+						},
+						{
+							steps: [
+								{
+									key: 'body',
+									optional: true
+								}
+							],
+							builder: 'fieldDeclarationList'
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			]
+		},
+		'declaration.member.enum_member.struct.public.parent': {
+			root: true,
+			arms: [
+				{
+					kind: 200,
+					builder: 'enumVariant',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList',
+									kinds: [201]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [201, 'elements'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList',
+									kinds: [203]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
+								},
+								{
+									at: [345, 'items'],
+									kinds: [432],
+									within: [
+										{
+											builder: 'orderedFieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3]
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						},
+						{
+							steps: [
+								{
+									key: 'body',
+									optional: true
+								}
+							],
+							builder: 'fieldDeclarationList'
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			]
+		},
+		'declaration.member.enum_member.struct.public.restricted': {
+			root: true,
+			arms: [
+				{
+					kind: 200,
+					builder: 'enumVariant',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'scope',
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier'
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [379]
+								},
+								{
+									key: 'path'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [379, 'path'],
+									kinds: [1, 125, 126, 127, 263, 481],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										crate: 126,
+										self: 481,
+										super: 125
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList',
+									kinds: [201]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [201, 'elements'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList',
+									kinds: [203]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
+								},
+								{
+									at: [345, 'items'],
+									kinds: [432],
+									within: [
+										{
+											builder: 'orderedFieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					owners: [
+						[0, 1, 2, 3],
+						[0, 1, 2, 4]
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								}
+							]
+						},
+						{
+							steps: [
+								{
+									key: 'body',
+									optional: true
+								}
+							],
+							builder: 'fieldDeclarationList'
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'scope']
+						}
+					]
+				}
+			]
+		},
+		'declaration.member.enum_member.tuple': {
+			root: true,
+			arms: [
+				{
+					kind: 200,
+					builder: 'enumVariant',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList',
+									kinds: [203]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
+								},
+								{
+									at: [345, 'items'],
+									kinds: [432],
+									within: [
+										{
+											builder: 'orderedFieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'body',
+									optional: true
+								}
+							],
+							builder: 'orderedFieldDeclarationList'
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			]
+		},
+		'declaration.member.enum_member.tuple.private': {
+			root: true,
+			arms: [
+				{
+					kind: 200,
+					builder: 'enumVariant',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList',
+									kinds: [201]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [201, 'elements'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList',
+									kinds: [203]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
+								},
+								{
+									at: [345, 'items'],
+									kinds: [432],
+									within: [
+										{
+											builder: 'orderedFieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3]
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 481
+						},
+						{
+							steps: [
+								{
+									key: 'body',
+									optional: true
+								}
+							],
+							builder: 'orderedFieldDeclarationList'
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			]
+		},
+		'declaration.member.enum_member.tuple.public': {
+			root: true,
+			arms: [
+				{
+					kind: 200,
+					builder: 'enumVariant',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList',
+									kinds: [201]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [201, 'elements'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList',
+									kinds: [203]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
+								},
+								{
+									at: [345, 'items'],
+									kinds: [432],
+									within: [
+										{
+											builder: 'orderedFieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3]
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								}
+							]
+						},
+						{
+							steps: [
+								{
+									key: 'body',
+									optional: true
+								}
+							],
+							builder: 'orderedFieldDeclarationList'
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			]
+		},
+		'declaration.member.enum_member.tuple.public.internal': {
+			root: true,
+			arms: [
+				{
+					kind: 200,
+					builder: 'enumVariant',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList',
+									kinds: [201]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [201, 'elements'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList',
+									kinds: [203]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
+								},
+								{
+									at: [345, 'items'],
+									kinds: [432],
+									within: [
+										{
+											builder: 'orderedFieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3]
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 126
+						},
+						{
+							steps: [
+								{
+									key: 'body',
+									optional: true
+								}
+							],
+							builder: 'orderedFieldDeclarationList'
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			]
+		},
+		'declaration.member.enum_member.tuple.public.parent': {
+			root: true,
+			arms: [
+				{
+					kind: 200,
+					builder: 'enumVariant',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList',
+									kinds: [201]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [201, 'elements'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList',
+									kinds: [203]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
+								},
+								{
+									at: [345, 'items'],
+									kinds: [432],
+									within: [
+										{
+											builder: 'orderedFieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3]
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						},
+						{
+							steps: [
+								{
+									key: 'body',
+									optional: true
+								}
+							],
+							builder: 'orderedFieldDeclarationList'
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			]
+		},
+		'declaration.member.enum_member.tuple.public.restricted': {
+			root: true,
+			arms: [
+				{
+					kind: 200,
+					builder: 'enumVariant',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'scope',
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier'
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [379]
+								},
+								{
+									key: 'path'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [379, 'path'],
+									kinds: [1, 125, 126, 127, 263, 481],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										crate: 126,
+										self: 481,
+										super: 125
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList',
+									kinds: [201]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [201, 'elements'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList',
+									kinds: [203]
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
+								},
+								{
+									at: [345, 'items'],
+									kinds: [432],
+									within: [
+										{
+											builder: 'orderedFieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					owners: [
+						[0, 1, 2, 3],
+						[0, 1, 2, 4]
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								}
+							]
+						},
+						{
+							steps: [
+								{
+									key: 'body',
+									optional: true
+								}
+							],
+							builder: 'orderedFieldDeclarationList'
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'scope']
+						}
+					]
+				}
+			]
+		},
+		'declaration.member.field': {
+			root: false,
+			arms: [
+				{
+					kind: 202,
+					builder: 'fieldDeclaration',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [202, 'name'],
+									kinds: [478],
+									leaf: 'identifier',
+									texts: [1, 478],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [202, 'type'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
+										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							absent: ['attributes'],
+							required: ['name', 'type']
+						}
+					],
+					holders: [[427, 'fieldDeclaration']]
+				},
+				{
+					kind: 432,
+					seated: 'config',
+					slots: [
+						{
+							name: 'attributes',
+							steps: [
+								{
+									key: 'attributeItems',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [432, 'attributeItems'],
+									kinds: [],
+									many: true
+								},
+								{
+									at: [190, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'attributeItem',
+											key: 'attribute'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [432, 'type'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
+										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							absent: ['name'],
+							required: ['type']
+						}
+					],
+					holders: [[345, 'items']]
+				}
+			]
+		},
+		'declaration.member.field.private': {
+			root: false,
+			arms: [
+				{
+					kind: 202,
+					builder: 'fieldDeclaration',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [202, 'name'],
+									kinds: [478],
+									leaf: 'identifier',
+									texts: [1, 478],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [202, 'type'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
+										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 481
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: ['attributes'],
+							required: ['name', 'type']
+						}
+					],
+					holders: [[427, 'fieldDeclaration']]
+				},
+				{
+					kind: 432,
+					seated: 'config',
+					slots: [
+						{
+							name: 'attributes',
+							steps: [
+								{
+									key: 'attributeItems',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [432, 'attributeItems'],
+									kinds: [],
+									many: true
+								},
+								{
+									at: [190, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'attributeItem',
+											key: 'attribute'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [432, 'type'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
+										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 481
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: ['name'],
+							required: ['type']
+						}
+					],
+					holders: [[345, 'items']]
+				}
+			]
+		},
+		'declaration.member.field.public': {
+			root: false,
+			arms: [
+				{
+					kind: 202,
+					builder: 'fieldDeclaration',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [202, 'name'],
+									kinds: [478],
+									leaf: 'identifier',
+									texts: [1, 478],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [202, 'type'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
+										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								}
+							]
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: ['attributes'],
+							required: ['name', 'type']
+						}
+					],
+					holders: [[427, 'fieldDeclaration']]
+				},
+				{
+					kind: 432,
+					seated: 'config',
+					slots: [
+						{
+							name: 'attributes',
+							steps: [
+								{
+									key: 'attributeItems',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [432, 'attributeItems'],
+									kinds: [],
+									many: true
+								},
+								{
+									at: [190, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'attributeItem',
+											key: 'attribute'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [432, 'type'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
+										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								}
+							]
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: ['name'],
+							required: ['type']
+						}
+					],
+					holders: [[345, 'items']]
+				}
+			]
+		},
+		'declaration.member.field.public.internal': {
+			root: false,
+			arms: [
+				{
+					kind: 202,
+					builder: 'fieldDeclaration',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [202, 'name'],
+									kinds: [478],
+									leaf: 'identifier',
+									texts: [1, 478],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [202, 'type'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
+										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 126
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: ['attributes'],
+							required: ['name', 'type']
+						}
+					],
+					holders: [[427, 'fieldDeclaration']]
+				},
+				{
+					kind: 432,
+					seated: 'config',
+					slots: [
+						{
+							name: 'attributes',
+							steps: [
+								{
+									key: 'attributeItems',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [432, 'attributeItems'],
+									kinds: [],
+									many: true
+								},
+								{
+									at: [190, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'attributeItem',
+											key: 'attribute'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [432, 'type'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
+										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 126
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: ['name'],
+							required: ['type']
+						}
+					],
+					holders: [[345, 'items']]
+				}
+			]
+		},
+		'declaration.member.field.public.parent': {
+			root: false,
+			arms: [
+				{
+					kind: 202,
+					builder: 'fieldDeclaration',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [202, 'name'],
+									kinds: [478],
+									leaf: 'identifier',
+									texts: [1, 478],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [202, 'type'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
+										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: ['attributes'],
+							required: ['name', 'type']
+						}
+					],
+					holders: [[427, 'fieldDeclaration']]
+				},
+				{
+					kind: 432,
+					seated: 'config',
+					slots: [
+						{
+							name: 'attributes',
+							steps: [
+								{
+									key: 'attributeItems',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [432, 'attributeItems'],
+									kinds: [],
+									many: true
+								},
+								{
+									at: [190, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'attributeItem',
+											key: 'attribute'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [432, 'type'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
+										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: ['name'],
+							required: ['type']
+						}
+					],
+					holders: [[345, 'items']]
+				}
+			]
+		},
+		'declaration.member.field.public.restricted': {
+			root: false,
+			arms: [
+				{
+					kind: 202,
+					builder: 'fieldDeclaration',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [202, 'name'],
+									kinds: [478],
+									leaf: 'identifier',
+									texts: [1, 478],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [202, 'type'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
+										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'scope',
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier'
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [379]
+								},
+								{
+									key: 'path'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [379, 'path'],
+									kinds: [1, 125, 126, 127, 263, 481],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										crate: 126,
+										self: 481,
+										super: 125
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								}
+							]
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: ['attributes'],
+							required: ['name', 'scope', 'type']
+						}
+					],
+					holders: [[427, 'fieldDeclaration']]
+				},
+				{
+					kind: 432,
+					seated: 'config',
+					slots: [
+						{
+							name: 'attributes',
+							steps: [
+								{
+									key: 'attributeItems',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [432, 'attributeItems'],
+									kinds: [],
+									many: true
+								},
+								{
+									at: [190, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'attributeItem',
+											key: 'attribute'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [432, 'type'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
+										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'scope',
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier'
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [379]
+								},
+								{
+									key: 'path'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [379, 'path'],
+									kinds: [1, 125, 126, 127, 263, 481],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										crate: 126,
+										self: 481,
+										super: 125
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								}
+							]
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: ['name'],
+							required: ['scope', 'type']
+						}
+					],
+					holders: [[345, 'items']]
+				}
+			]
+		},
+		'declaration.member.method': {
 			root: true,
 			arms: [
 				{
@@ -22253,7 +18805,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['default', 'static', 'async', 'const', 'unsafe']
 		},
-		'declaration.method.private': {
+		'declaration.member.method.private': {
 			root: true,
 			arms: [
 				{
@@ -22986,7 +19538,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['default', 'static', 'async', 'const', 'unsafe']
 		},
-		'declaration.method.public': {
+		'declaration.member.method.public': {
 			root: true,
 			arms: [
 				{
@@ -23704,7 +20256,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['default', 'static', 'async', 'const', 'unsafe']
 		},
-		'declaration.method.public.internal': {
+		'declaration.member.method.public.internal': {
 			root: true,
 			arms: [
 				{
@@ -24437,7 +20989,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['default', 'static', 'async', 'const', 'unsafe']
 		},
-		'declaration.method.public.parent': {
+		'declaration.member.method.public.parent': {
 			root: true,
 			arms: [
 				{
@@ -25170,7 +21722,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['default', 'static', 'async', 'const', 'unsafe']
 		},
-		'declaration.method.public.restricted': {
+		'declaration.member.method.public.restricted': {
 			root: true,
 			arms: [
 				{
@@ -25966,7 +22518,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['default', 'static', 'async', 'const', 'unsafe']
 		},
-		'declaration.method.signature': {
+		'declaration.member.method.signature': {
 			root: true,
 			arms: [
 				{
@@ -26529,7 +23081,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['static', 'async', 'default', 'const', 'unsafe']
 		},
-		'declaration.method.signature.private': {
+		'declaration.member.method.signature.private': {
 			root: true,
 			arms: [
 				{
@@ -27126,7 +23678,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['static', 'async', 'default', 'const', 'unsafe']
 		},
-		'declaration.method.signature.public': {
+		'declaration.member.method.signature.public': {
 			root: true,
 			arms: [
 				{
@@ -27708,7 +24260,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['static', 'async', 'default', 'const', 'unsafe']
 		},
-		'declaration.method.signature.public.internal': {
+		'declaration.member.method.signature.public.internal': {
 			root: true,
 			arms: [
 				{
@@ -28305,7 +24857,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['static', 'async', 'default', 'const', 'unsafe']
 		},
-		'declaration.method.signature.public.parent': {
+		'declaration.member.method.signature.public.parent': {
 			root: true,
 			arms: [
 				{
@@ -28902,7 +25454,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['static', 'async', 'default', 'const', 'unsafe']
 		},
-		'declaration.method.signature.public.restricted': {
+		'declaration.member.method.signature.public.restricted': {
 			root: true,
 			arms: [
 				{
@@ -31511,7 +28063,3455 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['mutable']
 		},
-		'declaration.struct': {
+		'declaration.type.enum': {
+			root: true,
+			arms: [
+				{
+					kind: 198,
+					builder: 'enumItem',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [198, 'name'],
+									kinds: [484],
+									leaf: 'identifier',
+									texts: [1, 484],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [198, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [198, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'members',
+							steps: [
+								{
+									key: 'body',
+									stored: '_body'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [198, 'body'],
+									kinds: []
+								},
+								{
+									at: [343, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'enumVariantList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'enumVariantListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [428, 'enumVariant'],
+									kinds: [200],
+									within: [
+										{
+											builder: 'enumVariantList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'enumVariantListElements',
+											key: 'items'
+										},
+										{
+											key: 'enumVariant',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [428, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['members', 'name']
+						}
+					]
+				}
+			],
+			flags: ['const']
+		},
+		'declaration.type.enum.private': {
+			root: true,
+			arms: [
+				{
+					kind: 198,
+					builder: 'enumItem',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [198, 'name'],
+									kinds: [484],
+									leaf: 'identifier',
+									texts: [1, 484],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [198, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [198, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'members',
+							steps: [
+								{
+									key: 'body',
+									stored: '_body'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [198, 'body'],
+									kinds: []
+								},
+								{
+									at: [343, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'enumVariantList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'enumVariantListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [428, 'enumVariant'],
+									kinds: [200],
+									within: [
+										{
+											builder: 'enumVariantList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'enumVariantListElements',
+											key: 'items'
+										},
+										{
+											key: 'enumVariant',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [428, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 481
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['members', 'name']
+						}
+					]
+				}
+			],
+			flags: ['const']
+		},
+		'declaration.type.enum.public': {
+			root: true,
+			arms: [
+				{
+					kind: 198,
+					builder: 'enumItem',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [198, 'name'],
+									kinds: [484],
+									leaf: 'identifier',
+									texts: [1, 484],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [198, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [198, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'members',
+							steps: [
+								{
+									key: 'body',
+									stored: '_body'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [198, 'body'],
+									kinds: []
+								},
+								{
+									at: [343, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'enumVariantList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'enumVariantListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [428, 'enumVariant'],
+									kinds: [200],
+									within: [
+										{
+											builder: 'enumVariantList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'enumVariantListElements',
+											key: 'items'
+										},
+										{
+											key: 'enumVariant',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [428, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								}
+							]
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['members', 'name']
+						}
+					]
+				}
+			],
+			flags: ['const']
+		},
+		'declaration.type.enum.public.internal': {
+			root: true,
+			arms: [
+				{
+					kind: 198,
+					builder: 'enumItem',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [198, 'name'],
+									kinds: [484],
+									leaf: 'identifier',
+									texts: [1, 484],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [198, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [198, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'members',
+							steps: [
+								{
+									key: 'body',
+									stored: '_body'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [198, 'body'],
+									kinds: []
+								},
+								{
+									at: [343, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'enumVariantList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'enumVariantListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [428, 'enumVariant'],
+									kinds: [200],
+									within: [
+										{
+											builder: 'enumVariantList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'enumVariantListElements',
+											key: 'items'
+										},
+										{
+											key: 'enumVariant',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [428, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 126
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['members', 'name']
+						}
+					]
+				}
+			],
+			flags: ['const']
+		},
+		'declaration.type.enum.public.parent': {
+			root: true,
+			arms: [
+				{
+					kind: 198,
+					builder: 'enumItem',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [198, 'name'],
+									kinds: [484],
+									leaf: 'identifier',
+									texts: [1, 484],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [198, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [198, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'members',
+							steps: [
+								{
+									key: 'body',
+									stored: '_body'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [198, 'body'],
+									kinds: []
+								},
+								{
+									at: [343, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'enumVariantList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'enumVariantListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [428, 'enumVariant'],
+									kinds: [200],
+									within: [
+										{
+											builder: 'enumVariantList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'enumVariantListElements',
+											key: 'items'
+										},
+										{
+											key: 'enumVariant',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [428, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['members', 'name']
+						}
+					]
+				}
+			],
+			flags: ['const']
+		},
+		'declaration.type.enum.public.restricted': {
+			root: true,
+			arms: [
+				{
+					kind: 198,
+					builder: 'enumItem',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [198, 'name'],
+									kinds: [484],
+									leaf: 'identifier',
+									texts: [1, 484],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [198, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [198, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'members',
+							steps: [
+								{
+									key: 'body',
+									stored: '_body'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [198, 'body'],
+									kinds: []
+								},
+								{
+									at: [343, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'enumVariantList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'enumVariantListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [428, 'enumVariant'],
+									kinds: [200],
+									within: [
+										{
+											builder: 'enumVariantList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'enumVariantListElements',
+											key: 'items'
+										},
+										{
+											key: 'enumVariant',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [428, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'scope',
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier'
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [379]
+								},
+								{
+									key: 'path'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [379, 'path'],
+									kinds: [1, 125, 126, 127, 263, 481],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										crate: 126,
+										self: 481,
+										super: 125
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								}
+							]
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['members', 'name', 'scope']
+						}
+					]
+				}
+			],
+			flags: ['const']
+		},
+		'declaration.type.interface.trait': {
+			root: true,
+			arms: [
+				{
+					kind: 214,
+					builder: 'traitItem',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [214, 'name'],
+									kinds: [484],
+									leaf: 'identifier',
+									texts: [1, 484],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [214, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'extends',
+							steps: [
+								{
+									key: 'bounds',
+									stored: '_bounds',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [214, 'bounds'],
+									kinds: []
+								},
+								{
+									at: [216, 'bounds'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
+										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'traitBounds',
+											key: 'bounds'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [214, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'members',
+							steps: [
+								{
+									key: 'body',
+									stored: '_body'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [214, 'body'],
+									kinds: []
+								},
+								{
+									at: [437, 'declarations'],
+									kinds: [
+										178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 213, 214, 215, 223, 224, 259, 377, 378, 384,
+										385, 395, 396, 416, 417, 418, 423, 424, 425, 480, 483
+									],
+									tokens: {
+										';': 178
+									},
+									within: [
+										{
+											builder: 'traitInterfaceDeclarationBody',
+											key: 'declarations',
+											optional: true
+										}
+									],
+									many: true
+								},
+								{
+									at: [190, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'traitInterfaceDeclarationBody',
+											key: 'declarations',
+											optional: true
+										},
+										{
+											builder: 'attributeItem',
+											key: 'attribute'
+										}
+									]
+								},
+								{
+									at: [191, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'traitInterfaceDeclarationBody',
+											key: 'declarations',
+											optional: true
+										},
+										{
+											builder: 'innerAttributeItem',
+											key: 'attribute',
+											sets: {
+												kind: 191,
+												flags: ['inner']
+											}
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'unsafe',
+											optional: true
+										}
+									],
+									kind: 111,
+									presence: true
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['members', 'name']
+						}
+					]
+				}
+			],
+			flags: ['unsafe']
+		},
+		'declaration.type.interface.trait.private': {
+			root: true,
+			arms: [
+				{
+					kind: 214,
+					builder: 'traitItem',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [214, 'name'],
+									kinds: [484],
+									leaf: 'identifier',
+									texts: [1, 484],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [214, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'extends',
+							steps: [
+								{
+									key: 'bounds',
+									stored: '_bounds',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [214, 'bounds'],
+									kinds: []
+								},
+								{
+									at: [216, 'bounds'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
+										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'traitBounds',
+											key: 'bounds'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [214, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'members',
+							steps: [
+								{
+									key: 'body',
+									stored: '_body'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [214, 'body'],
+									kinds: []
+								},
+								{
+									at: [437, 'declarations'],
+									kinds: [
+										178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 213, 214, 215, 223, 224, 259, 377, 378, 384,
+										385, 395, 396, 416, 417, 418, 423, 424, 425, 480, 483
+									],
+									tokens: {
+										';': 178
+									},
+									within: [
+										{
+											builder: 'traitInterfaceDeclarationBody',
+											key: 'declarations',
+											optional: true
+										}
+									],
+									many: true
+								},
+								{
+									at: [190, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'traitInterfaceDeclarationBody',
+											key: 'declarations',
+											optional: true
+										},
+										{
+											builder: 'attributeItem',
+											key: 'attribute'
+										}
+									]
+								},
+								{
+									at: [191, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'traitInterfaceDeclarationBody',
+											key: 'declarations',
+											optional: true
+										},
+										{
+											builder: 'innerAttributeItem',
+											key: 'attribute',
+											sets: {
+												kind: 191,
+												flags: ['inner']
+											}
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 481
+						}
+					],
+					flags: {
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'unsafe',
+											optional: true
+										}
+									],
+									kind: 111,
+									presence: true
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['members', 'name']
+						}
+					]
+				}
+			],
+			flags: ['unsafe']
+		},
+		'declaration.type.interface.trait.public': {
+			root: true,
+			arms: [
+				{
+					kind: 214,
+					builder: 'traitItem',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [214, 'name'],
+									kinds: [484],
+									leaf: 'identifier',
+									texts: [1, 484],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [214, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'extends',
+							steps: [
+								{
+									key: 'bounds',
+									stored: '_bounds',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [214, 'bounds'],
+									kinds: []
+								},
+								{
+									at: [216, 'bounds'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
+										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'traitBounds',
+											key: 'bounds'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [214, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'members',
+							steps: [
+								{
+									key: 'body',
+									stored: '_body'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [214, 'body'],
+									kinds: []
+								},
+								{
+									at: [437, 'declarations'],
+									kinds: [
+										178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 213, 214, 215, 223, 224, 259, 377, 378, 384,
+										385, 395, 396, 416, 417, 418, 423, 424, 425, 480, 483
+									],
+									tokens: {
+										';': 178
+									},
+									within: [
+										{
+											builder: 'traitInterfaceDeclarationBody',
+											key: 'declarations',
+											optional: true
+										}
+									],
+									many: true
+								},
+								{
+									at: [190, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'traitInterfaceDeclarationBody',
+											key: 'declarations',
+											optional: true
+										},
+										{
+											builder: 'attributeItem',
+											key: 'attribute'
+										}
+									]
+								},
+								{
+									at: [191, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'traitInterfaceDeclarationBody',
+											key: 'declarations',
+											optional: true
+										},
+										{
+											builder: 'innerAttributeItem',
+											key: 'attribute',
+											sets: {
+												kind: 191,
+												flags: ['inner']
+											}
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								}
+							]
+						}
+					],
+					flags: {
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'unsafe',
+											optional: true
+										}
+									],
+									kind: 111,
+									presence: true
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['members', 'name']
+						}
+					]
+				}
+			],
+			flags: ['unsafe']
+		},
+		'declaration.type.interface.trait.public.internal': {
+			root: true,
+			arms: [
+				{
+					kind: 214,
+					builder: 'traitItem',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [214, 'name'],
+									kinds: [484],
+									leaf: 'identifier',
+									texts: [1, 484],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [214, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'extends',
+							steps: [
+								{
+									key: 'bounds',
+									stored: '_bounds',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [214, 'bounds'],
+									kinds: []
+								},
+								{
+									at: [216, 'bounds'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
+										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'traitBounds',
+											key: 'bounds'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [214, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'members',
+							steps: [
+								{
+									key: 'body',
+									stored: '_body'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [214, 'body'],
+									kinds: []
+								},
+								{
+									at: [437, 'declarations'],
+									kinds: [
+										178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 213, 214, 215, 223, 224, 259, 377, 378, 384,
+										385, 395, 396, 416, 417, 418, 423, 424, 425, 480, 483
+									],
+									tokens: {
+										';': 178
+									},
+									within: [
+										{
+											builder: 'traitInterfaceDeclarationBody',
+											key: 'declarations',
+											optional: true
+										}
+									],
+									many: true
+								},
+								{
+									at: [190, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'traitInterfaceDeclarationBody',
+											key: 'declarations',
+											optional: true
+										},
+										{
+											builder: 'attributeItem',
+											key: 'attribute'
+										}
+									]
+								},
+								{
+									at: [191, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'traitInterfaceDeclarationBody',
+											key: 'declarations',
+											optional: true
+										},
+										{
+											builder: 'innerAttributeItem',
+											key: 'attribute',
+											sets: {
+												kind: 191,
+												flags: ['inner']
+											}
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 126
+						}
+					],
+					flags: {
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'unsafe',
+											optional: true
+										}
+									],
+									kind: 111,
+									presence: true
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['members', 'name']
+						}
+					]
+				}
+			],
+			flags: ['unsafe']
+		},
+		'declaration.type.interface.trait.public.parent': {
+			root: true,
+			arms: [
+				{
+					kind: 214,
+					builder: 'traitItem',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [214, 'name'],
+									kinds: [484],
+									leaf: 'identifier',
+									texts: [1, 484],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [214, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'extends',
+							steps: [
+								{
+									key: 'bounds',
+									stored: '_bounds',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [214, 'bounds'],
+									kinds: []
+								},
+								{
+									at: [216, 'bounds'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
+										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'traitBounds',
+											key: 'bounds'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [214, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'members',
+							steps: [
+								{
+									key: 'body',
+									stored: '_body'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [214, 'body'],
+									kinds: []
+								},
+								{
+									at: [437, 'declarations'],
+									kinds: [
+										178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 213, 214, 215, 223, 224, 259, 377, 378, 384,
+										385, 395, 396, 416, 417, 418, 423, 424, 425, 480, 483
+									],
+									tokens: {
+										';': 178
+									},
+									within: [
+										{
+											builder: 'traitInterfaceDeclarationBody',
+											key: 'declarations',
+											optional: true
+										}
+									],
+									many: true
+								},
+								{
+									at: [190, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'traitInterfaceDeclarationBody',
+											key: 'declarations',
+											optional: true
+										},
+										{
+											builder: 'attributeItem',
+											key: 'attribute'
+										}
+									]
+								},
+								{
+									at: [191, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'traitInterfaceDeclarationBody',
+											key: 'declarations',
+											optional: true
+										},
+										{
+											builder: 'innerAttributeItem',
+											key: 'attribute',
+											sets: {
+												kind: 191,
+												flags: ['inner']
+											}
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						}
+					],
+					flags: {
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'unsafe',
+											optional: true
+										}
+									],
+									kind: 111,
+									presence: true
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['members', 'name']
+						}
+					]
+				}
+			],
+			flags: ['unsafe']
+		},
+		'declaration.type.interface.trait.public.restricted': {
+			root: true,
+			arms: [
+				{
+					kind: 214,
+					builder: 'traitItem',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [214, 'name'],
+									kinds: [484],
+									leaf: 'identifier',
+									texts: [1, 484],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [214, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'extends',
+							steps: [
+								{
+									key: 'bounds',
+									stored: '_bounds',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [214, 'bounds'],
+									kinds: []
+								},
+								{
+									at: [216, 'bounds'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
+										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'traitBounds',
+											key: 'bounds'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [214, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'members',
+							steps: [
+								{
+									key: 'body',
+									stored: '_body'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [214, 'body'],
+									kinds: []
+								},
+								{
+									at: [437, 'declarations'],
+									kinds: [
+										178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 213, 214, 215, 223, 224, 259, 377, 378, 384,
+										385, 395, 396, 416, 417, 418, 423, 424, 425, 480, 483
+									],
+									tokens: {
+										';': 178
+									},
+									within: [
+										{
+											builder: 'traitInterfaceDeclarationBody',
+											key: 'declarations',
+											optional: true
+										}
+									],
+									many: true
+								},
+								{
+									at: [190, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'traitInterfaceDeclarationBody',
+											key: 'declarations',
+											optional: true
+										},
+										{
+											builder: 'attributeItem',
+											key: 'attribute'
+										}
+									]
+								},
+								{
+									at: [191, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'traitInterfaceDeclarationBody',
+											key: 'declarations',
+											optional: true
+										},
+										{
+											builder: 'innerAttributeItem',
+											key: 'attribute',
+											sets: {
+												kind: 191,
+												flags: ['inner']
+											}
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'scope',
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier'
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [379]
+								},
+								{
+									key: 'path'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [379, 'path'],
+									kinds: [1, 125, 126, 127, 263, 481],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										crate: 126,
+										self: 481,
+										super: 125
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								}
+							]
+						}
+					],
+					flags: {
+						unsafe: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'unsafe',
+											optional: true
+										}
+									],
+									kind: 111,
+									presence: true
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['members', 'name', 'scope']
+						}
+					]
+				}
+			],
+			flags: ['unsafe']
+		},
+		'declaration.type.struct': {
 			root: true,
 			arms: [
 				{
@@ -32020,7 +32020,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.struct.private': {
+		'declaration.type.struct.private': {
 			root: true,
 			arms: [
 				{
@@ -32273,7 +32273,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.struct.public': {
+		'declaration.type.struct.public': {
 			root: true,
 			arms: [
 				{
@@ -32511,7 +32511,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.struct.public.internal': {
+		'declaration.type.struct.public.internal': {
 			root: true,
 			arms: [
 				{
@@ -32764,7 +32764,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.struct.public.parent': {
+		'declaration.type.struct.public.parent': {
 			root: true,
 			arms: [
 				{
@@ -33017,7 +33017,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.struct.public.restricted': {
+		'declaration.type.struct.public.restricted': {
 			root: true,
 			arms: [
 				{
@@ -33333,7 +33333,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.struct.tuple': {
+		'declaration.type.struct.tuple': {
 			root: true,
 			arms: [
 				{
@@ -33504,7 +33504,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.struct.tuple.private': {
+		'declaration.type.struct.tuple.private': {
 			root: true,
 			arms: [
 				{
@@ -33709,7 +33709,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.struct.tuple.public': {
+		'declaration.type.struct.tuple.public': {
 			root: true,
 			arms: [
 				{
@@ -33899,7 +33899,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.struct.tuple.public.internal': {
+		'declaration.type.struct.tuple.public.internal': {
 			root: true,
 			arms: [
 				{
@@ -34104,7 +34104,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.struct.tuple.public.parent': {
+		'declaration.type.struct.tuple.public.parent': {
 			root: true,
 			arms: [
 				{
@@ -34309,7 +34309,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.struct.tuple.public.restricted': {
+		'declaration.type.struct.tuple.public.restricted': {
 			root: true,
 			arms: [
 				{
@@ -34577,7 +34577,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.struct.unit': {
+		'declaration.type.struct.unit': {
 			root: true,
 			arms: [
 				{
@@ -34698,7 +34698,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.struct.unit.private': {
+		'declaration.type.struct.unit.private': {
 			root: true,
 			arms: [
 				{
@@ -34853,7 +34853,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.struct.unit.public': {
+		'declaration.type.struct.unit.public': {
 			root: true,
 			arms: [
 				{
@@ -34993,7 +34993,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.struct.unit.public.internal': {
+		'declaration.type.struct.unit.public.internal': {
 			root: true,
 			arms: [
 				{
@@ -35148,7 +35148,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.struct.unit.public.parent': {
+		'declaration.type.struct.unit.public.parent': {
 			root: true,
 			arms: [
 				{
@@ -35303,7 +35303,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.struct.unit.public.restricted': {
+		'declaration.type.struct.unit.public.restricted': {
 			root: true,
 			arms: [
 				{
@@ -35521,7 +35521,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.type_alias': {
+		'declaration.type.type_alias': {
 			root: true,
 			arms: [
 				{
@@ -35722,7 +35722,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.type_alias.associated': {
+		'declaration.type.type_alias.associated': {
 			root: true,
 			arms: [
 				{
@@ -35919,7 +35919,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.type_alias.private': {
+		'declaration.type.type_alias.private': {
 			root: true,
 			arms: [
 				{
@@ -36154,7 +36154,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.type_alias.public': {
+		'declaration.type.type_alias.public': {
 			root: true,
 			arms: [
 				{
@@ -36374,7 +36374,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.type_alias.public.internal': {
+		'declaration.type.type_alias.public.internal': {
 			root: true,
 			arms: [
 				{
@@ -36609,7 +36609,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.type_alias.public.parent': {
+		'declaration.type.type_alias.public.parent': {
 			root: true,
 			arms: [
 				{
@@ -36844,7 +36844,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.type_alias.public.restricted': {
+		'declaration.type.type_alias.public.restricted': {
 			root: true,
 			arms: [
 				{
@@ -37137,6 +37137,1538 @@ export const build: PortableBuildTable = {
 						{
 							absent: [],
 							required: ['name', 'scope', 'value']
+						}
+					]
+				}
+			]
+		},
+		'declaration.type.union': {
+			root: true,
+			arms: [
+				{
+					kind: 197,
+					builder: 'unionItem',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [197, 'name'],
+									kinds: [484],
+									leaf: 'identifier',
+									texts: [1, 484],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [197, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [197, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body',
+									stored: '_body'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [197, 'body'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['body', 'name']
+						}
+					]
+				}
+			]
+		},
+		'declaration.type.union.private': {
+			root: true,
+			arms: [
+				{
+					kind: 197,
+					builder: 'unionItem',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [197, 'name'],
+									kinds: [484],
+									leaf: 'identifier',
+									texts: [1, 484],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [197, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [197, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body',
+									stored: '_body'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [197, 'body'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 481
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['body', 'name']
+						}
+					]
+				}
+			]
+		},
+		'declaration.type.union.public': {
+			root: true,
+			arms: [
+				{
+					kind: 197,
+					builder: 'unionItem',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [197, 'name'],
+									kinds: [484],
+									leaf: 'identifier',
+									texts: [1, 484],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [197, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [197, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body',
+									stored: '_body'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [197, 'body'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								}
+							]
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['body', 'name']
+						}
+					]
+				}
+			]
+		},
+		'declaration.type.union.public.internal': {
+			root: true,
+			arms: [
+				{
+					kind: 197,
+					builder: 'unionItem',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [197, 'name'],
+									kinds: [484],
+									leaf: 'identifier',
+									texts: [1, 484],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [197, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [197, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body',
+									stored: '_body'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [197, 'body'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 126
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['body', 'name']
+						}
+					]
+				}
+			]
+		},
+		'declaration.type.union.public.parent': {
+			root: true,
+			arms: [
+				{
+					kind: 197,
+					builder: 'unionItem',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [197, 'name'],
+									kinds: [484],
+									leaf: 'identifier',
+									texts: [1, 484],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [197, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [197, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body',
+									stored: '_body'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [197, 'body'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 125
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['body', 'name']
+						}
+					]
+				}
+			]
+		},
+		'declaration.type.union.public.restricted': {
+			root: true,
+			arms: [
+				{
+					kind: 197,
+					builder: 'unionItem',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [197, 'name'],
+									kinds: [484],
+									leaf: 'identifier',
+									texts: [1, 484],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [197, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [347, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [430, 'content'],
+									kinds: [127, 220, 221, 222],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										},
+										{
+											key: 'content',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [430, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [197, 'whereClause'],
+									kinds: [211]
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body',
+									stored: '_body'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [197, 'body'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationList',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'scope',
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier'
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [379]
+								},
+								{
+									key: 'path'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [379, 'path'],
+									kinds: [1, 125, 126, 127, 263, 481],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										crate: 126,
+										self: 481,
+										super: 125
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'visibilityModifier',
+									stored: '_visibility_modifier',
+									builder: 'visibilityModifier',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [381]
+								},
+								{
+									key: 'visibilityModifierPubScope',
+									stored: '_visibility_modifier_pub_scope',
+									builder: 'visibilityModifier.pub.scope',
+									optional: true,
+									mounted: {
+										call: 'child',
+										key: 'visibilityModifierPubScope'
+									}
+								},
+								{
+									key: 'content',
+									builder: 'visibilityModifier.pub.scope.inPath',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									}
+								}
+							]
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['body', 'name', 'scope']
 						}
 					]
 				}
@@ -37496,1538 +39028,6 @@ export const build: PortableBuildTable = {
 						{
 							absent: [],
 							required: ['name', 'type']
-						}
-					]
-				}
-			]
-		},
-		'declaration.union': {
-			root: true,
-			arms: [
-				{
-					kind: 197,
-					builder: 'unionItem',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [197, 'name'],
-									kinds: [484],
-									leaf: 'identifier',
-									texts: [1, 484],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [197, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [347, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [430, 'content'],
-									kinds: [127, 220, 221, 222],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										},
-										{
-											key: 'content',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [430, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'whereClause',
-							steps: [
-								{
-									key: 'whereClause',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [197, 'whereClause'],
-									kinds: [211]
-								}
-							]
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body',
-									stored: '_body'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [197, 'body'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['body', 'name']
-						}
-					]
-				}
-			]
-		},
-		'declaration.union.private': {
-			root: true,
-			arms: [
-				{
-					kind: 197,
-					builder: 'unionItem',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [197, 'name'],
-									kinds: [484],
-									leaf: 'identifier',
-									texts: [1, 484],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [197, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [347, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [430, 'content'],
-									kinds: [127, 220, 221, 222],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										},
-										{
-											key: 'content',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [430, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'whereClause',
-							steps: [
-								{
-									key: 'whereClause',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [197, 'whereClause'],
-									kinds: [211]
-								}
-							]
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body',
-									stored: '_body'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [197, 'body'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content'
-								}
-							],
-							kind: 481
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['body', 'name']
-						}
-					]
-				}
-			]
-		},
-		'declaration.union.public': {
-			root: true,
-			arms: [
-				{
-					kind: 197,
-					builder: 'unionItem',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [197, 'name'],
-									kinds: [484],
-									leaf: 'identifier',
-									texts: [1, 484],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [197, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [347, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [430, 'content'],
-									kinds: [127, 220, 221, 222],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										},
-										{
-											key: 'content',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [430, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'whereClause',
-							steps: [
-								{
-									key: 'whereClause',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [197, 'whereClause'],
-									kinds: [211]
-								}
-							]
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body',
-									stored: '_body'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [197, 'body'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									}
-								}
-							]
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['body', 'name']
-						}
-					]
-				}
-			]
-		},
-		'declaration.union.public.internal': {
-			root: true,
-			arms: [
-				{
-					kind: 197,
-					builder: 'unionItem',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [197, 'name'],
-									kinds: [484],
-									leaf: 'identifier',
-									texts: [1, 484],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [197, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [347, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [430, 'content'],
-									kinds: [127, 220, 221, 222],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										},
-										{
-											key: 'content',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [430, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'whereClause',
-							steps: [
-								{
-									key: 'whereClause',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [197, 'whereClause'],
-									kinds: [211]
-								}
-							]
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body',
-									stored: '_body'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [197, 'body'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content'
-								}
-							],
-							kind: 126
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['body', 'name']
-						}
-					]
-				}
-			]
-		},
-		'declaration.union.public.parent': {
-			root: true,
-			arms: [
-				{
-					kind: 197,
-					builder: 'unionItem',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [197, 'name'],
-									kinds: [484],
-									leaf: 'identifier',
-									texts: [1, 484],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [197, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [347, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [430, 'content'],
-									kinds: [127, 220, 221, 222],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										},
-										{
-											key: 'content',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [430, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'whereClause',
-							steps: [
-								{
-									key: 'whereClause',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [197, 'whereClause'],
-									kinds: [211]
-								}
-							]
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body',
-									stored: '_body'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [197, 'body'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content'
-								}
-							],
-							kind: 125
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['body', 'name']
-						}
-					]
-				}
-			]
-		},
-		'declaration.union.public.restricted': {
-			root: true,
-			arms: [
-				{
-					kind: 197,
-					builder: 'unionItem',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [197, 'name'],
-									kinds: [484],
-									leaf: 'identifier',
-									texts: [1, 484],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [197, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [347, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [430, 'content'],
-									kinds: [127, 220, 221, 222],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										},
-										{
-											key: 'content',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [430, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'whereClause',
-							steps: [
-								{
-									key: 'whereClause',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [197, 'whereClause'],
-									kinds: [211]
-								}
-							]
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body',
-									stored: '_body'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [197, 'body'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'scope',
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier'
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub.scope.inPath',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [379]
-								},
-								{
-									key: 'path'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [379, 'path'],
-									kinds: [1, 125, 126, 127, 263, 481],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										crate: 126,
-										self: 481,
-										super: 125
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'visibilityModifier',
-									stored: '_visibility_modifier',
-									builder: 'visibilityModifier',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [381]
-								},
-								{
-									key: 'visibilityModifierPubScope',
-									stored: '_visibility_modifier_pub_scope',
-									builder: 'visibilityModifier.pub.scope',
-									optional: true,
-									mounted: {
-										call: 'child',
-										key: 'visibilityModifierPubScope'
-									}
-								},
-								{
-									key: 'content',
-									builder: 'visibilityModifier.pub.scope.inPath',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									}
-								}
-							]
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['body', 'name', 'scope']
 						}
 					]
 				}

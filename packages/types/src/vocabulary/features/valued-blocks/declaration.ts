@@ -14,16 +14,18 @@ export namespace Declaration {
 		>;
 		// r only
 	}
-	export interface Method<G extends GrammarMap, K extends Under<'declaration.method'> = 'declaration.method'> {
-		readonly trailingExpression?: Slot<
-			G,
-			K,
-			'trailingExpression',
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Statement.Any<G>
-		>;
-		// r only
+	export namespace Member {
+		export interface Method<G extends GrammarMap, K extends Under<'declaration.member.method'> = 'declaration.member.method'> {
+			readonly trailingExpression?: Slot<
+				G,
+				K,
+				'trailingExpression',
+				| V.Expression.Any<G>
+				| V.Identifier.Any<G>
+				| V.Literal.Any<G>
+				| V.Statement.Any<G>
+			>;
+			// r only
+		}
 	}
 }

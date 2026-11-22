@@ -3,7 +3,7 @@ import { inLanguage } from '../language.ts';
 import { hasKind, readsAs } from './classify.ts';
 import { languageGuardOf, type PortableLanguage } from './language-guard.ts';
 import { portableTrees, type LanguageGuard, type PortableGuard, type PortableGuardTree } from './tree.ts';
-import { vocabularyPaths } from './vocabulary-paths.ts';
+import { vocabularyNamespaces, vocabularyPaths } from './vocabulary-paths.ts';
 
 /** A vocabulary path: one of {@link vocabularyPaths}. */
 export type VocabularyPath = (typeof vocabularyPaths)[number];
@@ -20,7 +20,7 @@ export { registerPortableRows, type PortableLanguage } from './language-guard.ts
 export { portablePathHasFacts } from './facts.ts';
 export { portableTrees, type LanguageGuard, type PortableGuard, type PortableGuardTree, type PortableKindTree } from './tree.ts';
 export type { PortableKind } from '@sittir/types';
-export { vocabularyPaths } from './vocabulary-paths.ts';
+export { vocabularyNamespaces, vocabularyPaths } from './vocabulary-paths.ts';
 
 type Node = { readonly $type: number };
 
@@ -49,7 +49,7 @@ const views = new WeakMap<PortableLanguage, PortableGuardTree<VocabularyPath, La
  * on where it sits. So a method in an impl, trait or class body reads as a function, not a method; a closure parameter reads as
  * no parameter; `crate` visibility reads as no visibility; and a python static method reads as a function.
  */
-export const portable = portableTrees(vocabularyPaths, guardOf);
+export const portable = portableTrees(vocabularyPaths, vocabularyNamespaces, guardOf);
 
 /**
  * A language's portable guards: the shared tree's paths, each guard reading a node of the language, a bare kind id of it, or a
@@ -70,7 +70,7 @@ export function portableGuardsOf(language: PortableLanguage): PortableGuardTree<
 	let view = views.get(language);
 	if (view === undefined) {
 		const ofLanguage = inLanguage(language);
-		views.set(language, (view = portableTrees(vocabularyPaths, (path) => languageGuardOf(language, ofLanguage, (rows, value) => readsAs(rows, path, value))).is));
+		views.set(language, (view = portableTrees(vocabularyPaths, vocabularyNamespaces, (path) => languageGuardOf(language, ofLanguage, (rows, value) => readsAs(rows, path, value))).is));
 	}
 	return view;
 }

@@ -35,9 +35,9 @@ const ROWS: PortableRows = {
 		paths: {
 			declaration: { ids: [FUNCTION], exact: true },
 			'declaration.function': { ids: [FUNCTION], exact: false },
-			'declaration.method': { ids: [FUNCTION], exact: false },
-			'declaration.method.static': { ids: [FUNCTION], exact: false },
-			'declaration.constructor': { ids: [FUNCTION], exact: false },
+			'declaration.member.method': { ids: [FUNCTION], exact: false },
+			'declaration.member.method.static': { ids: [FUNCTION], exact: false },
+			'declaration.member.constructor': { ids: [FUNCTION], exact: false },
 			literal: { ids: [BOOLEAN], exact: true },
 			'literal.boolean': { ids: [BOOLEAN], exact: true },
 			'literal.boolean.true': { ids: [BOOLEAN], exact: false },
@@ -46,25 +46,25 @@ const ROWS: PortableRows = {
 			expression: { ids: [IDENTIFIER, BINARY], exact: false },
 			'expression.call': { ids: [IDENTIFIER], exact: true },
 			'expression.add': { ids: [BINARY], exact: false },
-			'declaration.property': { ids: [FIELD], exact: false }
+			'declaration.member.property': { ids: [FIELD], exact: false }
 		},
 		fixedText: { [PLUS]: '+', [TRUE]: 'true', [FALSE]: 'false' },
 		literals: [],
 		entries: {
 			[FUNCTION]: [
 				{
-					path: 'declaration.method.static',
+					path: 'declaration.member.method.static',
 					within: [DECORATED],
 					test: [
 						{ up: 1, via: [subject(DECORATED, 0)], plan: { op: 'eq', text: 'staticmethod', ...subject(DECORATOR, 0) } }
 					]
 				},
 				{
-					path: 'declaration.constructor',
+					path: 'declaration.member.constructor',
 					within: [],
 					test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', ...subject(FUNCTION, 0) } }]
 				},
-				{ path: 'declaration.method', within: [BLOCK, CLASS], test: [] },
+				{ path: 'declaration.member.method', within: [BLOCK, CLASS], test: [] },
 				{ path: 'declaration.function', within: [], test: [] }
 			],
 			[BOOLEAN]: [
@@ -93,7 +93,7 @@ const ROWS: PortableRows = {
 			],
 			[FIELD]: [
 				{
-					path: 'declaration.property',
+					path: 'declaration.member.property',
 					within: [],
 					test: [{ up: 0, via: [], plan: { op: 'present', ...subject(FIELD, 0) } }]
 				}
@@ -109,7 +109,7 @@ const read = classifierOf(ROWS);
 
 describe('classifierOf', () => {
 	it("reads a node as its kind's first entry whose conditions all hold", () => {
-		expect(read(fn('__init__'))).toBe('declaration.constructor');
+		expect(read(fn('__init__'))).toBe('declaration.member.constructor');
 		expect(read(fn('f'))).toBe('declaration.function');
 	});
 
@@ -128,7 +128,7 @@ describe('classifierOf', () => {
 	});
 
 	it('reads a boolean slot holding true as its keyword present, and false as absent', () => {
-		expect(read({ $type: FIELD, accessor: () => true })).toBe('declaration.property');
+		expect(read({ $type: FIELD, accessor: () => true })).toBe('declaration.member.property');
 		expect(read({ $type: FIELD, accessor: () => false })).toBeUndefined();
 	});
 
@@ -253,18 +253,18 @@ describe('classifierOf refinements', () => {
 		},
 		table: {
 			paths: {
-				'declaration.method': { ids: [METHOD], exact: false },
-				'declaration.method.public': { ids: [METHOD], exact: false },
-				'declaration.constructor': { ids: [METHOD], exact: false }
+				'declaration.member.method': { ids: [METHOD], exact: false },
+				'declaration.member.method.public': { ids: [METHOD], exact: false },
+				'declaration.member.constructor': { ids: [METHOD], exact: false }
 			},
 			fixedText: {},
 			literals: [],
 			entries: {
 				[METHOD]: [
-					{ path: 'declaration.constructor', within: [], test: [{ up: 0, via: [], plan: { op: 'eq', text: 'new', slots: { [METHOD]: 0 } } }] },
-					{ path: 'declaration.method', within: [], test: [{ up: 0, via: [], plan: { op: 'present', slots: { [METHOD]: 0 } } }] },
-					{ path: 'declaration.method.public', within: [], test: [{ up: 0, via: [], plan: { op: 'present', slots: { [METHOD]: 1 } } }] },
-					{ path: 'declaration.method', within: [], test: [] }
+					{ path: 'declaration.member.constructor', within: [], test: [{ up: 0, via: [], plan: { op: 'eq', text: 'new', slots: { [METHOD]: 0 } } }] },
+					{ path: 'declaration.member.method', within: [], test: [{ up: 0, via: [], plan: { op: 'present', slots: { [METHOD]: 0 } } }] },
+					{ path: 'declaration.member.method.public', within: [], test: [{ up: 0, via: [], plan: { op: 'present', slots: { [METHOD]: 1 } } }] },
+					{ path: 'declaration.member.method', within: [], test: [] }
 				]
 			}
 		}
@@ -276,11 +276,11 @@ describe('classifierOf refinements', () => {
 	});
 
 	it('reads a node as a refinement that holds, over an earlier entry it refines', () => {
-		expect(read(method('m', 'pub'))).toBe('declaration.method.public');
-		expect(read(method('m'))).toBe('declaration.method');
+		expect(read(method('m', 'pub'))).toBe('declaration.member.method.public');
+		expect(read(method('m'))).toBe('declaration.member.method');
 	});
 
 	it('keeps the first entry that holds among paths that do not refine each other', () => {
-		expect(read(method('new', 'pub'))).toBe('declaration.constructor');
+		expect(read(method('new', 'pub'))).toBe('declaration.member.constructor');
 	});
 });

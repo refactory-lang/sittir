@@ -3,28 +3,28 @@ import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Expression {
 	export namespace Collection {
-		export interface Object<G extends GrammarMap, K extends Under<'expression.collection.object'> = 'expression.collection.object'> extends SubKindOf<V.Expression.Collection<G, K>> {
+		export interface Object<G extends GrammarMap, K extends Under<'expression.collection.object'> = 'expression.collection.object'> extends SubKindOf<V.Expression<G, K>> {
 			// claimed by t
 			readonly $path: K;
 			readonly properties?: Slot<
 				G,
 				K,
 				'properties',
-				| V.Declaration.Method<G>
+				| V.Declaration.Member.Method<G>
 				| V.Element.Any<G>
 				| string
-				| V.Declaration.Property.Getter<G>
-				| V.Declaration.Property.Setter<G>
+				| V.Declaration.Member.Property.Getter<G>
+				| V.Declaration.Member.Property.Setter<G>
 				| V.Identifier.Any<G>
-				| V.Declaration.Method.Private<G>
-				| V.Declaration.Method.Protected<G>
-				| V.Declaration.Method.Public<G>
-				| V.Declaration.Property.Getter.Private<G>
-				| V.Declaration.Property.Getter.Protected<G>
-				| V.Declaration.Property.Getter.Public<G>
-				| V.Declaration.Property.Setter.Private<G>
-				| V.Declaration.Property.Setter.Protected<G>
-				| V.Declaration.Property.Setter.Public<G>
+				| V.Declaration.Member.Method.Private<G>
+				| V.Declaration.Member.Method.Protected<G>
+				| V.Declaration.Member.Method.Public<G>
+				| V.Declaration.Member.Property.Getter.Private<G>
+				| V.Declaration.Member.Property.Getter.Protected<G>
+				| V.Declaration.Member.Property.Getter.Public<G>
+				| V.Declaration.Member.Property.Setter.Private<G>
+				| V.Declaration.Member.Property.Setter.Protected<G>
+				| V.Declaration.Member.Property.Setter.Public<G>
 			>[];
 		}
 	}

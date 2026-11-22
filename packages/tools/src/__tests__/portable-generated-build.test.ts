@@ -10,7 +10,7 @@ const GRAMMARS = ['python', 'rust', 'typescript'] as const;
 
 const STORAGES = ['object', 'arena'] as const;
 
-const INTERPRETER_REFUSES: Readonly<Record<string, readonly string[]>> = { python: ['declaration.property.getter', 'declaration.method.static'] };
+const INTERPRETER_REFUSES: Readonly<Record<string, readonly string[]>> = { python: ['declaration.member.property.getter', 'declaration.member.method.static'] };
 
 const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 494, rust: 771, typescript: 681 };
 
@@ -434,17 +434,17 @@ describe('the generated portable build, by the engine that scopes it', () => {
 	it("builds a fact's spelling from its $at, and refuses what an untyped caller misstates there", async () => {
 		using engine = await createEngine(await languageByName('python'), { api: 'strict' });
 		const runtime = await portableRuntime(engine);
-		const portableBuild = (await generatedBuild('python')) as { readonly declaration: { readonly property: { readonly getter: PathFunction } } };
-		const { getter } = scopeBuilders(engine, portableBuild).declaration.property;
+		const portableBuild = (await generatedBuild('python')) as { readonly declaration: { readonly member: { readonly property: { readonly getter: PathFunction } } } };
+		const { getter } = scopeBuilders(engine, portableBuild).declaration.member.property;
 		const render = (node: unknown): string => engine.render(node as never).toString();
-		const read = [...structuresIn(runtime.read(engine.parse('class A:\n    @property\n    @override\n    def x(self) -> int:\n        pass\n')))].find((structure) => structure.$path === 'declaration.property.getter')!;
+		const read = [...structuresIn(runtime.read(engine.parse('class A:\n    @property\n    @override\n    def x(self) -> int:\n        pass\n')))].find((structure) => structure.$path === 'declaration.member.property.getter')!;
 		expect(read.$at).toEqual({ getter: { index: 0, spelling: 'property' }, override: { index: 1, spelling: 'override' } });
 		const at = (facts: object): PortableStructure => ({ ...read, $at: { ...read.$at, ...facts } });
 		expect(render(getter(read))).toBe('@property\n@override\ndef x(self) -> int:\n    pass\n');
 		expect(render(getter(at({ getter: { index: 1 }, override: { index: 0 } })))).toBe('@override\n@property\ndef x(self) -> int:\n    pass\n');
-		expect(() => getter(at({ override: { index: 1, spelling: 'overrides' } }))).toThrow('declaration.property.getter.override has no spelling "overrides"');
-		expect(() => getter(at({ getter: { index: 0, spelling: 'cached_property' } }))).toThrow('declaration.property.getter.getter has no spelling "cached_property"');
-		expect(() => getter({ ...read, $flags: [] })).toThrow('declaration.property.getter: $at names override, which it does not set');
+		expect(() => getter(at({ override: { index: 1, spelling: 'overrides' } }))).toThrow('declaration.member.property.getter.override has no spelling "overrides"');
+		expect(() => getter(at({ getter: { index: 0, spelling: 'cached_property' } }))).toThrow('declaration.member.property.getter.getter has no spelling "cached_property"');
+		expect(() => getter({ ...read, $flags: [] })).toThrow('declaration.member.property.getter: $at names override, which it does not set');
 	});
 
 	it('refuses a node another grammar built, naming both languages', async () => {

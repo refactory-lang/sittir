@@ -195,7 +195,7 @@ describe('the portable read', () => {
 	it('reads the decorators of a decorated definition onto the definition, and builds them back around it', () => {
 		const decorators = ['d'];
 		expect(firstOf('@d\ndef f():\n    pass\n')).toMatchObject({ $path: 'declaration.function', name: 'f', decorators });
-		expect(firstOf('@d\nclass C:\n    pass\n')).toMatchObject({ $path: 'declaration.class', name: 'C', decorators });
+		expect(firstOf('@d\nclass C:\n    pass\n')).toMatchObject({ $path: 'declaration.type.class', name: 'C', decorators });
 		for (const source of ['@d\ndef f():\n    pass\n', '@d\nclass C:\n    pass\n', 'class C:\n    @staticmethod\n    def m():\n        pass\n']) expect(roundTrip(source)).toBe(source);
 	});
 
@@ -241,7 +241,7 @@ describe('the portable read', () => {
 	])('reads the mangled name %s as privateName with its stem as the name, and spells __ back', (name, stem) => {
 		const method = `class C:\n    def ${name}(self):\n        pass\n`;
 		const member = `self.${name}\n`;
-		expect(((firstOf(method) as Read).members as readonly Read[])[0]).toMatchObject({ $path: 'declaration.method', $flags: ['privateName'], name: stem });
+		expect(((firstOf(method) as Read).members as readonly Read[])[0]).toMatchObject({ $path: 'declaration.member.method', $flags: ['privateName'], name: stem });
 		expect(firstOf(member)).toEqual({ $path: 'expression.member', $flags: ['privateName'], object: 'self', property: stem });
 		for (const source of [method, member]) expect(roundTrip(source)).toBe(source);
 		expect(String(runtime.engine.render(runtime.build({ $path: 'expression.member', $flags: ['privateName'], object: 'self', property: stem }) as never))).toBe(`self.${name}`);

@@ -10,109 +10,109 @@
 (function_declaration) @declaration.function
 (generator_function_declaration) @declaration.function
 (generator_function_declaration "*" @generator)
-(class_declaration) @declaration.class
+(class_declaration) @declaration.type.class
 (class_declaration body: (class_body members: (_) @members))
 (class_declaration (class_heritage (class_heritage_extends_clause extends_clause: (_) @extends)))
 (class_declaration (class_heritage (class_heritage_extends_clause (implements_clause type: (_) @implements))))
 (class_declaration (class_heritage (implements_clause type: (_) @implements)))
-(abstract_class_declaration) @declaration.class
+(abstract_class_declaration) @declaration.type.class
 (abstract_class_declaration body: (class_body members: (_) @members))
 (abstract_class_declaration "abstract" @abstract)
 (abstract_class_declaration (class_heritage (class_heritage_extends_clause extends_clause: (_) @extends)))
 (abstract_class_declaration (class_heritage (class_heritage_extends_clause (implements_clause type: (_) @implements))))
 (abstract_class_declaration (class_heritage (implements_clause type: (_) @implements)))
-(interface_declaration (extends_type_clause type: (_) @extends)? body: (interface_body opening: "{" (object_type_content (_) @members)? closing: "}")) @declaration.interface
-(enum_declaration) @declaration.enum
-(enum_assignment) @declaration.enum_member
-(enum_body_element_name name: (_) @name) @declaration.enum_member
-(type_alias_declaration) @declaration.type_alias
-(method_definition_plain) @declaration.method
+(interface_declaration (extends_type_clause type: (_) @extends)? body: (interface_body opening: "{" (object_type_content (_) @members)? closing: "}")) @declaration.type.interface
+(enum_declaration) @declaration.type.enum
+(enum_assignment) @declaration.member.enum_member
+(enum_body_element_name name: (_) @name) @declaration.member.enum_member
+(type_alias_declaration) @declaration.type.type_alias
+(method_definition_plain) @declaration.member.method
 (method_definition_plain accessor_kind: "*" @generator)
 (method_definition_plain "?" @optional)
 (method_definition_plain name: (private_property_identifier) @name @privateName)
 (method_definition_plain name: (computed_property_name) @name @computed)
-(method_definition_plain (accessibility_modifier "private")) @declaration.method.private
-(method_definition_plain (accessibility_modifier "protected")) @declaration.method.protected
-(method_definition_plain (accessibility_modifier "public")) @declaration.method.public
-(method_definition_getter) @declaration.property.getter
+(method_definition_plain (accessibility_modifier "private")) @declaration.member.method.private
+(method_definition_plain (accessibility_modifier "protected")) @declaration.member.method.protected
+(method_definition_plain (accessibility_modifier "public")) @declaration.member.method.public
+(method_definition_getter) @declaration.member.property.getter
 (method_definition_getter return_type: (_)? @type)
 (method_definition_getter name: (private_property_identifier) @name @privateName)
 (method_definition_getter name: (computed_property_name) @name @computed)
-(method_definition_getter (accessibility_modifier "private")) @declaration.property.getter.private
-(method_definition_getter (accessibility_modifier "protected")) @declaration.property.getter.protected
-(method_definition_getter (accessibility_modifier "public")) @declaration.property.getter.public
-(method_definition_setter) @declaration.property.setter
+(method_definition_getter (accessibility_modifier "private")) @declaration.member.property.getter.private
+(method_definition_getter (accessibility_modifier "protected")) @declaration.member.property.getter.protected
+(method_definition_getter (accessibility_modifier "public")) @declaration.member.property.getter.public
+(method_definition_setter) @declaration.member.property.setter
 (method_definition_setter name: (private_property_identifier) @name @privateName)
 (method_definition_setter name: (computed_property_name) @name @computed)
-(method_definition_setter (accessibility_modifier "private")) @declaration.property.setter.private
-(method_definition_setter (accessibility_modifier "protected")) @declaration.property.setter.protected
-(method_definition_setter (accessibility_modifier "public")) @declaration.property.setter.public
-(class_body_member_method ((method_definition_plain !static !override !readonly !async !accessor_kind !optional !type_parameters !return_type name: (property_identifier) @name) @declaration.constructor (#eq? @name "constructor")))
-(constructor_declaration) @declaration.constructor
-((constructor_declaration (accessibility_modifier "private")) @declaration.constructor.private)
-((constructor_declaration (accessibility_modifier "protected")) @declaration.constructor.protected)
-((constructor_declaration (accessibility_modifier "public")) @declaration.constructor.public)
-(method_signature_plain) @declaration.method.signature
+(method_definition_setter (accessibility_modifier "private")) @declaration.member.property.setter.private
+(method_definition_setter (accessibility_modifier "protected")) @declaration.member.property.setter.protected
+(method_definition_setter (accessibility_modifier "public")) @declaration.member.property.setter.public
+(class_body_member_method ((method_definition_plain !static !override !readonly !async !accessor_kind !optional !type_parameters !return_type name: (property_identifier) @name) @declaration.member.constructor (#eq? @name "constructor")))
+(constructor_declaration) @declaration.member.constructor
+((constructor_declaration (accessibility_modifier "private")) @declaration.member.constructor.private)
+((constructor_declaration (accessibility_modifier "protected")) @declaration.member.constructor.protected)
+((constructor_declaration (accessibility_modifier "public")) @declaration.member.constructor.public)
+(method_signature_plain) @declaration.member.method.signature
 (method_signature_plain accessor_kind: "*" @generator)
 (method_signature_plain name: (private_property_identifier) @name @privateName)
 (method_signature_plain name: (computed_property_name) @name @computed)
-(method_signature_plain (accessibility_modifier "private")) @declaration.method.signature.private
-(method_signature_plain (accessibility_modifier "protected")) @declaration.method.signature.protected
-(method_signature_plain (accessibility_modifier "public")) @declaration.method.signature.public
-(method_signature_getter) @declaration.property.signature.getter
+(method_signature_plain (accessibility_modifier "private")) @declaration.member.method.signature.private
+(method_signature_plain (accessibility_modifier "protected")) @declaration.member.method.signature.protected
+(method_signature_plain (accessibility_modifier "public")) @declaration.member.method.signature.public
+(method_signature_getter) @declaration.member.property.signature.getter
 (method_signature_getter return_type: (_)? @type)
 (method_signature_getter name: (private_property_identifier) @name @privateName)
 (method_signature_getter name: (computed_property_name) @name @computed)
-(method_signature_getter (accessibility_modifier "private")) @declaration.property.signature.getter.private
-(method_signature_getter (accessibility_modifier "protected")) @declaration.property.signature.getter.protected
-(method_signature_getter (accessibility_modifier "public")) @declaration.property.signature.getter.public
-(method_signature_setter) @declaration.property.signature.setter
+(method_signature_getter (accessibility_modifier "private")) @declaration.member.property.signature.getter.private
+(method_signature_getter (accessibility_modifier "protected")) @declaration.member.property.signature.getter.protected
+(method_signature_getter (accessibility_modifier "public")) @declaration.member.property.signature.getter.public
+(method_signature_setter) @declaration.member.property.signature.setter
 (method_signature_setter name: (private_property_identifier) @name @privateName)
 (method_signature_setter name: (computed_property_name) @name @computed)
-(method_signature_setter (accessibility_modifier "private")) @declaration.property.signature.setter.private
-(method_signature_setter (accessibility_modifier "protected")) @declaration.property.signature.setter.protected
-(method_signature_setter (accessibility_modifier "public")) @declaration.property.signature.setter.public
-(abstract_method_signature_plain) @declaration.method.signature.abstract
+(method_signature_setter (accessibility_modifier "private")) @declaration.member.property.signature.setter.private
+(method_signature_setter (accessibility_modifier "protected")) @declaration.member.property.signature.setter.protected
+(method_signature_setter (accessibility_modifier "public")) @declaration.member.property.signature.setter.public
+(abstract_method_signature_plain) @declaration.member.method.signature.abstract
 (abstract_method_signature_plain accessor_kind: "*" @generator)
 (abstract_method_signature_plain name: (private_property_identifier) @name @privateName)
 (abstract_method_signature_plain name: (computed_property_name) @name @computed)
-(abstract_method_signature_plain (accessibility_modifier "private")) @declaration.method.signature.abstract.private
-(abstract_method_signature_plain (accessibility_modifier "protected")) @declaration.method.signature.abstract.protected
-(abstract_method_signature_plain (accessibility_modifier "public")) @declaration.method.signature.abstract.public
-(abstract_method_signature_getter) @declaration.property.signature.abstract.getter
+(abstract_method_signature_plain (accessibility_modifier "private")) @declaration.member.method.signature.abstract.private
+(abstract_method_signature_plain (accessibility_modifier "protected")) @declaration.member.method.signature.abstract.protected
+(abstract_method_signature_plain (accessibility_modifier "public")) @declaration.member.method.signature.abstract.public
+(abstract_method_signature_getter) @declaration.member.property.signature.abstract.getter
 (abstract_method_signature_getter return_type: (_)? @type)
 (abstract_method_signature_getter name: (private_property_identifier) @name @privateName)
 (abstract_method_signature_getter name: (computed_property_name) @name @computed)
-(abstract_method_signature_getter (accessibility_modifier "private")) @declaration.property.signature.abstract.getter.private
-(abstract_method_signature_getter (accessibility_modifier "protected")) @declaration.property.signature.abstract.getter.protected
-(abstract_method_signature_getter (accessibility_modifier "public")) @declaration.property.signature.abstract.getter.public
-(abstract_method_signature_setter) @declaration.property.signature.abstract.setter
+(abstract_method_signature_getter (accessibility_modifier "private")) @declaration.member.property.signature.abstract.getter.private
+(abstract_method_signature_getter (accessibility_modifier "protected")) @declaration.member.property.signature.abstract.getter.protected
+(abstract_method_signature_getter (accessibility_modifier "public")) @declaration.member.property.signature.abstract.getter.public
+(abstract_method_signature_setter) @declaration.member.property.signature.abstract.setter
 (abstract_method_signature_setter name: (private_property_identifier) @name @privateName)
 (abstract_method_signature_setter name: (computed_property_name) @name @computed)
-(abstract_method_signature_setter (accessibility_modifier "private")) @declaration.property.signature.abstract.setter.private
-(abstract_method_signature_setter (accessibility_modifier "protected")) @declaration.property.signature.abstract.setter.protected
-(abstract_method_signature_setter (accessibility_modifier "public")) @declaration.property.signature.abstract.setter.public
-(property_signature) @declaration.field.signature
+(abstract_method_signature_setter (accessibility_modifier "private")) @declaration.member.property.signature.abstract.setter.private
+(abstract_method_signature_setter (accessibility_modifier "protected")) @declaration.member.property.signature.abstract.setter.protected
+(abstract_method_signature_setter (accessibility_modifier "public")) @declaration.member.property.signature.abstract.setter.public
+(property_signature) @declaration.member.field.signature
 (property_signature name: (private_property_identifier) @name @privateName)
 (property_signature name: (computed_property_name) @name @computed)
-(property_signature (accessibility_modifier "private")) @declaration.field.signature.private
-(property_signature (accessibility_modifier "protected")) @declaration.field.signature.protected
-(property_signature (accessibility_modifier "public")) @declaration.field.signature.public
-(public_field_definition_plain) @declaration.field
+(property_signature (accessibility_modifier "private")) @declaration.member.field.signature.private
+(property_signature (accessibility_modifier "protected")) @declaration.member.field.signature.protected
+(property_signature (accessibility_modifier "public")) @declaration.member.field.signature.public
+(public_field_definition_plain) @declaration.member.field
 (public_field_definition_plain "?" @optional)
 (public_field_definition_plain "!" @definite)
 (public_field_definition_plain name: (private_property_identifier) @name @privateName)
 (public_field_definition_plain name: (computed_property_name) @name @computed)
-(public_field_definition_plain (accessibility_modifier "private")) @declaration.field.private
-(public_field_definition_plain (accessibility_modifier "protected")) @declaration.field.protected
-(public_field_definition_plain (accessibility_modifier "public")) @declaration.field.public
-(public_field_definition_accessor) @declaration.property
+(public_field_definition_plain (accessibility_modifier "private")) @declaration.member.field.private
+(public_field_definition_plain (accessibility_modifier "protected")) @declaration.member.field.protected
+(public_field_definition_plain (accessibility_modifier "public")) @declaration.member.field.public
+(public_field_definition_accessor) @declaration.member.property
 (public_field_definition_accessor name: (private_property_identifier) @name @privateName)
 (public_field_definition_accessor name: (computed_property_name) @name @computed)
-(public_field_definition_accessor (accessibility_modifier "private")) @declaration.property.private
-(public_field_definition_accessor (accessibility_modifier "protected")) @declaration.property.protected
-(public_field_definition_accessor (accessibility_modifier "public")) @declaration.property.public
-(public_field_definition_accessor abstract: "abstract") @declaration.property.signature.abstract
+(public_field_definition_accessor (accessibility_modifier "private")) @declaration.member.property.private
+(public_field_definition_accessor (accessibility_modifier "protected")) @declaration.member.property.protected
+(public_field_definition_accessor (accessibility_modifier "public")) @declaration.member.property.public
+(public_field_definition_accessor abstract: "abstract") @declaration.member.property.signature.abstract
 (class_body_member_declaration (_) @element)
 (class_body_member_method (decorator)* @decorators (_) @element)
 (class_body_member_method_sig (_) @element)
@@ -151,13 +151,13 @@
 (internal_module body: (statement_block statements: (_) @statements))
 (module) @declaration.module.external
 (module body: (statement_block statements: (_) @statements))
-(class_static_block) @statement.block.static
+(class_static_block) @declaration.member.static_block
 (class_static_block body: (statement_block statements: (_) @statements))
 (function_signature) @declaration.function.signature
-(call_signature) @declaration.signature.call
-(construct_signature) @declaration.signature.construct
-(index_signature) @declaration.signature.index
-(index_signature_mapped_type_clause) @declaration.signature.index.mapped
+(call_signature) @declaration.member.signature.call
+(construct_signature) @declaration.member.signature.construct
+(index_signature) @declaration.member.signature.index
+(index_signature_mapped_type_clause) @declaration.member.signature.index.mapped
 
 ; Each owner keeps the ordinary list after receiver extraction.
 (abstract_method_signature_plain (formal_parameters (formal_parameters_elements item: (_)* @parameters)?))

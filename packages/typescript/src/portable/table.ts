@@ -2531,4020 +2531,6 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.class': {
-			root: true,
-			arms: [
-				{
-					kind: 314,
-					builder: 'abstractClassDeclaration',
-					slots: [
-						{
-							name: 'decorators',
-							steps: [
-								{
-									key: 'decorators',
-									optional: true
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [314, 'decorators'],
-									kinds: [],
-									many: true
-								},
-								{
-									at: [285, 'expression'],
-									kinds: [1, 286, 287, 304],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'decorator',
-											key: 'expression'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [314, 'name'],
-									kinds: [509],
-									leaf: 'identifier',
-									texts: [1, 509],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [314, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [392, 'items'],
-									kinds: [373],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'members',
-							steps: [
-								{
-									key: 'body',
-									stored: '_body'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [314, 'body'],
-									kinds: []
-								},
-								{
-									at: [288, 'members'],
-									kinds: [290, 386, 406],
-									tokens: {
-										';': 406
-									},
-									within: [
-										{
-											builder: 'classBody',
-											key: 'members',
-											optional: true
-										}
-									],
-									many: true
-								},
-								{
-									at: [407, 'methodDefinition'],
-									kinds: [457, 458, 459, 468, 470],
-									within: [
-										{
-											builder: 'classBody',
-											key: 'members',
-											optional: true
-										},
-										{
-											builder: 'classBodyMemberMethod',
-											key: 'methodDefinition',
-											slots: [
-												{
-													name: 'decorators',
-													steps: [
-														{
-															key: 'decorators',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [407, 'decorators'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [285, 'expression'],
-															kinds: [1, 286, 287, 304],
-															leaf: 'identifier',
-															texts: [1],
-															pattern: {
-																source:
-																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-																flags: 'u'
-															},
-															within: [
-																{
-																	builder: 'decorator',
-																	key: 'expression'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								},
-								{
-									at: [408, 'methodSignature'],
-									kinds: [301, 460, 461, 462],
-									within: [
-										{
-											builder: 'classBody',
-											key: 'members',
-											optional: true
-										},
-										{
-											builder: 'classBodyMemberMethodSig',
-											key: 'methodSignature'
-										}
-									]
-								},
-								{
-									at: [409, 'member'],
-									kinds: [298, 301, 302, 377, 410, 411, 460, 461, 462, 463, 464, 465, 466, 467],
-									within: [
-										{
-											builder: 'classBody',
-											key: 'members',
-											optional: true
-										},
-										{
-											builder: 'classBodyMemberDeclaration',
-											key: 'member'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'extends',
-							steps: [
-								{
-									key: 'heritage',
-									stored: '_heritage',
-									builder: 'classHeritage',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'classHeritage.extendsClause',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [430]
-								},
-								{
-									key: 'extendsClause',
-									stored: '_extends_clause'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [430, 'extendsClause'],
-									kinds: [310]
-								}
-							]
-						},
-						{
-							name: 'implements',
-							steps: [
-								{
-									key: 'heritage',
-									stored: '_heritage',
-									builder: 'classHeritage',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'classHeritage.extendsClause',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [430]
-								},
-								{
-									key: 'implementsClause',
-									stored: '_implements_clause',
-									builder: 'implementsClause',
-									optional: true
-								},
-								{
-									key: 'types'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [312, 'types'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									many: true
-								}
-							],
-							requires: [['extends']]
-						},
-						{
-							name: 'implements',
-							steps: [
-								{
-									key: 'heritage',
-									stored: '_heritage',
-									builder: 'classHeritage',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'implementsClause',
-									kinds: [312]
-								},
-								{
-									key: 'types'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [312, 'types'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									many: true
-								}
-							]
-						}
-					],
-					owners: [
-						[0, 1, 2, 3, 4, 5],
-						[0, 1, 2, 3, 6]
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							flag: 'abstract',
-							set: true
-						},
-						{
-							absent: [],
-							required: ['members', 'name']
-						}
-					]
-				},
-				{
-					kind: 246,
-					builder: 'classDeclaration',
-					slots: [
-						{
-							name: 'decorators',
-							steps: [
-								{
-									key: 'decorators',
-									optional: true
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [246, 'decorators'],
-									kinds: [],
-									many: true
-								},
-								{
-									at: [285, 'expression'],
-									kinds: [1, 286, 287, 304],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'decorator',
-											key: 'expression'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [246, 'name'],
-									kinds: [509],
-									leaf: 'identifier',
-									texts: [1, 509],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [246, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [392, 'items'],
-									kinds: [373],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'members',
-							steps: [
-								{
-									key: 'body',
-									stored: '_body'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [246, 'body'],
-									kinds: []
-								},
-								{
-									at: [288, 'members'],
-									kinds: [290, 386, 406],
-									tokens: {
-										';': 406
-									},
-									within: [
-										{
-											builder: 'classBody',
-											key: 'members',
-											optional: true
-										}
-									],
-									many: true
-								},
-								{
-									at: [407, 'methodDefinition'],
-									kinds: [457, 458, 459, 468, 470],
-									within: [
-										{
-											builder: 'classBody',
-											key: 'members',
-											optional: true
-										},
-										{
-											builder: 'classBodyMemberMethod',
-											key: 'methodDefinition',
-											slots: [
-												{
-													name: 'decorators',
-													steps: [
-														{
-															key: 'decorators',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [407, 'decorators'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [285, 'expression'],
-															kinds: [1, 286, 287, 304],
-															leaf: 'identifier',
-															texts: [1],
-															pattern: {
-																source:
-																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-																flags: 'u'
-															},
-															within: [
-																{
-																	builder: 'decorator',
-																	key: 'expression'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								},
-								{
-									at: [408, 'methodSignature'],
-									kinds: [301, 460, 461, 462],
-									within: [
-										{
-											builder: 'classBody',
-											key: 'members',
-											optional: true
-										},
-										{
-											builder: 'classBodyMemberMethodSig',
-											key: 'methodSignature'
-										}
-									]
-								},
-								{
-									at: [409, 'member'],
-									kinds: [298, 301, 302, 377, 410, 411, 460, 461, 462, 463, 464, 465, 466, 467],
-									within: [
-										{
-											builder: 'classBody',
-											key: 'members',
-											optional: true
-										},
-										{
-											builder: 'classBodyMemberDeclaration',
-											key: 'member'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'extends',
-							steps: [
-								{
-									key: 'heritage',
-									stored: '_heritage',
-									builder: 'classHeritage',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'classHeritage.extendsClause',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [430]
-								},
-								{
-									key: 'extendsClause',
-									stored: '_extends_clause'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [430, 'extendsClause'],
-									kinds: [310]
-								}
-							]
-						},
-						{
-							name: 'implements',
-							steps: [
-								{
-									key: 'heritage',
-									stored: '_heritage',
-									builder: 'classHeritage',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'classHeritage.extendsClause',
-									mounted: {
-										call: 'child',
-										key: 'content'
-									},
-									kinds: [430]
-								},
-								{
-									key: 'implementsClause',
-									stored: '_implements_clause',
-									builder: 'implementsClause',
-									optional: true
-								},
-								{
-									key: 'types'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [312, 'types'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									many: true
-								}
-							],
-							requires: [['extends']]
-						},
-						{
-							name: 'implements',
-							steps: [
-								{
-									key: 'heritage',
-									stored: '_heritage',
-									builder: 'classHeritage',
-									optional: true
-								},
-								{
-									key: 'content',
-									builder: 'implementsClause',
-									kinds: [312]
-								},
-								{
-									key: 'types'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [312, 'types'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									many: true
-								}
-							]
-						}
-					],
-					owners: [
-						[0, 1, 2, 3, 4, 5],
-						[0, 1, 2, 3, 6]
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							flag: 'abstract',
-							set: false
-						},
-						{
-							absent: [],
-							required: ['members', 'name']
-						}
-					],
-					options: ['terminator']
-				}
-			],
-			flags: ['abstract']
-		},
-		'declaration.constructor': {
-			root: true,
-			arms: [
-				{
-					kind: 468,
-					builder: 'constructorDeclaration',
-					slots: [
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									stored: '_parameters',
-									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true,
-									kinds: [387]
-								},
-								{
-									key: 'items'
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [387, 'items'],
-									kinds: [328, 329],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'statements',
-							steps: [
-								{
-									key: 'body',
-									builder: 'statementBlock'
-								},
-								{
-									key: 'statements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [211, 'statements'],
-									kinds: [
-										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
-										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
-									],
-									refined: [228],
-									tokens: {
-										';': 227
-									},
-									many: true
-								},
-								{
-									at: [206, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
-										428, 441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionStatement',
-											key: 'expression'
-										}
-									]
-								},
-								{
-									at: [228, 'body'],
-									kinds: [211, 215, 216, 218, 219],
-									within: [
-										{
-											builder: 'labeledStatement',
-											key: 'body',
-											slots: [
-												{
-													name: 'label',
-													steps: [
-														{
-															key: 'label'
-														}
-													],
-													multiple: false,
-													list: false,
-													seats: [
-														{
-															at: [228, 'label'],
-															kinds: [507],
-															leaf: 'identifier',
-															texts: [1, 507],
-															pattern: {
-																source:
-																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-																flags: 'u'
-															}
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						}
-					],
-					presets: [],
-					flags: {},
-					when: []
-				}
-			]
-		},
-		'declaration.constructor.private': {
-			root: true,
-			arms: [
-				{
-					kind: 468,
-					builder: 'constructorDeclaration',
-					slots: [
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									stored: '_parameters',
-									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true,
-									kinds: [387]
-								},
-								{
-									key: 'items'
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [387, 'items'],
-									kinds: [328, 329],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'statements',
-							steps: [
-								{
-									key: 'body',
-									builder: 'statementBlock'
-								},
-								{
-									key: 'statements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [211, 'statements'],
-									kinds: [
-										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
-										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
-									],
-									refined: [228],
-									tokens: {
-										';': 227
-									},
-									many: true
-								},
-								{
-									at: [206, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
-										428, 441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionStatement',
-											key: 'expression'
-										}
-									]
-								},
-								{
-									at: [228, 'body'],
-									kinds: [211, 215, 216, 218, 219],
-									within: [
-										{
-											builder: 'labeledStatement',
-											key: 'body',
-											slots: [
-												{
-													name: 'label',
-													steps: [
-														{
-															key: 'label'
-														}
-													],
-													multiple: false,
-													list: false,
-													seats: [
-														{
-															at: [228, 'label'],
-															kinds: [507],
-															leaf: 'identifier',
-															texts: [1, 507],
-															pattern: {
-																source:
-																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-																flags: 'u'
-															}
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 35
-						}
-					],
-					flags: {},
-					when: []
-				}
-			]
-		},
-		'declaration.constructor.protected': {
-			root: true,
-			arms: [
-				{
-					kind: 468,
-					builder: 'constructorDeclaration',
-					slots: [
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									stored: '_parameters',
-									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true,
-									kinds: [387]
-								},
-								{
-									key: 'items'
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [387, 'items'],
-									kinds: [328, 329],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'statements',
-							steps: [
-								{
-									key: 'body',
-									builder: 'statementBlock'
-								},
-								{
-									key: 'statements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [211, 'statements'],
-									kinds: [
-										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
-										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
-									],
-									refined: [228],
-									tokens: {
-										';': 227
-									},
-									many: true
-								},
-								{
-									at: [206, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
-										428, 441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionStatement',
-											key: 'expression'
-										}
-									]
-								},
-								{
-									at: [228, 'body'],
-									kinds: [211, 215, 216, 218, 219],
-									within: [
-										{
-											builder: 'labeledStatement',
-											key: 'body',
-											slots: [
-												{
-													name: 'label',
-													steps: [
-														{
-															key: 'label'
-														}
-													],
-													multiple: false,
-													list: false,
-													seats: [
-														{
-															at: [228, 'label'],
-															kinds: [507],
-															leaf: 'identifier',
-															texts: [1, 507],
-															pattern: {
-																source:
-																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-																flags: 'u'
-															}
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 36
-						}
-					],
-					flags: {},
-					when: []
-				}
-			]
-		},
-		'declaration.constructor.public': {
-			root: true,
-			arms: [
-				{
-					kind: 468,
-					builder: 'constructorDeclaration',
-					slots: [
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									stored: '_parameters',
-									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true,
-									kinds: [387]
-								},
-								{
-									key: 'items'
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [387, 'items'],
-									kinds: [328, 329],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'statements',
-							steps: [
-								{
-									key: 'body',
-									builder: 'statementBlock'
-								},
-								{
-									key: 'statements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [211, 'statements'],
-									kinds: [
-										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
-										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
-									],
-									refined: [228],
-									tokens: {
-										';': 227
-									},
-									many: true
-								},
-								{
-									at: [206, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
-										428, 441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionStatement',
-											key: 'expression'
-										}
-									]
-								},
-								{
-									at: [228, 'body'],
-									kinds: [211, 215, 216, 218, 219],
-									within: [
-										{
-											builder: 'labeledStatement',
-											key: 'body',
-											slots: [
-												{
-													name: 'label',
-													steps: [
-														{
-															key: 'label'
-														}
-													],
-													multiple: false,
-													list: false,
-													seats: [
-														{
-															at: [228, 'label'],
-															kinds: [507],
-															leaf: 'identifier',
-															texts: [1, 507],
-															pattern: {
-																source:
-																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-																flags: 'u'
-															}
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 34
-						}
-					],
-					flags: {},
-					when: []
-				}
-			]
-		},
-		'declaration.enum': {
-			root: true,
-			arms: [
-				{
-					kind: 322,
-					builder: 'enumDeclaration',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [322, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'members',
-							steps: [
-								{
-									key: 'body',
-									stored: '_body'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [322, 'body'],
-									kinds: []
-								},
-								{
-									at: [390, 'items'],
-									kinds: [324, 388, 389],
-									within: [
-										{
-											builder: 'enumBody',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'enumBodyElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {
-						const: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'const',
-											optional: true
-										}
-									],
-									kind: 68,
-									presence: true
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['members', 'name']
-						}
-					]
-				}
-			],
-			flags: ['const']
-		},
-		'declaration.enum_member': {
-			root: true,
-			arms: [
-				{
-					kind: 388,
-					builder: 'enumBodyElementName',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [388, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: ['value'],
-							required: ['name']
-						}
-					]
-				},
-				{
-					kind: 324,
-					builder: 'enumAssignment',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [324, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [324, 'value'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['name', 'value']
-						}
-					]
-				}
-			]
-		},
-		'declaration.field': {
-			root: true,
-			arms: [
-				{
-					kind: 466,
-					builder: 'publicFieldDefinitionPlain',
-					slots: [
-						{
-							name: 'decorators',
-							steps: [
-								{
-									key: 'decorators',
-									optional: true
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [466, 'decorators'],
-									kinds: [],
-									many: true
-								},
-								{
-									at: [285, 'expression'],
-									kinds: [1, 286, 287, 304],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'decorator',
-											key: 'expression'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [466, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'optionality',
-							steps: [
-								{
-									key: 'optionality',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [466, 'optionality'],
-									kinds: [117, 140],
-									tokens: {
-										'!': 117,
-										'?': 140
-									}
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									stored: '_type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [466, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [466, 'value'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						}
-					],
-					presets: [],
-					flags: {
-						declare: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'declare',
-											optional: true
-										}
-									],
-									kind: 32,
-									presence: true
-								}
-							]
-						},
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						readonly: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'readonly',
-											optional: true
-										}
-									],
-									kind: 38,
-									presence: true
-								}
-							]
-						},
-						abstract: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'abstract',
-											optional: true
-										}
-									],
-									kind: 149,
-									presence: true
-								}
-							]
-						},
-						optional: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'optionality',
-											optional: true
-										}
-									],
-									kind: 140
-								}
-							]
-						},
-						definite: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'optionality',
-											optional: true
-										}
-									],
-									kind: 117
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			],
-			flags: [
-				'computed',
-				'privateName',
-				'abstract',
-				'override',
-				'static',
-				'readonly',
-				'declare',
-				'definite',
-				'optional'
-			]
-		},
-		'declaration.field.private': {
-			root: true,
-			arms: [
-				{
-					kind: 466,
-					builder: 'publicFieldDefinitionPlain',
-					slots: [
-						{
-							name: 'decorators',
-							steps: [
-								{
-									key: 'decorators',
-									optional: true
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [466, 'decorators'],
-									kinds: [],
-									many: true
-								},
-								{
-									at: [285, 'expression'],
-									kinds: [1, 286, 287, 304],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'decorator',
-											key: 'expression'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [466, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'optionality',
-							steps: [
-								{
-									key: 'optionality',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [466, 'optionality'],
-									kinds: [117, 140],
-									tokens: {
-										'!': 117,
-										'?': 140
-									}
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									stored: '_type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [466, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [466, 'value'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 35
-						}
-					],
-					flags: {
-						declare: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'declare',
-											optional: true
-										}
-									],
-									kind: 32,
-									presence: true
-								}
-							]
-						},
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						readonly: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'readonly',
-											optional: true
-										}
-									],
-									kind: 38,
-									presence: true
-								}
-							]
-						},
-						abstract: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'abstract',
-											optional: true
-										}
-									],
-									kind: 149,
-									presence: true
-								}
-							]
-						},
-						optional: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'optionality',
-											optional: true
-										}
-									],
-									kind: 140
-								}
-							]
-						},
-						definite: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'optionality',
-											optional: true
-										}
-									],
-									kind: 117
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			],
-			flags: [
-				'computed',
-				'privateName',
-				'abstract',
-				'override',
-				'static',
-				'readonly',
-				'declare',
-				'definite',
-				'optional'
-			]
-		},
-		'declaration.field.protected': {
-			root: true,
-			arms: [
-				{
-					kind: 466,
-					builder: 'publicFieldDefinitionPlain',
-					slots: [
-						{
-							name: 'decorators',
-							steps: [
-								{
-									key: 'decorators',
-									optional: true
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [466, 'decorators'],
-									kinds: [],
-									many: true
-								},
-								{
-									at: [285, 'expression'],
-									kinds: [1, 286, 287, 304],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'decorator',
-											key: 'expression'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [466, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'optionality',
-							steps: [
-								{
-									key: 'optionality',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [466, 'optionality'],
-									kinds: [117, 140],
-									tokens: {
-										'!': 117,
-										'?': 140
-									}
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									stored: '_type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [466, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [466, 'value'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 36
-						}
-					],
-					flags: {
-						declare: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'declare',
-											optional: true
-										}
-									],
-									kind: 32,
-									presence: true
-								}
-							]
-						},
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						readonly: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'readonly',
-											optional: true
-										}
-									],
-									kind: 38,
-									presence: true
-								}
-							]
-						},
-						abstract: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'abstract',
-											optional: true
-										}
-									],
-									kind: 149,
-									presence: true
-								}
-							]
-						},
-						optional: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'optionality',
-											optional: true
-										}
-									],
-									kind: 140
-								}
-							]
-						},
-						definite: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'optionality',
-											optional: true
-										}
-									],
-									kind: 117
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			],
-			flags: [
-				'computed',
-				'privateName',
-				'abstract',
-				'override',
-				'static',
-				'readonly',
-				'declare',
-				'definite',
-				'optional'
-			]
-		},
-		'declaration.field.public': {
-			root: true,
-			arms: [
-				{
-					kind: 466,
-					builder: 'publicFieldDefinitionPlain',
-					slots: [
-						{
-							name: 'decorators',
-							steps: [
-								{
-									key: 'decorators',
-									optional: true
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [466, 'decorators'],
-									kinds: [],
-									many: true
-								},
-								{
-									at: [285, 'expression'],
-									kinds: [1, 286, 287, 304],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'decorator',
-											key: 'expression'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [466, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'optionality',
-							steps: [
-								{
-									key: 'optionality',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [466, 'optionality'],
-									kinds: [117, 140],
-									tokens: {
-										'!': 117,
-										'?': 140
-									}
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									stored: '_type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [466, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [466, 'value'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 34
-						}
-					],
-					flags: {
-						declare: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'declare',
-											optional: true
-										}
-									],
-									kind: 32,
-									presence: true
-								}
-							]
-						},
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						readonly: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'readonly',
-											optional: true
-										}
-									],
-									kind: 38,
-									presence: true
-								}
-							]
-						},
-						abstract: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'abstract',
-											optional: true
-										}
-									],
-									kind: 149,
-									presence: true
-								}
-							]
-						},
-						optional: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'optionality',
-											optional: true
-										}
-									],
-									kind: 140
-								}
-							]
-						},
-						definite: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'optionality',
-											optional: true
-										}
-									],
-									kind: 117
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			],
-			flags: [
-				'computed',
-				'privateName',
-				'abstract',
-				'override',
-				'static',
-				'readonly',
-				'declare',
-				'definite',
-				'optional'
-			]
-		},
-		'declaration.field.signature': {
-			root: true,
-			arms: [
-				{
-					kind: 371,
-					builder: 'propertySignature',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [371, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									stored: '_type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [371, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						readonly: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'readonly',
-											optional: true
-										}
-									],
-									kind: 38,
-									presence: true
-								}
-							]
-						},
-						optional: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'optional',
-											optional: true
-										}
-									],
-									kind: 140,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			],
-			flags: [
-				'override',
-				'static',
-				'readonly',
-				'optional',
-				'computed',
-				'privateName',
-				'abstract',
-				'declare',
-				'definite'
-			]
-		},
-		'declaration.field.signature.private': {
-			root: true,
-			arms: [
-				{
-					kind: 371,
-					builder: 'propertySignature',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [371, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									stored: '_type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [371, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 35
-						}
-					],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						readonly: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'readonly',
-											optional: true
-										}
-									],
-									kind: 38,
-									presence: true
-								}
-							]
-						},
-						optional: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'optional',
-											optional: true
-										}
-									],
-									kind: 140,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			],
-			flags: [
-				'override',
-				'static',
-				'readonly',
-				'optional',
-				'computed',
-				'privateName',
-				'abstract',
-				'declare',
-				'definite'
-			]
-		},
-		'declaration.field.signature.protected': {
-			root: true,
-			arms: [
-				{
-					kind: 371,
-					builder: 'propertySignature',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [371, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									stored: '_type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [371, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 36
-						}
-					],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						readonly: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'readonly',
-											optional: true
-										}
-									],
-									kind: 38,
-									presence: true
-								}
-							]
-						},
-						optional: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'optional',
-											optional: true
-										}
-									],
-									kind: 140,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			],
-			flags: [
-				'override',
-				'static',
-				'readonly',
-				'optional',
-				'computed',
-				'privateName',
-				'abstract',
-				'declare',
-				'definite'
-			]
-		},
-		'declaration.field.signature.public': {
-			root: true,
-			arms: [
-				{
-					kind: 371,
-					builder: 'propertySignature',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [371, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									stored: '_type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [371, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 34
-						}
-					],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						readonly: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'readonly',
-											optional: true
-										}
-									],
-									kind: 38,
-									presence: true
-								}
-							]
-						},
-						optional: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'optional',
-											optional: true
-										}
-									],
-									kind: 140,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			],
-			flags: [
-				'override',
-				'static',
-				'readonly',
-				'optional',
-				'computed',
-				'privateName',
-				'abstract',
-				'declare',
-				'definite'
-			]
-		},
 		'declaration.function': {
 			root: true,
 			arms: [
@@ -7525,12 +3511,598 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['async', 'generator']
 		},
-		'declaration.interface': {
+		'declaration.member.constructor': {
 			root: true,
 			arms: [
 				{
-					kind: 320,
-					builder: 'interfaceDeclaration',
+					kind: 468,
+					builder: 'constructorDeclaration',
+					slots: [
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									stored: '_parameters',
+									builder: 'formalParameters'
+								},
+								{
+									key: 'elements',
+									builder: 'formalParametersElements',
+									optional: true,
+									kinds: [387]
+								},
+								{
+									key: 'items'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [387, 'items'],
+									kinds: [328, 329],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'statementBlock'
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [211, 'statements'],
+									kinds: [
+										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
+										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
+									],
+									refined: [228],
+									tokens: {
+										';': 227
+									},
+									many: true
+								},
+								{
+									at: [206, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
+										428, 441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
+								},
+								{
+									at: [228, 'body'],
+									kinds: [211, 215, 216, 218, 219],
+									within: [
+										{
+											builder: 'labeledStatement',
+											key: 'body',
+											slots: [
+												{
+													name: 'label',
+													steps: [
+														{
+															key: 'label'
+														}
+													],
+													multiple: false,
+													list: false,
+													seats: [
+														{
+															at: [228, 'label'],
+															kinds: [507],
+															leaf: 'identifier',
+															texts: [1, 507],
+															pattern: {
+																source:
+																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+																flags: 'u'
+															}
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						}
+					],
+					presets: [],
+					flags: {},
+					when: []
+				}
+			]
+		},
+		'declaration.member.constructor.private': {
+			root: true,
+			arms: [
+				{
+					kind: 468,
+					builder: 'constructorDeclaration',
+					slots: [
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									stored: '_parameters',
+									builder: 'formalParameters'
+								},
+								{
+									key: 'elements',
+									builder: 'formalParametersElements',
+									optional: true,
+									kinds: [387]
+								},
+								{
+									key: 'items'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [387, 'items'],
+									kinds: [328, 329],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'statementBlock'
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [211, 'statements'],
+									kinds: [
+										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
+										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
+									],
+									refined: [228],
+									tokens: {
+										';': 227
+									},
+									many: true
+								},
+								{
+									at: [206, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
+										428, 441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
+								},
+								{
+									at: [228, 'body'],
+									kinds: [211, 215, 216, 218, 219],
+									within: [
+										{
+											builder: 'labeledStatement',
+											key: 'body',
+											slots: [
+												{
+													name: 'label',
+													steps: [
+														{
+															key: 'label'
+														}
+													],
+													multiple: false,
+													list: false,
+													seats: [
+														{
+															at: [228, 'label'],
+															kinds: [507],
+															leaf: 'identifier',
+															texts: [1, 507],
+															pattern: {
+																source:
+																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+																flags: 'u'
+															}
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 35
+						}
+					],
+					flags: {},
+					when: []
+				}
+			]
+		},
+		'declaration.member.constructor.protected': {
+			root: true,
+			arms: [
+				{
+					kind: 468,
+					builder: 'constructorDeclaration',
+					slots: [
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									stored: '_parameters',
+									builder: 'formalParameters'
+								},
+								{
+									key: 'elements',
+									builder: 'formalParametersElements',
+									optional: true,
+									kinds: [387]
+								},
+								{
+									key: 'items'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [387, 'items'],
+									kinds: [328, 329],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'statementBlock'
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [211, 'statements'],
+									kinds: [
+										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
+										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
+									],
+									refined: [228],
+									tokens: {
+										';': 227
+									},
+									many: true
+								},
+								{
+									at: [206, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
+										428, 441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
+								},
+								{
+									at: [228, 'body'],
+									kinds: [211, 215, 216, 218, 219],
+									within: [
+										{
+											builder: 'labeledStatement',
+											key: 'body',
+											slots: [
+												{
+													name: 'label',
+													steps: [
+														{
+															key: 'label'
+														}
+													],
+													multiple: false,
+													list: false,
+													seats: [
+														{
+															at: [228, 'label'],
+															kinds: [507],
+															leaf: 'identifier',
+															texts: [1, 507],
+															pattern: {
+																source:
+																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+																flags: 'u'
+															}
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 36
+						}
+					],
+					flags: {},
+					when: []
+				}
+			]
+		},
+		'declaration.member.constructor.public': {
+			root: true,
+			arms: [
+				{
+					kind: 468,
+					builder: 'constructorDeclaration',
+					slots: [
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									stored: '_parameters',
+									builder: 'formalParameters'
+								},
+								{
+									key: 'elements',
+									builder: 'formalParametersElements',
+									optional: true,
+									kinds: [387]
+								},
+								{
+									key: 'items'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [387, 'items'],
+									kinds: [328, 329],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'statementBlock'
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [211, 'statements'],
+									kinds: [
+										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
+										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
+									],
+									refined: [228],
+									tokens: {
+										';': 227
+									},
+									many: true
+								},
+								{
+									at: [206, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
+										428, 441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
+								},
+								{
+									at: [228, 'body'],
+									kinds: [211, 215, 216, 218, 219],
+									within: [
+										{
+											builder: 'labeledStatement',
+											key: 'body',
+											slots: [
+												{
+													name: 'label',
+													steps: [
+														{
+															key: 'label'
+														}
+													],
+													multiple: false,
+													list: false,
+													seats: [
+														{
+															at: [228, 'label'],
+															kinds: [507],
+															leaf: 'identifier',
+															texts: [1, 507],
+															pattern: {
+																source:
+																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+																flags: 'u'
+															}
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 34
+						}
+					],
+					flags: {},
+					when: []
+				}
+			]
+		},
+		'declaration.member.enum_member': {
+			root: true,
+			arms: [
+				{
+					kind: 388,
+					builder: 'enumBodyElementName',
 					slots: [
 						{
 							name: 'name',
@@ -7543,146 +4115,2573 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [320, 'name'],
-									kinds: [509],
+									at: [388, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
 									leaf: 'identifier',
-									texts: [1, 509],
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						}
+					],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							absent: ['value'],
+							required: ['name']
+						}
+					]
+				},
+				{
+					kind: 324,
+					builder: 'enumAssignment',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [324, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [324, 'value'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
 									}
 								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
 							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [320, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [392, 'items'],
-									kinds: [373],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'elements'
-										},
-										{
-											builder: 'typeParametersElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'extends',
-							steps: [
-								{
-									key: 'extendsTypeClause',
-									stored: '_extends_type_clause',
-									builder: 'extendsTypeClause',
-									optional: true
-								},
-								{
-									key: 'types'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [321, 'types'],
-									kinds: [319, 351, 509],
-									leaf: 'identifier',
-									texts: [1, 509],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									many: true
-								}
-							]
-						},
-						{
-							name: 'members',
-							steps: [
-								{
-									key: 'body',
-									builder: 'interfaceBody'
-								},
-								{
-									key: 'members',
-									stored: '_members',
-									builder: 'objectTypeContent',
-									optional: true
-								},
-								{
-									key: 'items'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [402, 'items'],
-									kinds: [191, 301, 370, 371, 376, 377, 410, 411, 419, 420, 421, 432, 433, 460, 461, 462],
-									many: true
-								}
-							]
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
 						}
 					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'body',
-									builder: 'interfaceBody'
-								},
-								{
-									key: 'opening'
-								}
-							],
-							kind: 5
-						},
-						{
-							steps: [
-								{
-									key: 'body',
-									builder: 'interfaceBody'
-								},
-								{
-									key: 'closing'
-								}
-							],
-							kind: 6
-						}
-					],
+					presets: [],
 					flags: {},
 					when: [
 						{
 							absent: [],
-							required: ['name']
+							required: ['name', 'value']
 						}
 					]
 				}
 			]
 		},
-		'declaration.method': {
+		'declaration.member.field': {
+			root: true,
+			arms: [
+				{
+					kind: 466,
+					builder: 'publicFieldDefinitionPlain',
+					slots: [
+						{
+							name: 'decorators',
+							steps: [
+								{
+									key: 'decorators',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [466, 'decorators'],
+									kinds: [],
+									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [466, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'optionality',
+							steps: [
+								{
+									key: 'optionality',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [466, 'optionality'],
+									kinds: [117, 140],
+									tokens: {
+										'!': 117,
+										'?': 140
+									}
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									stored: '_type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [466, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [466, 'value'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						}
+					],
+					presets: [],
+					flags: {
+						declare: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'declare',
+											optional: true
+										}
+									],
+									kind: 32,
+									presence: true
+								}
+							]
+						},
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38,
+									presence: true
+								}
+							]
+						},
+						abstract: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'abstract',
+											optional: true
+										}
+									],
+									kind: 149,
+									presence: true
+								}
+							]
+						},
+						optional: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'optionality',
+											optional: true
+										}
+									],
+									kind: 140
+								}
+							]
+						},
+						definite: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'optionality',
+											optional: true
+										}
+									],
+									kind: 117
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			],
+			flags: [
+				'computed',
+				'privateName',
+				'abstract',
+				'override',
+				'static',
+				'readonly',
+				'declare',
+				'definite',
+				'optional'
+			]
+		},
+		'declaration.member.field.private': {
+			root: true,
+			arms: [
+				{
+					kind: 466,
+					builder: 'publicFieldDefinitionPlain',
+					slots: [
+						{
+							name: 'decorators',
+							steps: [
+								{
+									key: 'decorators',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [466, 'decorators'],
+									kinds: [],
+									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [466, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'optionality',
+							steps: [
+								{
+									key: 'optionality',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [466, 'optionality'],
+									kinds: [117, 140],
+									tokens: {
+										'!': 117,
+										'?': 140
+									}
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									stored: '_type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [466, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [466, 'value'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 35
+						}
+					],
+					flags: {
+						declare: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'declare',
+											optional: true
+										}
+									],
+									kind: 32,
+									presence: true
+								}
+							]
+						},
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38,
+									presence: true
+								}
+							]
+						},
+						abstract: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'abstract',
+											optional: true
+										}
+									],
+									kind: 149,
+									presence: true
+								}
+							]
+						},
+						optional: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'optionality',
+											optional: true
+										}
+									],
+									kind: 140
+								}
+							]
+						},
+						definite: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'optionality',
+											optional: true
+										}
+									],
+									kind: 117
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			],
+			flags: [
+				'computed',
+				'privateName',
+				'abstract',
+				'override',
+				'static',
+				'readonly',
+				'declare',
+				'definite',
+				'optional'
+			]
+		},
+		'declaration.member.field.protected': {
+			root: true,
+			arms: [
+				{
+					kind: 466,
+					builder: 'publicFieldDefinitionPlain',
+					slots: [
+						{
+							name: 'decorators',
+							steps: [
+								{
+									key: 'decorators',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [466, 'decorators'],
+									kinds: [],
+									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [466, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'optionality',
+							steps: [
+								{
+									key: 'optionality',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [466, 'optionality'],
+									kinds: [117, 140],
+									tokens: {
+										'!': 117,
+										'?': 140
+									}
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									stored: '_type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [466, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [466, 'value'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 36
+						}
+					],
+					flags: {
+						declare: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'declare',
+											optional: true
+										}
+									],
+									kind: 32,
+									presence: true
+								}
+							]
+						},
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38,
+									presence: true
+								}
+							]
+						},
+						abstract: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'abstract',
+											optional: true
+										}
+									],
+									kind: 149,
+									presence: true
+								}
+							]
+						},
+						optional: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'optionality',
+											optional: true
+										}
+									],
+									kind: 140
+								}
+							]
+						},
+						definite: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'optionality',
+											optional: true
+										}
+									],
+									kind: 117
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			],
+			flags: [
+				'computed',
+				'privateName',
+				'abstract',
+				'override',
+				'static',
+				'readonly',
+				'declare',
+				'definite',
+				'optional'
+			]
+		},
+		'declaration.member.field.public': {
+			root: true,
+			arms: [
+				{
+					kind: 466,
+					builder: 'publicFieldDefinitionPlain',
+					slots: [
+						{
+							name: 'decorators',
+							steps: [
+								{
+									key: 'decorators',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [466, 'decorators'],
+									kinds: [],
+									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [466, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'optionality',
+							steps: [
+								{
+									key: 'optionality',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [466, 'optionality'],
+									kinds: [117, 140],
+									tokens: {
+										'!': 117,
+										'?': 140
+									}
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									stored: '_type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [466, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [466, 'value'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 34
+						}
+					],
+					flags: {
+						declare: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'declare',
+											optional: true
+										}
+									],
+									kind: 32,
+									presence: true
+								}
+							]
+						},
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38,
+									presence: true
+								}
+							]
+						},
+						abstract: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'abstract',
+											optional: true
+										}
+									],
+									kind: 149,
+									presence: true
+								}
+							]
+						},
+						optional: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'optionality',
+											optional: true
+										}
+									],
+									kind: 140
+								}
+							]
+						},
+						definite: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'optionality',
+											optional: true
+										}
+									],
+									kind: 117
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			],
+			flags: [
+				'computed',
+				'privateName',
+				'abstract',
+				'override',
+				'static',
+				'readonly',
+				'declare',
+				'definite',
+				'optional'
+			]
+		},
+		'declaration.member.field.signature': {
+			root: true,
+			arms: [
+				{
+					kind: 371,
+					builder: 'propertySignature',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [371, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									stored: '_type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [371, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38,
+									presence: true
+								}
+							]
+						},
+						optional: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'optional',
+											optional: true
+										}
+									],
+									kind: 140,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			],
+			flags: [
+				'override',
+				'static',
+				'readonly',
+				'optional',
+				'computed',
+				'privateName',
+				'abstract',
+				'declare',
+				'definite'
+			]
+		},
+		'declaration.member.field.signature.private': {
+			root: true,
+			arms: [
+				{
+					kind: 371,
+					builder: 'propertySignature',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [371, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									stored: '_type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [371, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 35
+						}
+					],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38,
+									presence: true
+								}
+							]
+						},
+						optional: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'optional',
+											optional: true
+										}
+									],
+									kind: 140,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			],
+			flags: [
+				'override',
+				'static',
+				'readonly',
+				'optional',
+				'computed',
+				'privateName',
+				'abstract',
+				'declare',
+				'definite'
+			]
+		},
+		'declaration.member.field.signature.protected': {
+			root: true,
+			arms: [
+				{
+					kind: 371,
+					builder: 'propertySignature',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [371, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									stored: '_type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [371, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 36
+						}
+					],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38,
+									presence: true
+								}
+							]
+						},
+						optional: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'optional',
+											optional: true
+										}
+									],
+									kind: 140,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			],
+			flags: [
+				'override',
+				'static',
+				'readonly',
+				'optional',
+				'computed',
+				'privateName',
+				'abstract',
+				'declare',
+				'definite'
+			]
+		},
+		'declaration.member.field.signature.public': {
+			root: true,
+			arms: [
+				{
+					kind: 371,
+					builder: 'propertySignature',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [371, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									stored: '_type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [371, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 34
+						}
+					],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38,
+									presence: true
+								}
+							]
+						},
+						optional: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'optional',
+											optional: true
+										}
+									],
+									kind: 140,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			],
+			flags: [
+				'override',
+				'static',
+				'readonly',
+				'optional',
+				'computed',
+				'privateName',
+				'abstract',
+				'declare',
+				'definite'
+			]
+		},
+		'declaration.member.method': {
 			root: true,
 			arms: [
 				{
@@ -8181,7 +7180,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['default', 'static', 'async', 'computed', 'generator', 'privateName', 'override', 'readonly', 'optional']
 		},
-		'declaration.method.private': {
+		'declaration.member.method.private': {
 			root: true,
 			arms: [
 				{
@@ -8690,7 +7689,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['default', 'static', 'async', 'computed', 'generator', 'privateName', 'override', 'readonly', 'optional']
 		},
-		'declaration.method.protected': {
+		'declaration.member.method.protected': {
 			root: true,
 			arms: [
 				{
@@ -9199,7 +8198,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['default', 'static', 'async', 'computed', 'generator', 'privateName', 'override', 'readonly', 'optional']
 		},
-		'declaration.method.public': {
+		'declaration.member.method.public': {
 			root: true,
 			arms: [
 				{
@@ -9708,7 +8707,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['default', 'static', 'async', 'computed', 'generator', 'privateName', 'override', 'readonly', 'optional']
 		},
-		'declaration.method.signature': {
+		'declaration.member.method.signature': {
 			root: true,
 			arms: [
 				{
@@ -10101,7 +9100,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['static', 'async', 'override', 'readonly', 'optional', 'default', 'computed', 'generator', 'privateName']
 		},
-		'declaration.method.signature.abstract': {
+		'declaration.member.method.signature.abstract': {
 			root: true,
 			arms: [
 				{
@@ -10452,7 +9451,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['override', 'optional', 'static', 'async', 'readonly', 'default', 'computed', 'generator', 'privateName']
 		},
-		'declaration.method.signature.abstract.private': {
+		'declaration.member.method.signature.abstract.private': {
 			root: true,
 			arms: [
 				{
@@ -10813,7 +9812,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['override', 'optional', 'static', 'async', 'readonly', 'default', 'computed', 'generator', 'privateName']
 		},
-		'declaration.method.signature.abstract.protected': {
+		'declaration.member.method.signature.abstract.protected': {
 			root: true,
 			arms: [
 				{
@@ -11174,7 +10173,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['override', 'optional', 'static', 'async', 'readonly', 'default', 'computed', 'generator', 'privateName']
 		},
-		'declaration.method.signature.abstract.public': {
+		'declaration.member.method.signature.abstract.public': {
 			root: true,
 			arms: [
 				{
@@ -11535,7 +10534,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['override', 'optional', 'static', 'async', 'readonly', 'default', 'computed', 'generator', 'privateName']
 		},
-		'declaration.method.signature.private': {
+		'declaration.member.method.signature.private': {
 			root: true,
 			arms: [
 				{
@@ -11938,7 +10937,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['static', 'async', 'override', 'readonly', 'optional', 'default', 'computed', 'generator', 'privateName']
 		},
-		'declaration.method.signature.protected': {
+		'declaration.member.method.signature.protected': {
 			root: true,
 			arms: [
 				{
@@ -12341,7 +11340,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['static', 'async', 'override', 'readonly', 'optional', 'default', 'computed', 'generator', 'privateName']
 		},
-		'declaration.method.signature.public': {
+		'declaration.member.method.signature.public': {
 			root: true,
 			arms: [
 				{
@@ -12743,6 +11742,7603 @@ export const build: PortableBuildTable = {
 				}
 			],
 			flags: ['static', 'async', 'override', 'readonly', 'optional', 'default', 'computed', 'generator', 'privateName']
+		},
+		'declaration.member.property': {
+			root: true,
+			arms: [
+				{
+					kind: 467,
+					builder: 'publicFieldDefinitionAccessor',
+					slots: [
+						{
+							name: 'decorators',
+							steps: [
+								{
+									key: 'decorators',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [467, 'decorators'],
+									kinds: [],
+									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [467, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									stored: '_type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [467, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [467, 'value'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						}
+					],
+					presets: [],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.getter': {
+			root: true,
+			arms: [
+				{
+					kind: 458,
+					builder: 'methodDefinitionGetter',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [458, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [458, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [338, 'asserts'],
+									kinds: [337],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [353, 'typePredicate'],
+									kinds: [352],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'statementBlock'
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [211, 'statements'],
+									kinds: [
+										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
+										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
+									],
+									refined: [228],
+									tokens: {
+										';': 227
+									},
+									many: true
+								},
+								{
+									at: [206, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
+										428, 441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
+								},
+								{
+									at: [228, 'body'],
+									kinds: [211, 215, 216, 218, 219],
+									within: [
+										{
+											builder: 'labeledStatement',
+											key: 'body',
+											slots: [
+												{
+													name: 'label',
+													steps: [
+														{
+															key: 'label'
+														}
+													],
+													multiple: false,
+													list: false,
+													seats: [
+														{
+															at: [228, 'label'],
+															kinds: [507],
+															leaf: 'identifier',
+															texts: [1, 507],
+															pattern: {
+																source:
+																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+																flags: 'u'
+															}
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						}
+					],
+					presets: [],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.getter.private': {
+			root: true,
+			arms: [
+				{
+					kind: 458,
+					builder: 'methodDefinitionGetter',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [458, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [458, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [338, 'asserts'],
+									kinds: [337],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [353, 'typePredicate'],
+									kinds: [352],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'statementBlock'
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [211, 'statements'],
+									kinds: [
+										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
+										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
+									],
+									refined: [228],
+									tokens: {
+										';': 227
+									},
+									many: true
+								},
+								{
+									at: [206, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
+										428, 441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
+								},
+								{
+									at: [228, 'body'],
+									kinds: [211, 215, 216, 218, 219],
+									within: [
+										{
+											builder: 'labeledStatement',
+											key: 'body',
+											slots: [
+												{
+													name: 'label',
+													steps: [
+														{
+															key: 'label'
+														}
+													],
+													multiple: false,
+													list: false,
+													seats: [
+														{
+															at: [228, 'label'],
+															kinds: [507],
+															leaf: 'identifier',
+															texts: [1, 507],
+															pattern: {
+																source:
+																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+																flags: 'u'
+															}
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 35
+						}
+					],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.getter.protected': {
+			root: true,
+			arms: [
+				{
+					kind: 458,
+					builder: 'methodDefinitionGetter',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [458, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [458, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [338, 'asserts'],
+									kinds: [337],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [353, 'typePredicate'],
+									kinds: [352],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'statementBlock'
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [211, 'statements'],
+									kinds: [
+										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
+										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
+									],
+									refined: [228],
+									tokens: {
+										';': 227
+									},
+									many: true
+								},
+								{
+									at: [206, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
+										428, 441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
+								},
+								{
+									at: [228, 'body'],
+									kinds: [211, 215, 216, 218, 219],
+									within: [
+										{
+											builder: 'labeledStatement',
+											key: 'body',
+											slots: [
+												{
+													name: 'label',
+													steps: [
+														{
+															key: 'label'
+														}
+													],
+													multiple: false,
+													list: false,
+													seats: [
+														{
+															at: [228, 'label'],
+															kinds: [507],
+															leaf: 'identifier',
+															texts: [1, 507],
+															pattern: {
+																source:
+																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+																flags: 'u'
+															}
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 36
+						}
+					],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.getter.public': {
+			root: true,
+			arms: [
+				{
+					kind: 458,
+					builder: 'methodDefinitionGetter',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [458, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [458, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [338, 'asserts'],
+									kinds: [337],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [353, 'typePredicate'],
+									kinds: [352],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'statementBlock'
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [211, 'statements'],
+									kinds: [
+										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
+										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
+									],
+									refined: [228],
+									tokens: {
+										';': 227
+									},
+									many: true
+								},
+								{
+									at: [206, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
+										428, 441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
+								},
+								{
+									at: [228, 'body'],
+									kinds: [211, 215, 216, 218, 219],
+									within: [
+										{
+											builder: 'labeledStatement',
+											key: 'body',
+											slots: [
+												{
+													name: 'label',
+													steps: [
+														{
+															key: 'label'
+														}
+													],
+													multiple: false,
+													list: false,
+													seats: [
+														{
+															at: [228, 'label'],
+															kinds: [507],
+															leaf: 'identifier',
+															texts: [1, 507],
+															pattern: {
+																source:
+																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+																flags: 'u'
+															}
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 34
+						}
+					],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.private': {
+			root: true,
+			arms: [
+				{
+					kind: 467,
+					builder: 'publicFieldDefinitionAccessor',
+					slots: [
+						{
+							name: 'decorators',
+							steps: [
+								{
+									key: 'decorators',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [467, 'decorators'],
+									kinds: [],
+									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [467, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									stored: '_type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [467, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [467, 'value'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 35
+						}
+					],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.protected': {
+			root: true,
+			arms: [
+				{
+					kind: 467,
+					builder: 'publicFieldDefinitionAccessor',
+					slots: [
+						{
+							name: 'decorators',
+							steps: [
+								{
+									key: 'decorators',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [467, 'decorators'],
+									kinds: [],
+									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [467, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									stored: '_type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [467, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [467, 'value'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 36
+						}
+					],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.public': {
+			root: true,
+			arms: [
+				{
+					kind: 467,
+					builder: 'publicFieldDefinitionAccessor',
+					slots: [
+						{
+							name: 'decorators',
+							steps: [
+								{
+									key: 'decorators',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [467, 'decorators'],
+									kinds: [],
+									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [467, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									stored: '_type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [467, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [467, 'value'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 34
+						}
+					],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.setter': {
+			root: true,
+			arms: [
+				{
+					kind: 459,
+					builder: 'methodDefinitionSetter',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [459, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									stored: '_parameters',
+									builder: 'formalParametersSetAccessorSignature',
+									kinds: [452]
+								},
+								{
+									key: 'elements',
+									builder: 'formalParametersSetAccessorSignature.elements',
+									mounted: {
+										call: 'child',
+										key: 'elements'
+									},
+									kinds: [453]
+								},
+								{
+									key: 'item'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [453, 'item'],
+									kinds: [454]
+								}
+							]
+						},
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'statementBlock'
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [211, 'statements'],
+									kinds: [
+										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
+										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
+									],
+									refined: [228],
+									tokens: {
+										';': 227
+									},
+									many: true
+								},
+								{
+									at: [206, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
+										428, 441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
+								},
+								{
+									at: [228, 'body'],
+									kinds: [211, 215, 216, 218, 219],
+									within: [
+										{
+											builder: 'labeledStatement',
+											key: 'body',
+											slots: [
+												{
+													name: 'label',
+													steps: [
+														{
+															key: 'label'
+														}
+													],
+													multiple: false,
+													list: false,
+													seats: [
+														{
+															at: [228, 'label'],
+															kinds: [507],
+															leaf: 'identifier',
+															texts: [1, 507],
+															pattern: {
+																source:
+																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+																flags: 'u'
+															}
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						}
+					],
+					presets: [],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.setter.private': {
+			root: true,
+			arms: [
+				{
+					kind: 459,
+					builder: 'methodDefinitionSetter',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [459, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									stored: '_parameters',
+									builder: 'formalParametersSetAccessorSignature',
+									kinds: [452]
+								},
+								{
+									key: 'elements',
+									builder: 'formalParametersSetAccessorSignature.elements',
+									mounted: {
+										call: 'child',
+										key: 'elements'
+									},
+									kinds: [453]
+								},
+								{
+									key: 'item'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [453, 'item'],
+									kinds: [454]
+								}
+							]
+						},
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'statementBlock'
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [211, 'statements'],
+									kinds: [
+										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
+										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
+									],
+									refined: [228],
+									tokens: {
+										';': 227
+									},
+									many: true
+								},
+								{
+									at: [206, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
+										428, 441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
+								},
+								{
+									at: [228, 'body'],
+									kinds: [211, 215, 216, 218, 219],
+									within: [
+										{
+											builder: 'labeledStatement',
+											key: 'body',
+											slots: [
+												{
+													name: 'label',
+													steps: [
+														{
+															key: 'label'
+														}
+													],
+													multiple: false,
+													list: false,
+													seats: [
+														{
+															at: [228, 'label'],
+															kinds: [507],
+															leaf: 'identifier',
+															texts: [1, 507],
+															pattern: {
+																source:
+																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+																flags: 'u'
+															}
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 35
+						}
+					],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.setter.protected': {
+			root: true,
+			arms: [
+				{
+					kind: 459,
+					builder: 'methodDefinitionSetter',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [459, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									stored: '_parameters',
+									builder: 'formalParametersSetAccessorSignature',
+									kinds: [452]
+								},
+								{
+									key: 'elements',
+									builder: 'formalParametersSetAccessorSignature.elements',
+									mounted: {
+										call: 'child',
+										key: 'elements'
+									},
+									kinds: [453]
+								},
+								{
+									key: 'item'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [453, 'item'],
+									kinds: [454]
+								}
+							]
+						},
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'statementBlock'
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [211, 'statements'],
+									kinds: [
+										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
+										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
+									],
+									refined: [228],
+									tokens: {
+										';': 227
+									},
+									many: true
+								},
+								{
+									at: [206, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
+										428, 441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
+								},
+								{
+									at: [228, 'body'],
+									kinds: [211, 215, 216, 218, 219],
+									within: [
+										{
+											builder: 'labeledStatement',
+											key: 'body',
+											slots: [
+												{
+													name: 'label',
+													steps: [
+														{
+															key: 'label'
+														}
+													],
+													multiple: false,
+													list: false,
+													seats: [
+														{
+															at: [228, 'label'],
+															kinds: [507],
+															leaf: 'identifier',
+															texts: [1, 507],
+															pattern: {
+																source:
+																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+																flags: 'u'
+															}
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 36
+						}
+					],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.setter.public': {
+			root: true,
+			arms: [
+				{
+					kind: 459,
+					builder: 'methodDefinitionSetter',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [459, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									stored: '_parameters',
+									builder: 'formalParametersSetAccessorSignature',
+									kinds: [452]
+								},
+								{
+									key: 'elements',
+									builder: 'formalParametersSetAccessorSignature.elements',
+									mounted: {
+										call: 'child',
+										key: 'elements'
+									},
+									kinds: [453]
+								},
+								{
+									key: 'item'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [453, 'item'],
+									kinds: [454]
+								}
+							]
+						},
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'statementBlock'
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [211, 'statements'],
+									kinds: [
+										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
+										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
+									],
+									refined: [228],
+									tokens: {
+										';': 227
+									},
+									many: true
+								},
+								{
+									at: [206, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
+										428, 441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
+								},
+								{
+									at: [228, 'body'],
+									kinds: [211, 215, 216, 218, 219],
+									within: [
+										{
+											builder: 'labeledStatement',
+											key: 'body',
+											slots: [
+												{
+													name: 'label',
+													steps: [
+														{
+															key: 'label'
+														}
+													],
+													multiple: false,
+													list: false,
+													seats: [
+														{
+															at: [228, 'label'],
+															kinds: [507],
+															leaf: 'identifier',
+															texts: [1, 507],
+															pattern: {
+																source:
+																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+																flags: 'u'
+															}
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 34
+						}
+					],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.signature.abstract': {
+			root: true,
+			arms: [
+				{
+					kind: 467,
+					builder: 'publicFieldDefinitionAccessor',
+					slots: [
+						{
+							name: 'decorators',
+							steps: [
+								{
+									key: 'decorators',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [467, 'decorators'],
+									kinds: [],
+									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [467, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									stored: '_type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [467, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [467, 'value'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'abstract',
+									optional: true
+								}
+							],
+							kind: 149,
+							presence: true
+						}
+					],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.signature.abstract.getter': {
+			root: true,
+			arms: [
+				{
+					kind: 464,
+					builder: 'abstractMethodSignatureGetter',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [464, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [464, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [338, 'asserts'],
+									kinds: [337],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [353, 'typePredicate'],
+									kinds: [352],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.signature.abstract.getter.private': {
+			root: true,
+			arms: [
+				{
+					kind: 464,
+					builder: 'abstractMethodSignatureGetter',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [464, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [464, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [338, 'asserts'],
+									kinds: [337],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [353, 'typePredicate'],
+									kinds: [352],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 35
+						}
+					],
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.signature.abstract.getter.protected': {
+			root: true,
+			arms: [
+				{
+					kind: 464,
+					builder: 'abstractMethodSignatureGetter',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [464, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [464, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [338, 'asserts'],
+									kinds: [337],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [353, 'typePredicate'],
+									kinds: [352],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 36
+						}
+					],
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.signature.abstract.getter.public': {
+			root: true,
+			arms: [
+				{
+					kind: 464,
+					builder: 'abstractMethodSignatureGetter',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [464, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [464, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [338, 'asserts'],
+									kinds: [337],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [353, 'typePredicate'],
+									kinds: [352],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 34
+						}
+					],
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.signature.abstract.setter': {
+			root: true,
+			arms: [
+				{
+					kind: 465,
+					builder: 'abstractMethodSignatureSetter',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [465, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									stored: '_parameters',
+									builder: 'formalParametersSetAccessorSignature',
+									kinds: [452]
+								},
+								{
+									key: 'elements',
+									builder: 'formalParametersSetAccessorSignature.elements',
+									mounted: {
+										call: 'child',
+										key: 'elements'
+									},
+									kinds: [453]
+								},
+								{
+									key: 'item'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [453, 'item'],
+									kinds: [454]
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.signature.abstract.setter.private': {
+			root: true,
+			arms: [
+				{
+					kind: 465,
+					builder: 'abstractMethodSignatureSetter',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [465, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									stored: '_parameters',
+									builder: 'formalParametersSetAccessorSignature',
+									kinds: [452]
+								},
+								{
+									key: 'elements',
+									builder: 'formalParametersSetAccessorSignature.elements',
+									mounted: {
+										call: 'child',
+										key: 'elements'
+									},
+									kinds: [453]
+								},
+								{
+									key: 'item'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [453, 'item'],
+									kinds: [454]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 35
+						}
+					],
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.signature.abstract.setter.protected': {
+			root: true,
+			arms: [
+				{
+					kind: 465,
+					builder: 'abstractMethodSignatureSetter',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [465, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									stored: '_parameters',
+									builder: 'formalParametersSetAccessorSignature',
+									kinds: [452]
+								},
+								{
+									key: 'elements',
+									builder: 'formalParametersSetAccessorSignature.elements',
+									mounted: {
+										call: 'child',
+										key: 'elements'
+									},
+									kinds: [453]
+								},
+								{
+									key: 'item'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [453, 'item'],
+									kinds: [454]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 36
+						}
+					],
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.signature.abstract.setter.public': {
+			root: true,
+			arms: [
+				{
+					kind: 465,
+					builder: 'abstractMethodSignatureSetter',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [465, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									stored: '_parameters',
+									builder: 'formalParametersSetAccessorSignature',
+									kinds: [452]
+								},
+								{
+									key: 'elements',
+									builder: 'formalParametersSetAccessorSignature.elements',
+									mounted: {
+										call: 'child',
+										key: 'elements'
+									},
+									kinds: [453]
+								},
+								{
+									key: 'item'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [453, 'item'],
+									kinds: [454]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 34
+						}
+					],
+					flags: {
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.signature.getter': {
+			root: true,
+			arms: [
+				{
+					kind: 461,
+					builder: 'methodSignatureGetter',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [461, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [461, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [338, 'asserts'],
+									kinds: [337],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [353, 'typePredicate'],
+									kinds: [352],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.signature.getter.private': {
+			root: true,
+			arms: [
+				{
+					kind: 461,
+					builder: 'methodSignatureGetter',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [461, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [461, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [338, 'asserts'],
+									kinds: [337],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [353, 'typePredicate'],
+									kinds: [352],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 35
+						}
+					],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.signature.getter.protected': {
+			root: true,
+			arms: [
+				{
+					kind: 461,
+					builder: 'methodSignatureGetter',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [461, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [461, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [338, 'asserts'],
+									kinds: [337],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [353, 'typePredicate'],
+									kinds: [352],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 36
+						}
+					],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.signature.getter.public': {
+			root: true,
+			arms: [
+				{
+					kind: 461,
+					builder: 'methodSignatureGetter',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [461, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [461, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [338, 'asserts'],
+									kinds: [337],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [353, 'typePredicate'],
+									kinds: [352],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 34
+						}
+					],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.signature.setter': {
+			root: true,
+			arms: [
+				{
+					kind: 462,
+					builder: 'methodSignatureSetter',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [462, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									stored: '_parameters',
+									builder: 'formalParametersSetAccessorSignature',
+									kinds: [452]
+								},
+								{
+									key: 'elements',
+									builder: 'formalParametersSetAccessorSignature.elements',
+									mounted: {
+										call: 'child',
+										key: 'elements'
+									},
+									kinds: [453]
+								},
+								{
+									key: 'item'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [453, 'item'],
+									kinds: [454]
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.signature.setter.private': {
+			root: true,
+			arms: [
+				{
+					kind: 462,
+					builder: 'methodSignatureSetter',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [462, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									stored: '_parameters',
+									builder: 'formalParametersSetAccessorSignature',
+									kinds: [452]
+								},
+								{
+									key: 'elements',
+									builder: 'formalParametersSetAccessorSignature.elements',
+									mounted: {
+										call: 'child',
+										key: 'elements'
+									},
+									kinds: [453]
+								},
+								{
+									key: 'item'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [453, 'item'],
+									kinds: [454]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 35
+						}
+					],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.signature.setter.protected': {
+			root: true,
+			arms: [
+				{
+					kind: 462,
+					builder: 'methodSignatureSetter',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [462, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									stored: '_parameters',
+									builder: 'formalParametersSetAccessorSignature',
+									kinds: [452]
+								},
+								{
+									key: 'elements',
+									builder: 'formalParametersSetAccessorSignature.elements',
+									mounted: {
+										call: 'child',
+										key: 'elements'
+									},
+									kinds: [453]
+								},
+								{
+									key: 'item'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [453, 'item'],
+									kinds: [454]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 36
+						}
+					],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.property.signature.setter.public': {
+			root: true,
+			arms: [
+				{
+					kind: 462,
+					builder: 'methodSignatureSetter',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [462, 'name'],
+									kinds: [
+										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									contents: {
+										'128': 'content'
+									}
+								},
+								{
+									at: [297, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
+										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
+										441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									stored: '_parameters',
+									builder: 'formalParametersSetAccessorSignature',
+									kinds: [452]
+								},
+								{
+									key: 'elements',
+									builder: 'formalParametersSetAccessorSignature.elements',
+									mounted: {
+										call: 'child',
+										key: 'elements'
+									},
+									kinds: [453]
+								},
+								{
+									key: 'item'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [453, 'item'],
+									kinds: [454]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'accessibilityModifier',
+									optional: true
+								}
+							],
+							kind: 34
+						}
+					],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 52,
+									presence: true
+								}
+							]
+						},
+						override: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'override',
+											optional: true
+										}
+									],
+									kind: 327,
+									presence: true
+								}
+							]
+						},
+						privateName: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'privatePropertyIdentifier'
+								}
+							]
+						},
+						computed: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'name'
+										}
+									],
+									builder: 'computedPropertyName'
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters']
+						}
+					]
+				}
+			],
+			flags: ['computed', 'privateName', 'override', 'static', 'definite']
+		},
+		'declaration.member.signature.call': {
+			root: true,
+			arms: [
+				{
+					kind: 370,
+					builder: 'callSignature',
+					slots: [
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [370, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [392, 'items'],
+									kinds: [373],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'returnType',
+							steps: [
+								{
+									key: 'returnType',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [370, 'returnType'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [338, 'asserts'],
+									kinds: [337],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [353, 'typePredicate'],
+									kinds: [352],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									stored: '_parameters',
+									builder: 'formalParameters'
+								},
+								{
+									key: 'elements',
+									builder: 'formalParametersElements',
+									optional: true,
+									kinds: [387]
+								},
+								{
+									key: 'items'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [387, 'items'],
+									kinds: [328, 329],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									stored: '_parameters',
+									builder: 'formalParameters'
+								},
+								{
+									key: 'elements',
+									builder: 'formalParametersElementsReceiver',
+									optional: true,
+									kinds: [474]
+								},
+								{
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true,
+									seated: 'forwarded'
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									builder: 'formalParametersElements',
+									optional: true
+								},
+								{
+									key: 'items'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [387, 'items'],
+									kinds: [328, 329],
+									many: true
+								}
+							],
+							requires: [['receiver']]
+						},
+						{
+							name: 'receiver',
+							steps: [
+								{
+									key: 'parameters',
+									stored: '_parameters',
+									builder: 'formalParameters'
+								},
+								{
+									key: 'elements',
+									builder: 'formalParametersElementsReceiver',
+									optional: true,
+									kinds: [474]
+								},
+								{
+									key: 'receiver'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [474, 'receiver'],
+									kinds: [472]
+								}
+							]
+						}
+					],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3, 4]
+					],
+					presets: [],
+					flags: {},
+					when: []
+				}
+			]
+		},
+		'declaration.member.signature.construct': {
+			root: true,
+			arms: [
+				{
+					kind: 376,
+					builder: 'constructSignature',
+					slots: [
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [376, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [392, 'items'],
+									kinds: [373],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									stored: '_type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [376, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									stored: '_parameters',
+									builder: 'formalParameters'
+								},
+								{
+									key: 'elements',
+									builder: 'formalParametersElements',
+									optional: true,
+									kinds: [387]
+								},
+								{
+									key: 'items'
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [387, 'items'],
+									kinds: [328, 329],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {
+						abstract: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'abstract',
+											optional: true
+										}
+									],
+									kind: 149,
+									presence: true
+								}
+							]
+						}
+					},
+					when: []
+				}
+			],
+			flags: ['abstract']
+		},
+		'declaration.member.signature.index': {
+			root: true,
+			arms: [
+				{
+					kind: 410,
+					builder: 'indexSignatureColon',
+					slots: [
+						{
+							name: 'sign',
+							steps: [
+								{
+									key: 'sign',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [410, 'sign'],
+									kinds: [103, 104],
+									tokens: {
+										'+': 103,
+										'-': 104
+									}
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [410, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'indexType',
+							steps: [
+								{
+									key: 'indexType'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [410, 'indexType'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [410, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [331, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'omittingTypeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [332, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'addingTypeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'optingTypeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38,
+									presence: true
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['indexType', 'name', 'type']
+						}
+					]
+				}
+			],
+			flags: ['readonly']
+		},
+		'declaration.member.signature.index.mapped': {
+			root: true,
+			arms: [
+				{
+					kind: 411,
+					builder: 'indexSignatureMappedTypeClause',
+					slots: [
+						{
+							name: 'sign',
+							steps: [
+								{
+									key: 'sign',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [411, 'sign'],
+									kinds: [103, 104],
+									tokens: {
+										'+': 103,
+										'-': 104
+									}
+								}
+							]
+						},
+						{
+							name: 'mappedTypeClause',
+							steps: [
+								{
+									key: 'mappedTypeClause'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [411, 'mappedTypeClause'],
+									kinds: [361]
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [411, 'type'],
+									kinds: []
+								},
+								{
+									at: [334, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [331, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'omittingTypeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [332, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'addingTypeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'optingTypeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {
+						readonly: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'readonly',
+											optional: true
+										}
+									],
+									kind: 38,
+									presence: true
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['mappedTypeClause', 'type']
+						}
+					]
+				}
+			],
+			flags: ['readonly']
+		},
+		'declaration.member.static_block': {
+			root: true,
+			arms: [
+				{
+					kind: 290,
+					builder: 'classStaticBlock',
+					slots: [
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'statementBlock'
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [211, 'statements'],
+									kinds: [
+										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
+										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
+									],
+									refined: [228],
+									tokens: {
+										';': 227
+									},
+									many: true
+								},
+								{
+									at: [206, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
+										428, 441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
+								},
+								{
+									at: [228, 'body'],
+									kinds: [211, 215, 216, 218, 219],
+									within: [
+										{
+											builder: 'labeledStatement',
+											key: 'body',
+											slots: [
+												{
+													name: 'label',
+													steps: [
+														{
+															key: 'label'
+														}
+													],
+													multiple: false,
+													list: false,
+													seats: [
+														{
+															at: [228, 'label'],
+															kinds: [507],
+															leaf: 'identifier',
+															texts: [1, 507],
+															pattern: {
+																source:
+																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+																flags: 'u'
+															}
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
+						}
+					],
+					presets: [],
+					flags: {},
+					when: [],
+					options: ['terminator']
+				}
+			]
 		},
 		'declaration.module': {
 			root: true,
@@ -16484,12 +23080,12 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['override', 'readonly', 'optional']
 		},
-		'declaration.property': {
+		'declaration.type.class': {
 			root: true,
 			arms: [
 				{
-					kind: 467,
-					builder: 'publicFieldDefinitionAccessor',
+					kind: 314,
+					builder: 'abstractClassDeclaration',
 					slots: [
 						{
 							name: 'decorators',
@@ -16503,7 +23099,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [467, 'decorators'],
+									at: [314, 'decorators'],
 									kinds: [],
 									many: true
 								},
@@ -16537,6590 +23133,18 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [467, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									stored: '_type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [467, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
+									at: [314, 'name'],
+									kinds: [509],
 									leaf: 'identifier',
 									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [467, 'value'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
 									}
 								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						}
-					],
-					presets: [],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
 							]
 						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.getter': {
-			root: true,
-			arms: [
-				{
-					kind: 458,
-					builder: 'methodDefinitionGetter',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [458, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [458, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [338, 'asserts'],
-									kinds: [337],
-									within: [
-										{
-											builder: 'assertsAnnotation',
-											key: 'asserts'
-										}
-									]
-								},
-								{
-									at: [353, 'typePredicate'],
-									kinds: [352],
-									within: [
-										{
-											builder: 'typePredicateAnnotation',
-											key: 'typePredicate'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'statements',
-							steps: [
-								{
-									key: 'body',
-									builder: 'statementBlock'
-								},
-								{
-									key: 'statements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [211, 'statements'],
-									kinds: [
-										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
-										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
-									],
-									refined: [228],
-									tokens: {
-										';': 227
-									},
-									many: true
-								},
-								{
-									at: [206, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
-										428, 441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionStatement',
-											key: 'expression'
-										}
-									]
-								},
-								{
-									at: [228, 'body'],
-									kinds: [211, 215, 216, 218, 219],
-									within: [
-										{
-											builder: 'labeledStatement',
-											key: 'body',
-											slots: [
-												{
-													name: 'label',
-													steps: [
-														{
-															key: 'label'
-														}
-													],
-													multiple: false,
-													list: false,
-													seats: [
-														{
-															at: [228, 'label'],
-															kinds: [507],
-															leaf: 'identifier',
-															texts: [1, 507],
-															pattern: {
-																source:
-																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-																flags: 'u'
-															}
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						}
-					],
-					presets: [],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.getter.private': {
-			root: true,
-			arms: [
-				{
-					kind: 458,
-					builder: 'methodDefinitionGetter',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [458, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [458, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [338, 'asserts'],
-									kinds: [337],
-									within: [
-										{
-											builder: 'assertsAnnotation',
-											key: 'asserts'
-										}
-									]
-								},
-								{
-									at: [353, 'typePredicate'],
-									kinds: [352],
-									within: [
-										{
-											builder: 'typePredicateAnnotation',
-											key: 'typePredicate'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'statements',
-							steps: [
-								{
-									key: 'body',
-									builder: 'statementBlock'
-								},
-								{
-									key: 'statements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [211, 'statements'],
-									kinds: [
-										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
-										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
-									],
-									refined: [228],
-									tokens: {
-										';': 227
-									},
-									many: true
-								},
-								{
-									at: [206, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
-										428, 441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionStatement',
-											key: 'expression'
-										}
-									]
-								},
-								{
-									at: [228, 'body'],
-									kinds: [211, 215, 216, 218, 219],
-									within: [
-										{
-											builder: 'labeledStatement',
-											key: 'body',
-											slots: [
-												{
-													name: 'label',
-													steps: [
-														{
-															key: 'label'
-														}
-													],
-													multiple: false,
-													list: false,
-													seats: [
-														{
-															at: [228, 'label'],
-															kinds: [507],
-															leaf: 'identifier',
-															texts: [1, 507],
-															pattern: {
-																source:
-																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-																flags: 'u'
-															}
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 35
-						}
-					],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.getter.protected': {
-			root: true,
-			arms: [
-				{
-					kind: 458,
-					builder: 'methodDefinitionGetter',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [458, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [458, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [338, 'asserts'],
-									kinds: [337],
-									within: [
-										{
-											builder: 'assertsAnnotation',
-											key: 'asserts'
-										}
-									]
-								},
-								{
-									at: [353, 'typePredicate'],
-									kinds: [352],
-									within: [
-										{
-											builder: 'typePredicateAnnotation',
-											key: 'typePredicate'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'statements',
-							steps: [
-								{
-									key: 'body',
-									builder: 'statementBlock'
-								},
-								{
-									key: 'statements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [211, 'statements'],
-									kinds: [
-										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
-										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
-									],
-									refined: [228],
-									tokens: {
-										';': 227
-									},
-									many: true
-								},
-								{
-									at: [206, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
-										428, 441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionStatement',
-											key: 'expression'
-										}
-									]
-								},
-								{
-									at: [228, 'body'],
-									kinds: [211, 215, 216, 218, 219],
-									within: [
-										{
-											builder: 'labeledStatement',
-											key: 'body',
-											slots: [
-												{
-													name: 'label',
-													steps: [
-														{
-															key: 'label'
-														}
-													],
-													multiple: false,
-													list: false,
-													seats: [
-														{
-															at: [228, 'label'],
-															kinds: [507],
-															leaf: 'identifier',
-															texts: [1, 507],
-															pattern: {
-																source:
-																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-																flags: 'u'
-															}
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 36
-						}
-					],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.getter.public': {
-			root: true,
-			arms: [
-				{
-					kind: 458,
-					builder: 'methodDefinitionGetter',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [458, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [458, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [338, 'asserts'],
-									kinds: [337],
-									within: [
-										{
-											builder: 'assertsAnnotation',
-											key: 'asserts'
-										}
-									]
-								},
-								{
-									at: [353, 'typePredicate'],
-									kinds: [352],
-									within: [
-										{
-											builder: 'typePredicateAnnotation',
-											key: 'typePredicate'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'statements',
-							steps: [
-								{
-									key: 'body',
-									builder: 'statementBlock'
-								},
-								{
-									key: 'statements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [211, 'statements'],
-									kinds: [
-										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
-										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
-									],
-									refined: [228],
-									tokens: {
-										';': 227
-									},
-									many: true
-								},
-								{
-									at: [206, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
-										428, 441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionStatement',
-											key: 'expression'
-										}
-									]
-								},
-								{
-									at: [228, 'body'],
-									kinds: [211, 215, 216, 218, 219],
-									within: [
-										{
-											builder: 'labeledStatement',
-											key: 'body',
-											slots: [
-												{
-													name: 'label',
-													steps: [
-														{
-															key: 'label'
-														}
-													],
-													multiple: false,
-													list: false,
-													seats: [
-														{
-															at: [228, 'label'],
-															kinds: [507],
-															leaf: 'identifier',
-															texts: [1, 507],
-															pattern: {
-																source:
-																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-																flags: 'u'
-															}
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 34
-						}
-					],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.private': {
-			root: true,
-			arms: [
-				{
-					kind: 467,
-					builder: 'publicFieldDefinitionAccessor',
-					slots: [
-						{
-							name: 'decorators',
-							steps: [
-								{
-									key: 'decorators',
-									optional: true
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [467, 'decorators'],
-									kinds: [],
-									many: true
-								},
-								{
-									at: [285, 'expression'],
-									kinds: [1, 286, 287, 304],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'decorator',
-											key: 'expression'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [467, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									stored: '_type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [467, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [467, 'value'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 35
-						}
-					],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.protected': {
-			root: true,
-			arms: [
-				{
-					kind: 467,
-					builder: 'publicFieldDefinitionAccessor',
-					slots: [
-						{
-							name: 'decorators',
-							steps: [
-								{
-									key: 'decorators',
-									optional: true
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [467, 'decorators'],
-									kinds: [],
-									many: true
-								},
-								{
-									at: [285, 'expression'],
-									kinds: [1, 286, 287, 304],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'decorator',
-											key: 'expression'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [467, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									stored: '_type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [467, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [467, 'value'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 36
-						}
-					],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.public': {
-			root: true,
-			arms: [
-				{
-					kind: 467,
-					builder: 'publicFieldDefinitionAccessor',
-					slots: [
-						{
-							name: 'decorators',
-							steps: [
-								{
-									key: 'decorators',
-									optional: true
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [467, 'decorators'],
-									kinds: [],
-									many: true
-								},
-								{
-									at: [285, 'expression'],
-									kinds: [1, 286, 287, 304],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'decorator',
-											key: 'expression'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [467, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									stored: '_type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [467, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [467, 'value'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 34
-						}
-					],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.setter': {
-			root: true,
-			arms: [
-				{
-					kind: 459,
-					builder: 'methodDefinitionSetter',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [459, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									stored: '_parameters',
-									builder: 'formalParametersSetAccessorSignature',
-									kinds: [452]
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersSetAccessorSignature.elements',
-									mounted: {
-										call: 'child',
-										key: 'elements'
-									},
-									kinds: [453]
-								},
-								{
-									key: 'item'
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [453, 'item'],
-									kinds: [454]
-								}
-							]
-						},
-						{
-							name: 'statements',
-							steps: [
-								{
-									key: 'body',
-									builder: 'statementBlock'
-								},
-								{
-									key: 'statements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [211, 'statements'],
-									kinds: [
-										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
-										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
-									],
-									refined: [228],
-									tokens: {
-										';': 227
-									},
-									many: true
-								},
-								{
-									at: [206, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
-										428, 441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionStatement',
-											key: 'expression'
-										}
-									]
-								},
-								{
-									at: [228, 'body'],
-									kinds: [211, 215, 216, 218, 219],
-									within: [
-										{
-											builder: 'labeledStatement',
-											key: 'body',
-											slots: [
-												{
-													name: 'label',
-													steps: [
-														{
-															key: 'label'
-														}
-													],
-													multiple: false,
-													list: false,
-													seats: [
-														{
-															at: [228, 'label'],
-															kinds: [507],
-															leaf: 'identifier',
-															texts: [1, 507],
-															pattern: {
-																source:
-																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-																flags: 'u'
-															}
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						}
-					],
-					presets: [],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name', 'parameters']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.setter.private': {
-			root: true,
-			arms: [
-				{
-					kind: 459,
-					builder: 'methodDefinitionSetter',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [459, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									stored: '_parameters',
-									builder: 'formalParametersSetAccessorSignature',
-									kinds: [452]
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersSetAccessorSignature.elements',
-									mounted: {
-										call: 'child',
-										key: 'elements'
-									},
-									kinds: [453]
-								},
-								{
-									key: 'item'
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [453, 'item'],
-									kinds: [454]
-								}
-							]
-						},
-						{
-							name: 'statements',
-							steps: [
-								{
-									key: 'body',
-									builder: 'statementBlock'
-								},
-								{
-									key: 'statements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [211, 'statements'],
-									kinds: [
-										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
-										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
-									],
-									refined: [228],
-									tokens: {
-										';': 227
-									},
-									many: true
-								},
-								{
-									at: [206, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
-										428, 441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionStatement',
-											key: 'expression'
-										}
-									]
-								},
-								{
-									at: [228, 'body'],
-									kinds: [211, 215, 216, 218, 219],
-									within: [
-										{
-											builder: 'labeledStatement',
-											key: 'body',
-											slots: [
-												{
-													name: 'label',
-													steps: [
-														{
-															key: 'label'
-														}
-													],
-													multiple: false,
-													list: false,
-													seats: [
-														{
-															at: [228, 'label'],
-															kinds: [507],
-															leaf: 'identifier',
-															texts: [1, 507],
-															pattern: {
-																source:
-																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-																flags: 'u'
-															}
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 35
-						}
-					],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name', 'parameters']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.setter.protected': {
-			root: true,
-			arms: [
-				{
-					kind: 459,
-					builder: 'methodDefinitionSetter',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [459, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									stored: '_parameters',
-									builder: 'formalParametersSetAccessorSignature',
-									kinds: [452]
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersSetAccessorSignature.elements',
-									mounted: {
-										call: 'child',
-										key: 'elements'
-									},
-									kinds: [453]
-								},
-								{
-									key: 'item'
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [453, 'item'],
-									kinds: [454]
-								}
-							]
-						},
-						{
-							name: 'statements',
-							steps: [
-								{
-									key: 'body',
-									builder: 'statementBlock'
-								},
-								{
-									key: 'statements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [211, 'statements'],
-									kinds: [
-										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
-										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
-									],
-									refined: [228],
-									tokens: {
-										';': 227
-									},
-									many: true
-								},
-								{
-									at: [206, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
-										428, 441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionStatement',
-											key: 'expression'
-										}
-									]
-								},
-								{
-									at: [228, 'body'],
-									kinds: [211, 215, 216, 218, 219],
-									within: [
-										{
-											builder: 'labeledStatement',
-											key: 'body',
-											slots: [
-												{
-													name: 'label',
-													steps: [
-														{
-															key: 'label'
-														}
-													],
-													multiple: false,
-													list: false,
-													seats: [
-														{
-															at: [228, 'label'],
-															kinds: [507],
-															leaf: 'identifier',
-															texts: [1, 507],
-															pattern: {
-																source:
-																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-																flags: 'u'
-															}
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 36
-						}
-					],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name', 'parameters']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.setter.public': {
-			root: true,
-			arms: [
-				{
-					kind: 459,
-					builder: 'methodDefinitionSetter',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [459, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									stored: '_parameters',
-									builder: 'formalParametersSetAccessorSignature',
-									kinds: [452]
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersSetAccessorSignature.elements',
-									mounted: {
-										call: 'child',
-										key: 'elements'
-									},
-									kinds: [453]
-								},
-								{
-									key: 'item'
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [453, 'item'],
-									kinds: [454]
-								}
-							]
-						},
-						{
-							name: 'statements',
-							steps: [
-								{
-									key: 'body',
-									builder: 'statementBlock'
-								},
-								{
-									key: 'statements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [211, 'statements'],
-									kinds: [
-										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
-										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
-									],
-									refined: [228],
-									tokens: {
-										';': 227
-									},
-									many: true
-								},
-								{
-									at: [206, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
-										428, 441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionStatement',
-											key: 'expression'
-										}
-									]
-								},
-								{
-									at: [228, 'body'],
-									kinds: [211, 215, 216, 218, 219],
-									within: [
-										{
-											builder: 'labeledStatement',
-											key: 'body',
-											slots: [
-												{
-													name: 'label',
-													steps: [
-														{
-															key: 'label'
-														}
-													],
-													multiple: false,
-													list: false,
-													seats: [
-														{
-															at: [228, 'label'],
-															kinds: [507],
-															leaf: 'identifier',
-															texts: [1, 507],
-															pattern: {
-																source:
-																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-																flags: 'u'
-															}
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 34
-						}
-					],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name', 'parameters']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.signature.abstract': {
-			root: true,
-			arms: [
-				{
-					kind: 467,
-					builder: 'publicFieldDefinitionAccessor',
-					slots: [
-						{
-							name: 'decorators',
-							steps: [
-								{
-									key: 'decorators',
-									optional: true
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [467, 'decorators'],
-									kinds: [],
-									many: true
-								},
-								{
-									at: [285, 'expression'],
-									kinds: [1, 286, 287, 304],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'decorator',
-											key: 'expression'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [467, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									stored: '_type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [467, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [467, 'value'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'abstract',
-									optional: true
-								}
-							],
-							kind: 149,
-							presence: true
-						}
-					],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.signature.abstract.getter': {
-			root: true,
-			arms: [
-				{
-					kind: 464,
-					builder: 'abstractMethodSignatureGetter',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [464, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [464, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [338, 'asserts'],
-									kinds: [337],
-									within: [
-										{
-											builder: 'assertsAnnotation',
-											key: 'asserts'
-										}
-									]
-								},
-								{
-									at: [353, 'typePredicate'],
-									kinds: [352],
-									within: [
-										{
-											builder: 'typePredicateAnnotation',
-											key: 'typePredicate'
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.signature.abstract.getter.private': {
-			root: true,
-			arms: [
-				{
-					kind: 464,
-					builder: 'abstractMethodSignatureGetter',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [464, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [464, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [338, 'asserts'],
-									kinds: [337],
-									within: [
-										{
-											builder: 'assertsAnnotation',
-											key: 'asserts'
-										}
-									]
-								},
-								{
-									at: [353, 'typePredicate'],
-									kinds: [352],
-									within: [
-										{
-											builder: 'typePredicateAnnotation',
-											key: 'typePredicate'
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 35
-						}
-					],
-					flags: {
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.signature.abstract.getter.protected': {
-			root: true,
-			arms: [
-				{
-					kind: 464,
-					builder: 'abstractMethodSignatureGetter',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [464, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [464, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [338, 'asserts'],
-									kinds: [337],
-									within: [
-										{
-											builder: 'assertsAnnotation',
-											key: 'asserts'
-										}
-									]
-								},
-								{
-									at: [353, 'typePredicate'],
-									kinds: [352],
-									within: [
-										{
-											builder: 'typePredicateAnnotation',
-											key: 'typePredicate'
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 36
-						}
-					],
-					flags: {
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.signature.abstract.getter.public': {
-			root: true,
-			arms: [
-				{
-					kind: 464,
-					builder: 'abstractMethodSignatureGetter',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [464, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [464, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [338, 'asserts'],
-									kinds: [337],
-									within: [
-										{
-											builder: 'assertsAnnotation',
-											key: 'asserts'
-										}
-									]
-								},
-								{
-									at: [353, 'typePredicate'],
-									kinds: [352],
-									within: [
-										{
-											builder: 'typePredicateAnnotation',
-											key: 'typePredicate'
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 34
-						}
-					],
-					flags: {
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.signature.abstract.setter': {
-			root: true,
-			arms: [
-				{
-					kind: 465,
-					builder: 'abstractMethodSignatureSetter',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [465, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									stored: '_parameters',
-									builder: 'formalParametersSetAccessorSignature',
-									kinds: [452]
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersSetAccessorSignature.elements',
-									mounted: {
-										call: 'child',
-										key: 'elements'
-									},
-									kinds: [453]
-								},
-								{
-									key: 'item'
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [453, 'item'],
-									kinds: [454]
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name', 'parameters']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.signature.abstract.setter.private': {
-			root: true,
-			arms: [
-				{
-					kind: 465,
-					builder: 'abstractMethodSignatureSetter',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [465, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									stored: '_parameters',
-									builder: 'formalParametersSetAccessorSignature',
-									kinds: [452]
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersSetAccessorSignature.elements',
-									mounted: {
-										call: 'child',
-										key: 'elements'
-									},
-									kinds: [453]
-								},
-								{
-									key: 'item'
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [453, 'item'],
-									kinds: [454]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 35
-						}
-					],
-					flags: {
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name', 'parameters']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.signature.abstract.setter.protected': {
-			root: true,
-			arms: [
-				{
-					kind: 465,
-					builder: 'abstractMethodSignatureSetter',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [465, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									stored: '_parameters',
-									builder: 'formalParametersSetAccessorSignature',
-									kinds: [452]
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersSetAccessorSignature.elements',
-									mounted: {
-										call: 'child',
-										key: 'elements'
-									},
-									kinds: [453]
-								},
-								{
-									key: 'item'
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [453, 'item'],
-									kinds: [454]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 36
-						}
-					],
-					flags: {
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name', 'parameters']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.signature.abstract.setter.public': {
-			root: true,
-			arms: [
-				{
-					kind: 465,
-					builder: 'abstractMethodSignatureSetter',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [465, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									stored: '_parameters',
-									builder: 'formalParametersSetAccessorSignature',
-									kinds: [452]
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersSetAccessorSignature.elements',
-									mounted: {
-										call: 'child',
-										key: 'elements'
-									},
-									kinds: [453]
-								},
-								{
-									key: 'item'
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [453, 'item'],
-									kinds: [454]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 34
-						}
-					],
-					flags: {
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name', 'parameters']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.signature.getter': {
-			root: true,
-			arms: [
-				{
-					kind: 461,
-					builder: 'methodSignatureGetter',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [461, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [461, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [338, 'asserts'],
-									kinds: [337],
-									within: [
-										{
-											builder: 'assertsAnnotation',
-											key: 'asserts'
-										}
-									]
-								},
-								{
-									at: [353, 'typePredicate'],
-									kinds: [352],
-									within: [
-										{
-											builder: 'typePredicateAnnotation',
-											key: 'typePredicate'
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.signature.getter.private': {
-			root: true,
-			arms: [
-				{
-					kind: 461,
-					builder: 'methodSignatureGetter',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [461, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [461, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [338, 'asserts'],
-									kinds: [337],
-									within: [
-										{
-											builder: 'assertsAnnotation',
-											key: 'asserts'
-										}
-									]
-								},
-								{
-									at: [353, 'typePredicate'],
-									kinds: [352],
-									within: [
-										{
-											builder: 'typePredicateAnnotation',
-											key: 'typePredicate'
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 35
-						}
-					],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.signature.getter.protected': {
-			root: true,
-			arms: [
-				{
-					kind: 461,
-					builder: 'methodSignatureGetter',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [461, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [461, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [338, 'asserts'],
-									kinds: [337],
-									within: [
-										{
-											builder: 'assertsAnnotation',
-											key: 'asserts'
-										}
-									]
-								},
-								{
-									at: [353, 'typePredicate'],
-									kinds: [352],
-									within: [
-										{
-											builder: 'typePredicateAnnotation',
-											key: 'typePredicate'
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 36
-						}
-					],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.signature.getter.public': {
-			root: true,
-			arms: [
-				{
-					kind: 461,
-					builder: 'methodSignatureGetter',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [461, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [461, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [338, 'asserts'],
-									kinds: [337],
-									within: [
-										{
-											builder: 'assertsAnnotation',
-											key: 'asserts'
-										}
-									]
-								},
-								{
-									at: [353, 'typePredicate'],
-									kinds: [352],
-									within: [
-										{
-											builder: 'typePredicateAnnotation',
-											key: 'typePredicate'
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 34
-						}
-					],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.signature.setter': {
-			root: true,
-			arms: [
-				{
-					kind: 462,
-					builder: 'methodSignatureSetter',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [462, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									stored: '_parameters',
-									builder: 'formalParametersSetAccessorSignature',
-									kinds: [452]
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersSetAccessorSignature.elements',
-									mounted: {
-										call: 'child',
-										key: 'elements'
-									},
-									kinds: [453]
-								},
-								{
-									key: 'item'
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [453, 'item'],
-									kinds: [454]
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name', 'parameters']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.signature.setter.private': {
-			root: true,
-			arms: [
-				{
-					kind: 462,
-					builder: 'methodSignatureSetter',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [462, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									stored: '_parameters',
-									builder: 'formalParametersSetAccessorSignature',
-									kinds: [452]
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersSetAccessorSignature.elements',
-									mounted: {
-										call: 'child',
-										key: 'elements'
-									},
-									kinds: [453]
-								},
-								{
-									key: 'item'
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [453, 'item'],
-									kinds: [454]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 35
-						}
-					],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name', 'parameters']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.signature.setter.protected': {
-			root: true,
-			arms: [
-				{
-					kind: 462,
-					builder: 'methodSignatureSetter',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [462, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									stored: '_parameters',
-									builder: 'formalParametersSetAccessorSignature',
-									kinds: [452]
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersSetAccessorSignature.elements',
-									mounted: {
-										call: 'child',
-										key: 'elements'
-									},
-									kinds: [453]
-								},
-								{
-									key: 'item'
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [453, 'item'],
-									kinds: [454]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 36
-						}
-					],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name', 'parameters']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.property.signature.setter.public': {
-			root: true,
-			arms: [
-				{
-					kind: 462,
-					builder: 'methodSignatureSetter',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [462, 'name'],
-									kinds: [
-										128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504
-									],
-									leaf: 'identifier',
-									texts: [1, 504],
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									contents: {
-										'128': 'content'
-									}
-								},
-								{
-									at: [297, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428,
-										441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'computedPropertyName',
-											key: 'expression'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									stored: '_parameters',
-									builder: 'formalParametersSetAccessorSignature',
-									kinds: [452]
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersSetAccessorSignature.elements',
-									mounted: {
-										call: 'child',
-										key: 'elements'
-									},
-									kinds: [453]
-								},
-								{
-									key: 'item'
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [453, 'item'],
-									kinds: [454]
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'accessibilityModifier',
-									optional: true
-								}
-							],
-							kind: 34
-						}
-					],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 52,
-									presence: true
-								}
-							]
-						},
-						override: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'override',
-											optional: true
-										}
-									],
-									kind: 327,
-									presence: true
-								}
-							]
-						},
-						privateName: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'privatePropertyIdentifier'
-								}
-							]
-						},
-						computed: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'name'
-										}
-									],
-									builder: 'computedPropertyName'
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name', 'parameters']
-						}
-					]
-				}
-			],
-			flags: ['computed', 'privateName', 'override', 'static', 'definite']
-		},
-		'declaration.signature.call': {
-			root: true,
-			arms: [
-				{
-					kind: 370,
-					builder: 'callSignature',
-					slots: [
 						{
 							name: 'typeParameters',
 							steps: [
@@ -23131,10 +23155,9 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							list: true,
 							seats: [
 								{
-									at: [370, 'typeParameters'],
+									at: [314, 'typeParameters'],
 									kinds: []
 								},
 								{
@@ -23155,22 +23178,184 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'returnType',
+							name: 'members',
 							steps: [
 								{
-									key: 'returnType',
+									key: 'body',
+									stored: '_body'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [314, 'body'],
+									kinds: []
+								},
+								{
+									at: [288, 'members'],
+									kinds: [290, 386, 406],
+									tokens: {
+										';': 406
+									},
+									within: [
+										{
+											builder: 'classBody',
+											key: 'members',
+											optional: true
+										}
+									],
+									many: true
+								},
+								{
+									at: [407, 'methodDefinition'],
+									kinds: [457, 458, 459, 468, 470],
+									within: [
+										{
+											builder: 'classBody',
+											key: 'members',
+											optional: true
+										},
+										{
+											builder: 'classBodyMemberMethod',
+											key: 'methodDefinition',
+											slots: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [407, 'decorators'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [285, 'expression'],
+															kinds: [1, 286, 287, 304],
+															leaf: 'identifier',
+															texts: [1],
+															pattern: {
+																source:
+																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+																flags: 'u'
+															},
+															within: [
+																{
+																	builder: 'decorator',
+																	key: 'expression'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								},
+								{
+									at: [408, 'methodSignature'],
+									kinds: [301, 460, 461, 462],
+									within: [
+										{
+											builder: 'classBody',
+											key: 'members',
+											optional: true
+										},
+										{
+											builder: 'classBodyMemberMethodSig',
+											key: 'methodSignature'
+										}
+									]
+								},
+								{
+									at: [409, 'member'],
+									kinds: [298, 301, 302, 377, 410, 411, 460, 461, 462, 463, 464, 465, 466, 467],
+									within: [
+										{
+											builder: 'classBody',
+											key: 'members',
+											optional: true
+										},
+										{
+											builder: 'classBodyMemberDeclaration',
+											key: 'member'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'extends',
+							steps: [
+								{
+									key: 'heritage',
+									stored: '_heritage',
+									builder: 'classHeritage',
 									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'classHeritage.extendsClause',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [430]
+								},
+								{
+									key: 'extendsClause',
+									stored: '_extends_clause'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
 								{
-									at: [370, 'returnType'],
-									kinds: []
+									at: [430, 'extendsClause'],
+									kinds: [310]
+								}
+							]
+						},
+						{
+							name: 'implements',
+							steps: [
+								{
+									key: 'heritage',
+									stored: '_heritage',
+									builder: 'classHeritage',
+									optional: true
 								},
 								{
-									at: [334, 'type'],
+									key: 'content',
+									builder: 'classHeritage.extendsClause',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [430]
+								},
+								{
+									key: 'implementsClause',
+									stored: '_implements_clause',
+									builder: 'implementsClause',
+									optional: true
+								},
+								{
+									key: 'types'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [312, 'types'],
 									kinds: [
 										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
 										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
@@ -23196,148 +23381,143 @@ export const build: PortableBuildTable = {
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
 									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [338, 'asserts'],
-									kinds: [337],
-									within: [
-										{
-											builder: 'assertsAnnotation',
-											key: 'asserts'
-										}
-									]
-								},
-								{
-									at: [353, 'typePredicate'],
-									kinds: [352],
-									within: [
-										{
-											builder: 'typePredicateAnnotation',
-											key: 'typePredicate'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									stored: '_parameters',
-									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true,
-									kinds: [387]
-								},
-								{
-									key: 'items'
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [387, 'items'],
-									kinds: [328, 329],
 									many: true
 								}
-							]
+							],
+							requires: [['extends']]
 						},
 						{
-							name: 'parameters',
+							name: 'implements',
 							steps: [
 								{
-									key: 'parameters',
-									stored: '_parameters',
-									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElementsReceiver',
-									optional: true,
-									kinds: [474]
-								},
-								{
-									key: 'formalParametersElementsReceiverGroup',
-									optional: true,
-									seated: 'forwarded'
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									builder: 'formalParametersElements',
+									key: 'heritage',
+									stored: '_heritage',
+									builder: 'classHeritage',
 									optional: true
 								},
 								{
-									key: 'items'
-								}
-							],
-							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [387, 'items'],
-									kinds: [328, 329],
-									many: true
-								}
-							],
-							requires: [['receiver']]
-						},
-						{
-							name: 'receiver',
-							steps: [
-								{
-									key: 'parameters',
-									stored: '_parameters',
-									builder: 'formalParameters'
+									key: 'content',
+									builder: 'implementsClause',
+									kinds: [312]
 								},
 								{
-									key: 'elements',
-									builder: 'formalParametersElementsReceiver',
-									optional: true,
-									kinds: [474]
-								},
-								{
-									key: 'receiver'
+									key: 'types'
 								}
 							],
 							multiple: false,
-							list: false,
+							list: true,
 							seats: [
 								{
-									at: [474, 'receiver'],
-									kinds: [472]
+									at: [312, 'types'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									many: true
 								}
 							]
 						}
 					],
 					owners: [
-						[0, 1, 2],
-						[0, 1, 3, 4]
+						[0, 1, 2, 3, 4, 5],
+						[0, 1, 2, 3, 6]
 					],
 					presets: [],
 					flags: {},
-					when: []
-				}
-			]
-		},
-		'declaration.signature.construct': {
-			root: true,
-			arms: [
+					when: [
+						{
+							flag: 'abstract',
+							set: true
+						},
+						{
+							absent: [],
+							required: ['members', 'name']
+						}
+					]
+				},
 				{
-					kind: 376,
-					builder: 'constructSignature',
+					kind: 246,
+					builder: 'classDeclaration',
 					slots: [
+						{
+							name: 'decorators',
+							steps: [
+								{
+									key: 'decorators',
+									optional: true
+								}
+							],
+							multiple: true,
+							list: true,
+							seats: [
+								{
+									at: [246, 'decorators'],
+									kinds: [],
+									many: true
+								},
+								{
+									at: [285, 'expression'],
+									kinds: [1, 286, 287, 304],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'decorator',
+											key: 'expression'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [246, 'name'],
+									kinds: [509],
+									leaf: 'identifier',
+									texts: [1, 509],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									}
+								}
+							]
+						},
 						{
 							name: 'typeParameters',
 							steps: [
@@ -23348,10 +23528,9 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							list: true,
 							seats: [
 								{
-									at: [376, 'typeParameters'],
+									at: [246, 'typeParameters'],
 									kinds: []
 								},
 								{
@@ -23372,23 +23551,184 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'type',
+							name: 'members',
 							steps: [
 								{
-									key: 'type',
-									stored: '_type',
+									key: 'body',
+									stored: '_body'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [246, 'body'],
+									kinds: []
+								},
+								{
+									at: [288, 'members'],
+									kinds: [290, 386, 406],
+									tokens: {
+										';': 406
+									},
+									within: [
+										{
+											builder: 'classBody',
+											key: 'members',
+											optional: true
+										}
+									],
+									many: true
+								},
+								{
+									at: [407, 'methodDefinition'],
+									kinds: [457, 458, 459, 468, 470],
+									within: [
+										{
+											builder: 'classBody',
+											key: 'members',
+											optional: true
+										},
+										{
+											builder: 'classBodyMemberMethod',
+											key: 'methodDefinition',
+											slots: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [407, 'decorators'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [285, 'expression'],
+															kinds: [1, 286, 287, 304],
+															leaf: 'identifier',
+															texts: [1],
+															pattern: {
+																source:
+																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+																flags: 'u'
+															},
+															within: [
+																{
+																	builder: 'decorator',
+																	key: 'expression'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								},
+								{
+									at: [408, 'methodSignature'],
+									kinds: [301, 460, 461, 462],
+									within: [
+										{
+											builder: 'classBody',
+											key: 'members',
+											optional: true
+										},
+										{
+											builder: 'classBodyMemberMethodSig',
+											key: 'methodSignature'
+										}
+									]
+								},
+								{
+									at: [409, 'member'],
+									kinds: [298, 301, 302, 377, 410, 411, 460, 461, 462, 463, 464, 465, 466, 467],
+									within: [
+										{
+											builder: 'classBody',
+											key: 'members',
+											optional: true
+										},
+										{
+											builder: 'classBodyMemberDeclaration',
+											key: 'member'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'extends',
+							steps: [
+								{
+									key: 'heritage',
+									stored: '_heritage',
+									builder: 'classHeritage',
 									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'classHeritage.extendsClause',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [430]
+								},
+								{
+									key: 'extendsClause',
+									stored: '_extends_clause'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
 								{
-									at: [376, 'type'],
-									kinds: []
+									at: [430, 'extendsClause'],
+									kinds: [310]
+								}
+							]
+						},
+						{
+							name: 'implements',
+							steps: [
+								{
+									key: 'heritage',
+									stored: '_heritage',
+									builder: 'classHeritage',
+									optional: true
 								},
 								{
-									at: [334, 'type'],
+									key: 'content',
+									builder: 'classHeritage.extendsClause',
+									mounted: {
+										call: 'child',
+										key: 'content'
+									},
+									kinds: [430]
+								},
+								{
+									key: 'implementsClause',
+									stored: '_implements_clause',
+									builder: 'implementsClause',
+									optional: true
+								},
+								{
+									key: 'types'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [312, 'types'],
 									kinds: [
 										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
 										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
@@ -23414,94 +23754,92 @@ export const build: PortableBuildTable = {
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
 									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									stored: '_parameters',
-									builder: 'formalParameters'
-								},
-								{
-									key: 'elements',
-									builder: 'formalParametersElements',
-									optional: true,
-									kinds: [387]
-								},
-								{
-									key: 'items'
+									many: true
 								}
 							],
-							multiple: true,
+							requires: [['extends']]
+						},
+						{
+							name: 'implements',
+							steps: [
+								{
+									key: 'heritage',
+									stored: '_heritage',
+									builder: 'classHeritage',
+									optional: true
+								},
+								{
+									key: 'content',
+									builder: 'implementsClause',
+									kinds: [312]
+								},
+								{
+									key: 'types'
+								}
+							],
+							multiple: false,
 							list: true,
 							seats: [
 								{
-									at: [387, 'items'],
-									kinds: [328, 329],
+									at: [312, 'types'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
+										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+									],
+									leaf: 'identifier',
+									texts: [1, 509],
+									tokens: {
+										'*': 364,
+										any: 40,
+										boolean: 42,
+										never: 146,
+										number: 41,
+										object: 46,
+										string: 43,
+										symbol: 44,
+										this: 508,
+										'unique symbol': 144,
+										unknown: 145,
+										void: 78
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
 									many: true
 								}
 							]
 						}
 					],
+					owners: [
+						[0, 1, 2, 3, 4, 5],
+						[0, 1, 2, 3, 6]
+					],
 					presets: [],
-					flags: {
-						abstract: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'abstract',
-											optional: true
-										}
-									],
-									kind: 149,
-									presence: true
-								}
-							]
+					flags: {},
+					when: [
+						{
+							flag: 'abstract',
+							set: false
+						},
+						{
+							absent: [],
+							required: ['members', 'name']
 						}
-					},
-					when: []
+					],
+					options: ['terminator']
 				}
 			],
 			flags: ['abstract']
 		},
-		'declaration.signature.index': {
+		'declaration.type.enum': {
 			root: true,
 			arms: [
 				{
-					kind: 410,
-					builder: 'indexSignatureColon',
+					kind: 322,
+					builder: 'enumDeclaration',
 					slots: [
-						{
-							name: 'sign',
-							steps: [
-								{
-									key: 'sign',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [410, 'sign'],
-									kinds: [103, 104],
-									tokens: {
-										'+': 103,
-										'-': 104
-									}
-								}
-							]
-						},
 						{
 							name: 'name',
 							steps: [
@@ -23513,7 +23851,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [410, 'name'],
+									at: [322, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
 									texts: [1],
@@ -23526,37 +23864,88 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'indexType',
+							name: 'members',
 							steps: [
 								{
-									key: 'indexType'
+									key: 'body',
+									stored: '_body'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [322, 'body'],
+									kinds: []
+								},
+								{
+									at: [390, 'items'],
+									kinds: [324, 388, 389],
+									within: [
+										{
+											builder: 'enumBody',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'enumBodyElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {
+						const: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'const',
+											optional: true
+										}
+									],
+									kind: 68,
+									presence: true
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['members', 'name']
+						}
+					]
+				}
+			],
+			flags: ['const']
+		},
+		'declaration.type.interface': {
+			root: true,
+			arms: [
+				{
+					kind: 320,
+					builder: 'interfaceDeclaration',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
 								{
-									at: [410, 'indexType'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
+									at: [320, 'name'],
+									kinds: [509],
 									leaf: 'identifier',
 									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
@@ -23566,410 +23955,133 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'type',
+							name: 'typeParameters',
 							steps: [
 								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [410, 'type'],
-									kinds: []
-								},
-								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'typeAnnotation',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [331, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'omittingTypeAnnotation',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [332, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'addingTypeAnnotation',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [333, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'optingTypeAnnotation',
-											key: 'type'
-										}
-									]
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {
-						readonly: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'readonly',
-											optional: true
-										}
-									],
-									kind: 38,
-									presence: true
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['indexType', 'name', 'type']
-						}
-					]
-				}
-			],
-			flags: ['readonly']
-		},
-		'declaration.signature.index.mapped': {
-			root: true,
-			arms: [
-				{
-					kind: 411,
-					builder: 'indexSignatureMappedTypeClause',
-					slots: [
-						{
-							name: 'sign',
-							steps: [
-								{
-									key: 'sign',
+									key: 'typeParameters',
+									stored: '_type_parameters',
 									optional: true
 								}
 							],
 							multiple: false,
-							list: false,
+							list: true,
 							seats: [
 								{
-									at: [411, 'sign'],
-									kinds: [103, 104],
-									tokens: {
-										'+': 103,
-										'-': 104
-									}
-								}
-							]
-						},
-						{
-							name: 'mappedTypeClause',
-							steps: [
-								{
-									key: 'mappedTypeClause'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [411, 'mappedTypeClause'],
-									kinds: [361]
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [411, 'type'],
+									at: [320, 'typeParameters'],
 									kinds: []
 								},
 								{
-									at: [334, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
+									at: [392, 'items'],
+									kinds: [373],
 									within: [
 										{
-											builder: 'typeAnnotation',
-											key: 'type'
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
 										}
-									]
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'extends',
+							steps: [
+								{
+									key: 'extendsTypeClause',
+									stored: '_extends_type_clause',
+									builder: 'extendsTypeClause',
+									optional: true
 								},
 								{
-									at: [331, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
+									key: 'types'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [321, 'types'],
+									kinds: [319, 351, 509],
 									leaf: 'identifier',
 									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
 									pattern: {
 										source:
 											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
 										flags: 'u'
 									},
-									within: [
-										{
-											builder: 'omittingTypeAnnotation',
-											key: 'type'
-										}
-									]
+									many: true
+								}
+							]
+						},
+						{
+							name: 'members',
+							steps: [
+								{
+									key: 'body',
+									builder: 'interfaceBody'
 								},
 								{
-									at: [332, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'addingTypeAnnotation',
-											key: 'type'
-										}
-									]
+									key: 'members',
+									stored: '_members',
+									builder: 'objectTypeContent',
+									optional: true
 								},
 								{
-									at: [333, 'type'],
-									kinds: [
-										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358,
-										359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
-									],
-									leaf: 'identifier',
-									texts: [1, 509],
-									tokens: {
-										'*': 364,
-										any: 40,
-										boolean: 42,
-										never: 146,
-										number: 41,
-										object: 46,
-										string: 43,
-										symbol: 44,
-										this: 508,
-										'unique symbol': 144,
-										unknown: 145,
-										void: 78
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'optingTypeAnnotation',
-											key: 'type'
-										}
-									]
+									key: 'items'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [402, 'items'],
+									kinds: [191, 301, 370, 371, 376, 377, 410, 411, 419, 420, 421, 432, 433, 460, 461, 462],
+									many: true
 								}
 							]
 						}
 					],
-					presets: [],
-					flags: {
-						readonly: {
-							presets: [
+					presets: [
+						{
+							steps: [
 								{
-									steps: [
-										{
-											key: 'readonly',
-											optional: true
-										}
-									],
-									kind: 38,
-									presence: true
+									key: 'body',
+									builder: 'interfaceBody'
+								},
+								{
+									key: 'opening'
 								}
-							]
+							],
+							kind: 5
+						},
+						{
+							steps: [
+								{
+									key: 'body',
+									builder: 'interfaceBody'
+								},
+								{
+									key: 'closing'
+								}
+							],
+							kind: 6
 						}
-					},
+					],
+					flags: {},
 					when: [
 						{
 							absent: [],
-							required: ['mappedTypeClause', 'type']
+							required: ['name']
 						}
 					]
 				}
-			],
-			flags: ['readonly']
+			]
 		},
-		'declaration.type_alias': {
+		'declaration.type.type_alias': {
 			root: true,
 			arms: [
 				{
@@ -36574,118 +36686,6 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
-							list: true,
-							seats: [
-								{
-									at: [211, 'statements'],
-									kinds: [
-										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
-										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
-									],
-									refined: [228],
-									tokens: {
-										';': 227
-									},
-									many: true
-								},
-								{
-									at: [206, 'expression'],
-									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
-										428, 441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionStatement',
-											key: 'expression'
-										}
-									]
-								},
-								{
-									at: [228, 'body'],
-									kinds: [211, 215, 216, 218, 219],
-									within: [
-										{
-											builder: 'labeledStatement',
-											key: 'body',
-											slots: [
-												{
-													name: 'label',
-													steps: [
-														{
-															key: 'label'
-														}
-													],
-													multiple: false,
-													list: false,
-													seats: [
-														{
-															at: [228, 'label'],
-															kinds: [507],
-															leaf: 'identifier',
-															texts: [1, 507],
-															pattern: {
-																source:
-																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-																flags: 'u'
-															}
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [],
-					options: ['terminator']
-				}
-			]
-		},
-		'statement.block.static': {
-			root: true,
-			arms: [
-				{
-					kind: 290,
-					builder: 'classStaticBlock',
-					slots: [
-						{
-							name: 'statements',
-							steps: [
-								{
-									key: 'body',
-									builder: 'statementBlock'
-								},
-								{
-									key: 'statements',
-									optional: true
-								}
-							],
-							multiple: false,
 							list: true,
 							seats: [
 								{

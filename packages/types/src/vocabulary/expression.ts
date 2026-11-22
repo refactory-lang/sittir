@@ -139,9 +139,6 @@ export namespace Expression {
 		>;
 	}
 	export namespace Binary {
-		export interface Arithmetic<G extends GrammarMap, K extends Under<'expression.binary.arithmetic'> = 'expression.binary.arithmetic'> extends SubKindOf<V.Expression.Binary<G, K>> {
-			readonly $path: K;
-		}
 		export namespace Arithmetic {
 			export interface Add<G extends GrammarMap, K extends Under<'expression.binary.arithmetic.add'> = 'expression.binary.arithmetic.add'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
 				readonly $path: K;
@@ -164,9 +161,6 @@ export namespace Expression {
 				readonly operator?: never;
 			}
 		}
-		export interface Bitwise<G extends GrammarMap, K extends Under<'expression.binary.bitwise'> = 'expression.binary.bitwise'> extends SubKindOf<V.Expression.Binary<G, K>> {
-			readonly $path: K;
-		}
 		export namespace Bitwise {
 			export interface And<G extends GrammarMap, K extends Under<'expression.binary.bitwise.and'> = 'expression.binary.bitwise.and'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
 				readonly $path: K;
@@ -180,9 +174,6 @@ export namespace Expression {
 				readonly $path: K;
 				readonly operator?: never;
 			}
-		}
-		export interface Comparison<G extends GrammarMap, K extends Under<'expression.binary.comparison'> = 'expression.binary.comparison'> extends SubKindOf<V.Expression.Binary<G, K>> {
-			readonly $path: K;
 		}
 		export namespace Comparison {
 			export interface Equal<G extends GrammarMap, K extends Under<'expression.binary.comparison.equal'> = 'expression.binary.comparison.equal'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator'> {
@@ -223,9 +214,6 @@ export namespace Expression {
 				readonly $path: K;
 				readonly operator?: never;
 			}
-		}
-		export interface Shift<G extends GrammarMap, K extends Under<'expression.binary.shift'> = 'expression.binary.shift'> extends SubKindOf<V.Expression.Binary<G, K>> {
-			readonly $path: K;
 		}
 		export namespace Shift {
 			export interface Left<G extends GrammarMap, K extends Under<'expression.binary.shift.left'> = 'expression.binary.shift.left'> extends SubKindOf<V.Expression.Binary<G, K>, 'left' | 'operator' | 'right'> {
@@ -371,11 +359,8 @@ export namespace Expression {
 			>;
 		}
 	}
-	export interface Collection<G extends GrammarMap, K extends Under<'expression.collection'> = 'expression.collection'> extends SubKindOf<V.Expression<G, K>> {
-		readonly $path: K;
-	}
 	export namespace Collection {
-		export interface List<G extends GrammarMap, K extends Under<'expression.collection.list'> = 'expression.collection.list'> extends SubKindOf<V.Expression.Collection<G, K>> {
+		export interface List<G extends GrammarMap, K extends Under<'expression.collection.list'> = 'expression.collection.list'> extends SubKindOf<V.Expression<G, K>> {
 			// claimed by prt
 			readonly $path: K;
 			readonly elements?: Slot<

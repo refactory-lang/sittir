@@ -1116,190 +1116,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum: a container at content with no builder of its own"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.enum.private: a container at content with no builder of its own"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.enum.public: a container at content with no builder of its own"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.enum.public.internal: a container at content with no builder of its own"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.enum.public.parent: a container at content with no builder of its own"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.enum.public.restricted: a container at content with no builder of its own"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.enum_member.private: arm 200 builds fields through more than one form"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.enum_member.public: arm 200 builds fields through more than one form"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.enum_member.public.internal: arm 200 builds fields through more than one form"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.enum_member.public.parent: arm 200 builds fields through more than one form"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.enum_member.public.restricted: arm 200 builds fields through more than one form"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.enum_member.struct: a container at fieldDeclaration with no builder of its own"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.enum_member.struct.private: arm 200 builds fields through more than one form"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.enum_member.struct.public: arm 200 builds fields through more than one form"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.enum_member.struct.public.internal: arm 200 builds fields through more than one form"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.enum_member.struct.public.parent: arm 200 builds fields through more than one form"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.enum_member.struct.public.restricted: arm 200 builds fields through more than one form"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.enum_member.tuple: a preset at body that is not one keyword or text"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.enum_member.tuple.private: arm 200 builds fields through more than one form"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.enum_member.tuple.public: arm 200 builds fields through more than one form"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.enum_member.tuple.public.internal: arm 200 builds fields through more than one form"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.enum_member.tuple.public.parent: arm 200 builds fields through more than one form"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.enum_member.tuple.public.restricted: arm 200 builds fields through more than one form"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "declaration.extension: a container at content with no builder of its own"
   },
   {
@@ -1412,7 +1228,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface.trait: a container at content with no builder of its own"
+    "message": "declaration.member.enum_member.private: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1420,7 +1236,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface.trait.private: a container at content with no builder of its own"
+    "message": "declaration.member.enum_member.public: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1428,7 +1244,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface.trait.public: a container at content with no builder of its own"
+    "message": "declaration.member.enum_member.public.internal: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1436,7 +1252,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface.trait.public.internal: a container at content with no builder of its own"
+    "message": "declaration.member.enum_member.public.parent: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1444,7 +1260,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface.trait.public.parent: a container at content with no builder of its own"
+    "message": "declaration.member.enum_member.public.restricted: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1452,7 +1268,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface.trait.public.restricted: a container at content with no builder of its own"
+    "message": "declaration.member.enum_member.struct: a container at fieldDeclaration with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1460,7 +1276,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method: arm 480 builds parameters through more than one form"
+    "message": "declaration.member.enum_member.struct.private: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1468,7 +1284,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.private: arm 480 builds parameters through more than one form"
+    "message": "declaration.member.enum_member.struct.public: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1476,7 +1292,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.public: arm 480 builds parameters through more than one form"
+    "message": "declaration.member.enum_member.struct.public.internal: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1484,7 +1300,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.public.internal: arm 480 builds parameters through more than one form"
+    "message": "declaration.member.enum_member.struct.public.parent: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1492,7 +1308,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.public.parent: arm 480 builds parameters through more than one form"
+    "message": "declaration.member.enum_member.struct.public.restricted: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1500,7 +1316,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.public.restricted: arm 480 builds parameters through more than one form"
+    "message": "declaration.member.enum_member.tuple: a preset at body that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -1508,7 +1324,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature: arm 483 builds parameters through more than one form"
+    "message": "declaration.member.enum_member.tuple.private: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1516,7 +1332,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.private: arm 483 builds parameters through more than one form"
+    "message": "declaration.member.enum_member.tuple.public: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1524,7 +1340,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.public: arm 483 builds parameters through more than one form"
+    "message": "declaration.member.enum_member.tuple.public.internal: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1532,7 +1348,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.public.internal: arm 483 builds parameters through more than one form"
+    "message": "declaration.member.enum_member.tuple.public.parent: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1540,7 +1356,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.public.parent: arm 483 builds parameters through more than one form"
+    "message": "declaration.member.enum_member.tuple.public.restricted: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1548,7 +1364,95 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.public.restricted: arm 483 builds parameters through more than one form"
+    "message": "declaration.member.method: arm 480 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.member.method.private: arm 480 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.member.method.public: arm 480 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.member.method.public.internal: arm 480 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.member.method.public.parent: arm 480 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.member.method.public.restricted: arm 480 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.member.method.signature: arm 483 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.member.method.signature.private: arm 483 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.member.method.signature.public: arm 483 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.member.method.signature.public.internal: arm 483 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.member.method.signature.public.parent: arm 483 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.member.method.signature.public.restricted: arm 483 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -1596,7 +1500,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct: a container at content with no builder of its own"
+    "message": "declaration.type.enum: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1604,7 +1508,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.private: a container at content with no builder of its own"
+    "message": "declaration.type.enum.private: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1612,7 +1516,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.public: a container at content with no builder of its own"
+    "message": "declaration.type.enum.public: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1620,7 +1524,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.public.internal: a container at content with no builder of its own"
+    "message": "declaration.type.enum.public.internal: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1628,7 +1532,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.public.parent: a container at content with no builder of its own"
+    "message": "declaration.type.enum.public.parent: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1636,7 +1540,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.public.restricted: a container at content with no builder of its own"
+    "message": "declaration.type.enum.public.restricted: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1644,7 +1548,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.tuple: a container at content with no builder of its own"
+    "message": "declaration.type.interface.trait: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1652,7 +1556,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.tuple.private: a container at content with no builder of its own"
+    "message": "declaration.type.interface.trait.private: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1660,7 +1564,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.tuple.public: a container at content with no builder of its own"
+    "message": "declaration.type.interface.trait.public: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1668,7 +1572,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.tuple.public.internal: a container at content with no builder of its own"
+    "message": "declaration.type.interface.trait.public.internal: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1676,7 +1580,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.tuple.public.parent: a container at content with no builder of its own"
+    "message": "declaration.type.interface.trait.public.parent: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1684,7 +1588,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.tuple.public.restricted: a container at content with no builder of its own"
+    "message": "declaration.type.interface.trait.public.restricted: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1692,7 +1596,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.unit: a container at content with no builder of its own"
+    "message": "declaration.type.struct: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1700,7 +1604,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.unit.private: a container at content with no builder of its own"
+    "message": "declaration.type.struct.private: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1708,7 +1612,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.unit.public: a container at content with no builder of its own"
+    "message": "declaration.type.struct.public: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1716,7 +1620,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.unit.public.internal: a container at content with no builder of its own"
+    "message": "declaration.type.struct.public.internal: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1724,7 +1628,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.unit.public.parent: a container at content with no builder of its own"
+    "message": "declaration.type.struct.public.parent: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1732,7 +1636,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.unit.public.restricted: a container at content with no builder of its own"
+    "message": "declaration.type.struct.public.restricted: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1740,7 +1644,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias: a container at content with no builder of its own"
+    "message": "declaration.type.struct.tuple: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1748,7 +1652,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias.associated: a container at content with no builder of its own"
+    "message": "declaration.type.struct.tuple.private: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1756,7 +1660,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias.private: a container at content with no builder of its own"
+    "message": "declaration.type.struct.tuple.public: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1764,7 +1668,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias.public: a container at content with no builder of its own"
+    "message": "declaration.type.struct.tuple.public.internal: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1772,7 +1676,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias.public.internal: a container at content with no builder of its own"
+    "message": "declaration.type.struct.tuple.public.parent: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1780,7 +1684,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias.public.parent: a container at content with no builder of its own"
+    "message": "declaration.type.struct.tuple.public.restricted: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1788,7 +1692,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias.public.restricted: a container at content with no builder of its own"
+    "message": "declaration.type.struct.unit: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1796,7 +1700,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.union: a container at content with no builder of its own"
+    "message": "declaration.type.struct.unit.private: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1804,7 +1708,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.union.private: a container at content with no builder of its own"
+    "message": "declaration.type.struct.unit.public: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1812,7 +1716,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.union.public: a container at content with no builder of its own"
+    "message": "declaration.type.struct.unit.public.internal: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1820,7 +1724,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.union.public.internal: a container at content with no builder of its own"
+    "message": "declaration.type.struct.unit.public.parent: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1828,7 +1732,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.union.public.parent: a container at content with no builder of its own"
+    "message": "declaration.type.struct.unit.public.restricted: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1836,7 +1740,103 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.union.public.restricted: a container at content with no builder of its own"
+    "message": "declaration.type.type_alias: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.type_alias.associated: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.type_alias.private: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.type_alias.public: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.type_alias.public.internal: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.type_alias.public.parent: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.type_alias.public.restricted: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.union: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.union.private: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.union.public: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.union.public.internal: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.union.public.parent: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.union.public.restricted: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",

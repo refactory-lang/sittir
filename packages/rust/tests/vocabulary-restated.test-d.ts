@@ -21,26 +21,6 @@ export declare namespace Comment.Text {
 	}
 }
 
-export declare namespace Declaration.EnumMember.Struct {
-	type Child = V.Declaration.EnumMember.Struct<RustMap>;
-	type Parent = V.Declaration.EnumMember<RustMap, 'declaration.enum_member.struct'>;
-	interface Restated {
-		readonly fields: Fit<Child['fields'], Parent['fields']>;
-		readonly name: Fit<Child['name'], Parent['name']>;
-		readonly value: Fit<Child['value'], Parent['value']>;
-	}
-}
-
-export declare namespace Declaration.EnumMember.Tuple {
-	type Child = V.Declaration.EnumMember.Tuple<RustMap>;
-	type Parent = V.Declaration.EnumMember<RustMap, 'declaration.enum_member.tuple'>;
-	interface Restated {
-		readonly fields: Fit<Child['fields'], Parent['fields']>;
-		readonly name: Fit<Child['name'], Parent['name']>;
-		readonly value: Fit<Child['value'], Parent['value']>;
-	}
-}
-
 export declare namespace Declaration.Extension.Conformance {
 	type Child = V.Declaration.Extension.Conformance<RustMap>;
 	type Parent = V.Declaration.Extension<RustMap, 'declaration.extension.conformance'>;
@@ -69,20 +49,29 @@ export declare namespace Declaration.Function.Signature {
 	}
 }
 
-export declare namespace Declaration.Interface.Trait {
-	type Child = V.Declaration.Interface.Trait<RustMap>;
-	type Parent = V.Declaration.Interface<RustMap, 'declaration.interface.trait'>;
+export declare namespace Declaration.Member.EnumMember.Struct {
+	type Child = V.Declaration.Member.EnumMember.Struct<RustMap>;
+	type Parent = V.Declaration.Member.EnumMember<RustMap, 'declaration.member.enum_member.struct'>;
 	interface Restated {
-		readonly extends: Fit<Child['extends'], Parent['extends']>;
-		readonly members: Fit<Child['members'], Parent['members']>;
+		readonly fields: Fit<Child['fields'], Parent['fields']>;
 		readonly name: Fit<Child['name'], Parent['name']>;
-		readonly typeParameters: Fit<Child['typeParameters'], Parent['typeParameters']>;
+		readonly value: Fit<Child['value'], Parent['value']>;
 	}
 }
 
-export declare namespace Declaration.Method.Signature {
-	type Child = V.Declaration.Method.Signature<RustMap>;
-	type Parent = V.Declaration.Method<RustMap, 'declaration.method.signature'>;
+export declare namespace Declaration.Member.EnumMember.Tuple {
+	type Child = V.Declaration.Member.EnumMember.Tuple<RustMap>;
+	type Parent = V.Declaration.Member.EnumMember<RustMap, 'declaration.member.enum_member.tuple'>;
+	interface Restated {
+		readonly fields: Fit<Child['fields'], Parent['fields']>;
+		readonly name: Fit<Child['name'], Parent['name']>;
+		readonly value: Fit<Child['value'], Parent['value']>;
+	}
+}
+
+export declare namespace Declaration.Member.Method.Signature {
+	type Child = V.Declaration.Member.Method.Signature<RustMap>;
+	type Parent = V.Declaration.Member.Method<RustMap, 'declaration.member.method.signature'>;
 	interface Restated {
 		readonly async: Fit<Child['async'], Parent['async']>;
 		readonly name: Fit<Child['name'], Parent['name']>;
@@ -112,17 +101,28 @@ export declare namespace Declaration.Parameter.Variadic {
 	}
 }
 
-export declare namespace Declaration.Struct.Tuple {
-	type Child = V.Declaration.Struct.Tuple<RustMap>;
-	type Parent = V.Declaration.Struct<RustMap, 'declaration.struct.tuple'>;
+export declare namespace Declaration.Type.Interface.Trait {
+	type Child = V.Declaration.Type.Interface.Trait<RustMap>;
+	type Parent = V.Declaration.Type.Interface<RustMap, 'declaration.type.interface.trait'>;
+	interface Restated {
+		readonly extends: Fit<Child['extends'], Parent['extends']>;
+		readonly members: Fit<Child['members'], Parent['members']>;
+		readonly name: Fit<Child['name'], Parent['name']>;
+		readonly typeParameters: Fit<Child['typeParameters'], Parent['typeParameters']>;
+	}
+}
+
+export declare namespace Declaration.Type.Struct.Tuple {
+	type Child = V.Declaration.Type.Struct.Tuple<RustMap>;
+	type Parent = V.Declaration.Type.Struct<RustMap, 'declaration.type.struct.tuple'>;
 	interface Restated {
 		readonly fields: Fit<Child['fields'], Parent['fields']>;
 	}
 }
 
-export declare namespace Declaration.TypeAlias.Associated {
-	type Child = V.Declaration.TypeAlias.Associated<RustMap>;
-	type Parent = V.Declaration.TypeAlias<RustMap, 'declaration.type_alias.associated'>;
+export declare namespace Declaration.Type.TypeAlias.Associated {
+	type Child = V.Declaration.Type.TypeAlias.Associated<RustMap>;
+	type Parent = V.Declaration.Type.TypeAlias<RustMap, 'declaration.type.type_alias.associated'>;
 	interface Restated {
 		readonly name: Fit<Child['name'], Parent['name']>;
 		readonly typeParameters: Fit<Child['typeParameters'], Parent['typeParameters']>;

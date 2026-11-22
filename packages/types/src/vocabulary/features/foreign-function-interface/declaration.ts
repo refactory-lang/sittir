@@ -6,9 +6,11 @@ export namespace Declaration {
 		readonly extern?: Slot<G, K, 'extern', V.Modifier.Extern<G>>;
 		// r only
 	}
-	export interface Method<G extends GrammarMap, K extends Under<'declaration.method'> = 'declaration.method'> {
-		readonly extern?: Slot<G, K, 'extern', V.Modifier.Extern<G>>;
-		// rt only
+	export namespace Member {
+		export interface Method<G extends GrammarMap, K extends Under<'declaration.member.method'> = 'declaration.member.method'> {
+			readonly extern?: Slot<G, K, 'extern', V.Modifier.Extern<G>>;
+			// rt only
+		}
 	}
 	export namespace Module {
 		export interface Foreign<G extends GrammarMap, K extends Under<'declaration.module.foreign'> = 'declaration.module.foreign'> extends SubKindOf<V.Declaration.Module<G, K>> {

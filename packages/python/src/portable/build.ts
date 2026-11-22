@@ -1967,14 +1967,14 @@ type clause_else$158_statements$item$Item =
 	| Text<PythonMap, 'statement.empty'>
 	| bigint
 	| number
-	| BuildInput<PythonMap, 'declaration.class'>
-	| PythonMap['nodes']['declaration.class']
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| PythonMap['nodes']['declaration.constant']
 	| BuildInput<PythonMap, 'declaration.function'>
 	| PythonMap['nodes']['declaration.function']
-	| BuildInput<PythonMap, 'declaration.type_alias'>
-	| PythonMap['nodes']['declaration.type_alias']
+	| BuildInput<PythonMap, 'declaration.type.class'>
+	| PythonMap['nodes']['declaration.type.class']
+	| BuildInput<PythonMap, 'declaration.type.type_alias'>
+	| PythonMap['nodes']['declaration.type.type_alias']
 	| BuildInput<PythonMap, 'declaration.variable'>
 	| PythonMap['nodes']['declaration.variable']
 	| BuildInput<PythonMap, 'expression.assignment'>
@@ -2267,16 +2267,6 @@ const clause_else$158_statements$item = (value: clause_else$158_statements$item$
 		return unseated('clause.else.statements', value);
 	}
 	switch (value.$path) {
-		case 'declaration.class': {
-			if ((value.decorators ?? []).length === 0) return declaration_class$179(value);
-			return b.decoratedDefinition({
-				definition: declaration_class$179(value),
-				decorators: nonEmpty(
-					'declaration.class.decorators',
-					(value.decorators ?? []).map(declaration_class$179_decorators)
-				)
-			});
-		}
 		case 'declaration.constant':
 			return unbuilt('clause.else.statements', value);
 		case 'declaration.function': {
@@ -2289,8 +2279,18 @@ const clause_else$158_statements$item = (value: clause_else$158_statements$item$
 				)
 			});
 		}
-		case 'declaration.type_alias':
-			return b.simpleStatements(b.simpleStatementsElements(declaration_type_alias$178(value)));
+		case 'declaration.type.class': {
+			if ((value.decorators ?? []).length === 0) return declaration_type_class$179(value);
+			return b.decoratedDefinition({
+				definition: declaration_type_class$179(value),
+				decorators: nonEmpty(
+					'declaration.type.class.decorators',
+					(value.decorators ?? []).map(declaration_type_class$179_decorators)
+				)
+			});
+		}
+		case 'declaration.type.type_alias':
+			return b.simpleStatements(b.simpleStatementsElements(declaration_type_type_alias$178(value)));
 		case 'declaration.variable':
 			if (value.name !== undefined && value.value !== undefined && value.type === undefined)
 				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$302(value))));
@@ -3021,14 +3021,14 @@ type clause_else_if$157_statements$item$Item =
 	| Text<PythonMap, 'statement.empty'>
 	| bigint
 	| number
-	| BuildInput<PythonMap, 'declaration.class'>
-	| PythonMap['nodes']['declaration.class']
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| PythonMap['nodes']['declaration.constant']
 	| BuildInput<PythonMap, 'declaration.function'>
 	| PythonMap['nodes']['declaration.function']
-	| BuildInput<PythonMap, 'declaration.type_alias'>
-	| PythonMap['nodes']['declaration.type_alias']
+	| BuildInput<PythonMap, 'declaration.type.class'>
+	| PythonMap['nodes']['declaration.type.class']
+	| BuildInput<PythonMap, 'declaration.type.type_alias'>
+	| PythonMap['nodes']['declaration.type.type_alias']
 	| BuildInput<PythonMap, 'declaration.variable'>
 	| PythonMap['nodes']['declaration.variable']
 	| BuildInput<PythonMap, 'expression.assignment'>
@@ -3321,16 +3321,6 @@ const clause_else_if$157_statements$item = (value: clause_else_if$157_statements
 		return unseated('clause.else_if.statements', value);
 	}
 	switch (value.$path) {
-		case 'declaration.class': {
-			if ((value.decorators ?? []).length === 0) return declaration_class$179(value);
-			return b.decoratedDefinition({
-				definition: declaration_class$179(value),
-				decorators: nonEmpty(
-					'declaration.class.decorators',
-					(value.decorators ?? []).map(declaration_class$179_decorators)
-				)
-			});
-		}
 		case 'declaration.constant':
 			return unbuilt('clause.else_if.statements', value);
 		case 'declaration.function': {
@@ -3343,8 +3333,18 @@ const clause_else_if$157_statements$item = (value: clause_else_if$157_statements
 				)
 			});
 		}
-		case 'declaration.type_alias':
-			return b.simpleStatements(b.simpleStatementsElements(declaration_type_alias$178(value)));
+		case 'declaration.type.class': {
+			if ((value.decorators ?? []).length === 0) return declaration_type_class$179(value);
+			return b.decoratedDefinition({
+				definition: declaration_type_class$179(value),
+				decorators: nonEmpty(
+					'declaration.type.class.decorators',
+					(value.decorators ?? []).map(declaration_type_class$179_decorators)
+				)
+			});
+		}
+		case 'declaration.type.type_alias':
+			return b.simpleStatements(b.simpleStatementsElements(declaration_type_type_alias$178(value)));
 		case 'declaration.variable':
 			if (value.name !== undefined && value.value !== undefined && value.type === undefined)
 				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$302(value))));
@@ -3814,3378 +3814,6 @@ const clause_resource$307_items$item = (value: clause_resource$307_items$item$It
 		return unseated('clause.resource.items', value);
 	}
 	return unbuilt('clause.resource.items', value);
-};
-type declaration_class$179_bases$item$Item =
-	| Text<PythonMap, 'identifier'>
-	| Text<PythonMap, 'literal.number.integer'>
-	| Text<PythonMap, 'literal.number.integer.imaginary'>
-	| bigint
-	| number
-	| BuildInput<PythonMap, 'argument.named'>
-	| PythonMap['nodes']['argument.named']
-	| BuildInput<PythonMap, 'element.spread'>
-	| PythonMap['nodes']['element.spread']
-	| BuildInput<PythonMap, 'element.spread.map'>
-	| PythonMap['nodes']['element.spread.map']
-	| BuildInput<PythonMap, 'element.spread.parenthesized'>
-	| PythonMap['nodes']['element.spread.parenthesized']
-	| BuildInput<PythonMap, 'expression.assignment'>
-	| PythonMap['nodes']['expression.assignment']
-	| BuildInput<PythonMap, 'expression.await'>
-	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
-	| PythonMap['nodes']['expression.binary.arithmetic.add']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
-	| PythonMap['nodes']['expression.binary.arithmetic.divide']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
-	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
-	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
-	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
-	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
-	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
-	| PythonMap['nodes']['expression.binary.bitwise.and']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
-	| PythonMap['nodes']['expression.binary.bitwise.or']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
-	| PythonMap['nodes']['expression.binary.bitwise.xor']
-	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
-	| PythonMap['nodes']['expression.binary.comparison.chain']
-	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
-	| PythonMap['nodes']['expression.binary.comparison.equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
-	| PythonMap['nodes']['expression.binary.comparison.greater']
-	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
-	| PythonMap['nodes']['expression.binary.comparison.less']
-	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.less_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.not_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
-	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
-	| BuildInput<PythonMap, 'expression.binary.identity.is'>
-	| PythonMap['nodes']['expression.binary.identity.is']
-	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
-	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical.and'>
-	| PythonMap['nodes']['expression.binary.logical.and']
-	| BuildInput<PythonMap, 'expression.binary.logical.or'>
-	| PythonMap['nodes']['expression.binary.logical.or']
-	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
-	| PythonMap['nodes']['expression.binary.matrix_multiply']
-	| BuildInput<PythonMap, 'expression.binary.membership.in'>
-	| PythonMap['nodes']['expression.binary.membership.in']
-	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
-	| PythonMap['nodes']['expression.binary.membership.not_in']
-	| BuildInput<PythonMap, 'expression.binary.shift.left'>
-	| PythonMap['nodes']['expression.binary.shift.left']
-	| BuildInput<PythonMap, 'expression.binary.shift.right'>
-	| PythonMap['nodes']['expression.binary.shift.right']
-	| BuildInput<PythonMap, 'expression.call'>
-	| PythonMap['nodes']['expression.call']
-	| BuildInput<PythonMap, 'expression.call.member'>
-	| PythonMap['nodes']['expression.call.member']
-	| BuildInput<PythonMap, 'expression.collection.list'>
-	| PythonMap['nodes']['expression.collection.list']
-	| BuildInput<PythonMap, 'expression.collection.map'>
-	| PythonMap['nodes']['expression.collection.map']
-	| BuildInput<PythonMap, 'expression.collection.set'>
-	| PythonMap['nodes']['expression.collection.set']
-	| BuildInput<PythonMap, 'expression.collection.tuple'>
-	| PythonMap['nodes']['expression.collection.tuple']
-	| BuildInput<PythonMap, 'expression.comprehension.generator'>
-	| PythonMap['nodes']['expression.comprehension.generator']
-	| BuildInput<PythonMap, 'expression.comprehension.list'>
-	| PythonMap['nodes']['expression.comprehension.list']
-	| BuildInput<PythonMap, 'expression.comprehension.map'>
-	| PythonMap['nodes']['expression.comprehension.map']
-	| BuildInput<PythonMap, 'expression.comprehension.set'>
-	| PythonMap['nodes']['expression.comprehension.set']
-	| BuildInput<PythonMap, 'expression.conditional'>
-	| PythonMap['nodes']['expression.conditional']
-	| BuildInput<PythonMap, 'expression.lambda'>
-	| PythonMap['nodes']['expression.lambda']
-	| BuildInput<PythonMap, 'expression.member'>
-	| PythonMap['nodes']['expression.member']
-	| BuildInput<PythonMap, 'expression.parenthesized'>
-	| PythonMap['nodes']['expression.parenthesized']
-	| BuildInput<PythonMap, 'expression.subscript'>
-	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
-	| PythonMap['nodes']['expression.unary.bitwise_not']
-	| BuildInput<PythonMap, 'expression.unary.negation'>
-	| PythonMap['nodes']['expression.unary.negation']
-	| BuildInput<PythonMap, 'expression.unary.not'>
-	| PythonMap['nodes']['expression.unary.not']
-	| BuildInput<PythonMap, 'expression.unary.plus'>
-	| PythonMap['nodes']['expression.unary.plus']
-	| BuildInput<PythonMap, 'identifier'>
-	| PythonMap['nodes']['identifier']
-	| BuildInput<PythonMap, 'literal.boolean.false'>
-	| PythonMap['nodes']['literal.boolean.false']
-	| BuildInput<PythonMap, 'literal.boolean.true'>
-	| PythonMap['nodes']['literal.boolean.true']
-	| BuildInput<PythonMap, 'literal.ellipsis'>
-	| PythonMap['nodes']['literal.ellipsis']
-	| BuildInput<PythonMap, 'literal.null'>
-	| PythonMap['nodes']['literal.null']
-	| BuildInput<PythonMap, 'literal.number.float'>
-	| PythonMap['nodes']['literal.number.float']
-	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
-	| PythonMap['nodes']['literal.number.float.leading_point']
-	| BuildInput<PythonMap, 'literal.number.float.scientific'>
-	| PythonMap['nodes']['literal.number.float.scientific']
-	| BuildInput<PythonMap, 'literal.number.integer'>
-	| PythonMap['nodes']['literal.number.integer']
-	| BuildInput<PythonMap, 'literal.number.integer.big'>
-	| PythonMap['nodes']['literal.number.integer.big']
-	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
-	| PythonMap['nodes']['literal.number.integer.big.binary']
-	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
-	| PythonMap['nodes']['literal.number.integer.big.hex']
-	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
-	| PythonMap['nodes']['literal.number.integer.big.octal']
-	| BuildInput<PythonMap, 'literal.number.integer.binary'>
-	| PythonMap['nodes']['literal.number.integer.binary']
-	| BuildInput<PythonMap, 'literal.number.integer.hex'>
-	| PythonMap['nodes']['literal.number.integer.hex']
-	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
-	| PythonMap['nodes']['literal.number.integer.imaginary']
-	| BuildInput<PythonMap, 'literal.number.integer.octal'>
-	| PythonMap['nodes']['literal.number.integer.octal']
-	| BuildInput<PythonMap, 'literal.string'>
-	| PythonMap['nodes']['literal.string']
-	| BuildInput<PythonMap, 'literal.string.bytes'>
-	| PythonMap['nodes']['literal.string.bytes']
-	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
-	| PythonMap['nodes']['literal.string.bytes.multiline']
-	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
-	| PythonMap['nodes']['literal.string.bytes.raw']
-	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
-	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.concatenated'>
-	| PythonMap['nodes']['literal.string.concatenated']
-	| BuildInput<PythonMap, 'literal.string.interpolated'>
-	| PythonMap['nodes']['literal.string.interpolated']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
-	| PythonMap['nodes']['literal.string.interpolated.raw']
-	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.multiline'>
-	| PythonMap['nodes']['literal.string.multiline']
-	| BuildInput<PythonMap, 'literal.string.raw'>
-	| PythonMap['nodes']['literal.string.raw']
-	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
-	| PythonMap['nodes']['literal.string.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.unicode'>
-	| PythonMap['nodes']['literal.string.unicode']
-	| BuildInput<PythonMap, 'pattern.rest'>
-	| PythonMap['nodes']['pattern.rest']
-	| Unmapped<'python:as_pattern'>;
-const declaration_class$179_bases$item = (value: declaration_class$179_bases$item$Item) => {
-	if (typeof value === 'string') {
-		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
-		return b.identifier(value);
-	}
-	if (typeof value === 'bigint') {
-		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
-	}
-	if (typeof value === 'number') {
-		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
-		}
-		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 173, 174, 181, 206, 208,
-					210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 237, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251,
-					252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return value;
-		return unseated('declaration.class.bases', value);
-	}
-	switch (value.$path) {
-		case 'argument.named':
-			return argument_named$237(value);
-		case 'element.spread':
-			return element_spread$173(value);
-		case 'element.spread.map':
-			return element_spread_map$174(value);
-		case 'element.spread.parenthesized':
-			return element_spread_parenthesized$181(value);
-		case 'expression.assignment':
-			return expression_assignment$148(value);
-		case 'expression.await':
-			return expression_await$262(value);
-		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$214(value);
-		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$214(value);
-		case 'expression.binary.arithmetic.exponent':
-			return expression_binary_arithmetic_exponent$214(value);
-		case 'expression.binary.arithmetic.floor_divide':
-			return expression_binary_arithmetic_floor_divide$214(value);
-		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$214(value);
-		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$214(value);
-		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$214(value);
-		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$214(value);
-		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$214(value);
-		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$214(value);
-		case 'expression.binary.comparison.chain':
-			return expression_binary_comparison_chain$218(value);
-		case 'expression.binary.comparison.equal':
-			return unbuilt('declaration.class.bases', value);
-		case 'expression.binary.comparison.greater':
-			return unbuilt('declaration.class.bases', value);
-		case 'expression.binary.comparison.greater_equal':
-			return unbuilt('declaration.class.bases', value);
-		case 'expression.binary.comparison.less':
-			return unbuilt('declaration.class.bases', value);
-		case 'expression.binary.comparison.less_equal':
-			return unbuilt('declaration.class.bases', value);
-		case 'expression.binary.comparison.not_equal':
-			return unbuilt('declaration.class.bases', value);
-		case 'expression.binary.comparison.not_equal.legacy':
-			return unbuilt('declaration.class.bases', value);
-		case 'expression.binary.identity.is':
-			return unbuilt('declaration.class.bases', value);
-		case 'expression.binary.identity.is_not':
-			return unbuilt('declaration.class.bases', value);
-		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$213(value);
-		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$213(value);
-		case 'expression.binary.matrix_multiply':
-			return expression_binary_matrix_multiply$214(value);
-		case 'expression.binary.membership.in':
-			return unbuilt('declaration.class.bases', value);
-		case 'expression.binary.membership.not_in':
-			return unbuilt('declaration.class.bases', value);
-		case 'expression.binary.shift.left':
-			return expression_binary_shift_left$214(value);
-		case 'expression.binary.shift.right':
-			return expression_binary_shift_right$214(value);
-		case 'expression.call':
-			return expression_call$229(value);
-		case 'expression.call.member':
-			return unbuilt('declaration.class.bases', value);
-		case 'expression.collection.list':
-			return expression_collection_list$238(value);
-		case 'expression.collection.map':
-			return expression_collection_map$241(value);
-		case 'expression.collection.set':
-			return expression_collection_set$239(value);
-		case 'expression.collection.tuple':
-			return expression_collection_tuple$240(value);
-		case 'expression.comprehension.generator':
-			return expression_comprehension_generator$246(value);
-		case 'expression.comprehension.list':
-			return expression_comprehension_list$243(value);
-		case 'expression.comprehension.map':
-			return expression_comprehension_map$244(value);
-		case 'expression.comprehension.set':
-			return expression_comprehension_set$245(value);
-		case 'expression.conditional':
-			return expression_conditional$251(value);
-		case 'expression.lambda':
-			return expression_lambda$219(value);
-		case 'expression.member':
-			return unbuilt('declaration.class.bases', value);
-		case 'expression.parenthesized':
-			return expression_parenthesized$247(value);
-		case 'expression.subscript':
-			return expression_subscript$227(value);
-		case 'expression.unary.bitwise_not':
-			return expression_unary_bitwise_not$215(value);
-		case 'expression.unary.negation':
-			return expression_unary_negation$215(value);
-		case 'expression.unary.not':
-			return expression_unary_not$212(value);
-		case 'expression.unary.plus':
-			return expression_unary_plus$215(value);
-		case 'identifier':
-			return identifier$1(value);
-		case 'literal.boolean.false':
-			return unbuilt('declaration.class.bases', value);
-		case 'literal.boolean.true':
-			return unbuilt('declaration.class.bases', value);
-		case 'literal.ellipsis':
-			return unbuilt('declaration.class.bases', value);
-		case 'literal.null':
-			return unbuilt('declaration.class.bases', value);
-		case 'literal.number.float':
-			return literal_number_float$101(value);
-		case 'literal.number.float.leading_point':
-			return literal_number_float_leading_point$102(value);
-		case 'literal.number.float.scientific':
-			return literal_number_float_scientific$103(value);
-		case 'literal.number.integer':
-			return literal_number_integer$100(value);
-		case 'literal.number.integer.big':
-			return literal_number_integer_big$98(value);
-		case 'literal.number.integer.big.binary':
-			return literal_number_integer_big_binary$94(value);
-		case 'literal.number.integer.big.hex':
-			return literal_number_integer_big_hex$90(value);
-		case 'literal.number.integer.big.octal':
-			return literal_number_integer_big_octal$92(value);
-		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$95(value);
-		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$91(value);
-		case 'literal.number.integer.imaginary':
-			return unbuilt('declaration.class.bases', value);
-		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$93(value);
-		case 'literal.string':
-			return literal_string$253(value);
-		case 'literal.string.bytes':
-			return unbuilt('declaration.class.bases', value);
-		case 'literal.string.bytes.multiline':
-			return unbuilt('declaration.class.bases', value);
-		case 'literal.string.bytes.raw':
-			return unbuilt('declaration.class.bases', value);
-		case 'literal.string.bytes.raw.multiline':
-			return unbuilt('declaration.class.bases', value);
-		case 'literal.string.concatenated':
-			return literal_string_concatenated$252(value);
-		case 'literal.string.interpolated':
-			return unbuilt('declaration.class.bases', value);
-		case 'literal.string.interpolated.deferred':
-			return unbuilt('declaration.class.bases', value);
-		case 'literal.string.interpolated.deferred.multiline':
-			return unbuilt('declaration.class.bases', value);
-		case 'literal.string.interpolated.deferred.raw':
-			return unbuilt('declaration.class.bases', value);
-		case 'literal.string.interpolated.deferred.raw.multiline':
-			return unbuilt('declaration.class.bases', value);
-		case 'literal.string.interpolated.multiline':
-			return unbuilt('declaration.class.bases', value);
-		case 'literal.string.interpolated.raw':
-			return unbuilt('declaration.class.bases', value);
-		case 'literal.string.interpolated.raw.multiline':
-			return unbuilt('declaration.class.bases', value);
-		case 'literal.string.multiline':
-			return unbuilt('declaration.class.bases', value);
-		case 'literal.string.raw':
-			return unbuilt('declaration.class.bases', value);
-		case 'literal.string.raw.multiline':
-			return unbuilt('declaration.class.bases', value);
-		case 'literal.string.unicode':
-			return unbuilt('declaration.class.bases', value);
-		case 'pattern.rest':
-			return pattern_rest$206(value);
-		default:
-			return unbuilt('declaration.class.bases', value);
-	}
-};
-type declaration_class$179_decorators$Item =
-	| Text<PythonMap, 'identifier'>
-	| Text<PythonMap, 'literal.number.integer'>
-	| Text<PythonMap, 'literal.number.integer.imaginary'>
-	| bigint
-	| number
-	| BuildInput<PythonMap, 'expression.assignment'>
-	| PythonMap['nodes']['expression.assignment']
-	| BuildInput<PythonMap, 'expression.await'>
-	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
-	| PythonMap['nodes']['expression.binary.arithmetic.add']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
-	| PythonMap['nodes']['expression.binary.arithmetic.divide']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
-	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
-	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
-	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
-	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
-	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
-	| PythonMap['nodes']['expression.binary.bitwise.and']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
-	| PythonMap['nodes']['expression.binary.bitwise.or']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
-	| PythonMap['nodes']['expression.binary.bitwise.xor']
-	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
-	| PythonMap['nodes']['expression.binary.comparison.chain']
-	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
-	| PythonMap['nodes']['expression.binary.comparison.equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
-	| PythonMap['nodes']['expression.binary.comparison.greater']
-	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
-	| PythonMap['nodes']['expression.binary.comparison.less']
-	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.less_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.not_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
-	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
-	| BuildInput<PythonMap, 'expression.binary.identity.is'>
-	| PythonMap['nodes']['expression.binary.identity.is']
-	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
-	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical.and'>
-	| PythonMap['nodes']['expression.binary.logical.and']
-	| BuildInput<PythonMap, 'expression.binary.logical.or'>
-	| PythonMap['nodes']['expression.binary.logical.or']
-	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
-	| PythonMap['nodes']['expression.binary.matrix_multiply']
-	| BuildInput<PythonMap, 'expression.binary.membership.in'>
-	| PythonMap['nodes']['expression.binary.membership.in']
-	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
-	| PythonMap['nodes']['expression.binary.membership.not_in']
-	| BuildInput<PythonMap, 'expression.binary.shift.left'>
-	| PythonMap['nodes']['expression.binary.shift.left']
-	| BuildInput<PythonMap, 'expression.binary.shift.right'>
-	| PythonMap['nodes']['expression.binary.shift.right']
-	| BuildInput<PythonMap, 'expression.call'>
-	| PythonMap['nodes']['expression.call']
-	| BuildInput<PythonMap, 'expression.call.member'>
-	| PythonMap['nodes']['expression.call.member']
-	| BuildInput<PythonMap, 'expression.collection.list'>
-	| PythonMap['nodes']['expression.collection.list']
-	| BuildInput<PythonMap, 'expression.collection.map'>
-	| PythonMap['nodes']['expression.collection.map']
-	| BuildInput<PythonMap, 'expression.collection.set'>
-	| PythonMap['nodes']['expression.collection.set']
-	| BuildInput<PythonMap, 'expression.collection.tuple'>
-	| PythonMap['nodes']['expression.collection.tuple']
-	| BuildInput<PythonMap, 'expression.comprehension.generator'>
-	| PythonMap['nodes']['expression.comprehension.generator']
-	| BuildInput<PythonMap, 'expression.comprehension.list'>
-	| PythonMap['nodes']['expression.comprehension.list']
-	| BuildInput<PythonMap, 'expression.comprehension.map'>
-	| PythonMap['nodes']['expression.comprehension.map']
-	| BuildInput<PythonMap, 'expression.comprehension.set'>
-	| PythonMap['nodes']['expression.comprehension.set']
-	| BuildInput<PythonMap, 'expression.conditional'>
-	| PythonMap['nodes']['expression.conditional']
-	| BuildInput<PythonMap, 'expression.lambda'>
-	| PythonMap['nodes']['expression.lambda']
-	| BuildInput<PythonMap, 'expression.member'>
-	| PythonMap['nodes']['expression.member']
-	| BuildInput<PythonMap, 'expression.parenthesized'>
-	| PythonMap['nodes']['expression.parenthesized']
-	| BuildInput<PythonMap, 'expression.subscript'>
-	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
-	| PythonMap['nodes']['expression.unary.bitwise_not']
-	| BuildInput<PythonMap, 'expression.unary.negation'>
-	| PythonMap['nodes']['expression.unary.negation']
-	| BuildInput<PythonMap, 'expression.unary.not'>
-	| PythonMap['nodes']['expression.unary.not']
-	| BuildInput<PythonMap, 'expression.unary.plus'>
-	| PythonMap['nodes']['expression.unary.plus']
-	| BuildInput<PythonMap, 'identifier'>
-	| PythonMap['nodes']['identifier']
-	| BuildInput<PythonMap, 'literal.boolean.false'>
-	| PythonMap['nodes']['literal.boolean.false']
-	| BuildInput<PythonMap, 'literal.boolean.true'>
-	| PythonMap['nodes']['literal.boolean.true']
-	| BuildInput<PythonMap, 'literal.ellipsis'>
-	| PythonMap['nodes']['literal.ellipsis']
-	| BuildInput<PythonMap, 'literal.null'>
-	| PythonMap['nodes']['literal.null']
-	| BuildInput<PythonMap, 'literal.number.float'>
-	| PythonMap['nodes']['literal.number.float']
-	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
-	| PythonMap['nodes']['literal.number.float.leading_point']
-	| BuildInput<PythonMap, 'literal.number.float.scientific'>
-	| PythonMap['nodes']['literal.number.float.scientific']
-	| BuildInput<PythonMap, 'literal.number.integer'>
-	| PythonMap['nodes']['literal.number.integer']
-	| BuildInput<PythonMap, 'literal.number.integer.big'>
-	| PythonMap['nodes']['literal.number.integer.big']
-	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
-	| PythonMap['nodes']['literal.number.integer.big.binary']
-	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
-	| PythonMap['nodes']['literal.number.integer.big.hex']
-	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
-	| PythonMap['nodes']['literal.number.integer.big.octal']
-	| BuildInput<PythonMap, 'literal.number.integer.binary'>
-	| PythonMap['nodes']['literal.number.integer.binary']
-	| BuildInput<PythonMap, 'literal.number.integer.hex'>
-	| PythonMap['nodes']['literal.number.integer.hex']
-	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
-	| PythonMap['nodes']['literal.number.integer.imaginary']
-	| BuildInput<PythonMap, 'literal.number.integer.octal'>
-	| PythonMap['nodes']['literal.number.integer.octal']
-	| BuildInput<PythonMap, 'literal.string'>
-	| PythonMap['nodes']['literal.string']
-	| BuildInput<PythonMap, 'literal.string.bytes'>
-	| PythonMap['nodes']['literal.string.bytes']
-	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
-	| PythonMap['nodes']['literal.string.bytes.multiline']
-	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
-	| PythonMap['nodes']['literal.string.bytes.raw']
-	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
-	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.concatenated'>
-	| PythonMap['nodes']['literal.string.concatenated']
-	| BuildInput<PythonMap, 'literal.string.interpolated'>
-	| PythonMap['nodes']['literal.string.interpolated']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
-	| PythonMap['nodes']['literal.string.interpolated.raw']
-	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.multiline'>
-	| PythonMap['nodes']['literal.string.multiline']
-	| BuildInput<PythonMap, 'literal.string.raw'>
-	| PythonMap['nodes']['literal.string.raw']
-	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
-	| PythonMap['nodes']['literal.string.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.unicode'>
-	| PythonMap['nodes']['literal.string.unicode']
-	| BuildInput<PythonMap, 'pattern.rest'>
-	| PythonMap['nodes']['pattern.rest']
-	| Unmapped<'python:as_pattern'>;
-const declaration_class$179_decorators = (value: declaration_class$179_decorators$Item) => {
-	if (typeof value === 'string') {
-		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.decorator(b.identifier(value));
-		return b.decorator(b.identifier(value));
-	}
-	if (typeof value === 'bigint') {
-		return b.decorator(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }));
-	}
-	if (typeof value === 'number') {
-		if (Number.isSafeInteger(value)) {
-			return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
-		}
-		return b.decorator(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
-					262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return b.decorator(value);
-		return unseated('declaration.class.decorators', value);
-	}
-	switch (value.$path) {
-		case 'expression.assignment':
-			return b.decorator(expression_assignment$148(value));
-		case 'expression.await':
-			return b.decorator(expression_await$262(value));
-		case 'expression.binary.arithmetic.add':
-			return b.decorator(expression_binary_arithmetic_add$214(value));
-		case 'expression.binary.arithmetic.divide':
-			return b.decorator(expression_binary_arithmetic_divide$214(value));
-		case 'expression.binary.arithmetic.exponent':
-			return b.decorator(expression_binary_arithmetic_exponent$214(value));
-		case 'expression.binary.arithmetic.floor_divide':
-			return b.decorator(expression_binary_arithmetic_floor_divide$214(value));
-		case 'expression.binary.arithmetic.modulo':
-			return b.decorator(expression_binary_arithmetic_modulo$214(value));
-		case 'expression.binary.arithmetic.multiply':
-			return b.decorator(expression_binary_arithmetic_multiply$214(value));
-		case 'expression.binary.arithmetic.subtract':
-			return b.decorator(expression_binary_arithmetic_subtract$214(value));
-		case 'expression.binary.bitwise.and':
-			return b.decorator(expression_binary_bitwise_and$214(value));
-		case 'expression.binary.bitwise.or':
-			return b.decorator(expression_binary_bitwise_or$214(value));
-		case 'expression.binary.bitwise.xor':
-			return b.decorator(expression_binary_bitwise_xor$214(value));
-		case 'expression.binary.comparison.chain':
-			return b.decorator(expression_binary_comparison_chain$218(value));
-		case 'expression.binary.comparison.equal':
-			return unbuilt('declaration.class.decorators', value);
-		case 'expression.binary.comparison.greater':
-			return unbuilt('declaration.class.decorators', value);
-		case 'expression.binary.comparison.greater_equal':
-			return unbuilt('declaration.class.decorators', value);
-		case 'expression.binary.comparison.less':
-			return unbuilt('declaration.class.decorators', value);
-		case 'expression.binary.comparison.less_equal':
-			return unbuilt('declaration.class.decorators', value);
-		case 'expression.binary.comparison.not_equal':
-			return unbuilt('declaration.class.decorators', value);
-		case 'expression.binary.comparison.not_equal.legacy':
-			return unbuilt('declaration.class.decorators', value);
-		case 'expression.binary.identity.is':
-			return unbuilt('declaration.class.decorators', value);
-		case 'expression.binary.identity.is_not':
-			return unbuilt('declaration.class.decorators', value);
-		case 'expression.binary.logical.and':
-			return b.decorator(expression_binary_logical_and$213(value));
-		case 'expression.binary.logical.or':
-			return b.decorator(expression_binary_logical_or$213(value));
-		case 'expression.binary.matrix_multiply':
-			return b.decorator(expression_binary_matrix_multiply$214(value));
-		case 'expression.binary.membership.in':
-			return unbuilt('declaration.class.decorators', value);
-		case 'expression.binary.membership.not_in':
-			return unbuilt('declaration.class.decorators', value);
-		case 'expression.binary.shift.left':
-			return b.decorator(expression_binary_shift_left$214(value));
-		case 'expression.binary.shift.right':
-			return b.decorator(expression_binary_shift_right$214(value));
-		case 'expression.call':
-			return b.decorator(expression_call$229(value));
-		case 'expression.call.member':
-			return unbuilt('declaration.class.decorators', value);
-		case 'expression.collection.list':
-			return b.decorator(expression_collection_list$238(value));
-		case 'expression.collection.map':
-			return b.decorator(expression_collection_map$241(value));
-		case 'expression.collection.set':
-			return b.decorator(expression_collection_set$239(value));
-		case 'expression.collection.tuple':
-			return b.decorator(expression_collection_tuple$240(value));
-		case 'expression.comprehension.generator':
-			return b.decorator(expression_comprehension_generator$246(value));
-		case 'expression.comprehension.list':
-			return b.decorator(expression_comprehension_list$243(value));
-		case 'expression.comprehension.map':
-			return b.decorator(expression_comprehension_map$244(value));
-		case 'expression.comprehension.set':
-			return b.decorator(expression_comprehension_set$245(value));
-		case 'expression.conditional':
-			return b.decorator(expression_conditional$251(value));
-		case 'expression.lambda':
-			return b.decorator(expression_lambda$219(value));
-		case 'expression.member':
-			return unbuilt('declaration.class.decorators', value);
-		case 'expression.parenthesized':
-			return b.decorator(expression_parenthesized$247(value));
-		case 'expression.subscript':
-			return b.decorator(expression_subscript$227(value));
-		case 'expression.unary.bitwise_not':
-			return b.decorator(expression_unary_bitwise_not$215(value));
-		case 'expression.unary.negation':
-			return b.decorator(expression_unary_negation$215(value));
-		case 'expression.unary.not':
-			return b.decorator(expression_unary_not$212(value));
-		case 'expression.unary.plus':
-			return b.decorator(expression_unary_plus$215(value));
-		case 'identifier':
-			return b.decorator(identifier$1(value));
-		case 'literal.boolean.false':
-			return unbuilt('declaration.class.decorators', value);
-		case 'literal.boolean.true':
-			return unbuilt('declaration.class.decorators', value);
-		case 'literal.ellipsis':
-			return unbuilt('declaration.class.decorators', value);
-		case 'literal.null':
-			return unbuilt('declaration.class.decorators', value);
-		case 'literal.number.float':
-			return b.decorator(literal_number_float$101(value));
-		case 'literal.number.float.leading_point':
-			return b.decorator(literal_number_float_leading_point$102(value));
-		case 'literal.number.float.scientific':
-			return b.decorator(literal_number_float_scientific$103(value));
-		case 'literal.number.integer':
-			return b.decorator(literal_number_integer$100(value));
-		case 'literal.number.integer.big':
-			return b.decorator(literal_number_integer_big$98(value));
-		case 'literal.number.integer.big.binary':
-			return b.decorator(literal_number_integer_big_binary$94(value));
-		case 'literal.number.integer.big.hex':
-			return b.decorator(literal_number_integer_big_hex$90(value));
-		case 'literal.number.integer.big.octal':
-			return b.decorator(literal_number_integer_big_octal$92(value));
-		case 'literal.number.integer.binary':
-			return b.decorator(literal_number_integer_binary$95(value));
-		case 'literal.number.integer.hex':
-			return b.decorator(literal_number_integer_hex$91(value));
-		case 'literal.number.integer.imaginary':
-			return unbuilt('declaration.class.decorators', value);
-		case 'literal.number.integer.octal':
-			return b.decorator(literal_number_integer_octal$93(value));
-		case 'literal.string':
-			return b.decorator(literal_string$253(value));
-		case 'literal.string.bytes':
-			return unbuilt('declaration.class.decorators', value);
-		case 'literal.string.bytes.multiline':
-			return unbuilt('declaration.class.decorators', value);
-		case 'literal.string.bytes.raw':
-			return unbuilt('declaration.class.decorators', value);
-		case 'literal.string.bytes.raw.multiline':
-			return unbuilt('declaration.class.decorators', value);
-		case 'literal.string.concatenated':
-			return b.decorator(literal_string_concatenated$252(value));
-		case 'literal.string.interpolated':
-			return unbuilt('declaration.class.decorators', value);
-		case 'literal.string.interpolated.deferred':
-			return unbuilt('declaration.class.decorators', value);
-		case 'literal.string.interpolated.deferred.multiline':
-			return unbuilt('declaration.class.decorators', value);
-		case 'literal.string.interpolated.deferred.raw':
-			return unbuilt('declaration.class.decorators', value);
-		case 'literal.string.interpolated.deferred.raw.multiline':
-			return unbuilt('declaration.class.decorators', value);
-		case 'literal.string.interpolated.multiline':
-			return unbuilt('declaration.class.decorators', value);
-		case 'literal.string.interpolated.raw':
-			return unbuilt('declaration.class.decorators', value);
-		case 'literal.string.interpolated.raw.multiline':
-			return unbuilt('declaration.class.decorators', value);
-		case 'literal.string.multiline':
-			return unbuilt('declaration.class.decorators', value);
-		case 'literal.string.raw':
-			return unbuilt('declaration.class.decorators', value);
-		case 'literal.string.raw.multiline':
-			return unbuilt('declaration.class.decorators', value);
-		case 'literal.string.unicode':
-			return unbuilt('declaration.class.decorators', value);
-		case 'pattern.rest':
-			return b.decorator(pattern_rest$206(value));
-		default:
-			return unbuilt('declaration.class.decorators', value);
-	}
-};
-type declaration_class$179_doc$Item =
-	| string
-	| BuildInput<PythonMap, 'literal.string'>
-	| PythonMap['nodes']['literal.string']
-	| BuildInput<PythonMap, 'literal.string.bytes'>
-	| PythonMap['nodes']['literal.string.bytes']
-	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
-	| PythonMap['nodes']['literal.string.bytes.multiline']
-	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
-	| PythonMap['nodes']['literal.string.bytes.raw']
-	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
-	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated'>
-	| PythonMap['nodes']['literal.string.interpolated']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
-	| PythonMap['nodes']['literal.string.interpolated.raw']
-	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.multiline'>
-	| PythonMap['nodes']['literal.string.multiline']
-	| BuildInput<PythonMap, 'literal.string.raw'>
-	| PythonMap['nodes']['literal.string.raw']
-	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
-	| PythonMap['nodes']['literal.string.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.unicode'>
-	| PythonMap['nodes']['literal.string.unicode']
-	| {
-			readonly $path: 'literal.number.float';
-			readonly $value: number;
-	  }
-	| {
-			readonly $path: 'literal.number.integer';
-			readonly $value: number;
-	  }
-	| {
-			readonly $path: 'literal.number.integer.big';
-			readonly $value: bigint;
-	  };
-const declaration_class$179_doc = (value: declaration_class$179_doc$Item) => {
-	if (typeof value === 'string') {
-		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
-			return b.suiteBlockClassDeclaration(
-				b.blockClassDeclaration(
-					b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value))))
-				)
-			);
-		return b.suiteBlockClassDeclaration(
-			b.blockClassDeclaration(
-				b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value))))
-			)
-		);
-	}
-	if (typeof value === 'bigint') {
-		return b.suiteBlockClassDeclaration(
-			b.blockClassDeclaration(
-				b.simpleStatements(
-					b.simpleStatementsElements(
-						b.expressionStatement(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }))
-					)
-				)
-			)
-		);
-	}
-	if (typeof value === 'number') {
-		if (Number.isSafeInteger(value)) {
-			return b.suiteBlockClassDeclaration(
-				b.blockClassDeclaration(
-					b.simpleStatements(
-						b.simpleStatementsElements(
-							b.expressionStatement(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }))
-						)
-					)
-				)
-			);
-		}
-		return b.suiteBlockClassDeclaration(
-			b.blockClassDeclaration(
-				b.simpleStatements(
-					b.simpleStatementsElements(
-						b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
-					)
-				)
-			)
-		);
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
-					253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
-				]
-			)
-		)
-			return b.suiteBlockClassDeclaration(
-				b.blockClassDeclaration(b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(value))))
-			);
-		return unseated('declaration.class.doc', value);
-	}
-	switch (value.$path) {
-		case 'literal.string':
-			return b.suiteBlockClassDeclaration(
-				b.blockClassDeclaration(
-					b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_string$253(value))))
-				)
-			);
-		case 'literal.string.bytes':
-			return unbuilt('declaration.class.doc', value);
-		case 'literal.string.bytes.multiline':
-			return unbuilt('declaration.class.doc', value);
-		case 'literal.string.bytes.raw':
-			return unbuilt('declaration.class.doc', value);
-		case 'literal.string.bytes.raw.multiline':
-			return unbuilt('declaration.class.doc', value);
-		case 'literal.string.interpolated':
-			return unbuilt('declaration.class.doc', value);
-		case 'literal.string.interpolated.deferred':
-			return unbuilt('declaration.class.doc', value);
-		case 'literal.string.interpolated.deferred.multiline':
-			return unbuilt('declaration.class.doc', value);
-		case 'literal.string.interpolated.deferred.raw':
-			return unbuilt('declaration.class.doc', value);
-		case 'literal.string.interpolated.deferred.raw.multiline':
-			return unbuilt('declaration.class.doc', value);
-		case 'literal.string.interpolated.multiline':
-			return unbuilt('declaration.class.doc', value);
-		case 'literal.string.interpolated.raw':
-			return unbuilt('declaration.class.doc', value);
-		case 'literal.string.interpolated.raw.multiline':
-			return unbuilt('declaration.class.doc', value);
-		case 'literal.string.multiline':
-			return unbuilt('declaration.class.doc', value);
-		case 'literal.string.raw':
-			return unbuilt('declaration.class.doc', value);
-		case 'literal.string.raw.multiline':
-			return unbuilt('declaration.class.doc', value);
-		case 'literal.string.unicode':
-			return unbuilt('declaration.class.doc', value);
-		case 'literal.number.float':
-			if (typeof value.$value === 'bigint') {
-				return b.suiteBlockClassDeclaration(
-					b.blockClassDeclaration(
-						b.simpleStatements(
-							b.simpleStatementsElements(
-								b.expressionStatement(
-									literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
-								)
-							)
-						)
-					)
-				);
-			}
-			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) {
-					return b.suiteBlockClassDeclaration(
-						b.blockClassDeclaration(
-							b.simpleStatements(
-								b.simpleStatementsElements(
-									b.expressionStatement(
-										literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value })
-									)
-								)
-							)
-						)
-					);
-				}
-				return b.suiteBlockClassDeclaration(
-					b.blockClassDeclaration(
-						b.simpleStatements(
-							b.simpleStatementsElements(
-								b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }))
-							)
-						)
-					)
-				);
-			}
-			return unbuilt('declaration.class.doc', value);
-		case 'literal.number.integer':
-			if (typeof value.$value === 'bigint') {
-				return b.suiteBlockClassDeclaration(
-					b.blockClassDeclaration(
-						b.simpleStatements(
-							b.simpleStatementsElements(
-								b.expressionStatement(
-									literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
-								)
-							)
-						)
-					)
-				);
-			}
-			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) {
-					return b.suiteBlockClassDeclaration(
-						b.blockClassDeclaration(
-							b.simpleStatements(
-								b.simpleStatementsElements(
-									b.expressionStatement(
-										literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value })
-									)
-								)
-							)
-						)
-					);
-				}
-				return b.suiteBlockClassDeclaration(
-					b.blockClassDeclaration(
-						b.simpleStatements(
-							b.simpleStatementsElements(
-								b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }))
-							)
-						)
-					)
-				);
-			}
-			return unbuilt('declaration.class.doc', value);
-		case 'literal.number.integer.big':
-			if (typeof value.$value === 'bigint') {
-				return b.suiteBlockClassDeclaration(
-					b.blockClassDeclaration(
-						b.simpleStatements(
-							b.simpleStatementsElements(
-								b.expressionStatement(
-									literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
-								)
-							)
-						)
-					)
-				);
-			}
-			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) {
-					return b.suiteBlockClassDeclaration(
-						b.blockClassDeclaration(
-							b.simpleStatements(
-								b.simpleStatementsElements(
-									b.expressionStatement(
-										literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value })
-									)
-								)
-							)
-						)
-					);
-				}
-				return b.suiteBlockClassDeclaration(
-					b.blockClassDeclaration(
-						b.simpleStatements(
-							b.simpleStatementsElements(
-								b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }))
-							)
-						)
-					)
-				);
-			}
-			return unbuilt('declaration.class.doc', value);
-		default:
-			return unbuilt('declaration.class.doc', value);
-	}
-};
-type declaration_class$179_members$item$Item =
-	| 'break'
-	| 'continue'
-	| 'pass'
-	| Text<PythonMap, 'identifier'>
-	| Text<PythonMap, 'literal.number.integer'>
-	| Text<PythonMap, 'literal.number.integer.imaginary'>
-	| Text<PythonMap, 'statement.break'>
-	| Text<PythonMap, 'statement.continue'>
-	| Text<PythonMap, 'statement.empty'>
-	| bigint
-	| number
-	| BuildInput<PythonMap, 'declaration.class'>
-	| PythonMap['nodes']['declaration.class']
-	| BuildInput<PythonMap, 'declaration.constant'>
-	| PythonMap['nodes']['declaration.constant']
-	| BuildInput<PythonMap, 'declaration.constructor'>
-	| PythonMap['nodes']['declaration.constructor']
-	| BuildInput<PythonMap, 'declaration.method'>
-	| PythonMap['nodes']['declaration.method']
-	| BuildInput<PythonMap, 'declaration.method.special'>
-	| PythonMap['nodes']['declaration.method.special']
-	| BuildInput<PythonMap, 'declaration.type_alias'>
-	| PythonMap['nodes']['declaration.type_alias']
-	| BuildInput<PythonMap, 'declaration.variable'>
-	| PythonMap['nodes']['declaration.variable']
-	| BuildInput<PythonMap, 'expression.assignment'>
-	| PythonMap['nodes']['expression.assignment']
-	| BuildInput<PythonMap, 'expression.assignment.compound.add'>
-	| PythonMap['nodes']['expression.assignment.compound.add']
-	| BuildInput<PythonMap, 'expression.assignment.compound.bitwise_and'>
-	| PythonMap['nodes']['expression.assignment.compound.bitwise_and']
-	| BuildInput<PythonMap, 'expression.assignment.compound.bitwise_or'>
-	| PythonMap['nodes']['expression.assignment.compound.bitwise_or']
-	| BuildInput<PythonMap, 'expression.assignment.compound.bitwise_xor'>
-	| PythonMap['nodes']['expression.assignment.compound.bitwise_xor']
-	| BuildInput<PythonMap, 'expression.assignment.compound.divide'>
-	| PythonMap['nodes']['expression.assignment.compound.divide']
-	| BuildInput<PythonMap, 'expression.assignment.compound.exponent'>
-	| PythonMap['nodes']['expression.assignment.compound.exponent']
-	| BuildInput<PythonMap, 'expression.assignment.compound.floor_divide'>
-	| PythonMap['nodes']['expression.assignment.compound.floor_divide']
-	| BuildInput<PythonMap, 'expression.assignment.compound.matrix_multiply'>
-	| PythonMap['nodes']['expression.assignment.compound.matrix_multiply']
-	| BuildInput<PythonMap, 'expression.assignment.compound.modulo'>
-	| PythonMap['nodes']['expression.assignment.compound.modulo']
-	| BuildInput<PythonMap, 'expression.assignment.compound.multiply'>
-	| PythonMap['nodes']['expression.assignment.compound.multiply']
-	| BuildInput<PythonMap, 'expression.assignment.compound.shift_left'>
-	| PythonMap['nodes']['expression.assignment.compound.shift_left']
-	| BuildInput<PythonMap, 'expression.assignment.compound.shift_right'>
-	| PythonMap['nodes']['expression.assignment.compound.shift_right']
-	| BuildInput<PythonMap, 'expression.assignment.compound.subtract'>
-	| PythonMap['nodes']['expression.assignment.compound.subtract']
-	| BuildInput<PythonMap, 'expression.await'>
-	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
-	| PythonMap['nodes']['expression.binary.arithmetic.add']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
-	| PythonMap['nodes']['expression.binary.arithmetic.divide']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
-	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
-	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
-	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
-	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
-	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
-	| PythonMap['nodes']['expression.binary.bitwise.and']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
-	| PythonMap['nodes']['expression.binary.bitwise.or']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
-	| PythonMap['nodes']['expression.binary.bitwise.xor']
-	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
-	| PythonMap['nodes']['expression.binary.comparison.chain']
-	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
-	| PythonMap['nodes']['expression.binary.comparison.equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
-	| PythonMap['nodes']['expression.binary.comparison.greater']
-	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
-	| PythonMap['nodes']['expression.binary.comparison.less']
-	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.less_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.not_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
-	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
-	| BuildInput<PythonMap, 'expression.binary.identity.is'>
-	| PythonMap['nodes']['expression.binary.identity.is']
-	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
-	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical.and'>
-	| PythonMap['nodes']['expression.binary.logical.and']
-	| BuildInput<PythonMap, 'expression.binary.logical.or'>
-	| PythonMap['nodes']['expression.binary.logical.or']
-	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
-	| PythonMap['nodes']['expression.binary.matrix_multiply']
-	| BuildInput<PythonMap, 'expression.binary.membership.in'>
-	| PythonMap['nodes']['expression.binary.membership.in']
-	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
-	| PythonMap['nodes']['expression.binary.membership.not_in']
-	| BuildInput<PythonMap, 'expression.binary.shift.left'>
-	| PythonMap['nodes']['expression.binary.shift.left']
-	| BuildInput<PythonMap, 'expression.binary.shift.right'>
-	| PythonMap['nodes']['expression.binary.shift.right']
-	| BuildInput<PythonMap, 'expression.call'>
-	| PythonMap['nodes']['expression.call']
-	| BuildInput<PythonMap, 'expression.call.member'>
-	| PythonMap['nodes']['expression.call.member']
-	| BuildInput<PythonMap, 'expression.collection.list'>
-	| PythonMap['nodes']['expression.collection.list']
-	| BuildInput<PythonMap, 'expression.collection.map'>
-	| PythonMap['nodes']['expression.collection.map']
-	| BuildInput<PythonMap, 'expression.collection.set'>
-	| PythonMap['nodes']['expression.collection.set']
-	| BuildInput<PythonMap, 'expression.collection.tuple'>
-	| PythonMap['nodes']['expression.collection.tuple']
-	| BuildInput<PythonMap, 'expression.collection.tuple.bare'>
-	| PythonMap['nodes']['expression.collection.tuple.bare']
-	| BuildInput<PythonMap, 'expression.comprehension.generator'>
-	| PythonMap['nodes']['expression.comprehension.generator']
-	| BuildInput<PythonMap, 'expression.comprehension.list'>
-	| PythonMap['nodes']['expression.comprehension.list']
-	| BuildInput<PythonMap, 'expression.comprehension.map'>
-	| PythonMap['nodes']['expression.comprehension.map']
-	| BuildInput<PythonMap, 'expression.comprehension.set'>
-	| PythonMap['nodes']['expression.comprehension.set']
-	| BuildInput<PythonMap, 'expression.conditional'>
-	| PythonMap['nodes']['expression.conditional']
-	| BuildInput<PythonMap, 'expression.lambda'>
-	| PythonMap['nodes']['expression.lambda']
-	| BuildInput<PythonMap, 'expression.member'>
-	| PythonMap['nodes']['expression.member']
-	| BuildInput<PythonMap, 'expression.parenthesized'>
-	| PythonMap['nodes']['expression.parenthesized']
-	| BuildInput<PythonMap, 'expression.subscript'>
-	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
-	| PythonMap['nodes']['expression.unary.bitwise_not']
-	| BuildInput<PythonMap, 'expression.unary.negation'>
-	| PythonMap['nodes']['expression.unary.negation']
-	| BuildInput<PythonMap, 'expression.unary.not'>
-	| PythonMap['nodes']['expression.unary.not']
-	| BuildInput<PythonMap, 'expression.unary.plus'>
-	| PythonMap['nodes']['expression.unary.plus']
-	| BuildInput<PythonMap, 'expression.yield'>
-	| PythonMap['nodes']['expression.yield']
-	| BuildInput<PythonMap, 'expression.yield.delegate'>
-	| PythonMap['nodes']['expression.yield.delegate']
-	| BuildInput<PythonMap, 'identifier'>
-	| PythonMap['nodes']['identifier']
-	| BuildInput<PythonMap, 'literal.boolean.false'>
-	| PythonMap['nodes']['literal.boolean.false']
-	| BuildInput<PythonMap, 'literal.boolean.true'>
-	| PythonMap['nodes']['literal.boolean.true']
-	| BuildInput<PythonMap, 'literal.ellipsis'>
-	| PythonMap['nodes']['literal.ellipsis']
-	| BuildInput<PythonMap, 'literal.null'>
-	| PythonMap['nodes']['literal.null']
-	| BuildInput<PythonMap, 'literal.number.float'>
-	| PythonMap['nodes']['literal.number.float']
-	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
-	| PythonMap['nodes']['literal.number.float.leading_point']
-	| BuildInput<PythonMap, 'literal.number.float.scientific'>
-	| PythonMap['nodes']['literal.number.float.scientific']
-	| BuildInput<PythonMap, 'literal.number.integer'>
-	| PythonMap['nodes']['literal.number.integer']
-	| BuildInput<PythonMap, 'literal.number.integer.big'>
-	| PythonMap['nodes']['literal.number.integer.big']
-	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
-	| PythonMap['nodes']['literal.number.integer.big.binary']
-	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
-	| PythonMap['nodes']['literal.number.integer.big.hex']
-	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
-	| PythonMap['nodes']['literal.number.integer.big.octal']
-	| BuildInput<PythonMap, 'literal.number.integer.binary'>
-	| PythonMap['nodes']['literal.number.integer.binary']
-	| BuildInput<PythonMap, 'literal.number.integer.hex'>
-	| PythonMap['nodes']['literal.number.integer.hex']
-	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
-	| PythonMap['nodes']['literal.number.integer.imaginary']
-	| BuildInput<PythonMap, 'literal.number.integer.octal'>
-	| PythonMap['nodes']['literal.number.integer.octal']
-	| BuildInput<PythonMap, 'literal.string'>
-	| PythonMap['nodes']['literal.string']
-	| BuildInput<PythonMap, 'literal.string.bytes'>
-	| PythonMap['nodes']['literal.string.bytes']
-	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
-	| PythonMap['nodes']['literal.string.bytes.multiline']
-	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
-	| PythonMap['nodes']['literal.string.bytes.raw']
-	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
-	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.concatenated'>
-	| PythonMap['nodes']['literal.string.concatenated']
-	| BuildInput<PythonMap, 'literal.string.interpolated'>
-	| PythonMap['nodes']['literal.string.interpolated']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
-	| PythonMap['nodes']['literal.string.interpolated.raw']
-	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.multiline'>
-	| PythonMap['nodes']['literal.string.multiline']
-	| BuildInput<PythonMap, 'literal.string.raw'>
-	| PythonMap['nodes']['literal.string.raw']
-	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
-	| PythonMap['nodes']['literal.string.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.unicode'>
-	| PythonMap['nodes']['literal.string.unicode']
-	| BuildInput<PythonMap, 'pattern.rest'>
-	| PythonMap['nodes']['pattern.rest']
-	| BuildInput<PythonMap, 'statement.assert'>
-	| PythonMap['nodes']['statement.assert']
-	| BuildInput<PythonMap, 'statement.delete'>
-	| PythonMap['nodes']['statement.delete']
-	| BuildInput<PythonMap, 'statement.exec'>
-	| PythonMap['nodes']['statement.exec']
-	| BuildInput<PythonMap, 'statement.global'>
-	| PythonMap['nodes']['statement.global']
-	| BuildInput<PythonMap, 'statement.if'>
-	| PythonMap['nodes']['statement.if']
-	| BuildInput<PythonMap, 'statement.import'>
-	| PythonMap['nodes']['statement.import']
-	| BuildInput<PythonMap, 'statement.import.from'>
-	| PythonMap['nodes']['statement.import.from']
-	| BuildInput<PythonMap, 'statement.import.future'>
-	| PythonMap['nodes']['statement.import.future']
-	| BuildInput<PythonMap, 'statement.loop.for_each'>
-	| PythonMap['nodes']['statement.loop.for_each']
-	| BuildInput<PythonMap, 'statement.loop.while'>
-	| PythonMap['nodes']['statement.loop.while']
-	| BuildInput<PythonMap, 'statement.match'>
-	| PythonMap['nodes']['statement.match']
-	| BuildInput<PythonMap, 'statement.nonlocal'>
-	| PythonMap['nodes']['statement.nonlocal']
-	| BuildInput<PythonMap, 'statement.print'>
-	| PythonMap['nodes']['statement.print']
-	| BuildInput<PythonMap, 'statement.resource'>
-	| PythonMap['nodes']['statement.resource']
-	| BuildInput<PythonMap, 'statement.return'>
-	| PythonMap['nodes']['statement.return']
-	| BuildInput<PythonMap, 'statement.throw'>
-	| PythonMap['nodes']['statement.throw']
-	| BuildInput<PythonMap, 'statement.try'>
-	| PythonMap['nodes']['statement.try']
-	| Unmapped<'python:as_pattern'>;
-const declaration_class$179_members$item = (value: declaration_class$179_members$item$Item) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case 'break':
-				return b.simpleStatements(b.simpleStatementsElements(154));
-			case 'continue':
-				return b.simpleStatements(b.simpleStatementsElements(155));
-			case 'pass':
-				return b.simpleStatements(b.simpleStatementsElements(153));
-			default:
-				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
-					return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value))));
-				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value))));
-		}
-	}
-	if (typeof value === 'bigint') {
-		return b.simpleStatements(
-			b.simpleStatementsElements(
-				b.expressionStatement(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }))
-			)
-		);
-	}
-	if (typeof value === 'number') {
-		if (Number.isSafeInteger(value)) {
-			return b.simpleStatements(
-				b.simpleStatementsElements(
-					b.expressionStatement(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }))
-				)
-			);
-		}
-		return b.simpleStatements(
-			b.simpleStatementsElements(
-				b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
-			)
-		);
-	}
-	if (isNode(value)) {
-		if (seated(value, [156, 159, 162, 163, 164, 167, 179, 316, 317, 361])) return value;
-		if (seated(value, [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178]))
-			return b.simpleStatements(b.simpleStatementsElements(value));
-		if (seated(value, [287, 288])) return b.simpleStatements(b.simpleStatementsElements(b.printStatement(value)));
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
-					253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
-				]
-			)
-		)
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(value)));
-		return unseated('declaration.class.members', value);
-	}
-	switch (value.$path) {
-		case 'declaration.class': {
-			if ((value.decorators ?? []).length === 0) return declaration_class$179(value);
-			return b.decoratedDefinitionClassDeclaration({
-				definition: declaration_class$179(value),
-				decorators: nonEmpty(
-					'declaration.class.decorators',
-					(value.decorators ?? []).map(declaration_class$179_decorators)
-				)
-			});
-		}
-		case 'declaration.constant':
-			return unbuilt('declaration.class.members', value);
-		case 'declaration.constructor':
-			if (value.parameters !== undefined) {
-				if ((value.decorators ?? []).length === 0) return declaration_constructor$316(value);
-				return b.decoratedDefinitionClassDeclaration({
-					definition: declaration_constructor$316(value),
-					decorators: nonEmpty(
-						'declaration.constructor.decorators',
-						(value.decorators ?? []).map(declaration_constructor$316_decorators)
-					)
-				});
-			}
-			return unbuilt('declaration.class.members', value);
-		case 'declaration.method':
-			return unbuilt('declaration.class.members', value);
-		case 'declaration.method.special':
-			return unbuilt('declaration.class.members', value);
-		case 'declaration.type_alias':
-			return b.simpleStatements(b.simpleStatementsElements(declaration_type_alias$178(value)));
-		case 'declaration.variable':
-			if (value.name !== undefined && value.value !== undefined && value.type === undefined)
-				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$302(value))));
-			if (value.name !== undefined && value.type !== undefined && value.value === undefined)
-				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$303(value))));
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$304(value))));
-		case 'expression.assignment':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_assignment$148(value))));
-		case 'expression.assignment.compound.add':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_add$222(value)))
-			);
-		case 'expression.assignment.compound.bitwise_and':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_bitwise_and$222(value)))
-			);
-		case 'expression.assignment.compound.bitwise_or':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_bitwise_or$222(value)))
-			);
-		case 'expression.assignment.compound.bitwise_xor':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_bitwise_xor$222(value)))
-			);
-		case 'expression.assignment.compound.divide':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_divide$222(value)))
-			);
-		case 'expression.assignment.compound.exponent':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_exponent$222(value)))
-			);
-		case 'expression.assignment.compound.floor_divide':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_floor_divide$222(value)))
-			);
-		case 'expression.assignment.compound.matrix_multiply':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_matrix_multiply$222(value)))
-			);
-		case 'expression.assignment.compound.modulo':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_modulo$222(value)))
-			);
-		case 'expression.assignment.compound.multiply':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_multiply$222(value)))
-			);
-		case 'expression.assignment.compound.shift_left':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_shift_left$222(value)))
-			);
-		case 'expression.assignment.compound.shift_right':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_shift_right$222(value)))
-			);
-		case 'expression.assignment.compound.subtract':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_subtract$222(value)))
-			);
-		case 'expression.await':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_await$262(value))));
-		case 'expression.binary.arithmetic.add':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_add$214(value)))
-			);
-		case 'expression.binary.arithmetic.divide':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_divide$214(value)))
-			);
-		case 'expression.binary.arithmetic.exponent':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_exponent$214(value)))
-			);
-		case 'expression.binary.arithmetic.floor_divide':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_floor_divide$214(value)))
-			);
-		case 'expression.binary.arithmetic.modulo':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_modulo$214(value)))
-			);
-		case 'expression.binary.arithmetic.multiply':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_multiply$214(value)))
-			);
-		case 'expression.binary.arithmetic.subtract':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_subtract$214(value)))
-			);
-		case 'expression.binary.bitwise.and':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_bitwise_and$214(value)))
-			);
-		case 'expression.binary.bitwise.or':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_bitwise_or$214(value)))
-			);
-		case 'expression.binary.bitwise.xor':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_bitwise_xor$214(value)))
-			);
-		case 'expression.binary.comparison.chain':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_comparison_chain$218(value)))
-			);
-		case 'expression.binary.comparison.equal':
-			return unbuilt('declaration.class.members', value);
-		case 'expression.binary.comparison.greater':
-			return unbuilt('declaration.class.members', value);
-		case 'expression.binary.comparison.greater_equal':
-			return unbuilt('declaration.class.members', value);
-		case 'expression.binary.comparison.less':
-			return unbuilt('declaration.class.members', value);
-		case 'expression.binary.comparison.less_equal':
-			return unbuilt('declaration.class.members', value);
-		case 'expression.binary.comparison.not_equal':
-			return unbuilt('declaration.class.members', value);
-		case 'expression.binary.comparison.not_equal.legacy':
-			return unbuilt('declaration.class.members', value);
-		case 'expression.binary.identity.is':
-			return unbuilt('declaration.class.members', value);
-		case 'expression.binary.identity.is_not':
-			return unbuilt('declaration.class.members', value);
-		case 'expression.binary.logical.and':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_logical_and$213(value)))
-			);
-		case 'expression.binary.logical.or':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_logical_or$213(value)))
-			);
-		case 'expression.binary.matrix_multiply':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_matrix_multiply$214(value)))
-			);
-		case 'expression.binary.membership.in':
-			return unbuilt('declaration.class.members', value);
-		case 'expression.binary.membership.not_in':
-			return unbuilt('declaration.class.members', value);
-		case 'expression.binary.shift.left':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_shift_left$214(value)))
-			);
-		case 'expression.binary.shift.right':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_shift_right$214(value)))
-			);
-		case 'expression.call':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_call$229(value))));
-		case 'expression.call.member':
-			return unbuilt('declaration.class.members', value);
-		case 'expression.collection.list':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_collection_list$238(value)))
-			);
-		case 'expression.collection.map':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_collection_map$241(value)))
-			);
-		case 'expression.collection.set':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_collection_set$239(value)))
-			);
-		case 'expression.collection.tuple':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_collection_tuple$240(value)))
-			);
-		case 'expression.collection.tuple.bare':
-			return unbuilt('declaration.class.members', value);
-		case 'expression.comprehension.generator':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_generator$246(value)))
-			);
-		case 'expression.comprehension.list':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_list$243(value)))
-			);
-		case 'expression.comprehension.map':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_map$244(value)))
-			);
-		case 'expression.comprehension.set':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_set$245(value)))
-			);
-		case 'expression.conditional':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_conditional$251(value))));
-		case 'expression.lambda':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_lambda$219(value))));
-		case 'expression.member':
-			return unbuilt('declaration.class.members', value);
-		case 'expression.parenthesized':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_parenthesized$247(value))));
-		case 'expression.subscript':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_subscript$227(value))));
-		case 'expression.unary.bitwise_not':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_unary_bitwise_not$215(value)))
-			);
-		case 'expression.unary.negation':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_unary_negation$215(value)))
-			);
-		case 'expression.unary.not':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_unary_not$212(value))));
-		case 'expression.unary.plus':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_unary_plus$215(value))));
-		case 'expression.yield':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_yield$225(value))));
-		case 'expression.yield.delegate':
-			return unbuilt('declaration.class.members', value);
-		case 'identifier':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(identifier$1(value))));
-		case 'literal.boolean.false':
-			return unbuilt('declaration.class.members', value);
-		case 'literal.boolean.true':
-			return unbuilt('declaration.class.members', value);
-		case 'literal.ellipsis':
-			return unbuilt('declaration.class.members', value);
-		case 'literal.null':
-			return unbuilt('declaration.class.members', value);
-		case 'literal.number.float':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_float$101(value))));
-		case 'literal.number.float.leading_point':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_float_leading_point$102(value)))
-			);
-		case 'literal.number.float.scientific':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_float_scientific$103(value)))
-			);
-		case 'literal.number.integer':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_integer$100(value))));
-		case 'literal.number.integer.big':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big$98(value)))
-			);
-		case 'literal.number.integer.big.binary':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_binary$94(value)))
-			);
-		case 'literal.number.integer.big.hex':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_hex$90(value)))
-			);
-		case 'literal.number.integer.big.octal':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_octal$92(value)))
-			);
-		case 'literal.number.integer.binary':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_binary$95(value)))
-			);
-		case 'literal.number.integer.hex':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_hex$91(value)))
-			);
-		case 'literal.number.integer.imaginary':
-			return unbuilt('declaration.class.members', value);
-		case 'literal.number.integer.octal':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_octal$93(value)))
-			);
-		case 'literal.string':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_string$253(value))));
-		case 'literal.string.bytes':
-			return unbuilt('declaration.class.members', value);
-		case 'literal.string.bytes.multiline':
-			return unbuilt('declaration.class.members', value);
-		case 'literal.string.bytes.raw':
-			return unbuilt('declaration.class.members', value);
-		case 'literal.string.bytes.raw.multiline':
-			return unbuilt('declaration.class.members', value);
-		case 'literal.string.concatenated':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_string_concatenated$252(value)))
-			);
-		case 'literal.string.interpolated':
-			return unbuilt('declaration.class.members', value);
-		case 'literal.string.interpolated.deferred':
-			return unbuilt('declaration.class.members', value);
-		case 'literal.string.interpolated.deferred.multiline':
-			return unbuilt('declaration.class.members', value);
-		case 'literal.string.interpolated.deferred.raw':
-			return unbuilt('declaration.class.members', value);
-		case 'literal.string.interpolated.deferred.raw.multiline':
-			return unbuilt('declaration.class.members', value);
-		case 'literal.string.interpolated.multiline':
-			return unbuilt('declaration.class.members', value);
-		case 'literal.string.interpolated.raw':
-			return unbuilt('declaration.class.members', value);
-		case 'literal.string.interpolated.raw.multiline':
-			return unbuilt('declaration.class.members', value);
-		case 'literal.string.multiline':
-			return unbuilt('declaration.class.members', value);
-		case 'literal.string.raw':
-			return unbuilt('declaration.class.members', value);
-		case 'literal.string.raw.multiline':
-			return unbuilt('declaration.class.members', value);
-		case 'literal.string.unicode':
-			return unbuilt('declaration.class.members', value);
-		case 'pattern.rest':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(pattern_rest$206(value))));
-		case 'statement.assert':
-			return b.simpleStatements(b.simpleStatementsElements(statement_assert$146(value)));
-		case 'statement.delete':
-			return b.simpleStatements(b.simpleStatementsElements(statement_delete$151(value)));
-		case 'statement.exec':
-			return b.simpleStatements(b.simpleStatementsElements(statement_exec$177(value)));
-		case 'statement.global':
-			return b.simpleStatements(b.simpleStatementsElements(statement_global$175(value)));
-		case 'statement.if':
-			return statement_if$156(value);
-		case 'statement.import':
-			return b.simpleStatements(b.simpleStatementsElements(statement_import$136(value)));
-		case 'statement.import.from':
-			return unbuilt('declaration.class.members', value);
-		case 'statement.import.future':
-			return b.simpleStatements(b.simpleStatementsElements(statement_import_future$139(value)));
-		case 'statement.loop.for_each':
-			return statement_loop_for_each$162(value);
-		case 'statement.loop.while':
-			return statement_loop_while$163(value);
-		case 'statement.match':
-			return statement_match$159(value);
-		case 'statement.nonlocal':
-			return b.simpleStatements(b.simpleStatementsElements(statement_nonlocal$176(value)));
-		case 'statement.print':
-			return unbuilt('declaration.class.members', value);
-		case 'statement.resource':
-			return statement_resource$167(value);
-		case 'statement.return':
-			return b.simpleStatements(b.simpleStatementsElements(statement_return$150(value)));
-		case 'statement.throw':
-			return b.simpleStatements(b.simpleStatementsElements(statement_throw$152(value)));
-		case 'statement.try':
-			return statement_try$164(value);
-		default:
-			return unbuilt('declaration.class.members', value);
-	}
-};
-type declaration_class$179_name$Item =
-	| Text<PythonMap, 'identifier'>
-	| BuildInput<PythonMap, 'identifier'>
-	| PythonMap['nodes']['identifier'];
-const declaration_class$179_name = (value: declaration_class$179_name$Item) => {
-	if (typeof value === 'string') {
-		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
-		return b.identifier(value);
-	}
-	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('declaration.class.name', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [1])) return value;
-		return unseated('declaration.class.name', value);
-	}
-	switch (value.$path) {
-		case 'identifier':
-			return identifier$1(value);
-		default:
-			return unbuilt('declaration.class.name', value);
-	}
-};
-type declaration_class$179_typeParameters$Item =
-	| BuildInput<PythonMap, 'declaration.type_parameter'>
-	| PythonMap['nodes']['declaration.type_parameter']
-	| BuildInput<PythonMap, 'declaration.type_parameter.parameters'>
-	| PythonMap['nodes']['declaration.type_parameter.parameters']
-	| BuildInput<PythonMap, 'declaration.type_parameter.variadic'>
-	| PythonMap['nodes']['declaration.type_parameter.variadic'];
-const declaration_class$179_typeParameters = (value: declaration_class$179_typeParameters$Item) => {
-	if (typeof value === 'number') {
-		if (seated(value, [275, 313, 314, 315])) return b.typeParams(b.typeParamsItems(value));
-		return unseated('declaration.class.typeParameters', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [275, 313, 314, 315])) return b.typeParams(b.typeParamsItems(value));
-		return unseated('declaration.class.typeParameters', value);
-	}
-	switch (value.$path) {
-		case 'declaration.type_parameter':
-			return unbuilt('declaration.class.typeParameters', value);
-		case 'declaration.type_parameter.parameters':
-			return b.typeParams(b.typeParamsItems(declaration_type_parameter_parameters$315(value)));
-		case 'declaration.type_parameter.variadic':
-			return b.typeParams(b.typeParamsItems(declaration_type_parameter_variadic$314(value)));
-		default:
-			return unbuilt('declaration.class.typeParameters', value);
-	}
-};
-type declaration_class$179_typeParameters$item$Item =
-	| BuildInput<PythonMap, 'declaration.type_parameter'>
-	| PythonMap['nodes']['declaration.type_parameter']
-	| BuildInput<PythonMap, 'declaration.type_parameter.parameters'>
-	| PythonMap['nodes']['declaration.type_parameter.parameters']
-	| BuildInput<PythonMap, 'declaration.type_parameter.variadic'>
-	| PythonMap['nodes']['declaration.type_parameter.variadic'];
-const declaration_class$179_typeParameters$item = (value: declaration_class$179_typeParameters$item$Item) => {
-	if (typeof value === 'number') {
-		if (seated(value, [275, 313, 314, 315])) return value;
-		return unseated('declaration.class.typeParameters', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [275, 313, 314, 315])) return value;
-		return unseated('declaration.class.typeParameters', value);
-	}
-	switch (value.$path) {
-		case 'declaration.type_parameter':
-			return unbuilt('declaration.class.typeParameters', value);
-		case 'declaration.type_parameter.parameters':
-			return declaration_type_parameter_parameters$315(value);
-		case 'declaration.type_parameter.variadic':
-			return declaration_type_parameter_variadic$314(value);
-		default:
-			return unbuilt('declaration.class.typeParameters', value);
-	}
-};
-type declaration_constructor$316_decorators$Item =
-	| Text<PythonMap, 'identifier'>
-	| Text<PythonMap, 'literal.number.integer'>
-	| Text<PythonMap, 'literal.number.integer.imaginary'>
-	| bigint
-	| number
-	| BuildInput<PythonMap, 'expression.assignment'>
-	| PythonMap['nodes']['expression.assignment']
-	| BuildInput<PythonMap, 'expression.await'>
-	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
-	| PythonMap['nodes']['expression.binary.arithmetic.add']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
-	| PythonMap['nodes']['expression.binary.arithmetic.divide']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
-	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
-	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
-	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
-	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
-	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
-	| PythonMap['nodes']['expression.binary.bitwise.and']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
-	| PythonMap['nodes']['expression.binary.bitwise.or']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
-	| PythonMap['nodes']['expression.binary.bitwise.xor']
-	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
-	| PythonMap['nodes']['expression.binary.comparison.chain']
-	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
-	| PythonMap['nodes']['expression.binary.comparison.equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
-	| PythonMap['nodes']['expression.binary.comparison.greater']
-	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
-	| PythonMap['nodes']['expression.binary.comparison.less']
-	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.less_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.not_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
-	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
-	| BuildInput<PythonMap, 'expression.binary.identity.is'>
-	| PythonMap['nodes']['expression.binary.identity.is']
-	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
-	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical.and'>
-	| PythonMap['nodes']['expression.binary.logical.and']
-	| BuildInput<PythonMap, 'expression.binary.logical.or'>
-	| PythonMap['nodes']['expression.binary.logical.or']
-	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
-	| PythonMap['nodes']['expression.binary.matrix_multiply']
-	| BuildInput<PythonMap, 'expression.binary.membership.in'>
-	| PythonMap['nodes']['expression.binary.membership.in']
-	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
-	| PythonMap['nodes']['expression.binary.membership.not_in']
-	| BuildInput<PythonMap, 'expression.binary.shift.left'>
-	| PythonMap['nodes']['expression.binary.shift.left']
-	| BuildInput<PythonMap, 'expression.binary.shift.right'>
-	| PythonMap['nodes']['expression.binary.shift.right']
-	| BuildInput<PythonMap, 'expression.call'>
-	| PythonMap['nodes']['expression.call']
-	| BuildInput<PythonMap, 'expression.call.member'>
-	| PythonMap['nodes']['expression.call.member']
-	| BuildInput<PythonMap, 'expression.collection.list'>
-	| PythonMap['nodes']['expression.collection.list']
-	| BuildInput<PythonMap, 'expression.collection.map'>
-	| PythonMap['nodes']['expression.collection.map']
-	| BuildInput<PythonMap, 'expression.collection.set'>
-	| PythonMap['nodes']['expression.collection.set']
-	| BuildInput<PythonMap, 'expression.collection.tuple'>
-	| PythonMap['nodes']['expression.collection.tuple']
-	| BuildInput<PythonMap, 'expression.comprehension.generator'>
-	| PythonMap['nodes']['expression.comprehension.generator']
-	| BuildInput<PythonMap, 'expression.comprehension.list'>
-	| PythonMap['nodes']['expression.comprehension.list']
-	| BuildInput<PythonMap, 'expression.comprehension.map'>
-	| PythonMap['nodes']['expression.comprehension.map']
-	| BuildInput<PythonMap, 'expression.comprehension.set'>
-	| PythonMap['nodes']['expression.comprehension.set']
-	| BuildInput<PythonMap, 'expression.conditional'>
-	| PythonMap['nodes']['expression.conditional']
-	| BuildInput<PythonMap, 'expression.lambda'>
-	| PythonMap['nodes']['expression.lambda']
-	| BuildInput<PythonMap, 'expression.member'>
-	| PythonMap['nodes']['expression.member']
-	| BuildInput<PythonMap, 'expression.parenthesized'>
-	| PythonMap['nodes']['expression.parenthesized']
-	| BuildInput<PythonMap, 'expression.subscript'>
-	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
-	| PythonMap['nodes']['expression.unary.bitwise_not']
-	| BuildInput<PythonMap, 'expression.unary.negation'>
-	| PythonMap['nodes']['expression.unary.negation']
-	| BuildInput<PythonMap, 'expression.unary.not'>
-	| PythonMap['nodes']['expression.unary.not']
-	| BuildInput<PythonMap, 'expression.unary.plus'>
-	| PythonMap['nodes']['expression.unary.plus']
-	| BuildInput<PythonMap, 'identifier'>
-	| PythonMap['nodes']['identifier']
-	| BuildInput<PythonMap, 'literal.boolean.false'>
-	| PythonMap['nodes']['literal.boolean.false']
-	| BuildInput<PythonMap, 'literal.boolean.true'>
-	| PythonMap['nodes']['literal.boolean.true']
-	| BuildInput<PythonMap, 'literal.ellipsis'>
-	| PythonMap['nodes']['literal.ellipsis']
-	| BuildInput<PythonMap, 'literal.null'>
-	| PythonMap['nodes']['literal.null']
-	| BuildInput<PythonMap, 'literal.number.float'>
-	| PythonMap['nodes']['literal.number.float']
-	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
-	| PythonMap['nodes']['literal.number.float.leading_point']
-	| BuildInput<PythonMap, 'literal.number.float.scientific'>
-	| PythonMap['nodes']['literal.number.float.scientific']
-	| BuildInput<PythonMap, 'literal.number.integer'>
-	| PythonMap['nodes']['literal.number.integer']
-	| BuildInput<PythonMap, 'literal.number.integer.big'>
-	| PythonMap['nodes']['literal.number.integer.big']
-	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
-	| PythonMap['nodes']['literal.number.integer.big.binary']
-	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
-	| PythonMap['nodes']['literal.number.integer.big.hex']
-	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
-	| PythonMap['nodes']['literal.number.integer.big.octal']
-	| BuildInput<PythonMap, 'literal.number.integer.binary'>
-	| PythonMap['nodes']['literal.number.integer.binary']
-	| BuildInput<PythonMap, 'literal.number.integer.hex'>
-	| PythonMap['nodes']['literal.number.integer.hex']
-	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
-	| PythonMap['nodes']['literal.number.integer.imaginary']
-	| BuildInput<PythonMap, 'literal.number.integer.octal'>
-	| PythonMap['nodes']['literal.number.integer.octal']
-	| BuildInput<PythonMap, 'literal.string'>
-	| PythonMap['nodes']['literal.string']
-	| BuildInput<PythonMap, 'literal.string.bytes'>
-	| PythonMap['nodes']['literal.string.bytes']
-	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
-	| PythonMap['nodes']['literal.string.bytes.multiline']
-	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
-	| PythonMap['nodes']['literal.string.bytes.raw']
-	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
-	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.concatenated'>
-	| PythonMap['nodes']['literal.string.concatenated']
-	| BuildInput<PythonMap, 'literal.string.interpolated'>
-	| PythonMap['nodes']['literal.string.interpolated']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
-	| PythonMap['nodes']['literal.string.interpolated.raw']
-	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.multiline'>
-	| PythonMap['nodes']['literal.string.multiline']
-	| BuildInput<PythonMap, 'literal.string.raw'>
-	| PythonMap['nodes']['literal.string.raw']
-	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
-	| PythonMap['nodes']['literal.string.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.unicode'>
-	| PythonMap['nodes']['literal.string.unicode']
-	| BuildInput<PythonMap, 'pattern.rest'>
-	| PythonMap['nodes']['pattern.rest']
-	| Unmapped<'python:as_pattern'>;
-const declaration_constructor$316_decorators = (value: declaration_constructor$316_decorators$Item) => {
-	if (typeof value === 'string') {
-		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.decorator(b.identifier(value));
-		return b.decorator(b.identifier(value));
-	}
-	if (typeof value === 'bigint') {
-		return b.decorator(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }));
-	}
-	if (typeof value === 'number') {
-		if (Number.isSafeInteger(value)) {
-			return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
-		}
-		return b.decorator(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
-					262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return b.decorator(value);
-		return unseated('declaration.constructor.decorators', value);
-	}
-	switch (value.$path) {
-		case 'expression.assignment':
-			return b.decorator(expression_assignment$148(value));
-		case 'expression.await':
-			return b.decorator(expression_await$262(value));
-		case 'expression.binary.arithmetic.add':
-			return b.decorator(expression_binary_arithmetic_add$214(value));
-		case 'expression.binary.arithmetic.divide':
-			return b.decorator(expression_binary_arithmetic_divide$214(value));
-		case 'expression.binary.arithmetic.exponent':
-			return b.decorator(expression_binary_arithmetic_exponent$214(value));
-		case 'expression.binary.arithmetic.floor_divide':
-			return b.decorator(expression_binary_arithmetic_floor_divide$214(value));
-		case 'expression.binary.arithmetic.modulo':
-			return b.decorator(expression_binary_arithmetic_modulo$214(value));
-		case 'expression.binary.arithmetic.multiply':
-			return b.decorator(expression_binary_arithmetic_multiply$214(value));
-		case 'expression.binary.arithmetic.subtract':
-			return b.decorator(expression_binary_arithmetic_subtract$214(value));
-		case 'expression.binary.bitwise.and':
-			return b.decorator(expression_binary_bitwise_and$214(value));
-		case 'expression.binary.bitwise.or':
-			return b.decorator(expression_binary_bitwise_or$214(value));
-		case 'expression.binary.bitwise.xor':
-			return b.decorator(expression_binary_bitwise_xor$214(value));
-		case 'expression.binary.comparison.chain':
-			return b.decorator(expression_binary_comparison_chain$218(value));
-		case 'expression.binary.comparison.equal':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'expression.binary.comparison.greater':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'expression.binary.comparison.greater_equal':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'expression.binary.comparison.less':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'expression.binary.comparison.less_equal':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'expression.binary.comparison.not_equal':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'expression.binary.comparison.not_equal.legacy':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'expression.binary.identity.is':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'expression.binary.identity.is_not':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'expression.binary.logical.and':
-			return b.decorator(expression_binary_logical_and$213(value));
-		case 'expression.binary.logical.or':
-			return b.decorator(expression_binary_logical_or$213(value));
-		case 'expression.binary.matrix_multiply':
-			return b.decorator(expression_binary_matrix_multiply$214(value));
-		case 'expression.binary.membership.in':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'expression.binary.membership.not_in':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'expression.binary.shift.left':
-			return b.decorator(expression_binary_shift_left$214(value));
-		case 'expression.binary.shift.right':
-			return b.decorator(expression_binary_shift_right$214(value));
-		case 'expression.call':
-			return b.decorator(expression_call$229(value));
-		case 'expression.call.member':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'expression.collection.list':
-			return b.decorator(expression_collection_list$238(value));
-		case 'expression.collection.map':
-			return b.decorator(expression_collection_map$241(value));
-		case 'expression.collection.set':
-			return b.decorator(expression_collection_set$239(value));
-		case 'expression.collection.tuple':
-			return b.decorator(expression_collection_tuple$240(value));
-		case 'expression.comprehension.generator':
-			return b.decorator(expression_comprehension_generator$246(value));
-		case 'expression.comprehension.list':
-			return b.decorator(expression_comprehension_list$243(value));
-		case 'expression.comprehension.map':
-			return b.decorator(expression_comprehension_map$244(value));
-		case 'expression.comprehension.set':
-			return b.decorator(expression_comprehension_set$245(value));
-		case 'expression.conditional':
-			return b.decorator(expression_conditional$251(value));
-		case 'expression.lambda':
-			return b.decorator(expression_lambda$219(value));
-		case 'expression.member':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'expression.parenthesized':
-			return b.decorator(expression_parenthesized$247(value));
-		case 'expression.subscript':
-			return b.decorator(expression_subscript$227(value));
-		case 'expression.unary.bitwise_not':
-			return b.decorator(expression_unary_bitwise_not$215(value));
-		case 'expression.unary.negation':
-			return b.decorator(expression_unary_negation$215(value));
-		case 'expression.unary.not':
-			return b.decorator(expression_unary_not$212(value));
-		case 'expression.unary.plus':
-			return b.decorator(expression_unary_plus$215(value));
-		case 'identifier':
-			return b.decorator(identifier$1(value));
-		case 'literal.boolean.false':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'literal.boolean.true':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'literal.ellipsis':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'literal.null':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'literal.number.float':
-			return b.decorator(literal_number_float$101(value));
-		case 'literal.number.float.leading_point':
-			return b.decorator(literal_number_float_leading_point$102(value));
-		case 'literal.number.float.scientific':
-			return b.decorator(literal_number_float_scientific$103(value));
-		case 'literal.number.integer':
-			return b.decorator(literal_number_integer$100(value));
-		case 'literal.number.integer.big':
-			return b.decorator(literal_number_integer_big$98(value));
-		case 'literal.number.integer.big.binary':
-			return b.decorator(literal_number_integer_big_binary$94(value));
-		case 'literal.number.integer.big.hex':
-			return b.decorator(literal_number_integer_big_hex$90(value));
-		case 'literal.number.integer.big.octal':
-			return b.decorator(literal_number_integer_big_octal$92(value));
-		case 'literal.number.integer.binary':
-			return b.decorator(literal_number_integer_binary$95(value));
-		case 'literal.number.integer.hex':
-			return b.decorator(literal_number_integer_hex$91(value));
-		case 'literal.number.integer.imaginary':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'literal.number.integer.octal':
-			return b.decorator(literal_number_integer_octal$93(value));
-		case 'literal.string':
-			return b.decorator(literal_string$253(value));
-		case 'literal.string.bytes':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'literal.string.bytes.multiline':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'literal.string.bytes.raw':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'literal.string.bytes.raw.multiline':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'literal.string.concatenated':
-			return b.decorator(literal_string_concatenated$252(value));
-		case 'literal.string.interpolated':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'literal.string.interpolated.deferred':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'literal.string.interpolated.deferred.multiline':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'literal.string.interpolated.deferred.raw':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'literal.string.interpolated.deferred.raw.multiline':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'literal.string.interpolated.multiline':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'literal.string.interpolated.raw':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'literal.string.interpolated.raw.multiline':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'literal.string.multiline':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'literal.string.raw':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'literal.string.raw.multiline':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'literal.string.unicode':
-			return unbuilt('declaration.constructor.decorators', value);
-		case 'pattern.rest':
-			return b.decorator(pattern_rest$206(value));
-		default:
-			return unbuilt('declaration.constructor.decorators', value);
-	}
-};
-type declaration_constructor$316_parameters$item$Item =
-	| '*'
-	| '/'
-	| Text<PythonMap, 'identifier'>
-	| BuildInput<PythonMap, 'declaration.parameter.defaulted'>
-	| PythonMap['nodes']['declaration.parameter.defaulted']
-	| BuildInput<PythonMap, 'declaration.parameter.typed'>
-	| PythonMap['nodes']['declaration.parameter.typed']
-	| BuildInput<PythonMap, 'declaration.parameter.typed_default'>
-	| PythonMap['nodes']['declaration.parameter.typed_default']
-	| BuildInput<PythonMap, 'identifier'>
-	| PythonMap['nodes']['identifier']
-	| BuildInput<PythonMap, 'pattern.rest'>
-	| PythonMap['nodes']['pattern.rest']
-	| BuildInput<PythonMap, 'pattern.rest.map'>
-	| PythonMap['nodes']['pattern.rest.map']
-	| BuildInput<PythonMap, 'pattern.tuple'>
-	| PythonMap['nodes']['pattern.tuple'];
-const declaration_constructor$316_parameters$item = (value: declaration_constructor$316_parameters$item$Item) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case '*':
-				return 264;
-			case '/':
-				return 263;
-			default:
-				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
-				return b.identifier(value);
-		}
-	}
-	if (typeof value === 'number') {
-		if (seated(value, [1, 200, 202, 204, 205, 206, 207, 230])) return value;
-		return unseated('declaration.constructor.parameters', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [1, 200, 202, 204, 205, 206, 207, 230, 263, 264])) return value;
-		return unseated('declaration.constructor.parameters', value);
-	}
-	switch (value.$path) {
-		case 'declaration.parameter.defaulted':
-			return declaration_parameter_defaulted$204(value);
-		case 'declaration.parameter.typed':
-			return declaration_parameter_typed$230(value);
-		case 'declaration.parameter.typed_default':
-			return declaration_parameter_typed_default$205(value);
-		case 'identifier':
-			return identifier$1(value);
-		case 'pattern.rest':
-			return pattern_rest$206(value);
-		case 'pattern.rest.map':
-			return pattern_rest_map$207(value);
-		case 'pattern.tuple':
-			return pattern_tuple$202(value);
-		default:
-			return unbuilt('declaration.constructor.parameters', value);
-	}
-};
-type declaration_constructor$316_returnType$Item =
-	| Text<PythonMap, 'identifier'>
-	| Text<PythonMap, 'literal.number.integer'>
-	| Text<PythonMap, 'literal.number.integer.imaginary'>
-	| bigint
-	| number
-	| BuildInput<PythonMap, 'expression.assignment'>
-	| PythonMap['nodes']['expression.assignment']
-	| BuildInput<PythonMap, 'expression.await'>
-	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
-	| PythonMap['nodes']['expression.binary.arithmetic.add']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
-	| PythonMap['nodes']['expression.binary.arithmetic.divide']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
-	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
-	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
-	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
-	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
-	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
-	| PythonMap['nodes']['expression.binary.bitwise.and']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
-	| PythonMap['nodes']['expression.binary.bitwise.or']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
-	| PythonMap['nodes']['expression.binary.bitwise.xor']
-	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
-	| PythonMap['nodes']['expression.binary.comparison.chain']
-	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
-	| PythonMap['nodes']['expression.binary.comparison.equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
-	| PythonMap['nodes']['expression.binary.comparison.greater']
-	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
-	| PythonMap['nodes']['expression.binary.comparison.less']
-	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.less_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.not_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
-	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
-	| BuildInput<PythonMap, 'expression.binary.identity.is'>
-	| PythonMap['nodes']['expression.binary.identity.is']
-	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
-	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical.and'>
-	| PythonMap['nodes']['expression.binary.logical.and']
-	| BuildInput<PythonMap, 'expression.binary.logical.or'>
-	| PythonMap['nodes']['expression.binary.logical.or']
-	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
-	| PythonMap['nodes']['expression.binary.matrix_multiply']
-	| BuildInput<PythonMap, 'expression.binary.membership.in'>
-	| PythonMap['nodes']['expression.binary.membership.in']
-	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
-	| PythonMap['nodes']['expression.binary.membership.not_in']
-	| BuildInput<PythonMap, 'expression.binary.shift.left'>
-	| PythonMap['nodes']['expression.binary.shift.left']
-	| BuildInput<PythonMap, 'expression.binary.shift.right'>
-	| PythonMap['nodes']['expression.binary.shift.right']
-	| BuildInput<PythonMap, 'expression.call'>
-	| PythonMap['nodes']['expression.call']
-	| BuildInput<PythonMap, 'expression.call.member'>
-	| PythonMap['nodes']['expression.call.member']
-	| BuildInput<PythonMap, 'expression.collection.list'>
-	| PythonMap['nodes']['expression.collection.list']
-	| BuildInput<PythonMap, 'expression.collection.map'>
-	| PythonMap['nodes']['expression.collection.map']
-	| BuildInput<PythonMap, 'expression.collection.set'>
-	| PythonMap['nodes']['expression.collection.set']
-	| BuildInput<PythonMap, 'expression.collection.tuple'>
-	| PythonMap['nodes']['expression.collection.tuple']
-	| BuildInput<PythonMap, 'expression.comprehension.generator'>
-	| PythonMap['nodes']['expression.comprehension.generator']
-	| BuildInput<PythonMap, 'expression.comprehension.list'>
-	| PythonMap['nodes']['expression.comprehension.list']
-	| BuildInput<PythonMap, 'expression.comprehension.map'>
-	| PythonMap['nodes']['expression.comprehension.map']
-	| BuildInput<PythonMap, 'expression.comprehension.set'>
-	| PythonMap['nodes']['expression.comprehension.set']
-	| BuildInput<PythonMap, 'expression.conditional'>
-	| PythonMap['nodes']['expression.conditional']
-	| BuildInput<PythonMap, 'expression.lambda'>
-	| PythonMap['nodes']['expression.lambda']
-	| BuildInput<PythonMap, 'expression.member'>
-	| PythonMap['nodes']['expression.member']
-	| BuildInput<PythonMap, 'expression.parenthesized'>
-	| PythonMap['nodes']['expression.parenthesized']
-	| BuildInput<PythonMap, 'expression.subscript'>
-	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
-	| PythonMap['nodes']['expression.unary.bitwise_not']
-	| BuildInput<PythonMap, 'expression.unary.negation'>
-	| PythonMap['nodes']['expression.unary.negation']
-	| BuildInput<PythonMap, 'expression.unary.not'>
-	| PythonMap['nodes']['expression.unary.not']
-	| BuildInput<PythonMap, 'expression.unary.plus'>
-	| PythonMap['nodes']['expression.unary.plus']
-	| BuildInput<PythonMap, 'identifier'>
-	| PythonMap['nodes']['identifier']
-	| BuildInput<PythonMap, 'identifier.qualified'>
-	| PythonMap['nodes']['identifier.qualified']
-	| BuildInput<PythonMap, 'literal.boolean.false'>
-	| PythonMap['nodes']['literal.boolean.false']
-	| BuildInput<PythonMap, 'literal.boolean.true'>
-	| PythonMap['nodes']['literal.boolean.true']
-	| BuildInput<PythonMap, 'literal.ellipsis'>
-	| PythonMap['nodes']['literal.ellipsis']
-	| BuildInput<PythonMap, 'literal.null'>
-	| PythonMap['nodes']['literal.null']
-	| BuildInput<PythonMap, 'literal.number.float'>
-	| PythonMap['nodes']['literal.number.float']
-	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
-	| PythonMap['nodes']['literal.number.float.leading_point']
-	| BuildInput<PythonMap, 'literal.number.float.scientific'>
-	| PythonMap['nodes']['literal.number.float.scientific']
-	| BuildInput<PythonMap, 'literal.number.integer'>
-	| PythonMap['nodes']['literal.number.integer']
-	| BuildInput<PythonMap, 'literal.number.integer.big'>
-	| PythonMap['nodes']['literal.number.integer.big']
-	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
-	| PythonMap['nodes']['literal.number.integer.big.binary']
-	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
-	| PythonMap['nodes']['literal.number.integer.big.hex']
-	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
-	| PythonMap['nodes']['literal.number.integer.big.octal']
-	| BuildInput<PythonMap, 'literal.number.integer.binary'>
-	| PythonMap['nodes']['literal.number.integer.binary']
-	| BuildInput<PythonMap, 'literal.number.integer.hex'>
-	| PythonMap['nodes']['literal.number.integer.hex']
-	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
-	| PythonMap['nodes']['literal.number.integer.imaginary']
-	| BuildInput<PythonMap, 'literal.number.integer.octal'>
-	| PythonMap['nodes']['literal.number.integer.octal']
-	| BuildInput<PythonMap, 'literal.string'>
-	| PythonMap['nodes']['literal.string']
-	| BuildInput<PythonMap, 'literal.string.bytes'>
-	| PythonMap['nodes']['literal.string.bytes']
-	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
-	| PythonMap['nodes']['literal.string.bytes.multiline']
-	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
-	| PythonMap['nodes']['literal.string.bytes.raw']
-	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
-	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.concatenated'>
-	| PythonMap['nodes']['literal.string.concatenated']
-	| BuildInput<PythonMap, 'literal.string.interpolated'>
-	| PythonMap['nodes']['literal.string.interpolated']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
-	| PythonMap['nodes']['literal.string.interpolated.raw']
-	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.multiline'>
-	| PythonMap['nodes']['literal.string.multiline']
-	| BuildInput<PythonMap, 'literal.string.raw'>
-	| PythonMap['nodes']['literal.string.raw']
-	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
-	| PythonMap['nodes']['literal.string.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.unicode'>
-	| PythonMap['nodes']['literal.string.unicode']
-	| BuildInput<PythonMap, 'pattern.rest'>
-	| PythonMap['nodes']['pattern.rest']
-	| BuildInput<PythonMap, 'type.constrained'>
-	| PythonMap['nodes']['type.constrained']
-	| BuildInput<PythonMap, 'type.generic'>
-	| PythonMap['nodes']['type.generic']
-	| BuildInput<PythonMap, 'type.nullable'>
-	| PythonMap['nodes']['type.nullable']
-	| BuildInput<PythonMap, 'type.rest'>
-	| PythonMap['nodes']['type.rest']
-	| BuildInput<PythonMap, 'type.union'>
-	| PythonMap['nodes']['type.union']
-	| Unmapped<'python:as_pattern'>;
-const declaration_constructor$316_returnType = (value: declaration_constructor$316_returnType$Item) => {
-	if (typeof value === 'string') {
-		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
-		return b.type(b.identifier(value));
-	}
-	if (typeof value === 'bigint') {
-		return b.type(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }));
-	}
-	if (typeof value === 'number') {
-		if (Number.isSafeInteger(value)) {
-			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
-		}
-		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 232, 233, 234, 235, 236, 238, 239, 240, 241, 243, 244, 245, 246, 247,
-					251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return b.type(value);
-		return unseated('declaration.constructor.returnType', value);
-	}
-	switch (value.$path) {
-		case 'expression.assignment':
-			return b.type(expression_assignment$148(value));
-		case 'expression.await':
-			return b.type(expression_await$262(value));
-		case 'expression.binary.arithmetic.add':
-			return b.type(expression_binary_arithmetic_add$214(value));
-		case 'expression.binary.arithmetic.divide':
-			return b.type(expression_binary_arithmetic_divide$214(value));
-		case 'expression.binary.arithmetic.exponent':
-			return b.type(expression_binary_arithmetic_exponent$214(value));
-		case 'expression.binary.arithmetic.floor_divide':
-			return b.type(expression_binary_arithmetic_floor_divide$214(value));
-		case 'expression.binary.arithmetic.modulo':
-			return b.type(expression_binary_arithmetic_modulo$214(value));
-		case 'expression.binary.arithmetic.multiply':
-			return b.type(expression_binary_arithmetic_multiply$214(value));
-		case 'expression.binary.arithmetic.subtract':
-			return b.type(expression_binary_arithmetic_subtract$214(value));
-		case 'expression.binary.bitwise.and':
-			return b.type(expression_binary_bitwise_and$214(value));
-		case 'expression.binary.bitwise.or':
-			return b.type(expression_binary_bitwise_or$214(value));
-		case 'expression.binary.bitwise.xor':
-			return b.type(expression_binary_bitwise_xor$214(value));
-		case 'expression.binary.comparison.chain':
-			return b.type(expression_binary_comparison_chain$218(value));
-		case 'expression.binary.comparison.equal':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'expression.binary.comparison.greater':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'expression.binary.comparison.greater_equal':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'expression.binary.comparison.less':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'expression.binary.comparison.less_equal':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'expression.binary.comparison.not_equal':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'expression.binary.comparison.not_equal.legacy':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'expression.binary.identity.is':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'expression.binary.identity.is_not':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'expression.binary.logical.and':
-			return b.type(expression_binary_logical_and$213(value));
-		case 'expression.binary.logical.or':
-			return b.type(expression_binary_logical_or$213(value));
-		case 'expression.binary.matrix_multiply':
-			return b.type(expression_binary_matrix_multiply$214(value));
-		case 'expression.binary.membership.in':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'expression.binary.membership.not_in':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'expression.binary.shift.left':
-			return b.type(expression_binary_shift_left$214(value));
-		case 'expression.binary.shift.right':
-			return b.type(expression_binary_shift_right$214(value));
-		case 'expression.call':
-			return b.type(expression_call$229(value));
-		case 'expression.call.member':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'expression.collection.list':
-			return b.type(expression_collection_list$238(value));
-		case 'expression.collection.map':
-			return b.type(expression_collection_map$241(value));
-		case 'expression.collection.set':
-			return b.type(expression_collection_set$239(value));
-		case 'expression.collection.tuple':
-			return b.type(expression_collection_tuple$240(value));
-		case 'expression.comprehension.generator':
-			return b.type(expression_comprehension_generator$246(value));
-		case 'expression.comprehension.list':
-			return b.type(expression_comprehension_list$243(value));
-		case 'expression.comprehension.map':
-			return b.type(expression_comprehension_map$244(value));
-		case 'expression.comprehension.set':
-			return b.type(expression_comprehension_set$245(value));
-		case 'expression.conditional':
-			return b.type(expression_conditional$251(value));
-		case 'expression.lambda':
-			return b.type(expression_lambda$219(value));
-		case 'expression.member':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'expression.parenthesized':
-			return b.type(expression_parenthesized$247(value));
-		case 'expression.subscript':
-			return b.type(expression_subscript$227(value));
-		case 'expression.unary.bitwise_not':
-			return b.type(expression_unary_bitwise_not$215(value));
-		case 'expression.unary.negation':
-			return b.type(expression_unary_negation$215(value));
-		case 'expression.unary.not':
-			return b.type(expression_unary_not$212(value));
-		case 'expression.unary.plus':
-			return b.type(expression_unary_plus$215(value));
-		case 'identifier':
-			return b.type(identifier$1(value));
-		case 'identifier.qualified':
-			return b.type(identifier_qualified$236(value));
-		case 'literal.boolean.false':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'literal.boolean.true':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'literal.ellipsis':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'literal.null':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'literal.number.float':
-			return b.type(literal_number_float$101(value));
-		case 'literal.number.float.leading_point':
-			return b.type(literal_number_float_leading_point$102(value));
-		case 'literal.number.float.scientific':
-			return b.type(literal_number_float_scientific$103(value));
-		case 'literal.number.integer':
-			return b.type(literal_number_integer$100(value));
-		case 'literal.number.integer.big':
-			return b.type(literal_number_integer_big$98(value));
-		case 'literal.number.integer.big.binary':
-			return b.type(literal_number_integer_big_binary$94(value));
-		case 'literal.number.integer.big.hex':
-			return b.type(literal_number_integer_big_hex$90(value));
-		case 'literal.number.integer.big.octal':
-			return b.type(literal_number_integer_big_octal$92(value));
-		case 'literal.number.integer.binary':
-			return b.type(literal_number_integer_binary$95(value));
-		case 'literal.number.integer.hex':
-			return b.type(literal_number_integer_hex$91(value));
-		case 'literal.number.integer.imaginary':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'literal.number.integer.octal':
-			return b.type(literal_number_integer_octal$93(value));
-		case 'literal.string':
-			return b.type(literal_string$253(value));
-		case 'literal.string.bytes':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'literal.string.bytes.multiline':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'literal.string.bytes.raw':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'literal.string.bytes.raw.multiline':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'literal.string.concatenated':
-			return b.type(literal_string_concatenated$252(value));
-		case 'literal.string.interpolated':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'literal.string.interpolated.deferred':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'literal.string.interpolated.deferred.multiline':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'literal.string.interpolated.deferred.raw':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'literal.string.interpolated.deferred.raw.multiline':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'literal.string.interpolated.multiline':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'literal.string.interpolated.raw':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'literal.string.interpolated.raw.multiline':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'literal.string.multiline':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'literal.string.raw':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'literal.string.raw.multiline':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'literal.string.unicode':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'pattern.rest':
-			return b.type(pattern_rest$206(value));
-		case 'type.constrained':
-			return b.type(type_constrained$235(value));
-		case 'type.generic':
-			return b.type(type_generic$233(value));
-		case 'type.nullable':
-			return unbuilt('declaration.constructor.returnType', value);
-		case 'type.rest':
-			return b.type(type_rest$232(value));
-		case 'type.union':
-			return b.type(type_union$234(value));
-		default:
-			return unbuilt('declaration.constructor.returnType', value);
-	}
-};
-type declaration_constructor$316_statements$item$Item =
-	| 'break'
-	| 'continue'
-	| 'pass'
-	| Text<PythonMap, 'identifier'>
-	| Text<PythonMap, 'literal.number.integer'>
-	| Text<PythonMap, 'literal.number.integer.imaginary'>
-	| Text<PythonMap, 'statement.break'>
-	| Text<PythonMap, 'statement.continue'>
-	| Text<PythonMap, 'statement.empty'>
-	| bigint
-	| number
-	| BuildInput<PythonMap, 'declaration.class'>
-	| PythonMap['nodes']['declaration.class']
-	| BuildInput<PythonMap, 'declaration.constant'>
-	| PythonMap['nodes']['declaration.constant']
-	| BuildInput<PythonMap, 'declaration.function'>
-	| PythonMap['nodes']['declaration.function']
-	| BuildInput<PythonMap, 'declaration.type_alias'>
-	| PythonMap['nodes']['declaration.type_alias']
-	| BuildInput<PythonMap, 'declaration.variable'>
-	| PythonMap['nodes']['declaration.variable']
-	| BuildInput<PythonMap, 'expression.assignment'>
-	| PythonMap['nodes']['expression.assignment']
-	| BuildInput<PythonMap, 'expression.assignment.compound.add'>
-	| PythonMap['nodes']['expression.assignment.compound.add']
-	| BuildInput<PythonMap, 'expression.assignment.compound.bitwise_and'>
-	| PythonMap['nodes']['expression.assignment.compound.bitwise_and']
-	| BuildInput<PythonMap, 'expression.assignment.compound.bitwise_or'>
-	| PythonMap['nodes']['expression.assignment.compound.bitwise_or']
-	| BuildInput<PythonMap, 'expression.assignment.compound.bitwise_xor'>
-	| PythonMap['nodes']['expression.assignment.compound.bitwise_xor']
-	| BuildInput<PythonMap, 'expression.assignment.compound.divide'>
-	| PythonMap['nodes']['expression.assignment.compound.divide']
-	| BuildInput<PythonMap, 'expression.assignment.compound.exponent'>
-	| PythonMap['nodes']['expression.assignment.compound.exponent']
-	| BuildInput<PythonMap, 'expression.assignment.compound.floor_divide'>
-	| PythonMap['nodes']['expression.assignment.compound.floor_divide']
-	| BuildInput<PythonMap, 'expression.assignment.compound.matrix_multiply'>
-	| PythonMap['nodes']['expression.assignment.compound.matrix_multiply']
-	| BuildInput<PythonMap, 'expression.assignment.compound.modulo'>
-	| PythonMap['nodes']['expression.assignment.compound.modulo']
-	| BuildInput<PythonMap, 'expression.assignment.compound.multiply'>
-	| PythonMap['nodes']['expression.assignment.compound.multiply']
-	| BuildInput<PythonMap, 'expression.assignment.compound.shift_left'>
-	| PythonMap['nodes']['expression.assignment.compound.shift_left']
-	| BuildInput<PythonMap, 'expression.assignment.compound.shift_right'>
-	| PythonMap['nodes']['expression.assignment.compound.shift_right']
-	| BuildInput<PythonMap, 'expression.assignment.compound.subtract'>
-	| PythonMap['nodes']['expression.assignment.compound.subtract']
-	| BuildInput<PythonMap, 'expression.await'>
-	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
-	| PythonMap['nodes']['expression.binary.arithmetic.add']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
-	| PythonMap['nodes']['expression.binary.arithmetic.divide']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
-	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
-	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
-	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
-	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
-	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
-	| PythonMap['nodes']['expression.binary.bitwise.and']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
-	| PythonMap['nodes']['expression.binary.bitwise.or']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
-	| PythonMap['nodes']['expression.binary.bitwise.xor']
-	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
-	| PythonMap['nodes']['expression.binary.comparison.chain']
-	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
-	| PythonMap['nodes']['expression.binary.comparison.equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
-	| PythonMap['nodes']['expression.binary.comparison.greater']
-	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
-	| PythonMap['nodes']['expression.binary.comparison.less']
-	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.less_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.not_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
-	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
-	| BuildInput<PythonMap, 'expression.binary.identity.is'>
-	| PythonMap['nodes']['expression.binary.identity.is']
-	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
-	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical.and'>
-	| PythonMap['nodes']['expression.binary.logical.and']
-	| BuildInput<PythonMap, 'expression.binary.logical.or'>
-	| PythonMap['nodes']['expression.binary.logical.or']
-	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
-	| PythonMap['nodes']['expression.binary.matrix_multiply']
-	| BuildInput<PythonMap, 'expression.binary.membership.in'>
-	| PythonMap['nodes']['expression.binary.membership.in']
-	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
-	| PythonMap['nodes']['expression.binary.membership.not_in']
-	| BuildInput<PythonMap, 'expression.binary.shift.left'>
-	| PythonMap['nodes']['expression.binary.shift.left']
-	| BuildInput<PythonMap, 'expression.binary.shift.right'>
-	| PythonMap['nodes']['expression.binary.shift.right']
-	| BuildInput<PythonMap, 'expression.call'>
-	| PythonMap['nodes']['expression.call']
-	| BuildInput<PythonMap, 'expression.call.member'>
-	| PythonMap['nodes']['expression.call.member']
-	| BuildInput<PythonMap, 'expression.collection.list'>
-	| PythonMap['nodes']['expression.collection.list']
-	| BuildInput<PythonMap, 'expression.collection.map'>
-	| PythonMap['nodes']['expression.collection.map']
-	| BuildInput<PythonMap, 'expression.collection.set'>
-	| PythonMap['nodes']['expression.collection.set']
-	| BuildInput<PythonMap, 'expression.collection.tuple'>
-	| PythonMap['nodes']['expression.collection.tuple']
-	| BuildInput<PythonMap, 'expression.collection.tuple.bare'>
-	| PythonMap['nodes']['expression.collection.tuple.bare']
-	| BuildInput<PythonMap, 'expression.comprehension.generator'>
-	| PythonMap['nodes']['expression.comprehension.generator']
-	| BuildInput<PythonMap, 'expression.comprehension.list'>
-	| PythonMap['nodes']['expression.comprehension.list']
-	| BuildInput<PythonMap, 'expression.comprehension.map'>
-	| PythonMap['nodes']['expression.comprehension.map']
-	| BuildInput<PythonMap, 'expression.comprehension.set'>
-	| PythonMap['nodes']['expression.comprehension.set']
-	| BuildInput<PythonMap, 'expression.conditional'>
-	| PythonMap['nodes']['expression.conditional']
-	| BuildInput<PythonMap, 'expression.lambda'>
-	| PythonMap['nodes']['expression.lambda']
-	| BuildInput<PythonMap, 'expression.member'>
-	| PythonMap['nodes']['expression.member']
-	| BuildInput<PythonMap, 'expression.parenthesized'>
-	| PythonMap['nodes']['expression.parenthesized']
-	| BuildInput<PythonMap, 'expression.subscript'>
-	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
-	| PythonMap['nodes']['expression.unary.bitwise_not']
-	| BuildInput<PythonMap, 'expression.unary.negation'>
-	| PythonMap['nodes']['expression.unary.negation']
-	| BuildInput<PythonMap, 'expression.unary.not'>
-	| PythonMap['nodes']['expression.unary.not']
-	| BuildInput<PythonMap, 'expression.unary.plus'>
-	| PythonMap['nodes']['expression.unary.plus']
-	| BuildInput<PythonMap, 'expression.yield'>
-	| PythonMap['nodes']['expression.yield']
-	| BuildInput<PythonMap, 'expression.yield.delegate'>
-	| PythonMap['nodes']['expression.yield.delegate']
-	| BuildInput<PythonMap, 'identifier'>
-	| PythonMap['nodes']['identifier']
-	| BuildInput<PythonMap, 'literal.boolean.false'>
-	| PythonMap['nodes']['literal.boolean.false']
-	| BuildInput<PythonMap, 'literal.boolean.true'>
-	| PythonMap['nodes']['literal.boolean.true']
-	| BuildInput<PythonMap, 'literal.ellipsis'>
-	| PythonMap['nodes']['literal.ellipsis']
-	| BuildInput<PythonMap, 'literal.null'>
-	| PythonMap['nodes']['literal.null']
-	| BuildInput<PythonMap, 'literal.number.float'>
-	| PythonMap['nodes']['literal.number.float']
-	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
-	| PythonMap['nodes']['literal.number.float.leading_point']
-	| BuildInput<PythonMap, 'literal.number.float.scientific'>
-	| PythonMap['nodes']['literal.number.float.scientific']
-	| BuildInput<PythonMap, 'literal.number.integer'>
-	| PythonMap['nodes']['literal.number.integer']
-	| BuildInput<PythonMap, 'literal.number.integer.big'>
-	| PythonMap['nodes']['literal.number.integer.big']
-	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
-	| PythonMap['nodes']['literal.number.integer.big.binary']
-	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
-	| PythonMap['nodes']['literal.number.integer.big.hex']
-	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
-	| PythonMap['nodes']['literal.number.integer.big.octal']
-	| BuildInput<PythonMap, 'literal.number.integer.binary'>
-	| PythonMap['nodes']['literal.number.integer.binary']
-	| BuildInput<PythonMap, 'literal.number.integer.hex'>
-	| PythonMap['nodes']['literal.number.integer.hex']
-	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
-	| PythonMap['nodes']['literal.number.integer.imaginary']
-	| BuildInput<PythonMap, 'literal.number.integer.octal'>
-	| PythonMap['nodes']['literal.number.integer.octal']
-	| BuildInput<PythonMap, 'literal.string'>
-	| PythonMap['nodes']['literal.string']
-	| BuildInput<PythonMap, 'literal.string.bytes'>
-	| PythonMap['nodes']['literal.string.bytes']
-	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
-	| PythonMap['nodes']['literal.string.bytes.multiline']
-	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
-	| PythonMap['nodes']['literal.string.bytes.raw']
-	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
-	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.concatenated'>
-	| PythonMap['nodes']['literal.string.concatenated']
-	| BuildInput<PythonMap, 'literal.string.interpolated'>
-	| PythonMap['nodes']['literal.string.interpolated']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
-	| PythonMap['nodes']['literal.string.interpolated.raw']
-	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.multiline'>
-	| PythonMap['nodes']['literal.string.multiline']
-	| BuildInput<PythonMap, 'literal.string.raw'>
-	| PythonMap['nodes']['literal.string.raw']
-	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
-	| PythonMap['nodes']['literal.string.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.unicode'>
-	| PythonMap['nodes']['literal.string.unicode']
-	| BuildInput<PythonMap, 'pattern.rest'>
-	| PythonMap['nodes']['pattern.rest']
-	| BuildInput<PythonMap, 'statement.assert'>
-	| PythonMap['nodes']['statement.assert']
-	| BuildInput<PythonMap, 'statement.delete'>
-	| PythonMap['nodes']['statement.delete']
-	| BuildInput<PythonMap, 'statement.exec'>
-	| PythonMap['nodes']['statement.exec']
-	| BuildInput<PythonMap, 'statement.global'>
-	| PythonMap['nodes']['statement.global']
-	| BuildInput<PythonMap, 'statement.if'>
-	| PythonMap['nodes']['statement.if']
-	| BuildInput<PythonMap, 'statement.import'>
-	| PythonMap['nodes']['statement.import']
-	| BuildInput<PythonMap, 'statement.import.from'>
-	| PythonMap['nodes']['statement.import.from']
-	| BuildInput<PythonMap, 'statement.import.future'>
-	| PythonMap['nodes']['statement.import.future']
-	| BuildInput<PythonMap, 'statement.loop.for_each'>
-	| PythonMap['nodes']['statement.loop.for_each']
-	| BuildInput<PythonMap, 'statement.loop.while'>
-	| PythonMap['nodes']['statement.loop.while']
-	| BuildInput<PythonMap, 'statement.match'>
-	| PythonMap['nodes']['statement.match']
-	| BuildInput<PythonMap, 'statement.nonlocal'>
-	| PythonMap['nodes']['statement.nonlocal']
-	| BuildInput<PythonMap, 'statement.print'>
-	| PythonMap['nodes']['statement.print']
-	| BuildInput<PythonMap, 'statement.resource'>
-	| PythonMap['nodes']['statement.resource']
-	| BuildInput<PythonMap, 'statement.return'>
-	| PythonMap['nodes']['statement.return']
-	| BuildInput<PythonMap, 'statement.throw'>
-	| PythonMap['nodes']['statement.throw']
-	| BuildInput<PythonMap, 'statement.try'>
-	| PythonMap['nodes']['statement.try']
-	| Unmapped<'python:as_pattern'>;
-const declaration_constructor$316_statements$item = (value: declaration_constructor$316_statements$item$Item) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case 'break':
-				return b.simpleStatements(b.simpleStatementsElements(154));
-			case 'continue':
-				return b.simpleStatements(b.simpleStatementsElements(155));
-			case 'pass':
-				return b.simpleStatements(b.simpleStatementsElements(153));
-			default:
-				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
-					return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value))));
-				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value))));
-		}
-	}
-	if (typeof value === 'bigint') {
-		return b.simpleStatements(
-			b.simpleStatementsElements(
-				b.expressionStatement(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }))
-			)
-		);
-	}
-	if (typeof value === 'number') {
-		if (Number.isSafeInteger(value)) {
-			return b.simpleStatements(
-				b.simpleStatementsElements(
-					b.expressionStatement(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }))
-				)
-			);
-		}
-		return b.simpleStatements(
-			b.simpleStatementsElements(
-				b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
-			)
-		);
-	}
-	if (isNode(value)) {
-		if (seated(value, [134, 156, 159, 162, 163, 164, 167, 170, 179])) return value;
-		if (seated(value, [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178]))
-			return b.simpleStatements(b.simpleStatementsElements(value));
-		if (seated(value, [287, 288])) return b.simpleStatements(b.simpleStatementsElements(b.printStatement(value)));
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
-					253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
-				]
-			)
-		)
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(value)));
-		return unseated('declaration.constructor.statements', value);
-	}
-	switch (value.$path) {
-		case 'declaration.class': {
-			if ((value.decorators ?? []).length === 0) return declaration_class$179(value);
-			return b.decoratedDefinition({
-				definition: declaration_class$179(value),
-				decorators: nonEmpty(
-					'declaration.class.decorators',
-					(value.decorators ?? []).map(declaration_class$179_decorators)
-				)
-			});
-		}
-		case 'declaration.constant':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'declaration.function': {
-			if ((value.decorators ?? []).length === 0) return declaration_function$170(value);
-			return b.decoratedDefinition({
-				definition: declaration_function$170(value),
-				decorators: nonEmpty(
-					'declaration.function.decorators',
-					(value.decorators ?? []).map(declaration_function$170_decorators)
-				)
-			});
-		}
-		case 'declaration.type_alias':
-			return b.simpleStatements(b.simpleStatementsElements(declaration_type_alias$178(value)));
-		case 'declaration.variable':
-			if (value.name !== undefined && value.value !== undefined && value.type === undefined)
-				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$302(value))));
-			if (value.name !== undefined && value.type !== undefined && value.value === undefined)
-				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$303(value))));
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$304(value))));
-		case 'expression.assignment':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_assignment$148(value))));
-		case 'expression.assignment.compound.add':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_add$222(value)))
-			);
-		case 'expression.assignment.compound.bitwise_and':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_bitwise_and$222(value)))
-			);
-		case 'expression.assignment.compound.bitwise_or':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_bitwise_or$222(value)))
-			);
-		case 'expression.assignment.compound.bitwise_xor':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_bitwise_xor$222(value)))
-			);
-		case 'expression.assignment.compound.divide':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_divide$222(value)))
-			);
-		case 'expression.assignment.compound.exponent':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_exponent$222(value)))
-			);
-		case 'expression.assignment.compound.floor_divide':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_floor_divide$222(value)))
-			);
-		case 'expression.assignment.compound.matrix_multiply':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_matrix_multiply$222(value)))
-			);
-		case 'expression.assignment.compound.modulo':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_modulo$222(value)))
-			);
-		case 'expression.assignment.compound.multiply':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_multiply$222(value)))
-			);
-		case 'expression.assignment.compound.shift_left':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_shift_left$222(value)))
-			);
-		case 'expression.assignment.compound.shift_right':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_shift_right$222(value)))
-			);
-		case 'expression.assignment.compound.subtract':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_subtract$222(value)))
-			);
-		case 'expression.await':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_await$262(value))));
-		case 'expression.binary.arithmetic.add':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_add$214(value)))
-			);
-		case 'expression.binary.arithmetic.divide':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_divide$214(value)))
-			);
-		case 'expression.binary.arithmetic.exponent':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_exponent$214(value)))
-			);
-		case 'expression.binary.arithmetic.floor_divide':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_floor_divide$214(value)))
-			);
-		case 'expression.binary.arithmetic.modulo':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_modulo$214(value)))
-			);
-		case 'expression.binary.arithmetic.multiply':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_multiply$214(value)))
-			);
-		case 'expression.binary.arithmetic.subtract':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_subtract$214(value)))
-			);
-		case 'expression.binary.bitwise.and':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_bitwise_and$214(value)))
-			);
-		case 'expression.binary.bitwise.or':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_bitwise_or$214(value)))
-			);
-		case 'expression.binary.bitwise.xor':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_bitwise_xor$214(value)))
-			);
-		case 'expression.binary.comparison.chain':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_comparison_chain$218(value)))
-			);
-		case 'expression.binary.comparison.equal':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'expression.binary.comparison.greater':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'expression.binary.comparison.greater_equal':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'expression.binary.comparison.less':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'expression.binary.comparison.less_equal':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'expression.binary.comparison.not_equal':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'expression.binary.comparison.not_equal.legacy':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'expression.binary.identity.is':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'expression.binary.identity.is_not':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'expression.binary.logical.and':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_logical_and$213(value)))
-			);
-		case 'expression.binary.logical.or':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_logical_or$213(value)))
-			);
-		case 'expression.binary.matrix_multiply':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_matrix_multiply$214(value)))
-			);
-		case 'expression.binary.membership.in':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'expression.binary.membership.not_in':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'expression.binary.shift.left':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_shift_left$214(value)))
-			);
-		case 'expression.binary.shift.right':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_shift_right$214(value)))
-			);
-		case 'expression.call':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_call$229(value))));
-		case 'expression.call.member':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'expression.collection.list':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_collection_list$238(value)))
-			);
-		case 'expression.collection.map':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_collection_map$241(value)))
-			);
-		case 'expression.collection.set':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_collection_set$239(value)))
-			);
-		case 'expression.collection.tuple':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_collection_tuple$240(value)))
-			);
-		case 'expression.collection.tuple.bare':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'expression.comprehension.generator':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_generator$246(value)))
-			);
-		case 'expression.comprehension.list':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_list$243(value)))
-			);
-		case 'expression.comprehension.map':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_map$244(value)))
-			);
-		case 'expression.comprehension.set':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_set$245(value)))
-			);
-		case 'expression.conditional':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_conditional$251(value))));
-		case 'expression.lambda':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_lambda$219(value))));
-		case 'expression.member':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'expression.parenthesized':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_parenthesized$247(value))));
-		case 'expression.subscript':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_subscript$227(value))));
-		case 'expression.unary.bitwise_not':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_unary_bitwise_not$215(value)))
-			);
-		case 'expression.unary.negation':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_unary_negation$215(value)))
-			);
-		case 'expression.unary.not':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_unary_not$212(value))));
-		case 'expression.unary.plus':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_unary_plus$215(value))));
-		case 'expression.yield':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_yield$225(value))));
-		case 'expression.yield.delegate':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'identifier':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(identifier$1(value))));
-		case 'literal.boolean.false':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'literal.boolean.true':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'literal.ellipsis':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'literal.null':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'literal.number.float':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_float$101(value))));
-		case 'literal.number.float.leading_point':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_float_leading_point$102(value)))
-			);
-		case 'literal.number.float.scientific':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_float_scientific$103(value)))
-			);
-		case 'literal.number.integer':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_integer$100(value))));
-		case 'literal.number.integer.big':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big$98(value)))
-			);
-		case 'literal.number.integer.big.binary':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_binary$94(value)))
-			);
-		case 'literal.number.integer.big.hex':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_hex$90(value)))
-			);
-		case 'literal.number.integer.big.octal':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_octal$92(value)))
-			);
-		case 'literal.number.integer.binary':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_binary$95(value)))
-			);
-		case 'literal.number.integer.hex':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_hex$91(value)))
-			);
-		case 'literal.number.integer.imaginary':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'literal.number.integer.octal':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_octal$93(value)))
-			);
-		case 'literal.string':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_string$253(value))));
-		case 'literal.string.bytes':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'literal.string.bytes.multiline':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'literal.string.bytes.raw':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'literal.string.bytes.raw.multiline':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'literal.string.concatenated':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_string_concatenated$252(value)))
-			);
-		case 'literal.string.interpolated':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'literal.string.interpolated.deferred':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'literal.string.interpolated.deferred.multiline':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'literal.string.interpolated.deferred.raw':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'literal.string.interpolated.deferred.raw.multiline':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'literal.string.interpolated.multiline':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'literal.string.interpolated.raw':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'literal.string.interpolated.raw.multiline':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'literal.string.multiline':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'literal.string.raw':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'literal.string.raw.multiline':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'literal.string.unicode':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'pattern.rest':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(pattern_rest$206(value))));
-		case 'statement.assert':
-			return b.simpleStatements(b.simpleStatementsElements(statement_assert$146(value)));
-		case 'statement.delete':
-			return b.simpleStatements(b.simpleStatementsElements(statement_delete$151(value)));
-		case 'statement.exec':
-			return b.simpleStatements(b.simpleStatementsElements(statement_exec$177(value)));
-		case 'statement.global':
-			return b.simpleStatements(b.simpleStatementsElements(statement_global$175(value)));
-		case 'statement.if':
-			return statement_if$156(value);
-		case 'statement.import':
-			return b.simpleStatements(b.simpleStatementsElements(statement_import$136(value)));
-		case 'statement.import.from':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'statement.import.future':
-			return b.simpleStatements(b.simpleStatementsElements(statement_import_future$139(value)));
-		case 'statement.loop.for_each':
-			return statement_loop_for_each$162(value);
-		case 'statement.loop.while':
-			return statement_loop_while$163(value);
-		case 'statement.match':
-			return statement_match$159(value);
-		case 'statement.nonlocal':
-			return b.simpleStatements(b.simpleStatementsElements(statement_nonlocal$176(value)));
-		case 'statement.print':
-			return unbuilt('declaration.constructor.statements', value);
-		case 'statement.resource':
-			return statement_resource$167(value);
-		case 'statement.return':
-			return b.simpleStatements(b.simpleStatementsElements(statement_return$150(value)));
-		case 'statement.throw':
-			return b.simpleStatements(b.simpleStatementsElements(statement_throw$152(value)));
-		case 'statement.try':
-			return statement_try$164(value);
-		default:
-			return unbuilt('declaration.constructor.statements', value);
-	}
-};
-type declaration_constructor$316_typeParameters$Item =
-	| BuildInput<PythonMap, 'declaration.type_parameter'>
-	| PythonMap['nodes']['declaration.type_parameter']
-	| BuildInput<PythonMap, 'declaration.type_parameter.parameters'>
-	| PythonMap['nodes']['declaration.type_parameter.parameters']
-	| BuildInput<PythonMap, 'declaration.type_parameter.variadic'>
-	| PythonMap['nodes']['declaration.type_parameter.variadic'];
-const declaration_constructor$316_typeParameters = (value: declaration_constructor$316_typeParameters$Item) => {
-	if (typeof value === 'number') {
-		if (seated(value, [275, 313, 314, 315])) return b.typeParams(b.typeParamsItems(value));
-		return unseated('declaration.constructor.typeParameters', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [275, 313, 314, 315])) return b.typeParams(b.typeParamsItems(value));
-		return unseated('declaration.constructor.typeParameters', value);
-	}
-	switch (value.$path) {
-		case 'declaration.type_parameter':
-			return unbuilt('declaration.constructor.typeParameters', value);
-		case 'declaration.type_parameter.parameters':
-			return b.typeParams(b.typeParamsItems(declaration_type_parameter_parameters$315(value)));
-		case 'declaration.type_parameter.variadic':
-			return b.typeParams(b.typeParamsItems(declaration_type_parameter_variadic$314(value)));
-		default:
-			return unbuilt('declaration.constructor.typeParameters', value);
-	}
-};
-type declaration_constructor$316_typeParameters$item$Item =
-	| BuildInput<PythonMap, 'declaration.type_parameter'>
-	| PythonMap['nodes']['declaration.type_parameter']
-	| BuildInput<PythonMap, 'declaration.type_parameter.parameters'>
-	| PythonMap['nodes']['declaration.type_parameter.parameters']
-	| BuildInput<PythonMap, 'declaration.type_parameter.variadic'>
-	| PythonMap['nodes']['declaration.type_parameter.variadic'];
-const declaration_constructor$316_typeParameters$item = (
-	value: declaration_constructor$316_typeParameters$item$Item
-) => {
-	if (typeof value === 'number') {
-		if (seated(value, [275, 313, 314, 315])) return value;
-		return unseated('declaration.constructor.typeParameters', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [275, 313, 314, 315])) return value;
-		return unseated('declaration.constructor.typeParameters', value);
-	}
-	switch (value.$path) {
-		case 'declaration.type_parameter':
-			return unbuilt('declaration.constructor.typeParameters', value);
-		case 'declaration.type_parameter.parameters':
-			return declaration_type_parameter_parameters$315(value);
-		case 'declaration.type_parameter.variadic':
-			return declaration_type_parameter_variadic$314(value);
-		default:
-			return unbuilt('declaration.constructor.typeParameters', value);
-	}
 };
 type declaration_function$170_decorators$Item =
 	| Text<PythonMap, 'identifier'>
@@ -8319,14 +4947,14 @@ type declaration_function$170_statements$item$Item =
 	| Text<PythonMap, 'statement.empty'>
 	| bigint
 	| number
-	| BuildInput<PythonMap, 'declaration.class'>
-	| PythonMap['nodes']['declaration.class']
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| PythonMap['nodes']['declaration.constant']
 	| BuildInput<PythonMap, 'declaration.function'>
 	| PythonMap['nodes']['declaration.function']
-	| BuildInput<PythonMap, 'declaration.type_alias'>
-	| PythonMap['nodes']['declaration.type_alias']
+	| BuildInput<PythonMap, 'declaration.type.class'>
+	| PythonMap['nodes']['declaration.type.class']
+	| BuildInput<PythonMap, 'declaration.type.type_alias'>
+	| PythonMap['nodes']['declaration.type.type_alias']
 	| BuildInput<PythonMap, 'declaration.variable'>
 	| PythonMap['nodes']['declaration.variable']
 	| BuildInput<PythonMap, 'expression.assignment'>
@@ -8619,16 +5247,6 @@ const declaration_function$170_statements$item = (value: declaration_function$17
 		return unseated('declaration.function.statements', value);
 	}
 	switch (value.$path) {
-		case 'declaration.class': {
-			if ((value.decorators ?? []).length === 0) return declaration_class$179(value);
-			return b.decoratedDefinition({
-				definition: declaration_class$179(value),
-				decorators: nonEmpty(
-					'declaration.class.decorators',
-					(value.decorators ?? []).map(declaration_class$179_decorators)
-				)
-			});
-		}
 		case 'declaration.constant':
 			return unbuilt('declaration.function.statements', value);
 		case 'declaration.function': {
@@ -8641,8 +5259,18 @@ const declaration_function$170_statements$item = (value: declaration_function$17
 				)
 			});
 		}
-		case 'declaration.type_alias':
-			return b.simpleStatements(b.simpleStatementsElements(declaration_type_alias$178(value)));
+		case 'declaration.type.class': {
+			if ((value.decorators ?? []).length === 0) return declaration_type_class$179(value);
+			return b.decoratedDefinition({
+				definition: declaration_type_class$179(value),
+				decorators: nonEmpty(
+					'declaration.type.class.decorators',
+					(value.decorators ?? []).map(declaration_type_class$179_decorators)
+				)
+			});
+		}
+		case 'declaration.type.type_alias':
+			return b.simpleStatements(b.simpleStatementsElements(declaration_type_type_alias$178(value)));
 		case 'declaration.variable':
 			if (value.name !== undefined && value.value !== undefined && value.type === undefined)
 				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$302(value))));
@@ -9037,6 +5665,4683 @@ const declaration_function$170_typeParameters$item = (value: declaration_functio
 			return declaration_type_parameter_variadic$314(value);
 		default:
 			return unbuilt('declaration.function.typeParameters', value);
+	}
+};
+type declaration_member_constructor$316_decorators$Item =
+	| Text<PythonMap, 'identifier'>
+	| Text<PythonMap, 'literal.number.integer'>
+	| Text<PythonMap, 'literal.number.integer.imaginary'>
+	| bigint
+	| number
+	| BuildInput<PythonMap, 'expression.assignment'>
+	| PythonMap['nodes']['expression.assignment']
+	| BuildInput<PythonMap, 'expression.await'>
+	| PythonMap['nodes']['expression.await']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
+	| PythonMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
+	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
+	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
+	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
+	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
+	| PythonMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
+	| PythonMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
+	| PythonMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
+	| PythonMap['nodes']['expression.binary.comparison.chain']
+	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
+	| PythonMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
+	| PythonMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
+	| PythonMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
+	| BuildInput<PythonMap, 'expression.binary.identity.is'>
+	| PythonMap['nodes']['expression.binary.identity.is']
+	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
+	| PythonMap['nodes']['expression.binary.identity.is_not']
+	| BuildInput<PythonMap, 'expression.binary.logical.and'>
+	| PythonMap['nodes']['expression.binary.logical.and']
+	| BuildInput<PythonMap, 'expression.binary.logical.or'>
+	| PythonMap['nodes']['expression.binary.logical.or']
+	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
+	| PythonMap['nodes']['expression.binary.matrix_multiply']
+	| BuildInput<PythonMap, 'expression.binary.membership.in'>
+	| PythonMap['nodes']['expression.binary.membership.in']
+	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
+	| PythonMap['nodes']['expression.binary.membership.not_in']
+	| BuildInput<PythonMap, 'expression.binary.shift.left'>
+	| PythonMap['nodes']['expression.binary.shift.left']
+	| BuildInput<PythonMap, 'expression.binary.shift.right'>
+	| PythonMap['nodes']['expression.binary.shift.right']
+	| BuildInput<PythonMap, 'expression.call'>
+	| PythonMap['nodes']['expression.call']
+	| BuildInput<PythonMap, 'expression.call.member'>
+	| PythonMap['nodes']['expression.call.member']
+	| BuildInput<PythonMap, 'expression.collection.list'>
+	| PythonMap['nodes']['expression.collection.list']
+	| BuildInput<PythonMap, 'expression.collection.map'>
+	| PythonMap['nodes']['expression.collection.map']
+	| BuildInput<PythonMap, 'expression.collection.set'>
+	| PythonMap['nodes']['expression.collection.set']
+	| BuildInput<PythonMap, 'expression.collection.tuple'>
+	| PythonMap['nodes']['expression.collection.tuple']
+	| BuildInput<PythonMap, 'expression.comprehension.generator'>
+	| PythonMap['nodes']['expression.comprehension.generator']
+	| BuildInput<PythonMap, 'expression.comprehension.list'>
+	| PythonMap['nodes']['expression.comprehension.list']
+	| BuildInput<PythonMap, 'expression.comprehension.map'>
+	| PythonMap['nodes']['expression.comprehension.map']
+	| BuildInput<PythonMap, 'expression.comprehension.set'>
+	| PythonMap['nodes']['expression.comprehension.set']
+	| BuildInput<PythonMap, 'expression.conditional'>
+	| PythonMap['nodes']['expression.conditional']
+	| BuildInput<PythonMap, 'expression.lambda'>
+	| PythonMap['nodes']['expression.lambda']
+	| BuildInput<PythonMap, 'expression.member'>
+	| PythonMap['nodes']['expression.member']
+	| BuildInput<PythonMap, 'expression.parenthesized'>
+	| PythonMap['nodes']['expression.parenthesized']
+	| BuildInput<PythonMap, 'expression.subscript'>
+	| PythonMap['nodes']['expression.subscript']
+	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
+	| PythonMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<PythonMap, 'expression.unary.negation'>
+	| PythonMap['nodes']['expression.unary.negation']
+	| BuildInput<PythonMap, 'expression.unary.not'>
+	| PythonMap['nodes']['expression.unary.not']
+	| BuildInput<PythonMap, 'expression.unary.plus'>
+	| PythonMap['nodes']['expression.unary.plus']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'literal.boolean.false'>
+	| PythonMap['nodes']['literal.boolean.false']
+	| BuildInput<PythonMap, 'literal.boolean.true'>
+	| PythonMap['nodes']['literal.boolean.true']
+	| BuildInput<PythonMap, 'literal.ellipsis'>
+	| PythonMap['nodes']['literal.ellipsis']
+	| BuildInput<PythonMap, 'literal.null'>
+	| PythonMap['nodes']['literal.null']
+	| BuildInput<PythonMap, 'literal.number.float'>
+	| PythonMap['nodes']['literal.number.float']
+	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+	| PythonMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<PythonMap, 'literal.number.float.scientific'>
+	| PythonMap['nodes']['literal.number.float.scientific']
+	| BuildInput<PythonMap, 'literal.number.integer'>
+	| PythonMap['nodes']['literal.number.integer']
+	| BuildInput<PythonMap, 'literal.number.integer.big'>
+	| PythonMap['nodes']['literal.number.integer.big']
+	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+	| PythonMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+	| PythonMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+	| PythonMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<PythonMap, 'literal.number.integer.binary'>
+	| PythonMap['nodes']['literal.number.integer.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.hex'>
+	| PythonMap['nodes']['literal.number.integer.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+	| PythonMap['nodes']['literal.number.integer.imaginary']
+	| BuildInput<PythonMap, 'literal.number.integer.octal'>
+	| PythonMap['nodes']['literal.number.integer.octal']
+	| BuildInput<PythonMap, 'literal.string'>
+	| PythonMap['nodes']['literal.string']
+	| BuildInput<PythonMap, 'literal.string.bytes'>
+	| PythonMap['nodes']['literal.string.bytes']
+	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.multiline']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+	| PythonMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.concatenated'>
+	| PythonMap['nodes']['literal.string.concatenated']
+	| BuildInput<PythonMap, 'literal.string.interpolated'>
+	| PythonMap['nodes']['literal.string.interpolated']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.multiline'>
+	| PythonMap['nodes']['literal.string.multiline']
+	| BuildInput<PythonMap, 'literal.string.raw'>
+	| PythonMap['nodes']['literal.string.raw']
+	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+	| PythonMap['nodes']['literal.string.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.unicode'>
+	| PythonMap['nodes']['literal.string.unicode']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| Unmapped<'python:as_pattern'>;
+const declaration_member_constructor$316_decorators = (value: declaration_member_constructor$316_decorators$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.decorator(b.identifier(value));
+		return b.decorator(b.identifier(value));
+	}
+	if (typeof value === 'bigint') {
+		return b.decorator(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }));
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.decorator(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
+					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
+					262, 291, 292, 293, 294, 295
+				]
+			)
+		)
+			return b.decorator(value);
+		return unseated('declaration.member.constructor.decorators', value);
+	}
+	switch (value.$path) {
+		case 'expression.assignment':
+			return b.decorator(expression_assignment$148(value));
+		case 'expression.await':
+			return b.decorator(expression_await$262(value));
+		case 'expression.binary.arithmetic.add':
+			return b.decorator(expression_binary_arithmetic_add$214(value));
+		case 'expression.binary.arithmetic.divide':
+			return b.decorator(expression_binary_arithmetic_divide$214(value));
+		case 'expression.binary.arithmetic.exponent':
+			return b.decorator(expression_binary_arithmetic_exponent$214(value));
+		case 'expression.binary.arithmetic.floor_divide':
+			return b.decorator(expression_binary_arithmetic_floor_divide$214(value));
+		case 'expression.binary.arithmetic.modulo':
+			return b.decorator(expression_binary_arithmetic_modulo$214(value));
+		case 'expression.binary.arithmetic.multiply':
+			return b.decorator(expression_binary_arithmetic_multiply$214(value));
+		case 'expression.binary.arithmetic.subtract':
+			return b.decorator(expression_binary_arithmetic_subtract$214(value));
+		case 'expression.binary.bitwise.and':
+			return b.decorator(expression_binary_bitwise_and$214(value));
+		case 'expression.binary.bitwise.or':
+			return b.decorator(expression_binary_bitwise_or$214(value));
+		case 'expression.binary.bitwise.xor':
+			return b.decorator(expression_binary_bitwise_xor$214(value));
+		case 'expression.binary.comparison.chain':
+			return b.decorator(expression_binary_comparison_chain$218(value));
+		case 'expression.binary.comparison.equal':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'expression.binary.comparison.greater':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'expression.binary.comparison.greater_equal':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'expression.binary.comparison.less':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'expression.binary.comparison.less_equal':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'expression.binary.comparison.not_equal':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'expression.binary.comparison.not_equal.legacy':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'expression.binary.identity.is':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'expression.binary.identity.is_not':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'expression.binary.logical.and':
+			return b.decorator(expression_binary_logical_and$213(value));
+		case 'expression.binary.logical.or':
+			return b.decorator(expression_binary_logical_or$213(value));
+		case 'expression.binary.matrix_multiply':
+			return b.decorator(expression_binary_matrix_multiply$214(value));
+		case 'expression.binary.membership.in':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'expression.binary.membership.not_in':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'expression.binary.shift.left':
+			return b.decorator(expression_binary_shift_left$214(value));
+		case 'expression.binary.shift.right':
+			return b.decorator(expression_binary_shift_right$214(value));
+		case 'expression.call':
+			return b.decorator(expression_call$229(value));
+		case 'expression.call.member':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'expression.collection.list':
+			return b.decorator(expression_collection_list$238(value));
+		case 'expression.collection.map':
+			return b.decorator(expression_collection_map$241(value));
+		case 'expression.collection.set':
+			return b.decorator(expression_collection_set$239(value));
+		case 'expression.collection.tuple':
+			return b.decorator(expression_collection_tuple$240(value));
+		case 'expression.comprehension.generator':
+			return b.decorator(expression_comprehension_generator$246(value));
+		case 'expression.comprehension.list':
+			return b.decorator(expression_comprehension_list$243(value));
+		case 'expression.comprehension.map':
+			return b.decorator(expression_comprehension_map$244(value));
+		case 'expression.comprehension.set':
+			return b.decorator(expression_comprehension_set$245(value));
+		case 'expression.conditional':
+			return b.decorator(expression_conditional$251(value));
+		case 'expression.lambda':
+			return b.decorator(expression_lambda$219(value));
+		case 'expression.member':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'expression.parenthesized':
+			return b.decorator(expression_parenthesized$247(value));
+		case 'expression.subscript':
+			return b.decorator(expression_subscript$227(value));
+		case 'expression.unary.bitwise_not':
+			return b.decorator(expression_unary_bitwise_not$215(value));
+		case 'expression.unary.negation':
+			return b.decorator(expression_unary_negation$215(value));
+		case 'expression.unary.not':
+			return b.decorator(expression_unary_not$212(value));
+		case 'expression.unary.plus':
+			return b.decorator(expression_unary_plus$215(value));
+		case 'identifier':
+			return b.decorator(identifier$1(value));
+		case 'literal.boolean.false':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'literal.boolean.true':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'literal.ellipsis':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'literal.null':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'literal.number.float':
+			return b.decorator(literal_number_float$101(value));
+		case 'literal.number.float.leading_point':
+			return b.decorator(literal_number_float_leading_point$102(value));
+		case 'literal.number.float.scientific':
+			return b.decorator(literal_number_float_scientific$103(value));
+		case 'literal.number.integer':
+			return b.decorator(literal_number_integer$100(value));
+		case 'literal.number.integer.big':
+			return b.decorator(literal_number_integer_big$98(value));
+		case 'literal.number.integer.big.binary':
+			return b.decorator(literal_number_integer_big_binary$94(value));
+		case 'literal.number.integer.big.hex':
+			return b.decorator(literal_number_integer_big_hex$90(value));
+		case 'literal.number.integer.big.octal':
+			return b.decorator(literal_number_integer_big_octal$92(value));
+		case 'literal.number.integer.binary':
+			return b.decorator(literal_number_integer_binary$95(value));
+		case 'literal.number.integer.hex':
+			return b.decorator(literal_number_integer_hex$91(value));
+		case 'literal.number.integer.imaginary':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'literal.number.integer.octal':
+			return b.decorator(literal_number_integer_octal$93(value));
+		case 'literal.string':
+			return b.decorator(literal_string$253(value));
+		case 'literal.string.bytes':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'literal.string.bytes.multiline':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'literal.string.bytes.raw.multiline':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'literal.string.concatenated':
+			return b.decorator(literal_string_concatenated$252(value));
+		case 'literal.string.interpolated':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'literal.string.interpolated.deferred':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'literal.string.interpolated.deferred.multiline':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'literal.string.interpolated.deferred.raw':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'literal.string.interpolated.deferred.raw.multiline':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'literal.string.interpolated.multiline':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'literal.string.interpolated.raw':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'literal.string.interpolated.raw.multiline':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'literal.string.multiline':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'literal.string.raw':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'literal.string.raw.multiline':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'literal.string.unicode':
+			return unbuilt('declaration.member.constructor.decorators', value);
+		case 'pattern.rest':
+			return b.decorator(pattern_rest$206(value));
+		default:
+			return unbuilt('declaration.member.constructor.decorators', value);
+	}
+};
+type declaration_member_constructor$316_parameters$item$Item =
+	| '*'
+	| '/'
+	| Text<PythonMap, 'identifier'>
+	| BuildInput<PythonMap, 'declaration.parameter.defaulted'>
+	| PythonMap['nodes']['declaration.parameter.defaulted']
+	| BuildInput<PythonMap, 'declaration.parameter.typed'>
+	| PythonMap['nodes']['declaration.parameter.typed']
+	| BuildInput<PythonMap, 'declaration.parameter.typed_default'>
+	| PythonMap['nodes']['declaration.parameter.typed_default']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| BuildInput<PythonMap, 'pattern.rest.map'>
+	| PythonMap['nodes']['pattern.rest.map']
+	| BuildInput<PythonMap, 'pattern.tuple'>
+	| PythonMap['nodes']['pattern.tuple'];
+const declaration_member_constructor$316_parameters$item = (
+	value: declaration_member_constructor$316_parameters$item$Item
+) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '*':
+				return 264;
+			case '/':
+				return 263;
+			default:
+				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1, 200, 202, 204, 205, 206, 207, 230])) return value;
+		return unseated('declaration.member.constructor.parameters', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1, 200, 202, 204, 205, 206, 207, 230, 263, 264])) return value;
+		return unseated('declaration.member.constructor.parameters', value);
+	}
+	switch (value.$path) {
+		case 'declaration.parameter.defaulted':
+			return declaration_parameter_defaulted$204(value);
+		case 'declaration.parameter.typed':
+			return declaration_parameter_typed$230(value);
+		case 'declaration.parameter.typed_default':
+			return declaration_parameter_typed_default$205(value);
+		case 'identifier':
+			return identifier$1(value);
+		case 'pattern.rest':
+			return pattern_rest$206(value);
+		case 'pattern.rest.map':
+			return pattern_rest_map$207(value);
+		case 'pattern.tuple':
+			return pattern_tuple$202(value);
+		default:
+			return unbuilt('declaration.member.constructor.parameters', value);
+	}
+};
+type declaration_member_constructor$316_returnType$Item =
+	| Text<PythonMap, 'identifier'>
+	| Text<PythonMap, 'literal.number.integer'>
+	| Text<PythonMap, 'literal.number.integer.imaginary'>
+	| bigint
+	| number
+	| BuildInput<PythonMap, 'expression.assignment'>
+	| PythonMap['nodes']['expression.assignment']
+	| BuildInput<PythonMap, 'expression.await'>
+	| PythonMap['nodes']['expression.await']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
+	| PythonMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
+	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
+	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
+	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
+	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
+	| PythonMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
+	| PythonMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
+	| PythonMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
+	| PythonMap['nodes']['expression.binary.comparison.chain']
+	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
+	| PythonMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
+	| PythonMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
+	| PythonMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
+	| BuildInput<PythonMap, 'expression.binary.identity.is'>
+	| PythonMap['nodes']['expression.binary.identity.is']
+	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
+	| PythonMap['nodes']['expression.binary.identity.is_not']
+	| BuildInput<PythonMap, 'expression.binary.logical.and'>
+	| PythonMap['nodes']['expression.binary.logical.and']
+	| BuildInput<PythonMap, 'expression.binary.logical.or'>
+	| PythonMap['nodes']['expression.binary.logical.or']
+	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
+	| PythonMap['nodes']['expression.binary.matrix_multiply']
+	| BuildInput<PythonMap, 'expression.binary.membership.in'>
+	| PythonMap['nodes']['expression.binary.membership.in']
+	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
+	| PythonMap['nodes']['expression.binary.membership.not_in']
+	| BuildInput<PythonMap, 'expression.binary.shift.left'>
+	| PythonMap['nodes']['expression.binary.shift.left']
+	| BuildInput<PythonMap, 'expression.binary.shift.right'>
+	| PythonMap['nodes']['expression.binary.shift.right']
+	| BuildInput<PythonMap, 'expression.call'>
+	| PythonMap['nodes']['expression.call']
+	| BuildInput<PythonMap, 'expression.call.member'>
+	| PythonMap['nodes']['expression.call.member']
+	| BuildInput<PythonMap, 'expression.collection.list'>
+	| PythonMap['nodes']['expression.collection.list']
+	| BuildInput<PythonMap, 'expression.collection.map'>
+	| PythonMap['nodes']['expression.collection.map']
+	| BuildInput<PythonMap, 'expression.collection.set'>
+	| PythonMap['nodes']['expression.collection.set']
+	| BuildInput<PythonMap, 'expression.collection.tuple'>
+	| PythonMap['nodes']['expression.collection.tuple']
+	| BuildInput<PythonMap, 'expression.comprehension.generator'>
+	| PythonMap['nodes']['expression.comprehension.generator']
+	| BuildInput<PythonMap, 'expression.comprehension.list'>
+	| PythonMap['nodes']['expression.comprehension.list']
+	| BuildInput<PythonMap, 'expression.comprehension.map'>
+	| PythonMap['nodes']['expression.comprehension.map']
+	| BuildInput<PythonMap, 'expression.comprehension.set'>
+	| PythonMap['nodes']['expression.comprehension.set']
+	| BuildInput<PythonMap, 'expression.conditional'>
+	| PythonMap['nodes']['expression.conditional']
+	| BuildInput<PythonMap, 'expression.lambda'>
+	| PythonMap['nodes']['expression.lambda']
+	| BuildInput<PythonMap, 'expression.member'>
+	| PythonMap['nodes']['expression.member']
+	| BuildInput<PythonMap, 'expression.parenthesized'>
+	| PythonMap['nodes']['expression.parenthesized']
+	| BuildInput<PythonMap, 'expression.subscript'>
+	| PythonMap['nodes']['expression.subscript']
+	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
+	| PythonMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<PythonMap, 'expression.unary.negation'>
+	| PythonMap['nodes']['expression.unary.negation']
+	| BuildInput<PythonMap, 'expression.unary.not'>
+	| PythonMap['nodes']['expression.unary.not']
+	| BuildInput<PythonMap, 'expression.unary.plus'>
+	| PythonMap['nodes']['expression.unary.plus']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'identifier.qualified'>
+	| PythonMap['nodes']['identifier.qualified']
+	| BuildInput<PythonMap, 'literal.boolean.false'>
+	| PythonMap['nodes']['literal.boolean.false']
+	| BuildInput<PythonMap, 'literal.boolean.true'>
+	| PythonMap['nodes']['literal.boolean.true']
+	| BuildInput<PythonMap, 'literal.ellipsis'>
+	| PythonMap['nodes']['literal.ellipsis']
+	| BuildInput<PythonMap, 'literal.null'>
+	| PythonMap['nodes']['literal.null']
+	| BuildInput<PythonMap, 'literal.number.float'>
+	| PythonMap['nodes']['literal.number.float']
+	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+	| PythonMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<PythonMap, 'literal.number.float.scientific'>
+	| PythonMap['nodes']['literal.number.float.scientific']
+	| BuildInput<PythonMap, 'literal.number.integer'>
+	| PythonMap['nodes']['literal.number.integer']
+	| BuildInput<PythonMap, 'literal.number.integer.big'>
+	| PythonMap['nodes']['literal.number.integer.big']
+	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+	| PythonMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+	| PythonMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+	| PythonMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<PythonMap, 'literal.number.integer.binary'>
+	| PythonMap['nodes']['literal.number.integer.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.hex'>
+	| PythonMap['nodes']['literal.number.integer.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+	| PythonMap['nodes']['literal.number.integer.imaginary']
+	| BuildInput<PythonMap, 'literal.number.integer.octal'>
+	| PythonMap['nodes']['literal.number.integer.octal']
+	| BuildInput<PythonMap, 'literal.string'>
+	| PythonMap['nodes']['literal.string']
+	| BuildInput<PythonMap, 'literal.string.bytes'>
+	| PythonMap['nodes']['literal.string.bytes']
+	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.multiline']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+	| PythonMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.concatenated'>
+	| PythonMap['nodes']['literal.string.concatenated']
+	| BuildInput<PythonMap, 'literal.string.interpolated'>
+	| PythonMap['nodes']['literal.string.interpolated']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.multiline'>
+	| PythonMap['nodes']['literal.string.multiline']
+	| BuildInput<PythonMap, 'literal.string.raw'>
+	| PythonMap['nodes']['literal.string.raw']
+	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+	| PythonMap['nodes']['literal.string.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.unicode'>
+	| PythonMap['nodes']['literal.string.unicode']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| BuildInput<PythonMap, 'type.constrained'>
+	| PythonMap['nodes']['type.constrained']
+	| BuildInput<PythonMap, 'type.generic'>
+	| PythonMap['nodes']['type.generic']
+	| BuildInput<PythonMap, 'type.nullable'>
+	| PythonMap['nodes']['type.nullable']
+	| BuildInput<PythonMap, 'type.rest'>
+	| PythonMap['nodes']['type.rest']
+	| BuildInput<PythonMap, 'type.union'>
+	| PythonMap['nodes']['type.union']
+	| Unmapped<'python:as_pattern'>;
+const declaration_member_constructor$316_returnType = (value: declaration_member_constructor$316_returnType$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
+		return b.type(b.identifier(value));
+	}
+	if (typeof value === 'bigint') {
+		return b.type(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }));
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
+					213, 214, 215, 218, 219, 226, 227, 229, 232, 233, 234, 235, 236, 238, 239, 240, 241, 243, 244, 245, 246, 247,
+					251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+				]
+			)
+		)
+			return b.type(value);
+		return unseated('declaration.member.constructor.returnType', value);
+	}
+	switch (value.$path) {
+		case 'expression.assignment':
+			return b.type(expression_assignment$148(value));
+		case 'expression.await':
+			return b.type(expression_await$262(value));
+		case 'expression.binary.arithmetic.add':
+			return b.type(expression_binary_arithmetic_add$214(value));
+		case 'expression.binary.arithmetic.divide':
+			return b.type(expression_binary_arithmetic_divide$214(value));
+		case 'expression.binary.arithmetic.exponent':
+			return b.type(expression_binary_arithmetic_exponent$214(value));
+		case 'expression.binary.arithmetic.floor_divide':
+			return b.type(expression_binary_arithmetic_floor_divide$214(value));
+		case 'expression.binary.arithmetic.modulo':
+			return b.type(expression_binary_arithmetic_modulo$214(value));
+		case 'expression.binary.arithmetic.multiply':
+			return b.type(expression_binary_arithmetic_multiply$214(value));
+		case 'expression.binary.arithmetic.subtract':
+			return b.type(expression_binary_arithmetic_subtract$214(value));
+		case 'expression.binary.bitwise.and':
+			return b.type(expression_binary_bitwise_and$214(value));
+		case 'expression.binary.bitwise.or':
+			return b.type(expression_binary_bitwise_or$214(value));
+		case 'expression.binary.bitwise.xor':
+			return b.type(expression_binary_bitwise_xor$214(value));
+		case 'expression.binary.comparison.chain':
+			return b.type(expression_binary_comparison_chain$218(value));
+		case 'expression.binary.comparison.equal':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'expression.binary.comparison.greater':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'expression.binary.comparison.greater_equal':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'expression.binary.comparison.less':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'expression.binary.comparison.less_equal':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'expression.binary.comparison.not_equal':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'expression.binary.comparison.not_equal.legacy':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'expression.binary.identity.is':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'expression.binary.identity.is_not':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'expression.binary.logical.and':
+			return b.type(expression_binary_logical_and$213(value));
+		case 'expression.binary.logical.or':
+			return b.type(expression_binary_logical_or$213(value));
+		case 'expression.binary.matrix_multiply':
+			return b.type(expression_binary_matrix_multiply$214(value));
+		case 'expression.binary.membership.in':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'expression.binary.membership.not_in':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'expression.binary.shift.left':
+			return b.type(expression_binary_shift_left$214(value));
+		case 'expression.binary.shift.right':
+			return b.type(expression_binary_shift_right$214(value));
+		case 'expression.call':
+			return b.type(expression_call$229(value));
+		case 'expression.call.member':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'expression.collection.list':
+			return b.type(expression_collection_list$238(value));
+		case 'expression.collection.map':
+			return b.type(expression_collection_map$241(value));
+		case 'expression.collection.set':
+			return b.type(expression_collection_set$239(value));
+		case 'expression.collection.tuple':
+			return b.type(expression_collection_tuple$240(value));
+		case 'expression.comprehension.generator':
+			return b.type(expression_comprehension_generator$246(value));
+		case 'expression.comprehension.list':
+			return b.type(expression_comprehension_list$243(value));
+		case 'expression.comprehension.map':
+			return b.type(expression_comprehension_map$244(value));
+		case 'expression.comprehension.set':
+			return b.type(expression_comprehension_set$245(value));
+		case 'expression.conditional':
+			return b.type(expression_conditional$251(value));
+		case 'expression.lambda':
+			return b.type(expression_lambda$219(value));
+		case 'expression.member':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'expression.parenthesized':
+			return b.type(expression_parenthesized$247(value));
+		case 'expression.subscript':
+			return b.type(expression_subscript$227(value));
+		case 'expression.unary.bitwise_not':
+			return b.type(expression_unary_bitwise_not$215(value));
+		case 'expression.unary.negation':
+			return b.type(expression_unary_negation$215(value));
+		case 'expression.unary.not':
+			return b.type(expression_unary_not$212(value));
+		case 'expression.unary.plus':
+			return b.type(expression_unary_plus$215(value));
+		case 'identifier':
+			return b.type(identifier$1(value));
+		case 'identifier.qualified':
+			return b.type(identifier_qualified$236(value));
+		case 'literal.boolean.false':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'literal.boolean.true':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'literal.ellipsis':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'literal.null':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'literal.number.float':
+			return b.type(literal_number_float$101(value));
+		case 'literal.number.float.leading_point':
+			return b.type(literal_number_float_leading_point$102(value));
+		case 'literal.number.float.scientific':
+			return b.type(literal_number_float_scientific$103(value));
+		case 'literal.number.integer':
+			return b.type(literal_number_integer$100(value));
+		case 'literal.number.integer.big':
+			return b.type(literal_number_integer_big$98(value));
+		case 'literal.number.integer.big.binary':
+			return b.type(literal_number_integer_big_binary$94(value));
+		case 'literal.number.integer.big.hex':
+			return b.type(literal_number_integer_big_hex$90(value));
+		case 'literal.number.integer.big.octal':
+			return b.type(literal_number_integer_big_octal$92(value));
+		case 'literal.number.integer.binary':
+			return b.type(literal_number_integer_binary$95(value));
+		case 'literal.number.integer.hex':
+			return b.type(literal_number_integer_hex$91(value));
+		case 'literal.number.integer.imaginary':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'literal.number.integer.octal':
+			return b.type(literal_number_integer_octal$93(value));
+		case 'literal.string':
+			return b.type(literal_string$253(value));
+		case 'literal.string.bytes':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'literal.string.bytes.multiline':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'literal.string.bytes.raw.multiline':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'literal.string.concatenated':
+			return b.type(literal_string_concatenated$252(value));
+		case 'literal.string.interpolated':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'literal.string.interpolated.deferred':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'literal.string.interpolated.deferred.multiline':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'literal.string.interpolated.deferred.raw':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'literal.string.interpolated.deferred.raw.multiline':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'literal.string.interpolated.multiline':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'literal.string.interpolated.raw':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'literal.string.interpolated.raw.multiline':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'literal.string.multiline':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'literal.string.raw':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'literal.string.raw.multiline':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'literal.string.unicode':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'pattern.rest':
+			return b.type(pattern_rest$206(value));
+		case 'type.constrained':
+			return b.type(type_constrained$235(value));
+		case 'type.generic':
+			return b.type(type_generic$233(value));
+		case 'type.nullable':
+			return unbuilt('declaration.member.constructor.returnType', value);
+		case 'type.rest':
+			return b.type(type_rest$232(value));
+		case 'type.union':
+			return b.type(type_union$234(value));
+		default:
+			return unbuilt('declaration.member.constructor.returnType', value);
+	}
+};
+type declaration_member_constructor$316_statements$item$Item =
+	| 'break'
+	| 'continue'
+	| 'pass'
+	| Text<PythonMap, 'identifier'>
+	| Text<PythonMap, 'literal.number.integer'>
+	| Text<PythonMap, 'literal.number.integer.imaginary'>
+	| Text<PythonMap, 'statement.break'>
+	| Text<PythonMap, 'statement.continue'>
+	| Text<PythonMap, 'statement.empty'>
+	| bigint
+	| number
+	| BuildInput<PythonMap, 'declaration.constant'>
+	| PythonMap['nodes']['declaration.constant']
+	| BuildInput<PythonMap, 'declaration.function'>
+	| PythonMap['nodes']['declaration.function']
+	| BuildInput<PythonMap, 'declaration.type.class'>
+	| PythonMap['nodes']['declaration.type.class']
+	| BuildInput<PythonMap, 'declaration.type.type_alias'>
+	| PythonMap['nodes']['declaration.type.type_alias']
+	| BuildInput<PythonMap, 'declaration.variable'>
+	| PythonMap['nodes']['declaration.variable']
+	| BuildInput<PythonMap, 'expression.assignment'>
+	| PythonMap['nodes']['expression.assignment']
+	| BuildInput<PythonMap, 'expression.assignment.compound.add'>
+	| PythonMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<PythonMap, 'expression.assignment.compound.bitwise_and'>
+	| PythonMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<PythonMap, 'expression.assignment.compound.bitwise_or'>
+	| PythonMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<PythonMap, 'expression.assignment.compound.bitwise_xor'>
+	| PythonMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<PythonMap, 'expression.assignment.compound.divide'>
+	| PythonMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<PythonMap, 'expression.assignment.compound.exponent'>
+	| PythonMap['nodes']['expression.assignment.compound.exponent']
+	| BuildInput<PythonMap, 'expression.assignment.compound.floor_divide'>
+	| PythonMap['nodes']['expression.assignment.compound.floor_divide']
+	| BuildInput<PythonMap, 'expression.assignment.compound.matrix_multiply'>
+	| PythonMap['nodes']['expression.assignment.compound.matrix_multiply']
+	| BuildInput<PythonMap, 'expression.assignment.compound.modulo'>
+	| PythonMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<PythonMap, 'expression.assignment.compound.multiply'>
+	| PythonMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<PythonMap, 'expression.assignment.compound.shift_left'>
+	| PythonMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<PythonMap, 'expression.assignment.compound.shift_right'>
+	| PythonMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<PythonMap, 'expression.assignment.compound.subtract'>
+	| PythonMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<PythonMap, 'expression.await'>
+	| PythonMap['nodes']['expression.await']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
+	| PythonMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
+	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
+	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
+	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
+	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
+	| PythonMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
+	| PythonMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
+	| PythonMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
+	| PythonMap['nodes']['expression.binary.comparison.chain']
+	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
+	| PythonMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
+	| PythonMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
+	| PythonMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
+	| BuildInput<PythonMap, 'expression.binary.identity.is'>
+	| PythonMap['nodes']['expression.binary.identity.is']
+	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
+	| PythonMap['nodes']['expression.binary.identity.is_not']
+	| BuildInput<PythonMap, 'expression.binary.logical.and'>
+	| PythonMap['nodes']['expression.binary.logical.and']
+	| BuildInput<PythonMap, 'expression.binary.logical.or'>
+	| PythonMap['nodes']['expression.binary.logical.or']
+	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
+	| PythonMap['nodes']['expression.binary.matrix_multiply']
+	| BuildInput<PythonMap, 'expression.binary.membership.in'>
+	| PythonMap['nodes']['expression.binary.membership.in']
+	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
+	| PythonMap['nodes']['expression.binary.membership.not_in']
+	| BuildInput<PythonMap, 'expression.binary.shift.left'>
+	| PythonMap['nodes']['expression.binary.shift.left']
+	| BuildInput<PythonMap, 'expression.binary.shift.right'>
+	| PythonMap['nodes']['expression.binary.shift.right']
+	| BuildInput<PythonMap, 'expression.call'>
+	| PythonMap['nodes']['expression.call']
+	| BuildInput<PythonMap, 'expression.call.member'>
+	| PythonMap['nodes']['expression.call.member']
+	| BuildInput<PythonMap, 'expression.collection.list'>
+	| PythonMap['nodes']['expression.collection.list']
+	| BuildInput<PythonMap, 'expression.collection.map'>
+	| PythonMap['nodes']['expression.collection.map']
+	| BuildInput<PythonMap, 'expression.collection.set'>
+	| PythonMap['nodes']['expression.collection.set']
+	| BuildInput<PythonMap, 'expression.collection.tuple'>
+	| PythonMap['nodes']['expression.collection.tuple']
+	| BuildInput<PythonMap, 'expression.collection.tuple.bare'>
+	| PythonMap['nodes']['expression.collection.tuple.bare']
+	| BuildInput<PythonMap, 'expression.comprehension.generator'>
+	| PythonMap['nodes']['expression.comprehension.generator']
+	| BuildInput<PythonMap, 'expression.comprehension.list'>
+	| PythonMap['nodes']['expression.comprehension.list']
+	| BuildInput<PythonMap, 'expression.comprehension.map'>
+	| PythonMap['nodes']['expression.comprehension.map']
+	| BuildInput<PythonMap, 'expression.comprehension.set'>
+	| PythonMap['nodes']['expression.comprehension.set']
+	| BuildInput<PythonMap, 'expression.conditional'>
+	| PythonMap['nodes']['expression.conditional']
+	| BuildInput<PythonMap, 'expression.lambda'>
+	| PythonMap['nodes']['expression.lambda']
+	| BuildInput<PythonMap, 'expression.member'>
+	| PythonMap['nodes']['expression.member']
+	| BuildInput<PythonMap, 'expression.parenthesized'>
+	| PythonMap['nodes']['expression.parenthesized']
+	| BuildInput<PythonMap, 'expression.subscript'>
+	| PythonMap['nodes']['expression.subscript']
+	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
+	| PythonMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<PythonMap, 'expression.unary.negation'>
+	| PythonMap['nodes']['expression.unary.negation']
+	| BuildInput<PythonMap, 'expression.unary.not'>
+	| PythonMap['nodes']['expression.unary.not']
+	| BuildInput<PythonMap, 'expression.unary.plus'>
+	| PythonMap['nodes']['expression.unary.plus']
+	| BuildInput<PythonMap, 'expression.yield'>
+	| PythonMap['nodes']['expression.yield']
+	| BuildInput<PythonMap, 'expression.yield.delegate'>
+	| PythonMap['nodes']['expression.yield.delegate']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'literal.boolean.false'>
+	| PythonMap['nodes']['literal.boolean.false']
+	| BuildInput<PythonMap, 'literal.boolean.true'>
+	| PythonMap['nodes']['literal.boolean.true']
+	| BuildInput<PythonMap, 'literal.ellipsis'>
+	| PythonMap['nodes']['literal.ellipsis']
+	| BuildInput<PythonMap, 'literal.null'>
+	| PythonMap['nodes']['literal.null']
+	| BuildInput<PythonMap, 'literal.number.float'>
+	| PythonMap['nodes']['literal.number.float']
+	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+	| PythonMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<PythonMap, 'literal.number.float.scientific'>
+	| PythonMap['nodes']['literal.number.float.scientific']
+	| BuildInput<PythonMap, 'literal.number.integer'>
+	| PythonMap['nodes']['literal.number.integer']
+	| BuildInput<PythonMap, 'literal.number.integer.big'>
+	| PythonMap['nodes']['literal.number.integer.big']
+	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+	| PythonMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+	| PythonMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+	| PythonMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<PythonMap, 'literal.number.integer.binary'>
+	| PythonMap['nodes']['literal.number.integer.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.hex'>
+	| PythonMap['nodes']['literal.number.integer.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+	| PythonMap['nodes']['literal.number.integer.imaginary']
+	| BuildInput<PythonMap, 'literal.number.integer.octal'>
+	| PythonMap['nodes']['literal.number.integer.octal']
+	| BuildInput<PythonMap, 'literal.string'>
+	| PythonMap['nodes']['literal.string']
+	| BuildInput<PythonMap, 'literal.string.bytes'>
+	| PythonMap['nodes']['literal.string.bytes']
+	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.multiline']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+	| PythonMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.concatenated'>
+	| PythonMap['nodes']['literal.string.concatenated']
+	| BuildInput<PythonMap, 'literal.string.interpolated'>
+	| PythonMap['nodes']['literal.string.interpolated']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.multiline'>
+	| PythonMap['nodes']['literal.string.multiline']
+	| BuildInput<PythonMap, 'literal.string.raw'>
+	| PythonMap['nodes']['literal.string.raw']
+	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+	| PythonMap['nodes']['literal.string.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.unicode'>
+	| PythonMap['nodes']['literal.string.unicode']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| BuildInput<PythonMap, 'statement.assert'>
+	| PythonMap['nodes']['statement.assert']
+	| BuildInput<PythonMap, 'statement.delete'>
+	| PythonMap['nodes']['statement.delete']
+	| BuildInput<PythonMap, 'statement.exec'>
+	| PythonMap['nodes']['statement.exec']
+	| BuildInput<PythonMap, 'statement.global'>
+	| PythonMap['nodes']['statement.global']
+	| BuildInput<PythonMap, 'statement.if'>
+	| PythonMap['nodes']['statement.if']
+	| BuildInput<PythonMap, 'statement.import'>
+	| PythonMap['nodes']['statement.import']
+	| BuildInput<PythonMap, 'statement.import.from'>
+	| PythonMap['nodes']['statement.import.from']
+	| BuildInput<PythonMap, 'statement.import.future'>
+	| PythonMap['nodes']['statement.import.future']
+	| BuildInput<PythonMap, 'statement.loop.for_each'>
+	| PythonMap['nodes']['statement.loop.for_each']
+	| BuildInput<PythonMap, 'statement.loop.while'>
+	| PythonMap['nodes']['statement.loop.while']
+	| BuildInput<PythonMap, 'statement.match'>
+	| PythonMap['nodes']['statement.match']
+	| BuildInput<PythonMap, 'statement.nonlocal'>
+	| PythonMap['nodes']['statement.nonlocal']
+	| BuildInput<PythonMap, 'statement.print'>
+	| PythonMap['nodes']['statement.print']
+	| BuildInput<PythonMap, 'statement.resource'>
+	| PythonMap['nodes']['statement.resource']
+	| BuildInput<PythonMap, 'statement.return'>
+	| PythonMap['nodes']['statement.return']
+	| BuildInput<PythonMap, 'statement.throw'>
+	| PythonMap['nodes']['statement.throw']
+	| BuildInput<PythonMap, 'statement.try'>
+	| PythonMap['nodes']['statement.try']
+	| Unmapped<'python:as_pattern'>;
+const declaration_member_constructor$316_statements$item = (
+	value: declaration_member_constructor$316_statements$item$Item
+) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'break':
+				return b.simpleStatements(b.simpleStatementsElements(154));
+			case 'continue':
+				return b.simpleStatements(b.simpleStatementsElements(155));
+			case 'pass':
+				return b.simpleStatements(b.simpleStatementsElements(153));
+			default:
+				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value))));
+				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value))));
+		}
+	}
+	if (typeof value === 'bigint') {
+		return b.simpleStatements(
+			b.simpleStatementsElements(
+				b.expressionStatement(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }))
+			)
+		);
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }))
+				)
+			);
+		}
+		return b.simpleStatements(
+			b.simpleStatementsElements(
+				b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
+			)
+		);
+	}
+	if (isNode(value)) {
+		if (seated(value, [134, 156, 159, 162, 163, 164, 167, 170, 179])) return value;
+		if (seated(value, [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178]))
+			return b.simpleStatements(b.simpleStatementsElements(value));
+		if (seated(value, [287, 288])) return b.simpleStatements(b.simpleStatementsElements(b.printStatement(value)));
+		if (
+			seated(
+				value,
+				[
+					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
+					213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
+					253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+				]
+			)
+		)
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(value)));
+		return unseated('declaration.member.constructor.statements', value);
+	}
+	switch (value.$path) {
+		case 'declaration.constant':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'declaration.function': {
+			if ((value.decorators ?? []).length === 0) return declaration_function$170(value);
+			return b.decoratedDefinition({
+				definition: declaration_function$170(value),
+				decorators: nonEmpty(
+					'declaration.function.decorators',
+					(value.decorators ?? []).map(declaration_function$170_decorators)
+				)
+			});
+		}
+		case 'declaration.type.class': {
+			if ((value.decorators ?? []).length === 0) return declaration_type_class$179(value);
+			return b.decoratedDefinition({
+				definition: declaration_type_class$179(value),
+				decorators: nonEmpty(
+					'declaration.type.class.decorators',
+					(value.decorators ?? []).map(declaration_type_class$179_decorators)
+				)
+			});
+		}
+		case 'declaration.type.type_alias':
+			return b.simpleStatements(b.simpleStatementsElements(declaration_type_type_alias$178(value)));
+		case 'declaration.variable':
+			if (value.name !== undefined && value.value !== undefined && value.type === undefined)
+				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$302(value))));
+			if (value.name !== undefined && value.type !== undefined && value.value === undefined)
+				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$303(value))));
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$304(value))));
+		case 'expression.assignment':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_assignment$148(value))));
+		case 'expression.assignment.compound.add':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_add$222(value)))
+			);
+		case 'expression.assignment.compound.bitwise_and':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_bitwise_and$222(value)))
+			);
+		case 'expression.assignment.compound.bitwise_or':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_bitwise_or$222(value)))
+			);
+		case 'expression.assignment.compound.bitwise_xor':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_bitwise_xor$222(value)))
+			);
+		case 'expression.assignment.compound.divide':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_divide$222(value)))
+			);
+		case 'expression.assignment.compound.exponent':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_exponent$222(value)))
+			);
+		case 'expression.assignment.compound.floor_divide':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_floor_divide$222(value)))
+			);
+		case 'expression.assignment.compound.matrix_multiply':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_matrix_multiply$222(value)))
+			);
+		case 'expression.assignment.compound.modulo':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_modulo$222(value)))
+			);
+		case 'expression.assignment.compound.multiply':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_multiply$222(value)))
+			);
+		case 'expression.assignment.compound.shift_left':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_shift_left$222(value)))
+			);
+		case 'expression.assignment.compound.shift_right':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_shift_right$222(value)))
+			);
+		case 'expression.assignment.compound.subtract':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_subtract$222(value)))
+			);
+		case 'expression.await':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_await$262(value))));
+		case 'expression.binary.arithmetic.add':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_add$214(value)))
+			);
+		case 'expression.binary.arithmetic.divide':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_divide$214(value)))
+			);
+		case 'expression.binary.arithmetic.exponent':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_exponent$214(value)))
+			);
+		case 'expression.binary.arithmetic.floor_divide':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_floor_divide$214(value)))
+			);
+		case 'expression.binary.arithmetic.modulo':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_modulo$214(value)))
+			);
+		case 'expression.binary.arithmetic.multiply':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_multiply$214(value)))
+			);
+		case 'expression.binary.arithmetic.subtract':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_subtract$214(value)))
+			);
+		case 'expression.binary.bitwise.and':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_bitwise_and$214(value)))
+			);
+		case 'expression.binary.bitwise.or':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_bitwise_or$214(value)))
+			);
+		case 'expression.binary.bitwise.xor':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_bitwise_xor$214(value)))
+			);
+		case 'expression.binary.comparison.chain':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_comparison_chain$218(value)))
+			);
+		case 'expression.binary.comparison.equal':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'expression.binary.comparison.greater':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'expression.binary.comparison.greater_equal':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'expression.binary.comparison.less':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'expression.binary.comparison.less_equal':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'expression.binary.comparison.not_equal':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'expression.binary.comparison.not_equal.legacy':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'expression.binary.identity.is':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'expression.binary.identity.is_not':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'expression.binary.logical.and':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_logical_and$213(value)))
+			);
+		case 'expression.binary.logical.or':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_logical_or$213(value)))
+			);
+		case 'expression.binary.matrix_multiply':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_matrix_multiply$214(value)))
+			);
+		case 'expression.binary.membership.in':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'expression.binary.membership.not_in':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'expression.binary.shift.left':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_shift_left$214(value)))
+			);
+		case 'expression.binary.shift.right':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_shift_right$214(value)))
+			);
+		case 'expression.call':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_call$229(value))));
+		case 'expression.call.member':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'expression.collection.list':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_collection_list$238(value)))
+			);
+		case 'expression.collection.map':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_collection_map$241(value)))
+			);
+		case 'expression.collection.set':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_collection_set$239(value)))
+			);
+		case 'expression.collection.tuple':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_collection_tuple$240(value)))
+			);
+		case 'expression.collection.tuple.bare':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'expression.comprehension.generator':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_generator$246(value)))
+			);
+		case 'expression.comprehension.list':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_list$243(value)))
+			);
+		case 'expression.comprehension.map':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_map$244(value)))
+			);
+		case 'expression.comprehension.set':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_set$245(value)))
+			);
+		case 'expression.conditional':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_conditional$251(value))));
+		case 'expression.lambda':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_lambda$219(value))));
+		case 'expression.member':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'expression.parenthesized':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_parenthesized$247(value))));
+		case 'expression.subscript':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_subscript$227(value))));
+		case 'expression.unary.bitwise_not':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_unary_bitwise_not$215(value)))
+			);
+		case 'expression.unary.negation':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_unary_negation$215(value)))
+			);
+		case 'expression.unary.not':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_unary_not$212(value))));
+		case 'expression.unary.plus':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_unary_plus$215(value))));
+		case 'expression.yield':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_yield$225(value))));
+		case 'expression.yield.delegate':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'identifier':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(identifier$1(value))));
+		case 'literal.boolean.false':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'literal.boolean.true':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'literal.ellipsis':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'literal.null':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'literal.number.float':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_float$101(value))));
+		case 'literal.number.float.leading_point':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_float_leading_point$102(value)))
+			);
+		case 'literal.number.float.scientific':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_float_scientific$103(value)))
+			);
+		case 'literal.number.integer':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_integer$100(value))));
+		case 'literal.number.integer.big':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big$98(value)))
+			);
+		case 'literal.number.integer.big.binary':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_binary$94(value)))
+			);
+		case 'literal.number.integer.big.hex':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_hex$90(value)))
+			);
+		case 'literal.number.integer.big.octal':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_octal$92(value)))
+			);
+		case 'literal.number.integer.binary':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_binary$95(value)))
+			);
+		case 'literal.number.integer.hex':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_hex$91(value)))
+			);
+		case 'literal.number.integer.imaginary':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'literal.number.integer.octal':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_octal$93(value)))
+			);
+		case 'literal.string':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_string$253(value))));
+		case 'literal.string.bytes':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'literal.string.bytes.multiline':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'literal.string.bytes.raw.multiline':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'literal.string.concatenated':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_string_concatenated$252(value)))
+			);
+		case 'literal.string.interpolated':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'literal.string.interpolated.deferred':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'literal.string.interpolated.deferred.multiline':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'literal.string.interpolated.deferred.raw':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'literal.string.interpolated.deferred.raw.multiline':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'literal.string.interpolated.multiline':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'literal.string.interpolated.raw':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'literal.string.interpolated.raw.multiline':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'literal.string.multiline':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'literal.string.raw':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'literal.string.raw.multiline':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'literal.string.unicode':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'pattern.rest':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(pattern_rest$206(value))));
+		case 'statement.assert':
+			return b.simpleStatements(b.simpleStatementsElements(statement_assert$146(value)));
+		case 'statement.delete':
+			return b.simpleStatements(b.simpleStatementsElements(statement_delete$151(value)));
+		case 'statement.exec':
+			return b.simpleStatements(b.simpleStatementsElements(statement_exec$177(value)));
+		case 'statement.global':
+			return b.simpleStatements(b.simpleStatementsElements(statement_global$175(value)));
+		case 'statement.if':
+			return statement_if$156(value);
+		case 'statement.import':
+			return b.simpleStatements(b.simpleStatementsElements(statement_import$136(value)));
+		case 'statement.import.from':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'statement.import.future':
+			return b.simpleStatements(b.simpleStatementsElements(statement_import_future$139(value)));
+		case 'statement.loop.for_each':
+			return statement_loop_for_each$162(value);
+		case 'statement.loop.while':
+			return statement_loop_while$163(value);
+		case 'statement.match':
+			return statement_match$159(value);
+		case 'statement.nonlocal':
+			return b.simpleStatements(b.simpleStatementsElements(statement_nonlocal$176(value)));
+		case 'statement.print':
+			return unbuilt('declaration.member.constructor.statements', value);
+		case 'statement.resource':
+			return statement_resource$167(value);
+		case 'statement.return':
+			return b.simpleStatements(b.simpleStatementsElements(statement_return$150(value)));
+		case 'statement.throw':
+			return b.simpleStatements(b.simpleStatementsElements(statement_throw$152(value)));
+		case 'statement.try':
+			return statement_try$164(value);
+		default:
+			return unbuilt('declaration.member.constructor.statements', value);
+	}
+};
+type declaration_member_constructor$316_typeParameters$Item =
+	| BuildInput<PythonMap, 'declaration.type_parameter'>
+	| PythonMap['nodes']['declaration.type_parameter']
+	| BuildInput<PythonMap, 'declaration.type_parameter.parameters'>
+	| PythonMap['nodes']['declaration.type_parameter.parameters']
+	| BuildInput<PythonMap, 'declaration.type_parameter.variadic'>
+	| PythonMap['nodes']['declaration.type_parameter.variadic'];
+const declaration_member_constructor$316_typeParameters = (
+	value: declaration_member_constructor$316_typeParameters$Item
+) => {
+	if (typeof value === 'number') {
+		if (seated(value, [275, 313, 314, 315])) return b.typeParams(b.typeParamsItems(value));
+		return unseated('declaration.member.constructor.typeParameters', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [275, 313, 314, 315])) return b.typeParams(b.typeParamsItems(value));
+		return unseated('declaration.member.constructor.typeParameters', value);
+	}
+	switch (value.$path) {
+		case 'declaration.type_parameter':
+			return unbuilt('declaration.member.constructor.typeParameters', value);
+		case 'declaration.type_parameter.parameters':
+			return b.typeParams(b.typeParamsItems(declaration_type_parameter_parameters$315(value)));
+		case 'declaration.type_parameter.variadic':
+			return b.typeParams(b.typeParamsItems(declaration_type_parameter_variadic$314(value)));
+		default:
+			return unbuilt('declaration.member.constructor.typeParameters', value);
+	}
+};
+type declaration_member_constructor$316_typeParameters$item$Item =
+	| BuildInput<PythonMap, 'declaration.type_parameter'>
+	| PythonMap['nodes']['declaration.type_parameter']
+	| BuildInput<PythonMap, 'declaration.type_parameter.parameters'>
+	| PythonMap['nodes']['declaration.type_parameter.parameters']
+	| BuildInput<PythonMap, 'declaration.type_parameter.variadic'>
+	| PythonMap['nodes']['declaration.type_parameter.variadic'];
+const declaration_member_constructor$316_typeParameters$item = (
+	value: declaration_member_constructor$316_typeParameters$item$Item
+) => {
+	if (typeof value === 'number') {
+		if (seated(value, [275, 313, 314, 315])) return value;
+		return unseated('declaration.member.constructor.typeParameters', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [275, 313, 314, 315])) return value;
+		return unseated('declaration.member.constructor.typeParameters', value);
+	}
+	switch (value.$path) {
+		case 'declaration.type_parameter':
+			return unbuilt('declaration.member.constructor.typeParameters', value);
+		case 'declaration.type_parameter.parameters':
+			return declaration_type_parameter_parameters$315(value);
+		case 'declaration.type_parameter.variadic':
+			return declaration_type_parameter_variadic$314(value);
+		default:
+			return unbuilt('declaration.member.constructor.typeParameters', value);
+	}
+};
+type declaration_member_property_getter$361_decorators$Item =
+	| Text<PythonMap, 'identifier'>
+	| BuildInput<PythonMap, 'expression.member'>
+	| PythonMap['nodes']['expression.member']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| {
+			readonly $path: 'literal.number.float';
+			readonly $value: number;
+	  }
+	| {
+			readonly $path: 'literal.number.integer';
+			readonly $value: number;
+	  }
+	| {
+			readonly $path: 'literal.number.integer.big';
+			readonly $value: bigint;
+	  };
+const declaration_member_property_getter$361_decorators = (
+	value: declaration_member_property_getter$361_decorators$Item
+) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.decorator(b.identifier(value));
+		return b.decorator(b.identifier(value));
+	}
+	if (typeof value === 'bigint') {
+		return b.decorator(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }));
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.decorator(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
+					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
+					262, 291, 292, 293, 294, 295
+				]
+			)
+		)
+			return b.decorator(value);
+		return unseated('declaration.member.property.getter.decorators', value);
+	}
+	switch (value.$path) {
+		case 'expression.member':
+			return unbuilt('declaration.member.property.getter.decorators', value);
+		case 'identifier':
+			return b.decorator(identifier$1(value));
+		case 'literal.number.float':
+			if (typeof value.$value === 'bigint') {
+				return b.decorator(
+					literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
+				);
+			}
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) {
+					return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value }));
+				}
+				return b.decorator(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }));
+			}
+			return unbuilt('declaration.member.property.getter.decorators', value);
+		case 'literal.number.integer':
+			if (typeof value.$value === 'bigint') {
+				return b.decorator(
+					literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
+				);
+			}
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) {
+					return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value }));
+				}
+				return b.decorator(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }));
+			}
+			return unbuilt('declaration.member.property.getter.decorators', value);
+		case 'literal.number.integer.big':
+			if (typeof value.$value === 'bigint') {
+				return b.decorator(
+					literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
+				);
+			}
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) {
+					return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value }));
+				}
+				return b.decorator(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }));
+			}
+			return unbuilt('declaration.member.property.getter.decorators', value);
+		default:
+			return unbuilt('declaration.member.property.getter.decorators', value);
+	}
+};
+type declaration_member_property_getter$361_doc$Item =
+	| string
+	| BuildInput<PythonMap, 'literal.string'>
+	| PythonMap['nodes']['literal.string']
+	| BuildInput<PythonMap, 'literal.string.bytes'>
+	| PythonMap['nodes']['literal.string.bytes']
+	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.multiline']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+	| PythonMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated'>
+	| PythonMap['nodes']['literal.string.interpolated']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.multiline'>
+	| PythonMap['nodes']['literal.string.multiline']
+	| BuildInput<PythonMap, 'literal.string.raw'>
+	| PythonMap['nodes']['literal.string.raw']
+	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+	| PythonMap['nodes']['literal.string.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.unicode'>
+	| PythonMap['nodes']['literal.string.unicode']
+	| {
+			readonly $path: 'literal.number.float';
+			readonly $value: number;
+	  }
+	| {
+			readonly $path: 'literal.number.integer';
+			readonly $value: number;
+	  }
+	| {
+			readonly $path: 'literal.number.integer.big';
+			readonly $value: bigint;
+	  };
+const declaration_member_property_getter$361_doc = (value: declaration_member_property_getter$361_doc$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+			return b.suiteBlock(
+				b.block(b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value)))))
+			);
+		return b.suiteBlock(
+			b.block(b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value)))))
+		);
+	}
+	if (typeof value === 'bigint') {
+		return b.suiteBlock(
+			b.block(
+				b.simpleStatements(
+					b.simpleStatementsElements(
+						b.expressionStatement(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }))
+					)
+				)
+			)
+		);
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.suiteBlock(
+				b.block(
+					b.simpleStatements(
+						b.simpleStatementsElements(
+							b.expressionStatement(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }))
+						)
+					)
+				)
+			);
+		}
+		return b.suiteBlock(
+			b.block(
+				b.simpleStatements(
+					b.simpleStatementsElements(
+						b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
+					)
+				)
+			)
+		);
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
+					213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
+					253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+				]
+			)
+		)
+			return b.suiteBlock(b.block(b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(value)))));
+		return unseated('declaration.member.property.getter.doc', value);
+	}
+	switch (value.$path) {
+		case 'literal.string':
+			return b.suiteBlock(
+				b.block(b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_string$253(value)))))
+			);
+		case 'literal.string.bytes':
+			return unbuilt('declaration.member.property.getter.doc', value);
+		case 'literal.string.bytes.multiline':
+			return unbuilt('declaration.member.property.getter.doc', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('declaration.member.property.getter.doc', value);
+		case 'literal.string.bytes.raw.multiline':
+			return unbuilt('declaration.member.property.getter.doc', value);
+		case 'literal.string.interpolated':
+			return unbuilt('declaration.member.property.getter.doc', value);
+		case 'literal.string.interpolated.deferred':
+			return unbuilt('declaration.member.property.getter.doc', value);
+		case 'literal.string.interpolated.deferred.multiline':
+			return unbuilt('declaration.member.property.getter.doc', value);
+		case 'literal.string.interpolated.deferred.raw':
+			return unbuilt('declaration.member.property.getter.doc', value);
+		case 'literal.string.interpolated.deferred.raw.multiline':
+			return unbuilt('declaration.member.property.getter.doc', value);
+		case 'literal.string.interpolated.multiline':
+			return unbuilt('declaration.member.property.getter.doc', value);
+		case 'literal.string.interpolated.raw':
+			return unbuilt('declaration.member.property.getter.doc', value);
+		case 'literal.string.interpolated.raw.multiline':
+			return unbuilt('declaration.member.property.getter.doc', value);
+		case 'literal.string.multiline':
+			return unbuilt('declaration.member.property.getter.doc', value);
+		case 'literal.string.raw':
+			return unbuilt('declaration.member.property.getter.doc', value);
+		case 'literal.string.raw.multiline':
+			return unbuilt('declaration.member.property.getter.doc', value);
+		case 'literal.string.unicode':
+			return unbuilt('declaration.member.property.getter.doc', value);
+		case 'literal.number.float':
+			if (typeof value.$value === 'bigint') {
+				return b.suiteBlock(
+					b.block(
+						b.simpleStatements(
+							b.simpleStatementsElements(
+								b.expressionStatement(
+									literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
+								)
+							)
+						)
+					)
+				);
+			}
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) {
+					return b.suiteBlock(
+						b.block(
+							b.simpleStatements(
+								b.simpleStatementsElements(
+									b.expressionStatement(
+										literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value })
+									)
+								)
+							)
+						)
+					);
+				}
+				return b.suiteBlock(
+					b.block(
+						b.simpleStatements(
+							b.simpleStatementsElements(
+								b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }))
+							)
+						)
+					)
+				);
+			}
+			return unbuilt('declaration.member.property.getter.doc', value);
+		case 'literal.number.integer':
+			if (typeof value.$value === 'bigint') {
+				return b.suiteBlock(
+					b.block(
+						b.simpleStatements(
+							b.simpleStatementsElements(
+								b.expressionStatement(
+									literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
+								)
+							)
+						)
+					)
+				);
+			}
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) {
+					return b.suiteBlock(
+						b.block(
+							b.simpleStatements(
+								b.simpleStatementsElements(
+									b.expressionStatement(
+										literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value })
+									)
+								)
+							)
+						)
+					);
+				}
+				return b.suiteBlock(
+					b.block(
+						b.simpleStatements(
+							b.simpleStatementsElements(
+								b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }))
+							)
+						)
+					)
+				);
+			}
+			return unbuilt('declaration.member.property.getter.doc', value);
+		case 'literal.number.integer.big':
+			if (typeof value.$value === 'bigint') {
+				return b.suiteBlock(
+					b.block(
+						b.simpleStatements(
+							b.simpleStatementsElements(
+								b.expressionStatement(
+									literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
+								)
+							)
+						)
+					)
+				);
+			}
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) {
+					return b.suiteBlock(
+						b.block(
+							b.simpleStatements(
+								b.simpleStatementsElements(
+									b.expressionStatement(
+										literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value })
+									)
+								)
+							)
+						)
+					);
+				}
+				return b.suiteBlock(
+					b.block(
+						b.simpleStatements(
+							b.simpleStatementsElements(
+								b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }))
+							)
+						)
+					)
+				);
+			}
+			return unbuilt('declaration.member.property.getter.doc', value);
+		default:
+			return unbuilt('declaration.member.property.getter.doc', value);
+	}
+};
+type declaration_member_property_getter$361_name$Item =
+	| Text<PythonMap, 'identifier'>
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier'];
+const declaration_member_property_getter$361_name = (value: declaration_member_property_getter$361_name$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1])) return value;
+		return unseated('declaration.member.property.getter.name', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1])) return value;
+		return unseated('declaration.member.property.getter.name', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return identifier$1(value);
+		default:
+			return unbuilt('declaration.member.property.getter.name', value);
+	}
+};
+type declaration_member_property_getter$361_parameters$item$Item =
+	| '*'
+	| '/'
+	| Text<PythonMap, 'identifier'>
+	| BuildInput<PythonMap, 'declaration.parameter.defaulted'>
+	| PythonMap['nodes']['declaration.parameter.defaulted']
+	| BuildInput<PythonMap, 'declaration.parameter.typed'>
+	| PythonMap['nodes']['declaration.parameter.typed']
+	| BuildInput<PythonMap, 'declaration.parameter.typed_default'>
+	| PythonMap['nodes']['declaration.parameter.typed_default']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| BuildInput<PythonMap, 'pattern.rest.map'>
+	| PythonMap['nodes']['pattern.rest.map']
+	| BuildInput<PythonMap, 'pattern.tuple'>
+	| PythonMap['nodes']['pattern.tuple'];
+const declaration_member_property_getter$361_parameters$item = (
+	value: declaration_member_property_getter$361_parameters$item$Item
+) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '*':
+				return 264;
+			case '/':
+				return 263;
+			default:
+				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1, 200, 202, 204, 205, 206, 207, 230])) return value;
+		return unseated('declaration.member.property.getter.parameters', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1, 200, 202, 204, 205, 206, 207, 230, 263, 264])) return value;
+		return unseated('declaration.member.property.getter.parameters', value);
+	}
+	switch (value.$path) {
+		case 'declaration.parameter.defaulted':
+			return declaration_parameter_defaulted$204(value);
+		case 'declaration.parameter.typed':
+			return declaration_parameter_typed$230(value);
+		case 'declaration.parameter.typed_default':
+			return declaration_parameter_typed_default$205(value);
+		case 'identifier':
+			return identifier$1(value);
+		case 'pattern.rest':
+			return pattern_rest$206(value);
+		case 'pattern.rest.map':
+			return pattern_rest_map$207(value);
+		case 'pattern.tuple':
+			return pattern_tuple$202(value);
+		default:
+			return unbuilt('declaration.member.property.getter.parameters', value);
+	}
+};
+type declaration_member_property_getter$361_statements$item$Item =
+	| 'break'
+	| 'continue'
+	| 'pass'
+	| Text<PythonMap, 'identifier'>
+	| Text<PythonMap, 'literal.number.integer'>
+	| Text<PythonMap, 'literal.number.integer.imaginary'>
+	| Text<PythonMap, 'statement.break'>
+	| Text<PythonMap, 'statement.continue'>
+	| Text<PythonMap, 'statement.empty'>
+	| bigint
+	| number
+	| BuildInput<PythonMap, 'declaration.constant'>
+	| PythonMap['nodes']['declaration.constant']
+	| BuildInput<PythonMap, 'declaration.function'>
+	| PythonMap['nodes']['declaration.function']
+	| BuildInput<PythonMap, 'declaration.type.class'>
+	| PythonMap['nodes']['declaration.type.class']
+	| BuildInput<PythonMap, 'declaration.type.type_alias'>
+	| PythonMap['nodes']['declaration.type.type_alias']
+	| BuildInput<PythonMap, 'declaration.variable'>
+	| PythonMap['nodes']['declaration.variable']
+	| BuildInput<PythonMap, 'expression.assignment'>
+	| PythonMap['nodes']['expression.assignment']
+	| BuildInput<PythonMap, 'expression.assignment.compound.add'>
+	| PythonMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<PythonMap, 'expression.assignment.compound.bitwise_and'>
+	| PythonMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<PythonMap, 'expression.assignment.compound.bitwise_or'>
+	| PythonMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<PythonMap, 'expression.assignment.compound.bitwise_xor'>
+	| PythonMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<PythonMap, 'expression.assignment.compound.divide'>
+	| PythonMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<PythonMap, 'expression.assignment.compound.exponent'>
+	| PythonMap['nodes']['expression.assignment.compound.exponent']
+	| BuildInput<PythonMap, 'expression.assignment.compound.floor_divide'>
+	| PythonMap['nodes']['expression.assignment.compound.floor_divide']
+	| BuildInput<PythonMap, 'expression.assignment.compound.matrix_multiply'>
+	| PythonMap['nodes']['expression.assignment.compound.matrix_multiply']
+	| BuildInput<PythonMap, 'expression.assignment.compound.modulo'>
+	| PythonMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<PythonMap, 'expression.assignment.compound.multiply'>
+	| PythonMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<PythonMap, 'expression.assignment.compound.shift_left'>
+	| PythonMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<PythonMap, 'expression.assignment.compound.shift_right'>
+	| PythonMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<PythonMap, 'expression.assignment.compound.subtract'>
+	| PythonMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<PythonMap, 'expression.await'>
+	| PythonMap['nodes']['expression.await']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
+	| PythonMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
+	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
+	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
+	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
+	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
+	| PythonMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
+	| PythonMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
+	| PythonMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
+	| PythonMap['nodes']['expression.binary.comparison.chain']
+	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
+	| PythonMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
+	| PythonMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
+	| PythonMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
+	| BuildInput<PythonMap, 'expression.binary.identity.is'>
+	| PythonMap['nodes']['expression.binary.identity.is']
+	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
+	| PythonMap['nodes']['expression.binary.identity.is_not']
+	| BuildInput<PythonMap, 'expression.binary.logical.and'>
+	| PythonMap['nodes']['expression.binary.logical.and']
+	| BuildInput<PythonMap, 'expression.binary.logical.or'>
+	| PythonMap['nodes']['expression.binary.logical.or']
+	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
+	| PythonMap['nodes']['expression.binary.matrix_multiply']
+	| BuildInput<PythonMap, 'expression.binary.membership.in'>
+	| PythonMap['nodes']['expression.binary.membership.in']
+	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
+	| PythonMap['nodes']['expression.binary.membership.not_in']
+	| BuildInput<PythonMap, 'expression.binary.shift.left'>
+	| PythonMap['nodes']['expression.binary.shift.left']
+	| BuildInput<PythonMap, 'expression.binary.shift.right'>
+	| PythonMap['nodes']['expression.binary.shift.right']
+	| BuildInput<PythonMap, 'expression.call'>
+	| PythonMap['nodes']['expression.call']
+	| BuildInput<PythonMap, 'expression.call.member'>
+	| PythonMap['nodes']['expression.call.member']
+	| BuildInput<PythonMap, 'expression.collection.list'>
+	| PythonMap['nodes']['expression.collection.list']
+	| BuildInput<PythonMap, 'expression.collection.map'>
+	| PythonMap['nodes']['expression.collection.map']
+	| BuildInput<PythonMap, 'expression.collection.set'>
+	| PythonMap['nodes']['expression.collection.set']
+	| BuildInput<PythonMap, 'expression.collection.tuple'>
+	| PythonMap['nodes']['expression.collection.tuple']
+	| BuildInput<PythonMap, 'expression.collection.tuple.bare'>
+	| PythonMap['nodes']['expression.collection.tuple.bare']
+	| BuildInput<PythonMap, 'expression.comprehension.generator'>
+	| PythonMap['nodes']['expression.comprehension.generator']
+	| BuildInput<PythonMap, 'expression.comprehension.list'>
+	| PythonMap['nodes']['expression.comprehension.list']
+	| BuildInput<PythonMap, 'expression.comprehension.map'>
+	| PythonMap['nodes']['expression.comprehension.map']
+	| BuildInput<PythonMap, 'expression.comprehension.set'>
+	| PythonMap['nodes']['expression.comprehension.set']
+	| BuildInput<PythonMap, 'expression.conditional'>
+	| PythonMap['nodes']['expression.conditional']
+	| BuildInput<PythonMap, 'expression.lambda'>
+	| PythonMap['nodes']['expression.lambda']
+	| BuildInput<PythonMap, 'expression.member'>
+	| PythonMap['nodes']['expression.member']
+	| BuildInput<PythonMap, 'expression.parenthesized'>
+	| PythonMap['nodes']['expression.parenthesized']
+	| BuildInput<PythonMap, 'expression.subscript'>
+	| PythonMap['nodes']['expression.subscript']
+	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
+	| PythonMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<PythonMap, 'expression.unary.negation'>
+	| PythonMap['nodes']['expression.unary.negation']
+	| BuildInput<PythonMap, 'expression.unary.not'>
+	| PythonMap['nodes']['expression.unary.not']
+	| BuildInput<PythonMap, 'expression.unary.plus'>
+	| PythonMap['nodes']['expression.unary.plus']
+	| BuildInput<PythonMap, 'expression.yield'>
+	| PythonMap['nodes']['expression.yield']
+	| BuildInput<PythonMap, 'expression.yield.delegate'>
+	| PythonMap['nodes']['expression.yield.delegate']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'literal.boolean.false'>
+	| PythonMap['nodes']['literal.boolean.false']
+	| BuildInput<PythonMap, 'literal.boolean.true'>
+	| PythonMap['nodes']['literal.boolean.true']
+	| BuildInput<PythonMap, 'literal.ellipsis'>
+	| PythonMap['nodes']['literal.ellipsis']
+	| BuildInput<PythonMap, 'literal.null'>
+	| PythonMap['nodes']['literal.null']
+	| BuildInput<PythonMap, 'literal.number.float'>
+	| PythonMap['nodes']['literal.number.float']
+	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+	| PythonMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<PythonMap, 'literal.number.float.scientific'>
+	| PythonMap['nodes']['literal.number.float.scientific']
+	| BuildInput<PythonMap, 'literal.number.integer'>
+	| PythonMap['nodes']['literal.number.integer']
+	| BuildInput<PythonMap, 'literal.number.integer.big'>
+	| PythonMap['nodes']['literal.number.integer.big']
+	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+	| PythonMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+	| PythonMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+	| PythonMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<PythonMap, 'literal.number.integer.binary'>
+	| PythonMap['nodes']['literal.number.integer.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.hex'>
+	| PythonMap['nodes']['literal.number.integer.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+	| PythonMap['nodes']['literal.number.integer.imaginary']
+	| BuildInput<PythonMap, 'literal.number.integer.octal'>
+	| PythonMap['nodes']['literal.number.integer.octal']
+	| BuildInput<PythonMap, 'literal.string'>
+	| PythonMap['nodes']['literal.string']
+	| BuildInput<PythonMap, 'literal.string.bytes'>
+	| PythonMap['nodes']['literal.string.bytes']
+	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.multiline']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+	| PythonMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.concatenated'>
+	| PythonMap['nodes']['literal.string.concatenated']
+	| BuildInput<PythonMap, 'literal.string.interpolated'>
+	| PythonMap['nodes']['literal.string.interpolated']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.multiline'>
+	| PythonMap['nodes']['literal.string.multiline']
+	| BuildInput<PythonMap, 'literal.string.raw'>
+	| PythonMap['nodes']['literal.string.raw']
+	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+	| PythonMap['nodes']['literal.string.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.unicode'>
+	| PythonMap['nodes']['literal.string.unicode']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| BuildInput<PythonMap, 'statement.assert'>
+	| PythonMap['nodes']['statement.assert']
+	| BuildInput<PythonMap, 'statement.delete'>
+	| PythonMap['nodes']['statement.delete']
+	| BuildInput<PythonMap, 'statement.exec'>
+	| PythonMap['nodes']['statement.exec']
+	| BuildInput<PythonMap, 'statement.global'>
+	| PythonMap['nodes']['statement.global']
+	| BuildInput<PythonMap, 'statement.if'>
+	| PythonMap['nodes']['statement.if']
+	| BuildInput<PythonMap, 'statement.import'>
+	| PythonMap['nodes']['statement.import']
+	| BuildInput<PythonMap, 'statement.import.from'>
+	| PythonMap['nodes']['statement.import.from']
+	| BuildInput<PythonMap, 'statement.import.future'>
+	| PythonMap['nodes']['statement.import.future']
+	| BuildInput<PythonMap, 'statement.loop.for_each'>
+	| PythonMap['nodes']['statement.loop.for_each']
+	| BuildInput<PythonMap, 'statement.loop.while'>
+	| PythonMap['nodes']['statement.loop.while']
+	| BuildInput<PythonMap, 'statement.match'>
+	| PythonMap['nodes']['statement.match']
+	| BuildInput<PythonMap, 'statement.nonlocal'>
+	| PythonMap['nodes']['statement.nonlocal']
+	| BuildInput<PythonMap, 'statement.print'>
+	| PythonMap['nodes']['statement.print']
+	| BuildInput<PythonMap, 'statement.resource'>
+	| PythonMap['nodes']['statement.resource']
+	| BuildInput<PythonMap, 'statement.return'>
+	| PythonMap['nodes']['statement.return']
+	| BuildInput<PythonMap, 'statement.throw'>
+	| PythonMap['nodes']['statement.throw']
+	| BuildInput<PythonMap, 'statement.try'>
+	| PythonMap['nodes']['statement.try']
+	| Unmapped<'python:as_pattern'>;
+const declaration_member_property_getter$361_statements$item = (
+	value: declaration_member_property_getter$361_statements$item$Item
+) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'break':
+				return b.simpleStatements(b.simpleStatementsElements(154));
+			case 'continue':
+				return b.simpleStatements(b.simpleStatementsElements(155));
+			case 'pass':
+				return b.simpleStatements(b.simpleStatementsElements(153));
+			default:
+				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value))));
+				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value))));
+		}
+	}
+	if (typeof value === 'bigint') {
+		return b.simpleStatements(
+			b.simpleStatementsElements(
+				b.expressionStatement(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }))
+			)
+		);
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }))
+				)
+			);
+		}
+		return b.simpleStatements(
+			b.simpleStatementsElements(
+				b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
+			)
+		);
+	}
+	if (isNode(value)) {
+		if (seated(value, [134, 156, 159, 162, 163, 164, 167, 170, 179])) return value;
+		if (seated(value, [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178]))
+			return b.simpleStatements(b.simpleStatementsElements(value));
+		if (seated(value, [287, 288])) return b.simpleStatements(b.simpleStatementsElements(b.printStatement(value)));
+		if (
+			seated(
+				value,
+				[
+					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
+					213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
+					253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+				]
+			)
+		)
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(value)));
+		return unseated('declaration.member.property.getter.statements', value);
+	}
+	switch (value.$path) {
+		case 'declaration.constant':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'declaration.function': {
+			if ((value.decorators ?? []).length === 0) return declaration_function$170(value);
+			return b.decoratedDefinition({
+				definition: declaration_function$170(value),
+				decorators: nonEmpty(
+					'declaration.function.decorators',
+					(value.decorators ?? []).map(declaration_function$170_decorators)
+				)
+			});
+		}
+		case 'declaration.type.class': {
+			if ((value.decorators ?? []).length === 0) return declaration_type_class$179(value);
+			return b.decoratedDefinition({
+				definition: declaration_type_class$179(value),
+				decorators: nonEmpty(
+					'declaration.type.class.decorators',
+					(value.decorators ?? []).map(declaration_type_class$179_decorators)
+				)
+			});
+		}
+		case 'declaration.type.type_alias':
+			return b.simpleStatements(b.simpleStatementsElements(declaration_type_type_alias$178(value)));
+		case 'declaration.variable':
+			if (value.name !== undefined && value.value !== undefined && value.type === undefined)
+				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$302(value))));
+			if (value.name !== undefined && value.type !== undefined && value.value === undefined)
+				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$303(value))));
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$304(value))));
+		case 'expression.assignment':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_assignment$148(value))));
+		case 'expression.assignment.compound.add':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_add$222(value)))
+			);
+		case 'expression.assignment.compound.bitwise_and':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_bitwise_and$222(value)))
+			);
+		case 'expression.assignment.compound.bitwise_or':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_bitwise_or$222(value)))
+			);
+		case 'expression.assignment.compound.bitwise_xor':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_bitwise_xor$222(value)))
+			);
+		case 'expression.assignment.compound.divide':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_divide$222(value)))
+			);
+		case 'expression.assignment.compound.exponent':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_exponent$222(value)))
+			);
+		case 'expression.assignment.compound.floor_divide':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_floor_divide$222(value)))
+			);
+		case 'expression.assignment.compound.matrix_multiply':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_matrix_multiply$222(value)))
+			);
+		case 'expression.assignment.compound.modulo':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_modulo$222(value)))
+			);
+		case 'expression.assignment.compound.multiply':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_multiply$222(value)))
+			);
+		case 'expression.assignment.compound.shift_left':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_shift_left$222(value)))
+			);
+		case 'expression.assignment.compound.shift_right':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_shift_right$222(value)))
+			);
+		case 'expression.assignment.compound.subtract':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_subtract$222(value)))
+			);
+		case 'expression.await':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_await$262(value))));
+		case 'expression.binary.arithmetic.add':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_add$214(value)))
+			);
+		case 'expression.binary.arithmetic.divide':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_divide$214(value)))
+			);
+		case 'expression.binary.arithmetic.exponent':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_exponent$214(value)))
+			);
+		case 'expression.binary.arithmetic.floor_divide':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_floor_divide$214(value)))
+			);
+		case 'expression.binary.arithmetic.modulo':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_modulo$214(value)))
+			);
+		case 'expression.binary.arithmetic.multiply':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_multiply$214(value)))
+			);
+		case 'expression.binary.arithmetic.subtract':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_subtract$214(value)))
+			);
+		case 'expression.binary.bitwise.and':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_bitwise_and$214(value)))
+			);
+		case 'expression.binary.bitwise.or':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_bitwise_or$214(value)))
+			);
+		case 'expression.binary.bitwise.xor':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_bitwise_xor$214(value)))
+			);
+		case 'expression.binary.comparison.chain':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_comparison_chain$218(value)))
+			);
+		case 'expression.binary.comparison.equal':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'expression.binary.comparison.greater':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'expression.binary.comparison.greater_equal':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'expression.binary.comparison.less':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'expression.binary.comparison.less_equal':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'expression.binary.comparison.not_equal':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'expression.binary.comparison.not_equal.legacy':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'expression.binary.identity.is':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'expression.binary.identity.is_not':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'expression.binary.logical.and':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_logical_and$213(value)))
+			);
+		case 'expression.binary.logical.or':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_logical_or$213(value)))
+			);
+		case 'expression.binary.matrix_multiply':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_matrix_multiply$214(value)))
+			);
+		case 'expression.binary.membership.in':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'expression.binary.membership.not_in':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'expression.binary.shift.left':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_shift_left$214(value)))
+			);
+		case 'expression.binary.shift.right':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_shift_right$214(value)))
+			);
+		case 'expression.call':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_call$229(value))));
+		case 'expression.call.member':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'expression.collection.list':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_collection_list$238(value)))
+			);
+		case 'expression.collection.map':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_collection_map$241(value)))
+			);
+		case 'expression.collection.set':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_collection_set$239(value)))
+			);
+		case 'expression.collection.tuple':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_collection_tuple$240(value)))
+			);
+		case 'expression.collection.tuple.bare':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'expression.comprehension.generator':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_generator$246(value)))
+			);
+		case 'expression.comprehension.list':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_list$243(value)))
+			);
+		case 'expression.comprehension.map':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_map$244(value)))
+			);
+		case 'expression.comprehension.set':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_set$245(value)))
+			);
+		case 'expression.conditional':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_conditional$251(value))));
+		case 'expression.lambda':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_lambda$219(value))));
+		case 'expression.member':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'expression.parenthesized':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_parenthesized$247(value))));
+		case 'expression.subscript':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_subscript$227(value))));
+		case 'expression.unary.bitwise_not':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_unary_bitwise_not$215(value)))
+			);
+		case 'expression.unary.negation':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_unary_negation$215(value)))
+			);
+		case 'expression.unary.not':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_unary_not$212(value))));
+		case 'expression.unary.plus':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_unary_plus$215(value))));
+		case 'expression.yield':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_yield$225(value))));
+		case 'expression.yield.delegate':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'identifier':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(identifier$1(value))));
+		case 'literal.boolean.false':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'literal.boolean.true':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'literal.ellipsis':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'literal.null':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'literal.number.float':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_float$101(value))));
+		case 'literal.number.float.leading_point':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_float_leading_point$102(value)))
+			);
+		case 'literal.number.float.scientific':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_float_scientific$103(value)))
+			);
+		case 'literal.number.integer':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_integer$100(value))));
+		case 'literal.number.integer.big':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big$98(value)))
+			);
+		case 'literal.number.integer.big.binary':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_binary$94(value)))
+			);
+		case 'literal.number.integer.big.hex':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_hex$90(value)))
+			);
+		case 'literal.number.integer.big.octal':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_octal$92(value)))
+			);
+		case 'literal.number.integer.binary':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_binary$95(value)))
+			);
+		case 'literal.number.integer.hex':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_hex$91(value)))
+			);
+		case 'literal.number.integer.imaginary':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'literal.number.integer.octal':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_octal$93(value)))
+			);
+		case 'literal.string':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_string$253(value))));
+		case 'literal.string.bytes':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'literal.string.bytes.multiline':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'literal.string.bytes.raw.multiline':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'literal.string.concatenated':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_string_concatenated$252(value)))
+			);
+		case 'literal.string.interpolated':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'literal.string.interpolated.deferred':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'literal.string.interpolated.deferred.multiline':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'literal.string.interpolated.deferred.raw':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'literal.string.interpolated.deferred.raw.multiline':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'literal.string.interpolated.multiline':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'literal.string.interpolated.raw':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'literal.string.interpolated.raw.multiline':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'literal.string.multiline':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'literal.string.raw':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'literal.string.raw.multiline':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'literal.string.unicode':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'pattern.rest':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(pattern_rest$206(value))));
+		case 'statement.assert':
+			return b.simpleStatements(b.simpleStatementsElements(statement_assert$146(value)));
+		case 'statement.delete':
+			return b.simpleStatements(b.simpleStatementsElements(statement_delete$151(value)));
+		case 'statement.exec':
+			return b.simpleStatements(b.simpleStatementsElements(statement_exec$177(value)));
+		case 'statement.global':
+			return b.simpleStatements(b.simpleStatementsElements(statement_global$175(value)));
+		case 'statement.if':
+			return statement_if$156(value);
+		case 'statement.import':
+			return b.simpleStatements(b.simpleStatementsElements(statement_import$136(value)));
+		case 'statement.import.from':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'statement.import.future':
+			return b.simpleStatements(b.simpleStatementsElements(statement_import_future$139(value)));
+		case 'statement.loop.for_each':
+			return statement_loop_for_each$162(value);
+		case 'statement.loop.while':
+			return statement_loop_while$163(value);
+		case 'statement.match':
+			return statement_match$159(value);
+		case 'statement.nonlocal':
+			return b.simpleStatements(b.simpleStatementsElements(statement_nonlocal$176(value)));
+		case 'statement.print':
+			return unbuilt('declaration.member.property.getter.statements', value);
+		case 'statement.resource':
+			return statement_resource$167(value);
+		case 'statement.return':
+			return b.simpleStatements(b.simpleStatementsElements(statement_return$150(value)));
+		case 'statement.throw':
+			return b.simpleStatements(b.simpleStatementsElements(statement_throw$152(value)));
+		case 'statement.try':
+			return statement_try$164(value);
+		default:
+			return unbuilt('declaration.member.property.getter.statements', value);
+	}
+};
+type declaration_member_property_getter$361_type$Item =
+	| Text<PythonMap, 'identifier'>
+	| Text<PythonMap, 'literal.number.integer'>
+	| Text<PythonMap, 'literal.number.integer.imaginary'>
+	| bigint
+	| number
+	| BuildInput<PythonMap, 'expression.assignment'>
+	| PythonMap['nodes']['expression.assignment']
+	| BuildInput<PythonMap, 'expression.await'>
+	| PythonMap['nodes']['expression.await']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
+	| PythonMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
+	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
+	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
+	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
+	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
+	| PythonMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
+	| PythonMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
+	| PythonMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
+	| PythonMap['nodes']['expression.binary.comparison.chain']
+	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
+	| PythonMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
+	| PythonMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
+	| PythonMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
+	| BuildInput<PythonMap, 'expression.binary.identity.is'>
+	| PythonMap['nodes']['expression.binary.identity.is']
+	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
+	| PythonMap['nodes']['expression.binary.identity.is_not']
+	| BuildInput<PythonMap, 'expression.binary.logical.and'>
+	| PythonMap['nodes']['expression.binary.logical.and']
+	| BuildInput<PythonMap, 'expression.binary.logical.or'>
+	| PythonMap['nodes']['expression.binary.logical.or']
+	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
+	| PythonMap['nodes']['expression.binary.matrix_multiply']
+	| BuildInput<PythonMap, 'expression.binary.membership.in'>
+	| PythonMap['nodes']['expression.binary.membership.in']
+	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
+	| PythonMap['nodes']['expression.binary.membership.not_in']
+	| BuildInput<PythonMap, 'expression.binary.shift.left'>
+	| PythonMap['nodes']['expression.binary.shift.left']
+	| BuildInput<PythonMap, 'expression.binary.shift.right'>
+	| PythonMap['nodes']['expression.binary.shift.right']
+	| BuildInput<PythonMap, 'expression.call'>
+	| PythonMap['nodes']['expression.call']
+	| BuildInput<PythonMap, 'expression.call.member'>
+	| PythonMap['nodes']['expression.call.member']
+	| BuildInput<PythonMap, 'expression.collection.list'>
+	| PythonMap['nodes']['expression.collection.list']
+	| BuildInput<PythonMap, 'expression.collection.map'>
+	| PythonMap['nodes']['expression.collection.map']
+	| BuildInput<PythonMap, 'expression.collection.set'>
+	| PythonMap['nodes']['expression.collection.set']
+	| BuildInput<PythonMap, 'expression.collection.tuple'>
+	| PythonMap['nodes']['expression.collection.tuple']
+	| BuildInput<PythonMap, 'expression.comprehension.generator'>
+	| PythonMap['nodes']['expression.comprehension.generator']
+	| BuildInput<PythonMap, 'expression.comprehension.list'>
+	| PythonMap['nodes']['expression.comprehension.list']
+	| BuildInput<PythonMap, 'expression.comprehension.map'>
+	| PythonMap['nodes']['expression.comprehension.map']
+	| BuildInput<PythonMap, 'expression.comprehension.set'>
+	| PythonMap['nodes']['expression.comprehension.set']
+	| BuildInput<PythonMap, 'expression.conditional'>
+	| PythonMap['nodes']['expression.conditional']
+	| BuildInput<PythonMap, 'expression.lambda'>
+	| PythonMap['nodes']['expression.lambda']
+	| BuildInput<PythonMap, 'expression.member'>
+	| PythonMap['nodes']['expression.member']
+	| BuildInput<PythonMap, 'expression.parenthesized'>
+	| PythonMap['nodes']['expression.parenthesized']
+	| BuildInput<PythonMap, 'expression.subscript'>
+	| PythonMap['nodes']['expression.subscript']
+	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
+	| PythonMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<PythonMap, 'expression.unary.negation'>
+	| PythonMap['nodes']['expression.unary.negation']
+	| BuildInput<PythonMap, 'expression.unary.not'>
+	| PythonMap['nodes']['expression.unary.not']
+	| BuildInput<PythonMap, 'expression.unary.plus'>
+	| PythonMap['nodes']['expression.unary.plus']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'identifier.qualified'>
+	| PythonMap['nodes']['identifier.qualified']
+	| BuildInput<PythonMap, 'literal.boolean.false'>
+	| PythonMap['nodes']['literal.boolean.false']
+	| BuildInput<PythonMap, 'literal.boolean.true'>
+	| PythonMap['nodes']['literal.boolean.true']
+	| BuildInput<PythonMap, 'literal.ellipsis'>
+	| PythonMap['nodes']['literal.ellipsis']
+	| BuildInput<PythonMap, 'literal.null'>
+	| PythonMap['nodes']['literal.null']
+	| BuildInput<PythonMap, 'literal.number.float'>
+	| PythonMap['nodes']['literal.number.float']
+	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+	| PythonMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<PythonMap, 'literal.number.float.scientific'>
+	| PythonMap['nodes']['literal.number.float.scientific']
+	| BuildInput<PythonMap, 'literal.number.integer'>
+	| PythonMap['nodes']['literal.number.integer']
+	| BuildInput<PythonMap, 'literal.number.integer.big'>
+	| PythonMap['nodes']['literal.number.integer.big']
+	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+	| PythonMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+	| PythonMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+	| PythonMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<PythonMap, 'literal.number.integer.binary'>
+	| PythonMap['nodes']['literal.number.integer.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.hex'>
+	| PythonMap['nodes']['literal.number.integer.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+	| PythonMap['nodes']['literal.number.integer.imaginary']
+	| BuildInput<PythonMap, 'literal.number.integer.octal'>
+	| PythonMap['nodes']['literal.number.integer.octal']
+	| BuildInput<PythonMap, 'literal.string'>
+	| PythonMap['nodes']['literal.string']
+	| BuildInput<PythonMap, 'literal.string.bytes'>
+	| PythonMap['nodes']['literal.string.bytes']
+	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.multiline']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+	| PythonMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.concatenated'>
+	| PythonMap['nodes']['literal.string.concatenated']
+	| BuildInput<PythonMap, 'literal.string.interpolated'>
+	| PythonMap['nodes']['literal.string.interpolated']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.multiline'>
+	| PythonMap['nodes']['literal.string.multiline']
+	| BuildInput<PythonMap, 'literal.string.raw'>
+	| PythonMap['nodes']['literal.string.raw']
+	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+	| PythonMap['nodes']['literal.string.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.unicode'>
+	| PythonMap['nodes']['literal.string.unicode']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| BuildInput<PythonMap, 'type.constrained'>
+	| PythonMap['nodes']['type.constrained']
+	| BuildInput<PythonMap, 'type.generic'>
+	| PythonMap['nodes']['type.generic']
+	| BuildInput<PythonMap, 'type.nullable'>
+	| PythonMap['nodes']['type.nullable']
+	| BuildInput<PythonMap, 'type.rest'>
+	| PythonMap['nodes']['type.rest']
+	| BuildInput<PythonMap, 'type.union'>
+	| PythonMap['nodes']['type.union']
+	| Unmapped<'python:as_pattern'>;
+const declaration_member_property_getter$361_type = (value: declaration_member_property_getter$361_type$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
+		return b.type(b.identifier(value));
+	}
+	if (typeof value === 'bigint') {
+		return b.type(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }));
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
+					213, 214, 215, 218, 219, 226, 227, 229, 232, 233, 234, 235, 236, 238, 239, 240, 241, 243, 244, 245, 246, 247,
+					251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+				]
+			)
+		)
+			return b.type(value);
+		return unseated('declaration.member.property.getter.type', value);
+	}
+	switch (value.$path) {
+		case 'expression.assignment':
+			return b.type(expression_assignment$148(value));
+		case 'expression.await':
+			return b.type(expression_await$262(value));
+		case 'expression.binary.arithmetic.add':
+			return b.type(expression_binary_arithmetic_add$214(value));
+		case 'expression.binary.arithmetic.divide':
+			return b.type(expression_binary_arithmetic_divide$214(value));
+		case 'expression.binary.arithmetic.exponent':
+			return b.type(expression_binary_arithmetic_exponent$214(value));
+		case 'expression.binary.arithmetic.floor_divide':
+			return b.type(expression_binary_arithmetic_floor_divide$214(value));
+		case 'expression.binary.arithmetic.modulo':
+			return b.type(expression_binary_arithmetic_modulo$214(value));
+		case 'expression.binary.arithmetic.multiply':
+			return b.type(expression_binary_arithmetic_multiply$214(value));
+		case 'expression.binary.arithmetic.subtract':
+			return b.type(expression_binary_arithmetic_subtract$214(value));
+		case 'expression.binary.bitwise.and':
+			return b.type(expression_binary_bitwise_and$214(value));
+		case 'expression.binary.bitwise.or':
+			return b.type(expression_binary_bitwise_or$214(value));
+		case 'expression.binary.bitwise.xor':
+			return b.type(expression_binary_bitwise_xor$214(value));
+		case 'expression.binary.comparison.chain':
+			return b.type(expression_binary_comparison_chain$218(value));
+		case 'expression.binary.comparison.equal':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'expression.binary.comparison.greater':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'expression.binary.comparison.greater_equal':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'expression.binary.comparison.less':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'expression.binary.comparison.less_equal':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'expression.binary.comparison.not_equal':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'expression.binary.comparison.not_equal.legacy':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'expression.binary.identity.is':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'expression.binary.identity.is_not':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'expression.binary.logical.and':
+			return b.type(expression_binary_logical_and$213(value));
+		case 'expression.binary.logical.or':
+			return b.type(expression_binary_logical_or$213(value));
+		case 'expression.binary.matrix_multiply':
+			return b.type(expression_binary_matrix_multiply$214(value));
+		case 'expression.binary.membership.in':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'expression.binary.membership.not_in':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'expression.binary.shift.left':
+			return b.type(expression_binary_shift_left$214(value));
+		case 'expression.binary.shift.right':
+			return b.type(expression_binary_shift_right$214(value));
+		case 'expression.call':
+			return b.type(expression_call$229(value));
+		case 'expression.call.member':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'expression.collection.list':
+			return b.type(expression_collection_list$238(value));
+		case 'expression.collection.map':
+			return b.type(expression_collection_map$241(value));
+		case 'expression.collection.set':
+			return b.type(expression_collection_set$239(value));
+		case 'expression.collection.tuple':
+			return b.type(expression_collection_tuple$240(value));
+		case 'expression.comprehension.generator':
+			return b.type(expression_comprehension_generator$246(value));
+		case 'expression.comprehension.list':
+			return b.type(expression_comprehension_list$243(value));
+		case 'expression.comprehension.map':
+			return b.type(expression_comprehension_map$244(value));
+		case 'expression.comprehension.set':
+			return b.type(expression_comprehension_set$245(value));
+		case 'expression.conditional':
+			return b.type(expression_conditional$251(value));
+		case 'expression.lambda':
+			return b.type(expression_lambda$219(value));
+		case 'expression.member':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'expression.parenthesized':
+			return b.type(expression_parenthesized$247(value));
+		case 'expression.subscript':
+			return b.type(expression_subscript$227(value));
+		case 'expression.unary.bitwise_not':
+			return b.type(expression_unary_bitwise_not$215(value));
+		case 'expression.unary.negation':
+			return b.type(expression_unary_negation$215(value));
+		case 'expression.unary.not':
+			return b.type(expression_unary_not$212(value));
+		case 'expression.unary.plus':
+			return b.type(expression_unary_plus$215(value));
+		case 'identifier':
+			return b.type(identifier$1(value));
+		case 'identifier.qualified':
+			return b.type(identifier_qualified$236(value));
+		case 'literal.boolean.false':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'literal.boolean.true':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'literal.ellipsis':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'literal.null':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'literal.number.float':
+			return b.type(literal_number_float$101(value));
+		case 'literal.number.float.leading_point':
+			return b.type(literal_number_float_leading_point$102(value));
+		case 'literal.number.float.scientific':
+			return b.type(literal_number_float_scientific$103(value));
+		case 'literal.number.integer':
+			return b.type(literal_number_integer$100(value));
+		case 'literal.number.integer.big':
+			return b.type(literal_number_integer_big$98(value));
+		case 'literal.number.integer.big.binary':
+			return b.type(literal_number_integer_big_binary$94(value));
+		case 'literal.number.integer.big.hex':
+			return b.type(literal_number_integer_big_hex$90(value));
+		case 'literal.number.integer.big.octal':
+			return b.type(literal_number_integer_big_octal$92(value));
+		case 'literal.number.integer.binary':
+			return b.type(literal_number_integer_binary$95(value));
+		case 'literal.number.integer.hex':
+			return b.type(literal_number_integer_hex$91(value));
+		case 'literal.number.integer.imaginary':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'literal.number.integer.octal':
+			return b.type(literal_number_integer_octal$93(value));
+		case 'literal.string':
+			return b.type(literal_string$253(value));
+		case 'literal.string.bytes':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'literal.string.bytes.multiline':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'literal.string.bytes.raw.multiline':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'literal.string.concatenated':
+			return b.type(literal_string_concatenated$252(value));
+		case 'literal.string.interpolated':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'literal.string.interpolated.deferred':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'literal.string.interpolated.deferred.multiline':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'literal.string.interpolated.deferred.raw':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'literal.string.interpolated.deferred.raw.multiline':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'literal.string.interpolated.multiline':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'literal.string.interpolated.raw':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'literal.string.interpolated.raw.multiline':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'literal.string.multiline':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'literal.string.raw':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'literal.string.raw.multiline':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'literal.string.unicode':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'pattern.rest':
+			return b.type(pattern_rest$206(value));
+		case 'type.constrained':
+			return b.type(type_constrained$235(value));
+		case 'type.generic':
+			return b.type(type_generic$233(value));
+		case 'type.nullable':
+			return unbuilt('declaration.member.property.getter.type', value);
+		case 'type.rest':
+			return b.type(type_rest$232(value));
+		case 'type.union':
+			return b.type(type_union$234(value));
+		default:
+			return unbuilt('declaration.member.property.getter.type', value);
+	}
+};
+type declaration_member_property_getter$361_typeParameters$item$Item =
+	| BuildInput<PythonMap, 'declaration.type_parameter'>
+	| PythonMap['nodes']['declaration.type_parameter']
+	| BuildInput<PythonMap, 'declaration.type_parameter.parameters'>
+	| PythonMap['nodes']['declaration.type_parameter.parameters']
+	| BuildInput<PythonMap, 'declaration.type_parameter.variadic'>
+	| PythonMap['nodes']['declaration.type_parameter.variadic'];
+const declaration_member_property_getter$361_typeParameters$item = (
+	value: declaration_member_property_getter$361_typeParameters$item$Item
+) => {
+	if (typeof value === 'number') {
+		if (seated(value, [275, 313, 314, 315])) return value;
+		return unseated('declaration.member.property.getter.typeParameters', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [275, 313, 314, 315])) return value;
+		return unseated('declaration.member.property.getter.typeParameters', value);
+	}
+	switch (value.$path) {
+		case 'declaration.type_parameter':
+			return unbuilt('declaration.member.property.getter.typeParameters', value);
+		case 'declaration.type_parameter.parameters':
+			return declaration_type_parameter_parameters$315(value);
+		case 'declaration.type_parameter.variadic':
+			return declaration_type_parameter_variadic$314(value);
+		default:
+			return unbuilt('declaration.member.property.getter.typeParameters', value);
+	}
+};
+type declaration_member_property_setter$361_decorators$Item =
+	| Text<PythonMap, 'identifier'>
+	| BuildInput<PythonMap, 'expression.member'>
+	| PythonMap['nodes']['expression.member']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| {
+			readonly $path: 'literal.number.float';
+			readonly $value: number;
+	  }
+	| {
+			readonly $path: 'literal.number.integer';
+			readonly $value: number;
+	  }
+	| {
+			readonly $path: 'literal.number.integer.big';
+			readonly $value: bigint;
+	  };
+const declaration_member_property_setter$361_decorators = (
+	value: declaration_member_property_setter$361_decorators$Item
+) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.decorator(b.identifier(value));
+		return b.decorator(b.identifier(value));
+	}
+	if (typeof value === 'bigint') {
+		return b.decorator(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }));
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.decorator(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
+					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
+					262, 291, 292, 293, 294, 295
+				]
+			)
+		)
+			return b.decorator(value);
+		return unseated('declaration.member.property.setter.decorators', value);
+	}
+	switch (value.$path) {
+		case 'expression.member':
+			return unbuilt('declaration.member.property.setter.decorators', value);
+		case 'identifier':
+			return b.decorator(identifier$1(value));
+		case 'literal.number.float':
+			if (typeof value.$value === 'bigint') {
+				return b.decorator(
+					literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
+				);
+			}
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) {
+					return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value }));
+				}
+				return b.decorator(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }));
+			}
+			return unbuilt('declaration.member.property.setter.decorators', value);
+		case 'literal.number.integer':
+			if (typeof value.$value === 'bigint') {
+				return b.decorator(
+					literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
+				);
+			}
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) {
+					return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value }));
+				}
+				return b.decorator(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }));
+			}
+			return unbuilt('declaration.member.property.setter.decorators', value);
+		case 'literal.number.integer.big':
+			if (typeof value.$value === 'bigint') {
+				return b.decorator(
+					literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
+				);
+			}
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) {
+					return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value }));
+				}
+				return b.decorator(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }));
+			}
+			return unbuilt('declaration.member.property.setter.decorators', value);
+		default:
+			return unbuilt('declaration.member.property.setter.decorators', value);
+	}
+};
+type declaration_member_property_setter$361_doc$Item =
+	| string
+	| BuildInput<PythonMap, 'literal.string'>
+	| PythonMap['nodes']['literal.string']
+	| BuildInput<PythonMap, 'literal.string.bytes'>
+	| PythonMap['nodes']['literal.string.bytes']
+	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.multiline']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+	| PythonMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated'>
+	| PythonMap['nodes']['literal.string.interpolated']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.multiline'>
+	| PythonMap['nodes']['literal.string.multiline']
+	| BuildInput<PythonMap, 'literal.string.raw'>
+	| PythonMap['nodes']['literal.string.raw']
+	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+	| PythonMap['nodes']['literal.string.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.unicode'>
+	| PythonMap['nodes']['literal.string.unicode']
+	| {
+			readonly $path: 'literal.number.float';
+			readonly $value: number;
+	  }
+	| {
+			readonly $path: 'literal.number.integer';
+			readonly $value: number;
+	  }
+	| {
+			readonly $path: 'literal.number.integer.big';
+			readonly $value: bigint;
+	  };
+const declaration_member_property_setter$361_doc = (value: declaration_member_property_setter$361_doc$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+			return b.suiteBlock(
+				b.block(b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value)))))
+			);
+		return b.suiteBlock(
+			b.block(b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value)))))
+		);
+	}
+	if (typeof value === 'bigint') {
+		return b.suiteBlock(
+			b.block(
+				b.simpleStatements(
+					b.simpleStatementsElements(
+						b.expressionStatement(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }))
+					)
+				)
+			)
+		);
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.suiteBlock(
+				b.block(
+					b.simpleStatements(
+						b.simpleStatementsElements(
+							b.expressionStatement(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }))
+						)
+					)
+				)
+			);
+		}
+		return b.suiteBlock(
+			b.block(
+				b.simpleStatements(
+					b.simpleStatementsElements(
+						b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
+					)
+				)
+			)
+		);
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
+					213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
+					253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+				]
+			)
+		)
+			return b.suiteBlock(b.block(b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(value)))));
+		return unseated('declaration.member.property.setter.doc', value);
+	}
+	switch (value.$path) {
+		case 'literal.string':
+			return b.suiteBlock(
+				b.block(b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_string$253(value)))))
+			);
+		case 'literal.string.bytes':
+			return unbuilt('declaration.member.property.setter.doc', value);
+		case 'literal.string.bytes.multiline':
+			return unbuilt('declaration.member.property.setter.doc', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('declaration.member.property.setter.doc', value);
+		case 'literal.string.bytes.raw.multiline':
+			return unbuilt('declaration.member.property.setter.doc', value);
+		case 'literal.string.interpolated':
+			return unbuilt('declaration.member.property.setter.doc', value);
+		case 'literal.string.interpolated.deferred':
+			return unbuilt('declaration.member.property.setter.doc', value);
+		case 'literal.string.interpolated.deferred.multiline':
+			return unbuilt('declaration.member.property.setter.doc', value);
+		case 'literal.string.interpolated.deferred.raw':
+			return unbuilt('declaration.member.property.setter.doc', value);
+		case 'literal.string.interpolated.deferred.raw.multiline':
+			return unbuilt('declaration.member.property.setter.doc', value);
+		case 'literal.string.interpolated.multiline':
+			return unbuilt('declaration.member.property.setter.doc', value);
+		case 'literal.string.interpolated.raw':
+			return unbuilt('declaration.member.property.setter.doc', value);
+		case 'literal.string.interpolated.raw.multiline':
+			return unbuilt('declaration.member.property.setter.doc', value);
+		case 'literal.string.multiline':
+			return unbuilt('declaration.member.property.setter.doc', value);
+		case 'literal.string.raw':
+			return unbuilt('declaration.member.property.setter.doc', value);
+		case 'literal.string.raw.multiline':
+			return unbuilt('declaration.member.property.setter.doc', value);
+		case 'literal.string.unicode':
+			return unbuilt('declaration.member.property.setter.doc', value);
+		case 'literal.number.float':
+			if (typeof value.$value === 'bigint') {
+				return b.suiteBlock(
+					b.block(
+						b.simpleStatements(
+							b.simpleStatementsElements(
+								b.expressionStatement(
+									literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
+								)
+							)
+						)
+					)
+				);
+			}
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) {
+					return b.suiteBlock(
+						b.block(
+							b.simpleStatements(
+								b.simpleStatementsElements(
+									b.expressionStatement(
+										literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value })
+									)
+								)
+							)
+						)
+					);
+				}
+				return b.suiteBlock(
+					b.block(
+						b.simpleStatements(
+							b.simpleStatementsElements(
+								b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }))
+							)
+						)
+					)
+				);
+			}
+			return unbuilt('declaration.member.property.setter.doc', value);
+		case 'literal.number.integer':
+			if (typeof value.$value === 'bigint') {
+				return b.suiteBlock(
+					b.block(
+						b.simpleStatements(
+							b.simpleStatementsElements(
+								b.expressionStatement(
+									literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
+								)
+							)
+						)
+					)
+				);
+			}
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) {
+					return b.suiteBlock(
+						b.block(
+							b.simpleStatements(
+								b.simpleStatementsElements(
+									b.expressionStatement(
+										literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value })
+									)
+								)
+							)
+						)
+					);
+				}
+				return b.suiteBlock(
+					b.block(
+						b.simpleStatements(
+							b.simpleStatementsElements(
+								b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }))
+							)
+						)
+					)
+				);
+			}
+			return unbuilt('declaration.member.property.setter.doc', value);
+		case 'literal.number.integer.big':
+			if (typeof value.$value === 'bigint') {
+				return b.suiteBlock(
+					b.block(
+						b.simpleStatements(
+							b.simpleStatementsElements(
+								b.expressionStatement(
+									literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
+								)
+							)
+						)
+					)
+				);
+			}
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) {
+					return b.suiteBlock(
+						b.block(
+							b.simpleStatements(
+								b.simpleStatementsElements(
+									b.expressionStatement(
+										literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value })
+									)
+								)
+							)
+						)
+					);
+				}
+				return b.suiteBlock(
+					b.block(
+						b.simpleStatements(
+							b.simpleStatementsElements(
+								b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }))
+							)
+						)
+					)
+				);
+			}
+			return unbuilt('declaration.member.property.setter.doc', value);
+		default:
+			return unbuilt('declaration.member.property.setter.doc', value);
+	}
+};
+type declaration_member_property_setter$361_name$Item =
+	| Text<PythonMap, 'identifier'>
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier'];
+const declaration_member_property_setter$361_name = (value: declaration_member_property_setter$361_name$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1])) return value;
+		return unseated('declaration.member.property.setter.name', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1])) return value;
+		return unseated('declaration.member.property.setter.name', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return identifier$1(value);
+		default:
+			return unbuilt('declaration.member.property.setter.name', value);
+	}
+};
+type declaration_member_property_setter$361_parameters$item$Item =
+	| '*'
+	| '/'
+	| Text<PythonMap, 'identifier'>
+	| BuildInput<PythonMap, 'declaration.parameter.defaulted'>
+	| PythonMap['nodes']['declaration.parameter.defaulted']
+	| BuildInput<PythonMap, 'declaration.parameter.typed'>
+	| PythonMap['nodes']['declaration.parameter.typed']
+	| BuildInput<PythonMap, 'declaration.parameter.typed_default'>
+	| PythonMap['nodes']['declaration.parameter.typed_default']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| BuildInput<PythonMap, 'pattern.rest.map'>
+	| PythonMap['nodes']['pattern.rest.map']
+	| BuildInput<PythonMap, 'pattern.tuple'>
+	| PythonMap['nodes']['pattern.tuple'];
+const declaration_member_property_setter$361_parameters$item = (
+	value: declaration_member_property_setter$361_parameters$item$Item
+) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '*':
+				return 264;
+			case '/':
+				return 263;
+			default:
+				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1, 200, 202, 204, 205, 206, 207, 230])) return value;
+		return unseated('declaration.member.property.setter.parameters', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1, 200, 202, 204, 205, 206, 207, 230, 263, 264])) return value;
+		return unseated('declaration.member.property.setter.parameters', value);
+	}
+	switch (value.$path) {
+		case 'declaration.parameter.defaulted':
+			return declaration_parameter_defaulted$204(value);
+		case 'declaration.parameter.typed':
+			return declaration_parameter_typed$230(value);
+		case 'declaration.parameter.typed_default':
+			return declaration_parameter_typed_default$205(value);
+		case 'identifier':
+			return identifier$1(value);
+		case 'pattern.rest':
+			return pattern_rest$206(value);
+		case 'pattern.rest.map':
+			return pattern_rest_map$207(value);
+		case 'pattern.tuple':
+			return pattern_tuple$202(value);
+		default:
+			return unbuilt('declaration.member.property.setter.parameters', value);
+	}
+};
+type declaration_member_property_setter$361_returnType$Item =
+	| Text<PythonMap, 'identifier'>
+	| Text<PythonMap, 'literal.number.integer'>
+	| Text<PythonMap, 'literal.number.integer.imaginary'>
+	| bigint
+	| number
+	| BuildInput<PythonMap, 'expression.assignment'>
+	| PythonMap['nodes']['expression.assignment']
+	| BuildInput<PythonMap, 'expression.await'>
+	| PythonMap['nodes']['expression.await']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
+	| PythonMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
+	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
+	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
+	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
+	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
+	| PythonMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
+	| PythonMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
+	| PythonMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
+	| PythonMap['nodes']['expression.binary.comparison.chain']
+	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
+	| PythonMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
+	| PythonMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
+	| PythonMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
+	| BuildInput<PythonMap, 'expression.binary.identity.is'>
+	| PythonMap['nodes']['expression.binary.identity.is']
+	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
+	| PythonMap['nodes']['expression.binary.identity.is_not']
+	| BuildInput<PythonMap, 'expression.binary.logical.and'>
+	| PythonMap['nodes']['expression.binary.logical.and']
+	| BuildInput<PythonMap, 'expression.binary.logical.or'>
+	| PythonMap['nodes']['expression.binary.logical.or']
+	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
+	| PythonMap['nodes']['expression.binary.matrix_multiply']
+	| BuildInput<PythonMap, 'expression.binary.membership.in'>
+	| PythonMap['nodes']['expression.binary.membership.in']
+	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
+	| PythonMap['nodes']['expression.binary.membership.not_in']
+	| BuildInput<PythonMap, 'expression.binary.shift.left'>
+	| PythonMap['nodes']['expression.binary.shift.left']
+	| BuildInput<PythonMap, 'expression.binary.shift.right'>
+	| PythonMap['nodes']['expression.binary.shift.right']
+	| BuildInput<PythonMap, 'expression.call'>
+	| PythonMap['nodes']['expression.call']
+	| BuildInput<PythonMap, 'expression.call.member'>
+	| PythonMap['nodes']['expression.call.member']
+	| BuildInput<PythonMap, 'expression.collection.list'>
+	| PythonMap['nodes']['expression.collection.list']
+	| BuildInput<PythonMap, 'expression.collection.map'>
+	| PythonMap['nodes']['expression.collection.map']
+	| BuildInput<PythonMap, 'expression.collection.set'>
+	| PythonMap['nodes']['expression.collection.set']
+	| BuildInput<PythonMap, 'expression.collection.tuple'>
+	| PythonMap['nodes']['expression.collection.tuple']
+	| BuildInput<PythonMap, 'expression.comprehension.generator'>
+	| PythonMap['nodes']['expression.comprehension.generator']
+	| BuildInput<PythonMap, 'expression.comprehension.list'>
+	| PythonMap['nodes']['expression.comprehension.list']
+	| BuildInput<PythonMap, 'expression.comprehension.map'>
+	| PythonMap['nodes']['expression.comprehension.map']
+	| BuildInput<PythonMap, 'expression.comprehension.set'>
+	| PythonMap['nodes']['expression.comprehension.set']
+	| BuildInput<PythonMap, 'expression.conditional'>
+	| PythonMap['nodes']['expression.conditional']
+	| BuildInput<PythonMap, 'expression.lambda'>
+	| PythonMap['nodes']['expression.lambda']
+	| BuildInput<PythonMap, 'expression.member'>
+	| PythonMap['nodes']['expression.member']
+	| BuildInput<PythonMap, 'expression.parenthesized'>
+	| PythonMap['nodes']['expression.parenthesized']
+	| BuildInput<PythonMap, 'expression.subscript'>
+	| PythonMap['nodes']['expression.subscript']
+	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
+	| PythonMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<PythonMap, 'expression.unary.negation'>
+	| PythonMap['nodes']['expression.unary.negation']
+	| BuildInput<PythonMap, 'expression.unary.not'>
+	| PythonMap['nodes']['expression.unary.not']
+	| BuildInput<PythonMap, 'expression.unary.plus'>
+	| PythonMap['nodes']['expression.unary.plus']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'identifier.qualified'>
+	| PythonMap['nodes']['identifier.qualified']
+	| BuildInput<PythonMap, 'literal.boolean.false'>
+	| PythonMap['nodes']['literal.boolean.false']
+	| BuildInput<PythonMap, 'literal.boolean.true'>
+	| PythonMap['nodes']['literal.boolean.true']
+	| BuildInput<PythonMap, 'literal.ellipsis'>
+	| PythonMap['nodes']['literal.ellipsis']
+	| BuildInput<PythonMap, 'literal.null'>
+	| PythonMap['nodes']['literal.null']
+	| BuildInput<PythonMap, 'literal.number.float'>
+	| PythonMap['nodes']['literal.number.float']
+	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+	| PythonMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<PythonMap, 'literal.number.float.scientific'>
+	| PythonMap['nodes']['literal.number.float.scientific']
+	| BuildInput<PythonMap, 'literal.number.integer'>
+	| PythonMap['nodes']['literal.number.integer']
+	| BuildInput<PythonMap, 'literal.number.integer.big'>
+	| PythonMap['nodes']['literal.number.integer.big']
+	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+	| PythonMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+	| PythonMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+	| PythonMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<PythonMap, 'literal.number.integer.binary'>
+	| PythonMap['nodes']['literal.number.integer.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.hex'>
+	| PythonMap['nodes']['literal.number.integer.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+	| PythonMap['nodes']['literal.number.integer.imaginary']
+	| BuildInput<PythonMap, 'literal.number.integer.octal'>
+	| PythonMap['nodes']['literal.number.integer.octal']
+	| BuildInput<PythonMap, 'literal.string'>
+	| PythonMap['nodes']['literal.string']
+	| BuildInput<PythonMap, 'literal.string.bytes'>
+	| PythonMap['nodes']['literal.string.bytes']
+	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.multiline']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+	| PythonMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.concatenated'>
+	| PythonMap['nodes']['literal.string.concatenated']
+	| BuildInput<PythonMap, 'literal.string.interpolated'>
+	| PythonMap['nodes']['literal.string.interpolated']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.multiline'>
+	| PythonMap['nodes']['literal.string.multiline']
+	| BuildInput<PythonMap, 'literal.string.raw'>
+	| PythonMap['nodes']['literal.string.raw']
+	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+	| PythonMap['nodes']['literal.string.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.unicode'>
+	| PythonMap['nodes']['literal.string.unicode']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| BuildInput<PythonMap, 'type.constrained'>
+	| PythonMap['nodes']['type.constrained']
+	| BuildInput<PythonMap, 'type.generic'>
+	| PythonMap['nodes']['type.generic']
+	| BuildInput<PythonMap, 'type.nullable'>
+	| PythonMap['nodes']['type.nullable']
+	| BuildInput<PythonMap, 'type.rest'>
+	| PythonMap['nodes']['type.rest']
+	| BuildInput<PythonMap, 'type.union'>
+	| PythonMap['nodes']['type.union']
+	| Unmapped<'python:as_pattern'>;
+const declaration_member_property_setter$361_returnType = (
+	value: declaration_member_property_setter$361_returnType$Item
+) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
+		return b.type(b.identifier(value));
+	}
+	if (typeof value === 'bigint') {
+		return b.type(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }));
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
+					213, 214, 215, 218, 219, 226, 227, 229, 232, 233, 234, 235, 236, 238, 239, 240, 241, 243, 244, 245, 246, 247,
+					251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+				]
+			)
+		)
+			return b.type(value);
+		return unseated('declaration.member.property.setter.returnType', value);
+	}
+	switch (value.$path) {
+		case 'expression.assignment':
+			return b.type(expression_assignment$148(value));
+		case 'expression.await':
+			return b.type(expression_await$262(value));
+		case 'expression.binary.arithmetic.add':
+			return b.type(expression_binary_arithmetic_add$214(value));
+		case 'expression.binary.arithmetic.divide':
+			return b.type(expression_binary_arithmetic_divide$214(value));
+		case 'expression.binary.arithmetic.exponent':
+			return b.type(expression_binary_arithmetic_exponent$214(value));
+		case 'expression.binary.arithmetic.floor_divide':
+			return b.type(expression_binary_arithmetic_floor_divide$214(value));
+		case 'expression.binary.arithmetic.modulo':
+			return b.type(expression_binary_arithmetic_modulo$214(value));
+		case 'expression.binary.arithmetic.multiply':
+			return b.type(expression_binary_arithmetic_multiply$214(value));
+		case 'expression.binary.arithmetic.subtract':
+			return b.type(expression_binary_arithmetic_subtract$214(value));
+		case 'expression.binary.bitwise.and':
+			return b.type(expression_binary_bitwise_and$214(value));
+		case 'expression.binary.bitwise.or':
+			return b.type(expression_binary_bitwise_or$214(value));
+		case 'expression.binary.bitwise.xor':
+			return b.type(expression_binary_bitwise_xor$214(value));
+		case 'expression.binary.comparison.chain':
+			return b.type(expression_binary_comparison_chain$218(value));
+		case 'expression.binary.comparison.equal':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'expression.binary.comparison.greater':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'expression.binary.comparison.greater_equal':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'expression.binary.comparison.less':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'expression.binary.comparison.less_equal':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'expression.binary.comparison.not_equal':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'expression.binary.comparison.not_equal.legacy':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'expression.binary.identity.is':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'expression.binary.identity.is_not':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'expression.binary.logical.and':
+			return b.type(expression_binary_logical_and$213(value));
+		case 'expression.binary.logical.or':
+			return b.type(expression_binary_logical_or$213(value));
+		case 'expression.binary.matrix_multiply':
+			return b.type(expression_binary_matrix_multiply$214(value));
+		case 'expression.binary.membership.in':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'expression.binary.membership.not_in':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'expression.binary.shift.left':
+			return b.type(expression_binary_shift_left$214(value));
+		case 'expression.binary.shift.right':
+			return b.type(expression_binary_shift_right$214(value));
+		case 'expression.call':
+			return b.type(expression_call$229(value));
+		case 'expression.call.member':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'expression.collection.list':
+			return b.type(expression_collection_list$238(value));
+		case 'expression.collection.map':
+			return b.type(expression_collection_map$241(value));
+		case 'expression.collection.set':
+			return b.type(expression_collection_set$239(value));
+		case 'expression.collection.tuple':
+			return b.type(expression_collection_tuple$240(value));
+		case 'expression.comprehension.generator':
+			return b.type(expression_comprehension_generator$246(value));
+		case 'expression.comprehension.list':
+			return b.type(expression_comprehension_list$243(value));
+		case 'expression.comprehension.map':
+			return b.type(expression_comprehension_map$244(value));
+		case 'expression.comprehension.set':
+			return b.type(expression_comprehension_set$245(value));
+		case 'expression.conditional':
+			return b.type(expression_conditional$251(value));
+		case 'expression.lambda':
+			return b.type(expression_lambda$219(value));
+		case 'expression.member':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'expression.parenthesized':
+			return b.type(expression_parenthesized$247(value));
+		case 'expression.subscript':
+			return b.type(expression_subscript$227(value));
+		case 'expression.unary.bitwise_not':
+			return b.type(expression_unary_bitwise_not$215(value));
+		case 'expression.unary.negation':
+			return b.type(expression_unary_negation$215(value));
+		case 'expression.unary.not':
+			return b.type(expression_unary_not$212(value));
+		case 'expression.unary.plus':
+			return b.type(expression_unary_plus$215(value));
+		case 'identifier':
+			return b.type(identifier$1(value));
+		case 'identifier.qualified':
+			return b.type(identifier_qualified$236(value));
+		case 'literal.boolean.false':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'literal.boolean.true':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'literal.ellipsis':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'literal.null':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'literal.number.float':
+			return b.type(literal_number_float$101(value));
+		case 'literal.number.float.leading_point':
+			return b.type(literal_number_float_leading_point$102(value));
+		case 'literal.number.float.scientific':
+			return b.type(literal_number_float_scientific$103(value));
+		case 'literal.number.integer':
+			return b.type(literal_number_integer$100(value));
+		case 'literal.number.integer.big':
+			return b.type(literal_number_integer_big$98(value));
+		case 'literal.number.integer.big.binary':
+			return b.type(literal_number_integer_big_binary$94(value));
+		case 'literal.number.integer.big.hex':
+			return b.type(literal_number_integer_big_hex$90(value));
+		case 'literal.number.integer.big.octal':
+			return b.type(literal_number_integer_big_octal$92(value));
+		case 'literal.number.integer.binary':
+			return b.type(literal_number_integer_binary$95(value));
+		case 'literal.number.integer.hex':
+			return b.type(literal_number_integer_hex$91(value));
+		case 'literal.number.integer.imaginary':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'literal.number.integer.octal':
+			return b.type(literal_number_integer_octal$93(value));
+		case 'literal.string':
+			return b.type(literal_string$253(value));
+		case 'literal.string.bytes':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'literal.string.bytes.multiline':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'literal.string.bytes.raw.multiline':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'literal.string.concatenated':
+			return b.type(literal_string_concatenated$252(value));
+		case 'literal.string.interpolated':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'literal.string.interpolated.deferred':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'literal.string.interpolated.deferred.multiline':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'literal.string.interpolated.deferred.raw':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'literal.string.interpolated.deferred.raw.multiline':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'literal.string.interpolated.multiline':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'literal.string.interpolated.raw':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'literal.string.interpolated.raw.multiline':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'literal.string.multiline':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'literal.string.raw':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'literal.string.raw.multiline':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'literal.string.unicode':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'pattern.rest':
+			return b.type(pattern_rest$206(value));
+		case 'type.constrained':
+			return b.type(type_constrained$235(value));
+		case 'type.generic':
+			return b.type(type_generic$233(value));
+		case 'type.nullable':
+			return unbuilt('declaration.member.property.setter.returnType', value);
+		case 'type.rest':
+			return b.type(type_rest$232(value));
+		case 'type.union':
+			return b.type(type_union$234(value));
+		default:
+			return unbuilt('declaration.member.property.setter.returnType', value);
+	}
+};
+type declaration_member_property_setter$361_statements$item$Item =
+	| 'break'
+	| 'continue'
+	| 'pass'
+	| Text<PythonMap, 'identifier'>
+	| Text<PythonMap, 'literal.number.integer'>
+	| Text<PythonMap, 'literal.number.integer.imaginary'>
+	| Text<PythonMap, 'statement.break'>
+	| Text<PythonMap, 'statement.continue'>
+	| Text<PythonMap, 'statement.empty'>
+	| bigint
+	| number
+	| BuildInput<PythonMap, 'declaration.constant'>
+	| PythonMap['nodes']['declaration.constant']
+	| BuildInput<PythonMap, 'declaration.function'>
+	| PythonMap['nodes']['declaration.function']
+	| BuildInput<PythonMap, 'declaration.type.class'>
+	| PythonMap['nodes']['declaration.type.class']
+	| BuildInput<PythonMap, 'declaration.type.type_alias'>
+	| PythonMap['nodes']['declaration.type.type_alias']
+	| BuildInput<PythonMap, 'declaration.variable'>
+	| PythonMap['nodes']['declaration.variable']
+	| BuildInput<PythonMap, 'expression.assignment'>
+	| PythonMap['nodes']['expression.assignment']
+	| BuildInput<PythonMap, 'expression.assignment.compound.add'>
+	| PythonMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<PythonMap, 'expression.assignment.compound.bitwise_and'>
+	| PythonMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<PythonMap, 'expression.assignment.compound.bitwise_or'>
+	| PythonMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<PythonMap, 'expression.assignment.compound.bitwise_xor'>
+	| PythonMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<PythonMap, 'expression.assignment.compound.divide'>
+	| PythonMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<PythonMap, 'expression.assignment.compound.exponent'>
+	| PythonMap['nodes']['expression.assignment.compound.exponent']
+	| BuildInput<PythonMap, 'expression.assignment.compound.floor_divide'>
+	| PythonMap['nodes']['expression.assignment.compound.floor_divide']
+	| BuildInput<PythonMap, 'expression.assignment.compound.matrix_multiply'>
+	| PythonMap['nodes']['expression.assignment.compound.matrix_multiply']
+	| BuildInput<PythonMap, 'expression.assignment.compound.modulo'>
+	| PythonMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<PythonMap, 'expression.assignment.compound.multiply'>
+	| PythonMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<PythonMap, 'expression.assignment.compound.shift_left'>
+	| PythonMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<PythonMap, 'expression.assignment.compound.shift_right'>
+	| PythonMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<PythonMap, 'expression.assignment.compound.subtract'>
+	| PythonMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<PythonMap, 'expression.await'>
+	| PythonMap['nodes']['expression.await']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
+	| PythonMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
+	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
+	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
+	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
+	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
+	| PythonMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
+	| PythonMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
+	| PythonMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
+	| PythonMap['nodes']['expression.binary.comparison.chain']
+	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
+	| PythonMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
+	| PythonMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
+	| PythonMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
+	| BuildInput<PythonMap, 'expression.binary.identity.is'>
+	| PythonMap['nodes']['expression.binary.identity.is']
+	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
+	| PythonMap['nodes']['expression.binary.identity.is_not']
+	| BuildInput<PythonMap, 'expression.binary.logical.and'>
+	| PythonMap['nodes']['expression.binary.logical.and']
+	| BuildInput<PythonMap, 'expression.binary.logical.or'>
+	| PythonMap['nodes']['expression.binary.logical.or']
+	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
+	| PythonMap['nodes']['expression.binary.matrix_multiply']
+	| BuildInput<PythonMap, 'expression.binary.membership.in'>
+	| PythonMap['nodes']['expression.binary.membership.in']
+	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
+	| PythonMap['nodes']['expression.binary.membership.not_in']
+	| BuildInput<PythonMap, 'expression.binary.shift.left'>
+	| PythonMap['nodes']['expression.binary.shift.left']
+	| BuildInput<PythonMap, 'expression.binary.shift.right'>
+	| PythonMap['nodes']['expression.binary.shift.right']
+	| BuildInput<PythonMap, 'expression.call'>
+	| PythonMap['nodes']['expression.call']
+	| BuildInput<PythonMap, 'expression.call.member'>
+	| PythonMap['nodes']['expression.call.member']
+	| BuildInput<PythonMap, 'expression.collection.list'>
+	| PythonMap['nodes']['expression.collection.list']
+	| BuildInput<PythonMap, 'expression.collection.map'>
+	| PythonMap['nodes']['expression.collection.map']
+	| BuildInput<PythonMap, 'expression.collection.set'>
+	| PythonMap['nodes']['expression.collection.set']
+	| BuildInput<PythonMap, 'expression.collection.tuple'>
+	| PythonMap['nodes']['expression.collection.tuple']
+	| BuildInput<PythonMap, 'expression.collection.tuple.bare'>
+	| PythonMap['nodes']['expression.collection.tuple.bare']
+	| BuildInput<PythonMap, 'expression.comprehension.generator'>
+	| PythonMap['nodes']['expression.comprehension.generator']
+	| BuildInput<PythonMap, 'expression.comprehension.list'>
+	| PythonMap['nodes']['expression.comprehension.list']
+	| BuildInput<PythonMap, 'expression.comprehension.map'>
+	| PythonMap['nodes']['expression.comprehension.map']
+	| BuildInput<PythonMap, 'expression.comprehension.set'>
+	| PythonMap['nodes']['expression.comprehension.set']
+	| BuildInput<PythonMap, 'expression.conditional'>
+	| PythonMap['nodes']['expression.conditional']
+	| BuildInput<PythonMap, 'expression.lambda'>
+	| PythonMap['nodes']['expression.lambda']
+	| BuildInput<PythonMap, 'expression.member'>
+	| PythonMap['nodes']['expression.member']
+	| BuildInput<PythonMap, 'expression.parenthesized'>
+	| PythonMap['nodes']['expression.parenthesized']
+	| BuildInput<PythonMap, 'expression.subscript'>
+	| PythonMap['nodes']['expression.subscript']
+	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
+	| PythonMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<PythonMap, 'expression.unary.negation'>
+	| PythonMap['nodes']['expression.unary.negation']
+	| BuildInput<PythonMap, 'expression.unary.not'>
+	| PythonMap['nodes']['expression.unary.not']
+	| BuildInput<PythonMap, 'expression.unary.plus'>
+	| PythonMap['nodes']['expression.unary.plus']
+	| BuildInput<PythonMap, 'expression.yield'>
+	| PythonMap['nodes']['expression.yield']
+	| BuildInput<PythonMap, 'expression.yield.delegate'>
+	| PythonMap['nodes']['expression.yield.delegate']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'literal.boolean.false'>
+	| PythonMap['nodes']['literal.boolean.false']
+	| BuildInput<PythonMap, 'literal.boolean.true'>
+	| PythonMap['nodes']['literal.boolean.true']
+	| BuildInput<PythonMap, 'literal.ellipsis'>
+	| PythonMap['nodes']['literal.ellipsis']
+	| BuildInput<PythonMap, 'literal.null'>
+	| PythonMap['nodes']['literal.null']
+	| BuildInput<PythonMap, 'literal.number.float'>
+	| PythonMap['nodes']['literal.number.float']
+	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+	| PythonMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<PythonMap, 'literal.number.float.scientific'>
+	| PythonMap['nodes']['literal.number.float.scientific']
+	| BuildInput<PythonMap, 'literal.number.integer'>
+	| PythonMap['nodes']['literal.number.integer']
+	| BuildInput<PythonMap, 'literal.number.integer.big'>
+	| PythonMap['nodes']['literal.number.integer.big']
+	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+	| PythonMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+	| PythonMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+	| PythonMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<PythonMap, 'literal.number.integer.binary'>
+	| PythonMap['nodes']['literal.number.integer.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.hex'>
+	| PythonMap['nodes']['literal.number.integer.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+	| PythonMap['nodes']['literal.number.integer.imaginary']
+	| BuildInput<PythonMap, 'literal.number.integer.octal'>
+	| PythonMap['nodes']['literal.number.integer.octal']
+	| BuildInput<PythonMap, 'literal.string'>
+	| PythonMap['nodes']['literal.string']
+	| BuildInput<PythonMap, 'literal.string.bytes'>
+	| PythonMap['nodes']['literal.string.bytes']
+	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.multiline']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+	| PythonMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.concatenated'>
+	| PythonMap['nodes']['literal.string.concatenated']
+	| BuildInput<PythonMap, 'literal.string.interpolated'>
+	| PythonMap['nodes']['literal.string.interpolated']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.multiline'>
+	| PythonMap['nodes']['literal.string.multiline']
+	| BuildInput<PythonMap, 'literal.string.raw'>
+	| PythonMap['nodes']['literal.string.raw']
+	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+	| PythonMap['nodes']['literal.string.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.unicode'>
+	| PythonMap['nodes']['literal.string.unicode']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| BuildInput<PythonMap, 'statement.assert'>
+	| PythonMap['nodes']['statement.assert']
+	| BuildInput<PythonMap, 'statement.delete'>
+	| PythonMap['nodes']['statement.delete']
+	| BuildInput<PythonMap, 'statement.exec'>
+	| PythonMap['nodes']['statement.exec']
+	| BuildInput<PythonMap, 'statement.global'>
+	| PythonMap['nodes']['statement.global']
+	| BuildInput<PythonMap, 'statement.if'>
+	| PythonMap['nodes']['statement.if']
+	| BuildInput<PythonMap, 'statement.import'>
+	| PythonMap['nodes']['statement.import']
+	| BuildInput<PythonMap, 'statement.import.from'>
+	| PythonMap['nodes']['statement.import.from']
+	| BuildInput<PythonMap, 'statement.import.future'>
+	| PythonMap['nodes']['statement.import.future']
+	| BuildInput<PythonMap, 'statement.loop.for_each'>
+	| PythonMap['nodes']['statement.loop.for_each']
+	| BuildInput<PythonMap, 'statement.loop.while'>
+	| PythonMap['nodes']['statement.loop.while']
+	| BuildInput<PythonMap, 'statement.match'>
+	| PythonMap['nodes']['statement.match']
+	| BuildInput<PythonMap, 'statement.nonlocal'>
+	| PythonMap['nodes']['statement.nonlocal']
+	| BuildInput<PythonMap, 'statement.print'>
+	| PythonMap['nodes']['statement.print']
+	| BuildInput<PythonMap, 'statement.resource'>
+	| PythonMap['nodes']['statement.resource']
+	| BuildInput<PythonMap, 'statement.return'>
+	| PythonMap['nodes']['statement.return']
+	| BuildInput<PythonMap, 'statement.throw'>
+	| PythonMap['nodes']['statement.throw']
+	| BuildInput<PythonMap, 'statement.try'>
+	| PythonMap['nodes']['statement.try']
+	| Unmapped<'python:as_pattern'>;
+const declaration_member_property_setter$361_statements$item = (
+	value: declaration_member_property_setter$361_statements$item$Item
+) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'break':
+				return b.simpleStatements(b.simpleStatementsElements(154));
+			case 'continue':
+				return b.simpleStatements(b.simpleStatementsElements(155));
+			case 'pass':
+				return b.simpleStatements(b.simpleStatementsElements(153));
+			default:
+				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value))));
+				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value))));
+		}
+	}
+	if (typeof value === 'bigint') {
+		return b.simpleStatements(
+			b.simpleStatementsElements(
+				b.expressionStatement(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }))
+			)
+		);
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }))
+				)
+			);
+		}
+		return b.simpleStatements(
+			b.simpleStatementsElements(
+				b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
+			)
+		);
+	}
+	if (isNode(value)) {
+		if (seated(value, [134, 156, 159, 162, 163, 164, 167, 170, 179])) return value;
+		if (seated(value, [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178]))
+			return b.simpleStatements(b.simpleStatementsElements(value));
+		if (seated(value, [287, 288])) return b.simpleStatements(b.simpleStatementsElements(b.printStatement(value)));
+		if (
+			seated(
+				value,
+				[
+					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
+					213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
+					253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+				]
+			)
+		)
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(value)));
+		return unseated('declaration.member.property.setter.statements', value);
+	}
+	switch (value.$path) {
+		case 'declaration.constant':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'declaration.function': {
+			if ((value.decorators ?? []).length === 0) return declaration_function$170(value);
+			return b.decoratedDefinition({
+				definition: declaration_function$170(value),
+				decorators: nonEmpty(
+					'declaration.function.decorators',
+					(value.decorators ?? []).map(declaration_function$170_decorators)
+				)
+			});
+		}
+		case 'declaration.type.class': {
+			if ((value.decorators ?? []).length === 0) return declaration_type_class$179(value);
+			return b.decoratedDefinition({
+				definition: declaration_type_class$179(value),
+				decorators: nonEmpty(
+					'declaration.type.class.decorators',
+					(value.decorators ?? []).map(declaration_type_class$179_decorators)
+				)
+			});
+		}
+		case 'declaration.type.type_alias':
+			return b.simpleStatements(b.simpleStatementsElements(declaration_type_type_alias$178(value)));
+		case 'declaration.variable':
+			if (value.name !== undefined && value.value !== undefined && value.type === undefined)
+				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$302(value))));
+			if (value.name !== undefined && value.type !== undefined && value.value === undefined)
+				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$303(value))));
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$304(value))));
+		case 'expression.assignment':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_assignment$148(value))));
+		case 'expression.assignment.compound.add':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_add$222(value)))
+			);
+		case 'expression.assignment.compound.bitwise_and':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_bitwise_and$222(value)))
+			);
+		case 'expression.assignment.compound.bitwise_or':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_bitwise_or$222(value)))
+			);
+		case 'expression.assignment.compound.bitwise_xor':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_bitwise_xor$222(value)))
+			);
+		case 'expression.assignment.compound.divide':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_divide$222(value)))
+			);
+		case 'expression.assignment.compound.exponent':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_exponent$222(value)))
+			);
+		case 'expression.assignment.compound.floor_divide':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_floor_divide$222(value)))
+			);
+		case 'expression.assignment.compound.matrix_multiply':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_matrix_multiply$222(value)))
+			);
+		case 'expression.assignment.compound.modulo':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_modulo$222(value)))
+			);
+		case 'expression.assignment.compound.multiply':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_multiply$222(value)))
+			);
+		case 'expression.assignment.compound.shift_left':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_shift_left$222(value)))
+			);
+		case 'expression.assignment.compound.shift_right':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_shift_right$222(value)))
+			);
+		case 'expression.assignment.compound.subtract':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_subtract$222(value)))
+			);
+		case 'expression.await':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_await$262(value))));
+		case 'expression.binary.arithmetic.add':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_add$214(value)))
+			);
+		case 'expression.binary.arithmetic.divide':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_divide$214(value)))
+			);
+		case 'expression.binary.arithmetic.exponent':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_exponent$214(value)))
+			);
+		case 'expression.binary.arithmetic.floor_divide':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_floor_divide$214(value)))
+			);
+		case 'expression.binary.arithmetic.modulo':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_modulo$214(value)))
+			);
+		case 'expression.binary.arithmetic.multiply':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_multiply$214(value)))
+			);
+		case 'expression.binary.arithmetic.subtract':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_subtract$214(value)))
+			);
+		case 'expression.binary.bitwise.and':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_bitwise_and$214(value)))
+			);
+		case 'expression.binary.bitwise.or':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_bitwise_or$214(value)))
+			);
+		case 'expression.binary.bitwise.xor':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_bitwise_xor$214(value)))
+			);
+		case 'expression.binary.comparison.chain':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_comparison_chain$218(value)))
+			);
+		case 'expression.binary.comparison.equal':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'expression.binary.comparison.greater':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'expression.binary.comparison.greater_equal':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'expression.binary.comparison.less':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'expression.binary.comparison.less_equal':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'expression.binary.comparison.not_equal':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'expression.binary.comparison.not_equal.legacy':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'expression.binary.identity.is':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'expression.binary.identity.is_not':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'expression.binary.logical.and':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_logical_and$213(value)))
+			);
+		case 'expression.binary.logical.or':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_logical_or$213(value)))
+			);
+		case 'expression.binary.matrix_multiply':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_matrix_multiply$214(value)))
+			);
+		case 'expression.binary.membership.in':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'expression.binary.membership.not_in':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'expression.binary.shift.left':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_shift_left$214(value)))
+			);
+		case 'expression.binary.shift.right':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_shift_right$214(value)))
+			);
+		case 'expression.call':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_call$229(value))));
+		case 'expression.call.member':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'expression.collection.list':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_collection_list$238(value)))
+			);
+		case 'expression.collection.map':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_collection_map$241(value)))
+			);
+		case 'expression.collection.set':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_collection_set$239(value)))
+			);
+		case 'expression.collection.tuple':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_collection_tuple$240(value)))
+			);
+		case 'expression.collection.tuple.bare':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'expression.comprehension.generator':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_generator$246(value)))
+			);
+		case 'expression.comprehension.list':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_list$243(value)))
+			);
+		case 'expression.comprehension.map':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_map$244(value)))
+			);
+		case 'expression.comprehension.set':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_set$245(value)))
+			);
+		case 'expression.conditional':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_conditional$251(value))));
+		case 'expression.lambda':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_lambda$219(value))));
+		case 'expression.member':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'expression.parenthesized':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_parenthesized$247(value))));
+		case 'expression.subscript':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_subscript$227(value))));
+		case 'expression.unary.bitwise_not':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_unary_bitwise_not$215(value)))
+			);
+		case 'expression.unary.negation':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_unary_negation$215(value)))
+			);
+		case 'expression.unary.not':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_unary_not$212(value))));
+		case 'expression.unary.plus':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_unary_plus$215(value))));
+		case 'expression.yield':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_yield$225(value))));
+		case 'expression.yield.delegate':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'identifier':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(identifier$1(value))));
+		case 'literal.boolean.false':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'literal.boolean.true':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'literal.ellipsis':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'literal.null':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'literal.number.float':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_float$101(value))));
+		case 'literal.number.float.leading_point':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_float_leading_point$102(value)))
+			);
+		case 'literal.number.float.scientific':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_float_scientific$103(value)))
+			);
+		case 'literal.number.integer':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_integer$100(value))));
+		case 'literal.number.integer.big':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big$98(value)))
+			);
+		case 'literal.number.integer.big.binary':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_binary$94(value)))
+			);
+		case 'literal.number.integer.big.hex':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_hex$90(value)))
+			);
+		case 'literal.number.integer.big.octal':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_octal$92(value)))
+			);
+		case 'literal.number.integer.binary':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_binary$95(value)))
+			);
+		case 'literal.number.integer.hex':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_hex$91(value)))
+			);
+		case 'literal.number.integer.imaginary':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'literal.number.integer.octal':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_octal$93(value)))
+			);
+		case 'literal.string':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_string$253(value))));
+		case 'literal.string.bytes':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'literal.string.bytes.multiline':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'literal.string.bytes.raw.multiline':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'literal.string.concatenated':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_string_concatenated$252(value)))
+			);
+		case 'literal.string.interpolated':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'literal.string.interpolated.deferred':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'literal.string.interpolated.deferred.multiline':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'literal.string.interpolated.deferred.raw':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'literal.string.interpolated.deferred.raw.multiline':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'literal.string.interpolated.multiline':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'literal.string.interpolated.raw':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'literal.string.interpolated.raw.multiline':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'literal.string.multiline':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'literal.string.raw':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'literal.string.raw.multiline':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'literal.string.unicode':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'pattern.rest':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(pattern_rest$206(value))));
+		case 'statement.assert':
+			return b.simpleStatements(b.simpleStatementsElements(statement_assert$146(value)));
+		case 'statement.delete':
+			return b.simpleStatements(b.simpleStatementsElements(statement_delete$151(value)));
+		case 'statement.exec':
+			return b.simpleStatements(b.simpleStatementsElements(statement_exec$177(value)));
+		case 'statement.global':
+			return b.simpleStatements(b.simpleStatementsElements(statement_global$175(value)));
+		case 'statement.if':
+			return statement_if$156(value);
+		case 'statement.import':
+			return b.simpleStatements(b.simpleStatementsElements(statement_import$136(value)));
+		case 'statement.import.from':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'statement.import.future':
+			return b.simpleStatements(b.simpleStatementsElements(statement_import_future$139(value)));
+		case 'statement.loop.for_each':
+			return statement_loop_for_each$162(value);
+		case 'statement.loop.while':
+			return statement_loop_while$163(value);
+		case 'statement.match':
+			return statement_match$159(value);
+		case 'statement.nonlocal':
+			return b.simpleStatements(b.simpleStatementsElements(statement_nonlocal$176(value)));
+		case 'statement.print':
+			return unbuilt('declaration.member.property.setter.statements', value);
+		case 'statement.resource':
+			return statement_resource$167(value);
+		case 'statement.return':
+			return b.simpleStatements(b.simpleStatementsElements(statement_return$150(value)));
+		case 'statement.throw':
+			return b.simpleStatements(b.simpleStatementsElements(statement_throw$152(value)));
+		case 'statement.try':
+			return statement_try$164(value);
+		default:
+			return unbuilt('declaration.member.property.setter.statements', value);
+	}
+};
+type declaration_member_property_setter$361_typeParameters$item$Item =
+	| BuildInput<PythonMap, 'declaration.type_parameter'>
+	| PythonMap['nodes']['declaration.type_parameter']
+	| BuildInput<PythonMap, 'declaration.type_parameter.parameters'>
+	| PythonMap['nodes']['declaration.type_parameter.parameters']
+	| BuildInput<PythonMap, 'declaration.type_parameter.variadic'>
+	| PythonMap['nodes']['declaration.type_parameter.variadic'];
+const declaration_member_property_setter$361_typeParameters$item = (
+	value: declaration_member_property_setter$361_typeParameters$item$Item
+) => {
+	if (typeof value === 'number') {
+		if (seated(value, [275, 313, 314, 315])) return value;
+		return unseated('declaration.member.property.setter.typeParameters', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [275, 313, 314, 315])) return value;
+		return unseated('declaration.member.property.setter.typeParameters', value);
+	}
+	switch (value.$path) {
+		case 'declaration.type_parameter':
+			return unbuilt('declaration.member.property.setter.typeParameters', value);
+		case 'declaration.type_parameter.parameters':
+			return declaration_type_parameter_parameters$315(value);
+		case 'declaration.type_parameter.variadic':
+			return declaration_type_parameter_variadic$314(value);
+		default:
+			return unbuilt('declaration.member.property.setter.typeParameters', value);
 	}
 };
 type declaration_parameter_defaulted$204_default$Item =
@@ -10678,25 +11983,574 @@ const declaration_parameter_typed_default$205_type = (value: declaration_paramet
 			return unbuilt('declaration.parameter.typed_default.type', value);
 	}
 };
-type declaration_property_getter$361_decorators$Item =
+type declaration_type_class$179_bases$item$Item =
 	| Text<PythonMap, 'identifier'>
+	| Text<PythonMap, 'literal.number.integer'>
+	| Text<PythonMap, 'literal.number.integer.imaginary'>
+	| bigint
+	| number
+	| BuildInput<PythonMap, 'argument.named'>
+	| PythonMap['nodes']['argument.named']
+	| BuildInput<PythonMap, 'element.spread'>
+	| PythonMap['nodes']['element.spread']
+	| BuildInput<PythonMap, 'element.spread.map'>
+	| PythonMap['nodes']['element.spread.map']
+	| BuildInput<PythonMap, 'element.spread.parenthesized'>
+	| PythonMap['nodes']['element.spread.parenthesized']
+	| BuildInput<PythonMap, 'expression.assignment'>
+	| PythonMap['nodes']['expression.assignment']
+	| BuildInput<PythonMap, 'expression.await'>
+	| PythonMap['nodes']['expression.await']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
+	| PythonMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
+	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
+	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
+	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
+	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
+	| PythonMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
+	| PythonMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
+	| PythonMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
+	| PythonMap['nodes']['expression.binary.comparison.chain']
+	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
+	| PythonMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
+	| PythonMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
+	| PythonMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
+	| BuildInput<PythonMap, 'expression.binary.identity.is'>
+	| PythonMap['nodes']['expression.binary.identity.is']
+	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
+	| PythonMap['nodes']['expression.binary.identity.is_not']
+	| BuildInput<PythonMap, 'expression.binary.logical.and'>
+	| PythonMap['nodes']['expression.binary.logical.and']
+	| BuildInput<PythonMap, 'expression.binary.logical.or'>
+	| PythonMap['nodes']['expression.binary.logical.or']
+	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
+	| PythonMap['nodes']['expression.binary.matrix_multiply']
+	| BuildInput<PythonMap, 'expression.binary.membership.in'>
+	| PythonMap['nodes']['expression.binary.membership.in']
+	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
+	| PythonMap['nodes']['expression.binary.membership.not_in']
+	| BuildInput<PythonMap, 'expression.binary.shift.left'>
+	| PythonMap['nodes']['expression.binary.shift.left']
+	| BuildInput<PythonMap, 'expression.binary.shift.right'>
+	| PythonMap['nodes']['expression.binary.shift.right']
+	| BuildInput<PythonMap, 'expression.call'>
+	| PythonMap['nodes']['expression.call']
+	| BuildInput<PythonMap, 'expression.call.member'>
+	| PythonMap['nodes']['expression.call.member']
+	| BuildInput<PythonMap, 'expression.collection.list'>
+	| PythonMap['nodes']['expression.collection.list']
+	| BuildInput<PythonMap, 'expression.collection.map'>
+	| PythonMap['nodes']['expression.collection.map']
+	| BuildInput<PythonMap, 'expression.collection.set'>
+	| PythonMap['nodes']['expression.collection.set']
+	| BuildInput<PythonMap, 'expression.collection.tuple'>
+	| PythonMap['nodes']['expression.collection.tuple']
+	| BuildInput<PythonMap, 'expression.comprehension.generator'>
+	| PythonMap['nodes']['expression.comprehension.generator']
+	| BuildInput<PythonMap, 'expression.comprehension.list'>
+	| PythonMap['nodes']['expression.comprehension.list']
+	| BuildInput<PythonMap, 'expression.comprehension.map'>
+	| PythonMap['nodes']['expression.comprehension.map']
+	| BuildInput<PythonMap, 'expression.comprehension.set'>
+	| PythonMap['nodes']['expression.comprehension.set']
+	| BuildInput<PythonMap, 'expression.conditional'>
+	| PythonMap['nodes']['expression.conditional']
+	| BuildInput<PythonMap, 'expression.lambda'>
+	| PythonMap['nodes']['expression.lambda']
 	| BuildInput<PythonMap, 'expression.member'>
 	| PythonMap['nodes']['expression.member']
+	| BuildInput<PythonMap, 'expression.parenthesized'>
+	| PythonMap['nodes']['expression.parenthesized']
+	| BuildInput<PythonMap, 'expression.subscript'>
+	| PythonMap['nodes']['expression.subscript']
+	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
+	| PythonMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<PythonMap, 'expression.unary.negation'>
+	| PythonMap['nodes']['expression.unary.negation']
+	| BuildInput<PythonMap, 'expression.unary.not'>
+	| PythonMap['nodes']['expression.unary.not']
+	| BuildInput<PythonMap, 'expression.unary.plus'>
+	| PythonMap['nodes']['expression.unary.plus']
 	| BuildInput<PythonMap, 'identifier'>
 	| PythonMap['nodes']['identifier']
-	| {
-			readonly $path: 'literal.number.float';
-			readonly $value: number;
-	  }
-	| {
-			readonly $path: 'literal.number.integer';
-			readonly $value: number;
-	  }
-	| {
-			readonly $path: 'literal.number.integer.big';
-			readonly $value: bigint;
-	  };
-const declaration_property_getter$361_decorators = (value: declaration_property_getter$361_decorators$Item) => {
+	| BuildInput<PythonMap, 'literal.boolean.false'>
+	| PythonMap['nodes']['literal.boolean.false']
+	| BuildInput<PythonMap, 'literal.boolean.true'>
+	| PythonMap['nodes']['literal.boolean.true']
+	| BuildInput<PythonMap, 'literal.ellipsis'>
+	| PythonMap['nodes']['literal.ellipsis']
+	| BuildInput<PythonMap, 'literal.null'>
+	| PythonMap['nodes']['literal.null']
+	| BuildInput<PythonMap, 'literal.number.float'>
+	| PythonMap['nodes']['literal.number.float']
+	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+	| PythonMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<PythonMap, 'literal.number.float.scientific'>
+	| PythonMap['nodes']['literal.number.float.scientific']
+	| BuildInput<PythonMap, 'literal.number.integer'>
+	| PythonMap['nodes']['literal.number.integer']
+	| BuildInput<PythonMap, 'literal.number.integer.big'>
+	| PythonMap['nodes']['literal.number.integer.big']
+	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+	| PythonMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+	| PythonMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+	| PythonMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<PythonMap, 'literal.number.integer.binary'>
+	| PythonMap['nodes']['literal.number.integer.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.hex'>
+	| PythonMap['nodes']['literal.number.integer.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+	| PythonMap['nodes']['literal.number.integer.imaginary']
+	| BuildInput<PythonMap, 'literal.number.integer.octal'>
+	| PythonMap['nodes']['literal.number.integer.octal']
+	| BuildInput<PythonMap, 'literal.string'>
+	| PythonMap['nodes']['literal.string']
+	| BuildInput<PythonMap, 'literal.string.bytes'>
+	| PythonMap['nodes']['literal.string.bytes']
+	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.multiline']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+	| PythonMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.concatenated'>
+	| PythonMap['nodes']['literal.string.concatenated']
+	| BuildInput<PythonMap, 'literal.string.interpolated'>
+	| PythonMap['nodes']['literal.string.interpolated']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.multiline'>
+	| PythonMap['nodes']['literal.string.multiline']
+	| BuildInput<PythonMap, 'literal.string.raw'>
+	| PythonMap['nodes']['literal.string.raw']
+	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+	| PythonMap['nodes']['literal.string.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.unicode'>
+	| PythonMap['nodes']['literal.string.unicode']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| Unmapped<'python:as_pattern'>;
+const declaration_type_class$179_bases$item = (value: declaration_type_class$179_bases$item$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 173, 174, 181, 206, 208,
+					210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 237, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251,
+					252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+				]
+			)
+		)
+			return value;
+		return unseated('declaration.type.class.bases', value);
+	}
+	switch (value.$path) {
+		case 'argument.named':
+			return argument_named$237(value);
+		case 'element.spread':
+			return element_spread$173(value);
+		case 'element.spread.map':
+			return element_spread_map$174(value);
+		case 'element.spread.parenthesized':
+			return element_spread_parenthesized$181(value);
+		case 'expression.assignment':
+			return expression_assignment$148(value);
+		case 'expression.await':
+			return expression_await$262(value);
+		case 'expression.binary.arithmetic.add':
+			return expression_binary_arithmetic_add$214(value);
+		case 'expression.binary.arithmetic.divide':
+			return expression_binary_arithmetic_divide$214(value);
+		case 'expression.binary.arithmetic.exponent':
+			return expression_binary_arithmetic_exponent$214(value);
+		case 'expression.binary.arithmetic.floor_divide':
+			return expression_binary_arithmetic_floor_divide$214(value);
+		case 'expression.binary.arithmetic.modulo':
+			return expression_binary_arithmetic_modulo$214(value);
+		case 'expression.binary.arithmetic.multiply':
+			return expression_binary_arithmetic_multiply$214(value);
+		case 'expression.binary.arithmetic.subtract':
+			return expression_binary_arithmetic_subtract$214(value);
+		case 'expression.binary.bitwise.and':
+			return expression_binary_bitwise_and$214(value);
+		case 'expression.binary.bitwise.or':
+			return expression_binary_bitwise_or$214(value);
+		case 'expression.binary.bitwise.xor':
+			return expression_binary_bitwise_xor$214(value);
+		case 'expression.binary.comparison.chain':
+			return expression_binary_comparison_chain$218(value);
+		case 'expression.binary.comparison.equal':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'expression.binary.comparison.greater':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'expression.binary.comparison.greater_equal':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'expression.binary.comparison.less':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'expression.binary.comparison.less_equal':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'expression.binary.comparison.not_equal':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'expression.binary.comparison.not_equal.legacy':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'expression.binary.identity.is':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'expression.binary.identity.is_not':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'expression.binary.logical.and':
+			return expression_binary_logical_and$213(value);
+		case 'expression.binary.logical.or':
+			return expression_binary_logical_or$213(value);
+		case 'expression.binary.matrix_multiply':
+			return expression_binary_matrix_multiply$214(value);
+		case 'expression.binary.membership.in':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'expression.binary.membership.not_in':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'expression.binary.shift.left':
+			return expression_binary_shift_left$214(value);
+		case 'expression.binary.shift.right':
+			return expression_binary_shift_right$214(value);
+		case 'expression.call':
+			return expression_call$229(value);
+		case 'expression.call.member':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'expression.collection.list':
+			return expression_collection_list$238(value);
+		case 'expression.collection.map':
+			return expression_collection_map$241(value);
+		case 'expression.collection.set':
+			return expression_collection_set$239(value);
+		case 'expression.collection.tuple':
+			return expression_collection_tuple$240(value);
+		case 'expression.comprehension.generator':
+			return expression_comprehension_generator$246(value);
+		case 'expression.comprehension.list':
+			return expression_comprehension_list$243(value);
+		case 'expression.comprehension.map':
+			return expression_comprehension_map$244(value);
+		case 'expression.comprehension.set':
+			return expression_comprehension_set$245(value);
+		case 'expression.conditional':
+			return expression_conditional$251(value);
+		case 'expression.lambda':
+			return expression_lambda$219(value);
+		case 'expression.member':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'expression.parenthesized':
+			return expression_parenthesized$247(value);
+		case 'expression.subscript':
+			return expression_subscript$227(value);
+		case 'expression.unary.bitwise_not':
+			return expression_unary_bitwise_not$215(value);
+		case 'expression.unary.negation':
+			return expression_unary_negation$215(value);
+		case 'expression.unary.not':
+			return expression_unary_not$212(value);
+		case 'expression.unary.plus':
+			return expression_unary_plus$215(value);
+		case 'identifier':
+			return identifier$1(value);
+		case 'literal.boolean.false':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'literal.boolean.true':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'literal.ellipsis':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'literal.null':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'literal.number.float':
+			return literal_number_float$101(value);
+		case 'literal.number.float.leading_point':
+			return literal_number_float_leading_point$102(value);
+		case 'literal.number.float.scientific':
+			return literal_number_float_scientific$103(value);
+		case 'literal.number.integer':
+			return literal_number_integer$100(value);
+		case 'literal.number.integer.big':
+			return literal_number_integer_big$98(value);
+		case 'literal.number.integer.big.binary':
+			return literal_number_integer_big_binary$94(value);
+		case 'literal.number.integer.big.hex':
+			return literal_number_integer_big_hex$90(value);
+		case 'literal.number.integer.big.octal':
+			return literal_number_integer_big_octal$92(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$95(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$91(value);
+		case 'literal.number.integer.imaginary':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$93(value);
+		case 'literal.string':
+			return literal_string$253(value);
+		case 'literal.string.bytes':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'literal.string.bytes.multiline':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'literal.string.bytes.raw.multiline':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'literal.string.concatenated':
+			return literal_string_concatenated$252(value);
+		case 'literal.string.interpolated':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'literal.string.interpolated.deferred':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'literal.string.interpolated.deferred.multiline':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'literal.string.interpolated.deferred.raw':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'literal.string.interpolated.deferred.raw.multiline':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'literal.string.interpolated.multiline':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'literal.string.interpolated.raw':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'literal.string.interpolated.raw.multiline':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'literal.string.multiline':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'literal.string.raw':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'literal.string.raw.multiline':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'literal.string.unicode':
+			return unbuilt('declaration.type.class.bases', value);
+		case 'pattern.rest':
+			return pattern_rest$206(value);
+		default:
+			return unbuilt('declaration.type.class.bases', value);
+	}
+};
+type declaration_type_class$179_decorators$Item =
+	| Text<PythonMap, 'identifier'>
+	| Text<PythonMap, 'literal.number.integer'>
+	| Text<PythonMap, 'literal.number.integer.imaginary'>
+	| bigint
+	| number
+	| BuildInput<PythonMap, 'expression.assignment'>
+	| PythonMap['nodes']['expression.assignment']
+	| BuildInput<PythonMap, 'expression.await'>
+	| PythonMap['nodes']['expression.await']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
+	| PythonMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
+	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
+	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
+	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
+	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
+	| PythonMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
+	| PythonMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
+	| PythonMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
+	| PythonMap['nodes']['expression.binary.comparison.chain']
+	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
+	| PythonMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
+	| PythonMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
+	| PythonMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
+	| BuildInput<PythonMap, 'expression.binary.identity.is'>
+	| PythonMap['nodes']['expression.binary.identity.is']
+	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
+	| PythonMap['nodes']['expression.binary.identity.is_not']
+	| BuildInput<PythonMap, 'expression.binary.logical.and'>
+	| PythonMap['nodes']['expression.binary.logical.and']
+	| BuildInput<PythonMap, 'expression.binary.logical.or'>
+	| PythonMap['nodes']['expression.binary.logical.or']
+	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
+	| PythonMap['nodes']['expression.binary.matrix_multiply']
+	| BuildInput<PythonMap, 'expression.binary.membership.in'>
+	| PythonMap['nodes']['expression.binary.membership.in']
+	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
+	| PythonMap['nodes']['expression.binary.membership.not_in']
+	| BuildInput<PythonMap, 'expression.binary.shift.left'>
+	| PythonMap['nodes']['expression.binary.shift.left']
+	| BuildInput<PythonMap, 'expression.binary.shift.right'>
+	| PythonMap['nodes']['expression.binary.shift.right']
+	| BuildInput<PythonMap, 'expression.call'>
+	| PythonMap['nodes']['expression.call']
+	| BuildInput<PythonMap, 'expression.call.member'>
+	| PythonMap['nodes']['expression.call.member']
+	| BuildInput<PythonMap, 'expression.collection.list'>
+	| PythonMap['nodes']['expression.collection.list']
+	| BuildInput<PythonMap, 'expression.collection.map'>
+	| PythonMap['nodes']['expression.collection.map']
+	| BuildInput<PythonMap, 'expression.collection.set'>
+	| PythonMap['nodes']['expression.collection.set']
+	| BuildInput<PythonMap, 'expression.collection.tuple'>
+	| PythonMap['nodes']['expression.collection.tuple']
+	| BuildInput<PythonMap, 'expression.comprehension.generator'>
+	| PythonMap['nodes']['expression.comprehension.generator']
+	| BuildInput<PythonMap, 'expression.comprehension.list'>
+	| PythonMap['nodes']['expression.comprehension.list']
+	| BuildInput<PythonMap, 'expression.comprehension.map'>
+	| PythonMap['nodes']['expression.comprehension.map']
+	| BuildInput<PythonMap, 'expression.comprehension.set'>
+	| PythonMap['nodes']['expression.comprehension.set']
+	| BuildInput<PythonMap, 'expression.conditional'>
+	| PythonMap['nodes']['expression.conditional']
+	| BuildInput<PythonMap, 'expression.lambda'>
+	| PythonMap['nodes']['expression.lambda']
+	| BuildInput<PythonMap, 'expression.member'>
+	| PythonMap['nodes']['expression.member']
+	| BuildInput<PythonMap, 'expression.parenthesized'>
+	| PythonMap['nodes']['expression.parenthesized']
+	| BuildInput<PythonMap, 'expression.subscript'>
+	| PythonMap['nodes']['expression.subscript']
+	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
+	| PythonMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<PythonMap, 'expression.unary.negation'>
+	| PythonMap['nodes']['expression.unary.negation']
+	| BuildInput<PythonMap, 'expression.unary.not'>
+	| PythonMap['nodes']['expression.unary.not']
+	| BuildInput<PythonMap, 'expression.unary.plus'>
+	| PythonMap['nodes']['expression.unary.plus']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'literal.boolean.false'>
+	| PythonMap['nodes']['literal.boolean.false']
+	| BuildInput<PythonMap, 'literal.boolean.true'>
+	| PythonMap['nodes']['literal.boolean.true']
+	| BuildInput<PythonMap, 'literal.ellipsis'>
+	| PythonMap['nodes']['literal.ellipsis']
+	| BuildInput<PythonMap, 'literal.null'>
+	| PythonMap['nodes']['literal.null']
+	| BuildInput<PythonMap, 'literal.number.float'>
+	| PythonMap['nodes']['literal.number.float']
+	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+	| PythonMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<PythonMap, 'literal.number.float.scientific'>
+	| PythonMap['nodes']['literal.number.float.scientific']
+	| BuildInput<PythonMap, 'literal.number.integer'>
+	| PythonMap['nodes']['literal.number.integer']
+	| BuildInput<PythonMap, 'literal.number.integer.big'>
+	| PythonMap['nodes']['literal.number.integer.big']
+	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+	| PythonMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+	| PythonMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+	| PythonMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<PythonMap, 'literal.number.integer.binary'>
+	| PythonMap['nodes']['literal.number.integer.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.hex'>
+	| PythonMap['nodes']['literal.number.integer.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+	| PythonMap['nodes']['literal.number.integer.imaginary']
+	| BuildInput<PythonMap, 'literal.number.integer.octal'>
+	| PythonMap['nodes']['literal.number.integer.octal']
+	| BuildInput<PythonMap, 'literal.string'>
+	| PythonMap['nodes']['literal.string']
+	| BuildInput<PythonMap, 'literal.string.bytes'>
+	| PythonMap['nodes']['literal.string.bytes']
+	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.multiline']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+	| PythonMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.concatenated'>
+	| PythonMap['nodes']['literal.string.concatenated']
+	| BuildInput<PythonMap, 'literal.string.interpolated'>
+	| PythonMap['nodes']['literal.string.interpolated']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.multiline'>
+	| PythonMap['nodes']['literal.string.multiline']
+	| BuildInput<PythonMap, 'literal.string.raw'>
+	| PythonMap['nodes']['literal.string.raw']
+	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+	| PythonMap['nodes']['literal.string.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.unicode'>
+	| PythonMap['nodes']['literal.string.unicode']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| Unmapped<'python:as_pattern'>;
+const declaration_type_class$179_decorators = (value: declaration_type_class$179_decorators$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.decorator(b.identifier(value));
 		return b.decorator(b.identifier(value));
@@ -10722,57 +12576,182 @@ const declaration_property_getter$361_decorators = (value: declaration_property_
 			)
 		)
 			return b.decorator(value);
-		return unseated('declaration.property.getter.decorators', value);
+		return unseated('declaration.type.class.decorators', value);
 	}
 	switch (value.$path) {
+		case 'expression.assignment':
+			return b.decorator(expression_assignment$148(value));
+		case 'expression.await':
+			return b.decorator(expression_await$262(value));
+		case 'expression.binary.arithmetic.add':
+			return b.decorator(expression_binary_arithmetic_add$214(value));
+		case 'expression.binary.arithmetic.divide':
+			return b.decorator(expression_binary_arithmetic_divide$214(value));
+		case 'expression.binary.arithmetic.exponent':
+			return b.decorator(expression_binary_arithmetic_exponent$214(value));
+		case 'expression.binary.arithmetic.floor_divide':
+			return b.decorator(expression_binary_arithmetic_floor_divide$214(value));
+		case 'expression.binary.arithmetic.modulo':
+			return b.decorator(expression_binary_arithmetic_modulo$214(value));
+		case 'expression.binary.arithmetic.multiply':
+			return b.decorator(expression_binary_arithmetic_multiply$214(value));
+		case 'expression.binary.arithmetic.subtract':
+			return b.decorator(expression_binary_arithmetic_subtract$214(value));
+		case 'expression.binary.bitwise.and':
+			return b.decorator(expression_binary_bitwise_and$214(value));
+		case 'expression.binary.bitwise.or':
+			return b.decorator(expression_binary_bitwise_or$214(value));
+		case 'expression.binary.bitwise.xor':
+			return b.decorator(expression_binary_bitwise_xor$214(value));
+		case 'expression.binary.comparison.chain':
+			return b.decorator(expression_binary_comparison_chain$218(value));
+		case 'expression.binary.comparison.equal':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'expression.binary.comparison.greater':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'expression.binary.comparison.greater_equal':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'expression.binary.comparison.less':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'expression.binary.comparison.less_equal':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'expression.binary.comparison.not_equal':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'expression.binary.comparison.not_equal.legacy':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'expression.binary.identity.is':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'expression.binary.identity.is_not':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'expression.binary.logical.and':
+			return b.decorator(expression_binary_logical_and$213(value));
+		case 'expression.binary.logical.or':
+			return b.decorator(expression_binary_logical_or$213(value));
+		case 'expression.binary.matrix_multiply':
+			return b.decorator(expression_binary_matrix_multiply$214(value));
+		case 'expression.binary.membership.in':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'expression.binary.membership.not_in':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'expression.binary.shift.left':
+			return b.decorator(expression_binary_shift_left$214(value));
+		case 'expression.binary.shift.right':
+			return b.decorator(expression_binary_shift_right$214(value));
+		case 'expression.call':
+			return b.decorator(expression_call$229(value));
+		case 'expression.call.member':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'expression.collection.list':
+			return b.decorator(expression_collection_list$238(value));
+		case 'expression.collection.map':
+			return b.decorator(expression_collection_map$241(value));
+		case 'expression.collection.set':
+			return b.decorator(expression_collection_set$239(value));
+		case 'expression.collection.tuple':
+			return b.decorator(expression_collection_tuple$240(value));
+		case 'expression.comprehension.generator':
+			return b.decorator(expression_comprehension_generator$246(value));
+		case 'expression.comprehension.list':
+			return b.decorator(expression_comprehension_list$243(value));
+		case 'expression.comprehension.map':
+			return b.decorator(expression_comprehension_map$244(value));
+		case 'expression.comprehension.set':
+			return b.decorator(expression_comprehension_set$245(value));
+		case 'expression.conditional':
+			return b.decorator(expression_conditional$251(value));
+		case 'expression.lambda':
+			return b.decorator(expression_lambda$219(value));
 		case 'expression.member':
-			return unbuilt('declaration.property.getter.decorators', value);
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'expression.parenthesized':
+			return b.decorator(expression_parenthesized$247(value));
+		case 'expression.subscript':
+			return b.decorator(expression_subscript$227(value));
+		case 'expression.unary.bitwise_not':
+			return b.decorator(expression_unary_bitwise_not$215(value));
+		case 'expression.unary.negation':
+			return b.decorator(expression_unary_negation$215(value));
+		case 'expression.unary.not':
+			return b.decorator(expression_unary_not$212(value));
+		case 'expression.unary.plus':
+			return b.decorator(expression_unary_plus$215(value));
 		case 'identifier':
 			return b.decorator(identifier$1(value));
+		case 'literal.boolean.false':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'literal.boolean.true':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'literal.ellipsis':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'literal.null':
+			return unbuilt('declaration.type.class.decorators', value);
 		case 'literal.number.float':
-			if (typeof value.$value === 'bigint') {
-				return b.decorator(
-					literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
-				);
-			}
-			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) {
-					return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value }));
-				}
-				return b.decorator(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }));
-			}
-			return unbuilt('declaration.property.getter.decorators', value);
+			return b.decorator(literal_number_float$101(value));
+		case 'literal.number.float.leading_point':
+			return b.decorator(literal_number_float_leading_point$102(value));
+		case 'literal.number.float.scientific':
+			return b.decorator(literal_number_float_scientific$103(value));
 		case 'literal.number.integer':
-			if (typeof value.$value === 'bigint') {
-				return b.decorator(
-					literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
-				);
-			}
-			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) {
-					return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value }));
-				}
-				return b.decorator(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }));
-			}
-			return unbuilt('declaration.property.getter.decorators', value);
+			return b.decorator(literal_number_integer$100(value));
 		case 'literal.number.integer.big':
-			if (typeof value.$value === 'bigint') {
-				return b.decorator(
-					literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
-				);
-			}
-			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) {
-					return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value }));
-				}
-				return b.decorator(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }));
-			}
-			return unbuilt('declaration.property.getter.decorators', value);
+			return b.decorator(literal_number_integer_big$98(value));
+		case 'literal.number.integer.big.binary':
+			return b.decorator(literal_number_integer_big_binary$94(value));
+		case 'literal.number.integer.big.hex':
+			return b.decorator(literal_number_integer_big_hex$90(value));
+		case 'literal.number.integer.big.octal':
+			return b.decorator(literal_number_integer_big_octal$92(value));
+		case 'literal.number.integer.binary':
+			return b.decorator(literal_number_integer_binary$95(value));
+		case 'literal.number.integer.hex':
+			return b.decorator(literal_number_integer_hex$91(value));
+		case 'literal.number.integer.imaginary':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'literal.number.integer.octal':
+			return b.decorator(literal_number_integer_octal$93(value));
+		case 'literal.string':
+			return b.decorator(literal_string$253(value));
+		case 'literal.string.bytes':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'literal.string.bytes.multiline':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'literal.string.bytes.raw.multiline':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'literal.string.concatenated':
+			return b.decorator(literal_string_concatenated$252(value));
+		case 'literal.string.interpolated':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'literal.string.interpolated.deferred':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'literal.string.interpolated.deferred.multiline':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'literal.string.interpolated.deferred.raw':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'literal.string.interpolated.deferred.raw.multiline':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'literal.string.interpolated.multiline':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'literal.string.interpolated.raw':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'literal.string.interpolated.raw.multiline':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'literal.string.multiline':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'literal.string.raw':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'literal.string.raw.multiline':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'literal.string.unicode':
+			return unbuilt('declaration.type.class.decorators', value);
+		case 'pattern.rest':
+			return b.decorator(pattern_rest$206(value));
 		default:
-			return unbuilt('declaration.property.getter.decorators', value);
+			return unbuilt('declaration.type.class.decorators', value);
 	}
 };
-type declaration_property_getter$361_doc$Item =
+type declaration_type_class$179_doc$Item =
 	| string
 	| BuildInput<PythonMap, 'literal.string'>
 	| PythonMap['nodes']['literal.string']
@@ -10820,19 +12799,23 @@ type declaration_property_getter$361_doc$Item =
 			readonly $path: 'literal.number.integer.big';
 			readonly $value: bigint;
 	  };
-const declaration_property_getter$361_doc = (value: declaration_property_getter$361_doc$Item) => {
+const declaration_type_class$179_doc = (value: declaration_type_class$179_doc$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
-			return b.suiteBlock(
-				b.block(b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value)))))
+			return b.suiteBlockClassDeclaration(
+				b.blockClassDeclaration(
+					b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value))))
+				)
 			);
-		return b.suiteBlock(
-			b.block(b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value)))))
+		return b.suiteBlockClassDeclaration(
+			b.blockClassDeclaration(
+				b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value))))
+			)
 		);
 	}
 	if (typeof value === 'bigint') {
-		return b.suiteBlock(
-			b.block(
+		return b.suiteBlockClassDeclaration(
+			b.blockClassDeclaration(
 				b.simpleStatements(
 					b.simpleStatementsElements(
 						b.expressionStatement(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }))
@@ -10843,8 +12826,8 @@ const declaration_property_getter$361_doc = (value: declaration_property_getter$
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return b.suiteBlock(
-				b.block(
+			return b.suiteBlockClassDeclaration(
+				b.blockClassDeclaration(
 					b.simpleStatements(
 						b.simpleStatementsElements(
 							b.expressionStatement(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }))
@@ -10853,8 +12836,8 @@ const declaration_property_getter$361_doc = (value: declaration_property_getter$
 				)
 			);
 		}
-		return b.suiteBlock(
-			b.block(
+		return b.suiteBlockClassDeclaration(
+			b.blockClassDeclaration(
 				b.simpleStatements(
 					b.simpleStatementsElements(
 						b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
@@ -10874,50 +12857,54 @@ const declaration_property_getter$361_doc = (value: declaration_property_getter$
 				]
 			)
 		)
-			return b.suiteBlock(b.block(b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(value)))));
-		return unseated('declaration.property.getter.doc', value);
+			return b.suiteBlockClassDeclaration(
+				b.blockClassDeclaration(b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(value))))
+			);
+		return unseated('declaration.type.class.doc', value);
 	}
 	switch (value.$path) {
 		case 'literal.string':
-			return b.suiteBlock(
-				b.block(b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_string$253(value)))))
+			return b.suiteBlockClassDeclaration(
+				b.blockClassDeclaration(
+					b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_string$253(value))))
+				)
 			);
 		case 'literal.string.bytes':
-			return unbuilt('declaration.property.getter.doc', value);
+			return unbuilt('declaration.type.class.doc', value);
 		case 'literal.string.bytes.multiline':
-			return unbuilt('declaration.property.getter.doc', value);
+			return unbuilt('declaration.type.class.doc', value);
 		case 'literal.string.bytes.raw':
-			return unbuilt('declaration.property.getter.doc', value);
+			return unbuilt('declaration.type.class.doc', value);
 		case 'literal.string.bytes.raw.multiline':
-			return unbuilt('declaration.property.getter.doc', value);
+			return unbuilt('declaration.type.class.doc', value);
 		case 'literal.string.interpolated':
-			return unbuilt('declaration.property.getter.doc', value);
+			return unbuilt('declaration.type.class.doc', value);
 		case 'literal.string.interpolated.deferred':
-			return unbuilt('declaration.property.getter.doc', value);
+			return unbuilt('declaration.type.class.doc', value);
 		case 'literal.string.interpolated.deferred.multiline':
-			return unbuilt('declaration.property.getter.doc', value);
+			return unbuilt('declaration.type.class.doc', value);
 		case 'literal.string.interpolated.deferred.raw':
-			return unbuilt('declaration.property.getter.doc', value);
+			return unbuilt('declaration.type.class.doc', value);
 		case 'literal.string.interpolated.deferred.raw.multiline':
-			return unbuilt('declaration.property.getter.doc', value);
+			return unbuilt('declaration.type.class.doc', value);
 		case 'literal.string.interpolated.multiline':
-			return unbuilt('declaration.property.getter.doc', value);
+			return unbuilt('declaration.type.class.doc', value);
 		case 'literal.string.interpolated.raw':
-			return unbuilt('declaration.property.getter.doc', value);
+			return unbuilt('declaration.type.class.doc', value);
 		case 'literal.string.interpolated.raw.multiline':
-			return unbuilt('declaration.property.getter.doc', value);
+			return unbuilt('declaration.type.class.doc', value);
 		case 'literal.string.multiline':
-			return unbuilt('declaration.property.getter.doc', value);
+			return unbuilt('declaration.type.class.doc', value);
 		case 'literal.string.raw':
-			return unbuilt('declaration.property.getter.doc', value);
+			return unbuilt('declaration.type.class.doc', value);
 		case 'literal.string.raw.multiline':
-			return unbuilt('declaration.property.getter.doc', value);
+			return unbuilt('declaration.type.class.doc', value);
 		case 'literal.string.unicode':
-			return unbuilt('declaration.property.getter.doc', value);
+			return unbuilt('declaration.type.class.doc', value);
 		case 'literal.number.float':
 			if (typeof value.$value === 'bigint') {
-				return b.suiteBlock(
-					b.block(
+				return b.suiteBlockClassDeclaration(
+					b.blockClassDeclaration(
 						b.simpleStatements(
 							b.simpleStatementsElements(
 								b.expressionStatement(
@@ -10930,8 +12917,8 @@ const declaration_property_getter$361_doc = (value: declaration_property_getter$
 			}
 			if (typeof value.$value === 'number') {
 				if (Number.isSafeInteger(value.$value)) {
-					return b.suiteBlock(
-						b.block(
+					return b.suiteBlockClassDeclaration(
+						b.blockClassDeclaration(
 							b.simpleStatements(
 								b.simpleStatementsElements(
 									b.expressionStatement(
@@ -10942,8 +12929,8 @@ const declaration_property_getter$361_doc = (value: declaration_property_getter$
 						)
 					);
 				}
-				return b.suiteBlock(
-					b.block(
+				return b.suiteBlockClassDeclaration(
+					b.blockClassDeclaration(
 						b.simpleStatements(
 							b.simpleStatementsElements(
 								b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }))
@@ -10952,11 +12939,11 @@ const declaration_property_getter$361_doc = (value: declaration_property_getter$
 					)
 				);
 			}
-			return unbuilt('declaration.property.getter.doc', value);
+			return unbuilt('declaration.type.class.doc', value);
 		case 'literal.number.integer':
 			if (typeof value.$value === 'bigint') {
-				return b.suiteBlock(
-					b.block(
+				return b.suiteBlockClassDeclaration(
+					b.blockClassDeclaration(
 						b.simpleStatements(
 							b.simpleStatementsElements(
 								b.expressionStatement(
@@ -10969,8 +12956,8 @@ const declaration_property_getter$361_doc = (value: declaration_property_getter$
 			}
 			if (typeof value.$value === 'number') {
 				if (Number.isSafeInteger(value.$value)) {
-					return b.suiteBlock(
-						b.block(
+					return b.suiteBlockClassDeclaration(
+						b.blockClassDeclaration(
 							b.simpleStatements(
 								b.simpleStatementsElements(
 									b.expressionStatement(
@@ -10981,8 +12968,8 @@ const declaration_property_getter$361_doc = (value: declaration_property_getter$
 						)
 					);
 				}
-				return b.suiteBlock(
-					b.block(
+				return b.suiteBlockClassDeclaration(
+					b.blockClassDeclaration(
 						b.simpleStatements(
 							b.simpleStatementsElements(
 								b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }))
@@ -10991,11 +12978,11 @@ const declaration_property_getter$361_doc = (value: declaration_property_getter$
 					)
 				);
 			}
-			return unbuilt('declaration.property.getter.doc', value);
+			return unbuilt('declaration.type.class.doc', value);
 		case 'literal.number.integer.big':
 			if (typeof value.$value === 'bigint') {
-				return b.suiteBlock(
-					b.block(
+				return b.suiteBlockClassDeclaration(
+					b.blockClassDeclaration(
 						b.simpleStatements(
 							b.simpleStatementsElements(
 								b.expressionStatement(
@@ -11008,8 +12995,8 @@ const declaration_property_getter$361_doc = (value: declaration_property_getter$
 			}
 			if (typeof value.$value === 'number') {
 				if (Number.isSafeInteger(value.$value)) {
-					return b.suiteBlock(
-						b.block(
+					return b.suiteBlockClassDeclaration(
+						b.blockClassDeclaration(
 							b.simpleStatements(
 								b.simpleStatementsElements(
 									b.expressionStatement(
@@ -11020,8 +13007,8 @@ const declaration_property_getter$361_doc = (value: declaration_property_getter$
 						)
 					);
 				}
-				return b.suiteBlock(
-					b.block(
+				return b.suiteBlockClassDeclaration(
+					b.blockClassDeclaration(
 						b.simpleStatements(
 							b.simpleStatementsElements(
 								b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }))
@@ -11030,95 +13017,12 @@ const declaration_property_getter$361_doc = (value: declaration_property_getter$
 					)
 				);
 			}
-			return unbuilt('declaration.property.getter.doc', value);
+			return unbuilt('declaration.type.class.doc', value);
 		default:
-			return unbuilt('declaration.property.getter.doc', value);
+			return unbuilt('declaration.type.class.doc', value);
 	}
 };
-type declaration_property_getter$361_name$Item =
-	| Text<PythonMap, 'identifier'>
-	| BuildInput<PythonMap, 'identifier'>
-	| PythonMap['nodes']['identifier'];
-const declaration_property_getter$361_name = (value: declaration_property_getter$361_name$Item) => {
-	if (typeof value === 'string') {
-		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
-		return b.identifier(value);
-	}
-	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('declaration.property.getter.name', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [1])) return value;
-		return unseated('declaration.property.getter.name', value);
-	}
-	switch (value.$path) {
-		case 'identifier':
-			return identifier$1(value);
-		default:
-			return unbuilt('declaration.property.getter.name', value);
-	}
-};
-type declaration_property_getter$361_parameters$item$Item =
-	| '*'
-	| '/'
-	| Text<PythonMap, 'identifier'>
-	| BuildInput<PythonMap, 'declaration.parameter.defaulted'>
-	| PythonMap['nodes']['declaration.parameter.defaulted']
-	| BuildInput<PythonMap, 'declaration.parameter.typed'>
-	| PythonMap['nodes']['declaration.parameter.typed']
-	| BuildInput<PythonMap, 'declaration.parameter.typed_default'>
-	| PythonMap['nodes']['declaration.parameter.typed_default']
-	| BuildInput<PythonMap, 'identifier'>
-	| PythonMap['nodes']['identifier']
-	| BuildInput<PythonMap, 'pattern.rest'>
-	| PythonMap['nodes']['pattern.rest']
-	| BuildInput<PythonMap, 'pattern.rest.map'>
-	| PythonMap['nodes']['pattern.rest.map']
-	| BuildInput<PythonMap, 'pattern.tuple'>
-	| PythonMap['nodes']['pattern.tuple'];
-const declaration_property_getter$361_parameters$item = (
-	value: declaration_property_getter$361_parameters$item$Item
-) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case '*':
-				return 264;
-			case '/':
-				return 263;
-			default:
-				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
-				return b.identifier(value);
-		}
-	}
-	if (typeof value === 'number') {
-		if (seated(value, [1, 200, 202, 204, 205, 206, 207, 230])) return value;
-		return unseated('declaration.property.getter.parameters', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [1, 200, 202, 204, 205, 206, 207, 230, 263, 264])) return value;
-		return unseated('declaration.property.getter.parameters', value);
-	}
-	switch (value.$path) {
-		case 'declaration.parameter.defaulted':
-			return declaration_parameter_defaulted$204(value);
-		case 'declaration.parameter.typed':
-			return declaration_parameter_typed$230(value);
-		case 'declaration.parameter.typed_default':
-			return declaration_parameter_typed_default$205(value);
-		case 'identifier':
-			return identifier$1(value);
-		case 'pattern.rest':
-			return pattern_rest$206(value);
-		case 'pattern.rest.map':
-			return pattern_rest_map$207(value);
-		case 'pattern.tuple':
-			return pattern_tuple$202(value);
-		default:
-			return unbuilt('declaration.property.getter.parameters', value);
-	}
-};
-type declaration_property_getter$361_statements$item$Item =
+type declaration_type_class$179_members$item$Item =
 	| 'break'
 	| 'continue'
 	| 'pass'
@@ -11130,14 +13034,18 @@ type declaration_property_getter$361_statements$item$Item =
 	| Text<PythonMap, 'statement.empty'>
 	| bigint
 	| number
-	| BuildInput<PythonMap, 'declaration.class'>
-	| PythonMap['nodes']['declaration.class']
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| PythonMap['nodes']['declaration.constant']
-	| BuildInput<PythonMap, 'declaration.function'>
-	| PythonMap['nodes']['declaration.function']
-	| BuildInput<PythonMap, 'declaration.type_alias'>
-	| PythonMap['nodes']['declaration.type_alias']
+	| BuildInput<PythonMap, 'declaration.member.constructor'>
+	| PythonMap['nodes']['declaration.member.constructor']
+	| BuildInput<PythonMap, 'declaration.member.method'>
+	| PythonMap['nodes']['declaration.member.method']
+	| BuildInput<PythonMap, 'declaration.member.method.special'>
+	| PythonMap['nodes']['declaration.member.method.special']
+	| BuildInput<PythonMap, 'declaration.type.class'>
+	| PythonMap['nodes']['declaration.type.class']
+	| BuildInput<PythonMap, 'declaration.type.type_alias'>
+	| PythonMap['nodes']['declaration.type.type_alias']
 	| BuildInput<PythonMap, 'declaration.variable'>
 	| PythonMap['nodes']['declaration.variable']
 	| BuildInput<PythonMap, 'expression.assignment'>
@@ -11375,9 +13283,7 @@ type declaration_property_getter$361_statements$item$Item =
 	| BuildInput<PythonMap, 'statement.try'>
 	| PythonMap['nodes']['statement.try']
 	| Unmapped<'python:as_pattern'>;
-const declaration_property_getter$361_statements$item = (
-	value: declaration_property_getter$361_statements$item$Item
-) => {
+const declaration_type_class$179_members$item = (value: declaration_type_class$179_members$item$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'break':
@@ -11414,7 +13320,7 @@ const declaration_property_getter$361_statements$item = (
 		);
 	}
 	if (isNode(value)) {
-		if (seated(value, [134, 156, 159, 162, 163, 164, 167, 170, 179])) return value;
+		if (seated(value, [156, 159, 162, 163, 164, 167, 179, 316, 317, 361])) return value;
 		if (seated(value, [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178]))
 			return b.simpleStatements(b.simpleStatementsElements(value));
 		if (seated(value, [287, 288])) return b.simpleStatements(b.simpleStatementsElements(b.printStatement(value)));
@@ -11429,33 +13335,39 @@ const declaration_property_getter$361_statements$item = (
 			)
 		)
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(value)));
-		return unseated('declaration.property.getter.statements', value);
+		return unseated('declaration.type.class.members', value);
 	}
 	switch (value.$path) {
-		case 'declaration.class': {
-			if ((value.decorators ?? []).length === 0) return declaration_class$179(value);
-			return b.decoratedDefinition({
-				definition: declaration_class$179(value),
-				decorators: nonEmpty(
-					'declaration.class.decorators',
-					(value.decorators ?? []).map(declaration_class$179_decorators)
-				)
-			});
-		}
 		case 'declaration.constant':
-			return unbuilt('declaration.property.getter.statements', value);
-		case 'declaration.function': {
-			if ((value.decorators ?? []).length === 0) return declaration_function$170(value);
-			return b.decoratedDefinition({
-				definition: declaration_function$170(value),
+			return unbuilt('declaration.type.class.members', value);
+		case 'declaration.member.constructor':
+			if (value.parameters !== undefined) {
+				if ((value.decorators ?? []).length === 0) return declaration_member_constructor$316(value);
+				return b.decoratedDefinitionClassDeclaration({
+					definition: declaration_member_constructor$316(value),
+					decorators: nonEmpty(
+						'declaration.member.constructor.decorators',
+						(value.decorators ?? []).map(declaration_member_constructor$316_decorators)
+					)
+				});
+			}
+			return unbuilt('declaration.type.class.members', value);
+		case 'declaration.member.method':
+			return unbuilt('declaration.type.class.members', value);
+		case 'declaration.member.method.special':
+			return unbuilt('declaration.type.class.members', value);
+		case 'declaration.type.class': {
+			if ((value.decorators ?? []).length === 0) return declaration_type_class$179(value);
+			return b.decoratedDefinitionClassDeclaration({
+				definition: declaration_type_class$179(value),
 				decorators: nonEmpty(
-					'declaration.function.decorators',
-					(value.decorators ?? []).map(declaration_function$170_decorators)
+					'declaration.type.class.decorators',
+					(value.decorators ?? []).map(declaration_type_class$179_decorators)
 				)
 			});
 		}
-		case 'declaration.type_alias':
-			return b.simpleStatements(b.simpleStatementsElements(declaration_type_alias$178(value)));
+		case 'declaration.type.type_alias':
+			return b.simpleStatements(b.simpleStatementsElements(declaration_type_type_alias$178(value)));
 		case 'declaration.variable':
 			if (value.name !== undefined && value.value !== undefined && value.type === undefined)
 				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$302(value))));
@@ -11563,23 +13475,23 @@ const declaration_property_getter$361_statements$item = (
 				b.simpleStatementsElements(b.expressionStatement(expression_binary_comparison_chain$218(value)))
 			);
 		case 'expression.binary.comparison.equal':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'expression.binary.comparison.greater':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'expression.binary.comparison.greater_equal':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'expression.binary.comparison.less':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'expression.binary.comparison.less_equal':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'expression.binary.comparison.not_equal':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'expression.binary.comparison.not_equal.legacy':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'expression.binary.identity.is':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'expression.binary.identity.is_not':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'expression.binary.logical.and':
 			return b.simpleStatements(
 				b.simpleStatementsElements(b.expressionStatement(expression_binary_logical_and$213(value)))
@@ -11593,9 +13505,9 @@ const declaration_property_getter$361_statements$item = (
 				b.simpleStatementsElements(b.expressionStatement(expression_binary_matrix_multiply$214(value)))
 			);
 		case 'expression.binary.membership.in':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'expression.binary.membership.not_in':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'expression.binary.shift.left':
 			return b.simpleStatements(
 				b.simpleStatementsElements(b.expressionStatement(expression_binary_shift_left$214(value)))
@@ -11607,7 +13519,7 @@ const declaration_property_getter$361_statements$item = (
 		case 'expression.call':
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_call$229(value))));
 		case 'expression.call.member':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'expression.collection.list':
 			return b.simpleStatements(
 				b.simpleStatementsElements(b.expressionStatement(expression_collection_list$238(value)))
@@ -11625,7 +13537,7 @@ const declaration_property_getter$361_statements$item = (
 				b.simpleStatementsElements(b.expressionStatement(expression_collection_tuple$240(value)))
 			);
 		case 'expression.collection.tuple.bare':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'expression.comprehension.generator':
 			return b.simpleStatements(
 				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_generator$246(value)))
@@ -11647,7 +13559,7 @@ const declaration_property_getter$361_statements$item = (
 		case 'expression.lambda':
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_lambda$219(value))));
 		case 'expression.member':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'expression.parenthesized':
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_parenthesized$247(value))));
 		case 'expression.subscript':
@@ -11667,17 +13579,17 @@ const declaration_property_getter$361_statements$item = (
 		case 'expression.yield':
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_yield$225(value))));
 		case 'expression.yield.delegate':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'identifier':
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(identifier$1(value))));
 		case 'literal.boolean.false':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'literal.boolean.true':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'literal.ellipsis':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'literal.null':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'literal.number.float':
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_float$101(value))));
 		case 'literal.number.float.leading_point':
@@ -11715,7 +13627,7 @@ const declaration_property_getter$361_statements$item = (
 				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_hex$91(value)))
 			);
 		case 'literal.number.integer.imaginary':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'literal.number.integer.octal':
 			return b.simpleStatements(
 				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_octal$93(value)))
@@ -11723,41 +13635,41 @@ const declaration_property_getter$361_statements$item = (
 		case 'literal.string':
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_string$253(value))));
 		case 'literal.string.bytes':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'literal.string.bytes.multiline':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'literal.string.bytes.raw':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'literal.string.bytes.raw.multiline':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'literal.string.concatenated':
 			return b.simpleStatements(
 				b.simpleStatementsElements(b.expressionStatement(literal_string_concatenated$252(value)))
 			);
 		case 'literal.string.interpolated':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'literal.string.interpolated.deferred':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'literal.string.interpolated.deferred.multiline':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'literal.string.interpolated.deferred.raw':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'literal.string.interpolated.deferred.raw.multiline':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'literal.string.interpolated.multiline':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'literal.string.interpolated.raw':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'literal.string.interpolated.raw.multiline':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'literal.string.multiline':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'literal.string.raw':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'literal.string.raw.multiline':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'literal.string.unicode':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'pattern.rest':
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(pattern_rest$206(value))));
 		case 'statement.assert':
@@ -11773,7 +13685,7 @@ const declaration_property_getter$361_statements$item = (
 		case 'statement.import':
 			return b.simpleStatements(b.simpleStatementsElements(statement_import$136(value)));
 		case 'statement.import.from':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'statement.import.future':
 			return b.simpleStatements(b.simpleStatementsElements(statement_import_future$139(value)));
 		case 'statement.loop.for_each':
@@ -11785,7 +13697,7 @@ const declaration_property_getter$361_statements$item = (
 		case 'statement.nonlocal':
 			return b.simpleStatements(b.simpleStatementsElements(statement_nonlocal$176(value)));
 		case 'statement.print':
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 		case 'statement.resource':
 			return statement_resource$167(value);
 		case 'statement.return':
@@ -11795,2436 +13707,85 @@ const declaration_property_getter$361_statements$item = (
 		case 'statement.try':
 			return statement_try$164(value);
 		default:
-			return unbuilt('declaration.property.getter.statements', value);
+			return unbuilt('declaration.type.class.members', value);
 	}
 };
-type declaration_property_getter$361_type$Item =
-	| Text<PythonMap, 'identifier'>
-	| Text<PythonMap, 'literal.number.integer'>
-	| Text<PythonMap, 'literal.number.integer.imaginary'>
-	| bigint
-	| number
-	| BuildInput<PythonMap, 'expression.assignment'>
-	| PythonMap['nodes']['expression.assignment']
-	| BuildInput<PythonMap, 'expression.await'>
-	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
-	| PythonMap['nodes']['expression.binary.arithmetic.add']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
-	| PythonMap['nodes']['expression.binary.arithmetic.divide']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
-	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
-	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
-	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
-	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
-	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
-	| PythonMap['nodes']['expression.binary.bitwise.and']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
-	| PythonMap['nodes']['expression.binary.bitwise.or']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
-	| PythonMap['nodes']['expression.binary.bitwise.xor']
-	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
-	| PythonMap['nodes']['expression.binary.comparison.chain']
-	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
-	| PythonMap['nodes']['expression.binary.comparison.equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
-	| PythonMap['nodes']['expression.binary.comparison.greater']
-	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
-	| PythonMap['nodes']['expression.binary.comparison.less']
-	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.less_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.not_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
-	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
-	| BuildInput<PythonMap, 'expression.binary.identity.is'>
-	| PythonMap['nodes']['expression.binary.identity.is']
-	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
-	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical.and'>
-	| PythonMap['nodes']['expression.binary.logical.and']
-	| BuildInput<PythonMap, 'expression.binary.logical.or'>
-	| PythonMap['nodes']['expression.binary.logical.or']
-	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
-	| PythonMap['nodes']['expression.binary.matrix_multiply']
-	| BuildInput<PythonMap, 'expression.binary.membership.in'>
-	| PythonMap['nodes']['expression.binary.membership.in']
-	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
-	| PythonMap['nodes']['expression.binary.membership.not_in']
-	| BuildInput<PythonMap, 'expression.binary.shift.left'>
-	| PythonMap['nodes']['expression.binary.shift.left']
-	| BuildInput<PythonMap, 'expression.binary.shift.right'>
-	| PythonMap['nodes']['expression.binary.shift.right']
-	| BuildInput<PythonMap, 'expression.call'>
-	| PythonMap['nodes']['expression.call']
-	| BuildInput<PythonMap, 'expression.call.member'>
-	| PythonMap['nodes']['expression.call.member']
-	| BuildInput<PythonMap, 'expression.collection.list'>
-	| PythonMap['nodes']['expression.collection.list']
-	| BuildInput<PythonMap, 'expression.collection.map'>
-	| PythonMap['nodes']['expression.collection.map']
-	| BuildInput<PythonMap, 'expression.collection.set'>
-	| PythonMap['nodes']['expression.collection.set']
-	| BuildInput<PythonMap, 'expression.collection.tuple'>
-	| PythonMap['nodes']['expression.collection.tuple']
-	| BuildInput<PythonMap, 'expression.comprehension.generator'>
-	| PythonMap['nodes']['expression.comprehension.generator']
-	| BuildInput<PythonMap, 'expression.comprehension.list'>
-	| PythonMap['nodes']['expression.comprehension.list']
-	| BuildInput<PythonMap, 'expression.comprehension.map'>
-	| PythonMap['nodes']['expression.comprehension.map']
-	| BuildInput<PythonMap, 'expression.comprehension.set'>
-	| PythonMap['nodes']['expression.comprehension.set']
-	| BuildInput<PythonMap, 'expression.conditional'>
-	| PythonMap['nodes']['expression.conditional']
-	| BuildInput<PythonMap, 'expression.lambda'>
-	| PythonMap['nodes']['expression.lambda']
-	| BuildInput<PythonMap, 'expression.member'>
-	| PythonMap['nodes']['expression.member']
-	| BuildInput<PythonMap, 'expression.parenthesized'>
-	| PythonMap['nodes']['expression.parenthesized']
-	| BuildInput<PythonMap, 'expression.subscript'>
-	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
-	| PythonMap['nodes']['expression.unary.bitwise_not']
-	| BuildInput<PythonMap, 'expression.unary.negation'>
-	| PythonMap['nodes']['expression.unary.negation']
-	| BuildInput<PythonMap, 'expression.unary.not'>
-	| PythonMap['nodes']['expression.unary.not']
-	| BuildInput<PythonMap, 'expression.unary.plus'>
-	| PythonMap['nodes']['expression.unary.plus']
-	| BuildInput<PythonMap, 'identifier'>
-	| PythonMap['nodes']['identifier']
-	| BuildInput<PythonMap, 'identifier.qualified'>
-	| PythonMap['nodes']['identifier.qualified']
-	| BuildInput<PythonMap, 'literal.boolean.false'>
-	| PythonMap['nodes']['literal.boolean.false']
-	| BuildInput<PythonMap, 'literal.boolean.true'>
-	| PythonMap['nodes']['literal.boolean.true']
-	| BuildInput<PythonMap, 'literal.ellipsis'>
-	| PythonMap['nodes']['literal.ellipsis']
-	| BuildInput<PythonMap, 'literal.null'>
-	| PythonMap['nodes']['literal.null']
-	| BuildInput<PythonMap, 'literal.number.float'>
-	| PythonMap['nodes']['literal.number.float']
-	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
-	| PythonMap['nodes']['literal.number.float.leading_point']
-	| BuildInput<PythonMap, 'literal.number.float.scientific'>
-	| PythonMap['nodes']['literal.number.float.scientific']
-	| BuildInput<PythonMap, 'literal.number.integer'>
-	| PythonMap['nodes']['literal.number.integer']
-	| BuildInput<PythonMap, 'literal.number.integer.big'>
-	| PythonMap['nodes']['literal.number.integer.big']
-	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
-	| PythonMap['nodes']['literal.number.integer.big.binary']
-	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
-	| PythonMap['nodes']['literal.number.integer.big.hex']
-	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
-	| PythonMap['nodes']['literal.number.integer.big.octal']
-	| BuildInput<PythonMap, 'literal.number.integer.binary'>
-	| PythonMap['nodes']['literal.number.integer.binary']
-	| BuildInput<PythonMap, 'literal.number.integer.hex'>
-	| PythonMap['nodes']['literal.number.integer.hex']
-	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
-	| PythonMap['nodes']['literal.number.integer.imaginary']
-	| BuildInput<PythonMap, 'literal.number.integer.octal'>
-	| PythonMap['nodes']['literal.number.integer.octal']
-	| BuildInput<PythonMap, 'literal.string'>
-	| PythonMap['nodes']['literal.string']
-	| BuildInput<PythonMap, 'literal.string.bytes'>
-	| PythonMap['nodes']['literal.string.bytes']
-	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
-	| PythonMap['nodes']['literal.string.bytes.multiline']
-	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
-	| PythonMap['nodes']['literal.string.bytes.raw']
-	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
-	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.concatenated'>
-	| PythonMap['nodes']['literal.string.concatenated']
-	| BuildInput<PythonMap, 'literal.string.interpolated'>
-	| PythonMap['nodes']['literal.string.interpolated']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
-	| PythonMap['nodes']['literal.string.interpolated.raw']
-	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.multiline'>
-	| PythonMap['nodes']['literal.string.multiline']
-	| BuildInput<PythonMap, 'literal.string.raw'>
-	| PythonMap['nodes']['literal.string.raw']
-	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
-	| PythonMap['nodes']['literal.string.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.unicode'>
-	| PythonMap['nodes']['literal.string.unicode']
-	| BuildInput<PythonMap, 'pattern.rest'>
-	| PythonMap['nodes']['pattern.rest']
-	| BuildInput<PythonMap, 'type.constrained'>
-	| PythonMap['nodes']['type.constrained']
-	| BuildInput<PythonMap, 'type.generic'>
-	| PythonMap['nodes']['type.generic']
-	| BuildInput<PythonMap, 'type.nullable'>
-	| PythonMap['nodes']['type.nullable']
-	| BuildInput<PythonMap, 'type.rest'>
-	| PythonMap['nodes']['type.rest']
-	| BuildInput<PythonMap, 'type.union'>
-	| PythonMap['nodes']['type.union']
-	| Unmapped<'python:as_pattern'>;
-const declaration_property_getter$361_type = (value: declaration_property_getter$361_type$Item) => {
-	if (typeof value === 'string') {
-		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
-		return b.type(b.identifier(value));
-	}
-	if (typeof value === 'bigint') {
-		return b.type(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }));
-	}
-	if (typeof value === 'number') {
-		if (Number.isSafeInteger(value)) {
-			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
-		}
-		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 232, 233, 234, 235, 236, 238, 239, 240, 241, 243, 244, 245, 246, 247,
-					251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return b.type(value);
-		return unseated('declaration.property.getter.type', value);
-	}
-	switch (value.$path) {
-		case 'expression.assignment':
-			return b.type(expression_assignment$148(value));
-		case 'expression.await':
-			return b.type(expression_await$262(value));
-		case 'expression.binary.arithmetic.add':
-			return b.type(expression_binary_arithmetic_add$214(value));
-		case 'expression.binary.arithmetic.divide':
-			return b.type(expression_binary_arithmetic_divide$214(value));
-		case 'expression.binary.arithmetic.exponent':
-			return b.type(expression_binary_arithmetic_exponent$214(value));
-		case 'expression.binary.arithmetic.floor_divide':
-			return b.type(expression_binary_arithmetic_floor_divide$214(value));
-		case 'expression.binary.arithmetic.modulo':
-			return b.type(expression_binary_arithmetic_modulo$214(value));
-		case 'expression.binary.arithmetic.multiply':
-			return b.type(expression_binary_arithmetic_multiply$214(value));
-		case 'expression.binary.arithmetic.subtract':
-			return b.type(expression_binary_arithmetic_subtract$214(value));
-		case 'expression.binary.bitwise.and':
-			return b.type(expression_binary_bitwise_and$214(value));
-		case 'expression.binary.bitwise.or':
-			return b.type(expression_binary_bitwise_or$214(value));
-		case 'expression.binary.bitwise.xor':
-			return b.type(expression_binary_bitwise_xor$214(value));
-		case 'expression.binary.comparison.chain':
-			return b.type(expression_binary_comparison_chain$218(value));
-		case 'expression.binary.comparison.equal':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'expression.binary.comparison.greater':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'expression.binary.comparison.greater_equal':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'expression.binary.comparison.less':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'expression.binary.comparison.less_equal':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'expression.binary.comparison.not_equal':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'expression.binary.comparison.not_equal.legacy':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'expression.binary.identity.is':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'expression.binary.identity.is_not':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'expression.binary.logical.and':
-			return b.type(expression_binary_logical_and$213(value));
-		case 'expression.binary.logical.or':
-			return b.type(expression_binary_logical_or$213(value));
-		case 'expression.binary.matrix_multiply':
-			return b.type(expression_binary_matrix_multiply$214(value));
-		case 'expression.binary.membership.in':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'expression.binary.membership.not_in':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'expression.binary.shift.left':
-			return b.type(expression_binary_shift_left$214(value));
-		case 'expression.binary.shift.right':
-			return b.type(expression_binary_shift_right$214(value));
-		case 'expression.call':
-			return b.type(expression_call$229(value));
-		case 'expression.call.member':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'expression.collection.list':
-			return b.type(expression_collection_list$238(value));
-		case 'expression.collection.map':
-			return b.type(expression_collection_map$241(value));
-		case 'expression.collection.set':
-			return b.type(expression_collection_set$239(value));
-		case 'expression.collection.tuple':
-			return b.type(expression_collection_tuple$240(value));
-		case 'expression.comprehension.generator':
-			return b.type(expression_comprehension_generator$246(value));
-		case 'expression.comprehension.list':
-			return b.type(expression_comprehension_list$243(value));
-		case 'expression.comprehension.map':
-			return b.type(expression_comprehension_map$244(value));
-		case 'expression.comprehension.set':
-			return b.type(expression_comprehension_set$245(value));
-		case 'expression.conditional':
-			return b.type(expression_conditional$251(value));
-		case 'expression.lambda':
-			return b.type(expression_lambda$219(value));
-		case 'expression.member':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'expression.parenthesized':
-			return b.type(expression_parenthesized$247(value));
-		case 'expression.subscript':
-			return b.type(expression_subscript$227(value));
-		case 'expression.unary.bitwise_not':
-			return b.type(expression_unary_bitwise_not$215(value));
-		case 'expression.unary.negation':
-			return b.type(expression_unary_negation$215(value));
-		case 'expression.unary.not':
-			return b.type(expression_unary_not$212(value));
-		case 'expression.unary.plus':
-			return b.type(expression_unary_plus$215(value));
-		case 'identifier':
-			return b.type(identifier$1(value));
-		case 'identifier.qualified':
-			return b.type(identifier_qualified$236(value));
-		case 'literal.boolean.false':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'literal.boolean.true':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'literal.ellipsis':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'literal.null':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'literal.number.float':
-			return b.type(literal_number_float$101(value));
-		case 'literal.number.float.leading_point':
-			return b.type(literal_number_float_leading_point$102(value));
-		case 'literal.number.float.scientific':
-			return b.type(literal_number_float_scientific$103(value));
-		case 'literal.number.integer':
-			return b.type(literal_number_integer$100(value));
-		case 'literal.number.integer.big':
-			return b.type(literal_number_integer_big$98(value));
-		case 'literal.number.integer.big.binary':
-			return b.type(literal_number_integer_big_binary$94(value));
-		case 'literal.number.integer.big.hex':
-			return b.type(literal_number_integer_big_hex$90(value));
-		case 'literal.number.integer.big.octal':
-			return b.type(literal_number_integer_big_octal$92(value));
-		case 'literal.number.integer.binary':
-			return b.type(literal_number_integer_binary$95(value));
-		case 'literal.number.integer.hex':
-			return b.type(literal_number_integer_hex$91(value));
-		case 'literal.number.integer.imaginary':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'literal.number.integer.octal':
-			return b.type(literal_number_integer_octal$93(value));
-		case 'literal.string':
-			return b.type(literal_string$253(value));
-		case 'literal.string.bytes':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'literal.string.bytes.multiline':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'literal.string.bytes.raw':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'literal.string.bytes.raw.multiline':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'literal.string.concatenated':
-			return b.type(literal_string_concatenated$252(value));
-		case 'literal.string.interpolated':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'literal.string.interpolated.deferred':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'literal.string.interpolated.deferred.multiline':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'literal.string.interpolated.deferred.raw':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'literal.string.interpolated.deferred.raw.multiline':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'literal.string.interpolated.multiline':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'literal.string.interpolated.raw':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'literal.string.interpolated.raw.multiline':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'literal.string.multiline':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'literal.string.raw':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'literal.string.raw.multiline':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'literal.string.unicode':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'pattern.rest':
-			return b.type(pattern_rest$206(value));
-		case 'type.constrained':
-			return b.type(type_constrained$235(value));
-		case 'type.generic':
-			return b.type(type_generic$233(value));
-		case 'type.nullable':
-			return unbuilt('declaration.property.getter.type', value);
-		case 'type.rest':
-			return b.type(type_rest$232(value));
-		case 'type.union':
-			return b.type(type_union$234(value));
-		default:
-			return unbuilt('declaration.property.getter.type', value);
-	}
-};
-type declaration_property_getter$361_typeParameters$item$Item =
-	| BuildInput<PythonMap, 'declaration.type_parameter'>
-	| PythonMap['nodes']['declaration.type_parameter']
-	| BuildInput<PythonMap, 'declaration.type_parameter.parameters'>
-	| PythonMap['nodes']['declaration.type_parameter.parameters']
-	| BuildInput<PythonMap, 'declaration.type_parameter.variadic'>
-	| PythonMap['nodes']['declaration.type_parameter.variadic'];
-const declaration_property_getter$361_typeParameters$item = (
-	value: declaration_property_getter$361_typeParameters$item$Item
-) => {
-	if (typeof value === 'number') {
-		if (seated(value, [275, 313, 314, 315])) return value;
-		return unseated('declaration.property.getter.typeParameters', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [275, 313, 314, 315])) return value;
-		return unseated('declaration.property.getter.typeParameters', value);
-	}
-	switch (value.$path) {
-		case 'declaration.type_parameter':
-			return unbuilt('declaration.property.getter.typeParameters', value);
-		case 'declaration.type_parameter.parameters':
-			return declaration_type_parameter_parameters$315(value);
-		case 'declaration.type_parameter.variadic':
-			return declaration_type_parameter_variadic$314(value);
-		default:
-			return unbuilt('declaration.property.getter.typeParameters', value);
-	}
-};
-type declaration_property_setter$361_decorators$Item =
-	| Text<PythonMap, 'identifier'>
-	| BuildInput<PythonMap, 'expression.member'>
-	| PythonMap['nodes']['expression.member']
-	| BuildInput<PythonMap, 'identifier'>
-	| PythonMap['nodes']['identifier']
-	| {
-			readonly $path: 'literal.number.float';
-			readonly $value: number;
-	  }
-	| {
-			readonly $path: 'literal.number.integer';
-			readonly $value: number;
-	  }
-	| {
-			readonly $path: 'literal.number.integer.big';
-			readonly $value: bigint;
-	  };
-const declaration_property_setter$361_decorators = (value: declaration_property_setter$361_decorators$Item) => {
-	if (typeof value === 'string') {
-		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.decorator(b.identifier(value));
-		return b.decorator(b.identifier(value));
-	}
-	if (typeof value === 'bigint') {
-		return b.decorator(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }));
-	}
-	if (typeof value === 'number') {
-		if (Number.isSafeInteger(value)) {
-			return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
-		}
-		return b.decorator(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
-					262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return b.decorator(value);
-		return unseated('declaration.property.setter.decorators', value);
-	}
-	switch (value.$path) {
-		case 'expression.member':
-			return unbuilt('declaration.property.setter.decorators', value);
-		case 'identifier':
-			return b.decorator(identifier$1(value));
-		case 'literal.number.float':
-			if (typeof value.$value === 'bigint') {
-				return b.decorator(
-					literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
-				);
-			}
-			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) {
-					return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value }));
-				}
-				return b.decorator(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }));
-			}
-			return unbuilt('declaration.property.setter.decorators', value);
-		case 'literal.number.integer':
-			if (typeof value.$value === 'bigint') {
-				return b.decorator(
-					literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
-				);
-			}
-			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) {
-					return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value }));
-				}
-				return b.decorator(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }));
-			}
-			return unbuilt('declaration.property.setter.decorators', value);
-		case 'literal.number.integer.big':
-			if (typeof value.$value === 'bigint') {
-				return b.decorator(
-					literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
-				);
-			}
-			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) {
-					return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value }));
-				}
-				return b.decorator(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }));
-			}
-			return unbuilt('declaration.property.setter.decorators', value);
-		default:
-			return unbuilt('declaration.property.setter.decorators', value);
-	}
-};
-type declaration_property_setter$361_doc$Item =
-	| string
-	| BuildInput<PythonMap, 'literal.string'>
-	| PythonMap['nodes']['literal.string']
-	| BuildInput<PythonMap, 'literal.string.bytes'>
-	| PythonMap['nodes']['literal.string.bytes']
-	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
-	| PythonMap['nodes']['literal.string.bytes.multiline']
-	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
-	| PythonMap['nodes']['literal.string.bytes.raw']
-	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
-	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated'>
-	| PythonMap['nodes']['literal.string.interpolated']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
-	| PythonMap['nodes']['literal.string.interpolated.raw']
-	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.multiline'>
-	| PythonMap['nodes']['literal.string.multiline']
-	| BuildInput<PythonMap, 'literal.string.raw'>
-	| PythonMap['nodes']['literal.string.raw']
-	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
-	| PythonMap['nodes']['literal.string.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.unicode'>
-	| PythonMap['nodes']['literal.string.unicode']
-	| {
-			readonly $path: 'literal.number.float';
-			readonly $value: number;
-	  }
-	| {
-			readonly $path: 'literal.number.integer';
-			readonly $value: number;
-	  }
-	| {
-			readonly $path: 'literal.number.integer.big';
-			readonly $value: bigint;
-	  };
-const declaration_property_setter$361_doc = (value: declaration_property_setter$361_doc$Item) => {
-	if (typeof value === 'string') {
-		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
-			return b.suiteBlock(
-				b.block(b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value)))))
-			);
-		return b.suiteBlock(
-			b.block(b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value)))))
-		);
-	}
-	if (typeof value === 'bigint') {
-		return b.suiteBlock(
-			b.block(
-				b.simpleStatements(
-					b.simpleStatementsElements(
-						b.expressionStatement(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }))
-					)
-				)
-			)
-		);
-	}
-	if (typeof value === 'number') {
-		if (Number.isSafeInteger(value)) {
-			return b.suiteBlock(
-				b.block(
-					b.simpleStatements(
-						b.simpleStatementsElements(
-							b.expressionStatement(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }))
-						)
-					)
-				)
-			);
-		}
-		return b.suiteBlock(
-			b.block(
-				b.simpleStatements(
-					b.simpleStatementsElements(
-						b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
-					)
-				)
-			)
-		);
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
-					253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
-				]
-			)
-		)
-			return b.suiteBlock(b.block(b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(value)))));
-		return unseated('declaration.property.setter.doc', value);
-	}
-	switch (value.$path) {
-		case 'literal.string':
-			return b.suiteBlock(
-				b.block(b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_string$253(value)))))
-			);
-		case 'literal.string.bytes':
-			return unbuilt('declaration.property.setter.doc', value);
-		case 'literal.string.bytes.multiline':
-			return unbuilt('declaration.property.setter.doc', value);
-		case 'literal.string.bytes.raw':
-			return unbuilt('declaration.property.setter.doc', value);
-		case 'literal.string.bytes.raw.multiline':
-			return unbuilt('declaration.property.setter.doc', value);
-		case 'literal.string.interpolated':
-			return unbuilt('declaration.property.setter.doc', value);
-		case 'literal.string.interpolated.deferred':
-			return unbuilt('declaration.property.setter.doc', value);
-		case 'literal.string.interpolated.deferred.multiline':
-			return unbuilt('declaration.property.setter.doc', value);
-		case 'literal.string.interpolated.deferred.raw':
-			return unbuilt('declaration.property.setter.doc', value);
-		case 'literal.string.interpolated.deferred.raw.multiline':
-			return unbuilt('declaration.property.setter.doc', value);
-		case 'literal.string.interpolated.multiline':
-			return unbuilt('declaration.property.setter.doc', value);
-		case 'literal.string.interpolated.raw':
-			return unbuilt('declaration.property.setter.doc', value);
-		case 'literal.string.interpolated.raw.multiline':
-			return unbuilt('declaration.property.setter.doc', value);
-		case 'literal.string.multiline':
-			return unbuilt('declaration.property.setter.doc', value);
-		case 'literal.string.raw':
-			return unbuilt('declaration.property.setter.doc', value);
-		case 'literal.string.raw.multiline':
-			return unbuilt('declaration.property.setter.doc', value);
-		case 'literal.string.unicode':
-			return unbuilt('declaration.property.setter.doc', value);
-		case 'literal.number.float':
-			if (typeof value.$value === 'bigint') {
-				return b.suiteBlock(
-					b.block(
-						b.simpleStatements(
-							b.simpleStatementsElements(
-								b.expressionStatement(
-									literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
-								)
-							)
-						)
-					)
-				);
-			}
-			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) {
-					return b.suiteBlock(
-						b.block(
-							b.simpleStatements(
-								b.simpleStatementsElements(
-									b.expressionStatement(
-										literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value })
-									)
-								)
-							)
-						)
-					);
-				}
-				return b.suiteBlock(
-					b.block(
-						b.simpleStatements(
-							b.simpleStatementsElements(
-								b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }))
-							)
-						)
-					)
-				);
-			}
-			return unbuilt('declaration.property.setter.doc', value);
-		case 'literal.number.integer':
-			if (typeof value.$value === 'bigint') {
-				return b.suiteBlock(
-					b.block(
-						b.simpleStatements(
-							b.simpleStatementsElements(
-								b.expressionStatement(
-									literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
-								)
-							)
-						)
-					)
-				);
-			}
-			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) {
-					return b.suiteBlock(
-						b.block(
-							b.simpleStatements(
-								b.simpleStatementsElements(
-									b.expressionStatement(
-										literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value })
-									)
-								)
-							)
-						)
-					);
-				}
-				return b.suiteBlock(
-					b.block(
-						b.simpleStatements(
-							b.simpleStatementsElements(
-								b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }))
-							)
-						)
-					)
-				);
-			}
-			return unbuilt('declaration.property.setter.doc', value);
-		case 'literal.number.integer.big':
-			if (typeof value.$value === 'bigint') {
-				return b.suiteBlock(
-					b.block(
-						b.simpleStatements(
-							b.simpleStatementsElements(
-								b.expressionStatement(
-									literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
-								)
-							)
-						)
-					)
-				);
-			}
-			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) {
-					return b.suiteBlock(
-						b.block(
-							b.simpleStatements(
-								b.simpleStatementsElements(
-									b.expressionStatement(
-										literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value })
-									)
-								)
-							)
-						)
-					);
-				}
-				return b.suiteBlock(
-					b.block(
-						b.simpleStatements(
-							b.simpleStatementsElements(
-								b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }))
-							)
-						)
-					)
-				);
-			}
-			return unbuilt('declaration.property.setter.doc', value);
-		default:
-			return unbuilt('declaration.property.setter.doc', value);
-	}
-};
-type declaration_property_setter$361_name$Item =
+type declaration_type_class$179_name$Item =
 	| Text<PythonMap, 'identifier'>
 	| BuildInput<PythonMap, 'identifier'>
 	| PythonMap['nodes']['identifier'];
-const declaration_property_setter$361_name = (value: declaration_property_setter$361_name$Item) => {
+const declaration_type_class$179_name = (value: declaration_type_class$179_name$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
 		if (seated(value, [1])) return value;
-		return unseated('declaration.property.setter.name', value);
+		return unseated('declaration.type.class.name', value);
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
-		return unseated('declaration.property.setter.name', value);
+		return unseated('declaration.type.class.name', value);
 	}
 	switch (value.$path) {
 		case 'identifier':
 			return identifier$1(value);
 		default:
-			return unbuilt('declaration.property.setter.name', value);
+			return unbuilt('declaration.type.class.name', value);
 	}
 };
-type declaration_property_setter$361_parameters$item$Item =
-	| '*'
-	| '/'
-	| Text<PythonMap, 'identifier'>
-	| BuildInput<PythonMap, 'declaration.parameter.defaulted'>
-	| PythonMap['nodes']['declaration.parameter.defaulted']
-	| BuildInput<PythonMap, 'declaration.parameter.typed'>
-	| PythonMap['nodes']['declaration.parameter.typed']
-	| BuildInput<PythonMap, 'declaration.parameter.typed_default'>
-	| PythonMap['nodes']['declaration.parameter.typed_default']
-	| BuildInput<PythonMap, 'identifier'>
-	| PythonMap['nodes']['identifier']
-	| BuildInput<PythonMap, 'pattern.rest'>
-	| PythonMap['nodes']['pattern.rest']
-	| BuildInput<PythonMap, 'pattern.rest.map'>
-	| PythonMap['nodes']['pattern.rest.map']
-	| BuildInput<PythonMap, 'pattern.tuple'>
-	| PythonMap['nodes']['pattern.tuple'];
-const declaration_property_setter$361_parameters$item = (
-	value: declaration_property_setter$361_parameters$item$Item
-) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case '*':
-				return 264;
-			case '/':
-				return 263;
-			default:
-				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
-				return b.identifier(value);
-		}
-	}
-	if (typeof value === 'number') {
-		if (seated(value, [1, 200, 202, 204, 205, 206, 207, 230])) return value;
-		return unseated('declaration.property.setter.parameters', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [1, 200, 202, 204, 205, 206, 207, 230, 263, 264])) return value;
-		return unseated('declaration.property.setter.parameters', value);
-	}
-	switch (value.$path) {
-		case 'declaration.parameter.defaulted':
-			return declaration_parameter_defaulted$204(value);
-		case 'declaration.parameter.typed':
-			return declaration_parameter_typed$230(value);
-		case 'declaration.parameter.typed_default':
-			return declaration_parameter_typed_default$205(value);
-		case 'identifier':
-			return identifier$1(value);
-		case 'pattern.rest':
-			return pattern_rest$206(value);
-		case 'pattern.rest.map':
-			return pattern_rest_map$207(value);
-		case 'pattern.tuple':
-			return pattern_tuple$202(value);
-		default:
-			return unbuilt('declaration.property.setter.parameters', value);
-	}
-};
-type declaration_property_setter$361_returnType$Item =
-	| Text<PythonMap, 'identifier'>
-	| Text<PythonMap, 'literal.number.integer'>
-	| Text<PythonMap, 'literal.number.integer.imaginary'>
-	| bigint
-	| number
-	| BuildInput<PythonMap, 'expression.assignment'>
-	| PythonMap['nodes']['expression.assignment']
-	| BuildInput<PythonMap, 'expression.await'>
-	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
-	| PythonMap['nodes']['expression.binary.arithmetic.add']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
-	| PythonMap['nodes']['expression.binary.arithmetic.divide']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
-	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
-	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
-	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
-	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
-	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
-	| PythonMap['nodes']['expression.binary.bitwise.and']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
-	| PythonMap['nodes']['expression.binary.bitwise.or']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
-	| PythonMap['nodes']['expression.binary.bitwise.xor']
-	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
-	| PythonMap['nodes']['expression.binary.comparison.chain']
-	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
-	| PythonMap['nodes']['expression.binary.comparison.equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
-	| PythonMap['nodes']['expression.binary.comparison.greater']
-	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
-	| PythonMap['nodes']['expression.binary.comparison.less']
-	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.less_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.not_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
-	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
-	| BuildInput<PythonMap, 'expression.binary.identity.is'>
-	| PythonMap['nodes']['expression.binary.identity.is']
-	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
-	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical.and'>
-	| PythonMap['nodes']['expression.binary.logical.and']
-	| BuildInput<PythonMap, 'expression.binary.logical.or'>
-	| PythonMap['nodes']['expression.binary.logical.or']
-	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
-	| PythonMap['nodes']['expression.binary.matrix_multiply']
-	| BuildInput<PythonMap, 'expression.binary.membership.in'>
-	| PythonMap['nodes']['expression.binary.membership.in']
-	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
-	| PythonMap['nodes']['expression.binary.membership.not_in']
-	| BuildInput<PythonMap, 'expression.binary.shift.left'>
-	| PythonMap['nodes']['expression.binary.shift.left']
-	| BuildInput<PythonMap, 'expression.binary.shift.right'>
-	| PythonMap['nodes']['expression.binary.shift.right']
-	| BuildInput<PythonMap, 'expression.call'>
-	| PythonMap['nodes']['expression.call']
-	| BuildInput<PythonMap, 'expression.call.member'>
-	| PythonMap['nodes']['expression.call.member']
-	| BuildInput<PythonMap, 'expression.collection.list'>
-	| PythonMap['nodes']['expression.collection.list']
-	| BuildInput<PythonMap, 'expression.collection.map'>
-	| PythonMap['nodes']['expression.collection.map']
-	| BuildInput<PythonMap, 'expression.collection.set'>
-	| PythonMap['nodes']['expression.collection.set']
-	| BuildInput<PythonMap, 'expression.collection.tuple'>
-	| PythonMap['nodes']['expression.collection.tuple']
-	| BuildInput<PythonMap, 'expression.comprehension.generator'>
-	| PythonMap['nodes']['expression.comprehension.generator']
-	| BuildInput<PythonMap, 'expression.comprehension.list'>
-	| PythonMap['nodes']['expression.comprehension.list']
-	| BuildInput<PythonMap, 'expression.comprehension.map'>
-	| PythonMap['nodes']['expression.comprehension.map']
-	| BuildInput<PythonMap, 'expression.comprehension.set'>
-	| PythonMap['nodes']['expression.comprehension.set']
-	| BuildInput<PythonMap, 'expression.conditional'>
-	| PythonMap['nodes']['expression.conditional']
-	| BuildInput<PythonMap, 'expression.lambda'>
-	| PythonMap['nodes']['expression.lambda']
-	| BuildInput<PythonMap, 'expression.member'>
-	| PythonMap['nodes']['expression.member']
-	| BuildInput<PythonMap, 'expression.parenthesized'>
-	| PythonMap['nodes']['expression.parenthesized']
-	| BuildInput<PythonMap, 'expression.subscript'>
-	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
-	| PythonMap['nodes']['expression.unary.bitwise_not']
-	| BuildInput<PythonMap, 'expression.unary.negation'>
-	| PythonMap['nodes']['expression.unary.negation']
-	| BuildInput<PythonMap, 'expression.unary.not'>
-	| PythonMap['nodes']['expression.unary.not']
-	| BuildInput<PythonMap, 'expression.unary.plus'>
-	| PythonMap['nodes']['expression.unary.plus']
-	| BuildInput<PythonMap, 'identifier'>
-	| PythonMap['nodes']['identifier']
-	| BuildInput<PythonMap, 'identifier.qualified'>
-	| PythonMap['nodes']['identifier.qualified']
-	| BuildInput<PythonMap, 'literal.boolean.false'>
-	| PythonMap['nodes']['literal.boolean.false']
-	| BuildInput<PythonMap, 'literal.boolean.true'>
-	| PythonMap['nodes']['literal.boolean.true']
-	| BuildInput<PythonMap, 'literal.ellipsis'>
-	| PythonMap['nodes']['literal.ellipsis']
-	| BuildInput<PythonMap, 'literal.null'>
-	| PythonMap['nodes']['literal.null']
-	| BuildInput<PythonMap, 'literal.number.float'>
-	| PythonMap['nodes']['literal.number.float']
-	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
-	| PythonMap['nodes']['literal.number.float.leading_point']
-	| BuildInput<PythonMap, 'literal.number.float.scientific'>
-	| PythonMap['nodes']['literal.number.float.scientific']
-	| BuildInput<PythonMap, 'literal.number.integer'>
-	| PythonMap['nodes']['literal.number.integer']
-	| BuildInput<PythonMap, 'literal.number.integer.big'>
-	| PythonMap['nodes']['literal.number.integer.big']
-	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
-	| PythonMap['nodes']['literal.number.integer.big.binary']
-	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
-	| PythonMap['nodes']['literal.number.integer.big.hex']
-	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
-	| PythonMap['nodes']['literal.number.integer.big.octal']
-	| BuildInput<PythonMap, 'literal.number.integer.binary'>
-	| PythonMap['nodes']['literal.number.integer.binary']
-	| BuildInput<PythonMap, 'literal.number.integer.hex'>
-	| PythonMap['nodes']['literal.number.integer.hex']
-	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
-	| PythonMap['nodes']['literal.number.integer.imaginary']
-	| BuildInput<PythonMap, 'literal.number.integer.octal'>
-	| PythonMap['nodes']['literal.number.integer.octal']
-	| BuildInput<PythonMap, 'literal.string'>
-	| PythonMap['nodes']['literal.string']
-	| BuildInput<PythonMap, 'literal.string.bytes'>
-	| PythonMap['nodes']['literal.string.bytes']
-	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
-	| PythonMap['nodes']['literal.string.bytes.multiline']
-	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
-	| PythonMap['nodes']['literal.string.bytes.raw']
-	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
-	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.concatenated'>
-	| PythonMap['nodes']['literal.string.concatenated']
-	| BuildInput<PythonMap, 'literal.string.interpolated'>
-	| PythonMap['nodes']['literal.string.interpolated']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
-	| PythonMap['nodes']['literal.string.interpolated.raw']
-	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.multiline'>
-	| PythonMap['nodes']['literal.string.multiline']
-	| BuildInput<PythonMap, 'literal.string.raw'>
-	| PythonMap['nodes']['literal.string.raw']
-	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
-	| PythonMap['nodes']['literal.string.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.unicode'>
-	| PythonMap['nodes']['literal.string.unicode']
-	| BuildInput<PythonMap, 'pattern.rest'>
-	| PythonMap['nodes']['pattern.rest']
-	| BuildInput<PythonMap, 'type.constrained'>
-	| PythonMap['nodes']['type.constrained']
-	| BuildInput<PythonMap, 'type.generic'>
-	| PythonMap['nodes']['type.generic']
-	| BuildInput<PythonMap, 'type.nullable'>
-	| PythonMap['nodes']['type.nullable']
-	| BuildInput<PythonMap, 'type.rest'>
-	| PythonMap['nodes']['type.rest']
-	| BuildInput<PythonMap, 'type.union'>
-	| PythonMap['nodes']['type.union']
-	| Unmapped<'python:as_pattern'>;
-const declaration_property_setter$361_returnType = (value: declaration_property_setter$361_returnType$Item) => {
-	if (typeof value === 'string') {
-		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
-		return b.type(b.identifier(value));
-	}
-	if (typeof value === 'bigint') {
-		return b.type(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }));
-	}
-	if (typeof value === 'number') {
-		if (Number.isSafeInteger(value)) {
-			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
-		}
-		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 232, 233, 234, 235, 236, 238, 239, 240, 241, 243, 244, 245, 246, 247,
-					251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return b.type(value);
-		return unseated('declaration.property.setter.returnType', value);
-	}
-	switch (value.$path) {
-		case 'expression.assignment':
-			return b.type(expression_assignment$148(value));
-		case 'expression.await':
-			return b.type(expression_await$262(value));
-		case 'expression.binary.arithmetic.add':
-			return b.type(expression_binary_arithmetic_add$214(value));
-		case 'expression.binary.arithmetic.divide':
-			return b.type(expression_binary_arithmetic_divide$214(value));
-		case 'expression.binary.arithmetic.exponent':
-			return b.type(expression_binary_arithmetic_exponent$214(value));
-		case 'expression.binary.arithmetic.floor_divide':
-			return b.type(expression_binary_arithmetic_floor_divide$214(value));
-		case 'expression.binary.arithmetic.modulo':
-			return b.type(expression_binary_arithmetic_modulo$214(value));
-		case 'expression.binary.arithmetic.multiply':
-			return b.type(expression_binary_arithmetic_multiply$214(value));
-		case 'expression.binary.arithmetic.subtract':
-			return b.type(expression_binary_arithmetic_subtract$214(value));
-		case 'expression.binary.bitwise.and':
-			return b.type(expression_binary_bitwise_and$214(value));
-		case 'expression.binary.bitwise.or':
-			return b.type(expression_binary_bitwise_or$214(value));
-		case 'expression.binary.bitwise.xor':
-			return b.type(expression_binary_bitwise_xor$214(value));
-		case 'expression.binary.comparison.chain':
-			return b.type(expression_binary_comparison_chain$218(value));
-		case 'expression.binary.comparison.equal':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'expression.binary.comparison.greater':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'expression.binary.comparison.greater_equal':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'expression.binary.comparison.less':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'expression.binary.comparison.less_equal':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'expression.binary.comparison.not_equal':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'expression.binary.comparison.not_equal.legacy':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'expression.binary.identity.is':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'expression.binary.identity.is_not':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'expression.binary.logical.and':
-			return b.type(expression_binary_logical_and$213(value));
-		case 'expression.binary.logical.or':
-			return b.type(expression_binary_logical_or$213(value));
-		case 'expression.binary.matrix_multiply':
-			return b.type(expression_binary_matrix_multiply$214(value));
-		case 'expression.binary.membership.in':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'expression.binary.membership.not_in':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'expression.binary.shift.left':
-			return b.type(expression_binary_shift_left$214(value));
-		case 'expression.binary.shift.right':
-			return b.type(expression_binary_shift_right$214(value));
-		case 'expression.call':
-			return b.type(expression_call$229(value));
-		case 'expression.call.member':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'expression.collection.list':
-			return b.type(expression_collection_list$238(value));
-		case 'expression.collection.map':
-			return b.type(expression_collection_map$241(value));
-		case 'expression.collection.set':
-			return b.type(expression_collection_set$239(value));
-		case 'expression.collection.tuple':
-			return b.type(expression_collection_tuple$240(value));
-		case 'expression.comprehension.generator':
-			return b.type(expression_comprehension_generator$246(value));
-		case 'expression.comprehension.list':
-			return b.type(expression_comprehension_list$243(value));
-		case 'expression.comprehension.map':
-			return b.type(expression_comprehension_map$244(value));
-		case 'expression.comprehension.set':
-			return b.type(expression_comprehension_set$245(value));
-		case 'expression.conditional':
-			return b.type(expression_conditional$251(value));
-		case 'expression.lambda':
-			return b.type(expression_lambda$219(value));
-		case 'expression.member':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'expression.parenthesized':
-			return b.type(expression_parenthesized$247(value));
-		case 'expression.subscript':
-			return b.type(expression_subscript$227(value));
-		case 'expression.unary.bitwise_not':
-			return b.type(expression_unary_bitwise_not$215(value));
-		case 'expression.unary.negation':
-			return b.type(expression_unary_negation$215(value));
-		case 'expression.unary.not':
-			return b.type(expression_unary_not$212(value));
-		case 'expression.unary.plus':
-			return b.type(expression_unary_plus$215(value));
-		case 'identifier':
-			return b.type(identifier$1(value));
-		case 'identifier.qualified':
-			return b.type(identifier_qualified$236(value));
-		case 'literal.boolean.false':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'literal.boolean.true':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'literal.ellipsis':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'literal.null':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'literal.number.float':
-			return b.type(literal_number_float$101(value));
-		case 'literal.number.float.leading_point':
-			return b.type(literal_number_float_leading_point$102(value));
-		case 'literal.number.float.scientific':
-			return b.type(literal_number_float_scientific$103(value));
-		case 'literal.number.integer':
-			return b.type(literal_number_integer$100(value));
-		case 'literal.number.integer.big':
-			return b.type(literal_number_integer_big$98(value));
-		case 'literal.number.integer.big.binary':
-			return b.type(literal_number_integer_big_binary$94(value));
-		case 'literal.number.integer.big.hex':
-			return b.type(literal_number_integer_big_hex$90(value));
-		case 'literal.number.integer.big.octal':
-			return b.type(literal_number_integer_big_octal$92(value));
-		case 'literal.number.integer.binary':
-			return b.type(literal_number_integer_binary$95(value));
-		case 'literal.number.integer.hex':
-			return b.type(literal_number_integer_hex$91(value));
-		case 'literal.number.integer.imaginary':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'literal.number.integer.octal':
-			return b.type(literal_number_integer_octal$93(value));
-		case 'literal.string':
-			return b.type(literal_string$253(value));
-		case 'literal.string.bytes':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'literal.string.bytes.multiline':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'literal.string.bytes.raw':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'literal.string.bytes.raw.multiline':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'literal.string.concatenated':
-			return b.type(literal_string_concatenated$252(value));
-		case 'literal.string.interpolated':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'literal.string.interpolated.deferred':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'literal.string.interpolated.deferred.multiline':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'literal.string.interpolated.deferred.raw':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'literal.string.interpolated.deferred.raw.multiline':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'literal.string.interpolated.multiline':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'literal.string.interpolated.raw':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'literal.string.interpolated.raw.multiline':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'literal.string.multiline':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'literal.string.raw':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'literal.string.raw.multiline':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'literal.string.unicode':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'pattern.rest':
-			return b.type(pattern_rest$206(value));
-		case 'type.constrained':
-			return b.type(type_constrained$235(value));
-		case 'type.generic':
-			return b.type(type_generic$233(value));
-		case 'type.nullable':
-			return unbuilt('declaration.property.setter.returnType', value);
-		case 'type.rest':
-			return b.type(type_rest$232(value));
-		case 'type.union':
-			return b.type(type_union$234(value));
-		default:
-			return unbuilt('declaration.property.setter.returnType', value);
-	}
-};
-type declaration_property_setter$361_statements$item$Item =
-	| 'break'
-	| 'continue'
-	| 'pass'
-	| Text<PythonMap, 'identifier'>
-	| Text<PythonMap, 'literal.number.integer'>
-	| Text<PythonMap, 'literal.number.integer.imaginary'>
-	| Text<PythonMap, 'statement.break'>
-	| Text<PythonMap, 'statement.continue'>
-	| Text<PythonMap, 'statement.empty'>
-	| bigint
-	| number
-	| BuildInput<PythonMap, 'declaration.class'>
-	| PythonMap['nodes']['declaration.class']
-	| BuildInput<PythonMap, 'declaration.constant'>
-	| PythonMap['nodes']['declaration.constant']
-	| BuildInput<PythonMap, 'declaration.function'>
-	| PythonMap['nodes']['declaration.function']
-	| BuildInput<PythonMap, 'declaration.type_alias'>
-	| PythonMap['nodes']['declaration.type_alias']
-	| BuildInput<PythonMap, 'declaration.variable'>
-	| PythonMap['nodes']['declaration.variable']
-	| BuildInput<PythonMap, 'expression.assignment'>
-	| PythonMap['nodes']['expression.assignment']
-	| BuildInput<PythonMap, 'expression.assignment.compound.add'>
-	| PythonMap['nodes']['expression.assignment.compound.add']
-	| BuildInput<PythonMap, 'expression.assignment.compound.bitwise_and'>
-	| PythonMap['nodes']['expression.assignment.compound.bitwise_and']
-	| BuildInput<PythonMap, 'expression.assignment.compound.bitwise_or'>
-	| PythonMap['nodes']['expression.assignment.compound.bitwise_or']
-	| BuildInput<PythonMap, 'expression.assignment.compound.bitwise_xor'>
-	| PythonMap['nodes']['expression.assignment.compound.bitwise_xor']
-	| BuildInput<PythonMap, 'expression.assignment.compound.divide'>
-	| PythonMap['nodes']['expression.assignment.compound.divide']
-	| BuildInput<PythonMap, 'expression.assignment.compound.exponent'>
-	| PythonMap['nodes']['expression.assignment.compound.exponent']
-	| BuildInput<PythonMap, 'expression.assignment.compound.floor_divide'>
-	| PythonMap['nodes']['expression.assignment.compound.floor_divide']
-	| BuildInput<PythonMap, 'expression.assignment.compound.matrix_multiply'>
-	| PythonMap['nodes']['expression.assignment.compound.matrix_multiply']
-	| BuildInput<PythonMap, 'expression.assignment.compound.modulo'>
-	| PythonMap['nodes']['expression.assignment.compound.modulo']
-	| BuildInput<PythonMap, 'expression.assignment.compound.multiply'>
-	| PythonMap['nodes']['expression.assignment.compound.multiply']
-	| BuildInput<PythonMap, 'expression.assignment.compound.shift_left'>
-	| PythonMap['nodes']['expression.assignment.compound.shift_left']
-	| BuildInput<PythonMap, 'expression.assignment.compound.shift_right'>
-	| PythonMap['nodes']['expression.assignment.compound.shift_right']
-	| BuildInput<PythonMap, 'expression.assignment.compound.subtract'>
-	| PythonMap['nodes']['expression.assignment.compound.subtract']
-	| BuildInput<PythonMap, 'expression.await'>
-	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
-	| PythonMap['nodes']['expression.binary.arithmetic.add']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
-	| PythonMap['nodes']['expression.binary.arithmetic.divide']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
-	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
-	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
-	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
-	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
-	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
-	| PythonMap['nodes']['expression.binary.bitwise.and']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
-	| PythonMap['nodes']['expression.binary.bitwise.or']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
-	| PythonMap['nodes']['expression.binary.bitwise.xor']
-	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
-	| PythonMap['nodes']['expression.binary.comparison.chain']
-	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
-	| PythonMap['nodes']['expression.binary.comparison.equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
-	| PythonMap['nodes']['expression.binary.comparison.greater']
-	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
-	| PythonMap['nodes']['expression.binary.comparison.less']
-	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.less_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.not_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
-	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
-	| BuildInput<PythonMap, 'expression.binary.identity.is'>
-	| PythonMap['nodes']['expression.binary.identity.is']
-	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
-	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical.and'>
-	| PythonMap['nodes']['expression.binary.logical.and']
-	| BuildInput<PythonMap, 'expression.binary.logical.or'>
-	| PythonMap['nodes']['expression.binary.logical.or']
-	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
-	| PythonMap['nodes']['expression.binary.matrix_multiply']
-	| BuildInput<PythonMap, 'expression.binary.membership.in'>
-	| PythonMap['nodes']['expression.binary.membership.in']
-	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
-	| PythonMap['nodes']['expression.binary.membership.not_in']
-	| BuildInput<PythonMap, 'expression.binary.shift.left'>
-	| PythonMap['nodes']['expression.binary.shift.left']
-	| BuildInput<PythonMap, 'expression.binary.shift.right'>
-	| PythonMap['nodes']['expression.binary.shift.right']
-	| BuildInput<PythonMap, 'expression.call'>
-	| PythonMap['nodes']['expression.call']
-	| BuildInput<PythonMap, 'expression.call.member'>
-	| PythonMap['nodes']['expression.call.member']
-	| BuildInput<PythonMap, 'expression.collection.list'>
-	| PythonMap['nodes']['expression.collection.list']
-	| BuildInput<PythonMap, 'expression.collection.map'>
-	| PythonMap['nodes']['expression.collection.map']
-	| BuildInput<PythonMap, 'expression.collection.set'>
-	| PythonMap['nodes']['expression.collection.set']
-	| BuildInput<PythonMap, 'expression.collection.tuple'>
-	| PythonMap['nodes']['expression.collection.tuple']
-	| BuildInput<PythonMap, 'expression.collection.tuple.bare'>
-	| PythonMap['nodes']['expression.collection.tuple.bare']
-	| BuildInput<PythonMap, 'expression.comprehension.generator'>
-	| PythonMap['nodes']['expression.comprehension.generator']
-	| BuildInput<PythonMap, 'expression.comprehension.list'>
-	| PythonMap['nodes']['expression.comprehension.list']
-	| BuildInput<PythonMap, 'expression.comprehension.map'>
-	| PythonMap['nodes']['expression.comprehension.map']
-	| BuildInput<PythonMap, 'expression.comprehension.set'>
-	| PythonMap['nodes']['expression.comprehension.set']
-	| BuildInput<PythonMap, 'expression.conditional'>
-	| PythonMap['nodes']['expression.conditional']
-	| BuildInput<PythonMap, 'expression.lambda'>
-	| PythonMap['nodes']['expression.lambda']
-	| BuildInput<PythonMap, 'expression.member'>
-	| PythonMap['nodes']['expression.member']
-	| BuildInput<PythonMap, 'expression.parenthesized'>
-	| PythonMap['nodes']['expression.parenthesized']
-	| BuildInput<PythonMap, 'expression.subscript'>
-	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
-	| PythonMap['nodes']['expression.unary.bitwise_not']
-	| BuildInput<PythonMap, 'expression.unary.negation'>
-	| PythonMap['nodes']['expression.unary.negation']
-	| BuildInput<PythonMap, 'expression.unary.not'>
-	| PythonMap['nodes']['expression.unary.not']
-	| BuildInput<PythonMap, 'expression.unary.plus'>
-	| PythonMap['nodes']['expression.unary.plus']
-	| BuildInput<PythonMap, 'expression.yield'>
-	| PythonMap['nodes']['expression.yield']
-	| BuildInput<PythonMap, 'expression.yield.delegate'>
-	| PythonMap['nodes']['expression.yield.delegate']
-	| BuildInput<PythonMap, 'identifier'>
-	| PythonMap['nodes']['identifier']
-	| BuildInput<PythonMap, 'literal.boolean.false'>
-	| PythonMap['nodes']['literal.boolean.false']
-	| BuildInput<PythonMap, 'literal.boolean.true'>
-	| PythonMap['nodes']['literal.boolean.true']
-	| BuildInput<PythonMap, 'literal.ellipsis'>
-	| PythonMap['nodes']['literal.ellipsis']
-	| BuildInput<PythonMap, 'literal.null'>
-	| PythonMap['nodes']['literal.null']
-	| BuildInput<PythonMap, 'literal.number.float'>
-	| PythonMap['nodes']['literal.number.float']
-	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
-	| PythonMap['nodes']['literal.number.float.leading_point']
-	| BuildInput<PythonMap, 'literal.number.float.scientific'>
-	| PythonMap['nodes']['literal.number.float.scientific']
-	| BuildInput<PythonMap, 'literal.number.integer'>
-	| PythonMap['nodes']['literal.number.integer']
-	| BuildInput<PythonMap, 'literal.number.integer.big'>
-	| PythonMap['nodes']['literal.number.integer.big']
-	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
-	| PythonMap['nodes']['literal.number.integer.big.binary']
-	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
-	| PythonMap['nodes']['literal.number.integer.big.hex']
-	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
-	| PythonMap['nodes']['literal.number.integer.big.octal']
-	| BuildInput<PythonMap, 'literal.number.integer.binary'>
-	| PythonMap['nodes']['literal.number.integer.binary']
-	| BuildInput<PythonMap, 'literal.number.integer.hex'>
-	| PythonMap['nodes']['literal.number.integer.hex']
-	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
-	| PythonMap['nodes']['literal.number.integer.imaginary']
-	| BuildInput<PythonMap, 'literal.number.integer.octal'>
-	| PythonMap['nodes']['literal.number.integer.octal']
-	| BuildInput<PythonMap, 'literal.string'>
-	| PythonMap['nodes']['literal.string']
-	| BuildInput<PythonMap, 'literal.string.bytes'>
-	| PythonMap['nodes']['literal.string.bytes']
-	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
-	| PythonMap['nodes']['literal.string.bytes.multiline']
-	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
-	| PythonMap['nodes']['literal.string.bytes.raw']
-	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
-	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.concatenated'>
-	| PythonMap['nodes']['literal.string.concatenated']
-	| BuildInput<PythonMap, 'literal.string.interpolated'>
-	| PythonMap['nodes']['literal.string.interpolated']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
-	| PythonMap['nodes']['literal.string.interpolated.raw']
-	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.multiline'>
-	| PythonMap['nodes']['literal.string.multiline']
-	| BuildInput<PythonMap, 'literal.string.raw'>
-	| PythonMap['nodes']['literal.string.raw']
-	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
-	| PythonMap['nodes']['literal.string.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.unicode'>
-	| PythonMap['nodes']['literal.string.unicode']
-	| BuildInput<PythonMap, 'pattern.rest'>
-	| PythonMap['nodes']['pattern.rest']
-	| BuildInput<PythonMap, 'statement.assert'>
-	| PythonMap['nodes']['statement.assert']
-	| BuildInput<PythonMap, 'statement.delete'>
-	| PythonMap['nodes']['statement.delete']
-	| BuildInput<PythonMap, 'statement.exec'>
-	| PythonMap['nodes']['statement.exec']
-	| BuildInput<PythonMap, 'statement.global'>
-	| PythonMap['nodes']['statement.global']
-	| BuildInput<PythonMap, 'statement.if'>
-	| PythonMap['nodes']['statement.if']
-	| BuildInput<PythonMap, 'statement.import'>
-	| PythonMap['nodes']['statement.import']
-	| BuildInput<PythonMap, 'statement.import.from'>
-	| PythonMap['nodes']['statement.import.from']
-	| BuildInput<PythonMap, 'statement.import.future'>
-	| PythonMap['nodes']['statement.import.future']
-	| BuildInput<PythonMap, 'statement.loop.for_each'>
-	| PythonMap['nodes']['statement.loop.for_each']
-	| BuildInput<PythonMap, 'statement.loop.while'>
-	| PythonMap['nodes']['statement.loop.while']
-	| BuildInput<PythonMap, 'statement.match'>
-	| PythonMap['nodes']['statement.match']
-	| BuildInput<PythonMap, 'statement.nonlocal'>
-	| PythonMap['nodes']['statement.nonlocal']
-	| BuildInput<PythonMap, 'statement.print'>
-	| PythonMap['nodes']['statement.print']
-	| BuildInput<PythonMap, 'statement.resource'>
-	| PythonMap['nodes']['statement.resource']
-	| BuildInput<PythonMap, 'statement.return'>
-	| PythonMap['nodes']['statement.return']
-	| BuildInput<PythonMap, 'statement.throw'>
-	| PythonMap['nodes']['statement.throw']
-	| BuildInput<PythonMap, 'statement.try'>
-	| PythonMap['nodes']['statement.try']
-	| Unmapped<'python:as_pattern'>;
-const declaration_property_setter$361_statements$item = (
-	value: declaration_property_setter$361_statements$item$Item
-) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case 'break':
-				return b.simpleStatements(b.simpleStatementsElements(154));
-			case 'continue':
-				return b.simpleStatements(b.simpleStatementsElements(155));
-			case 'pass':
-				return b.simpleStatements(b.simpleStatementsElements(153));
-			default:
-				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
-					return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value))));
-				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value))));
-		}
-	}
-	if (typeof value === 'bigint') {
-		return b.simpleStatements(
-			b.simpleStatementsElements(
-				b.expressionStatement(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }))
-			)
-		);
-	}
-	if (typeof value === 'number') {
-		if (Number.isSafeInteger(value)) {
-			return b.simpleStatements(
-				b.simpleStatementsElements(
-					b.expressionStatement(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }))
-				)
-			);
-		}
-		return b.simpleStatements(
-			b.simpleStatementsElements(
-				b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
-			)
-		);
-	}
-	if (isNode(value)) {
-		if (seated(value, [134, 156, 159, 162, 163, 164, 167, 170, 179])) return value;
-		if (seated(value, [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178]))
-			return b.simpleStatements(b.simpleStatementsElements(value));
-		if (seated(value, [287, 288])) return b.simpleStatements(b.simpleStatementsElements(b.printStatement(value)));
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
-					253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
-				]
-			)
-		)
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(value)));
-		return unseated('declaration.property.setter.statements', value);
-	}
-	switch (value.$path) {
-		case 'declaration.class': {
-			if ((value.decorators ?? []).length === 0) return declaration_class$179(value);
-			return b.decoratedDefinition({
-				definition: declaration_class$179(value),
-				decorators: nonEmpty(
-					'declaration.class.decorators',
-					(value.decorators ?? []).map(declaration_class$179_decorators)
-				)
-			});
-		}
-		case 'declaration.constant':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'declaration.function': {
-			if ((value.decorators ?? []).length === 0) return declaration_function$170(value);
-			return b.decoratedDefinition({
-				definition: declaration_function$170(value),
-				decorators: nonEmpty(
-					'declaration.function.decorators',
-					(value.decorators ?? []).map(declaration_function$170_decorators)
-				)
-			});
-		}
-		case 'declaration.type_alias':
-			return b.simpleStatements(b.simpleStatementsElements(declaration_type_alias$178(value)));
-		case 'declaration.variable':
-			if (value.name !== undefined && value.value !== undefined && value.type === undefined)
-				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$302(value))));
-			if (value.name !== undefined && value.type !== undefined && value.value === undefined)
-				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$303(value))));
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$304(value))));
-		case 'expression.assignment':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_assignment$148(value))));
-		case 'expression.assignment.compound.add':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_add$222(value)))
-			);
-		case 'expression.assignment.compound.bitwise_and':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_bitwise_and$222(value)))
-			);
-		case 'expression.assignment.compound.bitwise_or':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_bitwise_or$222(value)))
-			);
-		case 'expression.assignment.compound.bitwise_xor':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_bitwise_xor$222(value)))
-			);
-		case 'expression.assignment.compound.divide':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_divide$222(value)))
-			);
-		case 'expression.assignment.compound.exponent':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_exponent$222(value)))
-			);
-		case 'expression.assignment.compound.floor_divide':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_floor_divide$222(value)))
-			);
-		case 'expression.assignment.compound.matrix_multiply':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_matrix_multiply$222(value)))
-			);
-		case 'expression.assignment.compound.modulo':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_modulo$222(value)))
-			);
-		case 'expression.assignment.compound.multiply':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_multiply$222(value)))
-			);
-		case 'expression.assignment.compound.shift_left':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_shift_left$222(value)))
-			);
-		case 'expression.assignment.compound.shift_right':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_shift_right$222(value)))
-			);
-		case 'expression.assignment.compound.subtract':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_subtract$222(value)))
-			);
-		case 'expression.await':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_await$262(value))));
-		case 'expression.binary.arithmetic.add':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_add$214(value)))
-			);
-		case 'expression.binary.arithmetic.divide':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_divide$214(value)))
-			);
-		case 'expression.binary.arithmetic.exponent':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_exponent$214(value)))
-			);
-		case 'expression.binary.arithmetic.floor_divide':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_floor_divide$214(value)))
-			);
-		case 'expression.binary.arithmetic.modulo':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_modulo$214(value)))
-			);
-		case 'expression.binary.arithmetic.multiply':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_multiply$214(value)))
-			);
-		case 'expression.binary.arithmetic.subtract':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_subtract$214(value)))
-			);
-		case 'expression.binary.bitwise.and':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_bitwise_and$214(value)))
-			);
-		case 'expression.binary.bitwise.or':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_bitwise_or$214(value)))
-			);
-		case 'expression.binary.bitwise.xor':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_bitwise_xor$214(value)))
-			);
-		case 'expression.binary.comparison.chain':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_comparison_chain$218(value)))
-			);
-		case 'expression.binary.comparison.equal':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'expression.binary.comparison.greater':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'expression.binary.comparison.greater_equal':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'expression.binary.comparison.less':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'expression.binary.comparison.less_equal':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'expression.binary.comparison.not_equal':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'expression.binary.comparison.not_equal.legacy':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'expression.binary.identity.is':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'expression.binary.identity.is_not':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'expression.binary.logical.and':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_logical_and$213(value)))
-			);
-		case 'expression.binary.logical.or':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_logical_or$213(value)))
-			);
-		case 'expression.binary.matrix_multiply':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_matrix_multiply$214(value)))
-			);
-		case 'expression.binary.membership.in':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'expression.binary.membership.not_in':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'expression.binary.shift.left':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_shift_left$214(value)))
-			);
-		case 'expression.binary.shift.right':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_binary_shift_right$214(value)))
-			);
-		case 'expression.call':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_call$229(value))));
-		case 'expression.call.member':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'expression.collection.list':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_collection_list$238(value)))
-			);
-		case 'expression.collection.map':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_collection_map$241(value)))
-			);
-		case 'expression.collection.set':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_collection_set$239(value)))
-			);
-		case 'expression.collection.tuple':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_collection_tuple$240(value)))
-			);
-		case 'expression.collection.tuple.bare':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'expression.comprehension.generator':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_generator$246(value)))
-			);
-		case 'expression.comprehension.list':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_list$243(value)))
-			);
-		case 'expression.comprehension.map':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_map$244(value)))
-			);
-		case 'expression.comprehension.set':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_set$245(value)))
-			);
-		case 'expression.conditional':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_conditional$251(value))));
-		case 'expression.lambda':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_lambda$219(value))));
-		case 'expression.member':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'expression.parenthesized':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_parenthesized$247(value))));
-		case 'expression.subscript':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_subscript$227(value))));
-		case 'expression.unary.bitwise_not':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_unary_bitwise_not$215(value)))
-			);
-		case 'expression.unary.negation':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(expression_unary_negation$215(value)))
-			);
-		case 'expression.unary.not':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_unary_not$212(value))));
-		case 'expression.unary.plus':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_unary_plus$215(value))));
-		case 'expression.yield':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_yield$225(value))));
-		case 'expression.yield.delegate':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'identifier':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(identifier$1(value))));
-		case 'literal.boolean.false':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'literal.boolean.true':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'literal.ellipsis':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'literal.null':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'literal.number.float':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_float$101(value))));
-		case 'literal.number.float.leading_point':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_float_leading_point$102(value)))
-			);
-		case 'literal.number.float.scientific':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_float_scientific$103(value)))
-			);
-		case 'literal.number.integer':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_integer$100(value))));
-		case 'literal.number.integer.big':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big$98(value)))
-			);
-		case 'literal.number.integer.big.binary':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_binary$94(value)))
-			);
-		case 'literal.number.integer.big.hex':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_hex$90(value)))
-			);
-		case 'literal.number.integer.big.octal':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_octal$92(value)))
-			);
-		case 'literal.number.integer.binary':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_binary$95(value)))
-			);
-		case 'literal.number.integer.hex':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_hex$91(value)))
-			);
-		case 'literal.number.integer.imaginary':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'literal.number.integer.octal':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_octal$93(value)))
-			);
-		case 'literal.string':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_string$253(value))));
-		case 'literal.string.bytes':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'literal.string.bytes.multiline':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'literal.string.bytes.raw':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'literal.string.bytes.raw.multiline':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'literal.string.concatenated':
-			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_string_concatenated$252(value)))
-			);
-		case 'literal.string.interpolated':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'literal.string.interpolated.deferred':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'literal.string.interpolated.deferred.multiline':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'literal.string.interpolated.deferred.raw':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'literal.string.interpolated.deferred.raw.multiline':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'literal.string.interpolated.multiline':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'literal.string.interpolated.raw':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'literal.string.interpolated.raw.multiline':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'literal.string.multiline':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'literal.string.raw':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'literal.string.raw.multiline':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'literal.string.unicode':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'pattern.rest':
-			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(pattern_rest$206(value))));
-		case 'statement.assert':
-			return b.simpleStatements(b.simpleStatementsElements(statement_assert$146(value)));
-		case 'statement.delete':
-			return b.simpleStatements(b.simpleStatementsElements(statement_delete$151(value)));
-		case 'statement.exec':
-			return b.simpleStatements(b.simpleStatementsElements(statement_exec$177(value)));
-		case 'statement.global':
-			return b.simpleStatements(b.simpleStatementsElements(statement_global$175(value)));
-		case 'statement.if':
-			return statement_if$156(value);
-		case 'statement.import':
-			return b.simpleStatements(b.simpleStatementsElements(statement_import$136(value)));
-		case 'statement.import.from':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'statement.import.future':
-			return b.simpleStatements(b.simpleStatementsElements(statement_import_future$139(value)));
-		case 'statement.loop.for_each':
-			return statement_loop_for_each$162(value);
-		case 'statement.loop.while':
-			return statement_loop_while$163(value);
-		case 'statement.match':
-			return statement_match$159(value);
-		case 'statement.nonlocal':
-			return b.simpleStatements(b.simpleStatementsElements(statement_nonlocal$176(value)));
-		case 'statement.print':
-			return unbuilt('declaration.property.setter.statements', value);
-		case 'statement.resource':
-			return statement_resource$167(value);
-		case 'statement.return':
-			return b.simpleStatements(b.simpleStatementsElements(statement_return$150(value)));
-		case 'statement.throw':
-			return b.simpleStatements(b.simpleStatementsElements(statement_throw$152(value)));
-		case 'statement.try':
-			return statement_try$164(value);
-		default:
-			return unbuilt('declaration.property.setter.statements', value);
-	}
-};
-type declaration_property_setter$361_typeParameters$item$Item =
+type declaration_type_class$179_typeParameters$Item =
 	| BuildInput<PythonMap, 'declaration.type_parameter'>
 	| PythonMap['nodes']['declaration.type_parameter']
 	| BuildInput<PythonMap, 'declaration.type_parameter.parameters'>
 	| PythonMap['nodes']['declaration.type_parameter.parameters']
 	| BuildInput<PythonMap, 'declaration.type_parameter.variadic'>
 	| PythonMap['nodes']['declaration.type_parameter.variadic'];
-const declaration_property_setter$361_typeParameters$item = (
-	value: declaration_property_setter$361_typeParameters$item$Item
-) => {
+const declaration_type_class$179_typeParameters = (value: declaration_type_class$179_typeParameters$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [275, 313, 314, 315])) return value;
-		return unseated('declaration.property.setter.typeParameters', value);
+		if (seated(value, [275, 313, 314, 315])) return b.typeParams(b.typeParamsItems(value));
+		return unseated('declaration.type.class.typeParameters', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [275, 313, 314, 315])) return value;
-		return unseated('declaration.property.setter.typeParameters', value);
+		if (seated(value, [275, 313, 314, 315])) return b.typeParams(b.typeParamsItems(value));
+		return unseated('declaration.type.class.typeParameters', value);
 	}
 	switch (value.$path) {
 		case 'declaration.type_parameter':
-			return unbuilt('declaration.property.setter.typeParameters', value);
+			return unbuilt('declaration.type.class.typeParameters', value);
 		case 'declaration.type_parameter.parameters':
-			return declaration_type_parameter_parameters$315(value);
+			return b.typeParams(b.typeParamsItems(declaration_type_parameter_parameters$315(value)));
 		case 'declaration.type_parameter.variadic':
-			return declaration_type_parameter_variadic$314(value);
+			return b.typeParams(b.typeParamsItems(declaration_type_parameter_variadic$314(value)));
 		default:
-			return unbuilt('declaration.property.setter.typeParameters', value);
+			return unbuilt('declaration.type.class.typeParameters', value);
 	}
 };
-type declaration_type_alias$178_name$Item =
-	| Text<PythonMap, 'identifier'>
-	| BuildInput<PythonMap, 'identifier'>
-	| PythonMap['nodes']['identifier'];
-const declaration_type_alias$178_name = (value: declaration_type_alias$178_name$Item) => {
-	if (typeof value === 'string') {
-		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
-		return b.identifier(value);
-	}
-	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('declaration.type_alias.name', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [1])) return value;
-		return unseated('declaration.type_alias.name', value);
-	}
-	switch (value.$path) {
-		case 'identifier':
-			return identifier$1(value);
-		default:
-			return unbuilt('declaration.type_alias.name', value);
-	}
-};
-type declaration_type_alias$178_typeParameters$item$Item =
+type declaration_type_class$179_typeParameters$item$Item =
 	| BuildInput<PythonMap, 'declaration.type_parameter'>
 	| PythonMap['nodes']['declaration.type_parameter']
 	| BuildInput<PythonMap, 'declaration.type_parameter.parameters'>
 	| PythonMap['nodes']['declaration.type_parameter.parameters']
 	| BuildInput<PythonMap, 'declaration.type_parameter.variadic'>
 	| PythonMap['nodes']['declaration.type_parameter.variadic'];
-const declaration_type_alias$178_typeParameters$item = (value: declaration_type_alias$178_typeParameters$item$Item) => {
+const declaration_type_class$179_typeParameters$item = (value: declaration_type_class$179_typeParameters$item$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [275, 313, 314, 315])) return value;
-		return unseated('declaration.type_alias.typeParameters', value);
+		return unseated('declaration.type.class.typeParameters', value);
 	}
 	if (isNode(value)) {
 		if (seated(value, [275, 313, 314, 315])) return value;
-		return unseated('declaration.type_alias.typeParameters', value);
+		return unseated('declaration.type.class.typeParameters', value);
 	}
 	switch (value.$path) {
 		case 'declaration.type_parameter':
-			return unbuilt('declaration.type_alias.typeParameters', value);
+			return unbuilt('declaration.type.class.typeParameters', value);
 		case 'declaration.type_parameter.parameters':
 			return declaration_type_parameter_parameters$315(value);
 		case 'declaration.type_parameter.variadic':
 			return declaration_type_parameter_variadic$314(value);
 		default:
-			return unbuilt('declaration.type_alias.typeParameters', value);
-	}
-};
-type declaration_type_alias$178_value$Item =
-	| Text<PythonMap, 'identifier'>
-	| Text<PythonMap, 'literal.number.integer'>
-	| Text<PythonMap, 'literal.number.integer.imaginary'>
-	| bigint
-	| number
-	| BuildInput<PythonMap, 'expression.assignment'>
-	| PythonMap['nodes']['expression.assignment']
-	| BuildInput<PythonMap, 'expression.await'>
-	| PythonMap['nodes']['expression.await']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
-	| PythonMap['nodes']['expression.binary.arithmetic.add']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
-	| PythonMap['nodes']['expression.binary.arithmetic.divide']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
-	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
-	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
-	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
-	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
-	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
-	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
-	| PythonMap['nodes']['expression.binary.bitwise.and']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
-	| PythonMap['nodes']['expression.binary.bitwise.or']
-	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
-	| PythonMap['nodes']['expression.binary.bitwise.xor']
-	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
-	| PythonMap['nodes']['expression.binary.comparison.chain']
-	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
-	| PythonMap['nodes']['expression.binary.comparison.equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
-	| PythonMap['nodes']['expression.binary.comparison.greater']
-	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
-	| PythonMap['nodes']['expression.binary.comparison.less']
-	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.less_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
-	| PythonMap['nodes']['expression.binary.comparison.not_equal']
-	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
-	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
-	| BuildInput<PythonMap, 'expression.binary.identity.is'>
-	| PythonMap['nodes']['expression.binary.identity.is']
-	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
-	| PythonMap['nodes']['expression.binary.identity.is_not']
-	| BuildInput<PythonMap, 'expression.binary.logical.and'>
-	| PythonMap['nodes']['expression.binary.logical.and']
-	| BuildInput<PythonMap, 'expression.binary.logical.or'>
-	| PythonMap['nodes']['expression.binary.logical.or']
-	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
-	| PythonMap['nodes']['expression.binary.matrix_multiply']
-	| BuildInput<PythonMap, 'expression.binary.membership.in'>
-	| PythonMap['nodes']['expression.binary.membership.in']
-	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
-	| PythonMap['nodes']['expression.binary.membership.not_in']
-	| BuildInput<PythonMap, 'expression.binary.shift.left'>
-	| PythonMap['nodes']['expression.binary.shift.left']
-	| BuildInput<PythonMap, 'expression.binary.shift.right'>
-	| PythonMap['nodes']['expression.binary.shift.right']
-	| BuildInput<PythonMap, 'expression.call'>
-	| PythonMap['nodes']['expression.call']
-	| BuildInput<PythonMap, 'expression.call.member'>
-	| PythonMap['nodes']['expression.call.member']
-	| BuildInput<PythonMap, 'expression.collection.list'>
-	| PythonMap['nodes']['expression.collection.list']
-	| BuildInput<PythonMap, 'expression.collection.map'>
-	| PythonMap['nodes']['expression.collection.map']
-	| BuildInput<PythonMap, 'expression.collection.set'>
-	| PythonMap['nodes']['expression.collection.set']
-	| BuildInput<PythonMap, 'expression.collection.tuple'>
-	| PythonMap['nodes']['expression.collection.tuple']
-	| BuildInput<PythonMap, 'expression.comprehension.generator'>
-	| PythonMap['nodes']['expression.comprehension.generator']
-	| BuildInput<PythonMap, 'expression.comprehension.list'>
-	| PythonMap['nodes']['expression.comprehension.list']
-	| BuildInput<PythonMap, 'expression.comprehension.map'>
-	| PythonMap['nodes']['expression.comprehension.map']
-	| BuildInput<PythonMap, 'expression.comprehension.set'>
-	| PythonMap['nodes']['expression.comprehension.set']
-	| BuildInput<PythonMap, 'expression.conditional'>
-	| PythonMap['nodes']['expression.conditional']
-	| BuildInput<PythonMap, 'expression.lambda'>
-	| PythonMap['nodes']['expression.lambda']
-	| BuildInput<PythonMap, 'expression.member'>
-	| PythonMap['nodes']['expression.member']
-	| BuildInput<PythonMap, 'expression.parenthesized'>
-	| PythonMap['nodes']['expression.parenthesized']
-	| BuildInput<PythonMap, 'expression.subscript'>
-	| PythonMap['nodes']['expression.subscript']
-	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
-	| PythonMap['nodes']['expression.unary.bitwise_not']
-	| BuildInput<PythonMap, 'expression.unary.negation'>
-	| PythonMap['nodes']['expression.unary.negation']
-	| BuildInput<PythonMap, 'expression.unary.not'>
-	| PythonMap['nodes']['expression.unary.not']
-	| BuildInput<PythonMap, 'expression.unary.plus'>
-	| PythonMap['nodes']['expression.unary.plus']
-	| BuildInput<PythonMap, 'identifier'>
-	| PythonMap['nodes']['identifier']
-	| BuildInput<PythonMap, 'identifier.qualified'>
-	| PythonMap['nodes']['identifier.qualified']
-	| BuildInput<PythonMap, 'literal.boolean.false'>
-	| PythonMap['nodes']['literal.boolean.false']
-	| BuildInput<PythonMap, 'literal.boolean.true'>
-	| PythonMap['nodes']['literal.boolean.true']
-	| BuildInput<PythonMap, 'literal.ellipsis'>
-	| PythonMap['nodes']['literal.ellipsis']
-	| BuildInput<PythonMap, 'literal.null'>
-	| PythonMap['nodes']['literal.null']
-	| BuildInput<PythonMap, 'literal.number.float'>
-	| PythonMap['nodes']['literal.number.float']
-	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
-	| PythonMap['nodes']['literal.number.float.leading_point']
-	| BuildInput<PythonMap, 'literal.number.float.scientific'>
-	| PythonMap['nodes']['literal.number.float.scientific']
-	| BuildInput<PythonMap, 'literal.number.integer'>
-	| PythonMap['nodes']['literal.number.integer']
-	| BuildInput<PythonMap, 'literal.number.integer.big'>
-	| PythonMap['nodes']['literal.number.integer.big']
-	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
-	| PythonMap['nodes']['literal.number.integer.big.binary']
-	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
-	| PythonMap['nodes']['literal.number.integer.big.hex']
-	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
-	| PythonMap['nodes']['literal.number.integer.big.octal']
-	| BuildInput<PythonMap, 'literal.number.integer.binary'>
-	| PythonMap['nodes']['literal.number.integer.binary']
-	| BuildInput<PythonMap, 'literal.number.integer.hex'>
-	| PythonMap['nodes']['literal.number.integer.hex']
-	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
-	| PythonMap['nodes']['literal.number.integer.imaginary']
-	| BuildInput<PythonMap, 'literal.number.integer.octal'>
-	| PythonMap['nodes']['literal.number.integer.octal']
-	| BuildInput<PythonMap, 'literal.string'>
-	| PythonMap['nodes']['literal.string']
-	| BuildInput<PythonMap, 'literal.string.bytes'>
-	| PythonMap['nodes']['literal.string.bytes']
-	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
-	| PythonMap['nodes']['literal.string.bytes.multiline']
-	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
-	| PythonMap['nodes']['literal.string.bytes.raw']
-	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
-	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.concatenated'>
-	| PythonMap['nodes']['literal.string.concatenated']
-	| BuildInput<PythonMap, 'literal.string.interpolated'>
-	| PythonMap['nodes']['literal.string.interpolated']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
-	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.multiline']
-	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
-	| PythonMap['nodes']['literal.string.interpolated.raw']
-	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
-	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.multiline'>
-	| PythonMap['nodes']['literal.string.multiline']
-	| BuildInput<PythonMap, 'literal.string.raw'>
-	| PythonMap['nodes']['literal.string.raw']
-	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
-	| PythonMap['nodes']['literal.string.raw.multiline']
-	| BuildInput<PythonMap, 'literal.string.unicode'>
-	| PythonMap['nodes']['literal.string.unicode']
-	| BuildInput<PythonMap, 'pattern.rest'>
-	| PythonMap['nodes']['pattern.rest']
-	| BuildInput<PythonMap, 'type.constrained'>
-	| PythonMap['nodes']['type.constrained']
-	| BuildInput<PythonMap, 'type.generic'>
-	| PythonMap['nodes']['type.generic']
-	| BuildInput<PythonMap, 'type.nullable'>
-	| PythonMap['nodes']['type.nullable']
-	| BuildInput<PythonMap, 'type.rest'>
-	| PythonMap['nodes']['type.rest']
-	| BuildInput<PythonMap, 'type.union'>
-	| PythonMap['nodes']['type.union']
-	| Unmapped<'python:as_pattern'>;
-const declaration_type_alias$178_value = (value: declaration_type_alias$178_value$Item) => {
-	if (typeof value === 'string') {
-		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
-		return b.type(b.identifier(value));
-	}
-	if (typeof value === 'bigint') {
-		return b.type(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }));
-	}
-	if (typeof value === 'number') {
-		if (Number.isSafeInteger(value)) {
-			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
-		}
-		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
-					213, 214, 215, 218, 219, 226, 227, 229, 232, 233, 234, 235, 236, 238, 239, 240, 241, 243, 244, 245, 246, 247,
-					251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-				]
-			)
-		)
-			return b.type(value);
-		return unseated('declaration.type_alias.value', value);
-	}
-	switch (value.$path) {
-		case 'expression.assignment':
-			return b.type(expression_assignment$148(value));
-		case 'expression.await':
-			return b.type(expression_await$262(value));
-		case 'expression.binary.arithmetic.add':
-			return b.type(expression_binary_arithmetic_add$214(value));
-		case 'expression.binary.arithmetic.divide':
-			return b.type(expression_binary_arithmetic_divide$214(value));
-		case 'expression.binary.arithmetic.exponent':
-			return b.type(expression_binary_arithmetic_exponent$214(value));
-		case 'expression.binary.arithmetic.floor_divide':
-			return b.type(expression_binary_arithmetic_floor_divide$214(value));
-		case 'expression.binary.arithmetic.modulo':
-			return b.type(expression_binary_arithmetic_modulo$214(value));
-		case 'expression.binary.arithmetic.multiply':
-			return b.type(expression_binary_arithmetic_multiply$214(value));
-		case 'expression.binary.arithmetic.subtract':
-			return b.type(expression_binary_arithmetic_subtract$214(value));
-		case 'expression.binary.bitwise.and':
-			return b.type(expression_binary_bitwise_and$214(value));
-		case 'expression.binary.bitwise.or':
-			return b.type(expression_binary_bitwise_or$214(value));
-		case 'expression.binary.bitwise.xor':
-			return b.type(expression_binary_bitwise_xor$214(value));
-		case 'expression.binary.comparison.chain':
-			return b.type(expression_binary_comparison_chain$218(value));
-		case 'expression.binary.comparison.equal':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'expression.binary.comparison.greater':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'expression.binary.comparison.greater_equal':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'expression.binary.comparison.less':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'expression.binary.comparison.less_equal':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'expression.binary.comparison.not_equal':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'expression.binary.comparison.not_equal.legacy':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'expression.binary.identity.is':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'expression.binary.identity.is_not':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'expression.binary.logical.and':
-			return b.type(expression_binary_logical_and$213(value));
-		case 'expression.binary.logical.or':
-			return b.type(expression_binary_logical_or$213(value));
-		case 'expression.binary.matrix_multiply':
-			return b.type(expression_binary_matrix_multiply$214(value));
-		case 'expression.binary.membership.in':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'expression.binary.membership.not_in':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'expression.binary.shift.left':
-			return b.type(expression_binary_shift_left$214(value));
-		case 'expression.binary.shift.right':
-			return b.type(expression_binary_shift_right$214(value));
-		case 'expression.call':
-			return b.type(expression_call$229(value));
-		case 'expression.call.member':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'expression.collection.list':
-			return b.type(expression_collection_list$238(value));
-		case 'expression.collection.map':
-			return b.type(expression_collection_map$241(value));
-		case 'expression.collection.set':
-			return b.type(expression_collection_set$239(value));
-		case 'expression.collection.tuple':
-			return b.type(expression_collection_tuple$240(value));
-		case 'expression.comprehension.generator':
-			return b.type(expression_comprehension_generator$246(value));
-		case 'expression.comprehension.list':
-			return b.type(expression_comprehension_list$243(value));
-		case 'expression.comprehension.map':
-			return b.type(expression_comprehension_map$244(value));
-		case 'expression.comprehension.set':
-			return b.type(expression_comprehension_set$245(value));
-		case 'expression.conditional':
-			return b.type(expression_conditional$251(value));
-		case 'expression.lambda':
-			return b.type(expression_lambda$219(value));
-		case 'expression.member':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'expression.parenthesized':
-			return b.type(expression_parenthesized$247(value));
-		case 'expression.subscript':
-			return b.type(expression_subscript$227(value));
-		case 'expression.unary.bitwise_not':
-			return b.type(expression_unary_bitwise_not$215(value));
-		case 'expression.unary.negation':
-			return b.type(expression_unary_negation$215(value));
-		case 'expression.unary.not':
-			return b.type(expression_unary_not$212(value));
-		case 'expression.unary.plus':
-			return b.type(expression_unary_plus$215(value));
-		case 'identifier':
-			return b.type(identifier$1(value));
-		case 'identifier.qualified':
-			return b.type(identifier_qualified$236(value));
-		case 'literal.boolean.false':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'literal.boolean.true':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'literal.ellipsis':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'literal.null':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'literal.number.float':
-			return b.type(literal_number_float$101(value));
-		case 'literal.number.float.leading_point':
-			return b.type(literal_number_float_leading_point$102(value));
-		case 'literal.number.float.scientific':
-			return b.type(literal_number_float_scientific$103(value));
-		case 'literal.number.integer':
-			return b.type(literal_number_integer$100(value));
-		case 'literal.number.integer.big':
-			return b.type(literal_number_integer_big$98(value));
-		case 'literal.number.integer.big.binary':
-			return b.type(literal_number_integer_big_binary$94(value));
-		case 'literal.number.integer.big.hex':
-			return b.type(literal_number_integer_big_hex$90(value));
-		case 'literal.number.integer.big.octal':
-			return b.type(literal_number_integer_big_octal$92(value));
-		case 'literal.number.integer.binary':
-			return b.type(literal_number_integer_binary$95(value));
-		case 'literal.number.integer.hex':
-			return b.type(literal_number_integer_hex$91(value));
-		case 'literal.number.integer.imaginary':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'literal.number.integer.octal':
-			return b.type(literal_number_integer_octal$93(value));
-		case 'literal.string':
-			return b.type(literal_string$253(value));
-		case 'literal.string.bytes':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'literal.string.bytes.multiline':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'literal.string.bytes.raw':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'literal.string.bytes.raw.multiline':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'literal.string.concatenated':
-			return b.type(literal_string_concatenated$252(value));
-		case 'literal.string.interpolated':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'literal.string.interpolated.deferred':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'literal.string.interpolated.deferred.multiline':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'literal.string.interpolated.deferred.raw':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'literal.string.interpolated.deferred.raw.multiline':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'literal.string.interpolated.multiline':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'literal.string.interpolated.raw':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'literal.string.interpolated.raw.multiline':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'literal.string.multiline':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'literal.string.raw':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'literal.string.raw.multiline':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'literal.string.unicode':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'pattern.rest':
-			return b.type(pattern_rest$206(value));
-		case 'type.constrained':
-			return b.type(type_constrained$235(value));
-		case 'type.generic':
-			return b.type(type_generic$233(value));
-		case 'type.nullable':
-			return unbuilt('declaration.type_alias.value', value);
-		case 'type.rest':
-			return b.type(type_rest$232(value));
-		case 'type.union':
-			return b.type(type_union$234(value));
-		default:
-			return unbuilt('declaration.type_alias.value', value);
+			return unbuilt('declaration.type.class.typeParameters', value);
 	}
 };
 type declaration_type_parameter_parameters$315_name$Item =
@@ -14273,6 +13834,459 @@ const declaration_type_parameter_variadic$314_name = (value: declaration_type_pa
 			return identifier$1(value);
 		default:
 			return unbuilt('declaration.type_parameter.variadic.name', value);
+	}
+};
+type declaration_type_type_alias$178_name$Item =
+	| Text<PythonMap, 'identifier'>
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier'];
+const declaration_type_type_alias$178_name = (value: declaration_type_type_alias$178_name$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1])) return value;
+		return unseated('declaration.type.type_alias.name', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1])) return value;
+		return unseated('declaration.type.type_alias.name', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return identifier$1(value);
+		default:
+			return unbuilt('declaration.type.type_alias.name', value);
+	}
+};
+type declaration_type_type_alias$178_typeParameters$item$Item =
+	| BuildInput<PythonMap, 'declaration.type_parameter'>
+	| PythonMap['nodes']['declaration.type_parameter']
+	| BuildInput<PythonMap, 'declaration.type_parameter.parameters'>
+	| PythonMap['nodes']['declaration.type_parameter.parameters']
+	| BuildInput<PythonMap, 'declaration.type_parameter.variadic'>
+	| PythonMap['nodes']['declaration.type_parameter.variadic'];
+const declaration_type_type_alias$178_typeParameters$item = (
+	value: declaration_type_type_alias$178_typeParameters$item$Item
+) => {
+	if (typeof value === 'number') {
+		if (seated(value, [275, 313, 314, 315])) return value;
+		return unseated('declaration.type.type_alias.typeParameters', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [275, 313, 314, 315])) return value;
+		return unseated('declaration.type.type_alias.typeParameters', value);
+	}
+	switch (value.$path) {
+		case 'declaration.type_parameter':
+			return unbuilt('declaration.type.type_alias.typeParameters', value);
+		case 'declaration.type_parameter.parameters':
+			return declaration_type_parameter_parameters$315(value);
+		case 'declaration.type_parameter.variadic':
+			return declaration_type_parameter_variadic$314(value);
+		default:
+			return unbuilt('declaration.type.type_alias.typeParameters', value);
+	}
+};
+type declaration_type_type_alias$178_value$Item =
+	| Text<PythonMap, 'identifier'>
+	| Text<PythonMap, 'literal.number.integer'>
+	| Text<PythonMap, 'literal.number.integer.imaginary'>
+	| bigint
+	| number
+	| BuildInput<PythonMap, 'expression.assignment'>
+	| PythonMap['nodes']['expression.assignment']
+	| BuildInput<PythonMap, 'expression.await'>
+	| PythonMap['nodes']['expression.await']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
+	| PythonMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
+	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
+	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
+	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
+	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
+	| PythonMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
+	| PythonMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
+	| PythonMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
+	| PythonMap['nodes']['expression.binary.comparison.chain']
+	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
+	| PythonMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
+	| PythonMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
+	| PythonMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
+	| BuildInput<PythonMap, 'expression.binary.identity.is'>
+	| PythonMap['nodes']['expression.binary.identity.is']
+	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
+	| PythonMap['nodes']['expression.binary.identity.is_not']
+	| BuildInput<PythonMap, 'expression.binary.logical.and'>
+	| PythonMap['nodes']['expression.binary.logical.and']
+	| BuildInput<PythonMap, 'expression.binary.logical.or'>
+	| PythonMap['nodes']['expression.binary.logical.or']
+	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
+	| PythonMap['nodes']['expression.binary.matrix_multiply']
+	| BuildInput<PythonMap, 'expression.binary.membership.in'>
+	| PythonMap['nodes']['expression.binary.membership.in']
+	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
+	| PythonMap['nodes']['expression.binary.membership.not_in']
+	| BuildInput<PythonMap, 'expression.binary.shift.left'>
+	| PythonMap['nodes']['expression.binary.shift.left']
+	| BuildInput<PythonMap, 'expression.binary.shift.right'>
+	| PythonMap['nodes']['expression.binary.shift.right']
+	| BuildInput<PythonMap, 'expression.call'>
+	| PythonMap['nodes']['expression.call']
+	| BuildInput<PythonMap, 'expression.call.member'>
+	| PythonMap['nodes']['expression.call.member']
+	| BuildInput<PythonMap, 'expression.collection.list'>
+	| PythonMap['nodes']['expression.collection.list']
+	| BuildInput<PythonMap, 'expression.collection.map'>
+	| PythonMap['nodes']['expression.collection.map']
+	| BuildInput<PythonMap, 'expression.collection.set'>
+	| PythonMap['nodes']['expression.collection.set']
+	| BuildInput<PythonMap, 'expression.collection.tuple'>
+	| PythonMap['nodes']['expression.collection.tuple']
+	| BuildInput<PythonMap, 'expression.comprehension.generator'>
+	| PythonMap['nodes']['expression.comprehension.generator']
+	| BuildInput<PythonMap, 'expression.comprehension.list'>
+	| PythonMap['nodes']['expression.comprehension.list']
+	| BuildInput<PythonMap, 'expression.comprehension.map'>
+	| PythonMap['nodes']['expression.comprehension.map']
+	| BuildInput<PythonMap, 'expression.comprehension.set'>
+	| PythonMap['nodes']['expression.comprehension.set']
+	| BuildInput<PythonMap, 'expression.conditional'>
+	| PythonMap['nodes']['expression.conditional']
+	| BuildInput<PythonMap, 'expression.lambda'>
+	| PythonMap['nodes']['expression.lambda']
+	| BuildInput<PythonMap, 'expression.member'>
+	| PythonMap['nodes']['expression.member']
+	| BuildInput<PythonMap, 'expression.parenthesized'>
+	| PythonMap['nodes']['expression.parenthesized']
+	| BuildInput<PythonMap, 'expression.subscript'>
+	| PythonMap['nodes']['expression.subscript']
+	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
+	| PythonMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<PythonMap, 'expression.unary.negation'>
+	| PythonMap['nodes']['expression.unary.negation']
+	| BuildInput<PythonMap, 'expression.unary.not'>
+	| PythonMap['nodes']['expression.unary.not']
+	| BuildInput<PythonMap, 'expression.unary.plus'>
+	| PythonMap['nodes']['expression.unary.plus']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'identifier.qualified'>
+	| PythonMap['nodes']['identifier.qualified']
+	| BuildInput<PythonMap, 'literal.boolean.false'>
+	| PythonMap['nodes']['literal.boolean.false']
+	| BuildInput<PythonMap, 'literal.boolean.true'>
+	| PythonMap['nodes']['literal.boolean.true']
+	| BuildInput<PythonMap, 'literal.ellipsis'>
+	| PythonMap['nodes']['literal.ellipsis']
+	| BuildInput<PythonMap, 'literal.null'>
+	| PythonMap['nodes']['literal.null']
+	| BuildInput<PythonMap, 'literal.number.float'>
+	| PythonMap['nodes']['literal.number.float']
+	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+	| PythonMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<PythonMap, 'literal.number.float.scientific'>
+	| PythonMap['nodes']['literal.number.float.scientific']
+	| BuildInput<PythonMap, 'literal.number.integer'>
+	| PythonMap['nodes']['literal.number.integer']
+	| BuildInput<PythonMap, 'literal.number.integer.big'>
+	| PythonMap['nodes']['literal.number.integer.big']
+	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+	| PythonMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+	| PythonMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+	| PythonMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<PythonMap, 'literal.number.integer.binary'>
+	| PythonMap['nodes']['literal.number.integer.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.hex'>
+	| PythonMap['nodes']['literal.number.integer.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+	| PythonMap['nodes']['literal.number.integer.imaginary']
+	| BuildInput<PythonMap, 'literal.number.integer.octal'>
+	| PythonMap['nodes']['literal.number.integer.octal']
+	| BuildInput<PythonMap, 'literal.string'>
+	| PythonMap['nodes']['literal.string']
+	| BuildInput<PythonMap, 'literal.string.bytes'>
+	| PythonMap['nodes']['literal.string.bytes']
+	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.multiline']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+	| PythonMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.concatenated'>
+	| PythonMap['nodes']['literal.string.concatenated']
+	| BuildInput<PythonMap, 'literal.string.interpolated'>
+	| PythonMap['nodes']['literal.string.interpolated']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.multiline'>
+	| PythonMap['nodes']['literal.string.multiline']
+	| BuildInput<PythonMap, 'literal.string.raw'>
+	| PythonMap['nodes']['literal.string.raw']
+	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+	| PythonMap['nodes']['literal.string.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.unicode'>
+	| PythonMap['nodes']['literal.string.unicode']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| BuildInput<PythonMap, 'type.constrained'>
+	| PythonMap['nodes']['type.constrained']
+	| BuildInput<PythonMap, 'type.generic'>
+	| PythonMap['nodes']['type.generic']
+	| BuildInput<PythonMap, 'type.nullable'>
+	| PythonMap['nodes']['type.nullable']
+	| BuildInput<PythonMap, 'type.rest'>
+	| PythonMap['nodes']['type.rest']
+	| BuildInput<PythonMap, 'type.union'>
+	| PythonMap['nodes']['type.union']
+	| Unmapped<'python:as_pattern'>;
+const declaration_type_type_alias$178_value = (value: declaration_type_type_alias$178_value$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.type(b.identifier(value));
+		return b.type(b.identifier(value));
+	}
+	if (typeof value === 'bigint') {
+		return b.type(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }));
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
+					213, 214, 215, 218, 219, 226, 227, 229, 232, 233, 234, 235, 236, 238, 239, 240, 241, 243, 244, 245, 246, 247,
+					251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+				]
+			)
+		)
+			return b.type(value);
+		return unseated('declaration.type.type_alias.value', value);
+	}
+	switch (value.$path) {
+		case 'expression.assignment':
+			return b.type(expression_assignment$148(value));
+		case 'expression.await':
+			return b.type(expression_await$262(value));
+		case 'expression.binary.arithmetic.add':
+			return b.type(expression_binary_arithmetic_add$214(value));
+		case 'expression.binary.arithmetic.divide':
+			return b.type(expression_binary_arithmetic_divide$214(value));
+		case 'expression.binary.arithmetic.exponent':
+			return b.type(expression_binary_arithmetic_exponent$214(value));
+		case 'expression.binary.arithmetic.floor_divide':
+			return b.type(expression_binary_arithmetic_floor_divide$214(value));
+		case 'expression.binary.arithmetic.modulo':
+			return b.type(expression_binary_arithmetic_modulo$214(value));
+		case 'expression.binary.arithmetic.multiply':
+			return b.type(expression_binary_arithmetic_multiply$214(value));
+		case 'expression.binary.arithmetic.subtract':
+			return b.type(expression_binary_arithmetic_subtract$214(value));
+		case 'expression.binary.bitwise.and':
+			return b.type(expression_binary_bitwise_and$214(value));
+		case 'expression.binary.bitwise.or':
+			return b.type(expression_binary_bitwise_or$214(value));
+		case 'expression.binary.bitwise.xor':
+			return b.type(expression_binary_bitwise_xor$214(value));
+		case 'expression.binary.comparison.chain':
+			return b.type(expression_binary_comparison_chain$218(value));
+		case 'expression.binary.comparison.equal':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'expression.binary.comparison.greater':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'expression.binary.comparison.greater_equal':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'expression.binary.comparison.less':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'expression.binary.comparison.less_equal':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'expression.binary.comparison.not_equal':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'expression.binary.comparison.not_equal.legacy':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'expression.binary.identity.is':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'expression.binary.identity.is_not':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'expression.binary.logical.and':
+			return b.type(expression_binary_logical_and$213(value));
+		case 'expression.binary.logical.or':
+			return b.type(expression_binary_logical_or$213(value));
+		case 'expression.binary.matrix_multiply':
+			return b.type(expression_binary_matrix_multiply$214(value));
+		case 'expression.binary.membership.in':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'expression.binary.membership.not_in':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'expression.binary.shift.left':
+			return b.type(expression_binary_shift_left$214(value));
+		case 'expression.binary.shift.right':
+			return b.type(expression_binary_shift_right$214(value));
+		case 'expression.call':
+			return b.type(expression_call$229(value));
+		case 'expression.call.member':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'expression.collection.list':
+			return b.type(expression_collection_list$238(value));
+		case 'expression.collection.map':
+			return b.type(expression_collection_map$241(value));
+		case 'expression.collection.set':
+			return b.type(expression_collection_set$239(value));
+		case 'expression.collection.tuple':
+			return b.type(expression_collection_tuple$240(value));
+		case 'expression.comprehension.generator':
+			return b.type(expression_comprehension_generator$246(value));
+		case 'expression.comprehension.list':
+			return b.type(expression_comprehension_list$243(value));
+		case 'expression.comprehension.map':
+			return b.type(expression_comprehension_map$244(value));
+		case 'expression.comprehension.set':
+			return b.type(expression_comprehension_set$245(value));
+		case 'expression.conditional':
+			return b.type(expression_conditional$251(value));
+		case 'expression.lambda':
+			return b.type(expression_lambda$219(value));
+		case 'expression.member':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'expression.parenthesized':
+			return b.type(expression_parenthesized$247(value));
+		case 'expression.subscript':
+			return b.type(expression_subscript$227(value));
+		case 'expression.unary.bitwise_not':
+			return b.type(expression_unary_bitwise_not$215(value));
+		case 'expression.unary.negation':
+			return b.type(expression_unary_negation$215(value));
+		case 'expression.unary.not':
+			return b.type(expression_unary_not$212(value));
+		case 'expression.unary.plus':
+			return b.type(expression_unary_plus$215(value));
+		case 'identifier':
+			return b.type(identifier$1(value));
+		case 'identifier.qualified':
+			return b.type(identifier_qualified$236(value));
+		case 'literal.boolean.false':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'literal.boolean.true':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'literal.ellipsis':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'literal.null':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'literal.number.float':
+			return b.type(literal_number_float$101(value));
+		case 'literal.number.float.leading_point':
+			return b.type(literal_number_float_leading_point$102(value));
+		case 'literal.number.float.scientific':
+			return b.type(literal_number_float_scientific$103(value));
+		case 'literal.number.integer':
+			return b.type(literal_number_integer$100(value));
+		case 'literal.number.integer.big':
+			return b.type(literal_number_integer_big$98(value));
+		case 'literal.number.integer.big.binary':
+			return b.type(literal_number_integer_big_binary$94(value));
+		case 'literal.number.integer.big.hex':
+			return b.type(literal_number_integer_big_hex$90(value));
+		case 'literal.number.integer.big.octal':
+			return b.type(literal_number_integer_big_octal$92(value));
+		case 'literal.number.integer.binary':
+			return b.type(literal_number_integer_binary$95(value));
+		case 'literal.number.integer.hex':
+			return b.type(literal_number_integer_hex$91(value));
+		case 'literal.number.integer.imaginary':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'literal.number.integer.octal':
+			return b.type(literal_number_integer_octal$93(value));
+		case 'literal.string':
+			return b.type(literal_string$253(value));
+		case 'literal.string.bytes':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'literal.string.bytes.multiline':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'literal.string.bytes.raw.multiline':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'literal.string.concatenated':
+			return b.type(literal_string_concatenated$252(value));
+		case 'literal.string.interpolated':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'literal.string.interpolated.deferred':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'literal.string.interpolated.deferred.multiline':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'literal.string.interpolated.deferred.raw':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'literal.string.interpolated.deferred.raw.multiline':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'literal.string.interpolated.multiline':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'literal.string.interpolated.raw':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'literal.string.interpolated.raw.multiline':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'literal.string.multiline':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'literal.string.raw':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'literal.string.raw.multiline':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'literal.string.unicode':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'pattern.rest':
+			return b.type(pattern_rest$206(value));
+		case 'type.constrained':
+			return b.type(type_constrained$235(value));
+		case 'type.generic':
+			return b.type(type_generic$233(value));
+		case 'type.nullable':
+			return unbuilt('declaration.type.type_alias.value', value);
+		case 'type.rest':
+			return b.type(type_rest$232(value));
+		case 'type.union':
+			return b.type(type_union$234(value));
+		default:
+			return unbuilt('declaration.type.type_alias.value', value);
 	}
 };
 type declaration_variable$302_name$Item =
@@ -43333,14 +43347,14 @@ type file$133_statements$Item =
 	| Text<PythonMap, 'statement.empty'>
 	| bigint
 	| number
-	| BuildInput<PythonMap, 'declaration.class'>
-	| PythonMap['nodes']['declaration.class']
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| PythonMap['nodes']['declaration.constant']
 	| BuildInput<PythonMap, 'declaration.function'>
 	| PythonMap['nodes']['declaration.function']
-	| BuildInput<PythonMap, 'declaration.type_alias'>
-	| PythonMap['nodes']['declaration.type_alias']
+	| BuildInput<PythonMap, 'declaration.type.class'>
+	| PythonMap['nodes']['declaration.type.class']
+	| BuildInput<PythonMap, 'declaration.type.type_alias'>
+	| PythonMap['nodes']['declaration.type.type_alias']
 	| BuildInput<PythonMap, 'declaration.variable'>
 	| PythonMap['nodes']['declaration.variable']
 	| BuildInput<PythonMap, 'expression.assignment'>
@@ -43633,16 +43647,6 @@ const file$133_statements = (value: file$133_statements$Item) => {
 		return unseated('file.statements', value);
 	}
 	switch (value.$path) {
-		case 'declaration.class': {
-			if ((value.decorators ?? []).length === 0) return declaration_class$179(value);
-			return b.decoratedDefinition({
-				definition: declaration_class$179(value),
-				decorators: nonEmpty(
-					'declaration.class.decorators',
-					(value.decorators ?? []).map(declaration_class$179_decorators)
-				)
-			});
-		}
 		case 'declaration.constant':
 			return unbuilt('file.statements', value);
 		case 'declaration.function': {
@@ -43655,8 +43659,18 @@ const file$133_statements = (value: file$133_statements$Item) => {
 				)
 			});
 		}
-		case 'declaration.type_alias':
-			return b.simpleStatements(b.simpleStatementsElements(declaration_type_alias$178(value)));
+		case 'declaration.type.class': {
+			if ((value.decorators ?? []).length === 0) return declaration_type_class$179(value);
+			return b.decoratedDefinition({
+				definition: declaration_type_class$179(value),
+				decorators: nonEmpty(
+					'declaration.type.class.decorators',
+					(value.decorators ?? []).map(declaration_type_class$179_decorators)
+				)
+			});
+		}
+		case 'declaration.type.type_alias':
+			return b.simpleStatements(b.simpleStatementsElements(declaration_type_type_alias$178(value)));
 		case 'declaration.variable':
 			if (value.name !== undefined && value.value !== undefined && value.type === undefined)
 				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$302(value))));
@@ -48445,20 +48459,20 @@ type statement_block$185_statements$Item =
 	| Text<PythonMap, 'statement.empty'>
 	| bigint
 	| number
-	| BuildInput<PythonMap, 'declaration.class'>
-	| PythonMap['nodes']['declaration.class']
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| PythonMap['nodes']['declaration.constant']
-	| BuildInput<PythonMap, 'declaration.constructor'>
-	| PythonMap['nodes']['declaration.constructor']
 	| BuildInput<PythonMap, 'declaration.function'>
 	| PythonMap['nodes']['declaration.function']
-	| BuildInput<PythonMap, 'declaration.method'>
-	| PythonMap['nodes']['declaration.method']
-	| BuildInput<PythonMap, 'declaration.method.special'>
-	| PythonMap['nodes']['declaration.method.special']
-	| BuildInput<PythonMap, 'declaration.type_alias'>
-	| PythonMap['nodes']['declaration.type_alias']
+	| BuildInput<PythonMap, 'declaration.member.constructor'>
+	| PythonMap['nodes']['declaration.member.constructor']
+	| BuildInput<PythonMap, 'declaration.member.method'>
+	| PythonMap['nodes']['declaration.member.method']
+	| BuildInput<PythonMap, 'declaration.member.method.special'>
+	| PythonMap['nodes']['declaration.member.method.special']
+	| BuildInput<PythonMap, 'declaration.type.class'>
+	| PythonMap['nodes']['declaration.type.class']
+	| BuildInput<PythonMap, 'declaration.type.type_alias'>
+	| PythonMap['nodes']['declaration.type.type_alias']
 	| BuildInput<PythonMap, 'declaration.variable'>
 	| PythonMap['nodes']['declaration.variable']
 	| BuildInput<PythonMap, 'expression.assignment'>
@@ -48751,19 +48765,7 @@ const statement_block$185_statements = (value: statement_block$185_statements$It
 		return unseated('statement.block.statements', value);
 	}
 	switch (value.$path) {
-		case 'declaration.class': {
-			if ((value.decorators ?? []).length === 0) return declaration_class$179(value);
-			return b.decoratedDefinition({
-				definition: declaration_class$179(value),
-				decorators: nonEmpty(
-					'declaration.class.decorators',
-					(value.decorators ?? []).map(declaration_class$179_decorators)
-				)
-			});
-		}
 		case 'declaration.constant':
-			return unbuilt('statement.block.statements', value);
-		case 'declaration.constructor':
 			return unbuilt('statement.block.statements', value);
 		case 'declaration.function': {
 			if ((value.decorators ?? []).length === 0) return declaration_function$170(value);
@@ -48775,12 +48777,24 @@ const statement_block$185_statements = (value: statement_block$185_statements$It
 				)
 			});
 		}
-		case 'declaration.method':
+		case 'declaration.member.constructor':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.method.special':
+		case 'declaration.member.method':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.type_alias':
-			return b.simpleStatements(b.simpleStatementsElements(declaration_type_alias$178(value)));
+		case 'declaration.member.method.special':
+			return unbuilt('statement.block.statements', value);
+		case 'declaration.type.class': {
+			if ((value.decorators ?? []).length === 0) return declaration_type_class$179(value);
+			return b.decoratedDefinition({
+				definition: declaration_type_class$179(value),
+				decorators: nonEmpty(
+					'declaration.type.class.decorators',
+					(value.decorators ?? []).map(declaration_type_class$179_decorators)
+				)
+			});
+		}
+		case 'declaration.type.type_alias':
+			return b.simpleStatements(b.simpleStatementsElements(declaration_type_type_alias$178(value)));
 		case 'declaration.variable':
 			if (value.name !== undefined && value.value !== undefined && value.type === undefined)
 				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$302(value))));
@@ -49135,20 +49149,20 @@ type statement_block$308_statements$item$Item =
 	| Text<PythonMap, 'statement.empty'>
 	| bigint
 	| number
-	| BuildInput<PythonMap, 'declaration.class'>
-	| PythonMap['nodes']['declaration.class']
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| PythonMap['nodes']['declaration.constant']
-	| BuildInput<PythonMap, 'declaration.constructor'>
-	| PythonMap['nodes']['declaration.constructor']
 	| BuildInput<PythonMap, 'declaration.function'>
 	| PythonMap['nodes']['declaration.function']
-	| BuildInput<PythonMap, 'declaration.method'>
-	| PythonMap['nodes']['declaration.method']
-	| BuildInput<PythonMap, 'declaration.method.special'>
-	| PythonMap['nodes']['declaration.method.special']
-	| BuildInput<PythonMap, 'declaration.type_alias'>
-	| PythonMap['nodes']['declaration.type_alias']
+	| BuildInput<PythonMap, 'declaration.member.constructor'>
+	| PythonMap['nodes']['declaration.member.constructor']
+	| BuildInput<PythonMap, 'declaration.member.method'>
+	| PythonMap['nodes']['declaration.member.method']
+	| BuildInput<PythonMap, 'declaration.member.method.special'>
+	| PythonMap['nodes']['declaration.member.method.special']
+	| BuildInput<PythonMap, 'declaration.type.class'>
+	| PythonMap['nodes']['declaration.type.class']
+	| BuildInput<PythonMap, 'declaration.type.type_alias'>
+	| PythonMap['nodes']['declaration.type.type_alias']
 	| BuildInput<PythonMap, 'declaration.variable'>
 	| PythonMap['nodes']['declaration.variable']
 	| BuildInput<PythonMap, 'expression.assignment'>
@@ -49427,20 +49441,20 @@ const statement_block$308_statements$item = (value: statement_block$308_statemen
 		return unseated('statement.block.statements', value);
 	}
 	switch (value.$path) {
-		case 'declaration.class':
-			return unbuilt('statement.block.statements', value);
 		case 'declaration.constant':
-			return unbuilt('statement.block.statements', value);
-		case 'declaration.constructor':
 			return unbuilt('statement.block.statements', value);
 		case 'declaration.function':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.method':
+		case 'declaration.member.constructor':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.method.special':
+		case 'declaration.member.method':
 			return unbuilt('statement.block.statements', value);
-		case 'declaration.type_alias':
-			return declaration_type_alias$178(value);
+		case 'declaration.member.method.special':
+			return unbuilt('statement.block.statements', value);
+		case 'declaration.type.class':
+			return unbuilt('statement.block.statements', value);
+		case 'declaration.type.type_alias':
+			return declaration_type_type_alias$178(value);
 		case 'declaration.variable':
 			if (value.name !== undefined && value.value !== undefined && value.type === undefined)
 				return b.expressionStatement(declaration_variable$302(value));
@@ -50968,14 +50982,14 @@ type statement_if$156_statements$item$Item =
 	| Text<PythonMap, 'statement.empty'>
 	| bigint
 	| number
-	| BuildInput<PythonMap, 'declaration.class'>
-	| PythonMap['nodes']['declaration.class']
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| PythonMap['nodes']['declaration.constant']
 	| BuildInput<PythonMap, 'declaration.function'>
 	| PythonMap['nodes']['declaration.function']
-	| BuildInput<PythonMap, 'declaration.type_alias'>
-	| PythonMap['nodes']['declaration.type_alias']
+	| BuildInput<PythonMap, 'declaration.type.class'>
+	| PythonMap['nodes']['declaration.type.class']
+	| BuildInput<PythonMap, 'declaration.type.type_alias'>
+	| PythonMap['nodes']['declaration.type.type_alias']
 	| BuildInput<PythonMap, 'declaration.variable'>
 	| PythonMap['nodes']['declaration.variable']
 	| BuildInput<PythonMap, 'expression.assignment'>
@@ -51268,16 +51282,6 @@ const statement_if$156_statements$item = (value: statement_if$156_statements$ite
 		return unseated('statement.if.statements', value);
 	}
 	switch (value.$path) {
-		case 'declaration.class': {
-			if ((value.decorators ?? []).length === 0) return declaration_class$179(value);
-			return b.decoratedDefinition({
-				definition: declaration_class$179(value),
-				decorators: nonEmpty(
-					'declaration.class.decorators',
-					(value.decorators ?? []).map(declaration_class$179_decorators)
-				)
-			});
-		}
 		case 'declaration.constant':
 			return unbuilt('statement.if.statements', value);
 		case 'declaration.function': {
@@ -51290,8 +51294,18 @@ const statement_if$156_statements$item = (value: statement_if$156_statements$ite
 				)
 			});
 		}
-		case 'declaration.type_alias':
-			return b.simpleStatements(b.simpleStatementsElements(declaration_type_alias$178(value)));
+		case 'declaration.type.class': {
+			if ((value.decorators ?? []).length === 0) return declaration_type_class$179(value);
+			return b.decoratedDefinition({
+				definition: declaration_type_class$179(value),
+				decorators: nonEmpty(
+					'declaration.type.class.decorators',
+					(value.decorators ?? []).map(declaration_type_class$179_decorators)
+				)
+			});
+		}
+		case 'declaration.type.type_alias':
+			return b.simpleStatements(b.simpleStatementsElements(declaration_type_type_alias$178(value)));
 		case 'declaration.variable':
 			if (value.name !== undefined && value.value !== undefined && value.type === undefined)
 				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$302(value))));
@@ -52134,14 +52148,14 @@ type statement_loop_for_each$162_statements$item$Item =
 	| Text<PythonMap, 'statement.empty'>
 	| bigint
 	| number
-	| BuildInput<PythonMap, 'declaration.class'>
-	| PythonMap['nodes']['declaration.class']
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| PythonMap['nodes']['declaration.constant']
 	| BuildInput<PythonMap, 'declaration.function'>
 	| PythonMap['nodes']['declaration.function']
-	| BuildInput<PythonMap, 'declaration.type_alias'>
-	| PythonMap['nodes']['declaration.type_alias']
+	| BuildInput<PythonMap, 'declaration.type.class'>
+	| PythonMap['nodes']['declaration.type.class']
+	| BuildInput<PythonMap, 'declaration.type.type_alias'>
+	| PythonMap['nodes']['declaration.type.type_alias']
 	| BuildInput<PythonMap, 'declaration.variable'>
 	| PythonMap['nodes']['declaration.variable']
 	| BuildInput<PythonMap, 'expression.assignment'>
@@ -52434,16 +52448,6 @@ const statement_loop_for_each$162_statements$item = (value: statement_loop_for_e
 		return unseated('statement.loop.for_each.statements', value);
 	}
 	switch (value.$path) {
-		case 'declaration.class': {
-			if ((value.decorators ?? []).length === 0) return declaration_class$179(value);
-			return b.decoratedDefinition({
-				definition: declaration_class$179(value),
-				decorators: nonEmpty(
-					'declaration.class.decorators',
-					(value.decorators ?? []).map(declaration_class$179_decorators)
-				)
-			});
-		}
 		case 'declaration.constant':
 			return unbuilt('statement.loop.for_each.statements', value);
 		case 'declaration.function': {
@@ -52456,8 +52460,18 @@ const statement_loop_for_each$162_statements$item = (value: statement_loop_for_e
 				)
 			});
 		}
-		case 'declaration.type_alias':
-			return b.simpleStatements(b.simpleStatementsElements(declaration_type_alias$178(value)));
+		case 'declaration.type.class': {
+			if ((value.decorators ?? []).length === 0) return declaration_type_class$179(value);
+			return b.decoratedDefinition({
+				definition: declaration_type_class$179(value),
+				decorators: nonEmpty(
+					'declaration.type.class.decorators',
+					(value.decorators ?? []).map(declaration_type_class$179_decorators)
+				)
+			});
+		}
+		case 'declaration.type.type_alias':
+			return b.simpleStatements(b.simpleStatementsElements(declaration_type_type_alias$178(value)));
 		case 'declaration.variable':
 			if (value.name !== undefined && value.value !== undefined && value.type === undefined)
 				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$302(value))));
@@ -53202,14 +53216,14 @@ type statement_loop_while$163_statements$item$Item =
 	| Text<PythonMap, 'statement.empty'>
 	| bigint
 	| number
-	| BuildInput<PythonMap, 'declaration.class'>
-	| PythonMap['nodes']['declaration.class']
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| PythonMap['nodes']['declaration.constant']
 	| BuildInput<PythonMap, 'declaration.function'>
 	| PythonMap['nodes']['declaration.function']
-	| BuildInput<PythonMap, 'declaration.type_alias'>
-	| PythonMap['nodes']['declaration.type_alias']
+	| BuildInput<PythonMap, 'declaration.type.class'>
+	| PythonMap['nodes']['declaration.type.class']
+	| BuildInput<PythonMap, 'declaration.type.type_alias'>
+	| PythonMap['nodes']['declaration.type.type_alias']
 	| BuildInput<PythonMap, 'declaration.variable'>
 	| PythonMap['nodes']['declaration.variable']
 	| BuildInput<PythonMap, 'expression.assignment'>
@@ -53502,16 +53516,6 @@ const statement_loop_while$163_statements$item = (value: statement_loop_while$16
 		return unseated('statement.loop.while.statements', value);
 	}
 	switch (value.$path) {
-		case 'declaration.class': {
-			if ((value.decorators ?? []).length === 0) return declaration_class$179(value);
-			return b.decoratedDefinition({
-				definition: declaration_class$179(value),
-				decorators: nonEmpty(
-					'declaration.class.decorators',
-					(value.decorators ?? []).map(declaration_class$179_decorators)
-				)
-			});
-		}
 		case 'declaration.constant':
 			return unbuilt('statement.loop.while.statements', value);
 		case 'declaration.function': {
@@ -53524,8 +53528,18 @@ const statement_loop_while$163_statements$item = (value: statement_loop_while$16
 				)
 			});
 		}
-		case 'declaration.type_alias':
-			return b.simpleStatements(b.simpleStatementsElements(declaration_type_alias$178(value)));
+		case 'declaration.type.class': {
+			if ((value.decorators ?? []).length === 0) return declaration_type_class$179(value);
+			return b.decoratedDefinition({
+				definition: declaration_type_class$179(value),
+				decorators: nonEmpty(
+					'declaration.type.class.decorators',
+					(value.decorators ?? []).map(declaration_type_class$179_decorators)
+				)
+			});
+		}
+		case 'declaration.type.type_alias':
+			return b.simpleStatements(b.simpleStatementsElements(declaration_type_type_alias$178(value)));
 		case 'declaration.variable':
 			if (value.name !== undefined && value.value !== undefined && value.type === undefined)
 				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$302(value))));
@@ -57696,125 +57710,6 @@ const clause_resource$307 = (input: PathInput<PythonMap, 'clause.resource'>): Re
 		b.withClauseWithItems(...nonEmpty('clause.resource.items', (input.items ?? []).map(clause_resource$307_items$item)))
 	);
 };
-const declaration_class$179 = (
-	input: PathInput<PythonMap, 'declaration.class'>
-): ReturnType<typeof b.classDefinition> => {
-	const unroutedSlot = unroutedIn(input, ['bases', 'decorators', 'doc', 'members', 'name', 'typeParameters']);
-	if (unroutedSlot !== undefined) return unrouted('declaration.class', unroutedSlot);
-	const typeParameters$first = (listed(input.typeParameters) ? input.typeParameters : [])[0];
-	const typeParameters$rest = (listed(input.typeParameters) ? input.typeParameters : []).slice(1);
-	const bases$first = (input.bases ?? [])[0];
-	const bases$rest = (input.bases ?? []).slice(1);
-	const members$first = (input.members ?? [])[0];
-	const members$rest = (input.members ?? []).slice(1);
-	if (input.doc === undefined)
-		return b.classDefinition({
-			name: declaration_class$179_name(input.name),
-			typeParameters: listed(input.typeParameters)
-				? typeParameters$first === undefined
-					? undefined
-					: b.typeParams(
-							b.typeParamsItems(
-								declaration_class$179_typeParameters$item(typeParameters$first),
-								...typeParameters$rest.map(declaration_class$179_typeParameters$item)
-							)
-						)
-				: input.typeParameters === undefined
-					? undefined
-					: declaration_class$179_typeParameters(input.typeParameters),
-			bases:
-				bases$first === undefined
-					? undefined
-					: b.argumentList(
-							b.argumentListElements(
-								declaration_class$179_bases$item(bases$first),
-								...bases$rest.map(declaration_class$179_bases$item)
-							)
-						),
-			body:
-				members$first === undefined
-					? b.suiteEmpty()
-					: b.suiteBlockClassDeclaration(
-							b.blockClassDeclaration(
-								declaration_class$179_members$item(members$first),
-								...members$rest.map(declaration_class$179_members$item)
-							)
-						)
-		});
-	if ((input.members ?? []).length === 0)
-		return b.classDefinition({
-			name: declaration_class$179_name(input.name),
-			typeParameters: listed(input.typeParameters)
-				? typeParameters$first === undefined
-					? undefined
-					: b.typeParams(
-							b.typeParamsItems(
-								declaration_class$179_typeParameters$item(typeParameters$first),
-								...typeParameters$rest.map(declaration_class$179_typeParameters$item)
-							)
-						)
-				: input.typeParameters === undefined
-					? undefined
-					: declaration_class$179_typeParameters(input.typeParameters),
-			bases:
-				bases$first === undefined
-					? undefined
-					: b.argumentList(
-							b.argumentListElements(
-								declaration_class$179_bases$item(bases$first),
-								...bases$rest.map(declaration_class$179_bases$item)
-							)
-						),
-			body: input.doc === undefined ? missing('declaration.class.doc') : declaration_class$179_doc(input.doc)
-		});
-	throw new Error('declaration.class: no form of arm 179 takes the slots it states together');
-};
-const declaration_constructor$316 = (
-	input: PathInput<PythonMap, 'declaration.constructor'>
-): ReturnType<typeof b.constructorDeclaration> => {
-	const unroutedSlot = unroutedIn(input, ['decorators', 'parameters', 'returnType', 'statements', 'typeParameters']);
-	if (unroutedSlot !== undefined) return unrouted('declaration.constructor', unroutedSlot);
-	const typeParameters$first = (listed(input.typeParameters) ? input.typeParameters : [])[0];
-	const typeParameters$rest = (listed(input.typeParameters) ? input.typeParameters : []).slice(1);
-	const parameters$first = (input.parameters ?? [])[0];
-	const parameters$rest = (input.parameters ?? []).slice(1);
-	const statements$first = (input.statements ?? [])[0];
-	const statements$rest = (input.statements ?? []).slice(1);
-	return b.constructorDeclaration({
-		typeParameters: listed(input.typeParameters)
-			? typeParameters$first === undefined
-				? undefined
-				: b.typeParams(
-						b.typeParamsItems(
-							declaration_constructor$316_typeParameters$item(typeParameters$first),
-							...typeParameters$rest.map(declaration_constructor$316_typeParameters$item)
-						)
-					)
-			: input.typeParameters === undefined
-				? undefined
-				: declaration_constructor$316_typeParameters(input.typeParameters),
-		parameters:
-			parameters$first === undefined
-				? b.parameters()
-				: b.parameters(
-						b.parametersElements(
-							declaration_constructor$316_parameters$item(parameters$first),
-							...parameters$rest.map(declaration_constructor$316_parameters$item)
-						)
-					),
-		returnType: input.returnType === undefined ? undefined : declaration_constructor$316_returnType(input.returnType),
-		body:
-			statements$first === undefined
-				? b.suiteEmpty()
-				: b.suiteBlock(
-						b.block(
-							declaration_constructor$316_statements$item(statements$first),
-							...statements$rest.map(declaration_constructor$316_statements$item)
-						)
-					),
-		async: (input.$flags ?? []).includes('async')
-	});
-};
 const declaration_function$170 = (
 	input: PathInput<PythonMap, 'declaration.function'>
 ): ReturnType<typeof b.functionDefinition> => {
@@ -57900,6 +57795,227 @@ const declaration_function$170 = (
 		});
 	throw new Error('declaration.function: no form of arm 170 takes the slots it states together');
 };
+const declaration_member_constructor$316 = (
+	input: PathInput<PythonMap, 'declaration.member.constructor'>
+): ReturnType<typeof b.constructorDeclaration> => {
+	const unroutedSlot = unroutedIn(input, ['decorators', 'parameters', 'returnType', 'statements', 'typeParameters']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.member.constructor', unroutedSlot);
+	const typeParameters$first = (listed(input.typeParameters) ? input.typeParameters : [])[0];
+	const typeParameters$rest = (listed(input.typeParameters) ? input.typeParameters : []).slice(1);
+	const parameters$first = (input.parameters ?? [])[0];
+	const parameters$rest = (input.parameters ?? []).slice(1);
+	const statements$first = (input.statements ?? [])[0];
+	const statements$rest = (input.statements ?? []).slice(1);
+	return b.constructorDeclaration({
+		typeParameters: listed(input.typeParameters)
+			? typeParameters$first === undefined
+				? undefined
+				: b.typeParams(
+						b.typeParamsItems(
+							declaration_member_constructor$316_typeParameters$item(typeParameters$first),
+							...typeParameters$rest.map(declaration_member_constructor$316_typeParameters$item)
+						)
+					)
+			: input.typeParameters === undefined
+				? undefined
+				: declaration_member_constructor$316_typeParameters(input.typeParameters),
+		parameters:
+			parameters$first === undefined
+				? b.parameters()
+				: b.parameters(
+						b.parametersElements(
+							declaration_member_constructor$316_parameters$item(parameters$first),
+							...parameters$rest.map(declaration_member_constructor$316_parameters$item)
+						)
+					),
+		returnType:
+			input.returnType === undefined ? undefined : declaration_member_constructor$316_returnType(input.returnType),
+		body:
+			statements$first === undefined
+				? b.suiteEmpty()
+				: b.suiteBlock(
+						b.block(
+							declaration_member_constructor$316_statements$item(statements$first),
+							...statements$rest.map(declaration_member_constructor$316_statements$item)
+						)
+					),
+		async: (input.$flags ?? []).includes('async')
+	});
+};
+const declaration_member_property_getter$361 = (
+	input: PathInput<PythonMap, 'declaration.member.property.getter'>
+): ReturnType<typeof b.methodDeclaration> => {
+	const unroutedSlot = unroutedIn(input, [
+		'decorators',
+		'doc',
+		'name',
+		'parameters',
+		'statements',
+		'type',
+		'typeParameters'
+	]);
+	if (unroutedSlot !== undefined) return unrouted('declaration.member.property.getter', unroutedSlot);
+	if (input.$at?.override !== undefined && !(input.$flags ?? []).includes('override'))
+		return unset('declaration.member.property.getter', 'override');
+	const typeParameters$first = (input.typeParameters ?? [])[0];
+	const typeParameters$rest = (input.typeParameters ?? []).slice(1);
+	const parameters$first = (input.parameters ?? [])[0];
+	const parameters$rest = (input.parameters ?? []).slice(1);
+	const statements$first = (input.statements ?? [])[0];
+	const statements$rest = (input.statements ?? []).slice(1);
+	if (input.doc === undefined)
+		return b.methodDeclaration({
+			name: declaration_member_property_getter$361_name(input.name),
+			typeParameters:
+				typeParameters$first === undefined
+					? undefined
+					: b.typeParams(
+							b.typeParamsItems(
+								declaration_member_property_getter$361_typeParameters$item(typeParameters$first),
+								...typeParameters$rest.map(declaration_member_property_getter$361_typeParameters$item)
+							)
+						),
+			parameters:
+				parameters$first === undefined
+					? b.parameters()
+					: b.parameters(
+							b.parametersElements(
+								declaration_member_property_getter$361_parameters$item(parameters$first),
+								...parameters$rest.map(declaration_member_property_getter$361_parameters$item)
+							)
+						),
+			returnType: input.type === undefined ? undefined : declaration_member_property_getter$361_type(input.type),
+			body:
+				statements$first === undefined
+					? b.suiteEmpty()
+					: b.suiteBlock(
+							b.block(
+								declaration_member_property_getter$361_statements$item(statements$first),
+								...statements$rest.map(declaration_member_property_getter$361_statements$item)
+							)
+						),
+			async: (input.$flags ?? []).includes('async')
+		});
+	if ((input.statements ?? []).length === 0)
+		return b.methodDeclaration({
+			name: declaration_member_property_getter$361_name(input.name),
+			typeParameters:
+				typeParameters$first === undefined
+					? undefined
+					: b.typeParams(
+							b.typeParamsItems(
+								declaration_member_property_getter$361_typeParameters$item(typeParameters$first),
+								...typeParameters$rest.map(declaration_member_property_getter$361_typeParameters$item)
+							)
+						),
+			parameters:
+				parameters$first === undefined
+					? b.parameters()
+					: b.parameters(
+							b.parametersElements(
+								declaration_member_property_getter$361_parameters$item(parameters$first),
+								...parameters$rest.map(declaration_member_property_getter$361_parameters$item)
+							)
+						),
+			returnType: input.type === undefined ? undefined : declaration_member_property_getter$361_type(input.type),
+			body:
+				input.doc === undefined
+					? missing('declaration.member.property.getter.doc')
+					: declaration_member_property_getter$361_doc(input.doc),
+			async: (input.$flags ?? []).includes('async')
+		});
+	throw new Error('declaration.member.property.getter: no form of arm 361 takes the slots it states together');
+};
+const declaration_member_property_setter$361 = (
+	input: PathInput<PythonMap, 'declaration.member.property.setter'>
+): ReturnType<typeof b.methodDeclaration> => {
+	const unroutedSlot = unroutedIn(input, [
+		'decorators',
+		'doc',
+		'name',
+		'parameters',
+		'returnType',
+		'statements',
+		'typeParameters'
+	]);
+	if (unroutedSlot !== undefined) return unrouted('declaration.member.property.setter', unroutedSlot);
+	if (input.$at?.override !== undefined && !(input.$flags ?? []).includes('override'))
+		return unset('declaration.member.property.setter', 'override');
+	const typeParameters$first = (input.typeParameters ?? [])[0];
+	const typeParameters$rest = (input.typeParameters ?? []).slice(1);
+	const parameters$first = (input.parameters ?? [])[0];
+	const parameters$rest = (input.parameters ?? []).slice(1);
+	const statements$first = (input.statements ?? [])[0];
+	const statements$rest = (input.statements ?? []).slice(1);
+	if (input.doc === undefined)
+		return b.methodDeclaration({
+			name: declaration_member_property_setter$361_name(input.name),
+			typeParameters:
+				typeParameters$first === undefined
+					? undefined
+					: b.typeParams(
+							b.typeParamsItems(
+								declaration_member_property_setter$361_typeParameters$item(typeParameters$first),
+								...typeParameters$rest.map(declaration_member_property_setter$361_typeParameters$item)
+							)
+						),
+			parameters:
+				parameters$first === undefined
+					? b.parameters()
+					: b.parameters(
+							b.parametersElements(
+								declaration_member_property_setter$361_parameters$item(parameters$first),
+								...parameters$rest.map(declaration_member_property_setter$361_parameters$item)
+							)
+						),
+			returnType:
+				input.returnType === undefined
+					? undefined
+					: declaration_member_property_setter$361_returnType(input.returnType),
+			body:
+				statements$first === undefined
+					? b.suiteEmpty()
+					: b.suiteBlock(
+							b.block(
+								declaration_member_property_setter$361_statements$item(statements$first),
+								...statements$rest.map(declaration_member_property_setter$361_statements$item)
+							)
+						),
+			async: (input.$flags ?? []).includes('async')
+		});
+	if ((input.statements ?? []).length === 0)
+		return b.methodDeclaration({
+			name: declaration_member_property_setter$361_name(input.name),
+			typeParameters:
+				typeParameters$first === undefined
+					? undefined
+					: b.typeParams(
+							b.typeParamsItems(
+								declaration_member_property_setter$361_typeParameters$item(typeParameters$first),
+								...typeParameters$rest.map(declaration_member_property_setter$361_typeParameters$item)
+							)
+						),
+			parameters:
+				parameters$first === undefined
+					? b.parameters()
+					: b.parameters(
+							b.parametersElements(
+								declaration_member_property_setter$361_parameters$item(parameters$first),
+								...parameters$rest.map(declaration_member_property_setter$361_parameters$item)
+							)
+						),
+			returnType:
+				input.returnType === undefined
+					? undefined
+					: declaration_member_property_setter$361_returnType(input.returnType),
+			body:
+				input.doc === undefined
+					? missing('declaration.member.property.setter.doc')
+					: declaration_member_property_setter$361_doc(input.doc),
+			async: (input.$flags ?? []).includes('async')
+		});
+	throw new Error('declaration.member.property.setter: no form of arm 361 takes the slots it states together');
+};
 const declaration_parameter_defaulted$204 = (
 	input: PathInput<PythonMap, 'declaration.parameter.defaulted'>
 ): ReturnType<typeof b.defaultParameter> => {
@@ -57931,200 +58047,78 @@ const declaration_parameter_typed_default$205 = (
 		default: declaration_parameter_typed_default$205_default(input.default)
 	});
 };
-const declaration_property_getter$361 = (
-	input: PathInput<PythonMap, 'declaration.property.getter'>
-): ReturnType<typeof b.methodDeclaration> => {
-	const unroutedSlot = unroutedIn(input, [
-		'decorators',
-		'doc',
-		'name',
-		'parameters',
-		'statements',
-		'type',
-		'typeParameters'
-	]);
-	if (unroutedSlot !== undefined) return unrouted('declaration.property.getter', unroutedSlot);
-	if (input.$at?.override !== undefined && !(input.$flags ?? []).includes('override'))
-		return unset('declaration.property.getter', 'override');
-	const typeParameters$first = (input.typeParameters ?? [])[0];
-	const typeParameters$rest = (input.typeParameters ?? []).slice(1);
-	const parameters$first = (input.parameters ?? [])[0];
-	const parameters$rest = (input.parameters ?? []).slice(1);
-	const statements$first = (input.statements ?? [])[0];
-	const statements$rest = (input.statements ?? []).slice(1);
+const declaration_type_class$179 = (
+	input: PathInput<PythonMap, 'declaration.type.class'>
+): ReturnType<typeof b.classDefinition> => {
+	const unroutedSlot = unroutedIn(input, ['bases', 'decorators', 'doc', 'members', 'name', 'typeParameters']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.type.class', unroutedSlot);
+	const typeParameters$first = (listed(input.typeParameters) ? input.typeParameters : [])[0];
+	const typeParameters$rest = (listed(input.typeParameters) ? input.typeParameters : []).slice(1);
+	const bases$first = (input.bases ?? [])[0];
+	const bases$rest = (input.bases ?? []).slice(1);
+	const members$first = (input.members ?? [])[0];
+	const members$rest = (input.members ?? []).slice(1);
 	if (input.doc === undefined)
-		return b.methodDeclaration({
-			name: declaration_property_getter$361_name(input.name),
-			typeParameters:
-				typeParameters$first === undefined
+		return b.classDefinition({
+			name: declaration_type_class$179_name(input.name),
+			typeParameters: listed(input.typeParameters)
+				? typeParameters$first === undefined
 					? undefined
 					: b.typeParams(
 							b.typeParamsItems(
-								declaration_property_getter$361_typeParameters$item(typeParameters$first),
-								...typeParameters$rest.map(declaration_property_getter$361_typeParameters$item)
+								declaration_type_class$179_typeParameters$item(typeParameters$first),
+								...typeParameters$rest.map(declaration_type_class$179_typeParameters$item)
 							)
-						),
-			parameters:
-				parameters$first === undefined
-					? b.parameters()
-					: b.parameters(
-							b.parametersElements(
-								declaration_property_getter$361_parameters$item(parameters$first),
-								...parameters$rest.map(declaration_property_getter$361_parameters$item)
-							)
-						),
-			returnType: input.type === undefined ? undefined : declaration_property_getter$361_type(input.type),
-			body:
-				statements$first === undefined
-					? b.suiteEmpty()
-					: b.suiteBlock(
-							b.block(
-								declaration_property_getter$361_statements$item(statements$first),
-								...statements$rest.map(declaration_property_getter$361_statements$item)
-							)
-						),
-			async: (input.$flags ?? []).includes('async')
-		});
-	if ((input.statements ?? []).length === 0)
-		return b.methodDeclaration({
-			name: declaration_property_getter$361_name(input.name),
-			typeParameters:
-				typeParameters$first === undefined
-					? undefined
-					: b.typeParams(
-							b.typeParamsItems(
-								declaration_property_getter$361_typeParameters$item(typeParameters$first),
-								...typeParameters$rest.map(declaration_property_getter$361_typeParameters$item)
-							)
-						),
-			parameters:
-				parameters$first === undefined
-					? b.parameters()
-					: b.parameters(
-							b.parametersElements(
-								declaration_property_getter$361_parameters$item(parameters$first),
-								...parameters$rest.map(declaration_property_getter$361_parameters$item)
-							)
-						),
-			returnType: input.type === undefined ? undefined : declaration_property_getter$361_type(input.type),
-			body:
-				input.doc === undefined
-					? missing('declaration.property.getter.doc')
-					: declaration_property_getter$361_doc(input.doc),
-			async: (input.$flags ?? []).includes('async')
-		});
-	throw new Error('declaration.property.getter: no form of arm 361 takes the slots it states together');
-};
-const declaration_property_setter$361 = (
-	input: PathInput<PythonMap, 'declaration.property.setter'>
-): ReturnType<typeof b.methodDeclaration> => {
-	const unroutedSlot = unroutedIn(input, [
-		'decorators',
-		'doc',
-		'name',
-		'parameters',
-		'returnType',
-		'statements',
-		'typeParameters'
-	]);
-	if (unroutedSlot !== undefined) return unrouted('declaration.property.setter', unroutedSlot);
-	if (input.$at?.override !== undefined && !(input.$flags ?? []).includes('override'))
-		return unset('declaration.property.setter', 'override');
-	const typeParameters$first = (input.typeParameters ?? [])[0];
-	const typeParameters$rest = (input.typeParameters ?? []).slice(1);
-	const parameters$first = (input.parameters ?? [])[0];
-	const parameters$rest = (input.parameters ?? []).slice(1);
-	const statements$first = (input.statements ?? [])[0];
-	const statements$rest = (input.statements ?? []).slice(1);
-	if (input.doc === undefined)
-		return b.methodDeclaration({
-			name: declaration_property_setter$361_name(input.name),
-			typeParameters:
-				typeParameters$first === undefined
-					? undefined
-					: b.typeParams(
-							b.typeParamsItems(
-								declaration_property_setter$361_typeParameters$item(typeParameters$first),
-								...typeParameters$rest.map(declaration_property_setter$361_typeParameters$item)
-							)
-						),
-			parameters:
-				parameters$first === undefined
-					? b.parameters()
-					: b.parameters(
-							b.parametersElements(
-								declaration_property_setter$361_parameters$item(parameters$first),
-								...parameters$rest.map(declaration_property_setter$361_parameters$item)
-							)
-						),
-			returnType:
-				input.returnType === undefined ? undefined : declaration_property_setter$361_returnType(input.returnType),
-			body:
-				statements$first === undefined
-					? b.suiteEmpty()
-					: b.suiteBlock(
-							b.block(
-								declaration_property_setter$361_statements$item(statements$first),
-								...statements$rest.map(declaration_property_setter$361_statements$item)
-							)
-						),
-			async: (input.$flags ?? []).includes('async')
-		});
-	if ((input.statements ?? []).length === 0)
-		return b.methodDeclaration({
-			name: declaration_property_setter$361_name(input.name),
-			typeParameters:
-				typeParameters$first === undefined
-					? undefined
-					: b.typeParams(
-							b.typeParamsItems(
-								declaration_property_setter$361_typeParameters$item(typeParameters$first),
-								...typeParameters$rest.map(declaration_property_setter$361_typeParameters$item)
-							)
-						),
-			parameters:
-				parameters$first === undefined
-					? b.parameters()
-					: b.parameters(
-							b.parametersElements(
-								declaration_property_setter$361_parameters$item(parameters$first),
-								...parameters$rest.map(declaration_property_setter$361_parameters$item)
-							)
-						),
-			returnType:
-				input.returnType === undefined ? undefined : declaration_property_setter$361_returnType(input.returnType),
-			body:
-				input.doc === undefined
-					? missing('declaration.property.setter.doc')
-					: declaration_property_setter$361_doc(input.doc),
-			async: (input.$flags ?? []).includes('async')
-		});
-	throw new Error('declaration.property.setter: no form of arm 361 takes the slots it states together');
-};
-const declaration_type_alias$178 = (
-	input: PathInput<PythonMap, 'declaration.type_alias'>
-): ReturnType<typeof b.typeAliasStatement> => {
-	const unroutedSlot = unroutedIn(input, ['name', 'typeParameters', 'value']);
-	if (unroutedSlot !== undefined) return unrouted('declaration.type_alias', unroutedSlot);
-	const typeParameters$first = (input.typeParameters ?? [])[0];
-	const typeParameters$rest = (input.typeParameters ?? []).slice(1);
-	return b.typeAliasStatement({
-		name:
-			input.name === undefined ? missing('declaration.type_alias.name') : declaration_type_alias$178_name(input.name),
-		typeParameters:
-			typeParameters$first === undefined
-				? undefined
-				: b.typeParams(
-						b.typeParamsItems(
-							declaration_type_alias$178_typeParameters$item(typeParameters$first),
-							...typeParameters$rest.map(declaration_type_alias$178_typeParameters$item)
 						)
-					),
-		value:
-			input.value === undefined
-				? missing('declaration.type_alias.value')
-				: declaration_type_alias$178_value(input.value)
-	});
+				: input.typeParameters === undefined
+					? undefined
+					: declaration_type_class$179_typeParameters(input.typeParameters),
+			bases:
+				bases$first === undefined
+					? undefined
+					: b.argumentList(
+							b.argumentListElements(
+								declaration_type_class$179_bases$item(bases$first),
+								...bases$rest.map(declaration_type_class$179_bases$item)
+							)
+						),
+			body:
+				members$first === undefined
+					? b.suiteEmpty()
+					: b.suiteBlockClassDeclaration(
+							b.blockClassDeclaration(
+								declaration_type_class$179_members$item(members$first),
+								...members$rest.map(declaration_type_class$179_members$item)
+							)
+						)
+		});
+	if ((input.members ?? []).length === 0)
+		return b.classDefinition({
+			name: declaration_type_class$179_name(input.name),
+			typeParameters: listed(input.typeParameters)
+				? typeParameters$first === undefined
+					? undefined
+					: b.typeParams(
+							b.typeParamsItems(
+								declaration_type_class$179_typeParameters$item(typeParameters$first),
+								...typeParameters$rest.map(declaration_type_class$179_typeParameters$item)
+							)
+						)
+				: input.typeParameters === undefined
+					? undefined
+					: declaration_type_class$179_typeParameters(input.typeParameters),
+			bases:
+				bases$first === undefined
+					? undefined
+					: b.argumentList(
+							b.argumentListElements(
+								declaration_type_class$179_bases$item(bases$first),
+								...bases$rest.map(declaration_type_class$179_bases$item)
+							)
+						),
+			body: input.doc === undefined ? missing('declaration.type.class.doc') : declaration_type_class$179_doc(input.doc)
+		});
+	throw new Error('declaration.type.class: no form of arm 179 takes the slots it states together');
 };
 const declaration_type_parameter_parameters$315 = (
 	input: PathInput<PythonMap, 'declaration.type_parameter.parameters'>
@@ -58139,6 +58133,33 @@ const declaration_type_parameter_variadic$314 = (
 	const unroutedSlot = unroutedIn(input, ['name']);
 	if (unroutedSlot !== undefined) return unrouted('declaration.type_parameter.variadic', unroutedSlot);
 	return b.typeParamTypeVarTuple(declaration_type_parameter_variadic$314_name(input.name));
+};
+const declaration_type_type_alias$178 = (
+	input: PathInput<PythonMap, 'declaration.type.type_alias'>
+): ReturnType<typeof b.typeAliasStatement> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'typeParameters', 'value']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.type.type_alias', unroutedSlot);
+	const typeParameters$first = (input.typeParameters ?? [])[0];
+	const typeParameters$rest = (input.typeParameters ?? []).slice(1);
+	return b.typeAliasStatement({
+		name:
+			input.name === undefined
+				? missing('declaration.type.type_alias.name')
+				: declaration_type_type_alias$178_name(input.name),
+		typeParameters:
+			typeParameters$first === undefined
+				? undefined
+				: b.typeParams(
+						b.typeParamsItems(
+							declaration_type_type_alias$178_typeParameters$item(typeParameters$first),
+							...typeParameters$rest.map(declaration_type_type_alias$178_typeParameters$item)
+						)
+					),
+		value:
+			input.value === undefined
+				? missing('declaration.type.type_alias.value')
+				: declaration_type_type_alias$178_value(input.value)
+	});
 };
 const declaration_variable$302 = (
 	input: PathInput<PythonMap, 'declaration.variable'>
@@ -59573,13 +59594,97 @@ const clause_resource = (input: PathInput<PythonMap, 'clause.resource'>) => {
 		return clause_resource$306(input);
 	return clause_resource$307(input);
 };
-const declaration_class = (input: PathInput<PythonMap, 'declaration.class'>) => {
-	if (input.decorators !== undefined) return unrouted('declaration.class', 'decorators');
-	return declaration_class$179(input);
-};
 const declaration_function = (input: PathInput<PythonMap, 'declaration.function'>) => {
 	if (input.decorators !== undefined) return unrouted('declaration.function', 'decorators');
 	return declaration_function$170(input);
+};
+const declaration_member_property_getter = (input: PathInput<PythonMap, 'declaration.member.property.getter'>) => {
+	return b.decoratedDefinitionClassDeclaration({
+		definition: declaration_member_property_getter$361(input),
+		decorators: nonEmpty(
+			'declaration.member.property.getter.decorators',
+			withSpelled(
+				[],
+				[
+					{
+						index: input.$at?.getter?.index,
+						item: declaration_member_property_getter$361_decorators(
+							input.$at?.getter?.spelling === undefined
+								? { $path: 'identifier', $value: 'property' }
+								: input.$at?.getter?.spelling === 'property'
+									? { $path: 'identifier', $value: 'property' }
+									: noSpelling('declaration.member.property.getter.getter', input.$at?.getter?.spelling)
+						)
+					},
+					...((input.$flags ?? []).includes('override')
+						? [
+								{
+									index: input.$at?.override?.index,
+									item: declaration_member_property_getter$361_decorators(
+										input.$at?.override?.spelling === undefined
+											? { $path: 'identifier', $value: 'override' }
+											: input.$at?.override?.spelling === 'override'
+												? { $path: 'identifier', $value: 'override' }
+												: input.$at?.override?.spelling === 'typing.override'
+													? { $path: 'expression.member', object: 'typing', property: 'override' }
+													: noSpelling('declaration.member.property.getter.override', input.$at?.override?.spelling)
+									)
+								}
+							]
+						: [])
+				]
+			)
+		)
+	});
+};
+const declaration_member_property_setter = (input: PathInput<PythonMap, 'declaration.member.property.setter'>) => {
+	return b.decoratedDefinitionClassDeclaration({
+		definition: declaration_member_property_setter$361(input),
+		decorators: nonEmpty(
+			'declaration.member.property.setter.decorators',
+			withSpelled(
+				[],
+				[
+					{
+						index: input.$at?.setter?.index,
+						item: declaration_member_property_setter$361_decorators(
+							input.$at?.setter?.spelling === undefined
+								? {
+										$path: 'expression.member',
+										property: 'setter',
+										object:
+											typeof input.name === 'string' ? input.name : missing('declaration.member.property.setter.name')
+									}
+								: input.$at?.setter?.spelling.endsWith('.setter')
+									? {
+											$path: 'expression.member',
+											property: 'setter',
+											object:
+												typeof input.name === 'string' ? input.name : missing('declaration.member.property.setter.name')
+										}
+									: noSpelling('declaration.member.property.setter.setter', input.$at?.setter?.spelling)
+						)
+					},
+					...((input.$flags ?? []).includes('override')
+						? [
+								{
+									index: input.$at?.override?.index,
+									item: declaration_member_property_setter$361_decorators(
+										input.$at?.override?.spelling === undefined
+											? { $path: 'identifier', $value: 'override' }
+											: input.$at?.override?.spelling === 'override'
+												? { $path: 'identifier', $value: 'override' }
+												: input.$at?.override?.spelling === 'typing.override'
+													? { $path: 'expression.member', object: 'typing', property: 'override' }
+													: noSpelling('declaration.member.property.setter.override', input.$at?.override?.spelling)
+									)
+								}
+							]
+						: [])
+				]
+			)
+		)
+	});
 };
 const declaration_parameter_defaulted = (input: PathInput<PythonMap, 'declaration.parameter.defaulted'>) => {
 	return declaration_parameter_defaulted$204(input);
@@ -59590,94 +59695,12 @@ const declaration_parameter_typed = (input: PathInput<PythonMap, 'declaration.pa
 const declaration_parameter_typed_default = (input: PathInput<PythonMap, 'declaration.parameter.typed_default'>) => {
 	return declaration_parameter_typed_default$205(input);
 };
-const declaration_property_getter = (input: PathInput<PythonMap, 'declaration.property.getter'>) => {
-	return b.decoratedDefinitionClassDeclaration({
-		definition: declaration_property_getter$361(input),
-		decorators: nonEmpty(
-			'declaration.property.getter.decorators',
-			withSpelled(
-				[],
-				[
-					{
-						index: input.$at?.getter?.index,
-						item: declaration_property_getter$361_decorators(
-							input.$at?.getter?.spelling === undefined
-								? { $path: 'identifier', $value: 'property' }
-								: input.$at?.getter?.spelling === 'property'
-									? { $path: 'identifier', $value: 'property' }
-									: noSpelling('declaration.property.getter.getter', input.$at?.getter?.spelling)
-						)
-					},
-					...((input.$flags ?? []).includes('override')
-						? [
-								{
-									index: input.$at?.override?.index,
-									item: declaration_property_getter$361_decorators(
-										input.$at?.override?.spelling === undefined
-											? { $path: 'identifier', $value: 'override' }
-											: input.$at?.override?.spelling === 'override'
-												? { $path: 'identifier', $value: 'override' }
-												: input.$at?.override?.spelling === 'typing.override'
-													? { $path: 'expression.member', object: 'typing', property: 'override' }
-													: noSpelling('declaration.property.getter.override', input.$at?.override?.spelling)
-									)
-								}
-							]
-						: [])
-				]
-			)
-		)
-	});
+const declaration_type_class = (input: PathInput<PythonMap, 'declaration.type.class'>) => {
+	if (input.decorators !== undefined) return unrouted('declaration.type.class', 'decorators');
+	return declaration_type_class$179(input);
 };
-const declaration_property_setter = (input: PathInput<PythonMap, 'declaration.property.setter'>) => {
-	return b.decoratedDefinitionClassDeclaration({
-		definition: declaration_property_setter$361(input),
-		decorators: nonEmpty(
-			'declaration.property.setter.decorators',
-			withSpelled(
-				[],
-				[
-					{
-						index: input.$at?.setter?.index,
-						item: declaration_property_setter$361_decorators(
-							input.$at?.setter?.spelling === undefined
-								? {
-										$path: 'expression.member',
-										property: 'setter',
-										object: typeof input.name === 'string' ? input.name : missing('declaration.property.setter.name')
-									}
-								: input.$at?.setter?.spelling.endsWith('.setter')
-									? {
-											$path: 'expression.member',
-											property: 'setter',
-											object: typeof input.name === 'string' ? input.name : missing('declaration.property.setter.name')
-										}
-									: noSpelling('declaration.property.setter.setter', input.$at?.setter?.spelling)
-						)
-					},
-					...((input.$flags ?? []).includes('override')
-						? [
-								{
-									index: input.$at?.override?.index,
-									item: declaration_property_setter$361_decorators(
-										input.$at?.override?.spelling === undefined
-											? { $path: 'identifier', $value: 'override' }
-											: input.$at?.override?.spelling === 'override'
-												? { $path: 'identifier', $value: 'override' }
-												: input.$at?.override?.spelling === 'typing.override'
-													? { $path: 'expression.member', object: 'typing', property: 'override' }
-													: noSpelling('declaration.property.setter.override', input.$at?.override?.spelling)
-									)
-								}
-							]
-						: [])
-				]
-			)
-		)
-	});
-};
-const declaration_type_alias = (input: PathInput<PythonMap, 'declaration.type_alias'>) => {
-	return declaration_type_alias$178(input);
+const declaration_type_type_alias = (input: PathInput<PythonMap, 'declaration.type.type_alias'>) => {
+	return declaration_type_type_alias$178(input);
 };
 const declaration_type_parameter_parameters = (
 	input: PathInput<PythonMap, 'declaration.type_parameter.parameters'>
@@ -60035,15 +60058,14 @@ export const portableBuild = {
 		resource: clause_resource
 	},
 	declaration: {
-		class: declaration_class,
 		function: declaration_function,
+		member: { property: { getter: declaration_member_property_getter, setter: declaration_member_property_setter } },
 		parameter: {
 			defaulted: declaration_parameter_defaulted,
 			typed: declaration_parameter_typed,
 			typed_default: declaration_parameter_typed_default
 		},
-		property: { getter: declaration_property_getter, setter: declaration_property_setter },
-		type_alias: declaration_type_alias,
+		type: { class: declaration_type_class, type_alias: declaration_type_type_alias },
 		type_parameter: {
 			parameters: declaration_type_parameter_parameters,
 			variadic: declaration_type_parameter_variadic
