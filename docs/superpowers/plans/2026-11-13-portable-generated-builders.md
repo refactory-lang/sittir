@@ -129,6 +129,8 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
 
 ### Task 4: The build emitter
 
+**Ceiling:** the user allowed rust's count of structures only the interpreter builds to rise from 771 to 776 for the struct-pattern paths. Both builds refused those six rows before, and the generated build now stops at paths that were already ungenerated: `statement.match`, `file` and `element.type_argument`. A commit that generates one of them lowers the ceiling to its new count.
+
 **Files:**
 - Create: `packages/codegen/src/emitters/overlays/portable/emit/build.ts` (from the prototype, its builders typed by `emit/engine.ts`), run in the pinned child
 - Generated: `packages/<lang>/src/portable/build.ts` becomes `portableBuild(engine)`
