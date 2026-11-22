@@ -351,6 +351,74 @@ export namespace Expression {
 	});
 });
 
+describe('aliases', () => {
+	const kindOf = (name: string, path: string, parent: string): string =>
+		`export interface ${name}<G extends GrammarMap, K extends Under<'${path}'> = '${path}'> extends SubKindOf<V.${parent}<G>> {\n\treadonly $path: K;\n}`;
+	const BASE = {
+		'expression.ts': `export interface Expression<G extends GrammarMap, K extends Under<'expression'> = 'expression'> {\n\treadonly $path: K;\n}\nexport namespace Expression {\n${kindOf('Call', 'expression.call', 'Expression')}\n}\n`,
+		'statement.ts': `export interface Statement<G extends GrammarMap, K extends Under<'statement'> = 'statement'> {\n\treadonly $path: K;\n}\nexport namespace Statement {\n${kindOf('If', 'statement.if', 'Statement')}\n${kindOf('Block', 'statement.block', 'Statement')}\nexport namespace Block {\n${kindOf('Async', 'statement.block.async', 'Statement.Block')}\n}\n}\n`
+	};
+	const owned = (name: string, stub: string): Record<string, string> =>
+		feature(name.toLowerCase(), `export interface ${name} {\n\treadonly ${name.toLowerCase()}: true;\n}`, { 'expression.ts': `export namespace Expression {\n${stub}\n}\n` });
+	const alias = (name: string, target: string): string => `export type ${name}<G extends GrammarMap> = V.${target}<G>;`;
+	const issuesOf = (...stubs: readonly string[]): Promise<readonly string[]> => issues({ ...BASE, ...owned('Valued', stubs.join('\n')) });
+
+	it('reads an alias with its path, target and owner, and puts it in the level above it', async () => {
+		const p = plan(await readVocabularySource(vocabulary({ ...BASE, ...owned('Valued', [alias('If', 'Statement.If'), alias('Block', 'Statement.Block.Any')].join('\n')) })));
+		expect(p.issues).toEqual([]);
+		expect(p.aliases.map(({ path, target, feature: by }) => [path, target, by])).toEqual([
+			['expression.block', 'statement.block', 'Valued'],
+			['expression.if', 'statement.if', 'Valued']
+		]);
+		expect(p.levels.get('Expression')).toEqual(['Expression', 'Expression.Block', 'Expression.Call', 'Expression.If']);
+	});
+
+	it('gates a feature alias on its owner and names what lies beneath the target', async () => {
+		const source = await readVocabularySource(vocabulary({ ...BASE, ...owned('Valued', [alias('If', 'Statement.If'), alias('Block', 'Statement.Block.Any')].join('\n')) }));
+		const text = augmentation(source, plan(source));
+		expect(text).toContain('type If<G extends GrammarMap> = gate.In<G, features.Valued, V.Statement.If<G>>;');
+		expect(text).toContain('type Block<G extends GrammarMap> = gate.In<G, features.Valued, V.Statement.Block.Any<G>>;');
+		expect(text).toContain('type Any<G extends GrammarMap> = V.Expression<G> | V.Expression.Block<G> | V.Expression.Call<G> | V.Expression.If<G>;');
+	});
+
+	it('leaves a base alias ungated in its level', async () => {
+		const statement = BASE['statement.ts'].replace('export namespace Statement {\n', `export namespace Statement {\n${alias('Expression', 'Expression.Any')}\n`);
+		const source = await readVocabularySource(vocabulary({ ...BASE, 'statement.ts': statement }));
+		const p = plan(source);
+		expect(p.issues).toEqual([]);
+		expect(p.aliases.map(({ path, feature: by }) => [path, by])).toEqual([['statement.expression', undefined]]);
+		const text = augmentation(source, p);
+		expect(text).not.toContain('type Expression<G extends GrammarMap> = gate.In');
+		expect(text).toContain('V.Statement.Expression<G>');
+	});
+
+	it('reports a path that is already a kind or a namespace', async () => {
+		expect(await issuesOf(alias('Call', 'Statement.If'))).toContainEqual(expect.stringContaining('expression.call: Valued declares it as an alias, and it is a kind'));
+		const nested = { ...BASE, ...owned('Valued', alias('Block', 'Statement.Block.Any')), 'expression.ts': BASE['expression.ts'].replace('export namespace Expression {\n', `export namespace Expression {\nexport namespace Block {\n${kindOf('Inner', 'expression.block.inner', 'Expression')}\n}\n`) };
+		expect(await issues(nested)).toContainEqual(expect.stringContaining('expression.block: Valued declares it as an alias, and it is a namespace'));
+	});
+
+	it('reports a target that does not exist, or a name that is not the target’s last segment', async () => {
+		expect(await issuesOf(alias('While', 'Statement.While'))).toContainEqual(expect.stringContaining('its target statement.while is neither a kind nor a namespace'));
+		expect(await issuesOf(alias('Cond', 'Statement.If'))).toContainEqual(expect.stringContaining('an alias path is its namespace and its target’s last segment'.replace('’', "'")));
+	});
+
+	it('reports a target with kinds beneath it that is not written as its Any', async () => {
+		expect(await issuesOf(alias('Block', 'Statement.Block'))).toContainEqual(expect.stringContaining('write V.Statement.Block.Any'));
+	});
+
+	it('reports an alias with two owners', async () => {
+		const found = await issues({ ...BASE, ...owned('Valued', alias('If', 'Statement.If')), ...owned('Other', alias('If', 'Statement.If')) });
+		expect(found).toContainEqual(expect.stringContaining('expression.if: an alias declared by'));
+	});
+
+	it('reports a cycle through the aliases', async () => {
+		const statement = BASE['statement.ts'].replace('export namespace Statement {\n', `export namespace Statement {\n${alias('Expression', 'Expression.Any')}\n`);
+		const found = await issues({ ...BASE, 'statement.ts': statement, ...owned('Valued', alias('Statement', 'Statement.Any')) });
+		expect(found).toContainEqual(expect.stringContaining('closes a cycle'));
+	});
+});
+
 describe('the synonym collision rule', () => {
 	const synonyms = (levels: string, flags = ''): Promise<readonly string[]> =>
 		issues({

@@ -3,17 +3,19 @@ import { inLanguage } from '../language.ts';
 import { hasKind, readsAs } from './classify.ts';
 import { languageGuardOf, type PortableLanguage } from './language-guard.ts';
 import { portableTrees, type LanguageGuard, type PortableGuard, type PortableGuardTree } from './tree.ts';
-import { vocabularyNamespaces, vocabularyPaths } from './vocabulary-paths.ts';
+import { vocabularyAliasPaths, vocabularyNamespaces, vocabularyPaths } from './vocabulary-paths.ts';
 
 /** A vocabulary path: one of {@link vocabularyPaths}. */
 export type VocabularyPath = (typeof vocabularyPaths)[number];
 
+type VocabularyAliasPath = (typeof vocabularyAliasPaths)[number];
+
 /**
- * Every vocabulary path and namespace, mapped to the kind ids a bound grammar reads at or under it, or to `never` where it reads none.
+ * Every vocabulary path, namespace and alias path, mapped to the kind ids a bound grammar reads at or under it, or to `never` where it reads none.
  *
- * @typeParam Ids - A bound grammar's kind ids per path and namespace it reads (its `PortableIds`); `{}` for a grammar without bindings.
+ * @typeParam Ids - A bound grammar's kind ids per path, namespace and alias it reads (its `PortableIds`); `{}` for a grammar without bindings.
  */
-export type PortableQueryIds<Ids> = { readonly [P in VocabularyPath | (typeof vocabularyNamespaces)[number]]: P extends keyof Ids ? Ids[P] : never };
+export type PortableQueryIds<Ids> = { readonly [P in VocabularyPath | (typeof vocabularyNamespaces)[number] | VocabularyAliasPath]: P extends keyof Ids ? Ids[P] : never };
 
 export { classifierOf, hasKind, type PortableClassifier } from './classify.ts';
 export { registerPortableRows, type PortableLanguage } from './language-guard.ts';
@@ -32,7 +34,7 @@ const guardOf =
 		return rows !== undefined && readsAs(rows, path, node);
 	};
 
-const views = new WeakMap<PortableLanguage, PortableGuardTree<VocabularyPath, LanguageGuard>>();
+const views = new WeakMap<PortableLanguage, PortableGuardTree<VocabularyPath | VocabularyAliasPath, LanguageGuard>>();
 
 /**
  * The portable kinds and guards, one per vocabulary path, the same objects for every language.
@@ -49,7 +51,7 @@ const views = new WeakMap<PortableLanguage, PortableGuardTree<VocabularyPath, La
  * on where it sits. So a method in an impl, trait or class body reads as a function, not a method; a closure parameter reads as
  * no parameter; `crate` visibility reads as no visibility; and a python static method reads as a function.
  */
-export const portable = portableTrees(vocabularyPaths, vocabularyNamespaces, guardOf);
+export const portable = portableTrees(vocabularyPaths, vocabularyNamespaces, vocabularyAliasPaths, guardOf);
 
 /**
  * A language's portable guards: the shared tree's paths, each guard reading a node of the language, a bare kind id of it, or a
@@ -66,11 +68,11 @@ export const portable = portableTrees(vocabularyPaths, vocabularyNamespaces, gua
  * @returns The guard tree, with the same keys as `portable.is`.
  * @throws When a guard is given a kind id or a text before an engine of the language has loaded its rows.
  */
-export function portableGuardsOf(language: PortableLanguage): PortableGuardTree<VocabularyPath, LanguageGuard> {
+export function portableGuardsOf(language: PortableLanguage): PortableGuardTree<VocabularyPath | VocabularyAliasPath, LanguageGuard> {
 	let view = views.get(language);
 	if (view === undefined) {
 		const ofLanguage = inLanguage(language);
-		views.set(language, (view = portableTrees(vocabularyPaths, vocabularyNamespaces, (path) => languageGuardOf(language, ofLanguage, (rows, value) => readsAs(rows, path, value))).is));
+		views.set(language, (view = portableTrees(vocabularyPaths, vocabularyNamespaces, vocabularyAliasPaths, (path) => languageGuardOf(language, ofLanguage, (rows, value) => readsAs(rows, path, value))).is));
 	}
 	return view;
 }

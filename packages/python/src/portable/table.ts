@@ -20381,6 +20381,7 @@ export const build: PortableBuildTable = {
 		'MultilineStrings',
 		'MultipleInheritance',
 		'NamedArguments',
+		'NestedTypes',
 		'NullableTypes',
 		'ObjectOriented',
 		'OperatorOverloading',

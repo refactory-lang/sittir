@@ -2,12 +2,6 @@ import type { GrammarMap, Slot } from '../../map.ts';
 import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Expression {
-	export namespace Block {
-		export interface Try<G extends GrammarMap, K extends Under<'expression.block.try'> = 'expression.block.try'> extends SubKindOf<V.Expression.Block<G, K>> {
-			// claimed by r
-			readonly $path: K;
-		}
-	}
 	export interface Propagate<G extends GrammarMap, K extends Under<'expression.propagate'> = 'expression.propagate'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by r
 		readonly $path: K;

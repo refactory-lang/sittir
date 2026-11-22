@@ -194,6 +194,8 @@ A kind name's kind id, stamped from the generated id tables, or `undefined` for 
 
 The tree of every vocabulary path a grammar reads (`NamespaceNode`), segment by segment and sorted. Each node's kinds are derived once from the read entries whose paths satisfy its facts through `portablePathHasFacts`. A crossing is admitted beneath each path that names its facts, even when another refinement separates its segments.
 
+An alias the language holds gets a node where some read lies at or under what it reaches. A node's `targets` (`aliasTargets`, kept to those with reads) add their kinds to it, so a namespace holds what its aliases place beneath it.
+
 ### `packages/codegen/src/emitters/overlays/portable/namespaces.ts::descendants`
 
 Every node below a namespace node, each before its own descendants. The alias pass and the portable surface walk the tree with it.
@@ -205,6 +207,8 @@ The `namespaces` section of `node-model-portable.json5`. Per depth (`NamespaceLe
 ### `packages/codegen/src/emitters/overlays/portable/namespaces.ts::NamespaceNode`
 
 One level of the portable namespace tree: its dotted path, the kinds whose readings carry every fact it names, and its child levels by segment.
+
+Its `targets` are what the aliases at or beneath it reach in this language.
 
 ### `packages/codegen/src/emitters/overlays/portable/namespaces.ts::MutableNode`
 
@@ -264,6 +268,8 @@ The typed portable module, emitted from the same routes as the other portable ou
 ### `packages/codegen/src/emitters/overlays/portable/surface.ts::PortableSurfaceConfig`
 
 What the portable surface is emitted from: the grammar's node union type name (`grammarNodeTypeName`), its routes, the compiled test of each read entry, the kind-id expression of a kind, the fixed text of each fixed-text kind, each kind's flag plans and the type names that declare them, and each kind's slot flags and the type names that declare the readable ones.
+
+Its `aliases` are those the grammar's composition holds: each gets a node with `$namespace`, and a row stamps the `targets` its aliases reach.
 
 ### `packages/codegen/src/emitters/overlays/portable/typed.ts::PortableTypedInput`
 

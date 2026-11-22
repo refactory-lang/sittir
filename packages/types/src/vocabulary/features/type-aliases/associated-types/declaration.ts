@@ -21,4 +21,7 @@ export namespace Declaration {
 			}
 		}
 	}
+	export namespace Member {
+		export type TypeAlias<G extends GrammarMap> = V.Declaration.Type.TypeAlias.Any<G>;
+	}
 }

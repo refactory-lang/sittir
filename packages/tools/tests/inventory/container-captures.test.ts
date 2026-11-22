@@ -81,7 +81,7 @@ describe('container captures', () => {
 		);
 		const built: Vocabulary = {
 			kinds,
-			namespaces: new Set(),
+			namespaces: new Set(), aliases: [],
 			shortened: new Set(),
 			flags: new Set(['async']),
 			synonyms: { levels: new Map(), flags: new Map([['async', ['concurrent']]]) },

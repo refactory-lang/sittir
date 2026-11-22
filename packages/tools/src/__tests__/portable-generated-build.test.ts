@@ -267,12 +267,12 @@ describe('a path whose arms no test tells apart', () => {
 
 describe('rust value blocks hold statements and a tail value', () => {
 	it.each([
-		['fn f() { unsafe { a; b } }\n', 'expression.block.unsafe', { statements: ['a'], trailingExpression: 'b' }, 'unsafe {\n    a;\n    b\n}'],
-		['fn f() { unsafe { a; } }\n', 'expression.block.unsafe', { statements: ['a'] }, 'unsafe {\n    a;\n}'],
-		['fn f() { unsafe { b } }\n', 'expression.block.unsafe', { statements: [], trailingExpression: 'b' }, 'unsafe {\n    b\n}'],
-		['fn f() { unsafe {} }\n', 'expression.block.unsafe', { statements: [] }, 'unsafe {}'],
-		['fn f() { async move { a; b } }\n', 'expression.block.async', { $flags: ['move'], statements: ['a'], trailingExpression: 'b' }, 'async move {\n    a;\n    b\n}'],
-		['fn f() { const { 1 } }\n', 'expression.block.const', { statements: [], trailingExpression: { $path: 'literal.number.integer', $value: 1 } }, 'const {\n    1\n}']
+		['fn f() { unsafe { a; b } }\n', 'statement.block.unsafe', { statements: ['a'], trailingExpression: 'b' }, 'unsafe {\n    a;\n    b\n}'],
+		['fn f() { unsafe { a; } }\n', 'statement.block.unsafe', { statements: ['a'] }, 'unsafe {\n    a;\n}'],
+		['fn f() { unsafe { b } }\n', 'statement.block.unsafe', { statements: [], trailingExpression: 'b' }, 'unsafe {\n    b\n}'],
+		['fn f() { unsafe {} }\n', 'statement.block.unsafe', { statements: [] }, 'unsafe {}'],
+		['fn f() { async move { a; b } }\n', 'statement.block.async', { $flags: ['move'], statements: ['a'], trailingExpression: 'b' }, 'async move {\n    a;\n    b\n}'],
+		['fn f() { const { 1 } }\n', 'statement.block.const', { statements: [], trailingExpression: { $path: 'literal.number.integer', $value: 1 } }, 'const {\n    1\n}']
 	] as const)('%j reads its block into the value block and builds back through one block in both builds', async (source, path, slots, rendered) => {
 		const structure = await readAt('rust', source, path);
 		expect(structure).toEqual({ $path: path, ...slots });
@@ -280,7 +280,7 @@ describe('rust value blocks hold statements and a tail value', () => {
 	});
 
 	it('builds an empty block when neither slot is stated, in both builds', async () => {
-		expect(await bothBuilds('rust', { $path: 'expression.block.unsafe' })).toEqual(['unsafe {}', 'unsafe {}']);
+		expect(await bothBuilds('rust', { $path: 'statement.block.unsafe' })).toEqual(['unsafe {}', 'unsafe {}']);
 	});
 });
 

@@ -127,6 +127,7 @@ export type { MultilineStrings } from './multiline-strings/index.ts';
 export type { MultipleInheritance } from './methods/classes/multiple-inheritance/index.ts';
 export type { MultiwayBranch } from './multiway-branch/index.ts';
 export type { NamedArguments } from './named-arguments/index.ts';
+export type { NestedTypes } from './nested-types/index.ts';
 export type { NonNullAssertions } from './type-annotations/nullable-types/non-null-assertions/index.ts';
 export type { NullableTypes } from './type-annotations/nullable-types/index.ts';
 export type { ObjectOriented } from './object-oriented/index.ts';

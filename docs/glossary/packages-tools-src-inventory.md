@@ -110,3 +110,11 @@ The options of the bindings inventory.
 ### `packages/tools/src/inventory/index.ts::CompileReport`
 
 The report a bindings compile produces.
+
+### `packages/tools/src/inventory/index.ts::KindSetRow`
+
+One kind-set in one grammar: the grammar's rule for it; `uncovered`, the reads the rule admits that lie neither beneath the namespace nor under an alias the language holds; and `unadmitted`, the aliases the language holds that the rule does not admit, which its map narrows.
+
+### `packages/tools/src/inventory/index.ts::kindSetRows`
+
+Compares a grammar's rule for each kind-set with the aliases its language holds. The rule is the kind-set's hidden bound name or its plain name, whichever the grammar has as a supertype. A member with no read of its own reads as what its container holds. `bindings-inventory --check` prints the rows and does not fail on them.

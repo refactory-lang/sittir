@@ -253,6 +253,8 @@ Where the vocabulary path list is written: `packages/common/src/portable/vocabul
 
 The source of the vocabulary path list: every kind path of the vocabulary (`readVocabulary`'s `kinds`, which includes the kinds features declare), sorted by code point, one quoted path per line, in a frozen `vocabularyPaths` array declared `as const`, so its element type is the union of the paths and types the shared portable trees (`portable/tree.ts::PortableKindTree`). After it, the same way, `vocabularyNamespaces`: the vocabulary's namespaces (`Vocabulary::namespaces`), which `portableTrees` gives nodes with no `$path`. The text is already in the repository's format, so the committed file and this emitter's output compare byte for byte.
 
+After the namespaces come `vocabularyAliases`, each alias's path, target and owner (null for the base), and `vocabularyAliasPaths`, their paths, which `portableTrees` gives nodes.
+
 ### `packages/codegen/src/bindings/vocabulary-paths.ts::writeVocabularyPaths`
 
 Reads the vocabulary and writes `emitVocabularyPaths`'s output to `VOCABULARY_PATHS_FILE`, leaving the file untouched when it already holds that text. The path list belongs to no grammar, so it has one writer, `regenerateGrammars`, which calls this once per run before any grammar generates; the per-grammar generations run in parallel and would otherwise race on the file.
@@ -267,6 +269,8 @@ One interface as declared, plain JSON so it crosses the pinned child:
 - its own property members (`DeclaredSlot`).
 
 A declaration with a `$kind` is a kind (`DeclaredKind`, `isKind`). In a feature folder, a declaration without one adds members to the kind with the same qualified name.
+
+A type alias whose right side is a `V.`-qualified name is an alias (`DeclaredAlias`, `isAlias`): neither a kind nor members added to one.
 
 ### `packages/codegen/src/bindings/vocabulary.ts::DeclaredSlot`
 
@@ -1844,6 +1848,8 @@ A table mapping each synonym to its canonical name.
 
 The vocabulary the bindings read claims against. Its `namespaces` (`vocabularyNamespaces` of its kind paths) and the ones a bound name leaves out (`shortened`, `vocabularyShortened` of its kind paths and their members) are computed once when it is read and are the same in every composition's view, since a kind's bound name never depends on a language's composition.
 
+`aliases` lists the aliases of the view: all of them in the whole vocabulary, and in a composition's view the base's and those its features own.
+
 ### `packages/codegen/src/bindings/vocabulary.ts::Vocabulary::synonyms`
 
 The synonyms the vocabulary resolves.
@@ -2183,3 +2189,27 @@ Marks the routes of a slot that the read takes and no build does. A slot's route
 ### `packages/codegen/src/bindings/routes.ts::writesText`
 
 Whether some parse of a kind writes text that is not layout. A layout node writes none. Any other kind writes text when it has a text or a pattern of its own, enum members, a token it spells (`spells`) or a slot holding a terminal, or when a subtype or a kind one of its slots holds writes text. It is the least fixed point over the model, so kinds that only hold each other write none, and it is computed once per model. A kind the model doesn't hold counts as writing text, so an unknown never passes as empty. Python's `suite_empty` holds only `_newline`, a layout node, so it writes none; typescript's `debugger_statement` spells `debugger`, so it writes text. The portable table names a step's `empty` form only among the kinds that read no slot and write no text.
+
+### `packages/codegen/src/bindings/vocabulary.ts::DeclaredAlias`
+
+An alias as the vocabulary reader finds it: a type alias in a namespace whose right side is a `V.`-qualified name, such as `type If<G> = V.Statement.If<G>`. `target` is that name as written, `.Any` included.
+
+### `packages/codegen/src/bindings/vocabulary.ts::VocabularyAlias`
+
+An alias resolved against the vocabulary: `name`, its qualified name; `path`; `targetName`, the target as written; `target`, the target's path; and `feature`, its owner, undefined for the base.
+
+### `packages/codegen/src/bindings/vocabulary.ts::isAlias`
+
+Whether a declaration is an alias, by its `target`. An alias is no kind: it has no `$path` and no slots.
+
+### `packages/codegen/src/bindings/vocabulary.ts::namePaths`
+
+Resolves a qualified vocabulary name to its path: a declared kind's own path, otherwise its parent's path and its last segment in snake case. The levels and the aliases read their paths through it.
+
+### `packages/codegen/src/bindings/vocabulary.ts::declaredAliases`
+
+Every alias of the vocabulary, the base's and each feature's, resolved and sorted by path. `readVocabulary` narrows the list to what a composition holds.
+
+### `packages/codegen/src/bindings/vocabulary.ts::aliasTargets`
+
+What the aliases at or beneath a path reach: their targets and, through those, the targets of the aliases beneath them, sorted. A portable row stamps it as `targets`, and the planner follows it to refuse a cycle.

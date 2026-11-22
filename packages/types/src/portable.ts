@@ -27,10 +27,14 @@ export interface PortableReadEntry {
 	readonly test: readonly PortableCondition[];
 }
 
-/** A vocabulary path's kind ids, and whether they decide it: every way those kinds read lands at or under the path, one of them unconditionally. */
+/**
+ * A vocabulary path's kind ids, and whether they decide it: every way those kinds read lands at or under the path or one of its `targets`, one of
+ * them unconditionally. `targets` lists what the aliases the language holds at or beneath the path reach, where there are any.
+ */
 export interface PortablePath {
 	readonly ids: readonly number[];
 	readonly exact: boolean;
+	readonly targets?: readonly string[];
 }
 
 /**

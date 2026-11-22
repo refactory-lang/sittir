@@ -1,6 +1,7 @@
 import { afterAll, describe, expect, it, vi } from 'vitest';
 import { createEngine } from '@sittir/common';
-import { portable as shared } from '@sittir/common/portable';
+import { portableRowHasFacts } from '@sittir/common/engine';
+import { classifierOf, portable as shared } from '@sittir/common/portable';
 import type { PortableRows } from '@sittir/types';
 import python from '../../../python/src/index.ts';
 import { rows as pythonRows } from '../../../python/src/portable/index.ts';
@@ -52,7 +53,7 @@ async function surfaces(name: keyof typeof languages) {
 		if (hit === undefined) throw new Error(`no ${kind}${text === undefined ? '' : ` '${text}'`} in ${JSON.stringify(source)}`);
 		return hit;
 	};
-	return { engine, located, at, idsAt, paths, find, kindName };
+	return { engine, located, at, idsAt, paths, find, kindName, rows };
 }
 
 describe('portable is: python', async () => {
@@ -808,7 +809,8 @@ describe('portable is agrees with one classification', () => {
 	} as const;
 	for (const name of Object.keys(SOURCES) as (keyof typeof SOURCES)[]) {
 		it(`${name}: each guard names facts of one classification and admits the node's kind`, async () => {
-			const { located, at, idsAt, paths } = await surfaces(name);
+			const { located, at, idsAt, paths, rows } = await surfaces(name);
+			const readOf = classifierOf(rows);
 			const canonical = new Map<Guard, string>();
 			for (const path of paths()) {
 				const known = canonical.get(at(path));
@@ -816,10 +818,10 @@ describe('portable is agrees with one classification', () => {
 			}
 			for (const node of located(SOURCES[name])) {
 				const held = [...canonical].filter(([guard]) => guard(node)).map(([, path]) => path);
-				const deepest = held.reduce((a, b) => (b.split('.').length > a.split('.').length ? b : a), held[0] ?? '');
+				const read = readOf(node);
 				for (const path of held) {
-					const facts = path.split('.').map((fact) => fact.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('(?:\\.[^.]+)*\\.');
-					expect(deepest, path).toMatch(new RegExp(`^${facts}(?:\\.[^.]+)*$`));
+					const row = rows.table.paths[path];
+					expect(read === undefined ? row?.exact : portableRowHasFacts(path, row?.targets, read), `${path} holds for a node that reads as ${read}`).toBe(true);
 					expect(idsAt(path)).toContain(kindOf(node));
 				}
 			}
@@ -851,7 +853,7 @@ describe('portable is: each kind under its neutral name', () => {
 			['fn f() { a::b(); }\n', 'call_expression', 'expression.call.qualified'],
 			['fn f() -> Option<u8> { x?; None }\n', 'try_expression', 'expression.propagate'],
 			["fn f() { let c = 'a'; }\n", 'char_literal_plain', 'literal.character'],
-			['fn f() { let g = gen { yield 1; }; }\n', 'gen_block', 'expression.block.generator']
+			['fn f() { let g = gen { yield 1; }; }\n', 'gen_block', 'statement.block.generator']
 		],
 		typescript: [
 			['for (const x of y) {}\n', 'for_in_statement', 'statement.loop.for_each'],

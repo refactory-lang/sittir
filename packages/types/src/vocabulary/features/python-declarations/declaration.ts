@@ -7,6 +7,9 @@ export namespace Declaration {
 		// p only
 	}
 	export namespace Parameter {
+		export type Identifier<G extends GrammarMap> = V.Identifier.Any<G>;
+		export type Rest<G extends GrammarMap> = V.Pattern.Rest.Any<G>;
+		export type Tuple<G extends GrammarMap> = V.Pattern.Tuple.Any<G>;
 		export interface Defaulted<G extends GrammarMap, K extends Under<'declaration.parameter.defaulted'> = 'declaration.parameter.defaulted'> extends SubKindOf<V.Declaration.Parameter<G, K>, 'default' | 'name'> {
 			// claimed by p
 			readonly $path: K;

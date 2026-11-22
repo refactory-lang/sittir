@@ -845,6 +845,8 @@ declare module './declaration.ts' {
 				| V.Declaration.Macro.Paren<G>;
 		}
 		namespace Member {
+			type Attribute<G extends GrammarMap> = gate.In<G, features.Attributes, V.Attribute.Any<G>>;
+			type Constant<G extends GrammarMap> = gate.In<G, features.Constants, V.Declaration.Constant.Any<G>>;
 			interface Constructor<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.member.constructor'> = 'declaration.member.constructor'
@@ -1202,6 +1204,7 @@ declare module './declaration.ts' {
 					| V.Declaration.Member.Field.Signature.Protected<G>
 					| V.Declaration.Member.Field.Signature.Public<G>;
 			}
+			type Macro<G extends GrammarMap> = gate.In<G, features.SyntacticMetaprogramming, V.Expression.Call.Macro<G>>;
 			interface Method<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.member.method'> = 'declaration.member.method'
@@ -1826,7 +1829,11 @@ declare module './declaration.ts' {
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.member.static_block'> = 'declaration.member.static_block'
 			> extends javascriptClasses.Declaration.Member.StaticBlock<G, K> {}
+			type Type<G extends GrammarMap> = gate.In<G, features.NestedTypes, V.Declaration.Type.Any<G>>;
+			type TypeAlias<G extends GrammarMap> = gate.In<G, features.AssociatedTypes, V.Declaration.Type.TypeAlias.Any<G>>;
 			type Any<G extends GrammarMap> =
+				| V.Declaration.Member.Attribute<G>
+				| V.Declaration.Member.Constant<G>
 				| V.Declaration.Member.Constructor<G>
 				| V.Declaration.Member.Constructor.Private<G>
 				| V.Declaration.Member.Constructor.Protected<G>
@@ -1860,6 +1867,7 @@ declare module './declaration.ts' {
 				| V.Declaration.Member.Field.Signature.Private<G>
 				| V.Declaration.Member.Field.Signature.Protected<G>
 				| V.Declaration.Member.Field.Signature.Public<G>
+				| V.Declaration.Member.Macro<G>
 				| V.Declaration.Member.Method<G>
 				| V.Declaration.Member.Method.Private<G>
 				| V.Declaration.Member.Method.Protected<G>
@@ -1914,7 +1922,9 @@ declare module './declaration.ts' {
 				| V.Declaration.Member.Signature.Construct<G>
 				| V.Declaration.Member.Signature.Index<G>
 				| V.Declaration.Member.Signature.Index.Mapped<G>
-				| V.Declaration.Member.StaticBlock<G>;
+				| V.Declaration.Member.StaticBlock<G>
+				| V.Declaration.Member.Type<G>
+				| V.Declaration.Member.TypeAlias<G>;
 		}
 		interface Module<
 			G extends GrammarMap,
@@ -1997,6 +2007,7 @@ declare module './declaration.ts' {
 					defaultParameterForms.Declaration.Parameter.Defaulted<G, K>['default']
 				>;
 			}
+			type Identifier<G extends GrammarMap> = gate.In<G, features.PythonDeclarations, V.Identifier.Any<G>>;
 			interface Private<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.parameter.private'> = 'declaration.parameter.private'
@@ -2025,6 +2036,8 @@ declare module './declaration.ts' {
 					references.Declaration.Parameter.Receiver<G, K>['reference']
 				>;
 			}
+			type Rest<G extends GrammarMap> = gate.In<G, features.PythonDeclarations, V.Pattern.Rest.Any<G>>;
+			type Tuple<G extends GrammarMap> = gate.In<G, features.PythonDeclarations, V.Pattern.Tuple.Any<G>>;
 			interface Typed<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.parameter.typed'> = 'declaration.parameter.typed'
@@ -2059,10 +2072,13 @@ declare module './declaration.ts' {
 			type Any<G extends GrammarMap> =
 				| V.Declaration.Parameter<G>
 				| V.Declaration.Parameter.Defaulted<G>
+				| V.Declaration.Parameter.Identifier<G>
 				| V.Declaration.Parameter.Private<G>
 				| V.Declaration.Parameter.Protected<G>
 				| V.Declaration.Parameter.Public<G>
 				| V.Declaration.Parameter.Receiver<G>
+				| V.Declaration.Parameter.Rest<G>
+				| V.Declaration.Parameter.Tuple<G>
 				| V.Declaration.Parameter.Typed<G>
 				| V.Declaration.Parameter.TypedDefault<G>
 				| V.Declaration.Parameter.Variadic<G>;
@@ -2719,6 +2735,8 @@ declare module './declaration.ts' {
 			| V.Declaration.Macro.Brace<G>
 			| V.Declaration.Macro.Bracket<G>
 			| V.Declaration.Macro.Paren<G>
+			| V.Declaration.Member.Attribute<G>
+			| V.Declaration.Member.Constant<G>
 			| V.Declaration.Member.Constructor<G>
 			| V.Declaration.Member.Constructor.Private<G>
 			| V.Declaration.Member.Constructor.Protected<G>
@@ -2752,6 +2770,7 @@ declare module './declaration.ts' {
 			| V.Declaration.Member.Field.Signature.Private<G>
 			| V.Declaration.Member.Field.Signature.Protected<G>
 			| V.Declaration.Member.Field.Signature.Public<G>
+			| V.Declaration.Member.Macro<G>
 			| V.Declaration.Member.Method<G>
 			| V.Declaration.Member.Method.Private<G>
 			| V.Declaration.Member.Method.Protected<G>
@@ -2807,6 +2826,8 @@ declare module './declaration.ts' {
 			| V.Declaration.Member.Signature.Index<G>
 			| V.Declaration.Member.Signature.Index.Mapped<G>
 			| V.Declaration.Member.StaticBlock<G>
+			| V.Declaration.Member.Type<G>
+			| V.Declaration.Member.TypeAlias<G>
 			| V.Declaration.Module<G>
 			| V.Declaration.Module.External<G>
 			| V.Declaration.Module.Foreign<G>
@@ -2818,10 +2839,13 @@ declare module './declaration.ts' {
 			| V.Declaration.ModuleProperty<G>
 			| V.Declaration.Parameter<G>
 			| V.Declaration.Parameter.Defaulted<G>
+			| V.Declaration.Parameter.Identifier<G>
 			| V.Declaration.Parameter.Private<G>
 			| V.Declaration.Parameter.Protected<G>
 			| V.Declaration.Parameter.Public<G>
 			| V.Declaration.Parameter.Receiver<G>
+			| V.Declaration.Parameter.Rest<G>
+			| V.Declaration.Parameter.Tuple<G>
 			| V.Declaration.Parameter.Typed<G>
 			| V.Declaration.Parameter.TypedDefault<G>
 			| V.Declaration.Parameter.Variadic<G>
@@ -3476,39 +3500,8 @@ declare module './expression.ts' {
 				| V.Expression.Binary.Shift.Right<G>
 				| V.Expression.Binary.Shift.RightUnsigned<G>;
 		}
-		interface Block<
-			G extends GrammarMap,
-			K extends gate.Under<'expression.block'> = 'expression.block'
-		> extends rustExpressions.Expression.Block<G, K> {}
-		namespace Block {
-			interface Async<
-				G extends GrammarMap,
-				K extends gate.Under<'expression.block.async'> = 'expression.block.async'
-			> extends asyncBlocks.Expression.Block.Async<G, K> {}
-			interface Const<
-				G extends GrammarMap,
-				K extends gate.Under<'expression.block.const'> = 'expression.block.const'
-			> extends compileTimeEvaluation.Expression.Block.Const<G, K> {}
-			interface Generator<
-				G extends GrammarMap,
-				K extends gate.Under<'expression.block.generator'> = 'expression.block.generator'
-			> extends generatorBlocks.Expression.Block.Generator<G, K> {}
-			interface Try<
-				G extends GrammarMap,
-				K extends gate.Under<'expression.block.try'> = 'expression.block.try'
-			> extends errorPropagation.Expression.Block.Try<G, K> {}
-			interface Unsafe<
-				G extends GrammarMap,
-				K extends gate.Under<'expression.block.unsafe'> = 'expression.block.unsafe'
-			> extends unsafeCode.Expression.Block.Unsafe<G, K> {}
-			type Any<G extends GrammarMap> =
-				| V.Expression.Block<G>
-				| V.Expression.Block.Async<G>
-				| V.Expression.Block.Const<G>
-				| V.Expression.Block.Generator<G>
-				| V.Expression.Block.Try<G>
-				| V.Expression.Block.Unsafe<G>;
-		}
+		type Block<G extends GrammarMap> = gate.In<G, features.RustExpressions, V.Statement.Block.Any<G>>;
+		type Break<G extends GrammarMap> = gate.In<G, features.RustExpressions, V.Statement.Break<G>>;
 		interface Call<G extends GrammarMap, K extends gate.Under<'expression.call'> = 'expression.call'> {
 			readonly optionalChain?: gate.In<
 				G,
@@ -3700,6 +3693,7 @@ declare module './expression.ts' {
 			G extends GrammarMap,
 			K extends gate.Under<'expression.conditional'> = 'expression.conditional'
 		> extends conditionalExpressions.Expression.Conditional<G, K> {}
+		type Continue<G extends GrammarMap> = gate.In<G, features.RustExpressions, V.Statement.Continue<G>>;
 		interface Function<
 			G extends GrammarMap,
 			K extends gate.Under<'expression.function'> = 'expression.function'
@@ -3722,6 +3716,7 @@ declare module './expression.ts' {
 				genericExpressions.Expression.Function<G, K>['typeParameters']
 			>;
 		}
+		type If<G extends GrammarMap> = gate.In<G, features.RustExpressions, V.Statement.If<G>>;
 		interface Instantiation<
 			G extends GrammarMap,
 			K extends gate.Under<'expression.instantiation'> = 'expression.instantiation'
@@ -3759,6 +3754,8 @@ declare module './expression.ts' {
 				genericLambdas.Expression.Lambda<G, K>['typeParameters']
 			>;
 		}
+		type Loop<G extends GrammarMap> = gate.In<G, features.RustExpressions, V.Statement.Loop.Any<G>>;
+		type Match<G extends GrammarMap> = gate.In<G, features.RustExpressions, V.Statement.Match<G>>;
 		interface Member<G extends GrammarMap, K extends gate.Under<'expression.member'> = 'expression.member'> {
 			readonly optionalChain?: gate.In<
 				G,
@@ -3815,6 +3812,8 @@ declare module './expression.ts' {
 			G extends GrammarMap,
 			K extends gate.Under<'expression.reference'> = 'expression.reference'
 		> extends references.Expression.Reference<G, K> {}
+		type Rest<G extends GrammarMap> = gate.In<G, features.PythonDestructuring, V.Pattern.Rest.Any<G>>;
+		type Return<G extends GrammarMap> = gate.In<G, features.RustExpressions, V.Statement.Return<G>>;
 		interface Sequence<
 			G extends GrammarMap,
 			K extends gate.Under<'expression.sequence'> = 'expression.sequence'
@@ -3955,11 +3954,7 @@ declare module './expression.ts' {
 			| V.Expression.Binary.Shift.Right<G>
 			| V.Expression.Binary.Shift.RightUnsigned<G>
 			| V.Expression.Block<G>
-			| V.Expression.Block.Async<G>
-			| V.Expression.Block.Const<G>
-			| V.Expression.Block.Generator<G>
-			| V.Expression.Block.Try<G>
-			| V.Expression.Block.Unsafe<G>
+			| V.Expression.Break<G>
 			| V.Expression.Call<G>
 			| V.Expression.Call.Construct<G>
 			| V.Expression.Call.Construct.Bare<G>
@@ -3989,12 +3984,18 @@ declare module './expression.ts' {
 			| V.Expression.Comprehension.Map<G>
 			| V.Expression.Comprehension.Set<G>
 			| V.Expression.Conditional<G>
+			| V.Expression.Continue<G>
 			| V.Expression.Function<G>
+			| V.Expression.Identifier<G>
+			| V.Expression.If<G>
 			| V.Expression.Instantiation<G>
 			| V.Expression.Interpolation<G>
 			| V.Expression.Interpolation.Conversion<G>
 			| V.Expression.Interpolation.Format<G>
 			| V.Expression.Lambda<G>
+			| V.Expression.Literal<G>
+			| V.Expression.Loop<G>
+			| V.Expression.Match<G>
 			| V.Expression.Member<G>
 			| V.Expression.Meta<G>
 			| V.Expression.Parenthesized<G>
@@ -4004,6 +4005,8 @@ declare module './expression.ts' {
 			| V.Expression.Range.Inclusive<G>
 			| V.Expression.Range.Inclusive.Legacy<G>
 			| V.Expression.Reference<G>
+			| V.Expression.Rest<G>
+			| V.Expression.Return<G>
 			| V.Expression.Sequence<G>
 			| V.Expression.Slice<G>
 			| V.Expression.Subscript<G>
@@ -4527,18 +4530,21 @@ declare module './pattern.ts' {
 			> extends complexNumbers.Pattern.Complex.Subtract<G, K> {}
 			type Any<G extends GrammarMap> = V.Pattern.Complex<G> | V.Pattern.Complex.Add<G> | V.Pattern.Complex.Subtract<G>;
 		}
+		type Const<G extends GrammarMap> = gate.In<G, features.CompileTimeEvaluation, V.Statement.Block.Const<G>>;
 		interface Generic<
 			G extends GrammarMap,
 			K extends gate.Under<'pattern.generic'> = 'pattern.generic'
 		> extends genericItems.Pattern.Generic<G, K> {}
 		interface List<G extends GrammarMap, K extends gate.Under<'pattern.list'> = 'pattern.list'> extends destructuring
 			.Pattern.List<G, K> {}
+		type Macro<G extends GrammarMap> = gate.In<G, features.SyntacticMetaprogramming, V.Expression.Call.Macro<G>>;
 		interface Map<G extends GrammarMap, K extends gate.Under<'pattern.map'> = 'pattern.map'> extends mappingPatterns
 			.Pattern.Map<G, K> {}
 		interface Mutable<
 			G extends GrammarMap,
 			K extends gate.Under<'pattern.mutable'> = 'pattern.mutable'
 		> extends rustDeclarations.Pattern.Mutable<G, K> {}
+		type NonNull<G extends GrammarMap> = gate.In<G, features.NonNullAssertions, V.Expression.Cast.NonNull<G>>;
 		interface Object<
 			G extends GrammarMap,
 			K extends gate.Under<'pattern.object'> = 'pattern.object'
@@ -4633,10 +4639,16 @@ declare module './pattern.ts' {
 			| V.Pattern.Complex<G>
 			| V.Pattern.Complex.Add<G>
 			| V.Pattern.Complex.Subtract<G>
+			| V.Pattern.Const<G>
 			| V.Pattern.Generic<G>
+			| V.Pattern.Identifier<G>
 			| V.Pattern.List<G>
+			| V.Pattern.Literal<G>
+			| V.Pattern.Macro<G>
 			| V.Pattern.Map<G>
+			| V.Pattern.Member<G>
 			| V.Pattern.Mutable<G>
+			| V.Pattern.NonNull<G>
 			| V.Pattern.Object<G>
 			| V.Pattern.Object.Assignment<G>
 			| V.Pattern.Object.Pair<G>
@@ -4652,6 +4664,7 @@ declare module './pattern.ts' {
 			| V.Pattern.Struct<G>
 			| V.Pattern.Struct.Field<G>
 			| V.Pattern.Struct.Rest<G>
+			| V.Pattern.Subscript<G>
 			| V.Pattern.Tuple<G>
 			| V.Pattern.Tuple.Bare<G>
 			| V.Pattern.Wildcard<G>;
@@ -4664,6 +4677,7 @@ declare module './statement.ts' {
 			G extends GrammarMap,
 			K extends gate.Under<'statement.assert'> = 'statement.assert'
 		> extends assertions.Statement.Assert<G, K> {}
+		type Attribute<G extends GrammarMap> = gate.In<G, features.Attributes, V.Attribute.Any<G>>;
 		interface Block<G extends GrammarMap, K extends gate.Under<'statement.block'> = 'statement.block'> {
 			readonly label?: gate.In<G, features.LoopLabels, loopLabels.Statement.Block<G, K>['label']>;
 			readonly trailingExpression?: gate.In<
@@ -4671,6 +4685,35 @@ declare module './statement.ts' {
 				features.ValuedBlocks,
 				valuedBlocks.Statement.Block<G, K>['trailingExpression']
 			>;
+		}
+		namespace Block {
+			interface Async<
+				G extends GrammarMap,
+				K extends gate.Under<'statement.block.async'> = 'statement.block.async'
+			> extends asyncBlocks.Statement.Block.Async<G, K> {}
+			interface Const<
+				G extends GrammarMap,
+				K extends gate.Under<'statement.block.const'> = 'statement.block.const'
+			> extends compileTimeEvaluation.Statement.Block.Const<G, K> {}
+			interface Generator<
+				G extends GrammarMap,
+				K extends gate.Under<'statement.block.generator'> = 'statement.block.generator'
+			> extends generatorBlocks.Statement.Block.Generator<G, K> {}
+			interface Try<
+				G extends GrammarMap,
+				K extends gate.Under<'statement.block.try'> = 'statement.block.try'
+			> extends errorPropagation.Statement.Block.Try<G, K> {}
+			interface Unsafe<
+				G extends GrammarMap,
+				K extends gate.Under<'statement.block.unsafe'> = 'statement.block.unsafe'
+			> extends unsafeCode.Statement.Block.Unsafe<G, K> {}
+			type Any<G extends GrammarMap> =
+				| V.Statement.Block<G>
+				| V.Statement.Block.Async<G>
+				| V.Statement.Block.Const<G>
+				| V.Statement.Block.Generator<G>
+				| V.Statement.Block.Try<G>
+				| V.Statement.Block.Unsafe<G>;
 		}
 		interface Break<G extends GrammarMap, K extends gate.Under<'statement.break'> = 'statement.break'> {
 			readonly expression?: gate.In<G, features.ValuedBlocks, valuedBlocks.Statement.Break<G, K>['expression']>;
@@ -4924,16 +4967,24 @@ declare module './statement.ts' {
 		type Any<G extends GrammarMap> =
 			| V.Statement<G>
 			| V.Statement.Assert<G>
+			| V.Statement.Attribute<G>
 			| V.Statement.Block<G>
+			| V.Statement.Block.Async<G>
+			| V.Statement.Block.Const<G>
+			| V.Statement.Block.Generator<G>
+			| V.Statement.Block.Try<G>
+			| V.Statement.Block.Unsafe<G>
 			| V.Statement.Break<G>
 			| V.Statement.Continue<G>
 			| V.Statement.Debugger<G>
+			| V.Statement.Declaration<G>
 			| V.Statement.Delete<G>
 			| V.Statement.Empty<G>
 			| V.Statement.Exec<G>
 			| V.Statement.Export<G>
 			| V.Statement.Export.All<G>
 			| V.Statement.Export.Default<G>
+			| V.Statement.Expression<G>
 			| V.Statement.Global<G>
 			| V.Statement.If<G>
 			| V.Statement.Import<G>
@@ -5005,6 +5056,7 @@ declare module './type.ts' {
 		interface Dynamic<G extends GrammarMap, K extends gate.Under<'type.dynamic'> = 'type.dynamic'> extends systemsTypes
 			.Type.Dynamic<G, K> {}
 		type Existential<G extends GrammarMap> = typeAlgebra.Type.Existential<G>;
+		type Expression<G extends GrammarMap> = gate.In<G, features.PythonTypeForms, V.Expression.Any<G>>;
 		interface Function<
 			G extends GrammarMap,
 			K extends gate.Under<'type.function'> = 'type.function'
@@ -5065,6 +5117,7 @@ declare module './type.ts' {
 			.Type.Literal<G, K> {}
 		interface Lookup<G extends GrammarMap, K extends gate.Under<'type.lookup'> = 'type.lookup'> extends typeAlgebra.Type
 			.Lookup<G, K> {}
+		type Macro<G extends GrammarMap> = gate.In<G, features.SyntacticMetaprogramming, V.Expression.Call.Macro<G>>;
 		interface Nullable<
 			G extends GrammarMap,
 			K extends gate.Under<'type.nullable'> = 'type.nullable'
@@ -5194,16 +5247,19 @@ declare module './type.ts' {
 			| V.Type.Constrained<G>
 			| V.Type.Dynamic<G>
 			| V.Type.Existential<G>
+			| V.Type.Expression<G>
 			| V.Type.Function<G>
 			| V.Type.Function.Constructor<G>
 			| V.Type.Generic<G>
 			| V.Type.Generic.Turbofish<G>
+			| V.Type.Identifier<G>
 			| V.Type.Import<G>
 			| V.Type.IndexQuery<G>
 			| V.Type.Infer<G>
 			| V.Type.Intersection<G>
 			| V.Type.Literal<G>
 			| V.Type.Lookup<G>
+			| V.Type.Macro<G>
 			| V.Type.Nullable<G>
 			| V.Type.Object<G>
 			| V.Type.Optional<G>
@@ -6377,12 +6433,6 @@ declare module './map.ts' {
 			features.JavaScriptOperators,
 			V.Expression.Binary.Shift.RightUnsigned<G>
 		>;
-		readonly 'expression.block': gate.In<G, features.RustExpressions, V.Expression.Block<G>>;
-		readonly 'expression.block.async': gate.In<G, features.AsyncBlocks, V.Expression.Block.Async<G>>;
-		readonly 'expression.block.const': gate.In<G, features.CompileTimeEvaluation, V.Expression.Block.Const<G>>;
-		readonly 'expression.block.generator': gate.In<G, features.GeneratorBlocks, V.Expression.Block.Generator<G>>;
-		readonly 'expression.block.try': gate.In<G, features.ErrorPropagation, V.Expression.Block.Try<G>>;
-		readonly 'expression.block.unsafe': gate.In<G, features.UnsafeCode, V.Expression.Block.Unsafe<G>>;
 		readonly 'expression.call': V.Expression.Call<G>;
 		readonly 'expression.call.construct': gate.In<G, features.JavaScriptClasses, V.Expression.Call.Construct<G>>;
 		readonly 'expression.call.construct.bare': gate.In<
@@ -6660,6 +6710,11 @@ declare module './map.ts' {
 		readonly statement: V.Statement<G>;
 		readonly 'statement.assert': gate.In<G, features.Assertions, V.Statement.Assert<G>>;
 		readonly 'statement.block': V.Statement.Block<G>;
+		readonly 'statement.block.async': gate.In<G, features.AsyncBlocks, V.Statement.Block.Async<G>>;
+		readonly 'statement.block.const': gate.In<G, features.CompileTimeEvaluation, V.Statement.Block.Const<G>>;
+		readonly 'statement.block.generator': gate.In<G, features.GeneratorBlocks, V.Statement.Block.Generator<G>>;
+		readonly 'statement.block.try': gate.In<G, features.ErrorPropagation, V.Statement.Block.Try<G>>;
+		readonly 'statement.block.unsafe': gate.In<G, features.UnsafeCode, V.Statement.Block.Unsafe<G>>;
 		readonly 'statement.break': V.Statement.Break<G>;
 		readonly 'statement.continue': V.Statement.Continue<G>;
 		readonly 'statement.debugger': gate.In<G, features.DebuggerStatements, V.Statement.Debugger<G>>;
@@ -7607,8 +7662,6 @@ declare module './utils.ts' {
 			readonly static: features.StaticStorage;
 		};
 		readonly 'element.pair': { readonly computed: features.ComputedKeys };
-		readonly 'expression.block.async': { readonly move: object };
-		readonly 'expression.block.generator': { readonly move: object };
 		readonly 'expression.call': { readonly optionalChain: features.OptionalChaining };
 		readonly 'expression.call.construct': { readonly optionalChain: features.OptionalChaining };
 		readonly 'expression.call.construct.bare': { readonly optionalChain: features.OptionalChaining };
@@ -7650,6 +7703,8 @@ declare module './utils.ts' {
 		readonly 'pattern.reference.value': { readonly exclusive: object };
 		readonly 'pattern.struct.field': { readonly byReference: object; readonly mutable: object };
 		readonly 'pattern.tuple.bare': { readonly trailingComma: object };
+		readonly 'statement.block.async': { readonly move: object };
+		readonly 'statement.block.generator': { readonly move: object };
 		readonly 'statement.export': { readonly typeOnly: features.TypeOnlyImports };
 		readonly 'statement.export.all': { readonly typeOnly: features.TypeOnlyImports };
 		readonly 'statement.export.default': { readonly typeOnly: features.TypeOnlyImports };

@@ -978,6 +978,8 @@ The flag query for a portable row.
 
 The value the shared kind tree holds at a vocabulary namespace, a prefix of kind paths that is no kind itself (`vocabularyNamespaces`): `{ $namespace: path }`, frozen and the same object in every language, beside a kind's `PortableKind`. It has no `$path`, since no node reads as a namespace itself; a namespace names the kinds beneath it. `ofType` takes it as it takes a portable kind and selects what the namespace's guard holds for (`ofTypeSteps`), and each grammar's generated `PortableKindsAt` stamps it on the namespace's entry (`emitPortableSurface`).
 
+An alias path has the same node: it is no kind, and it names what its target holds in a language that holds the alias.
+
 ### `packages/types/src/portable-build.ts::PortableCallShape`
 
 The shape of a builder's call: config, spread, text, constant, nullary, direct, elements, forwarded or placed. A `constant` entry is a value (a leaf's kind id); a `nullary` entry is a call that takes no arguments (a compound with no slots).
@@ -1566,6 +1568,14 @@ Rust's features, operator overloading through its traits included.
 
 TypeScript's features: JavaScript's features, and its typing features.
 
+### `packages/types/src/vocabulary/expression.ts::Expression::Identifier`
+
+The alias `expression.identifier`, of `identifier`: an identifier lies beneath `expression` in every language.
+
+### `packages/types/src/vocabulary/expression.ts::Expression::Literal`
+
+The alias `expression.literal`, of `literal`: a literal lies beneath `expression` in every language.
+
 ### `packages/types/src/vocabulary/features/annotated-lambdas/index.ts::AnnotatedLambdas`
 
 Annotated lambdas: the type a lambda returns.
@@ -1790,6 +1800,22 @@ The `Statement` namespace of assertions. It groups the `Assert` arm. The namespa
 
 The `statement.assert` node, claimed by the `p` claim tag. Its `expressions` slot lists the conditions asserted, each an expression, identifier, literal or pattern.
 
+### `packages/types/src/vocabulary/features/async-await/async-blocks/statement.ts::Statement`
+
+The async-blocks statement of the vocabulary.
+
+### `packages/types/src/vocabulary/features/async-await/async-blocks/statement.ts::Statement::Block`
+
+The block async-blocks adds beneath `statement.block`.
+
+### `packages/types/src/vocabulary/features/attributes/statement.ts::Statement`
+
+The attributes statement of the vocabulary.
+
+### `packages/types/src/vocabulary/features/attributes/statement.ts::Statement::Attribute`
+
+The alias `statement.attribute`, of `attribute`: rust's inner attribute stands as a statement.
+
 ### `packages/types/src/vocabulary/features/block-comments/comment.ts::Comment`
 
 The `Comment` namespace of block comments. It groups the `Block` arm. The namespace declares no slots of its own.
@@ -1842,6 +1868,22 @@ The `!=` arm of coercive equality: a binary expression whose `operator` slot is 
 
 Coercive equality: an interface marked `'coercive-equality': true`. `==` and `!=` convert their operands' types before comparing.
 
+### `packages/types/src/vocabulary/features/compile-time-evaluation/pattern.ts::Pattern`
+
+The compile-time-evaluation pattern of the vocabulary.
+
+### `packages/types/src/vocabulary/features/compile-time-evaluation/pattern.ts::Pattern::Const`
+
+The alias `pattern.const`, of `statement.block.const`: rust's const block is a pattern.
+
+### `packages/types/src/vocabulary/features/compile-time-evaluation/statement.ts::Statement`
+
+The compile-time-evaluation statement of the vocabulary.
+
+### `packages/types/src/vocabulary/features/compile-time-evaluation/statement.ts::Statement::Block`
+
+The block compile-time-evaluation adds beneath `statement.block`.
+
 ### `packages/types/src/vocabulary/features/conditional-expressions/expression.ts::Expression`
 
 The `Expression` namespace of conditional expressions. It groups the `Conditional` arm. The namespace declares no slots of its own.
@@ -1862,9 +1904,21 @@ The `Declaration` namespace of constants. It groups the `Constant` arm. The name
 
 The `declaration.constant` node, claimed by the `pr` claim tag. Its `name` slot holds an identifier, and its optional `value` slot holds an expression, an identifier, a literal or a statement. The `name` and `value` slots are claimed by the `r` claim tag only.
 
+### `packages/types/src/vocabulary/features/constants/declaration.ts::Declaration::Member`
+
+The alias constants adds beneath `declaration.member`: a constant declared in a type body.
+
 ### `packages/types/src/vocabulary/features/constants/index.ts::Constants`
 
 Constants: an interface marked `constants: true`. A binding declared as constant.
+
+### `packages/types/src/vocabulary/features/coroutines/generator-blocks/statement.ts::Statement`
+
+The generator-blocks statement of the vocabulary.
+
+### `packages/types/src/vocabulary/features/coroutines/generator-blocks/statement.ts::Statement::Block`
+
+The block generator-blocks adds beneath `statement.block`.
 
 ### `packages/types/src/vocabulary/features/counted-loops/index.ts::CountedLoops`
 
@@ -1877,6 +1931,106 @@ The `Statement` namespace of counted loops. It groups the `Loop` namespace. The 
 ### `packages/types/src/vocabulary/features/counted-loops/statement.ts::Statement::Loop`
 
 The `Loop` namespace of counted loops. It groups the `Counted` arm, a loop with `initializer`, `condition`, optional `increment` and optional `statements` slots, claimed by the `t` claim tag. The namespace declares no slots of its own.
+
+### `packages/types/src/vocabulary/features/destructuring/python-destructuring/expression.ts::Expression`
+
+The python-destructuring expression of the vocabulary.
+
+### `packages/types/src/vocabulary/features/destructuring/python-destructuring/expression.ts::Expression::Rest`
+
+The alias `expression.rest`, of `pattern.rest`: python's `*x` stands where an expression does.
+
+### `packages/types/src/vocabulary/features/error-propagation/statement.ts::Statement`
+
+The error-propagation statement of the vocabulary.
+
+### `packages/types/src/vocabulary/features/error-propagation/statement.ts::Statement::Block`
+
+The block error-propagation adds beneath `statement.block`.
+
+### `packages/types/src/vocabulary/features/nested-types/declaration.ts::Declaration`
+
+The nested-types declaration of the vocabulary.
+
+### `packages/types/src/vocabulary/features/nested-types/declaration.ts::Declaration::Member`
+
+The alias nested-types adds beneath `declaration.member`: a type declared in a type body.
+
+### `packages/types/src/vocabulary/features/nested-types/index.ts::NestedTypes`
+
+The marker of nested types: a type declared in a type body, which `declaration.member.type` places beneath the member kind-set.
+
+### `packages/types/src/vocabulary/features/rust-expressions/expression.ts::Expression::Block`
+
+The alias `expression.block`, of `statement.block`: rust's blocks, its modifier blocks included, are expressions.
+
+### `packages/types/src/vocabulary/features/rust-expressions/expression.ts::Expression::Break`
+
+The alias `expression.break`, of `statement.break`: rust's `break` is an expression.
+
+### `packages/types/src/vocabulary/features/rust-expressions/expression.ts::Expression::Continue`
+
+The alias `expression.continue`, of `statement.continue`: rust's `continue` is an expression.
+
+### `packages/types/src/vocabulary/features/rust-expressions/expression.ts::Expression::If`
+
+The alias `expression.if`, of `statement.if`: rust's `if` is an expression.
+
+### `packages/types/src/vocabulary/features/rust-expressions/expression.ts::Expression::Loop`
+
+The alias `expression.loop`, of `statement.loop`: rust's loops are expressions.
+
+### `packages/types/src/vocabulary/features/rust-expressions/expression.ts::Expression::Match`
+
+The alias `expression.match`, of `statement.match`: rust's `match` is an expression.
+
+### `packages/types/src/vocabulary/features/rust-expressions/expression.ts::Expression::Return`
+
+The alias `expression.return`, of `statement.return`: rust's `return` is an expression.
+
+### `packages/types/src/vocabulary/features/syntactic-metaprogramming/declaration.ts::Declaration::Member`
+
+The alias syntactic-metaprogramming adds beneath `declaration.member`: a macro call in a type body.
+
+### `packages/types/src/vocabulary/features/syntactic-metaprogramming/pattern.ts::Pattern`
+
+The syntactic-metaprogramming pattern of the vocabulary.
+
+### `packages/types/src/vocabulary/features/syntactic-metaprogramming/pattern.ts::Pattern::Macro`
+
+The alias `pattern.macro`, of `expression.call.macro`: a macro call stands as a pattern.
+
+### `packages/types/src/vocabulary/features/syntactic-metaprogramming/type.ts::Type`
+
+The syntactic-metaprogramming type of the vocabulary.
+
+### `packages/types/src/vocabulary/features/syntactic-metaprogramming/type.ts::Type::Macro`
+
+The alias `type.macro`, of `expression.call.macro`: a macro call stands as a type.
+
+### `packages/types/src/vocabulary/features/type-aliases/associated-types/declaration.ts::Declaration::Member`
+
+The alias associated-types adds beneath `declaration.member`: an associated type in a trait or impl body.
+
+### `packages/types/src/vocabulary/features/type-annotations/nullable-types/non-null-assertions/pattern.ts::Pattern`
+
+The non-null-assertions pattern of the vocabulary.
+
+### `packages/types/src/vocabulary/features/type-annotations/nullable-types/non-null-assertions/pattern.ts::Pattern::NonNull`
+
+The alias `pattern.non_null`, of `expression.cast.non_null`: typescript's `a! = 1` assigns through one.
+
+### `packages/types/src/vocabulary/features/type-annotations/python-type-forms/type.ts::Type::Expression`
+
+The alias `type.expression`, of `expression`: a python annotation is an expression.
+
+### `packages/types/src/vocabulary/features/unsafe-code/statement.ts::Statement`
+
+The unsafe-code statement of the vocabulary.
+
+### `packages/types/src/vocabulary/features/unsafe-code/statement.ts::Statement::Block`
+
+The block unsafe-code adds beneath `statement.block`.
 
 ### `packages/types/src/vocabulary/input.ts::BuildInput`
 
@@ -2033,3 +2187,31 @@ The method's slot under valued blocks: an optional `trailingExpression`, the exp
 ### `packages/types/src/vocabulary/features/valued-blocks/declaration.ts::Declaration`
 
 The declarations valued blocks add slots to: `Declaration.Function` and `Declaration.Member.Method`, whose block may end with a value.
+
+### `packages/types/src/vocabulary/pattern.ts::Pattern::Identifier`
+
+The alias `pattern.identifier`, of `identifier`: a binding or assignment target may be a name.
+
+### `packages/types/src/vocabulary/pattern.ts::Pattern::Literal`
+
+The alias `pattern.literal`, of `literal`: rust's patterns and python's case patterns hold a literal, and a target slot narrows it.
+
+### `packages/types/src/vocabulary/pattern.ts::Pattern::Member`
+
+The alias `pattern.member`, of `expression.member`: typescript's and python's assignment targets hold one, and rust's map narrows it.
+
+### `packages/types/src/vocabulary/pattern.ts::Pattern::Subscript`
+
+The alias `pattern.subscript`, of `expression.subscript`: typescript's and python's assignment targets hold one, and rust's map narrows it.
+
+### `packages/types/src/vocabulary/statement.ts::Statement::Declaration`
+
+The alias `statement.declaration`, of `declaration`: a statement position admits a declaration.
+
+### `packages/types/src/vocabulary/statement.ts::Statement::Expression`
+
+The alias `statement.expression`, of `expression`: an expression statement reads as its expression.
+
+### `packages/types/src/vocabulary/type.ts::Type::Identifier`
+
+The alias `type.identifier`, of `identifier`: a type position may be a name.

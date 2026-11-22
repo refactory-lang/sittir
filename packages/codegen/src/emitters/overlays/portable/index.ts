@@ -109,6 +109,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 		surface: emitPortableSurface({
 			nodeType: grammarNodeTypeName(nodeMap.name),
 			namespaces: input.vocabulary.namespaces,
+			aliases: input.vocabulary.aliases,
 			routes,
 			readTest,
 			factOf,

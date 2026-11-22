@@ -33,7 +33,7 @@ export namespace Clause {
 				K,
 				'pattern',
 				| V.Pattern.Any<G>
-				| V.Expression.Block.Const<G>
+				| V.Statement.Block.Const<G>
 				| V.Expression.Any<G>
 				| V.Identifier.Any<G>
 				| V.Literal.Any<G>

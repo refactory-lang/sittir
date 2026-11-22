@@ -43,13 +43,28 @@ export interface Declared {
 	readonly restated: readonly string[];
 	readonly slots: readonly DeclaredSlot[];
 	readonly text?: true;
+	readonly target?: string;
 }
 
 export interface DeclaredKind extends Declared {
 	readonly path: string;
 }
 
+export interface DeclaredAlias extends Declared {
+	readonly target: string;
+}
+
+export interface VocabularyAlias {
+	readonly name: string;
+	readonly path: string;
+	readonly targetName: string;
+	readonly target: string;
+	readonly feature: string | undefined;
+}
+
 export const isKind = (d: Declared): d is DeclaredKind => d.path !== undefined;
+
+export const isAlias = (d: Declared): d is DeclaredAlias => d.target !== undefined;
 
 export const byCodepoint = (a: string, b: string): number => (a < b ? -1 : a > b ? 1 : 0);
 
@@ -71,6 +86,7 @@ export interface Synonyms {
 
 export interface VocabularySource {
 	readonly kinds: readonly DeclaredKind[];
+	readonly aliases: readonly DeclaredAlias[];
 	readonly modules: ReadonlyMap<string, string>;
 	readonly synonyms: Synonyms;
 	readonly features: readonly Feature[];
@@ -117,6 +133,7 @@ export interface VocabularyKind {
 
 export interface Vocabulary {
 	readonly kinds: ReadonlyMap<string, VocabularyKind>;
+	readonly aliases: readonly VocabularyAlias[];
 	readonly namespaces: ReadonlySet<string>;
 	readonly shortened: ReadonlySet<string>;
 	readonly flags: ReadonlySet<string>;
@@ -159,6 +176,7 @@ export async function readVocabularySource(dir: string): Promise<VocabularySourc
 	const sources = vocabularySources(dir);
 	const files = sources.filter((name) => !name.includes(posix.sep));
 	const kinds: DeclaredKind[] = [];
+	const aliases: DeclaredAlias[] = [];
 	const modules = new Map<string, string>();
 	const levels = new Map<string, SynonymTable>();
 	const flags: Declared[] = [];
@@ -172,6 +190,7 @@ export async function readVocabularySource(dir: string): Promise<VocabularySourc
 			kinds.push(d);
 			modules.set(d.qname.replace(/\..*$/, ''), file);
 		}
+		aliases.push(...all.filter(isAlias));
 		if (file === COMPOSITIONS) for (const d of all) compositions.set(d.qname, d.heritage);
 		for (const d of all) {
 			const level = levelOf.get(d.qname);
@@ -185,6 +204,7 @@ export async function readVocabularySource(dir: string): Promise<VocabularySourc
 	const root = join(dir, FEATURES);
 	return {
 		kinds,
+		aliases,
 		modules,
 		synonyms: { levels, flags: flags[0] === undefined ? new Map() : synonymTable(flags[0]) },
 		features: existsSync(root) ? await readFeatures(dir, sources) : [],
@@ -293,6 +313,44 @@ export function vocabularyNamespaces(kinds: Iterable<string>): ReadonlySet<strin
 	return namespaces;
 }
 
+export function namePaths(kinds: Iterable<{ readonly qname: string; readonly path: string }>): (name: string) => string {
+	const known = new Map([...kinds].map((kind) => [kind.qname, kind.path]));
+	const pathOf = (name: string): string => {
+		const declared = known.get(name);
+		if (declared !== undefined) return declared;
+		const cut = name.lastIndexOf('.');
+		const path = cut < 0 ? snake(name) : `${pathOf(name.slice(0, cut))}.${snake(name.slice(cut + 1))}`;
+		known.set(name, path);
+		return path;
+	};
+	return pathOf;
+}
+
+export function declaredAliases(source: VocabularySource): readonly VocabularyAlias[] {
+	const pathOf = namePaths([...source.kinds, ...source.features.flatMap((feature) => feature.stubs.filter(isKind))]);
+	const resolved = (d: DeclaredAlias, feature: string | undefined): VocabularyAlias => ({
+		name: d.qname,
+		path: pathOf(d.qname),
+		targetName: d.target,
+		target: pathOf(d.target.replace(/\.Any$/, '')),
+		feature
+	});
+	return [...source.aliases.map((d) => resolved(d, undefined)), ...source.features.flatMap((feature) => feature.stubs.filter(isAlias).map((d) => resolved(d, feature.name)))].sort((a, b) => byCodepoint(a.path, b.path));
+}
+
+export function aliasTargets(path: string, aliases: readonly Pick<VocabularyAlias, 'path' | 'target'>[]): readonly string[] {
+	const found = new Set<string>();
+	const visit = (at: string): void => {
+		for (const alias of aliases) {
+			if ((alias.path !== at && !alias.path.startsWith(`${at}.`)) || found.has(alias.target)) continue;
+			found.add(alias.target);
+			visit(alias.target);
+		}
+	};
+	visit(path);
+	return [...found].sort(byCodepoint);
+}
+
 export function vocabularyShortened(paths: Iterable<string>, membersOf: (path: string) => Iterable<string> = () => []): ReadonlySet<string> {
 	const kinds = new Set(paths);
 	const unique = (namespace: string): boolean => {
@@ -373,8 +431,10 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 	const namespaces = vocabularyNamespaces(kinds.keys());
 	const shortened = vocabularyShortened(kinds.keys(), (path) => (kinds.has(path) ? slotsWithin(undefined)(path).keys() : []));
 	const featuresOf = composedFeatures(source);
+	const aliases = declaredAliases(source);
 	const view = (composed: ReadonlySet<string> | undefined): Vocabulary => ({
 		kinds,
+		aliases: composed === undefined ? aliases : aliases.filter((alias) => alias.feature === undefined || composed.has(alias.feature)),
 		namespaces,
 		shortened,
 		flags,

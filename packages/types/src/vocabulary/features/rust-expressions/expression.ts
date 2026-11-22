@@ -2,24 +2,13 @@ import type { GrammarMap, Slot } from '../../map.ts';
 import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Expression {
-	export interface Block<G extends GrammarMap, K extends Under<'expression.block'> = 'expression.block'> extends SubKindOf<V.Expression<G, K>> {
-		readonly $path: K;
-		readonly statements?: Slot<
-			G,
-			K,
-			'statements',
-			| V.Attribute.Any<G>
-			| V.Declaration.Any<G>
-			| V.Expression.Call.Macro<G>
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Pattern.Rest<G>
-			| V.Statement.Any<G>
-		>[];
-		readonly trailingExpression?: Slot<G, K, 'trailingExpression', V.Expression.Any<G> | V.Identifier.Any<G> | V.Literal.Any<G> | V.Statement.Any<G>>;
-		// r only
-	}
+	export type Block<G extends GrammarMap> = V.Statement.Block.Any<G>;
+	export type Break<G extends GrammarMap> = V.Statement.Break<G>;
+	export type Continue<G extends GrammarMap> = V.Statement.Continue<G>;
+	export type If<G extends GrammarMap> = V.Statement.If<G>;
+	export type Loop<G extends GrammarMap> = V.Statement.Loop.Any<G>;
+	export type Match<G extends GrammarMap> = V.Statement.Match<G>;
+	export type Return<G extends GrammarMap> = V.Statement.Return<G>;
 	export namespace Call {
 		export interface Qualified<G extends GrammarMap, K extends Under<'expression.call.qualified'> = 'expression.call.qualified'> extends SubKindOf<V.Expression.Call<G, K>, 'arguments' | 'function'> {
 			// claimed by r

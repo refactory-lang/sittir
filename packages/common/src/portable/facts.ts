@@ -21,6 +21,9 @@ export function portablePathHasFacts(path: string, read: string | undefined): bo
 	return at === facts.length;
 }
 
+export const portableRowHasFacts = (path: string, targets: readonly string[] | undefined, read: string | undefined): boolean =>
+	portablePathHasFacts(path, read) || (targets ?? []).some((target) => portablePathHasFacts(target, read));
+
 type Placement = Pick<PortableReadEntry, 'path'> & { readonly within: readonly unknown[]; readonly test: readonly Pick<PortableCondition, 'up'>[] };
 
 export const unplaced = (entry: Placement): boolean => entry.within.length === 0 && entry.test.every((condition) => condition.up === 0);

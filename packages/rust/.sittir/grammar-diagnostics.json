@@ -465,10 +465,34 @@
   {
     "scope": "grammar",
     "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.variable.name: expression.block.const is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+    "message": "expression.lambda.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.lambda.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.lambda.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.lambda.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
   },
   {
     "scope": "grammar",
@@ -708,7 +732,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.struct.fields: expression.block.const is a path the slot's type admits that arm 319's seats don't place, though another arm of pattern.struct does"
+    "message": "declaration.variable.name: statement.block.const is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
   },
   {
     "scope": "grammar",
@@ -953,34 +977,18 @@
   {
     "scope": "grammar",
     "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.lambda.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
+    "message": "pattern.struct.fields: pattern.tuple is a path the slot's type admits that arm 319's seats don't place, though another arm of pattern.struct does"
   },
   {
     "scope": "grammar",
     "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.lambda.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.lambda.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.lambda.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
+    "message": "pattern.struct.fields: statement.block.const is a path the slot's type admits that arm 319's seats don't place, though another arm of pattern.struct does"
   },
   {
     "scope": "grammar",
@@ -1013,14 +1021,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "element.struct.field.name: literal.number.integer.octal is a path the slot's type admits that arm 284's seats don't place, though another arm of element.struct.field does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.struct.fields: pattern.tuple is a path the slot's type admits that arm 319's seats don't place, though another arm of pattern.struct does"
   },
   {
     "scope": "grammar",

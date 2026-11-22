@@ -171,6 +171,12 @@ export function augmentation(source: VocabularySource, p: Plan): string {
 		);
 		add(kind.qname, lines.length === 0 ? [`${head} {}`] : [`${head} {`, ...lines, '}']);
 	}
+	for (const { name, targetName, feature } of p.aliases) {
+		if (feature === undefined) continue;
+		gated = true;
+		headed = true;
+		add(name, [`type ${lastSegment(name)}<G extends GrammarMap> = gate.In<G, features.${feature}, V.${targetName}<G>>;`]);
+	}
 	const pathOf = new Map([...p.kinds.values()].map((kind) => [kind.qname, kind.path]));
 	const byName = new Map([...p.kinds.values()].map((kind) => [kind.qname, kind]));
 	const gatedBy = (qname: string, type: string): string => {

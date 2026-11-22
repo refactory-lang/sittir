@@ -20,4 +20,7 @@ export namespace Declaration {
 		>;
 		// r only
 	}
+	export namespace Member {
+		export type Constant<G extends GrammarMap> = V.Declaration.Constant.Any<G>;
+	}
 }

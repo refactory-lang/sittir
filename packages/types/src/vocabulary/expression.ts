@@ -25,6 +25,8 @@ export interface ExpressionSynonyms {
 }
 
 export namespace Expression {
+	export type Identifier<G extends GrammarMap> = V.Identifier.Any<G>;
+	export type Literal<G extends GrammarMap> = V.Literal.Any<G>;
 	export interface Assignment<G extends GrammarMap, K extends Under<'expression.assignment'> = 'expression.assignment'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by prt
 		readonly $path: K;

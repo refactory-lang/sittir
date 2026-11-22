@@ -1,8 +1,10 @@
-import { portablePathHasFacts } from '@sittir/common/engine';
+import { portablePathHasFacts, portableRowHasFacts } from '@sittir/common/engine';
+import { aliasTargets, type VocabularyAlias } from '../../../bindings/vocabulary.ts';
 
 export interface NamespaceNode {
 	readonly path: string;
 	readonly kinds: readonly string[];
+	readonly targets: readonly string[];
 	readonly children: ReadonlyMap<string, NamespaceNode>;
 }
 
@@ -13,25 +15,30 @@ interface MutableNode {
 
 const joinPath = (under: string, segment: string): string => (under === '' ? segment : `${under}.${segment}`);
 
-export function namespaceTree(readEntries: ReadonlyMap<string, readonly { readonly vocab: string }[]>): NamespaceNode {
+export function namespaceTree(readEntries: ReadonlyMap<string, readonly { readonly vocab: string }[]>, aliases: readonly VocabularyAlias[] = []): NamespaceNode {
 	const root: MutableNode = { path: '', children: new Map() };
 	const entries = [...readEntries].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
-	for (const [, reads] of entries) {
-		for (const { vocab } of reads) {
-			let at = root;
-			for (const segment of vocab.split('.')) {
-				const path = joinPath(at.path, segment);
-				let next = at.children.get(segment);
-				if (next === undefined) at.children.set(segment, (next = { path, children: new Map() }));
-				at = next;
-			}
+	const reads = entries.flatMap(([, held]) => held.map(({ vocab }) => vocab));
+	const readTargets = (path: string): readonly string[] => aliasTargets(path, aliases).filter((target) => reads.some((vocab) => portablePathHasFacts(target, vocab)));
+	const place = (path: string): void => {
+		let at = root;
+		for (const segment of path.split('.')) {
+			const next = at.children.get(segment) ?? { path: joinPath(at.path, segment), children: new Map() };
+			at.children.set(segment, next);
+			at = next;
 		}
-	}
-	const freeze = (node: MutableNode): NamespaceNode => ({
-		path: node.path,
-		kinds: entries.filter(([, reads]) => reads.some(({ vocab }) => node === root || portablePathHasFacts(node.path, vocab))).map(([kind]) => kind),
-		children: new Map([...node.children].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)).map(([segment, child]) => [segment, freeze(child)]))
-	});
+	};
+	reads.forEach(place);
+	for (const { path } of aliases) if (readTargets(path).length > 0) place(path);
+	const freeze = (node: MutableNode): NamespaceNode => {
+		const targets = node === root ? [] : readTargets(node.path);
+		return {
+			path: node.path,
+			kinds: entries.filter(([, held]) => held.some(({ vocab }) => node === root || portableRowHasFacts(node.path, targets, vocab))).map(([kind]) => kind),
+			targets,
+			children: new Map([...node.children].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)).map(([segment, child]) => [segment, freeze(child)]))
+		};
+	};
 	return freeze(root);
 }
 

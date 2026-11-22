@@ -14,6 +14,8 @@ export interface StatementSynonyms {
 }
 
 export namespace Statement {
+	export type Declaration<G extends GrammarMap> = V.Declaration.Any<G>;
+	export type Expression<G extends GrammarMap> = V.Expression.Any<G>;
 	export interface Block<G extends GrammarMap, K extends Under<'statement.block'> = 'statement.block'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by prt
 		readonly $path: K;

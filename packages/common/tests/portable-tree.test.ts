@@ -13,7 +13,7 @@ const PATHS = [
 
 const guardOf = (path: string) => (node: unknown): node is { readonly $type: number } => node === path;
 
-const trees = () => portableTrees(PATHS, [], guardOf);
+const trees = () => portableTrees(PATHS, [], [], guardOf);
 
 type Tree = Record<string, unknown>;
 const at = (root: unknown, path: string): Tree =>
@@ -67,7 +67,7 @@ describe('portableTrees', () => {
 	});
 
 	it('gives a namespace a node in each tree: its path as $namespace among the kinds, the guard for its path among the guards', () => {
-		const { kinds, is } = portableTrees(['a', 'a.n.k', 'a.n.j'], ['a.n'], guardOf);
+		const { kinds, is } = portableTrees(['a', 'a.n.k', 'a.n.j'], ['a.n'], [], guardOf);
 		expect(at(kinds, 'a.n').$path).toBeUndefined();
 		expect(at(kinds, 'a.n').$namespace).toBe('a.n');
 		expect(ownKeys(at(kinds, 'a.n'))).toEqual(['$namespace', 'j', 'k']);
@@ -80,7 +80,7 @@ describe('portableTrees', () => {
 	});
 
 	it('gives a namespace at the root a node under no kind', () => {
-		const { kinds, is } = portableTrees(['a.b'], ['a'], guardOf);
+		const { kinds, is } = portableTrees(['a.b'], ['a'], [], guardOf);
 		expect(ownKeys(kinds)).toEqual(['a']);
 		expect(at(kinds, 'a').$path).toBeUndefined();
 		expect(at(kinds, 'a').$namespace).toBe('a');
@@ -88,9 +88,16 @@ describe('portableTrees', () => {
 		expect((at(is, 'a') as unknown as (node: unknown) => boolean)('a')).toBe(true);
 	});
 
+	it('gives an alias a node in each tree: its path as $namespace among the kinds, the guard for its path among the guards', () => {
+		const { kinds, is } = portableTrees(['a', 'b', 'b.c'], [], ['a.c'], guardOf);
+		expect(at(kinds, 'a.c').$path).toBeUndefined();
+		expect(at(kinds, 'a.c').$namespace).toBe('a.c');
+		expect((at(is, 'a.c') as unknown as (node: unknown) => boolean)('a.c')).toBe(true);
+	});
+
 	it('refuses a path whose parent is neither a listed path nor a namespace', () => {
-		expect(() => portableTrees(['a.b'], [], guardOf)).toThrow(/a\.b.*a/);
-		expect(() => portableTrees(['a', 'a.n.k'], [], guardOf)).toThrow(/a\.n\.k.*a\.n/);
+		expect(() => portableTrees(['a.b'], [], [], guardOf)).toThrow(/a\.b.*a/);
+		expect(() => portableTrees(['a', 'a.n.k'], [], [], guardOf)).toThrow(/a\.n\.k.*a\.n/);
 	});
 });
 

@@ -598,7 +598,7 @@ describe("keptKinds over a flag capture", () => {
 		].map((n) => [n.kind, n])
 	);
 	const KEPT_VOCABULARY: Vocabulary = {
-		namespaces: new Set(), shortened: new Set(),
+		namespaces: new Set(), aliases: [], shortened: new Set(),
 		kinds: new Map([["declaration.function", { name: "declaration.function", own: new Map([["marked", { optional: true, flag: true }]]), parent: undefined, refines: undefined }]]),
 		flags: new Set(["marked"]),
 		synonyms: { levels: new Map(), flags: new Map() },
@@ -1593,7 +1593,7 @@ describe('flag captures', () => {
 	const vocabularySlot = (flag: boolean): VocabularySlot => ({ optional: true, flag });
 	const vocabulary = (own: Readonly<Record<string, Readonly<Record<string, boolean>>>>): Vocabulary => {
 		const kinds = new Map(Object.entries(own).map(([path, slots]) => [path, { name: path, own: new Map(Object.entries(slots).map(([n, flag]) => [n, vocabularySlot(flag)])), parent: undefined, refines: undefined }]));
-		const built: Vocabulary = { kinds, namespaces: new Set(), shortened: new Set(), flags: new Set(Object.values(own).flatMap((m) => Object.entries(m).flatMap(([n, flag]) => (flag ? [n] : [])))), synonyms: { levels: new Map(), flags: new Map() }, slots: (path) => kinds.get(path)?.own ?? new Map(), featuresOf: () => new Set(), composedAs: () => built };
+		const built: Vocabulary = { kinds, namespaces: new Set(), aliases: [], shortened: new Set(), flags: new Set(Object.values(own).flatMap((m) => Object.entries(m).flatMap(([n, flag]) => (flag ? [n] : [])))), synonyms: { levels: new Map(), flags: new Map() }, slots: (path) => kinds.get(path)?.own ?? new Map(), featuresOf: () => new Set(), composedAs: () => built };
 		return built;
 	};
 	const VOCABULARY = vocabulary({
@@ -2051,7 +2051,7 @@ describe('a claim on an anonymous token', () => {
 describe('a list\'s trailing separator', () => {
 	const FLAGGED: Vocabulary = {
 		kinds: new Map(),
-		namespaces: new Set(), shortened: new Set(),
+		namespaces: new Set(), aliases: [], shortened: new Set(),
 		flags: new Set(['trailingComma']),
 		synonyms: { levels: new Map(), flags: new Map() },
 		slots: () => new Map([['trailingComma', { optional: true, flag: true }]]),

@@ -824,7 +824,7 @@ The shared portable guard of a vocabulary path. It refuses a value without a kin
 
 ### `packages/common/src/portable/classify.ts::readsAs`
 
-Whether a node or a bare kind id reads as a vocabulary path by one language's rows. Its kind (a node's `$type`, or the id itself) must be among the ids the rows' table gives the path (`portablePathOf`); an exact path then holds by the kind alone, and otherwise the value's reading (`classifierOf`) must carry every fact of the path (`portablePathHasFacts`). The one test the shared guards (`guardOf`), a language's guards (`languageGuardOf`) and a query's `ofType` by a portable kind (`query.ts::ofTypeSteps`) run once they hold the rows.
+Whether a node or a bare kind id reads as a vocabulary path by one language's rows. Its kind (a node's `$type`, or the id itself) must be among the ids the rows' table gives the path (`portablePathOf`); an exact path then holds by the kind alone, and otherwise the value's reading (`classifierOf`) must carry every fact of the path or of one of the row's `targets` (`portableRowHasFacts`). The one test the shared guards (`guardOf`), a language's guards (`languageGuardOf`) and a query's `ofType` by a portable kind (`query.ts::ofTypeSteps`) run once they hold the rows.
 
 ### `packages/common/src/portable/classify.ts::portablePathOf`
 
@@ -844,7 +844,7 @@ A language's view of the portable guards: `portableTrees` over the same `vocabul
 
 ### `packages/common/src/portable/index.ts::PortableQueryIds`
 
-The `Ids` of every query view a bound grammar's parsed nodes return (`View<T, Ids>`), from the grammar's `PortableReads`. It is keyed by every vocabulary path and every namespace, read from the generated path list (`vocabularyPaths`, `vocabularyNamespaces`), because `ofType` looks a portable kind's `$path` and a portable namespace's `$namespace` up in it: a key the grammar reads nothing at maps to `never`, so the view narrows to nothing, and a value that names no key is refused at compile time.
+The `Ids` of every query view a bound grammar's parsed nodes return (`View<T, Ids>`), from the grammar's `PortableReads`. It is keyed by every vocabulary path, namespace and alias path, read from the generated path list (`vocabularyPaths`, `vocabularyNamespaces`, `vocabularyAliasPaths`), because `ofType` looks a portable kind's `$path` and a portable namespace's `$namespace` up in it: a key the grammar reads nothing at maps to `never`, so the view narrows to nothing, and a value that names no key is refused at compile time.
 
 ### `packages/common/src/portable/language-guard.ts::languageGuardOf`
 
@@ -1284,6 +1284,10 @@ Creates the portable runtime for a language.
 ### `packages/common/src/portable/classify.ts::portableTextOf`
 
 The text of a portable value, or undefined when the value has none.
+
+### `packages/common/src/portable/facts.ts::portableRowHasFacts`
+
+Whether a read lands at or under a path's row: at or under the path itself (`portablePathHasFacts`), or at or under one of the row's `targets`, what the aliases the language holds at or beneath the path reach. `readsAs` asks it of a row its kinds do not decide, and `emitPortableSurface` asks it when stamping `exact`, so the guard and the stamp read an alias one way.
 
 ### `packages/common/src/portable/read.ts::PortableCarry`
 

@@ -78,6 +78,48 @@ describe('ofType takes a namespace as the guards do', async () => {
 	});
 });
 
+describe('an alias reads as its target in a language that holds it', async () => {
+	const rs = await createEngine(rust);
+	const ts = await createEngine(typescript);
+	const py = await createEngine(python);
+	const is = portable.is as unknown as { expression: Guard & { if: Guard; block: Guard }; type: Guard; statement: { block: Guard } };
+	const first = (view: View): Item => [...view][0]!;
+
+	it('holds for the target where the language holds the alias', () => {
+		const view = descendants(rs, 'fn f() { if a {} }');
+		const node = first(view.ofType(kinds.statement.if));
+		expect(texts(view.ofType(kinds.expression.if))).toEqual(['if a {}']);
+		expect(is.expression.if(node)).toBe(true);
+		expect(is.expression(node)).toBe(true);
+	});
+
+	it('holds for nothing where the language lacks the alias', () => {
+		const view = descendants(ts, 'if (a) {}');
+		const node = first(view.ofType(kinds.statement.if));
+		expect(texts(view.ofType(kinds.expression.if))).toEqual([]);
+		expect(is.expression.if(node)).toBe(false);
+		expect(is.expression(node)).toBe(false);
+	});
+
+	it('covers what lies beneath its target', () => {
+		const node = first(descendants(rs, 'fn f() { unsafe {} }').ofType(kinds.statement.block.unsafe));
+		expect(is.statement.block(node)).toBe(true);
+		expect(is.expression.block(node)).toBe(true);
+	});
+
+	it('reaches through an alias of a namespace that holds another alias', () => {
+		const number = first(descendants(py, 'x = 1\n').ofType(kinds.literal.number.integer));
+		expect(is.type(number)).toBe(true);
+		const tsNumber = first(descendants(ts, 'x = 1;').ofType(kinds.literal.number));
+		expect(is.type(tsNumber)).toBe(false);
+	});
+
+	it('is a node of the kinds with no path of its own', () => {
+		expect((kinds.expression.if as unknown as { $namespace: string }).$namespace).toBe('expression.if');
+		expect((kinds.expression.if as unknown as { $path?: string }).$path).toBeUndefined();
+	});
+});
+
 describe('ofType selects an element by the kind it reads as', async () => {
 	const rs = await createEngine(rust);
 	const SOURCE = 'const X: bool = true; fn f(x: u8) -> bool { false }';

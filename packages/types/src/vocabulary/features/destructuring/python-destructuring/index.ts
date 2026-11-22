@@ -1,3 +1,4 @@
+export type * from './expression.ts';
 export type * from './pattern.ts';
 
 import type { Destructuring } from '../index.ts';

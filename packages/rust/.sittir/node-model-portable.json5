@@ -382,10 +382,10 @@
       ]
     },
     "async_block": {
-      "vocab": "expression.block.async",
+      "vocab": "statement.block.async",
       "read": [
         {
-          "vocab": "expression.block.async",
+          "vocab": "statement.block.async",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3162,10 +3162,10 @@
       ]
     },
     "const_block": {
-      "vocab": "expression.block.const",
+      "vocab": "statement.block.const",
       "read": [
         {
-          "vocab": "expression.block.const",
+          "vocab": "statement.block.const",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -10151,10 +10151,10 @@
       }
     },
     "gen_block": {
-      "vocab": "expression.block.generator",
+      "vocab": "statement.block.generator",
       "read": [
         {
-          "vocab": "expression.block.generator",
+          "vocab": "statement.block.generator",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -20191,10 +20191,10 @@
       "slots": []
     },
     "try_block": {
-      "vocab": "expression.block.try",
+      "vocab": "statement.block.try",
       "read": [
         {
-          "vocab": "expression.block.try",
+          "vocab": "statement.block.try",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -22108,10 +22108,10 @@
       "slots": []
     },
     "unsafe_block": {
-      "vocab": "expression.block.unsafe",
+      "vocab": "statement.block.unsafe",
       "read": [
         {
-          "vocab": "expression.block.unsafe",
+          "vocab": "statement.block.unsafe",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -23424,7 +23424,7 @@
       },
       {
         "depth": 2,
-        "paths": 86,
+        "paths": 85,
         "kinds": 119,
         "refinements": 5
       },
@@ -23432,7 +23432,7 @@
         "depth": 3,
         "paths": 96,
         "kinds": 112,
-        "refinements": 60
+        "refinements": 65
       },
       {
         "depth": 4,
