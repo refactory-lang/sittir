@@ -1,0 +1,12 @@
+tsrs 0.20.1-ts7.1.0-beta, any.test-d.mts as committed (two @ts-expect-error lines)
+  body branch feat/portable-body-contents at 6aeb39c82: exit 0
+  master at 4fe1ff192: exit 0
+
+With the two @ts-expect-error lines removed (body branch):
+  error TS2430: Interface 'NarrowsToAFeatureAliasUngated<G, K>' incorrectly extends interface 'SubKindOf<Parent<G, K>, never>'.
+  error TS2430: Interface 'NarrowsToAFeatureAliasGatedByAnExtendingFeature<G, K>' incorrectly extends interface 'SubKindOf<Parent<G, K>, never>'.
+
+export import inside a namespace (alias.test-d.ts, not kept):
+  error TS1269: Cannot use 'export import' on a type or type-only namespace when 'verbatimModuleSyntax' is enabled.
+  error TS1288: An import alias cannot resolve to a type or type-only declaration when 'verbatimModuleSyntax' is enabled.
+  error TS1380: An import alias cannot reference a declaration that was imported using 'import type'.
