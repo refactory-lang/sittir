@@ -1,3 +1,4 @@
+import { flatOrderParses, flatSlotOrder, slotNameInBody, type ChoicePartition, type PartitionTree } from '../compiler/model/choice-partition.ts';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { emitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
 import { CHOICE, DEDENT, EOF, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
@@ -63,7 +64,6 @@ import {
 	gateKeywordSlotSeams,
 	isExpression,
 	mentions,
-	references,
 	dropSlotSeams,
 	duplicateSlots,
 	literalBody,
@@ -1389,125 +1389,18 @@ function leadGatedLiterals(arms: readonly KindGatedArm[], key: string, prefix: B
 	return concat(leads.length === 0 ? EMPTY : branches(leads, undefined), prefix.slice(-1), residuals.length === 0 ? EMPTY : branches(residuals, undefined));
 }
 
-interface EmittedArm {
-	readonly index: number;
-	readonly rule: RenderRule;
-	readonly body: Body;
-	readonly delta: readonly string[];
-}
-
-interface ExclusiveArm {
-	readonly indices: readonly number[];
-	readonly body: Body;
-	readonly held: ReadonlySet<string>;
-	readonly required: readonly (readonly string[])[];
-	readonly kindsAt: ReadonlyMap<string, readonly string[]>;
-}
-
-interface ArmTest {
-	readonly slots: readonly string[];
-	readonly kinds?: readonly string[];
-}
-
-function slotNameInBody(slot: AssembledNonterminal): string {
-	return slot.storageName.replace(/^_+/, '') || 'children';
-}
-
-function requiredParts(rule: RenderRule, ctx: EmitCtx): readonly (readonly string[])[] {
-	if (isSeamChoice(rule)) return [];
-	const multiplicity = (rule as { multiplicity?: Multiplicity }).multiplicity;
-	if (multiplicity === 'optional' || multiplicity === 'array') return [];
-	if (rule.type === SEQ) return rule.members.flatMap((member) => requiredParts(member as RenderRule, ctx));
-	if (rule.type !== SYMBOL && rule.type !== CHOICE) return [];
-	const slot = lookupSlot(rule, ctx);
-	const own = slot === undefined ? undefined : slotNameInBody(slot);
-	if (rule.type === SYMBOL) return own === undefined ? [] : [[own]];
-	const firsts = rule.members.map((member) => requiredParts(member as RenderRule, ctx)[0] ?? (own === undefined ? undefined : [own]));
-	if (firsts.some((part) => part === undefined)) return own === undefined ? [] : [[own]];
-	return [[...new Set(firsts.flatMap((part) => part!))]];
-}
-
-function slotKindsOf(rule: RenderRule, ctx: EmitCtx): ReadonlyMap<string, readonly string[]> {
-	const kinds = new Map<string, string[]>();
-	const textual = new Set<string>();
-	const walk = (r: RenderRule, inside: string | undefined): void => {
-		if (isSeamChoice(r)) return;
-		const own = r.type === SYMBOL || r.type === CHOICE ? lookupSlot(r, ctx) : undefined;
-		const slot = inside ?? (own === undefined ? undefined : slotNameInBody(own));
-		if (slot !== undefined && r.type === SYMBOL) {
-			const names = kinds.get(slot) ?? [];
-			if (!names.includes(r.name)) names.push(r.name);
-			kinds.set(slot, names);
-			return;
-		}
-		if (slot !== undefined && (r.type === STRING || r.type === PATTERN)) textual.add(slot);
-		if (r.type === SEQ || r.type === CHOICE) for (const member of r.members) walk(member as RenderRule, slot);
-	};
-	walk(rule, undefined);
-	for (const slot of textual) kinds.delete(slot);
-	return kinds;
-}
-
-function exclusiveArmsOf(arms: readonly EmittedArm[], ctx: EmitCtx): ExclusiveArm[] | undefined {
-	const held = arms.map((arm) => new Set(references(arm.body).slots));
-	const shared = held.some((slots, i) => [...slots].some((slot) => held.some((other, j) => j !== i && other.has(slot))));
-	if (!shared) return undefined;
-	const out: { indices: number[]; body: Body; held: Set<string>; required: (readonly string[])[]; kindsAt: Map<string, readonly string[]> }[] = [];
-	arms.forEach((arm, i) => {
-		const required = requiredParts(arm.rule, ctx);
-		const kindsAt = new Map(
-			[...slotKindsOf(arm.rule, ctx)].map(([slot, names]) => [slot, [...new Set(names.flatMap((name) => concreteKindsOf(name, ctx.nodeMap)))]] as const)
-		);
-		const same = out.find((candidate) => equalBodies(candidate.body, arm.body));
-		if (same === undefined) {
-			out.push({ indices: [arm.index], body: arm.body, held: held[i]!, required: [...required], kindsAt: new Map(kindsAt) });
-			return;
-		}
-		for (const [slot, kinds] of kindsAt) same.kindsAt.set(slot, [...new Set([...(same.kindsAt.get(slot) ?? []), ...kinds])]);
-		same.indices.push(arm.index);
-		for (const slot of held[i]!) same.held.add(slot);
-		same.required = same.required.filter((part) => required.some((other) => other.length === part.length && other.every((slot) => part.includes(slot))));
-	});
-	return out;
-}
-
-function exclusiveChain(arms: readonly ExclusiveArm[]): Body | readonly ExclusiveArm[] {
-	if (arms.length === 1) return arms[0]!.body;
-	const admits = (arm: ExclusiveArm, slot: string, kinds: readonly string[] | undefined): boolean => {
-		const own = arm.kindsAt.get(slot);
-		return kinds === undefined || own === undefined || own.some((kind) => kinds.includes(kind));
-	};
-	const confined = (arm: ExclusiveArm, slot: string, kinds: readonly string[] | undefined): boolean => {
-		const own = arm.kindsAt.get(slot);
-		return kinds === undefined || (own !== undefined && own.every((kind) => kinds.includes(kind)));
-	};
-	const holds = (arm: ExclusiveArm, test: ArmTest): boolean => test.slots.some((slot) => arm.held.has(slot) && admits(arm, slot, test.kinds));
-	const requires = (arm: ExclusiveArm, test: ArmTest): boolean =>
-		arm.required.some((own) => own.every((slot) => test.slots.includes(slot) && confined(arm, slot, test.kinds)));
-	const testsOf = (arm: ExclusiveArm, byKind: boolean): ArmTest[] =>
-		byKind
-			? arm.required.flatMap((part) => (part.length === 1 && arm.kindsAt.has(part[0]!) ? [{ slots: part, kinds: arm.kindsAt.get(part[0]!)! }] : []))
-			: arm.required.map((part) => ({ slots: part }));
-	const split = (single: boolean, byKind: boolean) => {
-		for (const arm of arms) {
-			for (const test of testsOf(arm, byKind)) {
-				const present = arms.filter((other) => holds(other, test));
-				const absent = arms.filter((other) => !requires(other, test));
-				if (present.length < arms.length && absent.length < arms.length && (!single || present.length === 1)) return { test, present, absent };
-			}
-		}
-		return undefined;
-	};
-	const chosen = split(true, false) ?? split(true, true) ?? split(false, false) ?? split(false, true);
-	if (chosen === undefined) return arms;
-	const present = exclusiveChain(chosen.present);
-	if (!isBody(present)) return present;
-	const absent = exclusiveChain(chosen.absent);
-	if (!isBody(absent)) return absent;
-	const [test, ...or] = chosen.test.slots;
+function bodyOfPartition(tree: PartitionTree, bodies: readonly Body[], rule: RenderRule, ctx: EmitCtx): Body {
+	if ('group' in tree) {
+		const [first, ...rest] = tree.group.map((index) => bodies[index]!);
+		if (rest.some((body) => !equalBodies(first!, body))) throw new Error(`emitRule: arms ${tree.group.join(', ')} of a choice in kind '${ctx.ownerKind ?? '(unknown)'}' (${rule.id ?? 'no id'}) share a partition group but render differently.`);
+		return first!;
+	}
+	const present = bodyOfPartition(tree.present, bodies, rule, ctx);
+	const absent = bodyOfPartition(tree.absent, bodies, rule, ctx);
+	const [test, ...or] = tree.test.slots;
 	const arm: IfArm =
-		chosen.test.kinds !== undefined
-			? { test: test!, kinds: chosen.test.kinds, body: present }
+		tree.test.kinds !== undefined
+			? { test: test!, kinds: tree.test.kinds, body: present }
 			: or.length === 0
 				? { test: test!, body: present }
 				: { test: test!, or, body: present };
@@ -1515,23 +1408,25 @@ function exclusiveChain(arms: readonly ExclusiveArm[]): Body | readonly Exclusiv
 	return only === undefined ? branches([arm], absent) : branches([arm, ...only.arms], only.fallback);
 }
 
-function isBody(chain: Body | readonly ExclusiveArm[]): chain is Body {
-	return chain.length === 0 || 'kind' in chain[0]!;
-}
-
-function lowerExclusiveArms(rule: RenderRule, arms: readonly ExclusiveArm[], ctx: EmitCtx): Body {
-	const chain = exclusiveChain(arms);
-	if (isBody(chain)) return chain;
-	const kind = ctx.currentKind ?? '(unknown)';
-	const slots = [...new Set(chain.flatMap((arm) => [...arm.held]))].sort();
-	const indices = chain.flatMap((arm) => arm.indices);
-	throw emitShapeFailure({
-		code: 'shared-slot-choice',
-		ownerKind: kind,
-		message: `${kind}: arms ${indices.join(', ')} of its choice hold slots (${slots.join(', ')}), and neither a slot's presence nor its kind tells them apart, so a node's slots can't say which arm to render`,
-		proposal: `name each arm's form: edits: { ${kind}: { <path of each arm>: variant('<name>') } }`,
-		details: { rule: rule.id, arms: indices, slots }
+function emitPartitioned(rule: Extract<RenderRule, { type: 'CHOICE' }>, partition: ChoicePartition, ctx: EmitCtx): Body {
+	if (partition.form === 'refused') throw emitShapeFailure(partition.failure);
+	const claimed = new Set<string>();
+	const bodies = rule.members.map((arm) => {
+		const beforeSlots = new Set(ctx.emittedSlotNames);
+		const body = emitRule(arm as RenderRule, ctx);
+		for (const name of ctx.emittedSlotNames) if (!beforeSlots.has(name)) claimed.add(name);
+		restoreEmittedSlotNames(ctx, beforeSlots);
+		return body;
 	});
+	if (partition.form === 'flat') {
+		const flat = flatSlotBody(bodies.filter((body) => body.length !== 0));
+		if (flat === undefined) throw new Error(`emitRule: the flat choice in kind '${ctx.ownerKind ?? '(unknown)'}' (${rule.id ?? 'no id'}) has arms whose slots render differently.`);
+		for (const name of flat.slots) ctx.emittedSlotNames.add(name);
+		return flat.body;
+	}
+	const lowered = bodyOfPartition(partition.tree, bodies, rule, ctx);
+	for (const name of claimed) ctx.emittedSlotNames.add(name);
+	return lowered;
 }
 
 function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx): Body {
@@ -1580,6 +1475,8 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 	if (rule.id === '__synthetic_exclusive_choice__') {
 		return concat(...rule.members.map((m) => emitRule(m, ctx)));
 	}
+	const partition = rule.id === undefined || ctx.ownerKind === undefined ? undefined : ctx.nodeMap.choicePartitions?.get(ctx.ownerKind)?.get(rule.id);
+	if (partition !== undefined) return emitPartitioned(rule, partition, ctx);
 	{
 		interface ArmInfo {
 			key: string;
@@ -1588,7 +1485,6 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 			delta: string[];
 		}
 		const armInfos: ArmInfo[] = [];
-		const emitted: EmittedArm[] = [];
 		let ungateableArm = false;
 		let literalFallback: Body | undefined;
 		let literalFallbackAmbiguous = false;
@@ -1598,7 +1494,6 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 			const delta = [...ctx.emittedSlotNames].filter((s) => !beforeSlots.has(s));
 			restoreEmittedSlotNames(ctx, beforeSlots);
 			if (body.length === 0) continue;
-			emitted.push({ index: rule.members.indexOf(arm), rule: arm as RenderRule, body, delta });
 			const { key, needsGate } = scanArmBody(body);
 			if (key === undefined || ownerSlotNames(ctx)?.has(key) !== true) {
 				if (isLiteralOnly(body)) {
@@ -1616,20 +1511,7 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 				`[flatchoice] id=${String((rule as { id?: string }).id)} ungateable=${ungateableArm} litFallback=${JSON.stringify(literalFallback)} arms=${armInfos.length} bodies=${JSON.stringify(armInfos.map((i) => i.body))}\n`
 			);
 		}
-		if (!ungateableArm && literalFallback === undefined) {
-			const flat = flatSlotBody(armInfos.map((info) => info.body));
-			if (flat !== undefined) {
-				for (const name of flat.slots) ctx.emittedSlotNames.add(name);
-				return flat.body;
-			}
-		}
 		if (!ungateableArm) {
-			const exclusive = exclusiveArmsOf(emitted, ctx);
-			if (exclusive !== undefined) {
-				const lowered = lowerExclusiveArms(rule, exclusive, ctx);
-				for (const { delta } of emitted) for (const s of delta) ctx.emittedSlotNames.add(s);
-				return lowered;
-			}
 			const blocks = armInfos.map((info) => ({
 				key: info.key,
 				block: info.needsGate ? gate(info.key, info.body) : info.body,
@@ -1652,29 +1534,6 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 	return EMPTY;
 }
 
-export function flatSlotOrder(armOrders: readonly (readonly string[])[]): string[] {
-	const first: string[] = [];
-	for (const order of armOrders) for (const name of order) if (!first.includes(name)) first.push(name);
-	const after = new Map(first.map((name) => [name, new Set<string>()]));
-	const waiting = new Map(first.map((name) => [name, 0]));
-	for (const order of armOrders) {
-		order.forEach((name, i) => {
-			const next = order[i + 1];
-			if (next === undefined || after.get(name)!.has(next)) return;
-			after.get(name)!.add(next);
-			waiting.set(next, waiting.get(next)! + 1);
-		});
-	}
-	const placed: string[] = [];
-	while (placed.length < first.length) {
-		const ready = first.find((name) => !placed.includes(name) && waiting.get(name) === 0);
-		if (ready === undefined) return first;
-		placed.push(ready);
-		for (const next of after.get(ready)!) waiting.set(next, waiting.get(next)! - 1);
-	}
-	return placed;
-}
-
 export function flatSlotBody(armBodies: readonly Body[]): { readonly body: Body; readonly slots: readonly string[] } | undefined {
 	const lists = armBodies.map(selfGatedSlotUnits);
 	if (!lists.every((units): units is SlotUnit[] => units !== null)) return undefined;
@@ -1691,17 +1550,7 @@ export function flatSlotBody(armBodies: readonly Body[]): { readonly body: Body;
 	if (![...armsHolding.values()].some((count) => count >= 2)) return undefined;
 	const armOrders = lists.map((units) => units.map((unit) => unit.name));
 	const order = flatSlotOrder(armOrders);
-	const isSubsequence = (needle: readonly string[], hay: readonly string[]): boolean => {
-		let i = 0;
-		for (const name of hay) if (i < needle.length && needle[i] === name) i++;
-		return i === needle.length;
-	};
-	const parseable = armOrders.every((arm) => {
-		const held = new Set(arm);
-		const projected = order.filter((name) => held.has(name));
-		return armOrders.some((other) => isSubsequence(projected, other));
-	});
-	return parseable ? { body: concat(...order.map((name) => unitOf.get(name)!)), slots: order } : undefined;
+	return flatOrderParses(armOrders, order) ? { body: concat(...order.map((name) => unitOf.get(name)!)), slots: order } : undefined;
 }
 
 interface SlotUnit {

@@ -8943,7 +8943,7 @@ that kind was left alone.
 
 ### `packages/codegen/src/emitters/templates.ts::emitChoice`
 
-A choice whose arms share no slot lowers to one block per arm, each gated on its own slot. When arms share a slot and every arm is a run of self-gated slots, `flatSlotBody` writes each slot once, in an order every arm agrees with; otherwise the arms lower to one exclusive chain (`exclusiveArmsOf`, `exclusiveChain`), and where neither presence nor kind tells two arms apart, emit refuses with `shared-slot-choice`.
+A choice whose arms share no slot lowers to one block per arm, each gated on its own slot. When arms share a slot, assemble has stamped the choice's partition (`choicePartitionsOf`) and `emitPartitioned` renders it: `flatSlotBody` for a flat one, the stamped tree of tests for a chain, and the stamped `shared-slot-choice` failure for a refused one.
 
 #### body
 
@@ -13696,53 +13696,13 @@ The fixed tokens of a node's rule that its template writes somewhere but not whe
 
 The text nodes of a template body, descending into the arms of its conditionals.
 
-### `packages/codegen/src/emitters/templates.ts::EmittedArm`
-
-One arm of a choice as `emitChoice` emitted it: its index among the choice's members, its rule, its body, and the slot names its emission claimed.
-
-### `packages/codegen/src/emitters/templates.ts::ExclusiveArm`
-
-An arm of a choice whose arms share a slot, as `exclusiveChain` reads it: the arm indices it stands for (arms with identical bodies are one), its body, the slots the body holds, its required parts (`requiredParts`), and the concrete kinds it admits at each slot that holds only kinds there (`slotKindsOf`).
-
-### `packages/codegen/src/emitters/templates.ts::ArmTest`
-
-One test of the exclusive chain: a slot, or a choice of slots, whose presence opens the arm, or one slot restricted to the kinds an arm admits there. It becomes an `IfArm`: `test` and `or` for presence, `test` and `kinds` for a kind test.
-
-### `packages/codegen/src/emitters/templates.ts::slotNameInBody`
-
-The name a slot takes in a render body: its storage name without leading underscores, or `children` when that leaves nothing. `emitSlotReference`, the union-backed choice and the exclusive chain all name a slot through it.
-
-### `packages/codegen/src/emitters/templates.ts::requiredParts`
-
-The parts of a rule that every node built from it holds, each a slot or a choice of slots of which a node holds one. A rule under an optional or array multiplicity contributes none. A choice contributes one part only when each member does, a member with no part of its own counting as the choice's own slot. Slots resolve through `lookupSlot`, as the emitted body names them, so a slot the rule names by field and one it names by symbol come out the same.
-
-### `packages/codegen/src/emitters/templates.ts::slotKindsOf`
-
-The kinds an arm admits at each slot it holds: the symbols under each rule that resolves to the slot. A slot that also takes text in the arm (a string or pattern under it) is left out, so the chain never tests it by kind.
-
-### `packages/codegen/src/emitters/templates.ts::exclusiveArmsOf`
-
-The arms of a choice for the exclusive chain, or undefined when no slot is held by two arms' bodies, in which case the choice lowers to one block per arm. Arms with identical bodies are one arm: it holds the slots and kinds of each and requires only the parts all of them require.
-
-### `packages/codegen/src/emitters/templates.ts::exclusiveChain`
-
-Lowers arms that share a slot to tests a node passes for exactly one arm. In turn it tests a required part that only one remaining arm holds, by presence and then restricted to that arm's kinds at the slot; the last arm is the fallback. When no such part exists, it splits on a part some remaining arms require and the rest don't hold, an arm that holds it optionally going to both sides, and lowers each side the same way. A split exists whenever presence or kind tells every two arms apart; when none does, it returns the arms it could not tell apart. A fallback that is itself one `if` is spliced in as further arms.
-
-### `packages/codegen/src/emitters/templates.ts::isBody`
-
-Whether `exclusiveChain` returned a body rather than the arms it could not tell apart.
-
-### `packages/codegen/src/emitters/templates.ts::lowerExclusiveArms`
-
-The exclusive chain's body, or the blocking `shared-slot-choice` refusal: the kind, the arms no presence or kind test tells apart and the slots they hold, with a proposal to name each arm's form with `variant()`. The refusal is raised at emit, where the arms' slots resolve as the body names them.
-
-### `packages/codegen/src/emitters/templates.ts::flatSlotOrder`
+### `packages/codegen/src/compiler/model/choice-partition.ts::flatSlotOrder`
 
 The order in which `flatSlotBody` writes the slots of arms that are runs of self-gated slots: each arm's order is a set of precedence constraints, and the slots are placed in topological order, the slot that appears first going first among those ready. So arms `[a c]` and `[b c]` give `[a b c]`, and C's sized_type_specifier gives its second arm's order. When the arms' orders disagree (a cycle, as in typescript's public_field_definition_plain), it returns the order of first appearance, and `flatSlotBody`'s check that every arm's slots appear in some arm's order decides whether the flat body is written. Whenever the order of first appearance passed that check, the arms agree, and this returns the same order.
 
 ### `packages/codegen/src/emitters/templates.ts::flatSlotBody`
 
-The flat path of `emitChoice`, used when every arm's body splits into self-gated slot units (`selfGatedSlotUnits`) and some slot occurs in two arms. It writes each slot's unit once, in `flatSlotOrder`'s order, and returns that body with the slot names it claims. Otherwise it returns `undefined` and the choice goes to the exclusive chain. Arms of this shape are forms of one set of optional slots, such as typescript's public_field_definition modifier positions, or C's sized_type_specifier, whose second arm adds type_qualifier. One arm merges into another when the other's body, with the parts only the other holds left out, equals it.
+The flat path of `emitChoice`, used when every arm's body splits into self-gated slot units (`selfGatedSlotUnits`) and some slot occurs in two arms. It writes each slot's unit once, in `flatSlotOrder`'s order, and returns that body with the slot names it claims. Otherwise it returns `undefined`, which for a choice assemble stamped `flat` is an internal error. Arms of this shape are forms of one set of optional slots, such as typescript's public_field_definition modifier positions, or C's sized_type_specifier, whose second arm adds type_qualifier. One arm merges into another when the other's body, with the parts only the other holds left out, equals it.
 
 A flat body renders any present subset in flat order, and the grammar accepts that only when some arm parses the order. So the flat order, projected onto each arm's slots, must be a subsequence of some arm's own order. Any subset of a subsequence is still a subsequence, so checking the full sets covers partial presence too. Arms that hold a shared slot at different relative positions fail the check (rust function_type's two forms around `parameters`). A slot whose unit differs between arms also declines, for example when one arm carries a seam beside it and another does not: one body cannot hold both.
 
@@ -13757,6 +13717,14 @@ The kind whose slots the rule being walked belongs to, which is the key `lookupS
 ### `packages/codegen/src/emitters/templates.ts::noSlotError`
 
 The compile-time error for a position that must render a slot but whose rule id is among no slot of its kind. It names the rule type, the kind and the id. A symbol, choice or pattern never recovers a slot by name, so a missing id surfaces here.
+
+### `packages/codegen/src/emitters/templates.ts::emitPartitioned`
+
+Renders a choice from its stamped partition. It emits every arm, restoring the claimed slot names between arms, then writes the flat body or the tree of tests and claims the slots. A flat choice whose units differ is an internal error, and a refused choice throws its stamped failure.
+
+### `packages/codegen/src/emitters/templates.ts::bodyOfPartition`
+
+The body of a partition tree. A leaf is one group of arms, whose bodies must be equal; bodies that differ are an internal error. A test becomes an `IfArm` over the present side, with the absent side as its fallback, and an absent side that is itself one `if` joins the same branches.
 
 ### `packages/codegen/src/emitters/factories.ts::patternMismatchThrow`
 

@@ -7950,6 +7950,10 @@ The fixed literals a simplified grammar's names take.
 
 The spelling groups the raw grammar declares, by kind and field.
 
+### `packages/codegen/src/compiler/types.ts::NodeMap::choicePartitions`
+
+Owner kind → choice rule id → the choice's `ChoicePartition`, stamped at assemble for each slotless choice whose arms share a slot. Emit reads it and does not decide how such a choice lowers.
+
 ### `packages/codegen/src/compiler/generate.ts::GeneratedFiles::tableFiles`
 
 The generated builder table files, by path, for the grammar.

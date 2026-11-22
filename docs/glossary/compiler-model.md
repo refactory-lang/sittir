@@ -6389,3 +6389,39 @@ Whether `slot` is the last slot of some chain: a slot the hoisted surface reads 
 ### `packages/codegen/src/compiler/model/wrapper-chain.ts::isListHop`
 
 Whether hop `hop` of a chain is a list or holds one: its wrapper is a list node or the wrapper's slot is multiple. The one per-hop list fact: `chainWrapExpr` spreads items at such a hop, `hoistedCardinality` makes the hoisted slot multiple, and `chainReadsAsList` reads the slot as a list.
+
+### `packages/codegen/src/compiler/model/choice-partition.ts::ArmTest`
+
+One test of a partition tree: a slot, or a choice of slots, whose presence opens the arm, or one slot restricted to the kinds an arm admits there. It becomes an `IfArm`: `test` and `or` for presence, `test` and `kinds` for a kind test.
+
+### `packages/codegen/src/compiler/model/choice-partition.ts::PartitionTree`
+
+How a node's slots select one arm of a choice. A leaf is a group of arm indices that render the same body. An inner node holds an `ArmTest` and the trees for the arms on its present and absent sides.
+
+### `packages/codegen/src/compiler/model/choice-partition.ts::ChoicePartition`
+
+The stamped lowering of a choice whose arms share a slot. `flat`: every arm is a run of slots in an order they all agree with, so each slot is written once. `chain`: a `PartitionTree` selects one arm. `refused`: neither presence nor kind tells two arms apart, and it holds the `shared-slot-choice` failure.
+
+### `packages/codegen/src/compiler/model/choice-partition.ts::ChoicePartitionInput`
+
+What `choicePartitionsOf` reads: the assembled nodes, the normalized rules, and the owner-scoped `slotByRuleId`.
+
+### `packages/codegen/src/compiler/model/choice-partition.ts::choicePartitionsOf`
+
+Stamps a `ChoicePartition` for each choice that no slot of its kind claims and whose arms share a slot, per owner kind. It reads rules before seams are added, so arm groups compare the rules with each reference resolved to its slot name. Assemble records a `refused` partition's failure as a blocking diagnostic that no `expectDiagnostics` entry can floor.
+
+### `packages/codegen/src/compiler/model/choice-partition.ts::partitionOfChoice`
+
+The partition of one choice, or `undefined` when no two arms hold one slot. Arms made only of slots whose orders parse are `flat`. Otherwise arms with the same shape form one group, which holds the slots and kinds of each and requires only the parts all of them require. A part is a slot, or a choice of slots of which a node holds one, that every node of the arm holds. The kinds at a slot are its symbols' concrete kinds, and a slot that also takes text is never tested by kind.
+
+### `packages/codegen/src/compiler/model/choice-partition.ts::partitionTree`
+
+Splits arm groups into tests a node passes for exactly one group. In turn it tests a required part that only one remaining group holds, by presence and then restricted to that group's kinds at the slot. When no such part exists, it splits on a part some groups require and the rest don't hold, a group that holds it optionally going to both sides. When nothing separates the groups it returns them, and the choice is refused.
+
+### `packages/codegen/src/compiler/model/choice-partition.ts::slotNameInBody`
+
+The name a slot takes in a render body: its storage name without leading underscores, or `children` when that leaves nothing. The partition and `emitSlotReference` both name a slot through it.
+
+### `packages/codegen/src/compiler/model/choice-partition.ts::flatOrderParses`
+
+Whether a flat order is safe: each arm's slots, in that order, must be a subsequence of some arm's own order, so writing the slots in that order still parses as one of the arms.

@@ -4,7 +4,8 @@ import { collectGeneratedKindEntries } from '../../dsl/symbol-table.ts';
 import { NO_JOINS } from '../../compiler/model/join-seams/index.ts';
 import { EmitHaltedError, type GrammarDiagnostic } from '../../types/diagnostics.ts';
 import { concat, duplicateSlots, gate, seam, slot, type Body, type IfArm } from '../render-body.ts';
-import { flatSlotBody, flatSlotOrder, runTemplateEmitter } from '../templates.ts';
+import { flatSlotBody, runTemplateEmitter } from '../templates.ts';
+import { flatSlotOrder, type PartitionTree } from '../../compiler/model/choice-partition.ts';
 import { storageKindOfValue, type NodeOrTerminal } from '../../compiler/model/node-map.ts';
 
 const sym = (name: string) => ({ type: 'SYMBOL', name });
@@ -208,11 +209,12 @@ describe('a choice whose arms share a slot takes exactly one arm', () => {
 	});
 
 	it('refuses with shared-slot-choice when no slot tells two arms apart', () => {
-		const { emit } = compile({
+		const { nodeMap, emit } = compile({
 			host: choice(seq(field('a', sym('x')), str('+'), field('b', sym('y'))), seq(field('b', sym('y')), str('-'), field('a', sym('x')))),
 			x: pattern('[a-z]+'),
 			y: pattern('[0-9]+')
 		});
+		expect(nodeMap.assembleWarnings).toContainEqual(expect.objectContaining({ code: 'shared-slot-choice', ownerKind: 'host' }));
 		let halted: unknown;
 		try {
 			emit();
@@ -221,6 +223,23 @@ describe('a choice whose arms share a slot takes exactly one arm', () => {
 		}
 		expect(halted).toBeInstanceOf(EmitHaltedError);
 		expect((halted as EmitHaltedError).blocking as readonly GrammarDiagnostic[]).toMatchObject([{ code: 'shared-slot-choice', ownerKind: 'host' }]);
+	});
+
+	it('assemble stamps the partition emit reads: a tree of slot tests over arm groups', () => {
+		const { nodeMap } = compile({
+			host: choice(
+				seq(field('a', sym('x')), str('+'), field('b', sym('y'))),
+				seq(field('a', sym('x')), str('-'), field('c', sym('z'))),
+				seq(field('b', sym('y')), str('*'), field('c', sym('z')))
+			),
+			x: pattern('[a-z]+'),
+			y: pattern('[0-9]+'),
+			z: pattern('[A-Z]+')
+		});
+		const [partition] = [...(nodeMap.choicePartitions?.get('host')?.values() ?? [])];
+		expect(partition?.form).toBe('chain');
+		const groups = (tree: PartitionTree): number[] => ('group' in tree ? [...tree.group] : [...groups(tree.present), ...groups(tree.absent)]);
+		expect(groups((partition as { tree: PartitionTree }).tree).sort()).toEqual([0, 1, 2]);
 	});
 });
 

@@ -224,6 +224,7 @@ export function fromHelperSlotRead(grammar: string, read: HelperSlotRead): Gramm
 
 const BLOCKING_SHAPE_CODES: ReadonlySet<string> = new Set([
 	'storagename-collision',
+	'shared-slot-choice',
 	'nonterminal-separator-unstamped',
 	'unclassifiable-shape',
 	'kind-shape-mismatch',
@@ -492,6 +493,7 @@ function externalsReadAsOf(raw: RawGrammar): (kind: string) => readonly string[]
 export const SURFACED_COMPILER_CODES: ReadonlySet<string> = new Set(['groups-config-invalid', 'refine-config-invalid', 'token-interior-unstructurable']);
 
 const UNEXPECTABLE_CODES: ReadonlySet<string> = new Set([
+	'shared-slot-choice',
 	'dangling-internal-ref',
 	'unpredictable-symbol-table',
 	'kind-key-collision',

@@ -4,7 +4,6 @@ import { CHOICE, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rul
 import { AssembledKeyword, AssembledSupertype } from '../../compiler/model/node-map.ts';
 import { NO_JOINS } from '../../compiler/model/join-seams/index.ts';
 import { emitKindGatedLiterals, emitRule, type EmitCtx } from '../templates.ts';
-import { EmitHaltedError } from '../../types/diagnostics.ts';
 import type { RenderRule } from '../../types/rule.ts';
 
 const keyword = (kind: string) =>
@@ -95,21 +94,13 @@ describe('emitRule — arms whose text before the slot differs, gated on the kin
 		expect(shape(body)).toEqual([{ if: [['v', ['_type'], ['extends']]] }, { slot: 'v' }]);
 	});
 
-	it('writes no kind gate when a kind is admitted by two arms with different text, and the choice refuses with shared-slot-choice', () => {
+	it('writes no kind gate when a kind is admitted by two arms with different text', () => {
 		const shapes: readonly [RenderRule, Record<string, object>][] = [
 			[choice(seq(str('"'), v('frag'), str('"')), seq(str('"""'), v('frag'), str('"""'))), { frag: branch('frag') }],
 			[choice(seq(str('extends'), v('_type')), v('a')), { _type: supertype('_type', ['a', 'b']), a: branch('a'), b: branch('b') }]
 		];
 		for (const [rule, nodes] of shapes) {
 			expect(emitKindGatedLiterals(rule as Extract<RenderRule, { type: 'CHOICE' }>, undefined, ctxWithKinds(nodes))).toBeUndefined();
-			let halted: unknown;
-			try {
-				emitRule(rule, ctxWithKinds(nodes));
-			} catch (error) {
-				halted = error;
-			}
-			expect(halted).toBeInstanceOf(EmitHaltedError);
-			expect((halted as EmitHaltedError).blocking).toMatchObject([{ code: 'shared-slot-choice' }]);
 		}
 	});
 });

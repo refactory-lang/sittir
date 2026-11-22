@@ -78,6 +78,7 @@ import {
 	type CompoundModelTypeCtx,
 	type KindFacts
 } from './model/node-map.ts';
+import { choicePartitionsOf } from './model/choice-partition.ts';
 import { simplifyRule } from './simplify.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
 import type { ParseKindCollisionDiagnostic } from '../types/parsekind-collisions.ts';
@@ -342,6 +343,10 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	for (const [kind, node] of nodes) {
 		slotByRuleId.set(kind, new Map(node.slots.flatMap((slot) => slot.sourceRuleIds.map((id) => [id, slot] as const))));
 	}
+	const choicePartitions = choicePartitionsOf({ nodes, rules: normalized.normalizedRules, slotByRuleId });
+	for (const own of choicePartitions.values()) {
+		for (const partition of own.values()) if (partition.form === 'refused') assembleDiagnostics.assembleWarnings.record(partition.failure);
+	}
 
 	linkAliasStorages(nodes, normalized.refineForms);
 	const assembled: AssembledNodeMap = {
@@ -351,6 +356,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		nodeByRuleId,
 		nodeByKindId,
 		slotByRuleId,
+		choicePartitions,
 		displayUnions: normalized.displayUnions,
 		terminalAliasWireIds: normalized.terminalAliasWireIds,
 		signatures: computeSignatures(nodes),
