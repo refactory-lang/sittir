@@ -18,7 +18,7 @@ use std::io::Write as _;
 
 use sittir_core::arena::side::{RunEntry, SideRecord};
 use sittir_core::arena::{header_of, Address, ArenaRead, Cell, CellWord, HydrateNode, ListCell, RecordCells, RecordGrammar, MAX_CHUNKS};
-use sittir_core::engine::{Engine, EngineGrammar, ParsedTree, Records};
+use sittir_core::engine::{Backing, Engine, EngineGrammar, Records};
 use sittir_core::nodes::{Kid, Nodes, Step, Visit};
 use sittir_core::options::ResolvedOptions;
 use sittir_core::read::{Route, Router};
@@ -158,11 +158,11 @@ fn census<G: RecordGrammar + Copy, N: HydrateNode + RecordCells>(grammar: G, opt
     tally
 }
 
-fn kind_name<G: EngineGrammar>(grammar: &G, kind: KindId) -> String {
+fn kind_name<G: EngineGrammar>(_: &G, kind: KindId) -> String {
     if kind == KindId::ERROR {
         "ERROR".to_string()
     } else {
-        grammar.kind_name(kind).to_string()
+        G::kind_name(kind).to_string()
     }
 }
 
@@ -329,7 +329,7 @@ fn count_cell<G: EngineGrammar>(words: &[u32], shape: sittir_core::arena::CellSh
     let cell = Cell::decode_parsed(words, shape, bits).expect("a parsed cell");
     let item = match cell {
         Cell::ParsedLeaf { row, .. } | Cell::Unit { row: Some(row), .. } if row.0 >= 2 => Some(Item::Row(row.0 as usize - 2)),
-        Cell::Child { at, link: None, .. } => Some(Item::Record(at)),
+        Cell::Child { at, .. } => Some(Item::Record(at)),
         _ => None,
     };
     let form = match cell {
@@ -342,10 +342,8 @@ fn count_cell<G: EngineGrammar>(words: &[u32], shape: sittir_core::arena::CellSh
             "leaf"
         }
         Cell::ParsedText { .. } => "text",
-        Cell::Child { at, link, .. } => {
-            if link.is_none() {
-                pending.push(at);
-            }
+        Cell::Child { at, .. } => {
+            pending.push(at);
             "child"
         }
         Cell::Unit { kind, row } => {
@@ -403,11 +401,6 @@ fn side_words(arena: &dyn ArenaRead, side_at: Address, side: &SideRecord, header
         let words = 1 + 8 * side.slots.len() as u64;
         tally.side_slots.add(words);
         total += words;
-        for slot in &side.slots {
-            if !slot.tokens.is_empty() {
-                tally.token_runs.add(slot.tokens.len() as u64);
-            }
-        }
     }
     if side.parent.is_some() {
         tally.side_parent.add(1);
@@ -512,15 +505,15 @@ enum Fate {
 }
 
 /// The stage-one tallies of the read at `root`.
-fn stage_one<G: RecordGrammar + Copy>(grammar: G, tree: &ParsedTree<G, Records<'_>>, root: NodeIndex, source: &str, label: &str, model: &ListModel, tally: &mut StageOne) {
+fn stage_one<G: RecordGrammar + Copy>(grammar: G, tree: &Records<'_, G>, root: NodeIndex, source: &str, label: &str, model: &ListModel, tally: &mut StageOne) {
     let mut nodes = tree.nodes();
-    let mut met: Vec<(Kid, Option<NodeIndex>, bool)> = Vec::new();
-    let mut open: Vec<(NodeIndex, bool)> = Vec::new();
+    let mut met: Vec<(Kid, Option<NodeIndex>, bool, bool)> = Vec::new();
+    let mut open: Vec<(NodeIndex, bool, bool)> = Vec::new();
     nodes.walk(root, &mut |step, kid| match step {
         Step::Meet => {
-            let under_trivia = open.last().is_some_and(|&(_, trivia)| trivia);
-            met.push((*kid, open.last().map(|&(index, _)| index), under_trivia));
-            open.push((kid.index, under_trivia || kid.extra || kid.error()));
+            let (under_trivia, inside_extra) = open.last().map_or((false, false), |&(_, trivia, extra)| (trivia, extra));
+            met.push((*kid, open.last().map(|&(index, ..)| index), under_trivia, inside_extra));
+            open.push((kid.index, under_trivia || kid.extra || kid.error(), inside_extra || kid.extra));
             Visit::Enter
         }
         Step::Leave => {
@@ -529,10 +522,10 @@ fn stage_one<G: RecordGrammar + Copy>(grammar: G, tree: &ParsedTree<G, Records<'
         }
     });
     let mut fates: HashMap<NodeIndex, Fate> = HashMap::new();
-    let name = |kind: KindId| grammar.kind_name(kind).to_string();
-    for &(kid, parent, under_trivia) in &met {
+    let name = |kind: KindId| G::kind_name(kind).to_string();
+    for &(kid, parent, under_trivia, _) in &met {
         let fate = match tree.name_at(kid.index) {
-            Some(named) if named.site.is_none() => Fate::Record,
+            Some(named) if named.site().is_none() => Fate::Record,
             _ if kid.extra || kid.error() || under_trivia => Fate::Kept,
             Some(_) => {
                 if grammar.unit_id(&mut nodes, &kid).is_some() {
@@ -549,7 +542,7 @@ fn stage_one<G: RecordGrammar + Copy>(grammar: G, tree: &ParsedTree<G, Records<'
         };
         fates.insert(kid.index, fate);
     }
-    let leaves: Vec<&(Kid, Option<NodeIndex>, bool)> = met.iter().filter(|(kid, ..)| kid.count == 1).collect();
+    let leaves: Vec<&(Kid, Option<NodeIndex>, bool, bool)> = met.iter().filter(|(kid, ..)| kid.count == 1).collect();
     for pair in leaves.windows(2) {
         let (leaf, next) = (pair[0].0, pair[1].0);
         let ends_line = leaf.end > leaf.start && source.as_bytes().get(leaf.end as usize - 1) == Some(&b'\n');
@@ -577,7 +570,7 @@ fn stage_one<G: RecordGrammar + Copy>(grammar: G, tree: &ParsedTree<G, Records<'
                 }
             }
         }
-        let Some(record) = tree.name_at(kid.index).map(|named| Address(named.node.0)) else { continue };
+        let Some(record) = tree.name_at(kid.index).map(|named| Address(named.address())) else { continue };
         let side_at = Address(arena.words(record, 2).expect("a header")[1]);
         let Some(delimiter) = SideRecord::read(arena, side_at).expect("a side record").delimiter else { continue };
         tally.flanked_lists += 1;
@@ -596,16 +589,8 @@ fn stage_one<G: RecordGrammar + Copy>(grammar: G, tree: &ParsedTree<G, Records<'
         }
     }
     let surface = grammar.surface_kinds();
-    let mut inside_extra: Vec<u32> = Vec::new();
-    for &(kid, parent, _) in &met {
-        while inside_extra.last().is_some_and(|&end| kid.index.get() >= end) {
-            inside_extra.pop();
-        }
-        if kid.index == root || !inside_extra.is_empty() {
-            continue;
-        }
-        if kid.extra {
-            inside_extra.push(kid.index.get() + kid.count);
+    for &(kid, parent, _, inside_extra) in &met {
+        if kid.index == root || inside_extra || kid.extra {
             continue;
         }
         if !kid.named || surface.is_depth_member(kid.grammar) || !(kid.error() || grammar.admits(kid.grammar, kid.display)) {
