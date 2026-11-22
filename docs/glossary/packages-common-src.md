@@ -1128,6 +1128,14 @@ Bound as `ReadNodes.sources`: the entry of the source each node was read from, w
 
 What the engine calls instead of `renderBuilt` for a read record whose sides the arena does not keep yet (`BuiltArena.wantsSides`). One call renders the text and answers the sides, which the engine hands to `BuiltArena.keepSides`, so a side read after the render does not place the source's records again.
 
+### `packages/common/src/engine.ts::NativeEngineLike::builtBump`
+
+Adds `more` counts to the native overflow of the built entry at `address`, whose count byte has saturated. Native refuses an address no entry starts at and a count that has not saturated. JavaScript does not call it once per hold: `holdSaturated` gathers the holds of each address and one call tells native their sum.
+
+### `packages/common/src/engine.ts::NativeEngineLike::holdSaturated`
+
+Notes one more hold of the built entry at `address`, whose count byte has saturated, without crossing to native. The holds wait in JavaScript, summed by address, and every engine function tells native all of them through `builtBump` before it runs, so native never reads a count that is short. Disposing the engine drops holds not yet told. Present only when the addon carries `builtBump`.
+
 ### `packages/common/src/built-arena.ts::BuiltArena::node`
 
 The node a child cell names by its record's address: the one its builder returned while anything holds it, else a fresh view of the record, which the arena then holds weakly in its place.

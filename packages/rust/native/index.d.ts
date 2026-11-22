@@ -117,11 +117,11 @@ export declare const ARENA_CHUNK_SHIFT: number
 export declare function backerParity(engine: object, source: string): BackerParityRead
 
 /**
- * r" Takes one more count of the built entry at `address`, whose
- * r" count saturated. Refuses an address no entry starts at and
- * r" a count that has not saturated.
+ * r" Takes `more` counts more of the built entry at `address`,
+ * r" whose count saturated. Refuses an address no entry starts at
+ * r" and a count that has not saturated.
  */
-export declare function builtBump(engine: object, address: number): void
+export declare function builtBump(engine: object, address: number, more: number): void
 
 /**
  * r" The chunk of the built arena's strings that builders append

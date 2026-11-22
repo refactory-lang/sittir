@@ -328,18 +328,18 @@ impl BuiltChunks {
         Ok(byte)
     }
 
-    /// One more count of the entry at `at`, whose count byte saturated.
+    /// `more` counts more of the entry at `at`, whose count byte saturated.
     ///
     /// # Errors
     ///
     /// What reaching its count refuses, and `ArenaError::Malformed` for a
     /// count that has not saturated.
-    pub fn bump(&mut self, at: Address) -> Result<(), ArenaError> {
+    pub fn bump(&mut self, at: Address, more: u32) -> Result<(), ArenaError> {
         let byte = *self.table(at.chunk())?.count(at.word())?;
         if byte & SATURATED != SATURATED {
             return Err(malformed("unsaturated count", u32::from(byte)));
         }
-        *self.overflow.entry(at.0).or_insert(0) += 1;
+        *self.overflow.entry(at.0).or_insert(0) += more;
         Ok(())
     }
 
@@ -426,8 +426,8 @@ impl BuiltChunks {
     /// released as a cell naming it is; a parsed record, as its kind's shape
     /// lays out its cells, also its lists' runs and each record its side
     /// record's run names that no cell of it names; a link record the
-    /// record it names a node of; a side record its slots' token runs, the
-    /// source it names and the record its sides name. A sealed chunk left
+    /// record it names a node of; a side record the source it names and the
+    /// record its sides name. A sealed chunk left
     /// with no live entry is freed, a chunk a read wrote as a built one.
     ///
     /// # Errors
@@ -489,7 +489,7 @@ impl BuiltChunks {
     }
 
     /// Drops the count of the entry at `at` its one holder holds, an entry
-    /// that holds nothing: a side record's token run.
+    /// whose items its holder releases: a parsed record's list run.
     fn retire(&mut self, at: Address) -> Result<(), ArenaError> {
         if self.drop_one(at)? {
             self.dead(at)?;
@@ -607,11 +607,12 @@ impl BuiltChunks {
             }
             Ok(())
         })?;
+        named.sort_unstable();
         let side = super::borrowed::side_of(self, at)?;
         let run = if side == Address::NONE { None } else { SideRecord::read_facts(self, side)?.1 };
         let unnamed: Vec<Address> = match run {
             Some(run) => run.entries(self)?.into_iter().filter_map(|entry| match entry {
-                RunEntry::Record { at, .. } if !named.contains(&at) => Some(at),
+                RunEntry::Record { at, .. } if named.binary_search(&at).is_err() => Some(at),
                 _ => None,
             }).collect(),
             None => Vec::new(),
@@ -868,8 +869,9 @@ mod tests {
         let leaf = built.leaf();
         built.arena.adopt(leaf).expect("moved");
         *built.arena.table(built.chunk).expect("a table").count(leaf.word()).expect("its count") = SATURATED;
-        built.arena.bump(leaf).expect("bumped");
+        built.arena.bump(leaf, 2).expect("bumped");
         built.release(leaf, false).expect("the overflow");
+        built.release(leaf, false).expect("the overflow's second");
         assert_eq!(built.arena.count_of(leaf), Ok(SATURATED));
         built.release(leaf, false).expect("the byte");
         assert_eq!(built.arena.count_of(leaf), Ok(SATURATED - 1));

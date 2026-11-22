@@ -1231,14 +1231,15 @@ macro_rules! napi_engine {
                 $crate::napi_engine::built_chunk(&env, engine.written(), true, least)
             }
 
-            /// Takes one more count of the built entry at `address`, whose
-            /// count saturated. Refuses an address no entry starts at and
-            /// a count that has not saturated.
+            /// Takes `more` counts more of the built entry at `address`,
+            /// whose count saturated. Refuses an address no entry starts at
+            /// and a count that has not saturated.
             #[::napi_derive::napi]
-            pub fn built_bump(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, address: f64) -> ::napi::Result<()> {
+            pub fn built_bump(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, address: f64, more: f64) -> ::napi::Result<()> {
                 let engine = engine_of(engine)?;
                 let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
-                engine.written().built_mut().bump(address).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                let more = $crate::napi_engine::checked_whole(more, "count")?;
+                engine.written().built_mut().bump(address, more).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
                 Ok(())
             }
 
