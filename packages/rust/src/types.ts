@@ -23580,8 +23580,8 @@ export namespace RawStringLiteral {
 		config: OmitEach<
 			NonNullable<
 				OmitEach<NonNullable<ConfigOf<T.RawStringLiteral>>, 'rawStringLiteralStart'> & {
-					prefix: T.RawStringLiteralStart.BuildArgs[0];
-				}
+					readonly rawStringLiteralStart?: never;
+				} & { prefix: T.RawStringLiteralStart.BuildArgs[0] }
 			>,
 			'rawStringLiteralEnd'
 		>
@@ -23590,8 +23590,8 @@ export namespace RawStringLiteral {
 		config: OmitEach<
 			NonNullable<
 				OmitEach<NonNullable<T.RawStringLiteral.Loose>, 'rawStringLiteralStart'> & {
-					prefix: NonNullable<T.RawStringLiteralStart.LooseConfig>['prefix'];
-				}
+					readonly rawStringLiteralStart?: never;
+				} & { prefix: NonNullable<T.RawStringLiteralStart.LooseConfig>['prefix'] }
 			>,
 			'rawStringLiteralEnd'
 		>

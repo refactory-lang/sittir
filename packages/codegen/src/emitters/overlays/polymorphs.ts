@@ -806,7 +806,7 @@ function alwaysFlattenShape(k: string, keys: readonly FlattenKey[], m: string, d
 		typeFor: (p, c, config, surface) =>
 			keys.length === 0
 				? `OmitEach<NonNullable<${p}>, '${k}'>`
-				: `OmitEach<NonNullable<${p}>, '${k}'> & ${groupOf(directKey !== undefined && surface === 'loose' ? `NonNullable<${config}>['${directKey}']` : `${c}[0]`)}`
+				: `OmitEach<NonNullable<${p}>, '${k}'> & { readonly ${k}?: never } & ${groupOf(directKey !== undefined && surface === 'loose' ? `NonNullable<${config}>['${directKey}']` : `${c}[0]`)}`
 	};
 }
 

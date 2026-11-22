@@ -15584,7 +15584,9 @@ export namespace String {
 		config?: GatedList<
 			OmitEach<
 				NonNullable<
-					OmitEach<NonNullable<Partial<ConfigOf<T.String>>>, 'stringStart'> & { prefix?: T.StringStart.BuildArgs[0] }
+					OmitEach<NonNullable<Partial<ConfigOf<T.String>>>, 'stringStart'> & { readonly stringStart?: never } & {
+						prefix?: T.StringStart.BuildArgs[0];
+					}
 				>,
 				'stringEnd'
 			>,
@@ -15599,7 +15601,7 @@ export namespace String {
 		config?: GatedList<
 			OmitEach<
 				NonNullable<
-					OmitEach<NonNullable<T.String.Loose>, 'stringStart'> & {
+					OmitEach<NonNullable<T.String.Loose>, 'stringStart'> & { readonly stringStart?: never } & {
 						prefix?: NonNullable<T.StringStart.LooseConfig>['prefix'];
 					}
 				>,
