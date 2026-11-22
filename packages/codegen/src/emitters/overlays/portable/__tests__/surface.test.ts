@@ -121,9 +121,9 @@ describe('emitPortableSurface', () => {
 		expect(text).toContain("import type { TestNode } from '../types.js';");
 	});
 
-	it("gives a namespace a kinds node with no $path, and a guard like any path's", async () => {
+	it("gives a namespace a kinds node stamped $namespace in place of $path, and a guard like any path's", async () => {
 		const text = await emit(SCM, new Set(['expression.assignment']));
-		expect(text).toContain('\t"expression.assignment": { readonly "add": PortableKindsAt["expression.assignment.add"] };');
+		expect(text).toContain('\t"expression.assignment": { readonly $namespace: "expression.assignment"; readonly "add": PortableKindsAt["expression.assignment.add"] };');
 		expect(text).toContain('\t"expression.assignment.add": { readonly $path: "expression.assignment.add" };');
 		expect(text).toContain(
 			'\t"expression.assignment": PortableGuard<PortableIds["expression.assignment"], TestNode, TSKindId, PortableTexts["expression.assignment"]> & { readonly "add": PortableIsAt["expression.assignment.add"] };'

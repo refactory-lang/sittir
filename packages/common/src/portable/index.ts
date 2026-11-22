@@ -9,11 +9,11 @@ import { vocabularyNamespaces, vocabularyPaths } from './vocabulary-paths.ts';
 export type VocabularyPath = (typeof vocabularyPaths)[number];
 
 /**
- * Every vocabulary path, mapped to the kind ids a bound grammar reads at or under it, or to `never` where it reads none.
+ * Every vocabulary path and namespace, mapped to the kind ids a bound grammar reads at or under it, or to `never` where it reads none.
  *
- * @typeParam Ids - A bound grammar's kind ids per path it reads (its `PortableIds`); `{}` for a grammar without bindings.
+ * @typeParam Ids - A bound grammar's kind ids per path and namespace it reads (its `PortableIds`); `{}` for a grammar without bindings.
  */
-export type PortableQueryIds<Ids> = { readonly [P in VocabularyPath]: P extends keyof Ids ? Ids[P] : never };
+export type PortableQueryIds<Ids> = { readonly [P in VocabularyPath | (typeof vocabularyNamespaces)[number]]: P extends keyof Ids ? Ids[P] : never };
 
 export { classifierOf, hasKind, type PortableClassifier } from './classify.ts';
 export { registerPortableRows, type PortableLanguage } from './language-guard.ts';

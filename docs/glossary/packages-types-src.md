@@ -974,6 +974,10 @@ A root that saves itself. `$save(path)` returns the pending write of the root th
 
 The flag query for a portable row.
 
+### `packages/types/src/portable.ts::PortableNamespace`
+
+The value the shared kind tree holds at a vocabulary namespace, a prefix of kind paths that is no kind itself (`vocabularyNamespaces`): `{ $namespace: path }`, frozen and the same object in every language, beside a kind's `PortableKind`. It has no `$path`, since no node reads as a namespace itself; a namespace names the kinds beneath it. `ofType` takes it as it takes a portable kind and selects what the namespace's guard holds for (`ofTypeSteps`), and each grammar's generated `PortableKindsAt` stamps it on the namespace's entry (`emitPortableSurface`).
+
 ### `packages/types/src/portable-build.ts::PortableCallShape`
 
 The shape of a builder's call: config, spread, text, constant, nullary, direct, elements, forwarded or placed. A `constant` entry is a value (a leaf's kind id); a `nullary` entry is a call that takes no arguments (a compound with no slots).

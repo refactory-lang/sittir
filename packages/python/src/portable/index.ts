@@ -752,6 +752,7 @@ export interface PortableKindsAt {
 	'declaration.constant': { readonly $path: 'declaration.constant' };
 	'declaration.function': { readonly $path: 'declaration.function' };
 	'declaration.member': {
+		readonly $namespace: 'declaration.member';
 		readonly constructor: PortableKindsAt['declaration.member.constructor'];
 		readonly method: PortableKindsAt['declaration.member.method'];
 		readonly property: PortableKindsAt['declaration.member.property'];
@@ -779,6 +780,7 @@ export interface PortableKindsAt {
 	'declaration.parameter.typed': { readonly $path: 'declaration.parameter.typed' };
 	'declaration.parameter.typed_default': { readonly $path: 'declaration.parameter.typed_default' };
 	'declaration.type': {
+		readonly $namespace: 'declaration.type';
 		readonly class: PortableKindsAt['declaration.type.class'];
 		readonly type_alias: PortableKindsAt['declaration.type.type_alias'];
 	};
@@ -805,6 +807,7 @@ export interface PortableKindsAt {
 		readonly membership: PortableKindsAt['element.comparator.membership'];
 	};
 	'element.comparator.comparison': {
+		readonly $namespace: 'element.comparator.comparison';
 		readonly equal: PortableKindsAt['element.comparator.comparison.equal'];
 		readonly greater: PortableKindsAt['element.comparator.comparison.greater'];
 		readonly greater_equal: PortableKindsAt['element.comparator.comparison.greater_equal'];
@@ -825,12 +828,14 @@ export interface PortableKindsAt {
 		readonly $path: 'element.comparator.comparison.not_equal.legacy';
 	};
 	'element.comparator.identity': {
+		readonly $namespace: 'element.comparator.identity';
 		readonly is: PortableKindsAt['element.comparator.identity.is'];
 		readonly is_not: PortableKindsAt['element.comparator.identity.is_not'];
 	};
 	'element.comparator.identity.is': { readonly $path: 'element.comparator.identity.is' };
 	'element.comparator.identity.is_not': { readonly $path: 'element.comparator.identity.is_not' };
 	'element.comparator.membership': {
+		readonly $namespace: 'element.comparator.membership';
 		readonly in: PortableKindsAt['element.comparator.membership.in'];
 		readonly not_in: PortableKindsAt['element.comparator.membership.not_in'];
 	};
@@ -910,6 +915,7 @@ export interface PortableKindsAt {
 		readonly shift: PortableKindsAt['expression.binary.shift'];
 	};
 	'expression.binary.arithmetic': {
+		readonly $namespace: 'expression.binary.arithmetic';
 		readonly add: PortableKindsAt['expression.binary.arithmetic.add'];
 		readonly divide: PortableKindsAt['expression.binary.arithmetic.divide'];
 		readonly exponent: PortableKindsAt['expression.binary.arithmetic.exponent'];
@@ -926,6 +932,7 @@ export interface PortableKindsAt {
 	'expression.binary.arithmetic.multiply': { readonly $path: 'expression.binary.arithmetic.multiply' };
 	'expression.binary.arithmetic.subtract': { readonly $path: 'expression.binary.arithmetic.subtract' };
 	'expression.binary.bitwise': {
+		readonly $namespace: 'expression.binary.bitwise';
 		readonly and: PortableKindsAt['expression.binary.bitwise.and'];
 		readonly or: PortableKindsAt['expression.binary.bitwise.or'];
 		readonly xor: PortableKindsAt['expression.binary.bitwise.xor'];
@@ -934,6 +941,7 @@ export interface PortableKindsAt {
 	'expression.binary.bitwise.or': { readonly $path: 'expression.binary.bitwise.or' };
 	'expression.binary.bitwise.xor': { readonly $path: 'expression.binary.bitwise.xor' };
 	'expression.binary.comparison': {
+		readonly $namespace: 'expression.binary.comparison';
 		readonly chain: PortableKindsAt['expression.binary.comparison.chain'];
 		readonly equal: PortableKindsAt['expression.binary.comparison.equal'];
 		readonly greater: PortableKindsAt['expression.binary.comparison.greater'];
@@ -976,6 +984,7 @@ export interface PortableKindsAt {
 	'expression.binary.membership.in': { readonly $path: 'expression.binary.membership.in' };
 	'expression.binary.membership.not_in': { readonly $path: 'expression.binary.membership.not_in' };
 	'expression.binary.shift': {
+		readonly $namespace: 'expression.binary.shift';
 		readonly left: PortableKindsAt['expression.binary.shift.left'];
 		readonly right: PortableKindsAt['expression.binary.shift.right'];
 	};
@@ -984,6 +993,7 @@ export interface PortableKindsAt {
 	'expression.call': { readonly $path: 'expression.call'; readonly member: PortableKindsAt['expression.call.member'] };
 	'expression.call.member': { readonly $path: 'expression.call.member' };
 	'expression.collection': {
+		readonly $namespace: 'expression.collection';
 		readonly list: PortableKindsAt['expression.collection.list'];
 		readonly map: PortableKindsAt['expression.collection.map'];
 		readonly set: PortableKindsAt['expression.collection.set'];

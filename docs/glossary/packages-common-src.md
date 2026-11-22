@@ -170,7 +170,7 @@ The `slice` step, with its bounds counted as an array counts them: truncated tow
 
 ### `packages/common/src/query.ts::ofTypeSteps`
 
-The steps an `ofType` call adds. A kind id becomes one `ofKinds` step over every type a node of that kind can have (`membership.membersOf`: the kind, a supertype's members, a polymorph's arms, an enum kind's member ids), resolved once when the step is added, the test the language's `is.*` guards make; nothing restamps a node's type to pass it. A portable kind becomes an `ofKinds` step over the ids the language's portable rows give its path (`portablePathOf`), the same ids the portable guards admit. A path whose ids decide it (`exact`) needs nothing more; otherwise a `filter` step follows that reads each node, or bare kind id, through `readsAs`, the guards' own test, so `ofType` and the guards cannot disagree. The filter is opaque, so the steps after it run over hydrated nodes, and the kinds stay known for a later `where`. A path the rows do not hold, or a grammar without portable rows, gives an empty `ofKinds` step, which yields nothing without a native call. Anything else, a kind name passed by mistake among it, is refused at the call rather than read as an empty result.
+The steps an `ofType` call adds. A kind id becomes one `ofKinds` step over every type a node of that kind can have (`membership.membersOf`: the kind, a supertype's members, a polymorph's arms, an enum kind's member ids), resolved once when the step is added, the test the language's `is.*` guards make; nothing restamps a node's type to pass it. A portable kind or a portable namespace becomes an `ofKinds` step over the ids the language's portable rows give its path (`portablePathArgument`, `portablePathOf`), the same ids the portable guards admit; the rows key a namespace like a path, so `ofType(kinds.declaration.member)` selects what `is.declaration.member` holds for. A path whose ids decide it (`exact`) needs nothing more; otherwise a `filter` step follows that reads each node, or bare kind id, through `readsAs`, the guards' own test, so `ofType` and the guards cannot disagree. The filter is opaque, so the steps after it run over hydrated nodes, and the kinds stay known for a later `where`. A path the rows do not hold, or a grammar without portable rows, gives an empty `ofKinds` step, which yields nothing without a native call. Anything else, a kind name passed by mistake among it, is refused at the call rather than read as an empty result.
 
 The step holds its kinds as a set, which each route reads. Pushed into a walk, or run over the tree's own entries, it reads membership alone: those elements are the tree's, so of its language. Run over elements after an opaque step, which may have put anything in their place, it is the language's kind test (`kindTest`, from `kindTestOf`), the test the language's guards are built with, so an element of another language never passes, as for the guards, and a bare kind id does.
 
@@ -754,9 +754,9 @@ Refuses a delimited composite whose content would not read back inside its own d
 
 A query result the native matcher returned as a coordinate, as a query entry: its kind and handle, and a `hydrate` that resolves the coordinate through `hydrateWith` under that tree's engine (`inTreeEngine`), so a match is read only when the caller asks for the node, and a match the registry already holds is the object its parent's accessor returns. It passes no role: a query yields each parser node once, as its alias envelope where an envelope and its content share one node.
 
-### `packages/common/src/query.ts::isPortableKind`
+### `packages/common/src/query.ts::portablePathArgument`
 
-Whether an `ofType` argument has a portable kind's shape: an object with a string `$path`. The path itself is not checked here; one the language's rows do not hold yields nothing (`ofTypeSteps`).
+The vocabulary path an `ofType` argument names: a portable kind's `$path`, or a portable namespace's `$namespace`, as the portable trees stamp them; `undefined` for any other value, which `ofTypeSteps` refuses. The path itself is not checked here; one the language's rows do not hold yields nothing (`ofTypeSteps`).
 
 ### `packages/common/src/language.ts::kindOf`
 
@@ -841,6 +841,10 @@ What a language's portable guards need from a descriptor: its `name`, for the er
 ### `packages/common/src/portable/index.ts::portableGuardsOf`
 
 A language's view of the portable guards: `portableTrees` over the same `vocabularyPaths`, each guard built by `languageGuardOf`, so it has the shared tree's keys at every level but guard objects of its own. It is memoized per language object (`views`), so the descriptor's `is.portable`, the `is.portable` of every engine of that descriptor and its portable engine's `is` are one object. An engine of a copied descriptor gets the copy's own view (`guardsOf` rebuilds the shared members through the recorded builder), which finds the same rows. The shared tree, `portable.is`, stays node-only.
+
+### `packages/common/src/portable/index.ts::PortableQueryIds`
+
+The `Ids` of every query view a bound grammar's parsed nodes return (`View<T, Ids>`), from the grammar's `PortableReads`. It is keyed by every vocabulary path and every namespace, read from the generated path list (`vocabularyPaths`, `vocabularyNamespaces`), because `ofType` looks a portable kind's `$path` and a portable namespace's `$namespace` up in it: a key the grammar reads nothing at maps to `never`, so the view narrows to nothing, and a value that names no key is refused at compile time.
 
 ### `packages/common/src/portable/language-guard.ts::languageGuardOf`
 
@@ -998,7 +1002,7 @@ The child segments of a path among a union of vocabulary paths: the next segment
 
 ### `packages/common/src/portable/tree.ts::KindAt`
 
-The type of one node of the shared kind tree: a kind's `PortableKind` (its `$path` as a literal) at a kind's path, nothing of its own at a namespace, and each child segment (`ChildrenOf`) as the node one level down. `GuardAt` is the same shape over the guards, where every node, a namespace's too, is a `PortableGuard` holding its children. Both derive from the path union that `portableTrees` is given, which for the exported `portable` is `vocabularyPaths`'s element type, so the generated path list is the one source of the shared trees' types and values.
+The type of one node of the shared kind tree: a kind's `PortableKind` (its `$path` as a literal) at a kind's path, a `PortableNamespace` (its path as `$namespace`) at a namespace, and each child segment (`ChildrenOf`) as the node one level down. `GuardAt` is the same shape over the guards, where every node, a namespace's too, is a `PortableGuard` holding its children. Both derive from the path union that `portableTrees` is given, which for the exported `portable` is `vocabularyPaths`'s element type, so the generated path list is the one source of the shared trees' types and values.
 
 ### `packages/common/src/portable/tree.ts::RootsOf`
 

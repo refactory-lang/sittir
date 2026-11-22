@@ -44,6 +44,7 @@ export type {
 	PortableFlagStep,
 	PortableGuard,
 	PortableKind,
+	PortableNamespace,
 	PortableSlotRoute,
 	PortableKeyedMount,
 	PortableMount,

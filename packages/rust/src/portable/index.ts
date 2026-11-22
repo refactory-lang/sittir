@@ -1364,6 +1364,7 @@ export interface PortableKindsAt {
 	'declaration.macro.bracket': { readonly $path: 'declaration.macro.bracket' };
 	'declaration.macro.paren': { readonly $path: 'declaration.macro.paren' };
 	'declaration.member': {
+		readonly $namespace: 'declaration.member';
 		readonly enum_member: PortableKindsAt['declaration.member.enum_member'];
 		readonly field: PortableKindsAt['declaration.member.field'];
 		readonly method: PortableKindsAt['declaration.member.method'];
@@ -1508,6 +1509,7 @@ export interface PortableKindsAt {
 	'declaration.parameter.receiver': { readonly $path: 'declaration.parameter.receiver' };
 	'declaration.parameter.variadic': { readonly $path: 'declaration.parameter.variadic' };
 	'declaration.type': {
+		readonly $namespace: 'declaration.type';
 		readonly enum: PortableKindsAt['declaration.type.enum'];
 		readonly interface: PortableKindsAt['declaration.type.interface'];
 		readonly struct: PortableKindsAt['declaration.type.struct'];
@@ -1778,6 +1780,7 @@ export interface PortableKindsAt {
 		readonly shift: PortableKindsAt['expression.binary.shift'];
 	};
 	'expression.binary.arithmetic': {
+		readonly $namespace: 'expression.binary.arithmetic';
 		readonly add: PortableKindsAt['expression.binary.arithmetic.add'];
 		readonly divide: PortableKindsAt['expression.binary.arithmetic.divide'];
 		readonly modulo: PortableKindsAt['expression.binary.arithmetic.modulo'];
@@ -1790,6 +1793,7 @@ export interface PortableKindsAt {
 	'expression.binary.arithmetic.multiply': { readonly $path: 'expression.binary.arithmetic.multiply' };
 	'expression.binary.arithmetic.subtract': { readonly $path: 'expression.binary.arithmetic.subtract' };
 	'expression.binary.bitwise': {
+		readonly $namespace: 'expression.binary.bitwise';
 		readonly and: PortableKindsAt['expression.binary.bitwise.and'];
 		readonly or: PortableKindsAt['expression.binary.bitwise.or'];
 		readonly xor: PortableKindsAt['expression.binary.bitwise.xor'];
@@ -1798,6 +1802,7 @@ export interface PortableKindsAt {
 	'expression.binary.bitwise.or': { readonly $path: 'expression.binary.bitwise.or' };
 	'expression.binary.bitwise.xor': { readonly $path: 'expression.binary.bitwise.xor' };
 	'expression.binary.comparison': {
+		readonly $namespace: 'expression.binary.comparison';
 		readonly equal: PortableKindsAt['expression.binary.comparison.equal'];
 		readonly greater: PortableKindsAt['expression.binary.comparison.greater'];
 		readonly greater_equal: PortableKindsAt['expression.binary.comparison.greater_equal'];
@@ -1819,6 +1824,7 @@ export interface PortableKindsAt {
 	'expression.binary.logical.and': { readonly $path: 'expression.binary.logical.and' };
 	'expression.binary.logical.or': { readonly $path: 'expression.binary.logical.or' };
 	'expression.binary.shift': {
+		readonly $namespace: 'expression.binary.shift';
 		readonly left: PortableKindsAt['expression.binary.shift.left'];
 		readonly right: PortableKindsAt['expression.binary.shift.right'];
 	};
@@ -1852,6 +1858,7 @@ export interface PortableKindsAt {
 	};
 	'expression.cast.conversion': { readonly $path: 'expression.cast.conversion' };
 	'expression.collection': {
+		readonly $namespace: 'expression.collection';
 		readonly list: PortableKindsAt['expression.collection.list'];
 		readonly struct: PortableKindsAt['expression.collection.struct'];
 		readonly tuple: PortableKindsAt['expression.collection.tuple'];

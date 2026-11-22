@@ -66,10 +66,11 @@ describe('portableTrees', () => {
 		).toBe(true);
 	});
 
-	it('gives a namespace a node in each tree: no $path among the kinds, the guard for its path among the guards', () => {
+	it('gives a namespace a node in each tree: its path as $namespace among the kinds, the guard for its path among the guards', () => {
 		const { kinds, is } = portableTrees(['a', 'a.n.k', 'a.n.j'], ['a.n'], guardOf);
 		expect(at(kinds, 'a.n').$path).toBeUndefined();
-		expect(ownKeys(at(kinds, 'a.n'))).toEqual(['j', 'k']);
+		expect(at(kinds, 'a.n').$namespace).toBe('a.n');
+		expect(ownKeys(at(kinds, 'a.n'))).toEqual(['$namespace', 'j', 'k']);
 		expect(at(kinds, 'a.n.k').$path).toBe('a.n.k');
 		const guard = at(is, 'a.n') as unknown as (node: unknown) => boolean;
 		expect(guard('a.n')).toBe(true);
@@ -82,6 +83,7 @@ describe('portableTrees', () => {
 		const { kinds, is } = portableTrees(['a.b'], ['a'], guardOf);
 		expect(ownKeys(kinds)).toEqual(['a']);
 		expect(at(kinds, 'a').$path).toBeUndefined();
+		expect(at(kinds, 'a').$namespace).toBe('a');
 		expect(at(kinds, 'a.b').$path).toBe('a.b');
 		expect((at(is, 'a') as unknown as (node: unknown) => boolean)('a')).toBe(true);
 	});
@@ -106,8 +108,9 @@ describe('portable', () => {
 		expect(Object.isFrozen(portable)).toBe(true);
 	});
 
-	it('serves a node at each vocabulary namespace: no $path among the kinds, a guard among the guards', () => {
+	it('serves a node at each vocabulary namespace: its path as $namespace among the kinds, a guard among the guards', () => {
 		expect(at(portable.kinds, 'declaration.member').$path).toBeUndefined();
+		expect(at(portable.kinds, 'declaration.member').$namespace).toBe('declaration.member');
 		expect(at(portable.kinds, 'declaration.member.method').$path).toBe('declaration.member.method');
 		expect(typeof at(portable.is, 'declaration.member')).toBe('function');
 		expect(typeof at(portable.is, 'expression.collection.list')).toBe('function');

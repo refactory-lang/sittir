@@ -1,8 +1,8 @@
 /**
  * `ofType` narrows by a portable kind to the kinds the view's language reads at or under its path, as the portable
  * guards narrow: a path the language does not read narrows to nothing, and a value that names no vocabulary path is
- * refused. A kind id still narrows to its kind. A keyword leaf is its kind id, in a walk and in a slot, and narrows
- * by that id.
+ * refused. A portable namespace narrows to the kinds the language reads under it, as its guard does. A kind id still
+ * narrows to its kind. A keyword leaf is its kind id, in a walk and in a slot, and narrows by that id.
  *
  * Compile-time only: `pnpm run type-check:cross-language`.
  */
@@ -75,3 +75,13 @@ export type RustExpressionNoItems = Expect<Equals<Has<Item<typeof rustExpression
 
 // @ts-expect-error a value that names no vocabulary path
 rustNodes.ofType({ $path: 'nope' });
+
+const rustMembers = rustNodes.ofType(portable.kinds.declaration.member);
+export type RustMembersHoldMethods = Expect<Has<Item<typeof rustMembers>, { readonly $type: typeof rs.kinds.MethodDeclaration }>>;
+export type RustMembersHoldFields = Expect<Has<Item<typeof rustMembers>, { readonly $type: typeof rs.kinds.FieldDeclaration }>>;
+export type RustMembersNoFunctions = Expect<Equals<Has<Item<typeof rustMembers>, { readonly $type: typeof rs.kinds.FunctionItem }>, false>>;
+
+const pythonTypes = pythonNodes.ofType(portable.kinds.declaration.type);
+export type PythonTypesAreClassesAndAliases = Expect<Equals<Item<typeof pythonTypes>['$type'], typeof py.kinds.ClassDefinition | typeof py.kinds.TypeAliasStatement>>;
+
+export type LastOverloadTakesAPortableKind = Expect<Equals<typeof portable.kinds.declaration.function extends Parameters<typeof rustNodes.ofType>[0] ? true : false, true>>;
