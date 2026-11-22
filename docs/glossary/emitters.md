@@ -10850,7 +10850,7 @@ The arity of a keyword leaf's pair: its coercer takes one optional `<Kind>.Loose
 
 ### `packages/codegen/src/emitters/from.ts::storedFieldCall`
 
-A slot's resolver expression without keyword extraction: the single-kind fast path or the interned resolver call, wrapped in the kind-enum or mixed-enum storage coercion (`slotStorageCoercion` with text input), mapped over a multiple slot's items through `storageCallExpr`. `resolveFieldCall` puts keyword extraction in front of it: whole value for a scalar slot, one element at a time (resolved as a scalar) for an array slot.
+A slot's resolver expression without keyword extraction: the single-kind fast path or the interned resolver call, wrapped in the kind-enum or mixed-enum storage coercion (`slotStorageCoercion` with text input), mapped over a multiple slot's items through `storageCallExpr`. The bare kind ids it passes through are the slot's enum members and, unless the slot takes a number (`takesNumber`), its builderless punctuation arms, which the many-arm resolver does not list. Bare text for such an arm stays refused. `resolveFieldCall` puts keyword extraction in front of it: whole value for a scalar slot, one element at a time (resolved as a scalar) for an array slot.
 
 ### `packages/codegen/src/emitters/from.ts::WrapChildrenEntry`
 
@@ -13639,6 +13639,10 @@ Whether a type text has ` | ` outside every bracket pair, the test `parenthesize
 ### `packages/codegen/src/emitters/from.ts::RAW_IMPORT`
 
 The coerce module's import of the strict builders, under a name of its own so that `F` can be their plain view (`PlainBuilders`).
+
+### `packages/codegen/src/emitters/from.ts::takesNumber`
+
+Whether any of a slot's resolved kinds has a number shape (`kindNumberShape`), which makes the slot a number taker. In such a slot a bare number is a number, so `storedFieldCall` does not admit a fixed token's bare kind id there.
 
 ### `packages/codegen/src/emitters/factories.ts::listOptionDefaults`
 

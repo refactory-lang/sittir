@@ -4,7 +4,7 @@ import type { AuthoredCompound, FullForm } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { builtFromText } from './built-from-text.ts';
 import { hasOptionalElements, isBuilderTextLeaf } from '../compiler/model/node-map.ts';
-import { bareInteriorText, interiorSlotGuards, numberInputTest, numberInputType, numberTextArgs, looseRefusal, numericInputRefusal, numericLeafFacts, numericLeafShape, numericSlotShape, type NumberShape } from './interior.ts';
+import { bareInteriorText, interiorSlotGuards, kindNumberShape, numberInputTest, numberInputType, numberTextArgs, looseRefusal, numericInputRefusal, numericLeafFacts, numericLeafShape, numericSlotShape, type NumberShape } from './interior.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
 	collectKindEntries,
@@ -1062,6 +1062,13 @@ function resolveFieldCall(
 	return `(${prop} == null ? [] : Array.isArray(${prop}) ? ${prop} : [${prop}]).map((_e: _LooseFieldInput) => _keywordOf(_e, ${keywords}) ?? ${element}).filter((_e) => _e !== undefined)`;
 }
 
+function takesNumber(kinds: readonly string[], nodeMap: NodeMap): boolean {
+	return kinds.some((kind) => {
+		const node = nodeMap.nodes.get(kind);
+		return node !== undefined && kindNumberShape(kind, node) !== undefined;
+	});
+}
+
 function storedFieldCall(
 	prop: string,
 	field: { values: readonly NodeOrTerminal[] },
@@ -1097,7 +1104,8 @@ function storedFieldCall(
 	const baseCall = callFor(prop);
 	if (storageInfo?.kind !== 'kindEnum' && storageInfo?.kind !== 'mixedEnum') return baseCall;
 	const coercion = slotStorageCoercion(field as AssembledNonterminal, nodeMap, kindEntries, true, storageInfo);
-	const stored = `[${kindEnumMemberDiscriminants(field as AssembledNonterminal, nodeMap, kindEntries).join(', ')}]`;
+	const tokenIds = takesNumber([...leafKinds, ...branchKinds], nodeMap) ? [] : altKindDiscriminants(tokenKinds, field.values, nodeMap, kindEntries);
+	const stored = `[${[...new Set([...kindEnumMemberDiscriminants(field as AssembledNonterminal, nodeMap, kindEntries), ...tokenIds])].join(', ')}]`;
 	const resolved =
 		storageInfo.kind === 'kindEnum'
 			? `_resolveKindEnumScalar(${prop}, () => ${baseCall})`

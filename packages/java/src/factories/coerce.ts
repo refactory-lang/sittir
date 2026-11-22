@@ -1504,7 +1504,9 @@ export const coerceToProgram: EmptyForm<
 	})();
 	return F.buildProgram(
 		...(listStorage(
-			_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.Statement | T.MethodDeclaration>(_v, _K0, _K1)),
+			_resolveKindEnumItems(_elems, [TSKindId.Semi], (_v) =>
+				_resolveMany<T.Statement | T.MethodDeclaration>(_v, _K0, _K1)
+			),
 			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildProgram>)
 	);
@@ -2637,7 +2639,7 @@ export function resolveSwitchBlockStatementGroup_statements(
 	value: T.SwitchBlockStatementGroup.LooseConfig['statements']
 ): Admit<T.SwitchBlockStatementGroup['_statements']> {
 	return listStorage(
-		_resolveKindEnumItems(value, [], (_v) => _resolveMany<T.Statement>(_v, _K0, _K29)),
+		_resolveKindEnumItems(value, [TSKindId.Semi], (_v) => _resolveMany<T.Statement>(_v, _K0, _K29)),
 		(item) => coerceMixedEnumStorage(item, [])
 	);
 }
@@ -2898,7 +2900,7 @@ export const coerceToBlock: EmptyForm<
 	})();
 	return F.buildBlock(
 		...(listStorage(
-			_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.Statement>(_v, _K0, _K29)),
+			_resolveKindEnumItems(_elems, [TSKindId.Semi], (_v) => _resolveMany<T.Statement>(_v, _K0, _K29)),
 			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildBlock>)
 	);
@@ -2946,7 +2948,7 @@ export function resolveLabeledStatement_statement(
 	value: T.LabeledStatement.LooseConfig['statement']
 ): Admit<T.LabeledStatement['_statement']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Statement>(value, _K0, _K29)),
+		_resolveKindEnum(value, [TSKindId.Semi], () => _resolveOne<T.Statement>(value, _K0, _K29)),
 		[]
 	);
 }
@@ -2997,7 +2999,7 @@ export const coerceToAssertStatement: ConfigSeat<T.AssertStatement.Loose, Return
 
 export function resolveDoStatement_body(value: T.DoStatement.LooseConfig['body']): Admit<T.DoStatement['_body']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Statement>(value, _K0, _K29)),
+		_resolveKindEnum(value, [TSKindId.Semi], () => _resolveOne<T.Statement>(value, _K0, _K29)),
 		[]
 	);
 }
@@ -3393,7 +3395,7 @@ export function resolveIfStatement_consequence(
 	value: T.IfStatement.LooseConfig['consequence']
 ): Admit<T.IfStatement['_consequence']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Statement>(value, _K0, _K29)),
+		_resolveKindEnum(value, [TSKindId.Semi], () => _resolveOne<T.Statement>(value, _K0, _K29)),
 		[]
 	);
 }
@@ -3402,7 +3404,7 @@ export function resolveIfStatement_alternative(
 	value: T.IfStatement.LooseConfig['alternative']
 ): Admit<T.IfStatement['_alternative']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Statement>(value, _K0, _K29)),
+		_resolveKindEnum(value, [TSKindId.Semi], () => _resolveOne<T.Statement>(value, _K0, _K29)),
 		[]
 	);
 }
@@ -3433,7 +3435,7 @@ export function resolveWhileStatement_body(
 	value: T.WhileStatement.LooseConfig['body']
 ): Admit<T.WhileStatement['_body']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Statement>(value, _K0, _K29)),
+		_resolveKindEnum(value, [TSKindId.Semi], () => _resolveOne<T.Statement>(value, _K0, _K29)),
 		[]
 	);
 }
@@ -3476,7 +3478,7 @@ export function resolveForStatement_updates(
 
 export function resolveForStatement_body(value: T.ForStatement.LooseConfig['body']): Admit<T.ForStatement['_body']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Statement>(value, _K0, _K29)),
+		_resolveKindEnum(value, [TSKindId.Semi], () => _resolveOne<T.Statement>(value, _K0, _K29)),
 		[]
 	);
 }
@@ -3542,7 +3544,7 @@ export function resolveEnhancedForStatement_body(
 	value: T.EnhancedForStatement.LooseConfig['body']
 ): Admit<T.EnhancedForStatement['_body']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Statement>(value, _K0, _K29)),
+		_resolveKindEnum(value, [TSKindId.Semi], () => _resolveOne<T.Statement>(value, _K0, _K29)),
 		[]
 	);
 }
@@ -4580,7 +4582,7 @@ export function resolveConstructorBody_statements(
 	value: T.ConstructorBody.LooseConfig['statements']
 ): Admit<T.ConstructorBody['_statements']> {
 	return listStorage(
-		_resolveKindEnumItems(value, [], (_v) => _resolveMany<T.Statement>(_v, _K0, _K29)),
+		_resolveKindEnumItems(value, [TSKindId.Semi], (_v) => _resolveMany<T.Statement>(_v, _K0, _K29)),
 		(item) => coerceMixedEnumStorage(item, [])
 	);
 }
