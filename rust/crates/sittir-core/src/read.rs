@@ -151,7 +151,7 @@ impl Depth {
 /// (`ReadNode::shows` of its nodes).
 pub struct ReadCtx<'s> {
     pub source: &'s str,
-    pub tree_id: crate::types::TreeId,
+    pub tree_id: Option<crate::types::TreeId>,
     pub shows: fn(KindId) -> bool,
     /// Whether a node with these grammar and display ids is a relaxed keyword:
     /// the grammar aliases the keyword token to its word rule, so the node
@@ -189,6 +189,10 @@ pub struct ReadCtx<'s> {
     /// (`ReadCtx::with_names`): each coordinate the read makes carries its
     /// node's.
     pub names: Option<&'s dyn NodeNames>,
+    /// Whether the read's root, index 0, is its source's root, whose
+    /// coordinate spans the whole source (`ReadCtx::over_records`): unset on
+    /// a read rooted at a record, whose row its parse stamped.
+    pub root_is_source: bool,
 }
 
 /// The names the nodes of a read keep past a call, where its records
@@ -265,12 +269,6 @@ pub trait SideLookup {
         let _ = index;
         None
     }
-    /// The separator before the node at `index` as an item of its parent's
-    /// list slot, where it is not the one the slot renders.
-    fn separator(&self, index: NodeIndex) -> Option<KindId> {
-        let _ = index;
-        None
-    }
     /// The first byte of the extras and `ERROR`s the leading side of the node
     /// at `index` holds as its source has them, which lie before the node:
     /// the points a snapshot measures on that side. None where the side holds
@@ -343,17 +341,26 @@ impl<'s> SnapshotCtx<'s> {
 pub enum Origin {
     Tree(NodeCoordinate),
     Snapshot(crate::points::PointSpan),
+    /// A node a read left, by the id that names it past the call.
+    Node(crate::query::NamedCoordinate),
 }
 
 impl<'s> ReadCtx<'s> {
-    pub fn new(source: &'s str, tree_id: crate::types::TreeId, shows: fn(KindId) -> bool) -> Self {
-        Self { source, tree_id, shows, relaxes: relaxes_nothing, snapshot: None, sides: None, changed: None, inline_units: false, inline_items: false, units_only: false, start: true, at: None, names: None }
+    pub fn new(source: &'s str, tree_id: impl Into<Option<crate::types::TreeId>>, shows: fn(KindId) -> bool) -> Self {
+        Self { source, tree_id: tree_id.into(), shows, relaxes: relaxes_nothing, snapshot: None, sides: None, changed: None, inline_units: false, inline_items: false, units_only: false, start: true, at: None, names: None, root_is_source: true }
     }
 
     /// The read names each node its coordinates name by `names`.
     #[must_use]
     pub fn with_names(self, names: Option<&'s dyn NodeNames>) -> Self {
         Self { names, ..self }
+    }
+
+    /// The read's root is a record, not its source's root: its coordinate
+    /// spans the record's stamped row.
+    #[must_use]
+    pub fn over_records(self, over: bool) -> Self {
+        Self { root_is_source: !over, ..self }
     }
 
     /// This context, reading a relaxed keyword as the word rule it displays.
@@ -512,7 +519,6 @@ impl<'s> ReadCtx<'s> {
             trivia: seated.then_some(NodeTrivia { leading, trailing, inner }),
             flanks,
             slots: self.sides.map_or_else(Vec::new, |lookup| lookup.slots(index)),
-            separator: self.sides.and_then(|lookup| lookup.separator(index)),
             ..placed_at(at)
         })
     }
@@ -584,7 +590,7 @@ impl<'s> ReadCtx<'s> {
     /// read node's start and its children's sides always lie inside it.
     pub fn hold(&mut self, at: &Kid, children: &[Kid]) {
         let Some(snapshot) = &self.snapshot else { return };
-        let start = self.coordinate_of(at).span.start;
+        let start = self.span_at(at.index, at.span()).start;
         let first = children.iter().find(|child| !child.entry());
         let held = first.and_then(|child| self.sides?.leading_start(child.index)).map_or(start, |leading| leading.min(start));
         let own = snapshot.lines.point(held).expect("a node's start lies in its source");
@@ -647,6 +653,23 @@ impl<'s> ReadCtx<'s> {
         }
     }
 
+    /// Where the node `kid` came from: under a snapshot its measured span,
+    /// which names no node, else its coordinate.
+    #[must_use]
+    pub fn origin_of_kid(&self, kid: &Kid) -> Origin {
+        match &self.snapshot {
+            None => Origin::Tree(self.coordinate_of(kid)),
+            Some(snapshot) => Origin::Snapshot(snapshot.span_of(self.span_at(kid.index, kid.span()))),
+        }
+    }
+
+    /// The bytes a node at `index` spanning `span` stands for: the source's
+    /// root stands for the whole file (`coordinate_at`).
+    #[must_use]
+    pub fn span_at(&self, index: NodeIndex, span: Span) -> Span {
+        if self.root_is_source && index == NodeIndex::ROOT { Span::whole(self.source) } else { span }
+    }
+
     /// The coordinate of the node `kid` (`coordinate_at`).
     #[must_use]
     pub fn coordinate_of(&self, kid: &Kid) -> NodeCoordinate {
@@ -661,13 +684,14 @@ impl<'s> ReadCtx<'s> {
 
     /// The coordinate of the node at `index`, with `count` nodes in its
     /// subtree, spanning `span`, with these ids: its tree and rows, its span
-    /// and its stamped kind (`stamped_kind`). The root (index 0) spans the
+    /// and its stamped kind (`stamped_kind`). The source's root spans the
     /// whole source: tree-sitter's root starts at the first token, and the
     /// root stands for the file, whose leading and trailing bytes its
     /// coordinate render must keep.
     fn coordinate_at(&self, index: NodeIndex, count: u32, span: Span, grammar: KindId, display: KindId) -> NodeCoordinate {
-        let span = if index == NodeIndex::ROOT { Span::whole(self.source) } else { span };
-        NodeCoordinate { kind: Some(self.stamped_kind(grammar, display)), ..NodeCoordinate::new(self.tree_id, index, index + count, span) }.named(self.names.and_then(|names| names.name(index)))
+        let span = self.span_at(index, span);
+        let tree = self.tree_id.expect("a read over records names its nodes by their ids");
+        NodeCoordinate { kind: Some(self.stamped_kind(grammar, display)), ..NodeCoordinate::new(tree, index, index + count, span) }.named(self.names.and_then(|names| names.name(index)))
     }
 
     /// The source text a node spans.
@@ -1271,6 +1295,7 @@ pub fn placed_at<T>(at: Origin) -> NodeLayout<T> {
     match at {
         Origin::Tree(coord) => NodeLayout { at: Some(coord), ..NodeLayout::default() },
         Origin::Snapshot(span) => NodeLayout { span: Some(span), ..NodeLayout::default() },
+        Origin::Node(_) => NodeLayout::default(),
     }
 }
 

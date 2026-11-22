@@ -247,10 +247,10 @@ pub fn owner(before: &[Sibling], entry: Span, after: &[Sibling], source: &str) -
 /// The item `list` passes the extras and `ERROR`s of its `side` to: its
 /// first (leading) or last (trailing) holder child among `kids`, the
 /// list's children, when that child lies at the list's edge and is not a
-/// unit kind; none for a node that is no list of `kinds`, and then `kids`
-/// is never asked.
+/// unit kind; none for a node the surface does not expose in its place
+/// (`SurfaceKinds::exposes_in_place`), and then `kids` is never asked.
 pub fn edge_item<K: std::ops::Deref<Target = [Kid]>>(list: &Kid, kinds: SurfaceKinds, side: TriviaSide, kids: impl FnOnce() -> K) -> Option<Kid> {
-    if list.leaf() || list.entry() || !kinds.lists.contains(&list.grammar) {
+    if list.leaf() || list.entry() || !kinds.exposes_in_place(list.grammar) {
         return None;
     }
     let kids = kids();
@@ -261,7 +261,9 @@ pub fn edge_item<K: std::ops::Deref<Target = [Kid]>>(list: &Kid, kinds: SurfaceK
 }
 
 /// The kinds of a grammar the assignment reads from its surface: the list
-/// kinds, whose items the surface exposes in the list's place, the unit
+/// kinds, whose items the surface exposes in the list's place, the wrappers
+/// a list seats around each of its elements, which expose the element in
+/// their place as a list does its items, the unit
 /// kinds, which it exposes as a kind id rather than a node, the extra kinds
 /// that are layout members, which it assigns as layout, the depth
 /// members (`indent`, `dedent`, 0 where the grammar has none), and whether
@@ -272,6 +274,7 @@ pub fn edge_item<K: std::ops::Deref<Target = [Kid]>>(list: &Kid, kinds: SurfaceK
 #[derive(Debug, Clone, Copy, Default)]
 pub struct SurfaceKinds {
     pub lists: &'static [KindId],
+    pub wrappers: &'static [KindId],
     pub units: &'static [KindId],
     pub layout: &'static [KindId],
     pub indent: KindId,
@@ -280,6 +283,14 @@ pub struct SurfaceKinds {
 }
 
 impl SurfaceKinds {
+    /// Whether the surface exposes what a node of `kind` holds in its
+    /// place: a list its items, a wrapper its element. Such a node holds
+    /// no sides at its edges; its edge items do.
+    #[must_use]
+    pub fn exposes_in_place(&self, kind: KindId) -> bool {
+        self.lists.contains(&kind) || self.wrappers.contains(&kind)
+    }
+
     /// Whether the grammar has a depth member at all.
     #[must_use]
     pub fn has_depth_members(&self) -> bool {

@@ -1,7 +1,7 @@
 import type { CommitScope, EngineIdentity, NodeCoordinate, NodeTrivia, ParseOptions, UnitSidesWire, WireNode } from '@sittir/types';
 import { bindTree, engineOf, isLive, sameLanguage, treeBuiltArena, type TreeEngineHandle } from './engine-scope.ts';
 import { wrapRegistered } from './identity.ts';
-import { asReadOutput, type ChangedEdges, coordinateOf, holdReadCoordinate, holdReadTree, isRead, type KindView, listEdges, keyName, type ReadOutput, triviaOf } from './node-data.ts';
+import { asReadOutput, coordinateOf, holdReadCoordinate, holdReadTree, isRead, type KindView, keyName, type ReadOutput, triviaOf } from './node-data.ts';
 import { decodeTree, isCoordinate } from './read.ts';
 import { carryTree, mintTreeToken, registerTree, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { ChunkWords, TreeHandle, TriviaSideName } from './read.ts';
@@ -89,7 +89,7 @@ export interface ReadChunk {
 	readonly meta: Uint8Array;
 }
 
-export type ReadNodes = Required<Pick<TreeHandle, 'snapshotLayouts' | 'writeTriviaSide' | 'slotLayouts' | 'slotSeparator' | 'separatorBefore' | 'editedWithin' | 'isEmpty' | 'siblings' | 'sources' | 'unitSides'>> & { sides(node: number): ReadSides };
+export type ReadNodes = Required<Pick<TreeHandle, 'snapshotLayouts' | 'writeTriviaSide' | 'slotLayouts' | 'slotSeparator' | 'editedWithin' | 'isEmpty' | 'unitSides'>> & { sides(node: number): ReadSides; sources(nodes: readonly number[]): readonly number[] };
 
 export type ReadSides = Readonly<Record<TriviaSideName, readonly WireNode[]>>;
 
@@ -379,11 +379,8 @@ export class BuiltArena {
 			snapshotLayouts: reads.snapshotLayouts,
 			slotLayouts: reads.slotLayouts,
 			slotSeparator: reads.slotSeparator,
-			separatorBefore: reads.separatorBefore,
 			editedWithin: reads.editedWithin,
 			isEmpty: reads.isEmpty,
-			siblings: reads.siblings,
-			sources: reads.sources,
 			triviaSide: (at, side) => {
 				if (at < 0 || this.reads(at)) return readEntries(this.tree, sidesOf(at)[side].slice());
 				if (((this.#sided[chunkOf(at, format)]?.get(at) ?? 0) & SIDE_BITS[side]) === 0) return undefined;
@@ -631,7 +628,7 @@ export class BuiltArena {
 			if (this.#parkedOf(node) === undefined) this.#parkOwn(node);
 			return node;
 		}
-		if (this.reads(at)) return node;
+		if (this.reads(at) && !this.isRoot(at)) return node;
 		this.refuseReleased(this.liveAt(node, at));
 		if (!this.#ownedByHandle(at)) this.#giveBack(at);
 		mark.kept.add(at);
@@ -674,7 +671,7 @@ export class BuiltArena {
 		for (let n = mark.minted; n < this.#mintedCount; n++) {
 			const at = this.#minted[n]!;
 			const words = this.#mintedWords[n]!;
-			if (!this.#words.current(chunkOf(at, this.format), words)) continue;
+			if (!this.#current(at, words)) continue;
 			if (mark.kept.has(at) || this.#kept(at)) {
 				keptAt.push(at);
 				keptWords.push(words);
@@ -688,6 +685,11 @@ export class BuiltArena {
 		if (this.#commits.length === 0) return;
 		for (let n = 0; n < keptAt.length; n++) this.#recordMinted(keptAt[n]!, keptWords[n]!);
 		this.#parked.push(...keptLeaves);
+	}
+
+	#current(at: number, words: WritableWords): boolean {
+		const chunk = chunkOf(at, this.format);
+		return this.#words.current(chunk, words) || (this.#reads[chunk] === words && words.length !== 0);
 	}
 
 	#giveBack(at: number): void {
@@ -1210,6 +1212,7 @@ export class BuiltArena {
 		const { root, errors, source: entry } = this.#parse(source, options);
 		if (root === null) throw new Error("the source's root has no record, so the arena holds no node of it");
 		this.#roots.set(root, entry);
+		if (this.#commits.length > 0) this.#recordMinted(root, this.#chunk(root, 1));
 		const regions = Object.freeze(errors);
 		if (regions.length > 0) this.#errors.set(entry, regions);
 		return this.#readView(root, regions);
@@ -1437,10 +1440,6 @@ export function builtRecordOf(value: object, arena: BuiltArena): number | undefi
 	return own === arena && at !== undefined && !own.reads(at) ? at : undefined;
 }
 
-function changedWord(changed: ChangedEdges): number {
-	return (changed.leading ? 1 : 0) | (changed.trailing ? 2 : 0);
-}
-
 /** The built cell naming `at`, a record or a leaf entry, with the edges `changed` its site marks. */
 export function builtCell(at: number, changed = 0): number {
 	if (at >= 2 ** 30) throw new Error(`a built cell holds addresses below 2^30, not ${at}`);
@@ -1559,15 +1558,6 @@ export function storeList(arena: BuiltArena, record: BuiltDraft, cell: number, w
 	const run = arena.run(items.length);
 	record.data[record.base + cell] = builtCell(run.at);
 	for (let n = 0; n < items.length; n++) run.data[run.base + 1 + n] = cellOf(arena, items[n], record, word, n);
-	arena.defer(run.at, () => markChangedEdges(arena, run, items));
-}
-
-function markChangedEdges(arena: BuiltArena, run: BuiltPlace, items: readonly unknown[]): void {
-	const edges = listEdges(items, arena.kinds);
-	for (let n = 0; edges !== undefined && n < items.length; n++) {
-		const changed = changedWord(edges[n]!);
-		if (changed !== 0) run.data[run.base + 1 + n] = (run.data[run.base + 1 + n]! | changed) >>> 0;
-	}
 }
 
 export function storeListOptions(arena: BuiltArena, record: BuiltDraft, delimiter: number | undefined, separator: number | undefined): void {

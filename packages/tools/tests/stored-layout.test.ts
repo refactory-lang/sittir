@@ -14,17 +14,17 @@ describe('every corpus entry reads what it stores of its layout', () => {
 describe('a parsed tree stores only the layout its read-time options do not render', () => {
 	it('stores nothing for a rust block, whether the options break it as its source does or not', async () => {
 		const storedOf = await storedLayoutOf('rust');
-		expect(storedOf('fn f() {\n    x;\n}\n')).toEqual({ slots: 0, separators: 0 });
-		expect(storedOf('fn f() { x; }\n')).toEqual({ slots: 0, separators: 0 });
+		expect(storedOf('fn f() {\n    x;\n}\n')).toEqual({ slots: 0 });
+		expect(storedOf('fn f() { x; }\n')).toEqual({ slots: 0 });
 	});
 
 	it('stores no list slot class where its gaps break apart from the options, which decide them', async () => {
 		const storedOf = await storedLayoutOf('rust');
-		expect(storedOf('fn f(a: u8,\n    b: u8,\n    c: u8) {}\n')).toMatchObject({ slots: 0, separators: 0 });
+		expect(storedOf('fn f(a: u8,\n    b: u8,\n    c: u8) {}\n')).toMatchObject({ slots: 0 });
 	});
 
-	it('stores the separator of an item whose gap holds another than its slot renders', async () => {
+	it('stores no separator of an item: an item owns no separator, a list keeps only its slot\'s (once `separators: 1` here)', async () => {
 		const storedOf = await storedLayoutOf('typescript');
-		expect(storedOf('type T = { a: 1; b: 2; c: 3, d: 4 };\n')).toMatchObject({ separators: 1 });
+		expect(Object.keys(storedOf('type T = { a: 1; b: 2; c: 3, d: 4 };\n'))).toEqual(['slots']);
 	});
 });

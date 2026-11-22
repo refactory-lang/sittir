@@ -3,6 +3,7 @@
 //! the items set apart. A holder whose only blank line lies inside one of
 //! its children is routed and sets none of its own items apart.
 
+use sittir_core::engine::Backing as _;
 use sittir_core::engine::{claim_tree_id, Engine, EngineGrammar};
 use sittir_core::layout_kinds::LayoutKinds;
 use sittir_core::nodes::Nodes;
@@ -50,9 +51,9 @@ fn every_item_a_source_sets_apart_lies_in_a_holder_that_holds_a_blank_line() {
     assert!(counts.iter().sum::<usize>() > 0, "the fixtures set items apart: {counts:?}");
 }
 
-/// The kind and text of each node of the rust `source` whose leading side,
-/// as the tree's lookup gives it, opens with a blank line, in document order.
-fn led_by_a_blank_line(source: &str) -> Vec<(&'static str, &str)> {
+/// The kind and text of each node of the rust `source` whose trailing side,
+/// as the tree's lookup gives it, ends with a blank line, in document order.
+fn followed_by_a_blank_line(source: &str) -> Vec<(&'static str, &str)> {
     let grammar = sittir_rust::RustGrammar;
     let mut engine = Engine::new(grammar, sittir_rust::render::options::defaults()).expect("an engine");
     let tree = engine.parse(source, claim_tree_id().expect("a tree id")).expect("a parse");
@@ -61,8 +62,8 @@ fn led_by_a_blank_line(source: &str) -> Vec<(&'static str, &str)> {
     while let Some(index) = pending.pop() {
         let kid = nodes.kid(index);
         pending.extend(nodes.kids(index).iter().map(|kid| kid.index));
-        let leading = tree.trivia_side(index, TriviaSide::Leading);
-        if leading.first().is_some_and(|entry| matches!(entry.value(), Some(SlotValue::Node(member)) if member.seam_gap() == Some(LayoutKinds::BLANKLINE))) {
+        let trailing = tree.trivia_side(index, TriviaSide::Trailing);
+        if trailing.last().is_some_and(|entry| matches!(entry.value(), Some(SlotValue::Node(member)) if member.seam_gap() == Some(LayoutKinds::BLANKLINE))) {
             led.push((kid.start, sittir_rust::RustGrammar::kind_name(kid.grammar), &source[kid.start as usize..kid.end as usize]));
         }
     }
@@ -72,6 +73,6 @@ fn led_by_a_blank_line(source: &str) -> Vec<(&'static str, &str)> {
 
 #[test]
 fn a_holder_whose_blank_line_lies_in_a_nested_child_sets_none_of_its_own_items_apart() {
-    assert_eq!(led_by_a_blank_line("fn f() {\n    a;\n\n    b;\n}\nfn g() {}\n"), [("expression_statement", "b;")]);
-    assert_eq!(led_by_a_blank_line("fn f() {\n    a;\n\n    b;\n}\n\nfn g() {}\n"), [("expression_statement", "b;"), ("function_item", "fn g() {}")]);
+    assert_eq!(followed_by_a_blank_line("fn f() {\n    a;\n\n    b;\n}\nfn g() {}\n"), [("expression_statement", "a;")]);
+    assert_eq!(followed_by_a_blank_line("fn f() {\n    a;\n\n    b;\n}\n\nfn g() {}\n"), [("function_item", "fn f() {\n    a;\n\n    b;\n}"), ("expression_statement", "a;")]);
 }

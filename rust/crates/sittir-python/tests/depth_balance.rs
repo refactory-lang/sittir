@@ -12,7 +12,7 @@ use sittir_python::render::node::{
 
 struct NoSources;
 impl SourceTable for NoSources {
-    fn source_of(&self, _tree_id: sittir_core::types::TreeId) -> Option<&str> {
+    fn source_of(&self, _: sittir_core::slot::NodeIdOrCoordinate<'_>) -> Option<&str> {
         None
     }
 }

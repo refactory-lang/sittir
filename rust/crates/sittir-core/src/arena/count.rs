@@ -393,18 +393,28 @@ impl BuiltChunks {
     /// What reaching its count refuses, and `ArenaError::Malformed` for a
     /// record whose count is gone.
     pub fn hold(&mut self, at: Address) -> Result<(), ArenaError> {
+        self.hold_more(at, 1)
+    }
+
+    /// Takes `more` counts more of the record at `at`, as `hold` takes one:
+    /// past the count byte's saturation, in the overflow.
+    ///
+    /// # Errors
+    ///
+    /// As `hold`.
+    pub(crate) fn hold_more(&mut self, at: Address, more: u32) -> Result<(), ArenaError> {
         let byte = self.table(at.chunk())?.count(at.word())?;
-        match *byte & SATURATED {
-            0 => Err(malformed("released record", at.0)),
-            SATURATED => {
-                *self.overflow.entry(at.0).or_insert(0) += 1;
-                Ok(())
-            }
-            _ => {
-                *byte += 1;
-                Ok(())
-            }
+        let count = u32::from(*byte & SATURATED);
+        if count == 0 {
+            return Err(malformed("released record", at.0));
         }
+        let room = u32::from(SATURATED) - count;
+        let into_byte = more.min(room);
+        *byte += u8::try_from(into_byte).map_err(|_| malformed("count", at.0))?;
+        if more > into_byte {
+            *self.overflow.entry(at.0).or_insert(0) += more - into_byte;
+        }
+        Ok(())
     }
 
     /// Releases a count of `held`: with `owned`, the count the handle that
@@ -531,11 +541,11 @@ impl BuiltChunks {
                 }
             }
             Held::Side(at) => {
-                let (side, tokens) = SideRecord::read_held(self, at)?;
-                for run in tokens {
-                    self.retire(run)?;
-                }
+                let (side, _) = SideRecord::read_facts(self, at)?;
                 if let Some(source) = side.source {
+                    if let Some(read) = super::source::Source::read_side_of(self, Address(source))? {
+                        self.drop_count(Held::Side(read), stack)?;
+                    }
                     self.drop_cell(Address(source), stack)?;
                 }
                 if let Some(sides) = side.sides {
@@ -824,25 +834,6 @@ mod tests {
         let parsed = reads.push(&[with_kind(PAIR, BITS).expect("a kind"), 0, with_kind(LEAF, BITS).expect("a kind"), child.0, 0, 0]).expect("a read's record");
         built.release(parsed, false).expect("released");
         assert!(built.arena.take_freed().contains(&parsed.chunk()), "the record, the child its cell names, and with them the chunk");
-    }
-
-    #[test]
-    fn a_released_side_record_releases_its_slots_token_runs() {
-        use crate::arena::side::SideSlot;
-        let mut built = Builder::new();
-        let mut placed = Vec::new();
-        let slot = SideSlot { word: 2, tokens: vec![Some(LEAF)], ..SideSlot::default() };
-        let side = SideRecord { slots: vec![slot], ..SideRecord::default() }
-            .write(&mut |words| {
-                let at = built.place(words, 1);
-                placed.push(at);
-                Ok(at)
-            })
-            .expect("a side record");
-        let root = built.place(&[with_kind(PAIR, BITS).expect("a kind"), side.0, 0, 0], OWNED | 1);
-        built.release(root, true).expect("released");
-        assert_eq!(placed.last(), Some(&side));
-        assert!(placed.iter().all(|&at| built.arena.released(at)), "the side record and its token run");
     }
 
     #[test]

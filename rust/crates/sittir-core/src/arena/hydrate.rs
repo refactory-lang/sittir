@@ -144,7 +144,7 @@ pub struct Hydration<'a> {
     placed: Vec<Placed>,
     /// The source the walk reads.
     text: &'a str,
-    /// Where each list item the source sets apart from the item before it
+    /// Where each list item the source sets apart from the item after it
     /// with a blank line is kept, with the blank line's kind
     /// (`Hydration::list`).
     apart: Vec<(super::NodeSite, crate::layout_kinds::LayoutKinds)>,
@@ -160,6 +160,7 @@ pub struct Hydration<'a> {
     /// in the order it placed each side and set each item apart.
     starts: Option<Vec<u32>>,
 }
+
 
 /// An extra or an `ERROR` placed on a side of a node: where the node is
 /// kept, the side, the entry's record, the record's kind and bytes, where
@@ -212,6 +213,10 @@ pub trait HydrateInto: RecordSpace {
     /// One more side record written names the source the records are read
     /// from, and holds a count of it.
     fn names_source(&mut self);
+
+    /// The side record at `at` is the read's own: its spans and entry
+    /// starts, which its source names (`BuiltChunks::name_read_side`).
+    fn keeps_read_side(&mut self, at: Address);
 }
 
 impl HydrateInto for super::ReadWriter<'_> {
@@ -221,6 +226,10 @@ impl HydrateInto for super::ReadWriter<'_> {
 
     fn names_source(&mut self) {
         super::ReadWriter::names_source(self);
+    }
+
+    fn keeps_read_side(&mut self, at: Address) {
+        super::ReadWriter::keeps_read_side(self, at);
     }
 }
 
@@ -353,35 +362,39 @@ impl OpenRun {
     /// The entries directly under the row at `holder`, or under the
     /// record's node for none, that a side is placed on: no extra, no
     /// `ERROR`, and no content the node shares.
-    fn children(&self, holder: Option<usize>) -> Vec<usize> {
-        let (mut at, end) = match holder {
+    fn children(&self, holder: Option<usize>) -> impl Iterator<Item = usize> + '_ {
+        let (at, end) = match holder {
             None => (0, self.entries.len()),
             Some(holder) => match self.entries[holder] {
                 RunEntry::Row { inner, .. } => (holder + 1, holder + 1 + inner as usize),
                 RunEntry::Record { .. } => (0, 0),
             },
         };
-        let mut found = Vec::new();
-        while at < end {
-            if !self.beside[at].aside {
-                found.push(at);
-            }
-            at += 1 + match self.entries[at] {
-                RunEntry::Row { inner, .. } => inner as usize,
-                RunEntry::Record { .. } => 0,
-            };
-        }
-        found
+        let mut next = at;
+        let tops = std::iter::from_fn(move || {
+            (next < end).then(|| {
+                let top = next;
+                next += 1 + match self.entries[top] {
+                    RunEntry::Row { inner, .. } => inner as usize,
+                    RunEntry::Record { .. } => 0,
+                };
+                top
+            })
+        });
+        tops.filter(|&top| !self.beside[top].aside)
     }
 
-    /// The item a list of `kind` spanning `span` passes an extra on `side`
-    /// to: its first or last child among `children`, when that begins or
-    /// ends where the list does and the surface exposes it as a node.
-    fn passed(&self, kind: KindId, span: Span, children: &[usize], leading: bool, kinds: crate::trivia_table::SurfaceKinds) -> Option<usize> {
-        if !kinds.lists.contains(&kind) {
+    /// The item a list or wrapper of `kind` spanning `span` passes an extra
+    /// on `side` to (`SurfaceKinds::exposes_in_place`): its first or last
+    /// child (`children`, under the row at `holder` or the record's node),
+    /// when that begins or ends where the node does and the surface exposes
+    /// it as a node.
+    fn passed(&self, kind: KindId, span: Span, holder: Option<usize>, leading: bool, kinds: crate::trivia_table::SurfaceKinds) -> Option<usize> {
+        if !kinds.exposes_in_place(kind) {
             return None;
         }
-        let item = *if leading { children.first() } else { children.last() }?;
+        let mut children = self.children(holder);
+        let item = if leading { children.next() } else { children.last() }?;
         let beside = &self.beside[item];
         let touches = if leading { beside.span.start == span.start } else { beside.span.end == span.end };
         (touches && beside.named && !kinds.units.contains(&beside.kind)).then_some(item)
@@ -398,23 +411,23 @@ impl OpenRun {
             return super::NodeSite::Record(at);
         }
         let beside = &self.beside[entry];
-        match kinds.and_then(|kinds| self.passed(beside.kind, beside.span, &self.children(Some(entry)), leading, kinds)) {
+        match kinds.and_then(|kinds| self.passed(beside.kind, beside.span, Some(entry), leading, kinds)) {
             Some(item) => self.target(item, leading, kinds),
             None => self.site(entry),
         }
     }
 
     /// Where the nodes an extra leading the record's node and one trailing
-    /// it are placed on are kept, for a list; none for any other node, which
+    /// it are placed on are kept, for a list or a wrapper
+    /// (`SurfaceKinds::exposes_in_place`); none for any other node, which
     /// takes them itself.
     fn edges(&self, span: Option<Span>, kinds: Option<crate::trivia_table::SurfaceKinds>) -> Option<Edges> {
         let (facts, span, kinds) = (self.facts?, span?, kinds?);
-        if !kinds.lists.contains(&facts.kind) {
+        if !kinds.exposes_in_place(facts.kind) {
             return None;
         }
         let own = super::NodeSite::Record(self.at);
-        let children = self.children(None);
-        let edge = |leading: bool| self.passed(facts.kind, span, &children, leading, kinds).map_or(own, |item| self.target(item, leading, Some(kinds)));
+        let edge = |leading: bool| self.passed(facts.kind, span, None, leading, kinds).map_or(own, |item| self.target(item, leading, Some(kinds)));
         Some((edge(true), edge(false)))
     }
 
@@ -602,8 +615,8 @@ impl<'a> Hydration<'a> {
 
     /// Writes the list of the slot of shape `shape` of `draft`, its items
     /// `items`, a `None` item absent: their run, reserved now its length is
-    /// known, and the one word naming it. Each item after the first the
-    /// source sets apart from the one before is noted (`set_apart`).
+    /// known, and the one word naming it. Each item before the last the
+    /// source sets apart from the one after is noted (`set_apart`).
     ///
     /// # Errors
     ///
@@ -634,11 +647,13 @@ impl<'a> Hydration<'a> {
     }
 
     /// Marks each of `items`, the list of `draft` as its run holds them,
-    /// that the source sets apart from the item before it with a blank line
+    /// that the source sets apart from the item after it with a blank line
     /// (`list_slots::sets_apart`), the extras and `ERROR`s between the two
-    /// among the run's entries: an item with a record leads with that blank
-    /// line's kind in its header's layout (`HeaderLayout`), and any other
-    /// item's site is noted for its side with the kind.
+    /// among the run's entries: the node the item passes its trailing side
+    /// to (`OpenRun::target`), the item itself or the element its wrapper
+    /// exposes, ends that side with the blank line's kind, in its header's
+    /// layout (`HeaderLayout`) when it has a record, and noted for its side
+    /// with the kind when it has none.
     ///
     /// # Errors
     ///
@@ -659,7 +674,7 @@ impl<'a> Hydration<'a> {
             let Some(last) = before.replace(entry) else { continue };
             let extras = (last + 1..entry).filter(|&at| open.beside[at].aside).map(|at| open.beside[at].span);
             if let Some(kind) = crate::list_slots::sets_apart(self.text, open.beside[last].span.end, open.beside[entry].span.start, extras) {
-                apart.push((open.site(entry), kind, open.beside[entry].span.start));
+                apart.push((open.target(last, false, self.kinds), kind, open.beside[last].span.end));
             }
         }
         let bits = self.tree.kind_bits();
@@ -671,7 +686,7 @@ impl<'a> Hydration<'a> {
                 self.apart.push((site, kind));
                 continue;
             };
-            super::rewrite_layout(self.tree.words_mut(at, 1)?, bits, |layout| layout.leading[0] = kind)?;
+            super::rewrite_layout(self.tree.words_mut(at, 1)?, bits, |layout| layout.trailing = kind)?;
         }
         Ok(())
     }
@@ -846,11 +861,16 @@ impl<'a> Hydration<'a> {
                 };
                 let holder = self.open.last_mut();
                 let parent = holder.as_ref().map(|holder| holder.at);
+                let content = holder.as_ref().is_some_and(|holder| run.index.is_some() && holder.index == run.index);
+                let held_by_error = !self.errors.is_empty();
                 if let Some(holder) = holder {
                     holder.name(run.index, draft.at, run.depth, run.own, edges);
                 }
-                let (spans, starts) = if parent.is_none() { (self.tree.spans(), self.starts.take().map(sorted)) } else { (Vec::new(), None) };
-                let record = SideRecord { parent, node: run.facts, source: self.source.map(|source| source.0), depth: run.depth, run: std::mem::take(&mut run.entries), spans, starts, ..side.clone() };
+                if parent.is_none() {
+                    let read = SideRecord { spans: self.tree.spans(), starts: self.starts.take().map(sorted), ..SideRecord::default() }.write_in(&mut *self.tree)?;
+                    self.tree.keeps_read_side(read);
+                }
+                let record = SideRecord { parent, content, held_by_error, node: run.facts, source: self.source.map(|source| source.0), depth: run.depth, run: std::mem::take(&mut run.entries), ..side.clone() };
                 let at = record.write_in(&mut *self.tree);
                 run.entries = record.run;
                 self.spare.push(run);

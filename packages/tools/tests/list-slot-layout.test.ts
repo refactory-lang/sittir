@@ -83,11 +83,29 @@ describe("a list slot's separator is the one most of its gaps use", () => {
 		expect(type.$with.members(a, z(), ...rest).$render()).toBe(inserted);
 	});
 
-	it('keeps an outlier separator on the member after it', () => {
+	it('writes its separator in an outlier gap too', () => {
 		const type = objectType('type T = { a: string, b: number; c: boolean, d: null };\n');
 		const members = membersOf(type);
 		const [a, rest] = [at(members, 0), members.slice(1)];
-		expect(ts.render(type.$snapshot()).toString()).toBe('{\n  a: string,\n  b: number;\n  c: boolean,\n  d: null\n}');
-		expect(type.$with.members(a, z(), ...rest).$render()).toBe('{\n  a: string,\n  z: string,\n  b: number;\n  c: boolean,\n  d: null\n}');
+		expect(ts.render(type.$snapshot()).toString()).toBe('{\n  a: string,\n  b: number,\n  c: boolean,\n  d: null\n}');
+		expect(type.$with.members(a, z(), ...rest).$render()).toBe('{\n  a: string,\n  z: string,\n  b: number,\n  c: boolean,\n  d: null\n}');
+	});
+});
+
+describe.each(['object', 'arena'] as const)('a rebuilt list writes its own separator (%s storage)', (nodeStorage) => {
+	it('in every gap, wherever an item from an outlier gap moves', async () => {
+		using engine = await createEngine(typescript, { nodeStorage });
+		const statement = engine.parse('type T = { a: string, b: number; c: boolean, d: null };\n').statements()[0] as any;
+		const type = statement.value();
+		const [a, b, c, d] = type.members();
+		expect(type.$with.members(a, c, b, d).$render()).toBe('{\n  a: string,\n  c: boolean,\n  b: number,\n  d: null\n}');
+	});
+
+	it("leaves a list's trailing separator to the list when its last item moves first", async () => {
+		using engine = await createEngine(rust, { nodeStorage });
+		const item = engine.parse('let a = [1, 2, 3,];\n').statements()[0] as any;
+		const array = item.value();
+		const [one, two, three] = array.elements();
+		expect(array.$with.elements(three, one, two).$render()).toBe('[3, 1, 2,]');
 	});
 });

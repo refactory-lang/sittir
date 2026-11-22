@@ -4,6 +4,7 @@
 //! moving its cursor from where it last stood: a preorder sweep never
 //! descends from the root.
 
+use sittir_core::engine::Backing as _;
 use sittir_core::engine::EngineGrammar;
 use sittir_core::layout::LayoutWorkCounter;
 use sittir_core::nodes::{Kid, Nodes, Step, TreeNodes, Visit};
@@ -217,7 +218,7 @@ fn root_descents<G: EngineGrammar + Copy>(name: &str, grammar: G, options: fn() 
 fn line_starts<G: EngineGrammar>(grammar: G, options: ResolvedOptions, source: &str) -> Vec<u32> {
     let parsed = parsed(grammar, options, source);
     let root = parsed.row_coordinate(NodeIndex::ROOT).expect("the root's coordinate");
-    let starts = sittir_core::render::SourceTable::line_starts_inside_tokens(&parsed.seating(), &root);
+    let starts = sittir_core::render::SourceTable::line_starts_inside_tokens(&parsed.seating(), (&root).into());
     assert!(starts.iter().all(|&at| source.is_char_boundary(at as usize) && source.as_bytes()[at as usize - 1] == b'\n'), "{source:?}: {starts:?}");
     starts
 }

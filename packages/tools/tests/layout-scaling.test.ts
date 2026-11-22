@@ -27,13 +27,12 @@ function expectLinear(measure: (count: number) => LayoutWork): readonly LayoutWo
 }
 
 describe("a long list's layout work grows linearly with its length", () => {
-	it('a snapshot of an array literal visits no sibling item', () => {
-		const works = expectLinear((count) => {
+	it('a snapshot of an array literal', () => {
+		expectLinear((count) => {
 			const root = rust.parse(`fn f() { let a = [${Array.from({ length: count }, (_, i) => String(i)).join(', ')}]; }\n`) as unknown as { $snapshot(): unknown };
 			root.$snapshot();
 			return rustWork(root);
 		});
-		for (const { siblingItems } of works) expect(siblingItems).toBe(0);
 	});
 
 	it('the render of a list of statements reversed', () => {

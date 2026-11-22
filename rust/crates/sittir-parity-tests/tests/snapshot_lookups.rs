@@ -5,6 +5,7 @@
 //! the trivia placement a lookup starts moves that cursor too, so it
 //! descends from the root no more often in a deeper tree.
 
+use sittir_core::engine::Backing as _;
 use sittir_core::engine::ParsedTree;
 use sittir_core::layout::LayoutWork;
 use sittir_core::read::SideLookup;
@@ -30,10 +31,6 @@ impl SideLookup for Alone<'_> {
 
     fn end_children(&self, index: NodeIndex) -> Option<[sittir_core::nodes::Kid; 2]> {
         self.0.seating().end_children(index)
-    }
-
-    fn separator(&self, index: NodeIndex) -> Option<sittir_core::KindId> {
-        self.0.seating().separator(index)
     }
 
     fn leading_start(&self, index: NodeIndex) -> Option<u32> {
@@ -112,7 +109,7 @@ fn the_depth_moves_of_every_node_of_a_chain_walk_its_nodes_once() {
                 edges: None,
                 carried: None,
             };
-            assert_eq!(tree.seating().depth_move(&coord), 0, "{levels} levels: a chain of tuples opens no level");
+            assert_eq!(tree.seating().depth_move((&coord).into()), 0, "{levels} levels: a chain of tuples opens no level");
         }
         assert_eq!(tree.layout_work().depth_nodes, nodes, "{levels} levels");
     }

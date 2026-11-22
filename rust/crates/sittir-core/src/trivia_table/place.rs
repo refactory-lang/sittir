@@ -841,11 +841,13 @@ impl<'t> Placer<'t, '_, '_> {
     }
 
     /// The layout owner of the node at `index`: the nearest node at or above
-    /// it that is no list, or the root.
+    /// it that the surface does not expose in its place (no list or
+    /// wrapper, `SurfaceKinds::exposes_in_place`), or the root.
     fn layout_owner_of(&mut self, index: NodeIndex) -> NodeIndex {
         let mut at = index;
-        while at != NodeIndex::ROOT && self.kinds.lists.contains(&self.kid(at).grammar) {
-            match self.parent(at) {
+        while at != NodeIndex::ROOT {
+            let kind = self.kid(at).grammar;
+            match self.parent(at).filter(|_| self.kinds.exposes_in_place(kind)) {
                 Some(parent) => at = parent,
                 None => break,
             }
@@ -888,7 +890,7 @@ impl<'t> Placer<'t, '_, '_> {
         let mut owners = Vec::new();
         let mut pending = vec![self.kid(NodeIndex::ROOT)];
         while let Some(kid) = pending.pop() {
-            if kid.index == NodeIndex::ROOT || (!kid.entry() && !kid.leaf() && !self.kinds.lists.contains(&kid.grammar)) {
+            if kid.index == NodeIndex::ROOT || (!kid.entry() && !kid.leaf() && !self.kinds.exposes_in_place(kid.grammar)) {
                 owners.push(kid.index);
             }
             if !kid.entry() && !kid.leaf() {
@@ -911,7 +913,7 @@ impl<'t> Placer<'t, '_, '_> {
         while let Some(at) = stack.pop() {
             members.push(at);
             let kids = Arc::clone(&self.shape(at).kids);
-            stack.extend(kids.iter().rev().filter(|kid| !kid.entry() && !kid.leaf() && self.kinds.lists.contains(&kid.grammar)).map(|kid| kid.index));
+            stack.extend(kids.iter().rev().filter(|kid| !kid.entry() && !kid.leaf() && self.kinds.exposes_in_place(kid.grammar)).map(|kid| kid.index));
         }
         let mut events: Vec<(Order, Place, Assigned)> = Vec::new();
         for &member in &members {
@@ -946,7 +948,7 @@ impl<'t> Placer<'t, '_, '_> {
         let mut edges = Vec::new();
         for &member in members {
             let kid = self.kid(member);
-            if kid.holder() && self.kinds.lists.contains(&kid.grammar) {
+            if kid.holder() && self.kinds.exposes_in_place(kid.grammar) {
                 for side in [TriviaSide::Leading, TriviaSide::Trailing] {
                     if let Some(item) = self.edge_item(&kid, side) {
                         edges.push((member, side, item.index));
@@ -1131,11 +1133,12 @@ impl<'t> Placer<'t, '_, '_> {
         super::edge_item(list, self.kinds, side, || self.kids(list.index))
     }
 
-    /// `kid`, or, while it is a list node, its first (for a `Leading` side)
+    /// `kid`, or, while it is a list or wrapper node
+    /// (`SurfaceKinds::exposes_in_place`), its first (for a `Leading` side)
     /// or last item that holds trivia and is not a unit kind.
     fn through_lists(&mut self, kid: &Kid, side: TriviaSide) -> NodeIndex {
         let mut child = *kid;
-        while !child.leaf() && self.kinds.lists.contains(&child.grammar) {
+        while !child.leaf() && self.kinds.exposes_in_place(child.grammar) {
             let kids = self.kids(child.index);
             let mut items = kids.iter().filter(|kid| kid.holder() && !self.kinds.units.contains(&kid.grammar));
             match if side == TriviaSide::Leading { items.next() } else { items.next_back() } {

@@ -3,6 +3,7 @@
 //! does. A node built over a read's records renders as it does natively.
 #![cfg(feature = "arena")]
 
+use sittir_core::engine::Backing as _;
 use sittir_core::arena::{HydrateNode, RecordCells, RecordGrammar, WriteCell};
 use sittir_core::engine::{EngineGrammar, ParsedTree};
 use sittir_core::layout::{NodeLayout, UnitSides};
@@ -365,7 +366,7 @@ fn a_built_node_s_written_sides_units_and_slots_render_from_its_record_as_native
         (
             "closure_parameters:0",
             |layout, tree| {
-                let source = sittir_core::render::SourceTable::slot_layouts(&tree.seating(), layout.sides.as_ref().expect("rebuilt from its read"));
+                let source = sittir_core::render::SourceTable::slot_layouts(&tree.seating(), layout.sides.as_ref().expect("rebuilt from its read").into());
                 assert!(source.is_empty(), "a read stores no slot layout: the options decide its gaps");
                 let (space, tight) = (sittir_rust::render::kind_ids::_SPACE, sittir_rust::render::kind_ids::_TIGHT);
                 layout.slots = vec![sittir_core::layout::SlotLayout { slot: "_parameters".into(), before: Some(space), after: Some(tight), ..Default::default() }];

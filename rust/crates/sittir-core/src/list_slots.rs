@@ -73,8 +73,8 @@ pub fn slot_gaps(routed: &Routed) -> Vec<SlotGaps> {
 }
 
 /// Each item of a routed node's list slots, in document order, with the
-/// blank-line kind the source sets it apart from the item before with
-/// (`sets_apart`); a slot's first item never is.
+/// blank-line kind the source sets the item after it apart from it with
+/// (`sets_apart`); a slot's last item never sets one apart.
 #[must_use]
 pub fn list_items(routed: &Routed, source: &str) -> Vec<(crate::types::NodeIndex, Option<crate::layout_kinds::LayoutKinds>)> {
     let mut slots: BTreeMap<crate::types::SlotId, Vec<usize>> = BTreeMap::new();
@@ -85,12 +85,12 @@ pub fn list_items(routed: &Routed, source: &str) -> Vec<(crate::types::NodeIndex
     }
     let mut items: Vec<(crate::types::NodeIndex, Option<crate::layout_kinds::LayoutKinds>)> = Vec::new();
     for at in slots.values().filter(|at| at.len() >= 2) {
-        items.push((routed.children[at[0]].index, None));
         items.extend(at.windows(2).map(|pair| {
-            let (before, item) = (&routed.children[pair[0]], &routed.children[pair[1]]);
+            let (item, after) = (&routed.children[pair[0]], &routed.children[pair[1]]);
             let extras = (pair[0] + 1..pair[1]).filter(|&between| routed.routes[between] == Route::Trivia).map(|between| routed.children[between].span());
-            (item.index, sets_apart(source, before.end, item.start, extras))
+            (item.index, sets_apart(source, item.end, after.start, extras))
         }));
+        items.extend(at.last().map(|&last| (routed.children[last].index, None)));
     }
     items.sort_unstable_by_key(|&(item, _)| item);
     items

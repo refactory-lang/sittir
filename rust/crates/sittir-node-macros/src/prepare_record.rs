@@ -31,7 +31,6 @@ struct Methods {
     prepare: TokenStream,
     takes_gaps: TokenStream,
     seat: TokenStream,
-    separator: TokenStream,
     snapshot: TokenStream,
     kind_in: TokenStream,
     slot_key: TokenStream,
@@ -41,7 +40,7 @@ struct Methods {
 /// The impl of `PrepareRecord<trivia>` for `ty`, under `generics` and the
 /// where clause `bounds`.
 fn implementation(ty: &Ident, trivia: &TokenStream, generics: &TokenStream, bounds: &TokenStream, methods: &Methods) -> TokenStream {
-    let Methods { claims, prepare, takes_gaps, seat, separator, snapshot, kind_in, slot_key, slot_word } = methods;
+    let Methods { claims, prepare, takes_gaps, seat, snapshot, kind_in, slot_key, slot_word } = methods;
     let prep = quote!(::sittir_core::arena::RecordPrep<'_, #trivia>);
     let at = quote!(::sittir_core::arena::CellAt);
     let ctx = quote!(&::sittir_core::prepare::RenderContext<'_>);
@@ -66,10 +65,6 @@ fn implementation(ty: &Ident, trivia: &TokenStream, generics: &TokenStream, boun
                 ctx: #ctx,
             ) -> ::core::option::Option<(::sittir_core::trivia_store::Site<::sittir_core::arena::PrepPlace>, ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
                 #seat
-            }
-            #[allow(unused_variables, reason = "a unit has no separator of its own")]
-            fn source_separator(prep: &#prep, at: #at, ctx: #ctx) -> ::core::option::Option<::sittir_core::types::KindId> {
-                #separator
             }
             #[allow(unused_variables, reason = "a unit has no geometry")]
             fn snapshot_edge(prep: &#prep, at: #at) -> ::core::option::Option<::sittir_core::prepare::SnapshotEdge> {
@@ -132,7 +127,6 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], trivia:
             },
             takes_gaps: quote!(true),
             seat: quote!(::sittir_core::arena::own_seat(prep, at, #kind, table) #through),
-            separator: quote!(::sittir_core::arena::record_source_separator(prep, at, #accepts, ctx)),
             snapshot: quote!(::sittir_core::arena::record_snapshot_edge(prep, at, #accepts)),
             kind_in: quote!(::sittir_core::arena::view_kind_in::<#trivia, #view<'_>>(prep, at, kinds)),
             slot_key: quote! {
@@ -172,7 +166,6 @@ fn shared_record_methods(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>],
         prepare: quote!(#list::prepare_record(prep, at, ctx)),
         takes_gaps: quote!(#list::takes_gaps(cell)),
         seat: quote!(::sittir_core::arena::own_seat(prep, at, #kind, table)),
-        separator: quote!(#list::source_separator(prep, at, ctx)),
         snapshot: quote!(#list::snapshot_edge(prep, at)),
         kind_in: quote!(::sittir_core::arena::view_kind_in::<#trivia, #view<'_>>(prep, at, kinds)),
         slot_key: quote!(#list::slot_key(kind, word)),
@@ -219,14 +212,13 @@ pub fn choice(ident: &Ident, attrs: &KindAttrs, variants: &[WireVariant<'_>]) ->
     let prepares = dispatch(quote!(prepare_record(prep, at, ctx)));
     let payload_gaps = dispatch(quote!(takes_gaps(cell)));
     let payload_seats = dispatch(quote!(seat_record(prep, at, table, ctx)));
-    let separators = dispatch(quote!(source_separator(prep, at, ctx)));
     let snapshots = dispatch(quote!(snapshot_edge(prep, at)));
     let slot_keys = dispatch(quote!(slot_key(kind, word)));
     let slot_words = dispatch(quote!(slot_word(kind, key)));
     let refused = refused("choice cell");
     let owner = ident.to_string();
     let name = crate::codec::kind_name_of(variants, &quote!(kind));
-    let unit = quote!(::sittir_core::arena::Cell::Unit { .. });
+    let unit = quote!(::sittir_core::arena::Cell::Unit { .. } | ::sittir_core::arena::Cell::NamedUnit { .. });
     let unit_claim = quote!(false #(|| #unit_claims)*);
     let bounds = payloads.iter().map(|ty| quote!(#ty: ::sittir_core::arena::PrepareRecord<__T>,));
     let methods = Methods {
@@ -253,14 +245,6 @@ pub fn choice(ident: &Ident, attrs: &KindAttrs, variants: &[WireVariant<'_>]) ->
                 #(#seats)*
             }
             #(#payload_seats)*
-            ::core::option::Option::None
-        },
-        separator: quote! {
-            let kind = at.cell.kind()?;
-            if matches!(at.cell, #unit) {
-                return ::core::option::Option::None;
-            }
-            #(#separators)*
             ::core::option::Option::None
         },
         snapshot: quote! {
@@ -292,7 +276,6 @@ pub fn members(ident: &Ident) -> TokenStream {
         prepare: quote!(::core::result::Result::Ok(())),
         takes_gaps: quote!(false),
         seat: quote!(::core::option::Option::None),
-        separator: quote!(::core::option::Option::None),
         snapshot: quote!(::core::option::Option::None),
         kind_in: quote!(::sittir_core::arena::view_kind_in::<__T, Self>(prep, at, kinds)),
         slot_key: quote!(::core::option::Option::None),
@@ -361,7 +344,6 @@ mod tests {
         let list = "<ArgumentsNode as ::sittir_core::arena::PrepareRecord<<Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia>>";
         assert!(has(&out, &format!("{list}::prepare_record(prep, at, ctx)")));
         assert!(has(&out, &format!("{list}::takes_gaps(cell)")));
-        assert!(has(&out, &format!("{list}::source_separator(prep, at, ctx)")));
         assert!(has(&out, &format!("{list}::snapshot_edge(prep, at)")));
         assert!(has(&out, &format!("{list}::slot_key(kind, word)")));
         assert!(has(&out, &format!("{list}::slot_word(kind, key)")));

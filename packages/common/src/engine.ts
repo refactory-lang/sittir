@@ -94,7 +94,6 @@ function depthOf(options: ParseOptions | undefined): number {
 /** How much of a parsed tree's layout it stores apart from its read-time options (`NativeEngineLike.storedLayout`). */
 export interface StoredLayout {
 	readonly slots: number;
-	readonly separators: number;
 }
 
 /** Whether the records a read of a source leaves answer its nodes as its tree does (`NativeEngineLike.backerParity`). */
@@ -106,7 +105,6 @@ export interface BackerParity {
 
 /** The work a tree's layout reads have done so far (`NativeEngineLike.layoutWork`), each count as the addon's `LayoutWork` names it. */
 export interface LayoutWork {
-	readonly siblingItems: number;
 	readonly cursorClimbs: number;
 	readonly siblingSteps: number;
 	readonly rootDescents: number;
@@ -180,13 +178,6 @@ export interface NativeEngineLike<TNode = unknown> {
 	 */
 	slotSeparator(treeId: number, index: number): number | null;
 	/**
-	 * The separator before the node at descendant `index` of tree `treeId` as an item of its parent's
-	 * list slot, as a grammar id, where its source spells another than the one the slot renders.
-	 *
-	 * @throws as {@link triviaSide} does.
-	 */
-	separatorBefore(treeId: number, index: number): number | null;
-	/**
 	 * Whether a write replaced a side of a node under the node at descendant `index` of tree `treeId`:
 	 * of a descendant or of the node's own `inner`, and of its own leading and trailing too when
 	 * `ownSides` is set.
@@ -240,14 +231,10 @@ export interface NativeEngineLike<TNode = unknown> {
 	readSlotLayouts?(node: number): SlotLayoutWire[];
 	/** `slotSeparator` for the node a read left in the built arena that the key `node` names. Present when the addon carries the record codec. */
 	readSlotSeparator?(node: number): number | null;
-	/** `separatorBefore` for the node a read left in the built arena that the key `node` names. Present when the addon carries the record codec. */
-	readSeparatorBefore?(node: number): number | null;
 	/** `editedWithin` for the node a read left in the built arena that the key `node` names. Present when the addon carries the record codec. */
 	readEditedWithin?(node: number, ownSides: boolean): boolean;
 	/** `isEmpty` for the node a read left in the built arena that the key `node` names. Present when the addon carries the record codec. */
 	readIsEmpty?(node: number): boolean;
-	/** `siblings` for the nodes reads left in the built arena that the keys `nodes` name, eight words a node, each from its own source. Present when the addon carries the record codec. */
-	readSiblings?(nodes: readonly number[]): number[];
 	/** The address of the source entry each node a read left in the built arena that the keys `nodes` name was read from. Present when the addon carries the record codec. */
 	readSources?(nodes: readonly number[]): number[];
 	/** The bytes the built arena's chunks take, and of them its counts'. Present when the addon carries the record codec. */
@@ -287,13 +274,6 @@ export interface NativeEngineLike<TNode = unknown> {
 	writeBuiltLeafSide?(sites: readonly number[], side: TriviaSideName, entries: readonly WireNode[]): void;
 	builtLeafSide?(holder: number, word: number, item: number, side: TriviaSideName): WireNode[] | null;
 	copyBuiltSites?(from: number, to: number, skip: readonly number[]): void;
-	/**
-	 * The siblings that hold sides beside each node at descendant `indexes` of tree `treeId`, eight words a node: the
-	 * previous sibling, then the next, each as 1, its kind, its start and its end, or as four zeros for none.
-	 *
-	 * @throws when the tree is not live or an index is past its last node.
-	 */
-	siblings(treeId: number, indexes: readonly number[]): number[];
 	/**
 	 * How much of its layout tree `treeId` stores apart from the options in effect when it was read:
 	 * the list slots that store a layout, and the items that store their own separator. A diagnostic.
@@ -358,11 +338,9 @@ const TREE_FUNCTIONS = [
 	'unitSides',
 	'slotLayouts',
 	'slotSeparator',
-	'separatorBefore',
 	'editedWithin',
 	'isEmpty',
 	'text',
-	'siblings',
 	'storedLayout',
 	'layoutWork',
 	'descendants',
@@ -398,10 +376,8 @@ const ENGINE_FUNCTIONS = [
 	'readSides',
 	'readSlotLayouts',
 	'readSlotSeparator',
-	'readSeparatorBefore',
 	'readEditedWithin',
 	'readIsEmpty',
-	'readSiblings',
 	'readSources',
 	'builtMemory',
 	'builtTriviaSide',
@@ -642,10 +618,8 @@ export function createNativeEngine<
 				unitSides: (index) => readOwnUnits(tree, engine.unitSides(parsed.treeId, index), liveToken),
 				slotLayouts: (index) => engine.slotLayouts(parsed.treeId, index),
 				slotSeparator: (index) => engine.slotSeparator(parsed.treeId, index) ?? undefined,
-				separatorBefore: (index) => engine.separatorBefore(parsed.treeId, index) ?? undefined,
 				editedWithin: (index, ownSides) => engine.editedWithin(parsed.treeId, index, ownSides),
 				isEmpty: (index) => engine.isEmpty(parsed.treeId, index),
-				siblings: (indexes) => engine.siblings(parsed.treeId, indexes),
 				query: queryOver(engine.descendants, engine.planHolds)
 			};
 			registerTree(liveToken, tree);
@@ -788,7 +762,7 @@ export function nativeBuiltRecords(native: object): BuiltRecords | undefined {
 }
 
 function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: KindView): BuiltRecords {
-	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, builtLeafSide, copyBuiltSites, builtWords, builtBytes, builtBump, releaseBuilt, parseRecords, readWords, readText, readDescendants, readPlanHolds, readSnapshotLayouts, writeReadTriviaSide, readSides, readUnitSides, readSlotLayouts, readSlotSeparator, readSeparatorBefore, readEditedWithin, readIsEmpty, readSiblings, readSources } = engine;
+	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, builtLeafSide, copyBuiltSites, builtWords, builtBytes, builtBump, releaseBuilt, parseRecords, readWords, readText, readDescendants, readPlanHolds, readSnapshotLayouts, writeReadTriviaSide, readSides, readUnitSides, readSlotLayouts, readSlotSeparator, readEditedWithin, readIsEmpty, readSources } = engine;
 	if (
 		builtBump === undefined ||
 		releaseBuilt === undefined ||
@@ -812,10 +786,8 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 		readUnitSides === undefined ||
 		readSlotLayouts === undefined ||
 		readSlotSeparator === undefined ||
-		readSeparatorBefore === undefined ||
 		readEditedWithin === undefined ||
 		readIsEmpty === undefined ||
-		readSiblings === undefined ||
 		readSources === undefined
 	)
 		throw new Error(ARENA_FEATURE_REFUSED);
@@ -838,10 +810,8 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 			writeTriviaSide: (node, side, entries) => writeReadTriviaSide.call(engine, node, side, entries),
 			slotLayouts: (node) => readSlotLayouts.call(engine, node),
 			slotSeparator: (node) => readSlotSeparator.call(engine, node) ?? undefined,
-			separatorBefore: (node) => readSeparatorBefore.call(engine, node) ?? undefined,
 			editedWithin: (node, ownSides) => readEditedWithin.call(engine, node, ownSides),
 			isEmpty: (node) => readIsEmpty.call(engine, node),
-			siblings: (nodes) => readSiblings.call(engine, nodes),
 			sources: (nodes) => readSources.call(engine, nodes)
 		},
 		trivia: {

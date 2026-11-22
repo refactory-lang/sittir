@@ -532,91 +532,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Verbatim(t) => t.source_coordinate(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            AnyNode::Pattern(t) => t.source_separator(ctx),
-            AnyNode::Alternation(t) => t.source_separator(ctx),
-            AnyNode::Term(t) => t.source_separator(ctx),
-            AnyNode::LookaroundAssertion(t) => t.source_separator(ctx),
-            AnyNode::LookaheadAssertion(t) => t.source_separator(ctx),
-            AnyNode::LookbehindAssertion(t) => t.source_separator(ctx),
-            AnyNode::PatternCharacter(t) => t.source_separator(ctx),
-            AnyNode::CharacterClass(t) => t.source_separator(ctx),
-            AnyNode::PosixCharacterClass(t) => t.source_separator(ctx),
-            AnyNode::PosixClassName(t) => t.source_separator(ctx),
-            AnyNode::ClassRange(t) => t.source_separator(ctx),
-            AnyNode::ClassCharacter(t) => t.source_separator(ctx),
-            AnyNode::AnonymousCapturingGroup(t) => t.source_separator(ctx),
-            AnyNode::NamedCapturingGroup(t) => t.source_separator(ctx),
-            AnyNode::NonCapturingGroup(t) => t.source_separator(ctx),
-            AnyNode::Flags(t) => t.source_separator(ctx),
-            AnyNode::ZeroOrMore(t) => t.source_separator(ctx),
-            AnyNode::OneOrMore(t) => t.source_separator(ctx),
-            AnyNode::Optional(t) => t.source_separator(ctx),
-            AnyNode::CountQuantifier(t) => t.source_separator(ctx),
-            AnyNode::BackreferenceEscape(t) => t.source_separator(ctx),
-            AnyNode::NamedGroupBackreference(t) => t.source_separator(ctx),
-            AnyNode::DecimalEscape(t) => t.source_separator(ctx),
-            AnyNode::CharacterClassEscape(t) => t.source_separator(ctx),
-            AnyNode::UnicodeCharacterEscape(t) => t.source_separator(ctx),
-            AnyNode::UnicodePropertyValueExpression(t) => t.source_separator(ctx),
-            AnyNode::UnicodePropertyValue(t) => t.source_separator(ctx),
-            AnyNode::ControlEscape(t) => t.source_separator(ctx),
-            AnyNode::ControlLetterEscape(t) => t.source_separator(ctx),
-            AnyNode::IdentityEscape(t) => t.source_separator(ctx),
-            AnyNode::GroupName(t) => t.source_separator(ctx),
-            AnyNode::DecimalDigits(t) => t.source_separator(ctx),
-            AnyNode::TermGroup(t) => t.source_separator(ctx),
-            AnyNode::CountQuantifierGroup(t) => t.source_separator(ctx),
-            AnyNode::CountQuantifierArm(t) => t.source_separator(ctx),
-            AnyNode::CharacterClassEscapeArm(t) => t.source_separator(ctx),
-            AnyNode::UnicodePropertyValueExpressionGroup(t) => t.source_separator(ctx),
-            AnyNode::CharacterClassEscapeText1(t) => t.source_separator(ctx),
-            AnyNode::CharacterClassEscapeText2(t) => t.source_separator(ctx),
-            AnyNode::InlineFlagsGroupEnable(t) => t.source_separator(ctx),
-            AnyNode::InlineFlagsGroupToggle(t) => t.source_separator(ctx),
-            AnyNode::InlineFlagsGroupDisable(t) => t.source_separator(ctx),
-            AnyNode::UnicodePropertyName(t) => t.source_separator(ctx),
-            AnyNode::AnyCharacter => None,
-            AnyNode::StartAssertion => None,
-            AnyNode::EndAssertion => None,
-            AnyNode::BoundaryAssertion => None,
-            AnyNode::NonBoundaryAssertion => None,
-            AnyNode::Lazy => None,
-            AnyNode::Negation => None,
-            AnyNode::Tight => None,
-            AnyNode::Newline => None,
-            AnyNode::Blankline => None,
-            AnyNode::DoubleBlankline => None,
-            AnyNode::Caret => None,
-            AnyNode::LparenQmark => None,
-            AnyNode::Eq => None,
-            AnyNode::Bang => None,
-            AnyNode::Rparen => None,
-            AnyNode::LparenQmarkLt => None,
-            AnyNode::Lbrack => None,
-            AnyNode::Dash => None,
-            AnyNode::BslashDash => None,
-            AnyNode::Rbrack => None,
-            AnyNode::LbrackColon => None,
-            AnyNode::ColonRbrack => None,
-            AnyNode::Lparen => None,
-            AnyNode::LparenQmarkPLt => None,
-            AnyNode::Gt => None,
-            AnyNode::LparenQmarkColon => None,
-            AnyNode::Star => None,
-            AnyNode::Plus => None,
-            AnyNode::Qmark => None,
-            AnyNode::Lbrace => None,
-            AnyNode::Rbrace => None,
-            AnyNode::Bslashk => None,
-            AnyNode::Lt => None,
-            AnyNode::LparenQmarkPEq => None,
-            AnyNode::Comma => None,
-            AnyNode::Colon => None,
-            AnyNode::Verbatim(t) => t.source_separator(ctx),
-        }
-    }
     fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
@@ -683,16 +598,6 @@ impl ::sittir_core::prepare::Prepare for TriviaNode {
             TriviaNode::DoubleBlankline => None,
             TriviaNode::Verbatim(t) => t.source_coordinate(),
             TriviaNode::Text(t) => t.source_coordinate(),
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            TriviaNode::Tight => None,
-            TriviaNode::Newline => None,
-            TriviaNode::Blankline => None,
-            TriviaNode::DoubleBlankline => None,
-            TriviaNode::Verbatim(t) => t.source_separator(ctx),
-            TriviaNode::Text(t) => t.source_separator(ctx),
         }
     }
 }
@@ -773,12 +678,6 @@ impl ::sittir_core::prepare::Prepare for PatternContentNodeSlot {
             PatternContentNodeSlot::Term(t) => t.source_coordinate(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            PatternContentNodeSlot::Alternation(t) => t.source_separator(ctx),
-            PatternContentNodeSlot::Term(t) => t.source_separator(ctx),
-        }
-    }
     fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
@@ -857,12 +756,6 @@ impl ::sittir_core::prepare::Prepare for LookaroundAssertionContentNodeSlot {
         match self {
             LookaroundAssertionContentNodeSlot::LookaheadAssertion(t) => t.source_coordinate(),
             LookaroundAssertionContentNodeSlot::LookbehindAssertion(t) => t.source_coordinate(),
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            LookaroundAssertionContentNodeSlot::LookaheadAssertion(t) => t.source_separator(ctx),
-            LookaroundAssertionContentNodeSlot::LookbehindAssertion(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -1023,18 +916,6 @@ impl ::sittir_core::prepare::Prepare for CharacterClassClassAtomsNodeSlot {
             CharacterClassClassAtomsNodeSlot::Verbatim(t) => t.source_coordinate(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            CharacterClassClassAtomsNodeSlot::ClassCharacter(t) => t.source_separator(ctx),
-            CharacterClassClassAtomsNodeSlot::IdentityEscape(t) => t.source_separator(ctx),
-            CharacterClassClassAtomsNodeSlot::CharacterClassEscape(t) => t.source_separator(ctx),
-            CharacterClassClassAtomsNodeSlot::ControlEscape(t) => t.source_separator(ctx),
-            CharacterClassClassAtomsNodeSlot::ControlLetterEscape(t) => t.source_separator(ctx),
-            CharacterClassClassAtomsNodeSlot::PosixCharacterClass(t) => t.source_separator(ctx),
-            CharacterClassClassAtomsNodeSlot::ClassRange(t) => t.source_separator(ctx),
-            CharacterClassClassAtomsNodeSlot::Verbatim(t) => t.source_separator(ctx),
-        }
-    }
     fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
@@ -1155,15 +1036,6 @@ impl ::sittir_core::prepare::Prepare for ClassRangeStartNodeSlot {
             ClassRangeStartNodeSlot::ControlEscape(t) => t.source_coordinate(),
             ClassRangeStartNodeSlot::Dash => None,
             ClassRangeStartNodeSlot::Verbatim(t) => t.source_coordinate(),
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            ClassRangeStartNodeSlot::ClassCharacter(t) => t.source_separator(ctx),
-            ClassRangeStartNodeSlot::CharacterClassEscape(t) => t.source_separator(ctx),
-            ClassRangeStartNodeSlot::ControlEscape(t) => t.source_separator(ctx),
-            ClassRangeStartNodeSlot::Dash => None,
-            ClassRangeStartNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -1306,13 +1178,6 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierContentNodeSlot {
             CountQuantifierContentNodeSlot::Verbatim(t) => t.source_coordinate(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            CountQuantifierContentNodeSlot::CountQuantifierArm(t) => t.source_separator(ctx),
-            CountQuantifierContentNodeSlot::DecimalDigits(t) => t.source_separator(ctx),
-            CountQuantifierContentNodeSlot::Verbatim(t) => t.source_separator(ctx),
-        }
-    }
     fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
@@ -1407,14 +1272,6 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeContentNodeSlot {
             CharacterClassEscapeContentNodeSlot::CharacterClassEscapeArm(t) => t.source_coordinate(),
             CharacterClassEscapeContentNodeSlot::UnicodeCharacterEscape(t) => t.source_coordinate(),
             CharacterClassEscapeContentNodeSlot::Verbatim(t) => t.source_coordinate(),
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            CharacterClassEscapeContentNodeSlot::CharacterClassEscapeText1(t) => t.source_separator(ctx),
-            CharacterClassEscapeContentNodeSlot::CharacterClassEscapeArm(t) => t.source_separator(ctx),
-            CharacterClassEscapeContentNodeSlot::UnicodeCharacterEscape(t) => t.source_separator(ctx),
-            CharacterClassEscapeContentNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -1515,14 +1372,6 @@ impl ::sittir_core::prepare::Prepare for TermGroupQuantifierNodeSlot {
             TermGroupQuantifierNodeSlot::OneOrMore(t) => t.source_coordinate(),
             TermGroupQuantifierNodeSlot::Optional(t) => t.source_coordinate(),
             TermGroupQuantifierNodeSlot::CountQuantifier(t) => t.source_coordinate(),
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            TermGroupQuantifierNodeSlot::ZeroOrMore(t) => t.source_separator(ctx),
-            TermGroupQuantifierNodeSlot::OneOrMore(t) => t.source_separator(ctx),
-            TermGroupQuantifierNodeSlot::Optional(t) => t.source_separator(ctx),
-            TermGroupQuantifierNodeSlot::CountQuantifier(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -1739,33 +1588,6 @@ impl ::sittir_core::prepare::Prepare for TermGroupContentNodeSlot {
             TermGroupContentNodeSlot::Verbatim(t) => t.source_coordinate(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            TermGroupContentNodeSlot::LookaroundAssertion(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::PatternCharacter(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::CharacterClass(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::PosixCharacterClass(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::DecimalEscape(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::CharacterClassEscape(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::ControlEscape(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::ControlLetterEscape(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::IdentityEscape(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::BackreferenceEscape(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::NamedGroupBackreference(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::AnonymousCapturingGroup(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::NamedCapturingGroup(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::NonCapturingGroup(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::InlineFlagsGroupEnable(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::InlineFlagsGroupToggle(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::InlineFlagsGroupDisable(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::StartAssertion => None,
-            TermGroupContentNodeSlot::EndAssertion => None,
-            TermGroupContentNodeSlot::BoundaryAssertion => None,
-            TermGroupContentNodeSlot::NonBoundaryAssertion => None,
-            TermGroupContentNodeSlot::AnyCharacter => None,
-            TermGroupContentNodeSlot::Verbatim(t) => t.source_separator(ctx),
-        }
-    }
     fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
@@ -1950,9 +1772,6 @@ impl ::sittir_core::prepare::Prepare for PatternNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -2040,9 +1859,6 @@ impl ::sittir_core::prepare::Prepare for AlternationNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -2122,9 +1938,6 @@ impl ::sittir_core::prepare::Prepare for TermNode {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -2358,9 +2171,6 @@ impl ::sittir_core::prepare::Prepare for LookaroundAssertionNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -2437,9 +2247,6 @@ impl ::sittir_core::prepare::Prepare for LookaheadAssertionNode {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -2520,9 +2327,6 @@ impl ::sittir_core::prepare::Prepare for LookbehindAssertionNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -2596,9 +2400,6 @@ impl ::sittir_core::prepare::Prepare for PatternCharacterNode {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -2682,9 +2483,6 @@ impl ::sittir_core::prepare::Prepare for CharacterClassNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -2761,9 +2559,6 @@ impl ::sittir_core::prepare::Prepare for PosixCharacterClassNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -2836,9 +2631,6 @@ impl ::sittir_core::prepare::Prepare for PosixClassNameNode {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -2916,9 +2708,6 @@ impl ::sittir_core::prepare::Prepare for ClassRangeNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -2993,9 +2782,6 @@ impl ::sittir_core::prepare::Prepare for ClassCharacterNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -3068,9 +2854,6 @@ impl ::sittir_core::prepare::Prepare for AnonymousCapturingGroupNode {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -3153,9 +2936,6 @@ impl ::sittir_core::prepare::Prepare for NamedCapturingGroupNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -3233,9 +3013,6 @@ impl ::sittir_core::prepare::Prepare for NonCapturingGroupNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -3309,9 +3086,6 @@ impl ::sittir_core::prepare::Prepare for FlagsNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -3382,9 +3156,6 @@ impl ::sittir_core::prepare::Prepare for ZeroOrMoreNode {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -3458,9 +3229,6 @@ impl ::sittir_core::prepare::Prepare for OneOrMoreNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -3532,9 +3300,6 @@ impl ::sittir_core::prepare::Prepare for OptionalNode {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -3613,9 +3378,6 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -3690,9 +3452,6 @@ impl ::sittir_core::prepare::Prepare for BackreferenceEscapeNode {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -3769,9 +3528,6 @@ impl ::sittir_core::prepare::Prepare for NamedGroupBackreferenceNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -3844,9 +3600,6 @@ impl ::sittir_core::prepare::Prepare for DecimalEscapeNode {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -3921,9 +3674,6 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -3995,9 +3745,6 @@ impl ::sittir_core::prepare::Prepare for UnicodeCharacterEscapeNode {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -4075,9 +3822,6 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyValueExpressionNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -4154,9 +3898,6 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyValueNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -4228,9 +3969,6 @@ impl ::sittir_core::prepare::Prepare for ControlEscapeNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -4301,9 +4039,6 @@ impl ::sittir_core::prepare::Prepare for ControlLetterEscapeNode {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -4379,9 +4114,6 @@ impl ::sittir_core::prepare::Prepare for IdentityEscapeNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -4453,9 +4185,6 @@ impl ::sittir_core::prepare::Prepare for GroupNameNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -4526,9 +4255,6 @@ impl ::sittir_core::prepare::Prepare for DecimalDigitsNode {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -4637,9 +4363,6 @@ impl ::sittir_core::prepare::Prepare for TermGroupNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -4715,9 +4438,6 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierGroupNode {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -4796,9 +4516,6 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierArmNode {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -4879,9 +4596,6 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeArmNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -4958,9 +4672,6 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyValueExpressionGroupNode
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -5034,9 +4745,6 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeText1Node {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -5107,9 +4815,6 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeText2Node {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -5218,9 +4923,6 @@ impl ::sittir_core::prepare::Prepare for InlineFlagsGroupEnableNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -5303,9 +5005,6 @@ impl ::sittir_core::prepare::Prepare for InlineFlagsGroupToggleNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -5385,9 +5084,6 @@ impl ::sittir_core::prepare::Prepare for InlineFlagsGroupDisableNode {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -6375,7 +6071,6 @@ fn render_alternation<N: AlternationFields + ?Sized>(node: &N, w: &mut dyn ::sit
         items: node.terms(),
         template: "{}",
         token: "|",
-        separators: None,
         before: node.terms_separator_space_before().unwrap_or(KindId::BLANK),
         after: node.terms_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
@@ -6394,7 +6089,6 @@ fn render_term<N: TermFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::rend
         items: node.term_group(),
         template: "{}",
         token: "",
-        separators: None,
         before: KindId::BLANK,
         after: node.term_group_separator_space().unwrap_or(KindId::BLANK),
         leading: false,
@@ -6459,7 +6153,6 @@ fn render_character_class<N: CharacterClassFields + ?Sized>(node: &N, w: &mut dy
         items: node.class_atoms(),
         template: "{}",
         token: "",
-        separators: None,
         before: KindId::BLANK,
         after: KindId::BLANK,
         leading: false,
@@ -7038,10 +6731,21 @@ pub fn render_record(
     store: &::sittir_core::trivia_store::TriviaStore<TriviaNode>,
     ctx: &::sittir_core::prepare::RenderContext<'_>,
 ) -> Result<String, ::sittir_core::render::RenderError> {
-    if let Some(coord) = ::sittir_core::arena::source_root(root, built, reads, store, ctx.sources, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)? {
-        return render_node_parts(::sittir_core::SlotValue::Coord(coord), ctx).map(|(_, text)| text);
+    if let Some(at) = ::sittir_core::arena::source_root(root, built, reads, store, ctx.sources, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)? {
+        return render_source_root(at, ctx);
     }
     with_record_node(root, reads, built, store, ctx, |node| render_root(ctx, |_| ::sittir_core::view::KindOf::kind_in(node, kind::ROOT_KINDS), |w| node.render(w)))
+}
+
+/// Render the node a read left that `at` names as a render root: its
+/// source bytes between its kind's edges, by the writer a node renders
+/// through.
+pub fn render_source_root(
+    at: ::sittir_core::slot::NodeIdOrCoordinate<'_>,
+    ctx: &::sittir_core::prepare::RenderContext<'_>,
+) -> Result<String, ::sittir_core::render::RenderError> {
+    let at = ::sittir_core::prepare::prepared_source(at, ctx)?;
+    render_root(ctx, |w| w.kind_of(at).is_some_and(|kind| kind::ROOT_KINDS.contains(&kind)), |w| ::sittir_core::slot::write_coordinate(at, false, w))
 }
 
 /// Write the built record `root` names into `w` as a trivia entry in
@@ -7055,8 +6759,8 @@ pub fn render_entry_record(
     ctx: &::sittir_core::prepare::RenderContext<'_>,
     w: &mut dyn ::sittir_core::render::RenderSink,
 ) -> ::sittir_core::render::RenderResult {
-    if let Some(coord) = ::sittir_core::arena::source_root(root, built, reads, store, ctx.sources, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)? {
-        return ::sittir_core::render::Render::render(&::sittir_core::SlotValue::<TriviaNode>::Coord(coord), w);
+    if let Some(at) = ::sittir_core::arena::source_root(root, built, reads, store, ctx.sources, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)? {
+        return ::sittir_core::slot::write_coordinate(at, false, w);
     }
     with_record_node(root, reads, built, store, ctx, |node| node.render(w))
 }
@@ -7072,7 +6776,7 @@ fn with_record_node<R>(
     body: impl FnOnce(&AnyNodeRecord<'_>) -> Result<R, ::sittir_core::render::RenderError>,
 ) -> Result<R, ::sittir_core::render::RenderError> {
     let prepared = ::sittir_core::arena::prepare_root::<TriviaNode, AnyNode>(reads, built, store, root, ctx, kind::KIND_BITS)?;
-    let view = ::sittir_core::arena::RecordCtx::of(root.tree, built, reads, ctx.sources, store, &prepared, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)?;
+    let view = ::sittir_core::arena::RecordCtx::of(root.node, built, reads, ctx.sources, store, &prepared, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)?;
     let node = <AnyNodeRecord<'_> as ::sittir_core::arena::RecordView<'_, TriviaNode>>::from_cell(view, root.cell, None).map_err(::sittir_core::render::RenderError::Record)?;
     body(&node)
 }

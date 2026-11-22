@@ -82,6 +82,18 @@ impl HeapBytes for BuiltEntry {
 pub struct RecordEntry<T> {
     pub record: BuiltEntry,
     pub store: Option<crate::trivia_store::TriviaStore<T>>,
+    /// Set on a record a read left whose node renders as its source bytes.
+    pub as_source: Option<SourceEntry>,
+}
+
+/// What a record a read left renders as its source with: its bytes, the
+/// entry of the source they index, and the seams prepare gave it.
+#[cfg(feature = "arena")]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SourceEntry {
+    pub span: crate::types::Span,
+    pub source: crate::arena::Address,
+    pub edges: Option<crate::slot::CoordinateEdges>,
 }
 
 /// The store a record entry holds is a handle on its engine's store, whose
@@ -89,7 +101,7 @@ pub struct RecordEntry<T> {
 #[cfg(feature = "arena")]
 impl<T> HeapBytes for RecordEntry<T> {
     fn heap_bytes(&self) -> usize {
-        let Self { record, store: _ } = self;
+        let Self { record, store: _, as_source: _ } = self;
         record.heap_bytes()
     }
 }
@@ -98,6 +110,10 @@ impl<T: Render + 'static> Render for TriviaEntry<T> {
     fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
         match self {
             Self::Value(value) => value.render(w),
+            #[cfg(feature = "arena")]
+            Self::Record(RecordEntry { record, as_source: Some(source), .. }) => {
+                crate::slot::write_coordinate(crate::slot::NodeIdOrCoordinate::NodeId { id: crate::types::NodeId::record(record.at.0), edges: source.edges, changed: crate::slot::ChangedEdges::default() }, false, w)
+            }
             #[cfg(feature = "arena")]
             Self::Record(entry) => {
                 let store = entry.store.as_ref().ok_or(crate::render::RenderError::Record(crate::arena::ARENA_RELEASED))?;
@@ -129,6 +145,21 @@ pub trait TriviaSeam: 'static {
         Self: Sized,
     {
         None
+    }
+}
+
+impl<T> TriviaEntry<T> {
+    /// The node an entry renders as its source names, which source it is
+    /// (a tree's id, or a read's entry) and the bytes it spans; none for an
+    /// entry that renders any other way.
+    #[must_use]
+    pub fn source_bytes(&self) -> Option<(crate::slot::NodeIdOrOwnedCoordinate, (bool, u32), crate::types::Span)> {
+        match self {
+            Self::Value(SlotValue::Coord(coord)) => Some((crate::slot::NodeIdOrOwnedCoordinate::Coordinate(coord.clone()), (false, coord.tree.0), coord.span)),
+            #[cfg(feature = "arena")]
+            Self::Record(RecordEntry { record, as_source: Some(source), .. }) => Some((crate::slot::NodeIdOrOwnedCoordinate::NodeId(crate::types::NodeId::record(record.at.0)), (true, source.source.0), source.span)),
+            _ => None,
+        }
     }
 }
 
@@ -208,8 +239,17 @@ impl<T: crate::prepare::Prepare> crate::prepare::Prepare for NodeTrivia<T> {
     /// kind's edges, as a coordinate in a slot does.
     fn prepare(&mut self, ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::RenderError> {
         let sides = self.leading.iter_mut().chain(self.trailing.iter_mut());
-        for value in sides.chain(self.inner.iter_mut()).flatten().filter_map(TriviaEntry::value_mut) {
-            value.prepare(ctx)?;
+        for entry in sides.chain(self.inner.iter_mut()).flatten() {
+            #[cfg(feature = "arena")]
+            if let TriviaEntry::Record(RecordEntry { record, as_source: Some(source), .. }) = entry {
+                let at = crate::slot::NodeIdOrCoordinate::of(crate::types::NodeId::record(record.at.0));
+                at.resolve(ctx.sources)?;
+                source.edges = crate::prepare::coordinate_edges(at, source.edges, ctx);
+                continue;
+            }
+            if let Some(value) = entry.value_mut() {
+                value.prepare(ctx)?;
+            }
         }
         Ok(())
     }
@@ -704,7 +744,7 @@ impl<T: crate::codec::WireNode> ::napi::bindgen_prelude::FromNapiValue
             if let Some(at) = unsafe { crate::boundary::property_whole::<u32>(env, napi_val, c"$record", "TriviaEntry")? } {
                 // SAFETY: `napi_val` is a live object in `env`.
                 let kind = unsafe { crate::boundary::required(env, napi_val, c"$type", "TriviaEntry")? };
-                return Ok(Self::Record(RecordEntry { record: BuiltEntry { kind, at: crate::arena::Address(at) }, store: None }));
+                return Ok(Self::Record(RecordEntry { record: BuiltEntry { kind, at: crate::arena::Address(at) }, store: None, as_source: None }));
             }
         }
         // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
@@ -755,6 +795,12 @@ impl<T: crate::codec::WireNode> ::napi::bindgen_prelude::ToNapiValue for TriviaE
         match val {
             // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
             Self::Value(value) => unsafe { SlotValue::to_napi_value(env, value) },
+            #[cfg(feature = "arena")]
+            Self::Record(RecordEntry { record: BuiltEntry { kind, at }, as_source: Some(source), .. }) => {
+                use crate::boundary::{object_with_present, present};
+                // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
+                unsafe { object_with_present(env, &[present(env, c"$node", Some(at.0))?, present(env, c"$span", Some(source.span))?, present(env, c"$type", Some(u32::from(kind.0)))?]) }
+            }
             #[cfg(feature = "arena")]
             Self::Record(RecordEntry { record: BuiltEntry { kind, at }, .. }) => {
                 use crate::boundary::{object_with_present, present};

@@ -237,7 +237,6 @@ fn bare_leaf<T>(layout: &NodeLayout<T>) -> bool {
         && layout.sides.is_none()
         && layout.units.is_empty()
         && layout.slots.is_empty()
-        && layout.separator.is_none()
         && layout.captures.is_empty()
         && layout.unit_rows.is_empty()
 }
@@ -390,7 +389,7 @@ impl SideRecord {
             .iter()
             .map(|slot| {
                 let word = slot_word(&slot.slot).ok_or_else(|| ArenaError::UnknownSlot(slot.slot.as_str().into()))?;
-                Ok(SideSlot { word, before: slot.before, after: slot.after, separator: slot.separator, space_before: None, space_after: None, tokens: slot.tokens.clone() })
+                Ok(SideSlot { word, before: slot.before, after: slot.after, separator: slot.separator, space_before: None, space_after: None })
             })
             .collect::<Result<_, ArenaError>>()?;
         Ok(SideRecord {
@@ -399,7 +398,6 @@ impl SideRecord {
             span: layout.span,
             sides: layout.sides.as_ref().map(|from| from.name().map_or(Sides { tree: from.tree, index: from.index, end: from.end, span: from.span }, |name| Sides::named(name, from.span))),
             changed: layout.changed,
-            separator: layout.separator,
             delimiter: None,
             separator_kind: None,
             flanks: layout.flanks,
@@ -437,8 +435,7 @@ mod tests {
             sides: Some(coordinate(1, 2)),
             changed: ChangedEdges { leading: false, trailing: true },
             units: Vec::new(),
-            slots: vec![SlotLayout { slot: "_items".to_owned(), before: Some(KindId(7)), after: None, separator: Some(KindId(8)), tokens: vec![None, Some(KindId(8))] }],
-            separator: Some(KindId(9)),
+            slots: vec![SlotLayout { slot: "_items".to_owned(), before: Some(KindId(7)), after: None, separator: Some(KindId(8)) }],
             captures: Vec::new(),
             unit_rows: Vec::new(),
         }
@@ -451,10 +448,9 @@ mod tests {
         assert_eq!(record.edges, layout().edges);
         assert_eq!(record.sides, Some(Sides { tree: TreeId(3), index: NodeIndex(1), end: NodeIndex(2), span: Span { start: 4, end: 9 } }));
         assert_eq!(record.changed, ChangedEdges { leading: false, trailing: true });
-        assert_eq!(record.separator, Some(KindId(9)));
         assert_eq!(
             record.slots,
-            vec![SideSlot { word: 4, before: Some(KindId(7)), after: None, separator: Some(KindId(8)), space_before: None, space_after: None, tokens: vec![None, Some(KindId(8))] }]
+            vec![SideSlot { word: 4, before: Some(KindId(7)), after: None, separator: Some(KindId(8)), space_before: None, space_after: None }]
         );
         assert!(SideRecord::of::<TriviaText>(None, |_| None).expect("no layout").is_empty());
     }

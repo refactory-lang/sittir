@@ -6,6 +6,7 @@
 //! beside the `ERROR` recovery leaves inside the string included, and the
 //! whole tree renders from its templates, neither refusing the string.
 
+use sittir_core::engine::Backing as _;
 use sittir_parity_tests::{edited_rendered, parsed};
 
 /// The root of `source` rendered from its templates (`ThroughTemplates`).
@@ -13,7 +14,7 @@ fn through_templates(source: &str) -> Result<String, sittir_core::render::Render
     let tree = parsed(sittir_python::PythonGrammar, sittir_python::render::options::defaults(), source);
     let seating = tree.seating();
     let sources = sittir_core::render::ThroughTemplates(&seating);
-    let root = sittir_core::render::SourceTable::row_coordinate(&sources, tree.tree_id(), sittir_core::types::NodeIndex::ROOT).expect("a root coordinate");
+    let root = tree.row_coordinate(sittir_core::types::NodeIndex::ROOT).expect("a root coordinate");
     let options = sittir_python::render::options::defaults();
     sittir_python::render::render_node_parts(sittir_core::SlotValue::Coord(root), &sittir_core::prepare::RenderContext::new(&options, &sources)).map(|(_, text)| text)
 }

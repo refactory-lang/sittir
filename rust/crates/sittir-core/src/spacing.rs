@@ -171,11 +171,11 @@ pub fn seam_rank(text: &str) -> SeamRank {
 }
 
 /// An open node of a render (`RenderSink::open_frame`): the source node it
-/// was read from (tree and descendant index), when it was, and the excess
+/// was read from, by what names it across the render, when it was, and the excess
 /// indentation it began with, which it restores when it closes.
 #[derive(Debug)]
 struct Frame {
-    origin: Option<(crate::types::TreeId, crate::types::NodeIndex)>,
+    origin: Option<Result<crate::types::NodeId, crate::types::TreeHandle>>,
     excess: i32,
 }
 
@@ -461,7 +461,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         };
     }
 
-    fn probe_slice(&mut self, coord: &crate::slot::NodeCoordinate) {
+    fn probe_slice(&mut self, coord: crate::slot::NodeIdOrCoordinate<'_>) {
         let (Some(probe), Some(sources)) = (self.probe, self.sources) else { return };
         if self.probe_hit.is_some() || self.probe_paused > 0 {
             return;
@@ -575,12 +575,12 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// layout, not content; a line that starts inside a token
     /// (`SourceTable::line_starts_inside_tokens`) keeps its bytes, as does a
     /// blank line.
-    fn reindented<'t>(&mut self, coord: &crate::slot::NodeCoordinate, text: &'t str, sources: &dyn crate::render::SourceTable) -> std::borrow::Cow<'t, str> {
+    fn reindented<'t>(&mut self, coord: crate::slot::NodeIdOrCoordinate<'_>, text: &'t str, sources: &dyn crate::render::SourceTable) -> std::borrow::Cow<'t, str> {
         if !text.contains('\n') {
             return std::borrow::Cow::Borrowed(text);
         }
-        let Some(source) = sources.source_of(coord.tree) else { return std::borrow::Cow::Borrowed(text) };
-        let start = coord.span.range().start;
+        let (Some(source), Some(span)) = (sources.source_of(coord), coord.span(sources)) else { return std::borrow::Cow::Borrowed(text) };
+        let start = span.range().start;
         let line_start = source[..start].rfind('\n').map_or(0, |at| at + 1);
         let base = &source[line_start..start];
         let base = &base[..base.len() - base.trim_start_matches([' ', '\t']).len()];
@@ -593,7 +593,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         let mut target: Option<String> = None;
         let inside = sources.line_starts_inside_tokens(coord);
         let mut out = String::with_capacity(text.len());
-        let mut at = coord.span.start;
+        let mut at = span.start;
         for (index, line) in text.split('\n').enumerate() {
             if index > 0 {
                 out.push('\n');
@@ -1325,11 +1325,25 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         self.seam_token = self.seam.is_some().then_some(SeamToken::Whitespace);
     }
 
-    fn kind_of(&self, coord: &crate::slot::NodeCoordinate) -> Option<crate::types::KindId> {
-        coord.kind.or_else(|| self.sources.and_then(|sources| sources.kind_of(coord)))
+    fn kind_of(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Option<crate::types::KindId> {
+        match self.sources {
+            Some(sources) => coord.kind_in(sources),
+            None => match coord {
+                crate::slot::NodeIdOrCoordinate::Coordinate(coord) => coord.kind,
+                crate::slot::NodeIdOrCoordinate::NodeId { .. } => None,
+            },
+        }
     }
 
-    fn frames(&self, coord: &crate::slot::NodeCoordinate) -> Result<crate::trivia::Frames, crate::render::RenderError> {
+    fn stamp_of(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Option<crate::types::KindId> {
+        match (coord, self.sources) {
+            (crate::slot::NodeIdOrCoordinate::Coordinate(coord), _) => coord.kind,
+            (at, Some(sources)) => sources.stamp_of(at),
+            (_, None) => None,
+        }
+    }
+
+    fn frames(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Result<crate::trivia::Frames, crate::render::RenderError> {
         let Some(sources) = self.sources else { return Ok(crate::trivia::Frames::default()) };
         let mut frames = sources.frames(coord);
         if let Some(options) = self.options {
@@ -1348,12 +1362,13 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         sources.render_record_entry(record, held, options, self)
     }
 
-    fn end_lines_after(&mut self, coord: &crate::slot::NodeCoordinate) {
+    fn end_lines_after(&mut self, coord: crate::slot::NodeIdOrCoordinate<'_>) {
         let sources = self.sources;
+        let stamp = crate::render::RenderSink::stamp_of(self, coord);
         let mut first = true;
         if let Some(sources) = sources {
             sources.for_each_edge_level(coord, crate::options::Side::After, &mut |level| {
-                let kind = match (first, coord.kind) {
+                let kind = match (first, stamp) {
                     (true, Some(stamp)) => stamp,
                     _ => level.grammar,
                 };
@@ -1365,13 +1380,13 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
             }
         }
         if first {
-            if let Some(stamp) = coord.kind {
+            if let Some(stamp) = stamp {
                 crate::render::RenderSink::end_line_after(self, stamp);
             }
         }
     }
 
-    fn boundary(&mut self, coord: &crate::slot::NodeCoordinate, side: crate::options::Side) {
+    fn boundary(&mut self, coord: crate::slot::NodeIdOrCoordinate<'_>, side: crate::options::Side) {
         let (Some(sources), Some(options)) = (self.sources, self.options) else {
             return;
         };
@@ -1394,21 +1409,15 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         self.edge_levels = levels;
     }
 
-    fn slice(&mut self, coord: &crate::slot::NodeCoordinate) -> crate::render::RenderResult {
-        let sources = self
-            .sources
-            .ok_or(crate::render::CoordinateError::UnknownTree {
-                handle: coord.handle(),
-                tree_id: coord.tree,
-            })?;
+    fn slice(&mut self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> crate::render::RenderResult {
+        let sources = self.sources.ok_or_else(|| coord.unknown())?;
         let raw = coord.resolve(sources)?;
-        let swallowed = sources
-            .source_of(coord.tree)
-            .is_some_and(|source| source.as_bytes().get(coord.span.end as usize) == Some(&b'\n'));
+        let end = coord.span(sources).ok_or_else(|| coord.unknown())?.end;
+        let swallowed = sources.source_of(coord).is_some_and(|source| source.as_bytes().get(end as usize) == Some(&b'\n'));
         let raw = if swallowed { crate::line_endings::without_swallowed_cr(raw) } else { raw };
         let reindented = self.reindented(coord, raw, sources);
         let respelled;
-        let text: &str = if sources.breaks_spelled_lf(coord.tree) {
+        let text: &str = if sources.breaks_spelled_lf(coord) {
             &reindented
         } else {
             respelled = crate::line_endings::to_internal(&reindented);
@@ -1434,7 +1443,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         }
         self.probe_kind = None;
         self.end_leaf();
-        if !text.is_empty() && coord.index == crate::types::NodeIndex::ROOT {
+        if !text.is_empty() && sources.is_source_root(coord) {
             self.depth.hold(coord, self.sources);
             return Ok(());
         }
@@ -1449,8 +1458,8 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         Ok(())
     }
 
-    fn open_frame(&mut self, origin: Option<&crate::slot::NodeCoordinate>) {
-        self.frames.push(Frame { origin: origin.map(|origin| (origin.tree, origin.index)), excess: self.excess });
+    fn open_frame(&mut self, origin: Option<crate::slot::NodeIdOrCoordinate<'_>>) {
+        self.frames.push(Frame { origin: origin.map(crate::slot::NodeIdOrCoordinate::key), excess: self.excess });
     }
 
     fn close_frame(&mut self) {
@@ -1459,8 +1468,12 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         }
     }
 
-    fn in_frame_of(&self, coord: &crate::slot::NodeCoordinate) -> bool {
-        self.frames.last().is_some_and(|frame| frame.origin == Some((coord.tree, coord.index)))
+    fn in_frame_of(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
+        self.frames.last().and_then(|frame| frame.origin).is_some_and(|origin| match (origin, coord.key()) {
+            (Ok(one), Ok(other)) => self.sources.map_or(one == other, |sources| sources.same_node(one, other)),
+            (Err(one), Err(other)) => one == other,
+            _ => false,
+        })
     }
 
     fn layout_depth(&mut self, delta: i32) {
@@ -1523,6 +1536,10 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         self.set_payload(Payload { set, pick: set.narrowest() });
     }
 
+    fn take_blank_seam(&mut self) -> Option<crate::render::HeldSeam> {
+        let blank = self.seam.is_some() && self.seam_strength == SeamStrength::Trivia && self.seam_pick.rank() >= LayoutKinds::BLANKLINE.rank();
+        if blank { crate::render::RenderSink::take_seam(self) } else { None }
+    }
     fn take_seam(&mut self) -> Option<crate::render::HeldSeam> {
         self.seam.take()?;
         let payload = self.take_payload();
@@ -2239,12 +2256,12 @@ mod sink_tests {
     }
 
     impl crate::render::SourceTable for Moves {
-        fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&str> {
-            let _ = tree_id;
+        fn source_of(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Option<&str> {
+            let _ = at;
             Some(&*self.source)
         }
 
-        fn depth_move(&self, coord: &crate::slot::NodeCoordinate) -> i32 {
+        fn depth_move(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> i32 {
             let _ = coord;
             self.asked.set(self.asked.get() + 1);
             self.moved
@@ -2285,7 +2302,7 @@ mod sink_tests {
         }
         let mut coord = crate::slot::NodeCoordinate::new(crate::types::TreeId(1), CHILD, CHILD + 1, crate::types::Span { start: 1, end: 3 });
         coord.kind = kind;
-        w.slice(&coord).unwrap();
+        w.slice((&coord).into()).unwrap();
         w.join_arm(arm);
         w.text("=>").unwrap();
         w.finish().unwrap();
@@ -2305,9 +2322,9 @@ mod sink_tests {
 
     #[test]
     fn a_root_slice_s_depth_move_is_found_only_when_something_reads_the_depth() {
-        assert_eq!(moving(1, |w, at| w.slice(&at(ROOT, HEAD)).unwrap()), ("a {".to_owned(), 0));
+        assert_eq!(moving(1, |w, at| w.slice((&at(ROOT, HEAD)).into()).unwrap()), ("a {".to_owned(), 0));
         let followed = moving(1, |w, at| {
-            w.slice(&at(ROOT, HEAD)).unwrap();
+            w.slice((&at(ROOT, HEAD)).into()).unwrap();
             w.text("\n").unwrap();
             w.text("b").unwrap();
             w.dedent(crate::layout_kinds::LayoutKinds::NONE);
@@ -2319,7 +2336,7 @@ mod sink_tests {
     fn any_other_slice_moves_the_depth_at_once_since_it_may_close_what_a_template_opened() {
         let closed = moving(-1, |w, at| {
             w.indent();
-            w.slice(&at(CHILD, HEAD)).unwrap();
+            w.slice((&at(CHILD, HEAD)).into()).unwrap();
         });
         assert_eq!(closed, ("a {".to_owned(), 1));
     }
@@ -2327,7 +2344,7 @@ mod sink_tests {
     #[test]
     fn a_held_move_is_made_before_a_later_indent_after_the_text_between_disarms_it() {
         let merged = moving(1, |w, at| {
-            w.slice(&at(ROOT, HEAD)).unwrap();
+            w.slice((&at(ROOT, HEAD)).into()).unwrap();
             w.indent();
             w.text("\n").unwrap();
             w.text("b").unwrap();
@@ -2336,7 +2353,7 @@ mod sink_tests {
         });
         assert_eq!(merged, ("a {\n  b".to_owned(), 1), "an indent right after the move merges into the level it opened");
         let stacked = moving(1, |w, at| {
-            w.slice(&at(ROOT, HEAD)).unwrap();
+            w.slice((&at(ROOT, HEAD)).into()).unwrap();
             w.text("\n").unwrap();
             w.indent();
             w.text("b").unwrap();
@@ -2352,7 +2369,7 @@ mod sink_tests {
             w.text("x").unwrap();
             w.indent();
             w.seam(crate::layout_kinds::LayoutKinds::NEWLINE);
-            w.slice(&at(ROOT, EMPTY)).unwrap();
+            w.slice((&at(ROOT, EMPTY)).into()).unwrap();
             w.text("y").unwrap();
         });
         assert_eq!(out, ("x y".to_owned(), 1));

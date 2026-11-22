@@ -20,4 +20,26 @@ describe.each(['object', 'arena'] as const)('a rebuilt list writes one blank lin
 		const statements = block.statements();
 		expect(root.$with.statements(fn.$with.body(block.$with.statements(statements[1], statements[0]))).$render()).toBe('fn f() {\n    b();\n    a();\n}\n');
 	});
+
+	it('after the item before it, so an item inserted before the next keeps it above', async () => {
+		using engine = await createEngine(rust, { nodeStorage });
+		const root = engine.parse('x();\n\nfn f() {}\n') as any;
+		const [x, f] = root.statements();
+		const [test] = (engine.parse('#[test]\nfn g() {}\n') as any).statements();
+		expect(root.$with.statements(x, test, f).$render()).toBe('x();\n\n#[test]\nfn f() {}\n');
+	});
+
+	it('after an item and its trailing comment, wherever the item moves', async () => {
+		using engine = await createEngine(rust, { nodeStorage });
+		const root = engine.parse('a(); // t\n\nb();\nc();\n') as any;
+		const [a, b, c] = root.statements();
+		expect(root.$with.statements(b, a, c).$render()).toBe('b();\na(); // t\n\nc();\n');
+	});
+
+	it('and none after an item and its trailing comment once the item is last', async () => {
+		using engine = await createEngine(rust, { nodeStorage });
+		const root = engine.parse('a(); // t\n\nb();\n') as any;
+		const [a, b] = root.statements();
+		expect(root.$with.statements(b, a).$render()).toBe('b();\na(); // t\n');
+	});
 });

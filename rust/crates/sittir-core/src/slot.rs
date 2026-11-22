@@ -119,6 +119,172 @@ impl HeapBytes for CoordinateEdges {
     }
 }
 
+/// A parsed node as a source table is asked about it and a render writes it:
+/// in arena storage its `NodeId`, with what its place in its holder gives it,
+/// and in object storage its coordinate. A node's span and kind stay on its
+/// record and are read through the id (`SourceTable::span_of`, `stamp_of`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum NodeIdOrCoordinate<'c> {
+    NodeId {
+        id: crate::types::NodeId,
+        /// The seams prepare gave the node at its site.
+        edges: Option<CoordinateEdges>,
+        /// The edges whose neighbour its holder changed.
+        changed: ChangedEdges,
+    },
+    Coordinate(&'c NodeCoordinate),
+}
+
+/// A `NodeIdOrCoordinate` that outlives the borrow it was named by.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum NodeIdOrOwnedCoordinate {
+    NodeId(crate::types::NodeId),
+    Coordinate(NodeCoordinate),
+}
+
+impl NodeIdOrOwnedCoordinate {
+    /// The node this names, with nothing its place would give it.
+    #[must_use]
+    pub fn at(&self) -> NodeIdOrCoordinate<'_> {
+        match self {
+            Self::NodeId(id) => NodeIdOrCoordinate::of(*id),
+            Self::Coordinate(coord) => coord.into(),
+        }
+    }
+}
+
+impl From<NodeIdOrCoordinate<'_>> for NodeIdOrOwnedCoordinate {
+    fn from(at: NodeIdOrCoordinate<'_>) -> Self {
+        match at {
+            NodeIdOrCoordinate::NodeId { id, .. } => Self::NodeId(id),
+            NodeIdOrCoordinate::Coordinate(coord) => Self::Coordinate(coord.clone()),
+        }
+    }
+}
+
+impl<'c> From<&'c NodeCoordinate> for NodeIdOrCoordinate<'c> {
+    fn from(coord: &'c NodeCoordinate) -> Self {
+        Self::Coordinate(coord)
+    }
+}
+
+impl NodeIdOrCoordinate<'_> {
+    /// The node `id` names, with nothing its place would give it.
+    #[must_use]
+    pub fn of(id: crate::types::NodeId) -> Self {
+        Self::NodeId { id, edges: None, changed: ChangedEdges::default() }
+    }
+
+    /// The tree of a coordinate; none for a node named by its id.
+    #[must_use]
+    pub fn tree(self) -> Option<crate::types::TreeId> {
+        match self {
+            Self::NodeId { .. } => None,
+            Self::Coordinate(coord) => Some(coord.tree),
+        }
+    }
+
+    /// The seams the node's holder gave it.
+    #[must_use]
+    pub fn edges(self) -> Option<CoordinateEdges> {
+        match self {
+            Self::NodeId { edges, .. } => edges,
+            Self::Coordinate(coord) => coord.edges,
+        }
+    }
+
+    /// The edges whose neighbour the node's holder changed.
+    #[must_use]
+    pub fn changed(self) -> ChangedEdges {
+        match self {
+            Self::NodeId { changed, .. } => changed,
+            Self::Coordinate(coord) => coord.changed(),
+        }
+    }
+
+    /// What names the node across a render: its id, or its tree and index
+    /// packed as one handle.
+    pub fn key(self) -> Result<crate::types::NodeId, crate::types::TreeHandle> {
+        match self {
+            Self::NodeId { id, .. } => Ok(id),
+            Self::Coordinate(coord) => Err(coord.handle()),
+        }
+    }
+
+    /// The node's bytes, where `sources` holds it.
+    #[must_use]
+    pub fn span(self, sources: &dyn SourceTable) -> Option<Span> {
+        match self {
+            Self::NodeId { .. } => sources.span_of(self),
+            Self::Coordinate(coord) => Some(coord.span),
+        }
+    }
+
+    /// The kind the read stamped on the node.
+    #[must_use]
+    pub fn stamp(self, sources: &dyn SourceTable) -> Option<crate::types::KindId> {
+        match self {
+            Self::NodeId { .. } => sources.stamp_of(self),
+            Self::Coordinate(coord) => coord.kind,
+        }
+    }
+
+    /// The kind this names: the read's stamp, else the node's own kind in
+    /// `sources`.
+    pub fn kind_in(self, sources: &dyn SourceTable) -> Option<crate::types::KindId> {
+        self.stamp(sources).or_else(|| sources.kind_of(self))
+    }
+
+    fn refusal(self, detail: String) -> CoordinateError {
+        match self {
+            Self::NodeId { id, .. } => CoordinateError::Node { id, detail },
+            Self::Coordinate(coord) => CoordinateError::BadSpan { handle: coord.handle(), detail },
+        }
+    }
+
+    /// Why `sources` holds no source for this node.
+    #[must_use]
+    pub fn unknown(self) -> CoordinateError {
+        match self {
+            Self::NodeId { id, .. } => CoordinateError::Node { id, detail: "no source of a read holds this node".to_owned() },
+            Self::Coordinate(coord) => CoordinateError::UnknownTree { handle: coord.handle(), tree_id: coord.tree },
+        }
+    }
+
+    /// The bytes this names, or why the table cannot give them.
+    pub fn resolve(self, sources: &dyn SourceTable) -> Result<&str, CoordinateError> {
+        let source = sources.source_of(self).ok_or_else(|| self.unknown())?;
+        let span = self.span(sources).ok_or_else(|| self.unknown())?;
+        let std::ops::Range { start, end } = span.range();
+        let in_range = start <= end && end <= source.len();
+        if !in_range || !source.is_char_boundary(start) || !source.is_char_boundary(end) {
+            return Err(self.refusal(format!("span {start}..{end} is not a character range of its source of {} bytes", source.len())));
+        }
+        Ok(&source[start..end])
+    }
+
+    /// Write this node's bytes between its kind's edge seams and what the
+    /// templates along its edges place there (`RenderSink::boundary`), as a
+    /// rendered node of the same kind writes them. `adjacent` drops the
+    /// leading seam for a position that forbids whitespace before it.
+    pub fn write_between_edges(self, w: &mut dyn crate::render::RenderSink, adjacent: bool) -> Result<(), crate::render::RenderError> {
+        let edges = self.edges();
+        if adjacent {
+            w.seam(crate::layout_kinds::LayoutKinds::TIGHT);
+        } else if let Some(seam) = edges.and_then(|e| e.before) {
+            w.seam_arm(seam);
+        }
+        w.boundary(self, crate::options::Side::Before);
+        w.slice(self)?;
+        w.boundary(self, crate::options::Side::After);
+        if let Some(seam) = edges.and_then(|e| e.after) {
+            w.seam_arm(seam);
+        }
+        w.end_lines_after(self);
+        Ok(())
+    }
+}
+
 impl NodeCoordinate {
     #[must_use]
     pub fn new(tree: crate::types::TreeId, index: crate::types::NodeIndex, end: crate::types::NodeIndex, span: Span) -> Self {
@@ -173,53 +339,12 @@ impl NodeCoordinate {
     /// The kind this coordinate names: the reader's stamp when it carries one,
     /// else the node its handle resolves to in `sources`.
     pub fn kind_in(&self, sources: &dyn crate::render::SourceTable) -> Option<crate::types::KindId> {
-        self.kind.or_else(|| sources.kind_of(self))
-    }
-
-    /// Write this coordinate's bytes between its kind's edge seams and what
-    /// the templates along its edges place there (`RenderSink::boundary`), as
-    /// a rendered node of the same kind writes them. `adjacent` drops the
-    /// leading seam for a position that forbids whitespace before it.
-    pub fn write_between_edges(
-        &self,
-        w: &mut dyn crate::render::RenderSink,
-        adjacent: bool,
-    ) -> Result<(), crate::render::RenderError> {
-        if adjacent {
-            w.seam(crate::layout_kinds::LayoutKinds::TIGHT);
-        } else if let Some(seam) = self.edges.and_then(|e| e.before) {
-            w.seam_arm(seam);
-        }
-        w.boundary(self, crate::options::Side::Before);
-        w.slice(self)?;
-        w.boundary(self, crate::options::Side::After);
-        if let Some(seam) = self.edges.and_then(|e| e.after) {
-            w.seam_arm(seam);
-        }
-        w.end_lines_after(self);
-        Ok(())
+        NodeIdOrCoordinate::from(self).kind_in(sources)
     }
 
     /// The bytes this coordinate names, or why the table cannot give them.
     pub fn resolve<'s>(&self, sources: &'s dyn SourceTable) -> Result<&'s str, CoordinateError> {
-        let source = sources
-            .source_of(self.tree)
-            .ok_or(CoordinateError::UnknownTree {
-                handle: self.handle(),
-                tree_id: self.tree,
-            })?;
-        let std::ops::Range { start, end } = self.span.range();
-        let in_range = start <= end && end <= source.len();
-        if !in_range || !source.is_char_boundary(start) || !source.is_char_boundary(end) {
-            return Err(CoordinateError::BadSpan {
-                handle: self.handle(),
-                detail: format!(
-                    "span {start}..{end} is not a character range of its source of {} bytes",
-                    source.len()
-                ),
-            });
-        }
-        Ok(&source[start..end])
+        NodeIdOrCoordinate::from(self).resolve(sources)
     }
 }
 
@@ -285,40 +410,35 @@ impl<T: crate::render::Render, const ADJACENT: bool> crate::render::Render
 {
     fn render(&self, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
         match self {
-            Self::Coord(coord) => write_coordinate(coord, ADJACENT, w),
+            Self::Coord(coord) => write_coordinate(coord.into(), ADJACENT, w),
             Self::Node(t) => t.render(w),
         }
     }
 }
 
-/// Write a coordinate's bytes, framed by its frames as nested rendered
-/// owners are (`RenderSink::frames`, `render_framed`), the outermost naming
-/// the coordinate's node, unless that node's frame is already open
-/// (`RenderSink::in_frame_of`); its kind's edges are the coordinate's own
-/// (`write_between_edges`).
-pub(crate) fn write_coordinate(
-    coord: &NodeCoordinate,
-    adjacent: bool,
-    w: &mut dyn crate::render::RenderSink,
-) -> crate::render::RenderResult {
-    if w.in_frame_of(coord) {
-        return coord.write_between_edges(w, adjacent);
+/// Write a node's bytes, framed by its frames as nested rendered owners are
+/// (`RenderSink::frames`, `render_framed`), the outermost naming the node,
+/// unless that node's frame is already open (`RenderSink::in_frame_of`); its
+/// kind's edges are its own (`NodeIdOrCoordinate::write_between_edges`).
+pub fn write_coordinate(at: NodeIdOrCoordinate<'_>, adjacent: bool, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
+    if w.in_frame_of(at) {
+        return at.write_between_edges(w, adjacent);
     }
-    let frames = w.frames(coord)?.into_vec();
-    write_framed(&frames, Some(coord), coord, adjacent, w)
+    let frames = w.frames(at)?.into_vec();
+    write_framed(&frames, Some(at), at, adjacent, w)
 }
 
-/// Write a coordinate's bytes framed by `frames`, outermost first, the
-/// outermost opening `origin`'s frame (`write_coordinate`).
+/// Write a node's bytes framed by `frames`, outermost first, the outermost
+/// opening `origin`'s frame (`write_coordinate`).
 pub(crate) fn write_framed(
     frames: &[Box<dyn crate::trivia::FramedTrivia>],
-    origin: Option<&NodeCoordinate>,
-    coord: &NodeCoordinate,
+    origin: Option<NodeIdOrCoordinate<'_>>,
+    at: NodeIdOrCoordinate<'_>,
     adjacent: bool,
     w: &mut dyn crate::render::RenderSink,
 ) -> crate::render::RenderResult {
     match frames.split_first() {
-        None => coord.write_between_edges(w, adjacent),
+        None => at.write_between_edges(w, adjacent),
         Some((frame, inner)) => crate::layout::render_framed(
             Some(&**frame),
             crate::options::Edges::default(),
@@ -326,7 +446,7 @@ pub(crate) fn write_framed(
             origin,
             crate::layout::TriviaRole::Owner,
             w,
-            |w| write_framed(inner, None, coord, adjacent, w),
+            |w| write_framed(inner, None, at, adjacent, w),
         ),
     }
 }
@@ -450,14 +570,7 @@ pub(crate) unsafe fn coordinate_to_napi(env: ::napi::sys::napi_env, coord: &Node
     use crate::boundary::{object_with_present, present};
     if let Some(name) = coord.name() {
         // SAFETY: its caller passes the live `env` napi gave `to_napi_value`.
-        return unsafe {
-            object_with_present(env, &[
-                present(env, c"$node", Some(name.address()))?,
-                present(env, c"$site", name.site().map(|site| site.to_vec()))?,
-                present(env, c"$span", Some(coord.span))?,
-                present(env, c"$type", coord.kind.map(|kind| u32::from(kind.0)))?,
-            ])
-        };
+        return unsafe { named_to_napi(env, name, coord.span, coord.kind) };
     }
     // SAFETY: its caller passes the live `env` napi gave `to_napi_value`.
     unsafe {
@@ -466,6 +579,26 @@ pub(crate) unsafe fn coordinate_to_napi(env: ::napi::sys::napi_env, coord: &Node
             present(env, c"$end", Some(coord.end))?,
             present(env, c"$span", Some(coord.span))?,
             present(env, c"$type", coord.kind.map(|kind| u32::from(kind.0)))?,
+        ])
+    }
+}
+
+/// A node a read left, as it crosses to JavaScript by its name:
+/// `{ $node, $site?, $span, $type? }`.
+///
+/// # Safety
+///
+/// `env` is the live environment napi gave its caller.
+#[cfg(feature = "napi-bindings")]
+pub(crate) unsafe fn named_to_napi(env: ::napi::sys::napi_env, name: crate::types::NodeId, span: Span, kind: Option<crate::types::KindId>) -> ::napi::Result<::napi::sys::napi_value> {
+    use crate::boundary::{object_with_present, present};
+    // SAFETY: its caller passes the live `env` napi gave `to_napi_value`.
+    unsafe {
+        object_with_present(env, &[
+            present(env, c"$node", Some(name.address()))?,
+            present(env, c"$site", name.site().map(|site| site.to_vec()))?,
+            present(env, c"$span", Some(span))?,
+            present(env, c"$type", kind.map(|kind| u32::from(kind.0)))?,
         ])
     }
 }
@@ -506,8 +639,8 @@ mod tests {
 
     struct Sources(HashMap<crate::types::TreeId, Arc<str>>);
     impl SourceTable for Sources {
-        fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&str> {
-            self.0.get(&tree_id).map(|source| &**source)
+        fn source_of(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Option<&str> {
+            self.0.get(&at.tree()?).map(|source| &**source)
         }
     }
 
@@ -556,10 +689,10 @@ mod tests {
 
     struct Kinded(Sources);
     impl SourceTable for Kinded {
-        fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&str> {
-            self.0.source_of(tree_id)
+        fn source_of(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Option<&str> {
+            self.0.source_of(at)
         }
-        fn kind_of(&self, _: &NodeCoordinate) -> Option<crate::types::KindId> {
+        fn kind_of(&self, _: crate::slot::NodeIdOrCoordinate<'_>) -> Option<crate::types::KindId> {
             Some(crate::types::KindId(9))
         }
     }

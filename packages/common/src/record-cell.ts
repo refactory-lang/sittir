@@ -38,8 +38,6 @@ export interface RecordCodecConstants {
 	readonly SIDE_WORDS_SIDES: number;
 	readonly SIDE_FIELD_CHANGED_LEADING: number;
 	readonly SIDE_FIELD_CHANGED_TRAILING: number;
-	readonly SIDE_FIELD_SEPARATOR: number;
-	readonly SIDE_WORDS_SEPARATOR: number;
 	readonly SIDE_FIELD_DELIMITER: number;
 	readonly SIDE_FIELD_SEPARATOR_KIND: number;
 	readonly NODE_ID_HOLDER_BITS: number;
@@ -175,8 +173,6 @@ const CODEC_KEYS = [
 	'SIDE_WORDS_SIDES',
 	'SIDE_FIELD_CHANGED_LEADING',
 	'SIDE_FIELD_CHANGED_TRAILING',
-	'SIDE_FIELD_SEPARATOR',
-	'SIDE_WORDS_SEPARATOR',
 	'SIDE_FIELD_DELIMITER',
 	'SIDE_FIELD_SEPARATOR_KIND',
 	'NODE_ID_HOLDER_BITS',
@@ -212,8 +208,7 @@ export function cellFormatOf(native: object): CellFormat | undefined {
 			{ bit: codec.SIDE_FIELD_AT, words: codec.SIDE_WORDS_AT },
 			{ bit: codec.SIDE_FIELD_EDGES, words: codec.SIDE_WORDS_EDGES },
 			{ bit: codec.SIDE_FIELD_SPAN, words: codec.SIDE_WORDS_SPAN },
-			{ bit: codec.SIDE_FIELD_SIDES, words: codec.SIDE_WORDS_SIDES },
-			{ bit: codec.SIDE_FIELD_SEPARATOR, words: codec.SIDE_WORDS_SEPARATOR }
+			{ bit: codec.SIDE_FIELD_SIDES, words: codec.SIDE_WORDS_SIDES }
 		],
 		sideDelimiter: codec.SIDE_FIELD_DELIMITER,
 		sideSides: { bit: codec.SIDE_FIELD_SIDES, words: codec.SIDE_WORDS_SIDES },

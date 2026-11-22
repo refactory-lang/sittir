@@ -4,9 +4,9 @@
 
 
 use super::{admit, Address, ArenaError, ArenaRead, Cell, CellAt, CellWord, RecordGrammar};
-use crate::engine::{encode_handle, Engine, ReadTrees};
+use crate::engine::{Backing, Engine, ReadSources};
 use crate::prepare::RenderContext;
-use crate::render::{CoordinateError, RenderError, RenderResult, RenderSink};
+use crate::render::{RenderError, RenderResult, RenderSink};
 use crate::slot::ChangedEdges;
 use crate::trivia::{BuiltEntry, TriviaEntry};
 use crate::trivia_store::{Place, Site, TriviaStore};
@@ -77,37 +77,8 @@ impl<G: RecordGrammar> Engine<G> {
     /// # Errors
     ///
     /// What making the tree refuses.
-    pub fn read_node<R>(&self, at: Address, f: impl FnOnce(&crate::engine::ParsedTree<G, crate::engine::Records<'_>>, NodeIndex) -> R) -> Result<Option<R>, ArenaError> {
+    pub fn read_node<R>(&self, at: Address, f: impl FnOnce(&crate::engine::Records<'_, G>, NodeIndex) -> R) -> Result<Option<R>, ArenaError> {
         self.read_named(crate::types::NodeId::record(at.0), f)
-    }
-
-    /// The siblings that hold sides beside each node `names` names
-    /// (`ParsedTree::siblings`), in order, each from the read that left it;
-    /// the nodes of one source share one walk of its records.
-    ///
-    /// # Errors
-    ///
-    /// `ARENA_RELEASED` once released, what reading a record refuses, and
-    /// `ArenaError::Malformed` for a name no read's record holds.
-    pub fn siblings_of(&self, names: &[crate::types::NodeId]) -> Result<Vec<crate::engine::Siblings>, ArenaError> {
-        let chunks = self.written().built();
-        let built = chunks.readable()?;
-        let mut trees: Vec<(Address, crate::engine::ParsedTree<G, crate::engine::Records<'_>>)> = Vec::new();
-        let mut siblings = Vec::with_capacity(names.len());
-        for &name in names {
-            let record = Address(name.address());
-            let source = super::RunNodes::source_of(built, record)?;
-            let at = if let Some(at) = trees.iter().position(|(known, _)| *known == source) {
-                at
-            } else {
-                trees.push((source, crate::engine::ParsedTree::over_records(self, &chunks, record)?));
-                trees.len() - 1
-            };
-            let tree = &trees[at].1;
-            let index = tree.index_named(name).ok_or(ArenaError::Malformed { what: "node name", word: record.0 })?;
-            siblings.extend(tree.siblings(&[index]));
-        }
-        Ok(siblings)
     }
 
     /// The entry of the source each node `names` names was read from.
@@ -129,14 +100,14 @@ impl<G: RecordGrammar> Engine<G> {
     ///
     /// What making the tree refuses, and `ArenaError::Malformed` for a name
     /// its source's records hold no node of.
-    pub fn read_named<R>(&self, name: crate::types::NodeId, f: impl FnOnce(&crate::engine::ParsedTree<G, crate::engine::Records<'_>>, NodeIndex) -> R) -> Result<Option<R>, ArenaError> {
+    pub fn read_named<R>(&self, name: crate::types::NodeId, f: impl FnOnce(&crate::engine::Records<'_, G>, NodeIndex) -> R) -> Result<Option<R>, ArenaError> {
         let built = self.written().built();
         built.readable()?;
         let record = Address(name.address());
         if !built.read_record(record) {
             return Ok(None);
         }
-        let tree = crate::engine::ParsedTree::over_records(self, &built, record)?;
+        let tree = crate::engine::Records::over(self, &built, record)?;
         let index = tree.index_named(name).ok_or(ArenaError::Malformed { what: "node name", word: record.0 })?;
         Ok(Some(f(&tree, index)))
     }
@@ -238,24 +209,23 @@ impl<G: RecordGrammar> Engine<G> {
         limit: u32,
         depth: Option<u32>,
     ) -> Result<crate::query::NamedBatch, String> {
-        use crate::query::{NamedBatch, NamedCoordinate, NamedItem, QueryItem};
+        use crate::query::{NamedBatch, NamedCoordinate, NamedItem};
         let built = self.written().built();
         built.readable().map_err(|e| e.to_string())?;
-        let tree = crate::engine::ParsedTree::over_records(self, &built, Address(from.name().address())).map_err(|e| e.to_string())?;
-        let batch = tree.descendants(local_address(&tree, from)?, kinds, plan, resume, limit, depth)?;
-        let named = |handle: crate::types::TreeHandle| {
-            let index = crate::engine::decode_handle(handle).1;
-            tree.name_at(index).ok_or_else(|| format!("the walk found node {}, which its records do not name", index.0))
-        };
-        let items = batch
-            .items
+        let tree = crate::engine::Records::over(self, &built, Address(from.name().address())).map_err(|e| e.to_string())?;
+        let mut nodes = crate::engine::Backing::nodes(&tree);
+        let index = tree.address_index(&mut nodes, from)?;
+        let (found, resume) = crate::engine::Backing::descendants_under(&tree, &mut nodes, index, kinds, plan, resume, limit, depth)?;
+        let named = |index: NodeIndex| tree.name_at(index).ok_or_else(|| format!("the walk found node {}, which its records do not name", index.0));
+        let ctx = crate::engine::Backing::read_ctx(&tree);
+        let items = found
             .into_iter()
             .map(|item| match item {
-                QueryItem::Node(at) => Ok(NamedItem::Node(NamedCoordinate { name: named(at.handle)?, span: at.span, kind: at.kind })),
-                QueryItem::Unit(kind) => Ok(NamedItem::Unit(kind)),
+                crate::engine::Descendant::Node(kid) => Ok(NamedItem::Node(NamedCoordinate { name: named(kid.index)?, span: kid.span(), kind: ctx.stamped_kind(kid.grammar, kid.display) })),
+                crate::engine::Descendant::Unit(kind) => Ok(NamedItem::Unit(kind)),
             })
             .collect::<Result<_, String>>()?;
-        Ok(NamedBatch { items, resume: batch.resume, origin: named(batch.origin)? })
+        Ok(NamedBatch { items, resume, origin: named(index)? })
     }
 
     /// Whether each node `addresses` names among the records reads left in
@@ -269,9 +239,8 @@ impl<G: RecordGrammar> Engine<G> {
         let Some(first) = addresses.first() else { return Ok(Vec::new()) };
         let built = self.written().built();
         built.readable().map_err(|e| e.to_string())?;
-        let tree = crate::engine::ParsedTree::over_records(self, &built, Address(first.name().address())).map_err(|e| e.to_string())?;
-        let local = addresses.iter().map(|&address| local_address(&tree, address)).collect::<Result<Vec<_>, String>>()?;
-        tree.plan_holds(&local, plan)
+        let tree = crate::engine::Records::over(self, &built, Address(first.name().address())).map_err(|e| e.to_string())?;
+        crate::engine::Backing::plan_holds_over(&tree, addresses, |nodes, address| tree.address_index(nodes, address), plan)
     }
 
     /// The built record at `at`, of the built arena `arena`, rendered as a
@@ -291,7 +260,7 @@ impl<G: RecordGrammar> Engine<G> {
         arena: &dyn ArenaRead,
         at: Address,
         changed: ChangedEdges,
-        trees: &ReadTrees<'_, G>,
+        trees: &ReadSources<'_, G>,
         ctx: &RenderContext<'_>,
     ) -> Result<String, RenderError> {
         let root = admitted_root::<G>(arena, at, changed, trees)?;
@@ -324,10 +293,11 @@ impl<G: RecordGrammar> Engine<G> {
     /// As `render_at`, and what reading the record's source refuses.
     pub fn render_at_with_sides(&self, built: &super::BuiltChunks, at: Address, changed: ChangedEdges, options: &crate::options::ResolvedOptions, entries: crate::engine::AdmitEntry) -> Result<RenderedSides<G::Trivia>, RenderError> {
         use crate::engine::Trees;
-        let source = if built.read_record(at) { Some(crate::types::TreeId(super::RunNodes::source_of(built, at).map_err(RenderError::Record)?.0)) } else { None };
+        let read = built.read_record(at);
         self.rendered_at(built, at, changed, options, false, entries, |trees| {
-            let tree = trees.tree_holding(source?, at)?;
-            let index = tree.index_named(crate::types::NodeId::record(at.0))?;
+            let name = crate::types::NodeId::record(at.0);
+            let tree = read.then(|| trees.holding(crate::slot::NodeIdOrCoordinate::of(name)))??;
+            let index = tree.index_named(name)?;
             Some([TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner].map(|side| tree.trivia_side(index, side)))
         })
         .map(|(text, sides)| RenderedSides { text, sides })
@@ -342,11 +312,11 @@ impl<G: RecordGrammar> Engine<G> {
         options: &crate::options::ResolvedOptions,
         templates: bool,
         entries: crate::engine::AdmitEntry,
-        after: impl FnOnce(&crate::engine::SourceTrees<'_, G>) -> R,
+        after: impl FnOnce(&crate::engine::SourceRecords<'_, G>) -> R,
     ) -> Result<(String, R), RenderError> {
         let root = root_at::<G>(built, at, changed)?;
-        let trees = crate::engine::SourceTrees::new(self, built, entries);
-        let read = ReadTrees::over(&trees);
+        let trees = crate::engine::SourceRecords::new(self, built, entries);
+        let read = ReadSources::over(&trees);
         let through = crate::render::ThroughTemplates(&read);
         let sources: &dyn crate::render::SourceTable = if templates { &through } else { &read };
         let text = G::render_record(self.grammar(), root, Some(built), built, self.written(), &RenderContext::new(options, sources))?;
@@ -378,9 +348,9 @@ impl<G: RecordGrammar> Engine<G> {
         entries: crate::engine::AdmitEntry,
     ) -> Result<String, RenderError> {
         let cell = admitted_leaf::<G>(built, kind, entry, changed).map_err(RenderError::Record)?;
-        let trees = crate::engine::SourceTrees::new(self, built, entries);
-        let read = ReadTrees::over(&trees);
-        G::render_record(self.grammar(), CellAt { cell, tree: None, site: None }, Some(built), built, store, &RenderContext::new(options, &read))
+        let trees = crate::engine::SourceRecords::new(self, built, entries);
+        let read = ReadSources::over(&trees);
+        G::render_record(self.grammar(), CellAt { cell, node: None, site: None }, Some(built), built, store, &RenderContext::new(options, &read))
     }
 }
 
@@ -413,7 +383,7 @@ pub fn render_record_entry<G: RecordGrammar>(
     arena: &dyn ArenaRead,
     record: BuiltEntry,
     store: &TriviaStore<G::Trivia>,
-    trees: &ReadTrees<'_, G>,
+    trees: &ReadSources<'_, G>,
     ctx: &RenderContext<'_>,
     w: &mut dyn RenderSink,
 ) -> RenderResult {
@@ -422,19 +392,6 @@ pub fn render_record_entry<G: RecordGrammar>(
     }
     let root = admitted_root::<G>(arena, record.at, ChangedEdges::default(), trees)?;
     G::render_entry(grammar, root, None, arena, store, ctx, w)
-}
-
-/// `address` as `tree`, made for one call over a source's records, names
-/// it: each name by the id the call gives its node.
-fn local_address<G: RecordGrammar>(tree: &crate::engine::ParsedTree<G, crate::engine::Records<'_>>, address: crate::query::NamedAddress) -> Result<crate::query::Address, String> {
-    use crate::query::{Address as Local, NamedAddress};
-    let handle = |name: crate::types::NodeId| {
-        tree.index_named(name).map(|index| encode_handle(tree.tree_id(), index)).ok_or_else(|| format!("{name:?} names no node its source's records hold"))
-    };
-    Ok(match address {
-        NamedAddress::Own(name) => Local::Own { handle: handle(name)? },
-        NamedAddress::Child { parent, index } => Local::Child { parent: handle(parent)?, index },
-    })
 }
 
 /// The record `record` of the engine's built arena `built`, a built one or
@@ -460,20 +417,21 @@ pub fn render_entry_at<G: RecordGrammar>(grammar: G, built: &super::BuiltChunks,
 /// source, and a built one is admitted.
 fn root_at<G: RecordGrammar>(built: &super::BuiltChunks, at: Address, changed: ChangedEdges) -> Result<CellAt, RenderError> {
     let kind = built.header_kind(at, G::KIND_BITS).map_err(RenderError::Record)?;
-    let tree = if built.read_record(at) {
-        Some(crate::types::TreeId(super::RunNodes::source_of(built, at).map_err(RenderError::Record)?.0))
+    let node = if built.read_record(at) {
+        Some(crate::types::NodeId::record(at.0))
     } else {
         admit(built, at, G::shape, G::KIND_BITS).map_err(RenderError::Record)?;
         None
     };
-    Ok(CellAt { cell: Cell::Child { kind, at, changed }, tree, site: None })
+    Ok(CellAt { cell: Cell::Child { kind, at, changed }, node, site: None })
 }
 
-fn admitted_root<G: RecordGrammar>(arena: &dyn ArenaRead, at: Address, changed: ChangedEdges, trees: &ReadTrees<'_, G>) -> Result<CellAt, RenderError> {
+fn admitted_root<G: RecordGrammar>(arena: &dyn ArenaRead, at: Address, changed: ChangedEdges, trees: &ReadSources<'_, G>) -> Result<CellAt, RenderError> {
     let kind = arena.header_kind(at, G::KIND_BITS).map_err(RenderError::Record)?;
     let linked = admit(arena, at, G::shape, G::KIND_BITS).map_err(RenderError::Record)?;
-    for tree in linked {
-        trees.get(tree).ok_or(CoordinateError::UnknownTree { handle: encode_handle(tree, NodeIndex::ROOT), tree_id: tree })?;
+    for id in linked {
+        let node = crate::slot::NodeIdOrCoordinate::of(id);
+        trees.holding(node).ok_or_else(|| node.unknown())?;
     }
-    Ok(CellAt { cell: Cell::Child { kind, at, changed }, tree: None, site: None })
+    Ok(CellAt { cell: Cell::Child { kind, at, changed }, node: None, site: None })
 }

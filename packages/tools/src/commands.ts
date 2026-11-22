@@ -131,7 +131,7 @@ export function formatGrammarCounts(counts: GrammarCounts): string {
 		`  factory-storagePass=${factoryStorage.pass}    factory-storageTotal=${factoryStorage.total}    factory-storageAstMatchPass=${factoryStorage.astMatchPass}`,
 		`  ir-storagePass=${irStorage.pass}    ir-storageTotal=${irStorage.total}    ir-storageAstMatchPass=${irStorage.astMatchPass}`,
 		`  built-render-parsePass=${builtRenderParse.pass}    built-render-parseTotal=${builtRenderParse.total}    built-render-parseAstMatchPass=${builtRenderParse.astMatchPass}    built-render-parseSeparatorTolerated=${builtRenderParse.separatorTolerated}    built-render-parseSpellingNormalized=${builtRenderParse.spellingNormalized}`,
-		`  layout-storedSlots=${storedLayout.stored.slots}    layout-storedSeparators=${storedLayout.stored.separators}    layout-storedRefused=${storedLayout.refused.length}`,
+		`  layout-storedSlots=${storedLayout.stored.slots}    layout-storedRefused=${storedLayout.refused.length}`,
 		...(portableRoundTrip === undefined
 			? []
 			: [
@@ -250,7 +250,6 @@ export function toValidationRun(counts: GrammarCounts): ValidationRun {
 		readRenderParseShallowFoldedMismatches: readRenderParseShallow.foldedMismatches.length,
 		readRenderParseShallowTrivia: readRenderParseShallow.trivia.length,
 		layoutStoredSlots: storedLayout.stored.slots,
-		layoutStoredSeparators: storedLayout.stored.separators,
 		layoutStoredRefused: storedLayout.refused.length,
 		...(portableRoundTrip === undefined
 			? {}

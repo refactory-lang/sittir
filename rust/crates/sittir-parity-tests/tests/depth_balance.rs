@@ -7,6 +7,7 @@
 //! text); a block with a write in its range renders from its template
 //! (trivia-table design § 4, edited ranges).
 
+use sittir_core::engine::Backing as _;
 use sittir_core::engine::{claim_tree_id, Engine};
 use sittir_core::prepare::RenderContext;
 use sittir_core::read::{read_at, Depth};

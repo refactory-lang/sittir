@@ -160,6 +160,26 @@ pub trait Nodes<'t> {
     /// token too.
     fn holds_error(&mut self, index: NodeIndex) -> bool;
 
+    /// The outermost `ERROR` that is or holds the node at `index`, or `None`
+    /// when none does. A tree whose root holds no error answers at once;
+    /// otherwise the node's ancestors are climbed, so the cost follows the
+    /// node's depth, not how many siblings precede it.
+    fn error_holding(&mut self, index: NodeIndex) -> Option<Kid> {
+        if !self.holds_error(NodeIndex::ROOT) {
+            return None;
+        }
+        let mut outermost = None;
+        let mut at = Some(index);
+        while let Some(here) = at {
+            let kid = self.kid(here);
+            if kid.error() {
+                outermost = Some(kid);
+            }
+            at = self.parent(here);
+        }
+        outermost
+    }
+
     /// How many indexes name a node, from 0 up, where that is known
     /// before any is met.
     fn bound(&mut self) -> Option<u32> {
@@ -500,6 +520,10 @@ impl<'t> Nodes<'t> for Navigation<'t> {
 
     fn holds_error(&mut self, index: NodeIndex) -> bool {
         self.nodes().holds_error(index)
+    }
+
+    fn error_holding(&mut self, index: NodeIndex) -> Option<Kid> {
+        self.nodes().error_holding(index)
     }
 
     fn walk(&mut self, from: NodeIndex, visit: &mut dyn FnMut(Step, &Kid) -> Visit) {

@@ -6,6 +6,7 @@
 //! source left it, with no tree (arena).
 #![cfg(feature = "arena")]
 
+use sittir_core::engine::Backing as _;
 use sittir_core::arena::{HydrateNode, RecordCells, RecordGrammar};
 use sittir_core::engine::{claim_tree_id, Engine, ParsedTree};
 use sittir_core::options::ResolvedOptions;
@@ -42,7 +43,7 @@ impl<G: RecordGrammar, N: ReadNode + HydrateNode + RecordCells> Renders<G, N> {
 
     /// The root of `tree` rendered as its coordinate through `sources`.
     fn coordinate(&self, tree: &ParsedTree<G>, sources: &dyn SourceTable, options: &ResolvedOptions) -> Result<String, String> {
-        let root = sources.row_coordinate(tree.tree_id(), NodeIndex::ROOT).ok_or("no root coordinate")?;
+        let root = tree.row_coordinate(NodeIndex::ROOT).ok_or("no root coordinate")?;
         (self.native)(SlotValue::Coord(root), &RenderContext::new(options, sources)).map(|(_, text)| text).map_err(|e| e.to_string())
     }
 

@@ -221,7 +221,7 @@ fn refusal_reason(spec: &DelimiterSpec, content: &str) -> String {
 fn read_token<T: Prepare, const ADJACENT: bool>(slot: &SlotValue<T, ADJACENT>, ctx: &RenderContext<'_>) -> Option<T> {
     let coord = slot.coord()?;
     let mut node = None;
-    ctx.sources.read_node(coord.tree, coord.index, &mut |cursor, read| node = T::read_coordinate(cursor, read));
+    ctx.sources.read_node(coord, &mut |cursor, read| node = T::read_coordinate(cursor, read));
     node?.ok()
 }
 

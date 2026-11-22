@@ -52,6 +52,8 @@
 #[macro_export]
 macro_rules! napi_engine {
     ($grammar:ty, $render_root:ty, $any:ty, $options:ty, $render_parts:path, $abi:expr, $defaults:path) => {
+        use $crate::engine::Backing as _;
+
         /// Refuse to load beside an engine image of another release: the
         /// addon carries the stamp it was built against, and the process
         /// holds one engine, mapped by whichever addon loaded first.
@@ -177,15 +179,15 @@ macro_rules! napi_engine {
         }
 
         /// Runs `f` on the live trees, noting each tree it reads
-        /// (`ReadTrees`), then reports each of those that grew
+        /// (`ReadSources`), then reports each of those that grew
         /// (`report_tree`).
         fn with_live_trees<R>(
             env: &::napi::Env,
-            f: impl FnOnce(&$crate::engine::ReadTrees<'_, $grammar>) -> ::napi::Result<R>,
+            f: impl FnOnce(&$crate::engine::ReadSources<'_, $grammar>) -> ::napi::Result<R>,
         ) -> ::napi::Result<R> {
             let (out, read) = LIVE_TREES.with(|trees| {
                 let trees = trees.borrow();
-                let read = $crate::engine::ReadTrees::new(&trees);
+                let read = $crate::engine::ReadSources::new(&trees);
                 (f(&read), read.read())
             });
             LIVE_TREES.with(|trees| {
@@ -463,15 +465,6 @@ macro_rules! napi_engine {
             with_live_node(&env, tree_id, index, |parsed, index| Ok(parsed.slot_separator(index)))
         }
 
-        /// The separator before the node at `index` of the live tree
-        /// `treeId` as an item of its parent's list slot, as a grammar id,
-        /// where its source spells another than the one the slot renders.
-        /// Refuses as `triviaSide` does.
-        #[::napi_derive::napi(ts_return_type = "import('../src/types.ts').TSKindId | null")]
-        pub fn separator_before(env: ::napi::Env, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex) -> ::napi::Result<Option<$crate::types::KindId>> {
-            with_live_node(&env, tree_id, index, |parsed, index| Ok(parsed.separator_before(index)))
-        }
-
         /// A snapshot's layout of the node at `index` of the live tree
         /// `treeId` and of each node under it that a read gives a layout, as
         /// `[row, layout]` pairs in preorder (`ParsedTree::snapshot_layouts`):
@@ -532,29 +525,6 @@ macro_rules! napi_engine {
         pub fn edited_within(env: ::napi::Env, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex, own_sides: bool) -> ::napi::Result<bool> {
             with_live_node(&env, tree_id, index, |parsed, index| Ok(parsed.edited_within(index, own_sides)))
         }
-
-        /// The siblings that hold sides beside each node at `indexes` of the
-        /// live tree `treeId` (`ParsedTree::siblings`), in order, eight words
-        /// a node: the previous sibling, then the next, each as 1, its kind,
-        /// its start and its end, or as four zeros where that node starts
-        /// (ends) its parent. Each span is taken at the outermost node
-        /// spanning exactly the node's bytes. Refuses a tree that is not live
-        /// and an index naming no node of it.
-        #[::napi_derive::napi]
-        pub fn siblings(env: ::napi::Env, tree_id: $crate::types::TreeId, indexes: Vec<$crate::types::NodeIndex>) -> ::napi::Result<Vec<u32>> {
-            with_live_tree(&env, tree_id, |parsed| {
-                for &index in &indexes {
-                    $crate::napi_engine::check_node(parsed, index)?;
-                }
-                Ok(parsed
-                    .siblings(&indexes)
-                    .into_iter()
-                    .flat_map(|siblings| [siblings.previous, siblings.next])
-                    .flat_map(|sibling| sibling.map_or([0; 4], |sibling| [1, u32::from(sibling.kind.0), sibling.start, sibling.end]))
-                    .collect())
-            })
-        }
-
         /// The text `span` covers in the source of the live tree `treeId`:
         /// one string of that span's characters, so the source itself
         /// never crosses. Refuses a tree that is not live and a span that
@@ -580,9 +550,9 @@ macro_rules! napi_engine {
         }
 
         /// How much of its layout the live tree `treeId` stores apart from
-        /// its read-time options (`ParsedTree::stored_layout`): `{ slots,
-        /// separators }`. A diagnostic. Refuses a tree that is not live.
-        #[::napi_derive::napi(ts_return_type = "{ slots: number; separators: number }")]
+        /// its read-time options (`ParsedTree::stored_layout`): `{ slots }`.
+        /// A diagnostic. Refuses a tree that is not live.
+        #[::napi_derive::napi(ts_return_type = "{ slots: number }")]
         pub fn stored_layout(env: ::napi::Env, tree_id: $crate::types::TreeId) -> ::napi::Result<$crate::layout::StoredLayout> {
             with_live_node(&env, tree_id, $crate::types::NodeIndex::ROOT, |parsed, _| Ok(parsed.stored_layout()))
         }
@@ -724,7 +694,7 @@ macro_rules! napi_engine {
                 $crate::napi_engine::check_node(parsed, index)?;
                 let table = render_options(&engine, options)?;
                 let canonical = $crate::napi_engine::entry_sources(engine.grammar(), trees, |sources| {
-                    let coord = $crate::render::SourceTable::row_coordinate(sources, tree_id, index).ok_or_else(|| format!("index {} names no node of tree {}", index.0, tree_id.0))?;
+                    let coord = parsed.row_coordinate(index).ok_or_else(|| format!("index {} names no node of tree {}", index.0, tree_id.0))?;
                     let through = $crate::render::ThroughTemplates(sources);
                     let sources: &dyn $crate::render::SourceTable = if templates == Some(true) { &through } else { sources };
                     let ctx = $crate::prepare::RenderContext::new(&table, sources);
@@ -868,10 +838,6 @@ macro_rules! napi_engine {
             #[::napi_derive::napi]
             pub const SIDE_FIELD_CHANGED_TRAILING: u32 = $crate::arena::side::field::CHANGED_TRAILING;
             #[::napi_derive::napi]
-            pub const SIDE_FIELD_SEPARATOR: u32 = $crate::arena::side::field::SEPARATOR;
-            #[::napi_derive::napi]
-            pub const SIDE_WORDS_SEPARATOR: u32 = $crate::arena::side::field::SEPARATOR_WORDS;
-            #[::napi_derive::napi]
             pub const SIDE_FIELD_DELIMITER: u32 = $crate::arena::side::field::DELIMITER;
             #[::napi_derive::napi]
             pub const SIDE_FIELD_SEPARATOR_KIND: u32 = $crate::arena::side::field::SEPARATOR_KIND;
@@ -947,7 +913,7 @@ macro_rules! napi_engine {
             fn with_read_node<R>(
                 engine: &::napi::bindgen_prelude::External<EngineCell>,
                 node: f64,
-                f: impl FnOnce(&$crate::ParsedTree<$grammar, $crate::engine::Records<'_>>, $crate::types::NodeIndex) -> ::napi::Result<R>,
+                f: impl FnOnce(&$crate::engine::Records<'_, $grammar>, $crate::types::NodeIndex) -> ::napi::Result<R>,
             ) -> ::napi::Result<R> {
                 let engine = engine_of(engine)?;
                 let name = $crate::napi_engine::named_key(node)?;
@@ -971,25 +937,23 @@ macro_rules! napi_engine {
                 let built = engine.written().built();
                 built.readable().map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
                 let refused = |e: $crate::arena::ArenaError| ::napi::Error::from_reason(format!("render_at failed: {e}"));
-                let tree_id = $crate::types::TreeId($crate::arena::RunNodes::source_of(&*built, $crate::arena::Address(name.address())).map_err(refused)?.0);
                 let table = render_options(&engine, options)?;
+                let changed = $crate::slot::ChangedEdges { leading, trailing };
                 if name.site().is_none() {
-                    let changed = $crate::slot::ChangedEdges { leading, trailing };
                     let canonical = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| engine.render_at(&built, $crate::arena::Address(name.address()), changed, &table, templates == Some(true), $crate::napi_engine::admit_entry::<$grammar>)))
                         .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_at panicked")))?
                         .map_err(|e| ::napi::Error::from_reason(format!("render_at failed: {e}")))?;
                     return Ok($crate::boundary::RenderedText($crate::line_endings::spell(canonical, &table.newline)));
                 }
-                let trees = $crate::engine::SourceTrees::new(&engine, &built, $crate::napi_engine::admit_entry::<$grammar>);
-                let read = $crate::engine::ReadTrees::over(&trees);
+                let trees = $crate::engine::SourceRecords::new(&engine, &built, $crate::napi_engine::admit_entry::<$grammar>);
+                let read = $crate::engine::ReadSources::over(&trees);
                 let no_node = || ::napi::Error::from_reason(format!("no read wrote a node named {name:?}"));
-                let index = read.holding(tree_id, $crate::arena::Address(name.address())).and_then(|tree| tree.index_named(name)).ok_or_else(no_node)?;
-                let coord = $crate::render::SourceTable::row_coordinate(&read, tree_id, index).ok_or_else(no_node)?;
+                let at = $crate::slot::NodeIdOrCoordinate::NodeId { id: name, edges: None, changed };
+                read.holding(at).and_then(|tree| tree.index_named(name)).ok_or_else(no_node)?;
                 let through = $crate::render::ThroughTemplates(&read);
                 let sources: &dyn $crate::render::SourceTable = if templates == Some(true) { &through } else { &read };
                 let ctx = $crate::prepare::RenderContext::new(&table, sources);
-                let canonical = $render_parts($crate::SlotValue::Coord(coord.with_changed($crate::slot::ChangedEdges { leading, trailing })), &ctx)
-                    .map(|(_, canonical)| canonical)
+                let canonical = <$grammar as $crate::arena::RecordGrammar>::render_source(engine.grammar(), at, &ctx)
                     .map_err(|e| ::napi::Error::from_reason(format!("render_at failed: {e}")))?;
                 Ok($crate::boundary::RenderedText($crate::line_endings::spell(canonical, &table.newline)))
             }
@@ -1057,33 +1021,10 @@ macro_rules! napi_engine {
                 with_read_node(engine, node, |tree, index| Ok(tree.slot_separator(index)))
             }
 
-            /// `separatorBefore` for the node a read left that the key `node` names.
-            #[::napi_derive::napi(ts_return_type = "import('../src/types.ts').TSKindId | null")]
-            pub fn read_separator_before(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, node: f64) -> ::napi::Result<Option<$crate::types::KindId>> {
-                with_read_node(engine, node, |tree, index| Ok(tree.separator_before(index)))
-            }
-
             /// `editedWithin` for the node a read left that the key `node` names.
             #[::napi_derive::napi]
             pub fn read_edited_within(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, node: f64, own_sides: bool) -> ::napi::Result<bool> {
                 with_read_node(engine, node, |tree, index| Ok(tree.edited_within(index, own_sides)))
-            }
-
-            /// `siblings` for the nodes reads left that the keys `nodes`
-            /// name, in order, eight words a node, each from its own source.
-            /// Refuses an engine already disposed, a number that is no key
-            /// and a name no read's record holds.
-            #[::napi_derive::napi]
-            pub fn read_siblings(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, nodes: Vec<f64>) -> ::napi::Result<Vec<u32>> {
-                let engine = engine_of(engine)?;
-                let names = nodes.into_iter().map($crate::napi_engine::named_key).collect::<::napi::Result<Vec<_>>>()?;
-                Ok(engine
-                    .siblings_of(&names)
-                    .map_err(|e| ::napi::Error::from_reason(e.to_string()))?
-                    .into_iter()
-                    .flat_map(|siblings| [siblings.previous, siblings.next])
-                    .flat_map(|sibling| sibling.map_or([0; 4], |sibling| [1, u32::from(sibling.kind.0), sibling.start, sibling.end]))
-                    .collect())
             }
 
             /// The address of the source entry each node a read left that
@@ -1601,8 +1542,9 @@ pub fn check_node<G: crate::engine::EngineGrammar>(parsed: &crate::ParsedTree<G>
 
 /// The refusal for an index that names no node of `parsed`.
 #[must_use]
-pub fn no_node<G: crate::engine::EngineGrammar, B: crate::engine::Backing>(parsed: &crate::ParsedTree<G, B>, index: crate::types::NodeIndex) -> napi::Error {
-    napi::Error::from_reason(format!("index {index} names no node of tree {}", parsed.tree_id()))
+pub fn no_node<G: crate::engine::EngineGrammar, B: crate::engine::Backing<G>>(parsed: &B, index: crate::types::NodeIndex) -> napi::Error {
+    let holder = parsed.handle_tree().map_or_else(|| "its source".to_owned(), |tree| format!("tree {tree}"));
+    napi::Error::from_reason(format!("index {index} names no node of {holder}"))
 }
 
 /// What `read` answers for the node at `index` of `parsed`
@@ -1631,8 +1573,8 @@ pub fn node_or_error<G: crate::engine::EngineGrammar, T>(
 /// # Errors
 ///
 /// Those refusals.
-pub fn answered<G: crate::engine::EngineGrammar, B: crate::engine::Backing, T>(
-    parsed: &crate::ParsedTree<G, B>,
+pub fn answered<G: crate::engine::EngineGrammar, B: crate::engine::Backing<G>, T>(
+    parsed: &B,
     index: crate::types::NodeIndex,
     what: &str,
     answer: impl FnOnce() -> Option<Result<T, crate::read::ReadError>>,
@@ -2088,7 +2030,7 @@ pub fn dispose<G: crate::engine::EngineGrammar>(env: &napi::Env, mut tree: crate
     if !tree.release_sides() {
         return Ok(());
     }
-    let store = tree.store().clone();
+    let store = crate::engine::Backing::store(&tree).clone();
     drop(tree);
     settle(env, &store)
 }
@@ -2134,7 +2076,7 @@ pub fn release_built<T>(_env: &napi::Env, _store: &crate::trivia_store::TriviaSt
 #[cfg(feature = "arena")]
 struct ArenaSources<'a, 't, G: crate::engine::EngineGrammar> {
     grammar: G,
-    trees: &'a crate::engine::ReadTrees<'t, G>,
+    trees: &'a crate::engine::ReadSources<'t, G>,
 }
 
 #[cfg(feature = "arena")]
@@ -2142,80 +2084,88 @@ impl<G: crate::arena::RecordGrammar> crate::render::SourceTable for ArenaSources
 where
     G::Trivia: crate::boundary::DecodesKind,
 {
-    fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&str> {
-        self.trees.source_of(tree_id)
+    fn source_of(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Option<&str> {
+        self.trees.source_of(at)
     }
 
-    fn breaks_spelled_lf(&self, tree_id: crate::types::TreeId) -> bool {
-        self.trees.breaks_spelled_lf(tree_id)
+    fn breaks_spelled_lf(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
+        self.trees.breaks_spelled_lf(at)
     }
 
-    fn kind_of(&self, coord: &crate::slot::NodeCoordinate) -> Option<crate::types::KindId> {
-        self.trees.kind_of(coord)
+    fn kind_of(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Option<crate::types::KindId> {
+        self.trees.kind_of(at)
     }
 
-    fn for_each_descendant(&self, coord: &crate::slot::NodeCoordinate, visit: &mut dyn FnMut(crate::types::KindId, &str) -> bool) {
-        self.trees.for_each_descendant(coord, visit);
+    fn for_each_descendant(&self, at: crate::slot::NodeIdOrCoordinate<'_>, visit: &mut dyn FnMut(crate::types::KindId, &str) -> bool) {
+        self.trees.for_each_descendant(at, visit);
     }
 
-    fn line_starts_inside_tokens(&self, coord: &crate::slot::NodeCoordinate) -> Vec<u32> {
-        self.trees.line_starts_inside_tokens(coord)
+    fn line_starts_inside_tokens(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Vec<u32> {
+        self.trees.line_starts_inside_tokens(at)
     }
 
-    fn last_list_child_kind(&self, tree: crate::types::TreeId, span: crate::types::Span, kind: crate::types::KindId) -> Option<crate::types::KindId> {
-        self.trees.last_list_child_kind(tree, span, kind)
+    fn last_list_child_kind(&self, at: crate::slot::NodeIdOrCoordinate<'_>, span: crate::types::Span, kind: crate::types::KindId) -> Option<crate::types::KindId> {
+        self.trees.last_list_child_kind(at, span, kind)
     }
 
-    fn for_each_edge_level(&self, coord: &crate::slot::NodeCoordinate, side: crate::options::Side, f: &mut dyn FnMut(crate::render::EdgeLevel)) {
-        self.trees.for_each_edge_level(coord, side, f);
+    fn for_each_edge_level(&self, at: crate::slot::NodeIdOrCoordinate<'_>, side: crate::options::Side, f: &mut dyn FnMut(crate::render::EdgeLevel)) {
+        self.trees.for_each_edge_level(at, side, f);
     }
 
-    fn spelled_end_kind(&self, coord: &crate::slot::NodeCoordinate) -> Option<crate::types::KindId> {
-        self.trees.spelled_end_kind(coord)
+    fn spelled_end_kind(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Option<crate::types::KindId> {
+        self.trees.spelled_end_kind(at)
     }
 
-    fn depth_move(&self, coord: &crate::slot::NodeCoordinate) -> i32 {
-        self.trees.depth_move(coord)
+    fn depth_move(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> i32 {
+        self.trees.depth_move(at)
     }
 
-    fn sides(&self, coord: &crate::slot::NodeCoordinate) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
-        self.trees.sides(coord)
+    fn sides(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
+        self.trees.sides(at)
     }
 
-    fn frames(&self, coord: &crate::slot::NodeCoordinate) -> crate::trivia::Frames {
-        self.trees.frames(coord)
+    fn frames(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> crate::trivia::Frames {
+        self.trees.frames(at)
     }
 
-    fn slot_layouts(&self, coord: &crate::slot::NodeCoordinate) -> Vec<crate::layout::SlotLayout> {
-        crate::render::SourceTable::slot_layouts(self.trees, coord)
+    fn slot_layouts(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Vec<crate::layout::SlotLayout> {
+        crate::render::SourceTable::slot_layouts(self.trees, at)
     }
 
-    fn separator_before(&self, coord: &crate::slot::NodeCoordinate) -> Option<crate::types::KindId> {
-        crate::render::SourceTable::separator_before(self.trees, coord)
+    fn framed_span(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Option<crate::types::Span> {
+        self.trees.framed_span(at)
     }
 
-    fn framed_span(&self, coord: &crate::slot::NodeCoordinate) -> crate::types::Span {
-        self.trees.framed_span(coord)
+    fn edited_within(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
+        crate::render::SourceTable::edited_within(self.trees, at)
     }
 
-    fn edited_within(&self, coord: &crate::slot::NodeCoordinate) -> bool {
-        crate::render::SourceTable::edited_within(self.trees, coord)
+    fn renders_as_source(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
+        crate::render::SourceTable::renders_as_source(self.trees, at)
     }
 
-    fn renders_as_source(&self, coord: &crate::slot::NodeCoordinate) -> bool {
-        crate::render::SourceTable::renders_as_source(self.trees, coord)
+    fn seat_through(&self, at: crate::slot::NodeIdOrCoordinate<'_>, wrappers: &[Option<crate::options::SeatPath>], seat: &dyn Fn(crate::types::KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
+        self.trees.seat_through(at, wrappers, seat)
     }
 
-    fn seat_through(&self, coord: &crate::slot::NodeCoordinate, wrappers: &[Option<crate::options::SeatPath>], seat: &dyn Fn(crate::types::KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
-        self.trees.seat_through(coord, wrappers, seat)
+    fn read_node(&self, coord: &crate::slot::NodeCoordinate, read: &mut dyn FnMut(&mut crate::tree_sitter::TreeCursor<'_>, &mut crate::read::ReadCtx<'_>)) -> bool {
+        crate::render::SourceTable::read_node(self.trees, coord, read)
     }
 
-    fn row_coordinate(&self, tree: crate::types::TreeId, index: crate::types::NodeIndex) -> Option<crate::slot::NodeCoordinate> {
-        crate::render::SourceTable::row_coordinate(self.trees, tree, index)
+    fn span_of(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Option<crate::types::Span> {
+        self.trees.span_of(at)
     }
 
-    fn read_node(&self, tree: crate::types::TreeId, index: crate::types::NodeIndex, read: &mut dyn FnMut(&mut crate::tree_sitter::TreeCursor<'_>, &mut crate::read::ReadCtx<'_>)) -> bool {
-        crate::render::SourceTable::read_node(self.trees, tree, index, read)
+    fn stamp_of(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Option<crate::types::KindId> {
+        self.trees.stamp_of(at)
+    }
+
+    fn same_node(&self, one: crate::types::NodeId, other: crate::types::NodeId) -> bool {
+        self.trees.same_node(one, other)
+    }
+
+    fn is_source_root(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
+        self.trees.is_source_root(at)
     }
 
     fn render_record_entry(&self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any, options: &crate::options::ResolvedOptions, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
@@ -2266,7 +2216,7 @@ pub fn named_key(key: f64) -> napi::Result<crate::types::NodeId> {
 /// names, which nothing past the call can ask after.
 #[cfg(feature = "arena")]
 #[must_use]
-pub fn node_key<G: crate::arena::RecordGrammar>(tree: &crate::ParsedTree<G, crate::engine::Records<'_>>, index: crate::types::NodeIndex) -> Option<f64> {
+pub fn node_key<G: crate::arena::RecordGrammar>(tree: &crate::engine::Records<'_, G>, index: crate::types::NodeIndex) -> Option<f64> {
     tree.name_at(index).map(crate::types::NodeId::key)
 }
 
@@ -2317,7 +2267,7 @@ where
 #[cfg(feature = "arena")]
 pub fn entry_sources<G: crate::arena::RecordGrammar, R>(
     grammar: G,
-    trees: &crate::engine::ReadTrees<'_, G>,
+    trees: &crate::engine::ReadSources<'_, G>,
     f: impl FnOnce(&dyn crate::render::SourceTable) -> R,
 ) -> R
 where
@@ -2331,7 +2281,7 @@ where
 #[cfg(not(feature = "arena"))]
 pub fn entry_sources<G: crate::engine::EngineGrammar, R>(
     _grammar: G,
-    trees: &crate::engine::ReadTrees<'_, G>,
+    trees: &crate::engine::ReadSources<'_, G>,
     f: impl FnOnce(&dyn crate::render::SourceTable) -> R,
 ) -> R {
     f(trees)

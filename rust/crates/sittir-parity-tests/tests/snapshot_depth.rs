@@ -13,6 +13,7 @@
 //! build the indentation the comment's lines never take. The test binary
 //! holds this one test, so no other test shares its process.
 
+use sittir_core::engine::Backing as _;
 use sittir_core::types::NodeIndex;
 use sittir_parity_tests::{block_chain, flat_tuple, indented_block_line, multiline_tuple_chain, on_deep_stack, parsed_rust, tuple_chain, unary_chain, wide_unit_blocks, wide_unit_comments};
 use std::time::{Duration, Instant};

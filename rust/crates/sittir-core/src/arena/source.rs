@@ -1,8 +1,11 @@
 //! A read's source text in a built arena's string chunks: one whole string
-//! an entry. An entry is `[len][found]` then the text's bytes padded to a
-//! word: `found`'s top bit is whether the source spells every line break
-//! `\n`, and the bit below it is set in every entry a writer wrote, so
-//! zeroed bytes hold none.
+//! an entry. An entry is `[len][found][read]` then the text's bytes padded
+//! to a word: `found`'s top bit is whether the source spells every line
+//! break `\n`, and the bit below it is set in every entry a writer wrote, so
+//! zeroed bytes hold none; `read` is the address of the read's own side
+//! record, holding its spans and entry starts (`SideRecord::spans`,
+//! `SideRecord::starts`), 0 for none, which its read names once it has
+//! placed every side (`name_read_side`).
 //! An entry names no record: a source's nodes are found from a record that
 //! names the entry.
 //! Small sources share a chunk the arena keeps open for them; a source too
@@ -11,7 +14,8 @@
 
 use super::{Address, ArenaError, ArenaRead, BuiltChunk, BuiltChunks, ChunkMem, STRING_CHUNK_BYTES};
 
-const HEAD_BYTES: u32 = 8;
+const HEAD_BYTES: u32 = 12;
+const READ_SIDE_BYTE: usize = 8;
 const BREAKS_LF: u32 = 1 << 31;
 const WRITTEN: u32 = 1 << 30;
 
@@ -58,12 +62,28 @@ impl<'a> Source<'a> {
     pub fn read(arena: &'a dyn ArenaRead, at: Address) -> Result<Source<'a>, ArenaError> {
         let chunk = arena.string_chunk(at.chunk()).ok_or(malformed("source chunk", at))?;
         let mut words = Words { bytes: chunk.get(at.word() as usize..).ok_or(malformed("source entry", at))?, at };
-        let (len, found) = (words.word()?, words.word()?);
+        let (len, found, _) = (words.word()?, words.word()?, words.word()?);
         if found & !BREAKS_LF != WRITTEN {
             return Err(malformed("source entry", at));
         }
         let text = std::str::from_utf8(&words.take(padded(len) as usize)?[..len as usize]).map_err(|_| malformed("source text", at))?;
         Ok(Source { text, breaks_lf: found & BREAKS_LF != 0 })
+    }
+
+    /// The own side record of the read whose source's entry is at `at`;
+    /// none for a read that names none.
+    ///
+    /// # Errors
+    ///
+    /// As `read`.
+    pub fn read_side_of(arena: &dyn ArenaRead, at: Address) -> Result<Option<Address>, ArenaError> {
+        let chunk = arena.string_chunk(at.chunk()).ok_or(malformed("source chunk", at))?;
+        let mut words = Words { bytes: chunk.get(at.word() as usize..).ok_or(malformed("source entry", at))?, at };
+        let (_, found, read) = (words.word()?, words.word()?, words.word()?);
+        if found & !BREAKS_LF != WRITTEN {
+            return Err(malformed("source entry", at));
+        }
+        Ok((read != 0).then_some(Address(read)))
     }
 }
 
@@ -106,9 +126,26 @@ impl BuiltChunks {
         let out = unsafe { &mut mem.slice_mut()[byte as usize..(byte + size) as usize] };
         out[..4].copy_from_slice(&len.to_le_bytes());
         out[4..8].copy_from_slice(&(WRITTEN | if source.breaks_lf { BREAKS_LF } else { 0 }).to_le_bytes());
+        out[8..12].copy_from_slice(&0u32.to_le_bytes());
         let text = HEAD_BYTES as usize;
         out[text..text + len as usize].copy_from_slice(source.text.as_bytes());
         Ok(at)
+    }
+
+    /// Names the side record at `read` as the own side record of the read
+    /// whose source's entry is at `source` (`Source::read_side_of`).
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Malformed` for an address no source entry is at.
+    pub fn name_read_side(&mut self, source: Address, read: Address) -> Result<(), ArenaError> {
+        Source::read(self, source)?;
+        let mem = self.bytes_mem(source.chunk()).ok_or(malformed("source chunk", source))?;
+        let byte = source.word() as usize + READ_SIDE_BYTE;
+        // SAFETY: as `write_source`.
+        let out = unsafe { &mut mem.slice_mut()[byte..byte + 4] };
+        out.copy_from_slice(&read.0.to_le_bytes());
+        Ok(())
     }
 
     fn alloc_read_bytes(&mut self, len: u32) -> Result<u32, ArenaError> {

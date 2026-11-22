@@ -1,6 +1,6 @@
 //! A record's side record: the layout facts beside its slots. Word 0 is a
 //! mask of the fields present, and the fields follow in a fixed order:
-//! `at` (kind, byte start, byte end), `edges`, `span`, `sides`, `separator`, `delimiter`,
+//! `at` (kind, byte start, byte end), `edges`, `span`, `sides`, `delimiter`,
 //! `separator_kind`, `flanks`, `slots`. `changed` is two bits of the mask. It holds no trivia and no unit sides: a written side is
 //! in the engine's store of written sides ([`crate::trivia_store`]), and a
 //! parsed node's assigned sides in its tree's trivia table.
@@ -31,32 +31,31 @@ pub mod field {
     pub const SIDES_WORDS: u32 = 5;
     pub const CHANGED_LEADING: u32 = super::mask::CHANGED_LEADING;
     pub const CHANGED_TRAILING: u32 = super::mask::CHANGED_TRAILING;
-    pub const SEPARATOR: u32 = super::mask::SEPARATOR;
-    pub const SEPARATOR_WORDS: u32 = 1;
     pub const DELIMITER: u32 = super::mask::DELIMITER;
     pub const SEPARATOR_KIND: u32 = super::mask::SEPARATOR_KIND;
 }
 
-mod mask {
+pub(crate) mod mask {
     pub const AT: u32 = 1;
     pub const EDGES: u32 = 1 << 1;
     pub const SPAN: u32 = 1 << 2;
     pub const SIDES: u32 = 1 << 3;
     pub const CHANGED_LEADING: u32 = 1 << 4;
     pub const CHANGED_TRAILING: u32 = 1 << 5;
-    pub const SEPARATOR: u32 = 1 << 6;
-    pub const SLOTS: u32 = 1 << 7;
-    pub const DELIMITER: u32 = 1 << 8;
-    pub const SEPARATOR_KIND: u32 = 1 << 9;
-    pub const FLANKS: u32 = 1 << 10;
-    pub const PARENT: u32 = 1 << 11;
-    pub const NODE: u32 = 1 << 12;
-    pub const SOURCE: u32 = 1 << 13;
-    pub const DEPTH: u32 = 1 << 14;
-    pub const RUN: u32 = 1 << 15;
-    pub const SPANS: u32 = 1 << 16;
-    pub const STARTS: u32 = 1 << 17;
-    pub const ALL: u32 = (1 << 18) - 1;
+    pub const SLOTS: u32 = 1 << 6;
+    pub const DELIMITER: u32 = 1 << 7;
+    pub const SEPARATOR_KIND: u32 = 1 << 8;
+    pub const FLANKS: u32 = 1 << 9;
+    pub const PARENT: u32 = 1 << 10;
+    pub const NODE: u32 = 1 << 11;
+    pub const SOURCE: u32 = 1 << 12;
+    pub const DEPTH: u32 = 1 << 13;
+    pub const RUN: u32 = 1 << 14;
+    pub const SPANS: u32 = 1 << 15;
+    pub const STARTS: u32 = 1 << 16;
+    pub const CONTENT: u32 = 1 << 17;
+    pub const HELD_BY_ERROR: u32 = 1 << 18;
+    pub const ALL: u32 = (1 << 19) - 1;
 }
 
 /// The bits of a node's packed facts that hold its field id.
@@ -220,8 +219,7 @@ pub struct Sides {
 impl Sides {
     /// The node `name` names past a call, spanning `span`, as a side record
     /// keeps it where its records outlive its tree: its record where a tree
-    /// is, its packed site where an index is, and no end. A read
-    /// resolves it to the call's own tree and index (`RecordCtx::side`).
+    /// is, its packed site where an index is, and no end.
     #[must_use]
     pub fn named(name: crate::types::NodeId, span: Span) -> Self {
         Self { tree: TreeId(name.address()), index: NodeIndex(name.packed_site()), end: NodeIndex(0), span }
@@ -235,6 +233,13 @@ impl Sides {
             return None;
         }
         crate::types::NodeId::of_packed(self.tree.0, self.index.0)
+    }
+
+    /// The node as a render names it: by its name, else by its coordinate
+    /// in its tree.
+    #[must_use]
+    pub fn at(self) -> crate::slot::NodeIdOrOwnedCoordinate {
+        self.name().map_or_else(|| crate::slot::NodeIdOrOwnedCoordinate::Coordinate(self.coordinate()), crate::slot::NodeIdOrOwnedCoordinate::NodeId)
     }
 
     /// The node's coordinate in its tree.
@@ -256,7 +261,6 @@ pub struct SideSlot {
     pub space_before: Option<KindId>,
     /// The slot's `…_separator_space` (`…_after`) setting.
     pub space_after: Option<KindId>,
-    pub tokens: Vec<Option<KindId>>,
 }
 
 /// What a side record holds.
@@ -268,7 +272,6 @@ pub struct SideRecord {
     pub span: Option<PointSpan>,
     pub sides: Option<Sides>,
     pub changed: ChangedEdges,
-    pub separator: Option<KindId>,
     /// A list's delimiters setting; an explicit empty set is `Some`.
     pub delimiter: Option<Delimiter>,
     /// A list's chosen separator setting, a builder's preference.
@@ -278,6 +281,13 @@ pub struct SideRecord {
     pub slots: Vec<SideSlot>,
     /// A parsed node's parent's record; none for a source's root.
     pub parent: Option<Address>,
+    /// Whether a parsed record is a content its parent's own node reads
+    /// (`RunEntry::Record { shared: true }` in the parent's run): its node is
+    /// its parent's. Navigation reads the parent only for such a record.
+    pub content: bool,
+    /// Whether a parsed record lies under an `ERROR`, whose interior no
+    /// view names: navigation rooted at it is refused.
+    pub held_by_error: bool,
     /// A parsed node's navigation facts.
     pub node: Option<NodeFacts>,
     /// The string chunk a parsed node's source is, which its bytes index.
@@ -286,21 +296,21 @@ pub struct SideRecord {
     pub depth: i32,
     /// A parsed node's children, in document order.
     pub run: Vec<RunEntry>,
-    /// A read's root: the addresses the read's records lie in, one range
+    /// A read's own side record: the addresses the read's records lie in, one range
     /// for each run of chunks its writer wrote in turn
     /// (`ReadWriter::spans`). Only `SideRecord::spans_at` reads them back;
     /// every other read leaves them where they lie.
     pub spans: Vec<std::ops::Range<Address>>,
-    /// A read's root: the byte offsets, sorted, at which its parse placed a
+    /// A read's own side record: the byte offsets, sorted, at which its parse placed a
     /// side or kept a header gap, each within the node that side is the
     /// side of; none for a read that does not keep them. Only
     /// `SideRecord::starts_at` reads them back.
     pub starts: Option<Vec<u32>>,
 }
 
-/// The words of one slot entry: word, before, after, separator, the two
-/// spacing settings, and the tokens run's address and length.
-const SLOT_WORDS: u32 = 8;
+/// The words of one slot entry: word, before, after, separator and the two
+/// spacing settings.
+const SLOT_WORDS: u32 = 6;
 /// An edge side's word marks a set side with this bit, so a blank arm with
 /// no strength still differs from an unset side.
 const EDGE_SET: u32 = 1 << 31;
@@ -382,33 +392,30 @@ impl SideRecord {
     }
 
     /// Writes the side record through `place`, which places words at a fresh
-    /// address, its slots' token runs first, and answers its address:
+    /// address, and answers its address:
     /// `Address::NONE` when it holds nothing.
     pub fn write(&self, place: &mut dyn FnMut(&[u32]) -> Result<Address, ArenaError>) -> Result<Address, ArenaError> {
         if self.is_empty() {
             return Ok(Address::NONE);
         }
-        let runs = self.token_runs(place)?;
         let mut words = vec![0];
-        let flags = self.fields(&runs, &mut |word| words.push(word))?;
+        let flags = self.fields(&mut |word| words.push(word))?;
         words[0] = flags;
         place(&words)
     }
 
-    /// Writes the side record in place in `arena`, its slots' token runs
-    /// first, and answers its address: `Address::NONE` when it holds
-    /// nothing.
+    /// Writes the side record in place in `arena`, and answers its address:
+    /// `Address::NONE` when it holds nothing.
     pub fn write_in(&self, arena: &mut dyn RecordSpace) -> Result<Address, ArenaError> {
         if self.is_empty() {
             return Ok(Address::NONE);
         }
-        let runs = self.token_runs(&mut |words| arena.push(words))?;
         let mut len = 1;
-        self.fields(&runs, &mut |_| len += 1)?;
+        self.fields(&mut |_| len += 1)?;
         let at = arena.alloc(len)?;
         let out = arena.words_mut(at, len)?;
         let mut n = 1;
-        let flags = self.fields(&runs, &mut |word| {
+        let flags = self.fields(&mut |word| {
             out[n] = word;
             n += 1;
         })?;
@@ -416,21 +423,9 @@ impl SideRecord {
         Ok(at)
     }
 
-    /// Each slot's token run, placed by `place`, and its length; none for a
-    /// slot with no tokens.
-    fn token_runs(&self, place: &mut dyn FnMut(&[u32]) -> Result<Address, ArenaError>) -> Result<Vec<(Address, u32)>, ArenaError> {
-        self.slots
-            .iter()
-            .map(|slot| {
-                let tokens: Vec<u32> = slot.tokens.iter().copied().map(optional_kind).collect();
-                Ok(if tokens.is_empty() { (Address::NONE, 0) } else { (place(&tokens)?, u32::try_from(tokens.len()).map_err(|_| ArenaError::Full)?) })
-            })
-            .collect()
-    }
-
-    /// Hands `put` each word after the flags word, in field order, its slots'
-    /// token runs at `runs`, and answers the flags word.
-    fn fields(&self, runs: &[(Address, u32)], put: &mut dyn FnMut(u32)) -> Result<u32, ArenaError> {
+    /// Hands `put` each word after the flags word, in field order, and
+    /// answers the flags word.
+    fn fields(&self, put: &mut dyn FnMut(u32)) -> Result<u32, ArenaError> {
         let mut flags = 0;
         let mut words = |words: &[u32]| words.iter().for_each(|&word| put(word));
         if let Some(Row { kind, span }) = self.at {
@@ -455,9 +450,11 @@ impl SideRecord {
         if self.changed.trailing {
             flags |= mask::CHANGED_TRAILING;
         }
-        if let Some(separator) = self.separator {
-            flags |= mask::SEPARATOR;
-            words(&[u32::from(separator.0)]);
+        if self.content {
+            flags |= mask::CONTENT;
+        }
+        if self.held_by_error {
+            flags |= mask::HELD_BY_ERROR;
         }
         if let Some(delimiter) = self.delimiter {
             flags |= mask::DELIMITER;
@@ -474,7 +471,7 @@ impl SideRecord {
         if !self.slots.is_empty() {
             flags |= mask::SLOTS;
             words(&[u32::try_from(self.slots.len()).map_err(|_| ArenaError::Full)?]);
-            for (slot, &(run, len)) in self.slots.iter().zip(runs) {
+            for slot in &self.slots {
                 words(&[
                     slot.word,
                     optional_kind(slot.before),
@@ -482,8 +479,6 @@ impl SideRecord {
                     optional_kind(slot.separator),
                     optional_kind(slot.space_before),
                     optional_kind(slot.space_after),
-                    run.0,
-                    len,
                 ]);
             }
         }
@@ -532,37 +527,29 @@ impl SideRecord {
     /// The side record at `at`, its spans left empty; an empty one at
     /// `Address::NONE`.
     pub fn read(arena: &dyn ArenaRead, at: Address) -> Result<SideRecord, ArenaError> {
-        Self::read_parts(arena, at, true, None).map(|(record, _)| record)
+        Self::read_parts(arena, at, true).map(|(record, _)| record)
     }
 
     /// The side record at `at` without its lists, its slots, its run and its
     /// spans left empty, and where its run lies: what naming a node and
     /// finding its parent read.
     pub(super) fn read_facts(arena: &dyn ArenaRead, at: Address) -> Result<(SideRecord, Option<RunAt>), ArenaError> {
-        Self::read_parts(arena, at, false, None).map(|(record, found)| (record, found.run))
-    }
-
-    /// The side record at `at` as `read_facts` reads it, and the entries it
-    /// holds a count of: its slots' token runs.
-    pub(super) fn read_held(arena: &dyn ArenaRead, at: Address) -> Result<(SideRecord, Vec<Address>), ArenaError> {
-        let mut held = Vec::new();
-        let (record, _) = Self::read_parts(arena, at, false, Some(&mut held))?;
-        Ok((record, held))
+        Self::read_parts(arena, at, false).map(|(record, found)| (record, found.run))
     }
 
     /// The spans the side record at `at` holds (`SideRecord::spans`); none
     /// at `Address::NONE`.
     pub(super) fn spans_at(arena: &dyn ArenaRead, at: Address) -> Result<Vec<std::ops::Range<Address>>, ArenaError> {
-        Self::read_parts(arena, at, false, None)?.1.spans.map_or(Ok(Vec::new()), |spans| spans.spans(arena))
+        Self::read_parts(arena, at, false)?.1.spans.map_or(Ok(Vec::new()), |spans| spans.spans(arena))
     }
 
     /// The starts the side record at `at` holds (`SideRecord::starts`);
     /// none at `Address::NONE`.
     pub(super) fn starts_at(arena: &dyn ArenaRead, at: Address) -> Result<Option<Vec<u32>>, ArenaError> {
-        Self::read_parts(arena, at, false, None)?.1.starts.map(|starts| starts.starts(arena)).transpose()
+        Self::read_parts(arena, at, false)?.1.starts.map(|starts| starts.starts(arena)).transpose()
     }
 
-    fn read_parts(arena: &dyn ArenaRead, at: Address, lists: bool, held: Option<&mut Vec<Address>>) -> Result<(SideRecord, ListsAt), ArenaError> {
+    fn read_parts(arena: &dyn ArenaRead, at: Address, lists: bool) -> Result<(SideRecord, ListsAt), ArenaError> {
         if at == Address::NONE {
             return Ok((SideRecord::default(), ListsAt::default()));
         }
@@ -572,7 +559,7 @@ impl SideRecord {
             return Err(malformed("side record mask", flags));
         }
         let has = |bit: u32| flags & bit != 0;
-        let mut record = SideRecord { changed: ChangedEdges { leading: has(mask::CHANGED_LEADING), trailing: has(mask::CHANGED_TRAILING) }, ..SideRecord::default() };
+        let mut record = SideRecord { changed: ChangedEdges { leading: has(mask::CHANGED_LEADING), trailing: has(mask::CHANGED_TRAILING) }, content: has(mask::CONTENT), held_by_error: has(mask::HELD_BY_ERROR), ..SideRecord::default() };
         if has(mask::AT) {
             let [kind, start, end]: [u32; field::AT_WORDS as usize] = fields.array()?;
             if start > end {
@@ -595,10 +582,6 @@ impl SideRecord {
             }
             record.sides = Some(Sides { tree: TreeId(tree), index: NodeIndex(index), end: NodeIndex(end), span: Span { start, end: stop } });
         }
-        if has(mask::SEPARATOR) {
-            let [separator]: [u32; field::SEPARATOR_WORDS as usize] = fields.array()?;
-            record.separator = Some(read_kind(separator)?);
-        }
         if has(mask::DELIMITER) {
             let [delimiter] = fields.array()?;
             record.delimiter = Some(read_delimiter(delimiter)?);
@@ -615,17 +598,9 @@ impl SideRecord {
             let [count] = fields.array()?;
             let entries = fields.take(count.checked_mul(SLOT_WORDS).ok_or(malformed("side record slot count", count))?)?;
             let (entries, _) = entries.as_chunks::<{ SLOT_WORDS as usize }>();
-            if let Some(held) = held {
-                held.extend(entries.iter().filter_map(|&[.., run, _]| (run != 0).then_some(Address(run))));
-            }
             record.slots = entries[..if lists { entries.len() } else { 0 }]
                 .iter()
-                .map(|&[word, before, after, separator, space_before, space_after, run, len]| {
-                    let tokens = match (run, len) {
-                        (0, 0) => Vec::new(),
-                        (0, _) => return Err(malformed("side record tokens address", run)),
-                        _ => arena.words(Address(run), len)?.iter().map(|&token| read_optional_kind(token)).collect::<Result<_, _>>()?,
-                    };
+                .map(|&[word, before, after, separator, space_before, space_after]| {
                     Ok(SideSlot {
                         word,
                         before: read_optional_kind(before)?,
@@ -633,7 +608,6 @@ impl SideRecord {
                         separator: read_optional_kind(separator)?,
                         space_before: read_optional_kind(space_before)?,
                         space_after: read_optional_kind(space_after)?,
-                        tokens,
                     })
                 })
                 .collect::<Result<_, _>>()?;
@@ -753,23 +727,27 @@ impl StartsAt {
     }
 }
 
-/// The starts the root of a read at `root` keeps (`SideRecord::starts`).
+/// The entry starts of the read whose source's entry is at `source`: the
+/// read's own side record holds them (`Source::read_side_of`,
+/// `SideRecord::starts`); none for a read that kept none.
 ///
 /// # Errors
 ///
-/// What reading the root's header and its side record refuses.
-pub fn read_entry_starts(arena: &dyn ArenaRead, root: Address) -> Result<Option<Vec<u32>>, ArenaError> {
-    SideRecord::starts_at(arena, super::borrowed::side_of(arena, root)?)
+/// What reading the source's entry and that side record refuses.
+pub fn read_entry_starts(arena: &dyn ArenaRead, source: Address) -> Result<Option<Vec<u32>>, ArenaError> {
+    super::source::Source::read_side_of(arena, source)?.map_or(Ok(None), |read| SideRecord::starts_at(arena, read))
 }
 
-/// The spans the root of a read at `root` names: the addresses the read's
-/// records lie in (`SideRecord::spans`).
+/// The spans of the read whose source's entry is at `source`: the
+/// addresses the read's records lie in, which the read's own side record
+/// holds (`Source::read_side_of`, `SideRecord::spans`); none for a read
+/// that names no side record.
 ///
 /// # Errors
 ///
-/// What reading the root's header and its side record refuses.
-pub fn read_spans(arena: &dyn ArenaRead, root: Address) -> Result<Vec<std::ops::Range<Address>>, ArenaError> {
-    SideRecord::spans_at(arena, super::borrowed::side_of(arena, root)?)
+/// What reading the source's entry and that side record refuses.
+pub fn read_spans(arena: &dyn ArenaRead, source: Address) -> Result<Vec<std::ops::Range<Address>>, ArenaError> {
+    super::source::Source::read_side_of(arena, source)?.map_or(Ok(Vec::new()), |read| SideRecord::spans_at(arena, read))
 }
 
 /// Where a side record's run lies: its first word and its words.
@@ -817,7 +795,6 @@ mod tests {
             span: Some(PointSpan { start: Point { row: 1, column: 2 }, end: Point { row: 3, column: 0 } }),
             sides: Some(Sides { tree: TreeId(2), index: NodeIndex(5), end: NodeIndex(6), span: Span { start: 10, end: 14 } }),
             changed: ChangedEdges { leading: true, trailing: false },
-            separator: Some(KindId(7)),
             delimiter: Some(Delimiter::TRAILING),
             separator_kind: Some(KindId(12)),
             flanks: crate::layout_kinds::Flanks { before: crate::layout_kinds::LayoutKinds::NEWLINE, after: crate::layout_kinds::LayoutKinds::NONE },
@@ -829,12 +806,13 @@ mod tests {
                     separator: Some(KindId(8)),
                     space_before: None,
                     space_after: Some(KindId(3)),
-                    tokens: vec![None, Some(KindId(8)), Some(KindId::BLANK)],
                 },
                 SideSlot { word: 7, ..SideSlot::default() },
                 SideSlot { word: 9, space_before: Some(KindId::BLANK), ..SideSlot::default() },
             ],
             parent: Some(Address(77)),
+            content: true,
+            held_by_error: true,
             node: Some(NodeFacts { kind: KindId(39), field: Some(FieldId(9)), alias: Some(KindId(40)), named: true, extra: false, missing: false, holds_error: true }),
             source: Some(3),
             depth: -2,
@@ -865,7 +843,7 @@ mod tests {
         let (mut placed, mut in_place) = (Arena::new(), Arena::new());
         let record = full();
         let at = record.write(&mut |words| placed.push(words)).expect("room");
-        assert_eq!(record.write_in(&mut in_place), Ok(at), "the token runs, then the record, at the same words");
+        assert_eq!(record.write_in(&mut in_place), Ok(at), "the record at the same words");
         assert_eq!(in_place.chunk(0), placed.chunk(0));
         assert_eq!(SideRecord::default().write_in(&mut in_place), Ok(Address::NONE));
     }
@@ -889,7 +867,7 @@ mod tests {
         let mut arena = Arena::new();
         arena.alloc(crate::arena::CHUNK_WORDS).expect("a full chunk");
         arena.alloc(crate::arena::CHUNK_WORDS - 2).expect("leave two words");
-        let record = SideRecord { separator: Some(KindId(7)), ..SideRecord::default() };
+        let record = SideRecord { separator_kind: Some(KindId(7)), ..SideRecord::default() };
         let at = record.write(&mut |words| arena.push(words)).expect("room");
         assert_eq!(at.word(), crate::arena::CHUNK_WORDS - 2);
         assert_eq!(SideRecord::read(&arena, at), Ok(record));
@@ -905,13 +883,14 @@ mod tests {
             SideRecord { span: whole.span, ..SideRecord::default() },
             SideRecord { sides: whole.sides, ..SideRecord::default() },
             SideRecord { changed: ChangedEdges { leading: false, trailing: true }, ..SideRecord::default() },
-            SideRecord { separator: whole.separator, ..SideRecord::default() },
             SideRecord { delimiter: whole.delimiter, ..SideRecord::default() },
             SideRecord { delimiter: Some(Delimiter::NONE), ..SideRecord::default() },
             SideRecord { separator_kind: whole.separator_kind, ..SideRecord::default() },
             SideRecord { flanks: whole.flanks, ..SideRecord::default() },
             SideRecord { slots: whole.slots, ..SideRecord::default() },
             SideRecord { parent: whole.parent, ..SideRecord::default() },
+            SideRecord { content: true, ..SideRecord::default() },
+            SideRecord { held_by_error: true, ..SideRecord::default() },
             SideRecord { node: whole.node, ..SideRecord::default() },
             SideRecord { node: Some(plain(0)), ..SideRecord::default() },
             SideRecord { source: whole.source, ..SideRecord::default() },
@@ -956,7 +935,6 @@ mod tests {
             edges: Some(Edges { before: None, after: Some(EdgeArm { arm: KindId(31), strength: None }) }),
             span: Some(PointSpan { start: Point { row: 1, column: 2 }, end: Point { row: 3, column: 0 } }),
             sides: Some(Sides { tree: TreeId(2), index: NodeIndex(5), end: NodeIndex(6), span: Span { start: 10, end: 14 } }),
-            separator: Some(KindId(7)),
             delimiter: Some(Delimiter::TRAILING),
             ..SideRecord::default()
         };
@@ -1003,7 +981,7 @@ mod tests {
             let at = arena.push(&words).expect("room");
             assert_eq!(SideRecord::read(&arena, at), Ok(SideRecord::default()), "{words:?}: a read steps over the spans");
             assert!(SideRecord::read_facts(&arena, at).is_ok(), "{words:?}");
-            assert!(SideRecord::read_held(&arena, at).is_ok(), "{words:?}");
+            assert!(SideRecord::read_facts(&arena, at).is_ok(), "{words:?}");
             assert!(SideRecord::spans_at(&arena, at).is_err(), "{words:?}");
         }
     }
@@ -1015,7 +993,7 @@ mod tests {
             let at = arena.push(&words).expect("room");
             assert!(SideRecord::read(&arena, at).is_err(), "{words:?}");
             assert!(SideRecord::read_facts(&arena, at).is_err(), "{words:?}");
-            assert!(SideRecord::read_held(&arena, at).is_err(), "{words:?}");
+            assert!(SideRecord::read_facts(&arena, at).is_err(), "{words:?}");
             assert!(SideRecord::spans_at(&arena, at).is_err(), "{words:?}");
         }
     }
@@ -1043,14 +1021,12 @@ mod tests {
             vec![mask::EDGES, 5, 0],
             vec![mask::EDGES, EDGE_SET | 9 << 16, 0],
             vec![mask::SIDES, 1, 2, 3, 9, 4],
-            vec![mask::SEPARATOR, 70_000],
             vec![mask::DELIMITER, 4],
             vec![mask::DELIMITER],
             vec![mask::SEPARATOR_KIND, 70_000],
             vec![mask::SLOTS, u32::MAX],
-            vec![mask::SLOTS, 1, 2, 0, 0, 0, 0, 0, 0, 3],
-            vec![mask::SLOTS, 1, 2, 70_002, 0, 0, 0, 0, 0, 0],
-            vec![mask::SLOTS, 1, 2, 0, 0, 0, 0, 70_002, 0, 0],
+            vec![mask::SLOTS, 1, 2, 70_002, 0, 0, 0, 0],
+            vec![mask::SLOTS, 1, 2, 0, 0, 0, 0, 70_002],
             vec![mask::SPANS],
             vec![mask::SPANS, 0],
         ] {

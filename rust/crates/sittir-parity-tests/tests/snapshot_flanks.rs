@@ -2,6 +2,7 @@
 //! where its first child's render begins and from where its last child's
 //! ends to its end, measured from geometry as the render once measured them.
 
+use sittir_core::engine::Backing as _;
 use sittir_core::layout_kinds::{Flanks, LayoutKinds};
 use sittir_core::types::NodeIndex;
 use sittir_parity_tests::parsed_rust;

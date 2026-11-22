@@ -7,6 +7,7 @@
 //! walk of the tree does.
 #![cfg(feature = "arena")]
 
+use sittir_core::engine::Backing as _;
 use sittir_core::arena::side::FIELD_BITS;
 use sittir_core::arena::{HydrateNode, RecordCells, RecordGrammar};
 use sittir_core::engine::{node_at_index, Engine, EngineGrammar};
@@ -376,7 +377,6 @@ fn parent_lookups_grow_with_the_tree() {
 /// names: an `ERROR`'s nodes are rows of its one record, so the second
 /// count is 0 and a list's edge item is never asked of a node there.
 fn lists_inside_entries<G: RecordGrammar + Copy, N: HydrateNode + RecordCells>(name: &str, grammar: G, options: fn() -> ResolvedOptions) -> (u32, Vec<String>) {
-    use sittir_core::engine::{Backing, Records};
     let lists = grammar.surface_kinds().lists;
     let (mut inside, mut named) = (0, Vec::new());
     for source in fixtures(name) {
@@ -384,7 +384,7 @@ fn lists_inside_entries<G: RecordGrammar + Copy, N: HydrateNode + RecordCells>(n
         let Some(root) = engine.parse_records::<N>(&source).unwrap_or_else(|refusal| panic!("{name} {source:?}: a read: {refusal}")).root else { continue };
         engine
             .read_node(root, |parsed, at| {
-                let names = <Records as Backing>::names(parsed).expect("a read names its nodes");
+                let names = parsed.node_names().expect("a read names its nodes");
                 let mut entries = Vec::new();
                 parsed.nodes().walk(at, &mut |step, kid| {
                     if step == Step::Meet {

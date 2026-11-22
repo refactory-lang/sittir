@@ -55,13 +55,11 @@ export async function storedLayoutOf(grammar: string): Promise<(source: string) 
 /** What every corpus entry of `grammar` stores of its layout apart from its read-time options, summed, and the entries refused. */
 export async function runStoredLayout(grammar: string): Promise<StoredLayoutResult> {
 	const storedOf = await storedLayoutOf(grammar);
-	const stored = { slots: 0, separators: 0 };
+	const stored = { slots: 0 };
 	const refused: LayoutRefusal[] = [];
 	for (const { name, source } of loadCorpusEntries(grammar)) {
 		try {
-			const { slots, separators } = storedOf(source);
-			stored.slots += slots;
-			stored.separators += separators;
+			stored.slots += storedOf(source).slots;
 		} catch (error) {
 			refused.push({ entry: name, message: error instanceof Error ? error.message : String(error) });
 		}

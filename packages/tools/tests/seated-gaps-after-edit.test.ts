@@ -28,7 +28,7 @@ const cases: readonly Case[] = [
 			else items = [built, use!];
 			return root.$with.statements(...items).$render();
 		},
-		expected: { reversed: 'fn f() {}\n\nuse x;\n', 'parsed-built': 'use x;\nfn g() {}\n', 'built-parsed': 'fn g() {}\n\nuse x;\n' }
+		expected: { reversed: 'fn f() {}\n\nuse x;\n', 'parsed-built': 'use x;\n\nfn g() {}\n', 'built-parsed': 'fn g() {}\n\nuse x;\n' }
 	},
 	{
 		grammar: 'typescript',
@@ -48,7 +48,7 @@ const cases: readonly Case[] = [
 		},
 		expected: {
 			reversed: 'function f() {}\n\nimport x from "x";\n',
-			'parsed-built': 'import x from "x";\nfunction g() {}\n',
+			'parsed-built': 'import x from "x";\n\nfunction g() {}\n',
 			'built-parsed': 'function g() {}\n\nimport x from "x";\n'
 		}
 	},
@@ -70,7 +70,7 @@ const cases: readonly Case[] = [
 		},
 		expected: {
 			reversed: 'def f():\n    pass\n\n\nimport x\n',
-			'parsed-built': 'import x\ndef g():\n    pass\n',
+			'parsed-built': 'import x\n\n\ndef g():\n    pass\n',
 			'built-parsed': 'def g():\n    pass\n\n\nimport x\n'
 		}
 	}
@@ -84,7 +84,7 @@ describe('a rebuilt list gives each parsed item the gap its seat declares', () =
 		it(`${grammar}: a built item after a parsed one`, () => {
 			expect(edit('built-parsed')).toBe(expected['built-parsed']);
 		});
-		it(`${grammar}: a parsed item before a built one`, () => {
+		it(`${grammar}: a parsed item before a built one keeps the blank line after it: an item owns the blank line after it, which stays when the item after is replaced (once it took the options' gap)`, () => {
 			expect(edit('parsed-built')).toBe(expected['parsed-built']);
 		});
 	}
@@ -133,11 +133,11 @@ describe('a rebuilt list gives each parsed item the gap its seat declares', () =
 		expect(root.$with.statements(x!, y!).$render()).toBe('use x;\n// c\nuse y;\n');
 	});
 
-	it('gives an inserted attribute its own seat before the item it now leads', () => {
+	it('gives an inserted attribute its own seat before the item it now leads, after the blank line the item before owns (once the attribute took the options\' gap)', () => {
 		const root = rust.parse('use x;\n\nfn f() {}\n\nfn g() {}\n');
 		const [x, f, g] = root.statements();
 		const inline = rust.parse('#[inline]\nfn h() {}\n').statements()[0];
-		expect(root.$with.statements(x!, inline!, f!, g!).$render()).toBe('use x;\n#[inline]\nfn f() {}\n\nfn g() {}\n');
+		expect(root.$with.statements(x!, inline!, f!, g!).$render()).toBe('use x;\n\n#[inline]\nfn f() {}\n\nfn g() {}\n');
 	});
 
 	it('keeps the source gap before an edited item whose neighbour is unchanged', () => {
@@ -199,7 +199,7 @@ describe('a rebuilt list takes the options\' layout, keeping its trailing delimi
 		expect(args.$with.elements(...items, appended).$render()).toBe('(1i32, 2i32, 3i32,)');
 	});
 
-	it('gives an item inserted before a wrapped item the options\' class', () => {
+	it('lands an item inserted after a set-apart item after its blank line, and gives the gap after it the options\' class (once both gaps took the options\' class)', () => {
 		const item = rust.parse('fn f(\n    a: u8,\n\n    b: i8,\n) {}\n').statements()[0];
 		if (item === undefined || typeof item === 'number' || !rust.is.functionItem(item)) throw new Error('expected a function item');
 		const parameters = item.$query().$descendants.ofType(rust.kinds.Parameters).at(0)!;
@@ -216,7 +216,7 @@ describe('a rebuilt list takes the options\' layout, keeping its trailing delimi
 		if (otherList === undefined || !rust.is.parametersElements(otherList)) throw new Error('expected parameters');
 		const c = otherList.items()[0]?.content();
 		if (c === undefined || typeof c === 'number' || !rust.is.parameter(c)) throw new Error('expected a parameter');
-		expect(parameters.$with.elements(rust.build.parametersElements(a, c, b)).$render()).toBe('(a: u8, c: u16, b: i8,)');
+		expect(parameters.$with.elements(rust.build.parametersElements(a, c, b)).$render()).toBe('(a: u8,\n\nc: u16, b: i8,)');
 	});
 
 	it('keeps the trailing delimiter beside an edited last parameter', () => {

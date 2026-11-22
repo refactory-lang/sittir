@@ -336,7 +336,7 @@ describe('render options on nodes', () => {
 			'::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);'
 		);
 		expect(listFill).toMatch(
-			/let delimiter = ::sittir_core::prepare::source_trailing_delimiter\(::sittir_core::prepare::LayoutTarget::sides\(&parts\.layout, overlay\)\.as_deref\(\), ::sittir_core::types::KindId\(\d+\), &\[::sittir_core::types::KindId\(\d+\)\], ctx\.options\.delimiter_at\(options::DELIM_FORMAL_PARAMETERS_ELEMENTS_ITEM\), ctx\);\n    ::sittir_core::prepare::Setting::fill\(&mut parts\.delimiter, overlay, delimiter\);/
+			/let delimiter = ::sittir_core::prepare::source_trailing_delimiter\(::sittir_core::prepare::LayoutTarget::sides\(&parts\.layout, overlay\)\.as_ref\(\), ::sittir_core::types::KindId\(\d+\), &\[::sittir_core::types::KindId\(\d+\)\], ctx\.options\.delimiter_at\(options::DELIM_FORMAL_PARAMETERS_ELEMENTS_ITEM\), ctx\);\n    ::sittir_core::prepare::Setting::fill\(&mut parts\.delimiter, overlay, delimiter\);/
 		);
 		expect(extractStructBody(src, 'FormalParametersElementsNode')).toMatch(
 			/    #\[space\(slot = \d+, side = before, site = options::SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE\)\]\n    pub item_separator_space_before: Option<KindId>,/

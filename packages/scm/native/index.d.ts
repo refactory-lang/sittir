@@ -26,8 +26,6 @@ export interface BackerParityRead {
  * count.
  */
 export interface LayoutWork {
-  /** The items the sibling lookups visited (`ParsedTree::siblings`). */
-  siblingItems: number
   /**
    * The levels the lookup cursors of the tree's calls climbed to reach
    * the nodes they looked up (`read::goto_from`), which bound the levels
@@ -438,17 +436,6 @@ export declare function readPlanHolds(engine: object, addresses: string, plan: s
  */
 export declare function readRenderAt(engine: object, node: number, leading: boolean, trailing: boolean, options?: object | undefined | null, templates?: boolean | undefined | null): string
 
-/** r" `separatorBefore` for the node a read left that the key `node` names. */
-export declare function readSeparatorBefore(engine: object, node: number): import('../src/types.ts').TSKindId | null
-
-/**
- * r" `siblings` for the nodes reads left that the keys `nodes`
- * r" name, in order, eight words a node, each from its own source.
- * r" Refuses an engine already disposed, a number that is no key
- * r" and a name no read's record holds.
- */
-export declare function readSiblings(engine: object, nodes: Array<number>): Array<number>
-
 /**
  * r" `{ leading, trailing, inner }`: `triviaSide` of each side for
  * r" the node a read left that the key `node` names, all from one
@@ -608,25 +595,6 @@ export declare function renderBuiltToFile(engine: object, owner: object, address
 export declare function renderToFile(engine: object, node: import('@sittir/types').WireNode, path: string, create: boolean, options?: object | undefined | null): boolean
 
 /**
- * The separator before the node at `index` of the live tree
- * `treeId` as an item of its parent's list slot, as a grammar id,
- * where its source spells another than the one the slot renders.
- * Refuses as `triviaSide` does.
- */
-export declare function separatorBefore(treeId: TreeId, index: NodeIndex): import('../src/types.ts').TSKindId | null
-
-/**
- * The siblings that hold sides beside each node at `indexes` of the
- * live tree `treeId` (`ParsedTree::siblings`), in order, eight words
- * a node: the previous sibling, then the next, each as 1, its kind,
- * its start and its end, or as four zeros where that node starts
- * (ends) its parent. Each span is taken at the outermost node
- * spanning exactly the node's bytes. Refuses a tree that is not live
- * and an index naming no node of it.
- */
-export declare function siblings(treeId: TreeId, indexes: Array<NodeIndex>): Array<number>
-
-/**
  * r" A side record's fields before a list's delimiters setting, each
  * r" one's mask bit and its words (`arena::side::field`).
  */
@@ -640,8 +608,6 @@ export declare const SIDE_FIELD_DELIMITER: number
 
 export declare const SIDE_FIELD_EDGES: number
 
-export declare const SIDE_FIELD_SEPARATOR: number
-
 export declare const SIDE_FIELD_SEPARATOR_KIND: number
 
 export declare const SIDE_FIELD_SIDES: number
@@ -651,8 +617,6 @@ export declare const SIDE_FIELD_SPAN: number
 export declare const SIDE_WORDS_AT: number
 
 export declare const SIDE_WORDS_EDGES: number
-
-export declare const SIDE_WORDS_SEPARATOR: number
 
 export declare const SIDE_WORDS_SIDES: number
 
@@ -689,10 +653,10 @@ export declare function snapshotLayouts(treeId: TreeId, index: NodeIndex, holder
 
 /**
  * How much of its layout the live tree `treeId` stores apart from
- * its read-time options (`ParsedTree::stored_layout`): `{ slots,
- * separators }`. A diagnostic. Refuses a tree that is not live.
+ * its read-time options (`ParsedTree::stored_layout`): `{ slots }`.
+ * A diagnostic. Refuses a tree that is not live.
  */
-export declare function storedLayout(treeId: TreeId): { slots: number; separators: number }
+export declare function storedLayout(treeId: TreeId): { slots: number }
 
 /**
  * The text `span` covers in the source of the live tree `treeId`:

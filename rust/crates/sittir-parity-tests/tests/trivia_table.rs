@@ -222,19 +222,3 @@ fn a_node_is_empty_when_no_child_has_width() {
         assert_eq!(is_empty(&mut nodes, case.at("statement_block", block)), empty, "{source:?}");
     }
 }
-
-#[test]
-fn a_list_items_siblings_are_the_items_of_its_own_list() {
-    let (language, _) = python();
-    let source = "@a\n@b\ndef f(): pass\n";
-    let tree = parse(&language, source);
-    let decorator = sittir_core::read::kind_named(&language, "decorator", true);
-    let sibling = |start, end| Some(sittir_core::engine::Sibling { start, end, kind: decorator });
-    let work = sittir_core::layout::LayoutWorkCounter::default();
-    let mut nodes = sittir_core::nodes::TreeNodes::new(&tree, source, &work);
-    let first = sittir_core::engine::siblings(&mut nodes, index_of(&tree, source, "decorator", "@a"));
-    let last = sittir_core::engine::siblings(&mut nodes, index_of(&tree, source, "decorator", "@b"));
-    assert_eq!((first.previous, first.next), (None, sibling(3, 5)));
-    assert_eq!((last.previous, last.next), (sibling(0, 2), None), "the definition after the decorators is another slot's");
-}
-

@@ -47,6 +47,21 @@ describe.each(['arena', 'object'] as const)('a parsed root released, %s storage'
 		expect(() => rs.release(built)).not.toThrow();
 	});
 
+	it('leaves a built node naming an item whose ancestors lie in other chunks rendering, after those chunks are reused', async () => {
+		using rs: any = await createEngine(rust, { nodeStorage });
+		const functions = (prefix: string) => Array.from({ length: 2000 }, (_, n) => `fn ${prefix}${n}(a: u8) -> u8 { a + ${n} }\n`).join('');
+		const root: any = rs.parse(functions('f'));
+		const kept: any = rs.build.sourceFile({ statements: [items(root).at(-1)] });
+		const rendered = 'fn f1999(a: u8) -> u8 { a + 1999 }\n';
+		expect(String(kept.$render())).toBe(rendered);
+		rs.release(root);
+		expect(String(kept.$render())).toBe(rendered);
+		const other: any = rs.parse(functions('g'));
+		expect(String(kept.$render())).toBe(rendered);
+		rs.release(other);
+		rs.release(kept);
+	});
+
 	it('does nothing when released a second time', async () => {
 		using rs: any = await createEngine(rust, { nodeStorage });
 		const root: any = rs.parse('fn a() {}\n');

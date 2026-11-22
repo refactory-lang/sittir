@@ -8,6 +8,7 @@
 //! parser-inserted `;` leaves an `ERROR` past its end on its declarator's
 //! side.
 
+use sittir_core::engine::Backing as _;
 use sittir_core::engine::EngineGrammar;
 use sittir_core::tree_sitter;
 use sittir_core::trivia_table::TriviaSide;

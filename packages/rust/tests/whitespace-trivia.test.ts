@@ -15,10 +15,11 @@ const statementsOf = (source: string, deep = false, engine = rs) => {
 };
 
 describe('a read node carries the whitespace beside a comment it owns, and the blank line that sets a list item apart, as whitespace trivia, and no other', () => {
-	it('holds the blank line that sets the second of two statements apart, and nothing on the first', () => {
+	it('holds the blank line between two statements on the first one\'s trailing side, and nothing on the second\'s leading side: an item owns the blank line after it (once the second\'s leading side held it)', () => {
 		const [a, b] = statementsOf('fn f() {\n    a;\n\n    b;\n}\n');
 		expect(a!.$trivia.leading()).toEqual([]);
-		expect(b!.$trivia.leading()).toEqual([blankline]);
+		expect(a!.$trivia.trailing()).toEqual([blankline]);
+		expect(b!.$trivia.leading()).toEqual([]);
 	});
 
 	it('gives the last statement nothing for the line break the options write before the closing brace', () => {
@@ -26,10 +27,11 @@ describe('a read node carries the whitespace beside a comment it owns, and the b
 		expect(b!.$trivia.trailing()).toEqual([]);
 	});
 
-	it('puts the blank line before a comment it owns in source order, and nothing for the break the line comment ends with', () => {
-		const [, b] = statementsOf('fn f() {\n    a;\n\n    // note\n    b;\n}\n');
+	it('leaves the blank line before a comment an item owns on the item before, and nothing for the break the line comment ends with: an item owns the blank line after it (once the commented item\'s leading side held [blank line, comment])', () => {
+		const [a, b] = statementsOf('fn f() {\n    a;\n\n    // note\n    b;\n}\n');
+		expect(a!.$trivia.trailing()).toEqual([blankline]);
 		const leading = b!.$trivia.leading();
-		expect(leading.map((entry: unknown) => (typeof entry === 'number' ? entry : 'comment'))).toEqual([blankline, 'comment']);
+		expect(leading.map((entry: unknown) => (typeof entry === 'number' ? entry : 'comment'))).toEqual(['comment']);
 	});
 
 	it('gives a node that starts where its parent starts nothing', () => {
@@ -46,7 +48,8 @@ describe('a read node carries the whitespace beside a comment it owns, and the b
 	it('reads the same from a tree read whole as from one read a level at a time', () => {
 		const [a, b] = statementsOf('fn f() {\n    a;\n\n    b;\n}\n', true);
 		expect(a!.$trivia.leading()).toEqual([]);
-		expect(b!.$trivia.leading()).toEqual([blankline]);
+		expect(a!.$trivia.trailing()).toEqual([blankline]);
+		expect(b!.$trivia.leading()).toEqual([]);
 		expect(b!.$trivia.trailing()).toEqual([]);
 	});
 
@@ -102,6 +105,5 @@ describe('a read node carries the whitespace beside a comment it owns, and the b
 		};
 		visit(root);
 		expect(coordinates.some(({ $span }) => $span.start === $span.end)).toBe(true);
-		for (const { $treeHandle } of coordinates) expect(() => tree.siblings?.([decodeIndex($treeHandle)])).not.toThrow();
 	});
 });

@@ -36,7 +36,7 @@ pub trait KindTest {
 impl<T: KindOf, const ADJACENT: bool> KindTest for SlotValue<T, ADJACENT> {
     fn kind_in(&self, w: &dyn RenderSink, kinds: &[KindId]) -> bool {
         match self {
-            SlotValue::Coord(coord) => w.kind_of(coord).is_some_and(|kind| kinds.contains(&kind)),
+            SlotValue::Coord(coord) => w.kind_of(coord.into()).is_some_and(|kind| kinds.contains(&kind)),
             SlotValue::Node(t) => t.kind_in(kinds),
         }
     }
@@ -253,9 +253,6 @@ impl<S: Slot> Render for View<'_, S> {
 /// The items of a list slot named in a template but absent from the node.
 pub const NO_ITEMS: &[&str] = &[];
 
-/// The text of a list's separator kind (`ListView::separators`).
-pub type SeparatorText = fn(crate::types::KindId) -> &'static str;
-
 /// A repeated slot with everything its rendering needs. Between items every
 /// separator part is written; a leading flank writes the token and what
 /// follows it, a trailing flank what precedes it and the token, so the
@@ -273,11 +270,6 @@ pub struct ListView<'a, L: SlotItems> {
     pub before: crate::types::KindId,
     /// The separator token itself; empty for an unseparated repeat.
     pub token: &'a str,
-    /// Each item's own separator by its place, where its source spells
-    /// another than `token` (`layout::slot_tokens`), with the text of each
-    /// separator kind; `None` for a list whose separator is not chosen per
-    /// instance.
-    pub separators: Option<(&'a [Option<crate::types::KindId>], SeparatorText)>,
     /// Whitespace site written after the separator token.
     pub after: crate::types::KindId,
     pub leading: bool,
@@ -373,10 +365,13 @@ impl<L: SlotItems> Render for ListView<'_, L> {
         }
         for (i, item) in (0..self.items.count()).filter_map(|i| Some((i, self.items.item(i)?))) {
             if i > 0 {
-                let own = self.separators.and_then(|(tokens, text)| Some(text(tokens.get(i).copied().flatten()?)));
+                let blank = w.take_blank_seam();
                 w.site(self.before);
-                w.text(own.unwrap_or(self.token))?;
+                w.text(self.token)?;
                 w.site(self.after);
+                if let Some(blank) = blank {
+                    w.restore_seam(blank);
+                }
             }
             w.join_arm(self.join);
             match self.units {
@@ -384,6 +379,7 @@ impl<L: SlotItems> Render for ListView<'_, L> {
                 None => item.write_slot("", "", w)?,
             }
         }
+        w.take_blank_seam();
         if self.trailing {
             w.site(self.before);
             w.text(self.token)?;

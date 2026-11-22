@@ -131,6 +131,14 @@ sittir_core::records_codec! {
             render::node::render_entry_record(root, reads, built, store, ctx, w)
         }
 
+        fn render_source(
+            self,
+            at: sittir_core::slot::NodeIdOrCoordinate<'_>,
+            ctx: &sittir_core::prepare::RenderContext<'_>,
+        ) -> std::result::Result<String, sittir_core::render::RenderError> {
+            render::node::render_source_root(at, ctx)
+        }
+
         fn slot_key(kind: sittir_core::types::KindId, word: u32) -> Option<&'static str> {
             <AnyNode as sittir_core::arena::PrepareRecord<Self::Trivia>>::slot_key(kind, word)
         }

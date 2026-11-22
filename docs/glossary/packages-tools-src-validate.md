@@ -1409,7 +1409,7 @@ Reads, for a parsed node, the work its tree's layout reads have done so far: the
 
 ### `packages/tools/src/validate/stored-layout.ts::storedLayoutOf`
 
-How much of its layout the source's tree stores apart from its read-time options (`SittirEngine::storedLayout`): the list slots that store a layout, and the items that store their own separator.
+How much of its layout the source's tree stores apart from its read-time options (`SittirEngine::storedLayout`): the list slots that store a layout.
 
 ### `packages/tools/src/validate/stored-layout.ts::runStoredLayout`
 
@@ -1425,7 +1425,7 @@ A corpus entry whose stored layout the engine refused to measure, with the engin
 
 ### `packages/tools/src/validate/stored-layout.ts::StoredLayoutResult`
 
-What `runStoredLayout` returns for a grammar's corpus: `stored`, the layout every entry stores apart from its read-time options summed over the corpus (the `layoutStoredSlots` and `layoutStoredSeparators` rows), and `refused`, each `LayoutRefusal`.
+What `runStoredLayout` returns for a grammar's corpus: `stored`, the layout every entry stores apart from its read-time options summed over the corpus (the `layoutStoredSlots` row), and `refused`, each `LayoutRefusal`.
 
 ### `packages/tools/src/validate/grammar-diagnostics-file.ts::readGrammarDiagnostics`
 

@@ -3,10 +3,28 @@
     "expectedOutput": "\ndeclare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar {\n  export var foo;\n};\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n",
     "grammar": "typescript",
     "input": {
+      "$_layout": {
+        "units": [
+          {
+            "item": 7,
+            "slot": "_statements",
+            "trailing": [
+              186
+            ]
+          }
+        ]
+      },
       "$errors": [],
       "$type": 190,
       "_statements": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 313,
           "_content": {
             "$type": 246,
@@ -59,7 +77,7 @@
         {
           "$_layout": {
             "trivia": {
-              "leading": [
+              "trailing": [
                 186
               ]
             }
@@ -86,7 +104,7 @@
         {
           "$_layout": {
             "trivia": {
-              "leading": [
+              "trailing": [
                 186
               ]
             }
@@ -119,7 +137,7 @@
         {
           "$_layout": {
             "trivia": {
-              "leading": [
+              "trailing": [
                 186
               ]
             }
@@ -168,7 +186,7 @@
         {
           "$_layout": {
             "trivia": {
-              "leading": [
+              "trailing": [
                 186
               ]
             }
@@ -219,6 +237,13 @@
                   "_terminator": 22
                 },
                 {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        186
+                      ]
+                    }
+                  },
                   "$type": 208,
                   "_declarators": [
                     {
@@ -237,13 +262,6 @@
                   "_terminator": 22
                 },
                 {
-                  "$_layout": {
-                    "trivia": {
-                      "leading": [
-                        186
-                      ]
-                    }
-                  },
                   "$type": 320,
                   "_body": {
                     "$type": 498,
@@ -369,7 +387,7 @@
         {
           "$_layout": {
             "trivia": {
-              "leading": [
+              "trailing": [
                 186
               ]
             }
@@ -381,6 +399,13 @@
               "$type": 288,
               "_members": [
                 {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        186
+                      ]
+                    }
+                  },
                   "$type": 408,
                   "_member": {
                     "$type": 456,
@@ -427,13 +452,6 @@
                   "_terminator": 22
                 },
                 {
-                  "$_layout": {
-                    "trivia": {
-                      "leading": [
-                        186
-                      ]
-                    }
-                  },
                   "$type": 408,
                   "_member": {
                     "$type": 462,
@@ -498,13 +516,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 313,
           "_content": {
             "$type": 315,
@@ -549,13 +560,6 @@
         },
         227,
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 313,
           "_content": {
             "$type": 315,
@@ -1017,6 +1021,13 @@
               "_terminator": 22
             },
             {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    186
+                  ]
+                }
+              },
               "$type": 208,
               "_declarators": [
                 {
@@ -1035,13 +1046,6 @@
               "_terminator": 22
             },
             {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    186
-                  ]
-                }
-              },
               "$type": 320,
               "_body": {
                 "$type": 498,
@@ -1190,6 +1194,13 @@
           "$type": 288,
           "_members": [
             {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    186
+                  ]
+                }
+              },
               "$type": 408,
               "_member": {
                 "$type": 456,
@@ -1236,13 +1247,6 @@
               "_terminator": 22
             },
             {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    186
-                  ]
-                }
-              },
               "$type": 408,
               "_member": {
                 "$type": 462,
@@ -1659,6 +1663,13 @@
         "$type": 288,
         "_members": [
           {
+            "$_layout": {
+              "trivia": {
+                "trailing": [
+                  186
+                ]
+              }
+            },
             "$type": 408,
             "_member": {
               "$type": 456,
@@ -1705,13 +1716,6 @@
             "_terminator": 22
           },
           {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  186
-                ]
-              }
-            },
             "$type": 408,
             "_member": {
               "$type": 462,
@@ -1974,6 +1978,13 @@
       "$type": 288,
       "_members": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 408,
           "_member": {
             "$type": 456,
@@ -2020,13 +2031,6 @@
           "_terminator": 22
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 408,
           "_member": {
             "$type": 462,
@@ -3871,6 +3875,13 @@
             "_terminator": 22
           },
           {
+            "$_layout": {
+              "trivia": {
+                "trailing": [
+                  186
+                ]
+              }
+            },
             "$type": 208,
             "_declarators": [
               {
@@ -3889,13 +3900,6 @@
             "_terminator": 22
           },
           {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  186
-                ]
-              }
-            },
             "$type": 320,
             "_body": {
               "$type": 498,
@@ -4078,6 +4082,13 @@
           "_terminator": 22
         },
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 208,
           "_declarators": [
             {
@@ -4096,13 +4107,6 @@
           "_terminator": 22
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 320,
           "_body": {
             "$type": 498,
@@ -6666,6 +6670,13 @@
       "$type": 190,
       "_statements": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 313,
           "_content": {
             "$type": 320,
@@ -6750,13 +6761,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 313,
           "_content": {
             "$type": 246,
@@ -8550,6 +8554,13 @@
       "$type": 190,
       "_statements": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 432,
           "_content": {
             "$type": 436,
@@ -8641,11 +8652,13 @@
           "$_layout": {
             "trivia": {
               "leading": [
-                186,
                 {
                   "$text": "// a comment",
                   "$type": 153
                 },
+                186
+              ],
+              "trailing": [
                 186
               ]
             }
@@ -8673,13 +8686,6 @@
           "_decorator": []
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 432,
           "_content": {
             "$type": 303,
@@ -11543,6 +11549,13 @@
       "$type": 190,
       "_statements": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 432,
           "_content": {
             "$type": 320,
@@ -11612,13 +11625,6 @@
           "_decorator": []
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 432,
           "_content": {
             "$type": 246,
@@ -13342,6 +13348,13 @@
       "$type": 190,
       "_statements": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 315,
           "_body": {
             "$type": 211,
@@ -13491,7 +13504,7 @@
         {
           "$_layout": {
             "trivia": {
-              "leading": [
+              "trailing": [
                 186
               ]
             }
@@ -13511,13 +13524,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 313,
           "_content": {
             "$type": 315,
@@ -18420,6 +18426,13 @@
               "$type": 211,
               "_statements": [
                 {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        186
+                      ]
+                    }
+                  },
                   "$type": 325,
                   "_name": {
                     "$type": 505,
@@ -18438,13 +18451,6 @@
                   }
                 },
                 {
-                  "$_layout": {
-                    "trivia": {
-                      "leading": [
-                        186
-                      ]
-                    }
-                  },
                   "$type": 432,
                   "_content": {
                     "$type": 207,
@@ -18599,6 +18605,13 @@
           "$type": 211,
           "_statements": [
             {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    186
+                  ]
+                }
+              },
               "$type": 325,
               "_name": {
                 "$type": 505,
@@ -18617,13 +18630,6 @@
               }
             },
             {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    186
-                  ]
-                }
-              },
               "$type": 432,
               "_content": {
                 "$type": 207,
@@ -18774,6 +18780,13 @@
         "$type": 211,
         "_statements": [
           {
+            "$_layout": {
+              "trivia": {
+                "trailing": [
+                  186
+                ]
+              }
+            },
             "$type": 325,
             "_name": {
               "$type": 505,
@@ -18792,13 +18805,6 @@
             }
           },
           {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  186
-                ]
-              }
-            },
             "$type": 432,
             "_content": {
               "$type": 207,
@@ -18946,6 +18952,13 @@
       "$type": 211,
       "_statements": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 325,
           "_name": {
             "$type": 505,
@@ -18964,13 +18977,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 432,
           "_content": {
             "$type": 207,
@@ -20350,6 +20356,13 @@
       "$type": 190,
       "_statements": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 316,
           "_body": {
             "$type": 211,
@@ -20362,13 +20375,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 316,
           "_body": {
             "$type": 211,
@@ -21793,6 +21799,13 @@
             "$type": 288,
             "_members": [
               {
+                "$_layout": {
+                  "trivia": {
+                    "trailing": [
+                      186
+                    ]
+                  }
+                },
                 "$type": 408,
                 "_member": {
                   "$type": 456,
@@ -22046,13 +22059,6 @@
                 "_terminator": 22
               },
               {
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      186
-                    ]
-                  }
-                },
                 "$type": 408,
                 "_member": {
                   "$type": 456,
@@ -22192,6 +22198,13 @@
         "$type": 288,
         "_members": [
           {
+            "$_layout": {
+              "trivia": {
+                "trailing": [
+                  186
+                ]
+              }
+            },
             "$type": 408,
             "_member": {
               "$type": 456,
@@ -22445,13 +22458,6 @@
             "_terminator": 22
           },
           {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  186
-                ]
-              }
-            },
             "$type": 408,
             "_member": {
               "$type": 456,
@@ -22862,6 +22868,13 @@
       "$type": 288,
       "_members": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 408,
           "_member": {
             "$type": 456,
@@ -23115,13 +23128,6 @@
           "_terminator": 22
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 408,
           "_member": {
             "$type": 456,
@@ -34113,6 +34119,13 @@
       "$type": 190,
       "_statements": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 314,
           "_body": {
             "$type": 288,
@@ -34130,7 +34143,7 @@
         {
           "$_layout": {
             "trivia": {
-              "leading": [
+              "trailing": [
                 186
               ]
             }
@@ -34338,13 +34351,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 314,
           "_body": {
             "$type": 288,
@@ -38523,6 +38529,13 @@
       "$type": 190,
       "_statements": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 246,
           "_body": {
             "$type": 288,
@@ -38570,13 +38583,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 246,
           "_body": {
             "$type": 288,
@@ -39514,6 +39520,13 @@
           "_terminator": 175
         },
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 432,
           "_content": {
             "$type": 246,
@@ -39592,13 +39605,6 @@
           "_decorator": []
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 246,
           "_body": {
             "$type": 288,
@@ -39689,6 +39695,13 @@
           "_terminator": 175
         },
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 432,
           "_content": {
             "$type": 246,
@@ -39783,13 +39796,6 @@
           "_decorator": []
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 432,
           "_content": {
             "$type": 246,
@@ -43942,6 +43948,13 @@
       "$type": 190,
       "_statements": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 314,
           "_body": {
             "$type": 288,
@@ -43982,13 +43995,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 246,
           "_body": {
             "$type": 288,
@@ -47990,6 +47996,13 @@
       "$type": 190,
       "_statements": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 206,
           "_expression": {
             "$type": 269,
@@ -48019,13 +48032,6 @@
           "_terminator": 22
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 206,
           "_expression": {
             "$type": 269,
@@ -50181,6 +50187,13 @@
       "$type": 190,
       "_statements": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 206,
           "_expression": {
             "$type": 238,
@@ -50223,13 +50236,6 @@
           "_terminator": 22
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 206,
           "_expression": {
             "$type": 238,
@@ -53590,6 +53596,13 @@
       "$type": 190,
       "_statements": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 249,
           "_async": false,
           "_body": {
@@ -53654,7 +53667,7 @@
         {
           "$_layout": {
             "trivia": {
-              "leading": [
+              "trailing": [
                 186
               ]
             }
@@ -53737,7 +53750,7 @@
         {
           "$_layout": {
             "trivia": {
-              "leading": [
+              "trailing": [
                 186
               ]
             }
@@ -53895,7 +53908,7 @@
         {
           "$_layout": {
             "trivia": {
-              "leading": [
+              "trailing": [
                 186
               ]
             }
@@ -53992,13 +54005,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 249,
           "_async": false,
           "_body": {
@@ -59209,6 +59215,13 @@
       "$type": 190,
       "_statements": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 206,
           "_expression": {
             "$type": 252,
@@ -59298,7 +59311,7 @@
         {
           "$_layout": {
             "trivia": {
-              "leading": [
+              "trailing": [
                 186
               ]
             }
@@ -59425,13 +59438,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 206,
           "_expression": {
             "$type": 252,
@@ -63976,6 +63982,13 @@
       "$type": 190,
       "_statements": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 249,
           "_async": false,
           "_body": {
@@ -63993,13 +64006,6 @@
           "_terminator": 175
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 303,
           "_async": false,
           "_name": {
@@ -64072,6 +64078,13 @@
           "_terminator": 22
         },
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 303,
           "_async": false,
           "_name": {
@@ -64103,13 +64116,6 @@
           "_terminator": 175
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 303,
           "_async": false,
           "_name": {
@@ -65916,6 +65922,9 @@
                   "$text": "// above is a signature",
                   "$type": 153
                 }
+              ],
+              "trailing": [
+                186
               ]
             }
           },
@@ -65936,7 +65945,7 @@
         {
           "$_layout": {
             "trivia": {
-              "leading": [
+              "trailing": [
                 186
               ]
             }
@@ -65968,13 +65977,6 @@
           "_terminator": 175
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 303,
           "_async": false,
           "_name": {
@@ -71489,6 +71491,13 @@
       "$type": 190,
       "_statements": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 249,
           "_async": false,
           "_body": {
@@ -71537,13 +71546,6 @@
           "_terminator": 175
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 249,
           "_async": false,
           "_body": {
@@ -76970,6 +76972,13 @@
           "_type_keyword": 8
         },
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 198,
           "_from_clause": {
             "$type": 411,
@@ -77023,13 +77032,6 @@
           "_type_keyword": 7
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 198,
           "_from_clause": {
             "$type": 411,
@@ -82327,6 +82329,13 @@
       "$type": 190,
       "_statements": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 325,
           "_name": {
             "$type": 505,
@@ -82456,13 +82465,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 325,
           "_name": {
             "$type": 505,
@@ -84260,6 +84262,13 @@
       "$type": 190,
       "_statements": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 322,
           "_body": {
             "$type": 323,
@@ -84388,13 +84397,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 322,
           "_body": {
             "$type": 323,
@@ -86439,6 +86441,13 @@
       "$type": 190,
       "_statements": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 320,
           "_body": {
             "$type": 498,
@@ -86480,7 +86489,7 @@
         {
           "$_layout": {
             "trivia": {
-              "leading": [
+              "trailing": [
                 186
               ]
             }
@@ -86538,7 +86547,7 @@
         {
           "$_layout": {
             "trivia": {
-              "leading": [
+              "trailing": [
                 186
               ]
             }
@@ -86602,7 +86611,7 @@
         {
           "$_layout": {
             "trivia": {
-              "leading": [
+              "trailing": [
                 186
               ]
             }
@@ -86720,7 +86729,7 @@
         {
           "$_layout": {
             "trivia": {
-              "leading": [
+              "trailing": [
                 186
               ]
             }
@@ -86853,13 +86862,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 320,
           "_body": {
             "$type": 498,
@@ -90131,6 +90133,13 @@
       "$type": 190,
       "_statements": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 246,
           "_body": {
             "$type": 288,
@@ -90180,7 +90189,7 @@
         {
           "$_layout": {
             "trivia": {
-              "leading": [
+              "trailing": [
                 186
               ]
             }
@@ -90244,7 +90253,7 @@
         {
           "$_layout": {
             "trivia": {
-              "leading": [
+              "trailing": [
                 186
               ]
             }
@@ -90313,13 +90322,6 @@
           "_terminator": 175
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 246,
           "_body": {
             "$type": 288,
@@ -94125,6 +94127,13 @@
       "$type": 190,
       "_statements": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 320,
           "_body": {
             "$type": 498,
@@ -94213,13 +94222,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 207,
           "_declarators": [
             {
@@ -97636,6 +97638,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 325,
           "_name": {
             "$type": 505,
@@ -97660,13 +97669,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 325,
           "_name": {
             "$type": 505,
@@ -97714,6 +97716,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 325,
           "_name": {
             "$type": 505,
@@ -97747,7 +97756,7 @@
         {
           "$_layout": {
             "trivia": {
-              "leading": [
+              "trailing": [
                 186
               ]
             }
@@ -97773,13 +97782,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 325,
           "_name": {
             "$type": 505,
@@ -97805,6 +97807,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 325,
           "_name": {
             "$type": 505,
@@ -97836,13 +97845,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 325,
           "_name": {
             "$type": 505,
@@ -101676,6 +101678,13 @@
       "$type": 190,
       "_statements": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 249,
           "_async": false,
           "_body": {
@@ -101732,7 +101741,7 @@
         {
           "$_layout": {
             "trivia": {
-              "leading": [
+              "trailing": [
                 186
               ]
             }
@@ -101817,13 +101826,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 249,
           "_async": false,
           "_body": {
@@ -104515,6 +104517,13 @@
       "$type": 190,
       "_statements": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 249,
           "_async": false,
           "_body": {
@@ -104578,13 +104587,6 @@
           "_terminator": 175
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 249,
           "_async": false,
           "_body": {
@@ -106683,6 +106685,13 @@
           }
         },
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 325,
           "_name": {
             "$type": 505,
@@ -106733,11 +106742,13 @@
           "$_layout": {
             "trivia": {
               "leading": [
-                186,
                 {
                   "$text": "// special optional and rest type syntax",
                   "$type": 153
                 }
+              ],
+              "trailing": [
+                186
               ]
             }
           },
@@ -106778,7 +106789,6 @@
           "$_layout": {
             "trivia": {
               "leading": [
-                186,
                 {
                   "$text": "// labeled elements",
                   "$type": 153
@@ -133183,10 +133193,28 @@
     "expectedOutput": "\ndeclare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar {\n  export var foo;\n};\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  for (let i = 0; i < 3; i++) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n",
     "grammar": "typescript",
     "input": {
+      "$_layout": {
+        "units": [
+          {
+            "item": 7,
+            "slot": "_statements",
+            "trailing": [
+              186
+            ]
+          }
+        ]
+      },
       "$errors": [],
       "$type": 190,
       "_statements": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 313,
           "_content": {
             "$type": 246,
@@ -133239,7 +133267,7 @@
         {
           "$_layout": {
             "trivia": {
-              "leading": [
+              "trailing": [
                 186
               ]
             }
@@ -133266,7 +133294,7 @@
         {
           "$_layout": {
             "trivia": {
-              "leading": [
+              "trailing": [
                 186
               ]
             }
@@ -133299,7 +133327,7 @@
         {
           "$_layout": {
             "trivia": {
-              "leading": [
+              "trailing": [
                 186
               ]
             }
@@ -133348,7 +133376,7 @@
         {
           "$_layout": {
             "trivia": {
-              "leading": [
+              "trailing": [
                 186
               ]
             }
@@ -133399,6 +133427,13 @@
                   "_terminator": 22
                 },
                 {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        186
+                      ]
+                    }
+                  },
                   "$type": 208,
                   "_declarators": [
                     {
@@ -133417,13 +133452,6 @@
                   "_terminator": 22
                 },
                 {
-                  "$_layout": {
-                    "trivia": {
-                      "leading": [
-                        186
-                      ]
-                    }
-                  },
                   "$type": 320,
                   "_body": {
                     "$type": 498,
@@ -133549,7 +133577,7 @@
         {
           "$_layout": {
             "trivia": {
-              "leading": [
+              "trailing": [
                 186
               ]
             }
@@ -133561,6 +133589,13 @@
               "$type": 288,
               "_members": [
                 {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        186
+                      ]
+                    }
+                  },
                   "$type": 408,
                   "_member": {
                     "$type": 456,
@@ -133607,13 +133642,6 @@
                   "_terminator": 22
                 },
                 {
-                  "$_layout": {
-                    "trivia": {
-                      "leading": [
-                        186
-                      ]
-                    }
-                  },
                   "$type": 408,
                   "_member": {
                     "$type": 462,
@@ -133678,13 +133706,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 313,
           "_content": {
             "$type": 315,
@@ -133729,13 +133750,6 @@
         },
         227,
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 313,
           "_content": {
             "$type": 315,
@@ -134243,6 +134257,13 @@
               "_terminator": 22
             },
             {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    186
+                  ]
+                }
+              },
               "$type": 208,
               "_declarators": [
                 {
@@ -134261,13 +134282,6 @@
               "_terminator": 22
             },
             {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    186
-                  ]
-                }
-              },
               "$type": 320,
               "_body": {
                 "$type": 498,
@@ -134416,6 +134430,13 @@
           "$type": 288,
           "_members": [
             {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    186
+                  ]
+                }
+              },
               "$type": 408,
               "_member": {
                 "$type": 456,
@@ -134462,13 +134483,6 @@
               "_terminator": 22
             },
             {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    186
-                  ]
-                }
-              },
               "$type": 408,
               "_member": {
                 "$type": 462,
@@ -134931,6 +134945,13 @@
         "$type": 288,
         "_members": [
           {
+            "$_layout": {
+              "trivia": {
+                "trailing": [
+                  186
+                ]
+              }
+            },
             "$type": 408,
             "_member": {
               "$type": 456,
@@ -134977,13 +134998,6 @@
             "_terminator": 22
           },
           {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  186
-                ]
-              }
-            },
             "$type": 408,
             "_member": {
               "$type": 462,
@@ -135246,6 +135260,13 @@
       "$type": 288,
       "_members": [
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 408,
           "_member": {
             "$type": 456,
@@ -135292,13 +135313,6 @@
           "_terminator": 22
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 408,
           "_member": {
             "$type": 462,
@@ -137208,6 +137222,13 @@
             "_terminator": 22
           },
           {
+            "$_layout": {
+              "trivia": {
+                "trailing": [
+                  186
+                ]
+              }
+            },
             "$type": 208,
             "_declarators": [
               {
@@ -137226,13 +137247,6 @@
             "_terminator": 22
           },
           {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  186
-                ]
-              }
-            },
             "$type": 320,
             "_body": {
               "$type": 498,
@@ -137415,6 +137429,13 @@
           "_terminator": 22
         },
         {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                186
+              ]
+            }
+          },
           "$type": 208,
           "_declarators": [
             {
@@ -137433,13 +137454,6 @@
           "_terminator": 22
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                186
-              ]
-            }
-          },
           "$type": 320,
           "_body": {
             "$type": 498,

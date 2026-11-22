@@ -5,6 +5,7 @@
 //! that names a record holding it is refused at admission.
 #![cfg(feature = "arena")]
 
+use sittir_core::engine::Backing as _;
 use sittir_core::arena::{Address, ArenaError, ArenaRead, BuiltChunks, Cell, CellAt, CellWord, Linked, RecordCells, RecordGrammar, RecordSink, WriteCell};
 use sittir_core::engine::{claim_tree_id, Engine, ParsedTree};
 use sittir_core::options::ResolvedOptions;
@@ -85,7 +86,7 @@ impl<T: Clone + sittir_core::heap::HeapBytes> Built<T> {
         let mut link = |_: &sittir_core::slot::NodeCoordinate| -> Result<Linked, sittir_core::arena::ArenaError> { Err(sittir_core::arena::ArenaError::Unwritable("a coordinate in a snapshot")) };
         let word = node.write_cell(&mut RecordSink::built(&mut arena, &store, &mut link)).ok()?;
         let cell = Cell::decode_built(word, &arena, G::KIND_BITS).ok()?;
-        matches!(cell, Cell::Child { .. }).then(|| Self { image: Image::of(&arena), bits: G::KIND_BITS, store, root: CellAt { cell, tree: None, site: None } })
+        matches!(cell, Cell::Child { .. }).then(|| Self { image: Image::of(&arena), bits: G::KIND_BITS, store, root: CellAt { cell, node: None, site: None } })
     }
 
     /// The address of every word of each words chunk up to the word after

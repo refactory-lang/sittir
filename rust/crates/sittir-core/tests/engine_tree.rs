@@ -61,7 +61,7 @@ fn node_at_span_finds_the_first_node_a_pre_order_walk_meets_with_that_span_and_k
                     .iter()
                     .find(|candidate| grammar_id(candidate) == kind || display_id(candidate) == kind)
                     .map(tree_sitter::Node::id);
-                let found = node_at_span(&mut navigation, span, kind).and_then(|found| node_at_index(&tree, found.index)).map(|found| found.id());
+                let found = node_at_span(&mut navigation, NodeIndex::ROOT, span, kind).and_then(|found| node_at_index(&tree, found.index)).map(|found| found.id());
                 assert_eq!(found, expected, "{} at {}..{}", node.kind(), span.start, span.end);
             }
         }
@@ -155,7 +155,7 @@ fn last_list_child_of(source: &str, list: &str, kind: u16) -> Option<String> {
     let tree = parse_tree(&tree_sitter_rust::LANGUAGE.into(), source);
     let start = sittir_core::types::narrow(source.find(list).unwrap());
     let work = LayoutWorkCounter::default();
-    let child = sittir_core::engine::last_list_child(&mut TreeNodes::new(&tree, source, &work), Span { start, end: start + sittir_core::types::narrow(list.len()) }, KindId(kind))?;
+    let child = sittir_core::engine::last_list_child(&mut TreeNodes::new(&tree, source, &work), NodeIndex::ROOT, Span { start, end: start + sittir_core::types::narrow(list.len()) }, KindId(kind))?;
     node_at_index(&tree, child.index).map(|child| child.kind().to_string())
 }
 
@@ -183,6 +183,6 @@ fn a_list_the_tree_holds_a_node_for_ends_in_that_node_child() {
     let arguments = tree.root_node().descendant_for_byte_range(10, 17).unwrap();
     assert_eq!(arguments.kind(), "arguments");
     let work = LayoutWorkCounter::default();
-    let last = sittir_core::engine::last_list_child(&mut TreeNodes::new(&tree, source, &work), Span { start: 10, end: 17 }, sittir_core::read::grammar_id(&arguments)).unwrap();
+    let last = sittir_core::engine::last_list_child(&mut TreeNodes::new(&tree, source, &work), NodeIndex::ROOT, Span { start: 10, end: 17 }, sittir_core::read::grammar_id(&arguments)).unwrap();
     assert_eq!(node_at_index(&tree, last.index).unwrap().kind(), ")");
 }

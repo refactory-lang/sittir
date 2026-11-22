@@ -3,6 +3,7 @@
 //! past the tree's last node. A snapshot likewise: the `ERROR`'s row alone,
 //! else the node's own row first.
 
+use sittir_core::engine::Backing as _;
 use sittir_core::engine::NodeRead;
 use sittir_core::read::{Depth, Origin};
 use sittir_core::types::NodeIndex;

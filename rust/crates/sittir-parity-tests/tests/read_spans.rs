@@ -1,12 +1,13 @@
-//! A read's root names the addresses its records lie in: one range for each
+//! A read names the addresses its records lie in, on its own side record: one range for each
 //! run of chunks its writer wrote in turn. A range holds no record of
 //! another read or of a build, whatever numbers the read's chunks took.
 #![cfg(feature = "arena")]
 
+use sittir_core::engine::Backing as _;
 use std::ops::Range;
 
 use sittir_core::arena::{read_spans, Address};
-use sittir_core::engine::{Engine, ParsedTree};
+use sittir_core::engine::Engine;
 use sittir_core::nodes::Nodes;
 use sittir_core::trivia_store::Place;
 use sittir_core::types::NodeIndex;
@@ -27,7 +28,7 @@ fn joined(n: usize) -> String {
 /// The records a read left for the nodes of the tree its root heads.
 fn records(engine: &Engine<RustGrammar>, root: Address) -> Vec<Address> {
     let built = engine.written().built();
-    let tree = ParsedTree::over_records(engine, &built, root).expect("a tree over the records");
+    let tree = sittir_core::engine::Records::over(engine, &built, root).expect("a tree over the records");
     let mut nodes = tree.nodes();
     let (mut pending, mut found) = (vec![NodeIndex::ROOT], Vec::new());
     while let Some(at) = pending.pop() {
@@ -40,7 +41,8 @@ fn records(engine: &Engine<RustGrammar>, root: Address) -> Vec<Address> {
 }
 
 fn spans(engine: &Engine<RustGrammar>, root: Address) -> Vec<Range<Address>> {
-    read_spans(&*engine.written().built(), root).expect("the root's spans")
+    let built = engine.written().built();
+    read_spans(&*built, sittir_core::arena::RunNodes::source_of(&*built, root).expect("the root's source")).expect("the read's spans")
 }
 
 fn parse(engine: &mut Engine<RustGrammar>, source: &str) -> Address {

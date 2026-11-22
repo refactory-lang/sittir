@@ -10,7 +10,7 @@ use super::small::{SmallMap, SmallStack};
 
 use super::{Address, ArenaError, ArenaRead, Cell, SideRecord};
 use crate::record::HEADER_WORDS;
-use crate::types::{KindId, TreeId};
+use crate::types::{KindId, NodeId};
 
 /// Where a record of one kind keeps its cells: its width in words, parsed
 /// and built, and each slot's cell, by the stamps its node type carries.
@@ -90,7 +90,7 @@ enum Step {
 ///
 /// The first word that breaks one of these: `ArenaError::OutOfBounds` for
 /// words the arena never wrote, `ArenaError::Malformed` for any other.
-pub fn admit(arena: &dyn ArenaRead, root: Address, shape: fn(KindId) -> Option<RecordShape>, bits: u32) -> Result<Vec<TreeId>, ArenaError> {
+pub fn admit(arena: &dyn ArenaRead, root: Address, shape: fn(KindId) -> Option<RecordShape>, bits: u32) -> Result<Vec<NodeId>, ArenaError> {
     let mut walked = SmallMap::<Address, Walked>::new();
     let mut pending = SmallStack::new();
     let mut linked = Vec::new();
@@ -121,10 +121,9 @@ pub fn admit(arena: &dyn ArenaRead, root: Address, shape: fn(KindId) -> Option<R
         SideRecord::read(arena, super::borrowed::side_of(arena, at)?)?;
         super::cell::built_cells(arena, at, record, super::cell::Lists::Items, |_, _, word| {
             match Cell::decode_built(word, arena, bits)? {
-                Cell::Child { at: child, .. } if arena.read_record(child) => linked.push(TreeId(super::RunNodes::source_of(arena, child)?.0)),
+                Cell::Child { at: child, .. } if arena.read_record(child) => linked.push(NodeId::record(child.0)),
                 Cell::Child { kind, at: child, .. } => pending.push(Step::Enter(child, kind)),
-                Cell::LinkedLeaf { tree, .. } => linked.push(tree),
-                Cell::ReadLeaf { name, .. } => linked.push(TreeId(super::RunNodes::source_of(arena, Address(name.address()))?.0)),
+                Cell::ReadLeaf { name, .. } => linked.push(name),
                 Cell::BuiltLeaf { kind, text, .. } => {
                     shape(kind).ok_or(malformed("built leaf kind", u32::from(kind.0)))?;
                     arena.text(text)?;
@@ -204,7 +203,7 @@ mod tests {
 
     #[test]
     fn a_record_whose_side_record_holds_a_malformed_run_is_refused() {
-        const RUN: u32 = 1 << 15;
+        const RUN: u32 = crate::arena::side::mask::RUN;
         const RECORD_ENTRY: u32 = 1 << 31;
         let mut image = BuiltImage::new(BITS);
         let whole = BuiltImage::words(&mut image, &[RUN, 2, RECORD_ENTRY, 0]);

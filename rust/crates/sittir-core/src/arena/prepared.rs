@@ -3,8 +3,8 @@
 //! never rewritten. One overlay is built for one render and dropped after it.
 //!
 //! A fact of a node itself is keyed by the node's place: its own kind's
-//! edges, its print settings, its defaulted units, its prepared sides and its
-//! slots' per-item separators. Every other fact of its layout is read where
+//! edges, its print settings, its defaulted units and its prepared sides.
+//! Every other fact of its layout is read where
 //! it is kept: its side record, the store of written sides, or its tree. A fact a holder writes about the child it
 //! holds at one site (a gap fill, a seat) is keyed by that site, so a node
 //! placed at two sites gets each site's facts, as each native copy does.
@@ -22,8 +22,7 @@ use crate::trivia_store::{Place, Site};
 
 /// Where the overlay keeps a node's facts: the place the store keeps its
 /// sides at, or, for an envelope's content, which shares its envelope's row
-/// and has no place in the store, its cell's site in the envelope. A parsed
-/// content's key carries its tree, so no built record's address meets it.
+/// and has no place in the store, its cell's site in the envelope.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum PrepPlace {
     Stored(Place),
@@ -41,14 +40,12 @@ impl PrepPlace {
         }
     }
 
-    /// The tree row of a parsed node: its own row, or for an envelope's
-    /// content its envelope's; none for a built node.
+    /// The id of a node a read left, as `reads` holds it: its own, or for
+    /// an envelope's content its envelope's; none for a built node.
     #[must_use]
-    pub fn row(self) -> Option<(crate::types::TreeId, crate::types::NodeIndex)> {
-        match self {
-            Self::Stored(Place::Row { tree, row }) | Self::Content(Site { holder: Place::Row { tree, row }, .. }) => Some((tree, row)),
-            _ => None,
-        }
+    pub fn read_node(self, reads: Option<&dyn super::ArenaRead>) -> Option<crate::types::NodeId> {
+        let (Self::Stored(Place::Node(id)) | Self::Content(Site { holder: Place::Node(id), .. })) = self else { return None };
+        reads?.read_record(super::Address(id.address())).then_some(id)
     }
 }
 
@@ -77,23 +74,12 @@ pub struct PreparedNode<T> {
     pub trivia: Option<NodeTrivia<T>>,
     /// Its unit children's sides, each entry prepared.
     pub units: Vec<UnitSides<T>>,
-    /// Its list slots' per-item separators (`SlotLayout::tokens`), by the
-    /// slot's wire key.
-    pub tokens: Vec<SlotTokens>,
 }
 
 impl<T> Default for PreparedNode<T> {
     fn default() -> Self {
-        Self { edges: Edges::default(), delimiter: None, separator_kind: None, slots: Vec::new(), trivia: None, units: Vec::new(), tokens: Vec::new() }
+        Self { edges: Edges::default(), delimiter: None, separator_kind: None, slots: Vec::new(), trivia: None, units: Vec::new() }
     }
-}
-
-/// The separator before each item of one list slot, by the item's place
-/// (`SlotLayout::tokens`).
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SlotTokens {
-    pub slot: String,
-    pub tokens: Vec<Option<KindId>>,
 }
 
 /// What prepare fills for one slot of a node: a list's separator spacing,
@@ -117,21 +103,6 @@ impl<T> PreparedNode<T> {
     #[must_use]
     pub fn slot(&self, word: u32) -> Option<&PreparedSlot> {
         self.slots.iter().find(|slot| slot.word == word)
-    }
-
-    /// The per-item separators of the list slot `slot`; none where prepare
-    /// gave it none.
-    #[must_use]
-    pub fn tokens(&self, slot: &str) -> Option<&[Option<KindId>]> {
-        self.tokens.iter().find(|entry| entry.slot == slot).map(|entry| entry.tokens.as_slice())
-    }
-
-    /// `slot`'s per-item separators are `tokens`, in place of any it had.
-    pub fn set_tokens(&mut self, slot: &str, tokens: Vec<Option<KindId>>) {
-        match self.tokens.iter_mut().find(|entry| entry.slot == slot) {
-            Some(entry) => entry.tokens = tokens,
-            None => self.tokens.push(SlotTokens { slot: slot.to_owned(), tokens }),
-        }
     }
 }
 
@@ -235,7 +206,7 @@ mod tests {
     use crate::arena::Address;
     use crate::options::EdgeArm;
     use crate::trivia::TriviaText;
-    use crate::types::{ItemIndex, NodeIndex, TreeId};
+    use crate::types::ItemIndex;
 
     #[derive(Clone, Debug, PartialEq, Eq)]
     struct HashBomb(u32);
@@ -284,7 +255,7 @@ mod tests {
     }
 
     fn child() -> PrepPlace {
-        Place::Row { tree: TreeId(1), row: NodeIndex(4) }.into()
+        Place::Node(crate::types::NodeId::record(4)).into()
     }
 
     fn site(holder: u32, item: u32) -> Site<PrepPlace> {
@@ -339,9 +310,9 @@ mod tests {
     }
 
     #[test]
-    fn a_built_record_an_envelope_and_the_content_at_the_same_numbers_keep_their_own_facts() {
+    fn a_record_an_envelope_and_the_envelope_s_content_keep_their_own_facts() {
         let mut prepared = Prepared::<TriviaText>::new();
-        let envelope = Place::Row { tree: TreeId(1), row: NodeIndex(3) };
+        let envelope = Place::Node(crate::types::NodeId::record(4));
         let places = [Place::record(Address(3)).into(), envelope.into(), PrepPlace::Content(Site { holder: envelope, word: 2, item: ItemIndex(0) })];
         for (place, kind) in places.into_iter().zip(1..) {
             prepared.node_mut(place).edges.before = Some(arm(kind));

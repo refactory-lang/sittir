@@ -413,22 +413,6 @@ export function slotsOf(node: object): readonly unknown[] | undefined {
 }
 
 /**
- * The separator a node's source spells before it as a list item where it is not its slot's
- * (`NodeLayout.separator`): the one it holds, else its tree's for a parsed node, else that of
- * the node it was rebuilt from (`placeOf`); `undefined` when none answers.
- */
-export function separatorOf(node: object): number | undefined {
-	const held = (node as { readonly $_layout?: NodeDataLayout }).$_layout?.separator;
-	if (held !== undefined) return held;
-	const tree = treeOf(node);
-	const index = indexOf(node);
-	if (tree?.separatorBefore !== undefined && index !== undefined) return tree.separatorBefore(index);
-	const source = placeOf(node);
-	const from = source === undefined ? undefined : sourceTree(source);
-	return source === undefined ? undefined : from?.separatorBefore?.(source.index);
-}
-
-/**
  * The separator a list writes between its items, as a grammar id: its tree's for a parsed list
  * (its slot's stored one, else the one the read-time options render), else that of the list it
  * was rebuilt from (`placeOf`); `undefined` when none answers.
@@ -713,45 +697,6 @@ export function aliasContentOf(holder: object): Record<string, unknown> | undefi
 	return undefined;
 }
 
-function keepsNeighbour(siblings: readonly number[], at: number, neighbour: unknown, other: SourceIdentity | undefined, sameParse: boolean): boolean {
-	if (siblings[at] === 0) return neighbour === undefined;
-	if (typeof neighbour === 'number') return neighbour === siblings[at + 1];
-	return other !== undefined && sameParse && other.span.start === siblings[at + 2] && other.span.end === siblings[at + 3];
-}
-
-export function listEdges(list: readonly unknown[], view: KindView): readonly ChangedEdges[] | undefined {
-	let sources: (SourceIdentity | undefined)[] | undefined;
-	for (let n = 0; n < list.length; n++) {
-		const entry = list[n];
-		const source = isRecord(entry) ? placeOf(evidenceOf(entry, view)) : undefined;
-		if (source !== undefined) (sources ??= [])[n] = source;
-	}
-	if (sources === undefined) return undefined;
-	const byTree = new Map<TreeHandle, number[]>();
-	sources.forEach((source, n) => {
-		const tree = source === undefined ? undefined : sourceTree(source);
-		if (tree?.siblings === undefined) return;
-		const items = byTree.get(tree);
-		if (items === undefined) byTree.set(tree, [n]);
-		else items.push(n);
-	});
-	const edges: ChangedEdges[] = list.map(() => NO_EDGES);
-	for (const [tree, items] of byTree) {
-		const siblings = tree.siblings!(items.map((n) => sources[n]!.index));
-		const parses = tree.sources?.(items.map((n) => sources[n]!.index));
-		const parseOf = new Map(items.map((n, k) => [n, parses?.[k]] as const));
-		items.forEach((n, k) => {
-			const { token } = sources[n]!;
-			const sameParse = (m: number): boolean => sources[m]?.token === token && (parses === undefined || parseOf.get(m) === parses[k]);
-			edges[n] = {
-				leading: !keepsNeighbour(siblings, 8 * k, list[n - 1], sources[n - 1], sameParse(n - 1)),
-				trailing: !keepsNeighbour(siblings, 8 * k + 4, list[n + 1], sources[n + 1], sameParse(n + 1))
-			};
-		});
-	}
-	return edges;
-}
-
 function isPresent(value: unknown): boolean {
 	return value != null && !(Array.isArray(value) && value.length === 0);
 }
@@ -789,8 +734,7 @@ export interface PointSpanData {
 /**
  * A node's layout as the native node sends it (`$_layout`): the trivia that
  * crosses with it, its list slots' stored layout (`slots`, as a read gives
- * it), the separator its source spells before it as a list item where it is
- * not its slot's (`separator`), a snapshot node's span, a snapshot root's
+ * it), a snapshot node's span, a snapshot root's
  * flanks as its read stamped them (`flanks`, opaque here), the node a built node takes its missing sides
  * and slots from (`sides`, a coordinate), and the edges whose neighbour
  * changed (`changed`), where its sides drop their layout runs. Absent when
@@ -800,14 +744,13 @@ export interface NodeDataLayout {
 	trivia?: unknown;
 	units?: readonly unknown[];
 	slots?: readonly unknown[];
-	separator?: number;
 	span?: PointSpanData;
 	flanks?: number;
 	sides?: Record<string, unknown>;
 	changed?: ChangedEdges;
 }
 
-const DECIDED_LAYOUT_KEYS: ReadonlySet<string> = new Set(['at', 'trivia', 'units', 'slots', 'separator', 'sides', 'changed']);
+const DECIDED_LAYOUT_KEYS: ReadonlySet<string> = new Set(['at', 'trivia', 'units', 'slots', 'sides', 'changed']);
 
 function setLayout<K extends keyof NodeDataLayout>(out: Record<string, unknown>, key: K, value: NodeDataLayout[K]): void {
 	const layout = (out.$_layout ??= {}) as NodeDataLayout;
@@ -857,16 +800,8 @@ function nodeValueStep(task: NodeValueTask, { view, fold, work, path }: NodeValu
 	if (Array.isArray(value)) {
 		enterPath(path, value);
 		work.push(() => path.delete(value));
-		const edges = listEdges(value, view);
 		const out = value.map(() => undefined) as unknown[];
-		const items: NodeValueTask[] = [];
-		value.forEach((entry, index) => {
-			items.push(
-				isRecord(entry)
-					? { value: entry, changed: edges?.[index] ?? NO_EDGES, bearer: evidenceOf(entry, view), sided: true, holder: out, key: index }
-					: { value: entry, changed: NO_EDGES, bearer: undefined, sided: true, holder: out, key: index }
-			);
-		});
+		const items: NodeValueTask[] = value.map((entry, index) => ({ value: entry, changed: NO_EDGES, bearer: isRecord(entry) ? evidenceOf(entry, view) : undefined, sided: true, holder: out, key: index }));
 		for (let at = items.length - 1; at >= 0; at -= 1) work.push(items[at]!);
 		return out;
 	}
@@ -912,8 +847,6 @@ function finishNodeValue(value: Record<string, unknown>, out: Record<string, unk
 	}
 	const slots = fold ? given?.slots : slotsOf(value);
 	if (slots !== undefined && slots.length > 0) setLayout(out, 'slots', slots);
-	const separator = edges.leading ? undefined : fold ? given?.separator : separatorOf(value);
-	if (separator !== undefined) setLayout(out, 'separator', separator);
 	const trivia = fold ? triviaOf(value) : sided ? sidesOf(value) : undefined;
 	if (trivia != null) {
 		if (fold) forEachTriviaList(trivia as TriviaSides<unknown>, assertTriviaHoldsTree);

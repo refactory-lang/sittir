@@ -8,6 +8,7 @@
 //! (`packages/tools/tests/snapshot-one-rule.test.ts`). The members after an
 //! entry that leads a list's first item go with that entry likewise.
 
+use sittir_core::engine::Backing as _;
 use sittir_core::read::SideEntry;
 use sittir_core::trivia_table::TriviaSide;
 use sittir_core::types::NodeIndex;

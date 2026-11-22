@@ -523,15 +523,6 @@ was rebuilt from (`placeOf`), which apply to every gap of the slot, kept or
 inserted. A detached crossing and a snapshot of a built node carry them as
 data, since neither leaves the render a tree to measure them from.
 
-### `packages/common/src/node-data.ts::separatorOf`
-
-The separator a node's source spells before it as a list item, where it is
-not the one its slot renders (`NodeLayout.separator`): the one it holds,
-else its live tree's for a parsed node, else that of the node it was rebuilt
-from. A detached crossing stamps it, and a live crossing keeps a held one,
-on a node whose neighbour before is unchanged; otherwise the node takes its
-new list's separator.
-
 ### `packages/common/src/node-data.ts::carriedUnitSides`
 
 A rebuilt node's unit sides, carried from the node at `index` of the tree it was rebuilt from: the tree's records for that node, realigned against what the tree reads there (`realignedUnits`).
@@ -606,7 +597,7 @@ The native node for data leaving the tree it was read from, such as a render fix
 
 ### `packages/common/src/node-data.ts::toNodeValue`
 
-The walk behind `toNodeData` and `toDetachedNodeData`. A parsed node of a live tree, and a coordinate a slot stores raw, crosses as its coordinate (`coordinateCrossing`) with the edges whose neighbour changed; the render frames it with the sides its tree's table gives it, and reads it into its native node when a write lies in its range. Detached, a raw coordinate crosses plain, and every other node as its storage. A built node crosses as its storage with the trivia it holds, names the node it was rebuilt from for the sides it does not hold (`$_layout.sides`), and names its changed edges (`$_layout.changed`) when it has sides for them to touch. Every other key a node's `$_layout` holds crosses as it is (`DECIDED_LAYOUT_KEYS` names the ones the walk decides), so a fact the native read writes, such as a snapshot's `span` and `flanks`, crosses back without the walk naming it; a fold crosses the `slots` and `separator` it already holds: data a tool detached from its tree keeps the layout facts the tree would have given. A node crosses with the changed edges its holder judged only when it bears them (the entry itself, or the node a rebuilt wrapper holds, `evidenceOf`); a list node's edges are its holder's like any other node's. An alias envelope's content crosses without sides, which its envelope holds (`envelopeKindOf`). A node's source stamp does not cross: it is a symbol member, and nothing native reads it.
+The walk behind `toNodeData` and `toDetachedNodeData`. A parsed node of a live tree, and a coordinate a slot stores raw, crosses as its coordinate (`coordinateCrossing`) with the edges whose neighbour changed; the render frames it with the sides its tree's table gives it, and reads it into its native node when a write lies in its range. Detached, a raw coordinate crosses plain, and every other node as its storage. A built node crosses as its storage with the trivia it holds, names the node it was rebuilt from for the sides it does not hold (`$_layout.sides`), and names its changed edges (`$_layout.changed`) when it has sides for them to touch. Every other key a node's `$_layout` holds crosses as it is (`DECIDED_LAYOUT_KEYS` names the ones the walk decides), so a fact the native read writes, such as a snapshot's `span` and `flanks`, crosses back without the walk naming it; a fold crosses the `slots` it already holds: data a tool detached from its tree keeps the layout facts the tree would have given. A node crosses with the changed edges its holder judged only when it bears them (the entry itself, or the node a rebuilt wrapper holds, `evidenceOf`); a list node's edges are its holder's like any other node's. An alias envelope's content crosses without sides, which its envelope holds (`envelopeKindOf`). A node's source stamp does not cross: it is a symbol member, and nothing native reads it.
 
 ### `packages/common/src/node-data.ts::aliasContentOf`
 
@@ -876,10 +867,6 @@ The trivia table that answers for a node: a parsed node's live tree's, at its ow
 
 The edges a render root crosses with. It renders with no neighbour, so both its edges changed and its sides drop their edge runs, unless it is its tree's root (index 0), whose edges are the document's and whose stored layout is the document's own.
 
-### `packages/common/src/node-data.ts::keepsNeighbour`
-
-Whether the neighbour a node has in its holder is the sibling its source had on that side: both absent, the neighbour's evidence (`evidenceOf`) names the same tree and span, or the neighbour is a unit held as its bare kind and the sibling is of that kind. A unit has no identity of its own, and its text is its kind's, so any unit of the sibling's kind spells the same gap.
-
 ### `packages/common/src/node-data.ts::coordinateCrossing`
 
 A coordinate as it crosses: its plain fields (`plainCoordinate`) and, when an edge's neighbour changed, `$_layout.changed`, which the native coordinate decode keeps and the render applies to its sides.
@@ -890,7 +877,7 @@ The `KindView` of data with no wrapper or list kinds: no for every kind.
 
 ### `packages/common/src/node-data.ts::DECIDED_LAYOUT_KEYS`
 
-The `$_layout` keys `toNodeValue` decides for itself: `at`, which a crossing never carries (an untouched node crosses as its coordinate, an edited one without it); `trivia`, `units`, `slots`, `separator` and `sides`, which it derives from the node; and `changed`, which its holder judges. Every other key crosses as the node holds it, so the walk names no copy of `NodeLayout`'s shape and a key the native side adds crosses without a change here. Pinned by a test that walks a snapshot through `toNodeData` and refuses any `$_layout` key it drops.
+The `$_layout` keys `toNodeValue` decides for itself: `at`, which a crossing never carries (an untouched node crosses as its coordinate, an edited one without it); `trivia`, `units`, `slots` and `sides`, which it derives from the node; and `changed`, which its holder judges. Every other key crosses as the node holds it, so the walk names no copy of `NodeLayout`'s shape and a key the native side adds crosses without a change here. Pinned by a test that walks a snapshot through `toNodeData` and refuses any `$_layout` key it drops.
 
 ### `packages/common/src/node-data.ts::sourceTextOf`
 
@@ -1069,10 +1056,6 @@ The address of the record a node is the node of, in one arena.
 
 What every record view reads its words through, a parsed tree's records and a built arena alike: the cell format and the words of a chunk.
 
-### `packages/common/src/read.ts::TreeHandle::sources`
-
-Lets a reader that compares positions across nodes tell whether two nodes share a source before it compares their byte offsets: the built arena's handle reads nodes of many parses, whose offsets compare only within one. `listEdges` reads it to keep a neighbour only within its own parse.
-
 ### `packages/common/src/engine.ts::nativeBuiltRecords`
 
 What the built arena of a language engine that reads trees as records is made with (`BuiltRecords`), kept beside the engine rather than on its public interface, which a types-only package declares. `createEngine` reads it when it gives the engine its record builders (`useRecordConstruction`).
@@ -1129,10 +1112,6 @@ Bound as `ReadNodes.slotLayouts`: a read node's stored slot layouts, with no tre
 
 Bound as `ReadNodes.slotSeparator`, null mapped to `undefined`: the separator a read list's source spelled.
 
-### `packages/common/src/engine.ts::NativeEngineLike::readSeparatorBefore`
-
-Bound as `ReadNodes.separatorBefore`, null mapped to `undefined`: the separator the source spelled before a read list item.
-
 ### `packages/common/src/engine.ts::NativeEngineLike::readEditedWithin`
 
 Bound as `ReadNodes.editedWithin`: whether a write has changed anything under a read node, its own sides counted when asked.
@@ -1141,13 +1120,9 @@ Bound as `ReadNodes.editedWithin`: whether a write has changed anything under a 
 
 Bound as `ReadNodes.isEmpty`: whether a read node spans nothing but trivia.
 
-### `packages/common/src/engine.ts::NativeEngineLike::readSiblings`
-
-Bound as `ReadNodes.siblings`. Nodes of several parses can share one call, since each answers from its own source; `listEdges` reads the words in eights.
-
 ### `packages/common/src/engine.ts::NativeEngineLike::readSources`
 
-Bound as `ReadNodes.sources`, the built arena's `TreeHandle.sources`: equal answers mean the nodes came from one parse, so their byte offsets compare.
+Bound as `ReadNodes.sources`: the entry of the source each node was read from, which `errorsOf` keys a parse's ERROR and MISSING regions by.
 
 ### `packages/common/src/engine.ts::NativeEngineLike::renderBuiltSides`
 

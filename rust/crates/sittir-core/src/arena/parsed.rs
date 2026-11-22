@@ -2,7 +2,7 @@
 //! the tree they were read from.
 
 use super::{Address, ArenaRead, Cell, CellAt, RecordCells};
-use crate::engine::{EngineGrammar, ParsedTree, Records};
+use crate::engine::{Backing, EngineGrammar, Records};
 use crate::nodes::{Navigation, Nodes, TreeNodes};
 use crate::prepare::RenderContext;
 use crate::render::RenderError;
@@ -32,7 +32,7 @@ pub struct BackerParity {
 /// # Errors
 ///
 /// What reading the records refuses.
-pub fn runs_agree<G: RecordGrammar, N: RecordCells>(parsed: &ParsedTree<G, Records<'_>>, root: NodeIndex, nodes: &mut TreeNodes<'_>, kinds: crate::trivia_table::SurfaceKinds) -> Result<BackerParity, String> {
+pub fn runs_agree<G: RecordGrammar, N: RecordCells>(parsed: &Records<'_, G>, root: NodeIndex, nodes: &mut TreeNodes<'_>, kinds: crate::trivia_table::SurfaceKinds) -> Result<BackerParity, String> {
     let Navigation::Runs(mut runs) = parsed.nodes() else { return Err("a tree over a read's records navigates its runs".to_owned()) };
     let built = parsed.records_arena();
     let count = nodes.kid(NodeIndex::ROOT).count;
@@ -130,6 +130,15 @@ pub trait RecordGrammar: EngineGrammar<Trivia: super::WriteCell<<Self as EngineG
     ///
     /// As `render_record`.
     fn render_entry(self, root: CellAt, reads: Option<&dyn ArenaRead>, built: &dyn ArenaRead, store: &TriviaStore<Self::Trivia>, ctx: &RenderContext<'_>, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult;
+
+    /// Renders the node a read left that `at` names as a render root, its
+    /// source bytes between its kind's edges, and answers its text before
+    /// its line endings are spelled.
+    ///
+    /// # Errors
+    ///
+    /// What resolving the node's bytes or writing them refuses.
+    fn render_source(self, at: crate::slot::NodeIdOrCoordinate<'_>, ctx: &RenderContext<'_>) -> Result<String, RenderError>;
 
     /// The storage key of the slot a record of `kind` holds at `word`
     /// (`PrepareRecord::slot_key` of the grammar's node).

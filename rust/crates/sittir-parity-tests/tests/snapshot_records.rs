@@ -1,6 +1,7 @@
 //! A snapshot seats each node's sides as the tree's own lookup seats each
 //! alone.
 
+use sittir_core::engine::Backing as _;
 use sittir_core::engine::EngineGrammar;
 use sittir_core::options::ResolvedOptions;
 use sittir_core::types::NodeIndex;

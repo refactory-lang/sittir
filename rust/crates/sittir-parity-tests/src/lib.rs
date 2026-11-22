@@ -8,6 +8,7 @@
 //! dependencies (`sittir-{lang}`, `tree-sitter-{lang}`) only
 //! when the integration-test binary builds.
 
+use sittir_core::engine::Backing as _;
 use sittir_core::tree_sitter;
 use serde::Deserialize;
 
@@ -333,7 +334,7 @@ impl<G: sittir_core::arena::RecordGrammar> OverRead<G> {
         let root = engine.parse_records::<N>(tree.source()).expect("a parse").root.expect("a root");
         let records = {
             let built = engine.written().built();
-            let over = sittir_core::engine::ParsedTree::over_records(&engine, &built, root).expect("a tree over the records");
+            let over = sittir_core::engine::Records::over(&engine, &built, root).expect("a tree over the records");
             let (mut ours, mut theirs) = (over.nodes(), tree.nodes());
             let mut records = std::collections::HashMap::new();
             let mut pending = vec![(NodeIndex::ROOT, NodeIndex::ROOT)];

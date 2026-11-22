@@ -12,7 +12,7 @@ use crate::layout_kinds::LayoutKinds;
 use crate::record::{form, tagged};
 use crate::record::HEADER_WORDS;
 use crate::slot::ChangedEdges;
-use crate::types::{KindId, NodeIndex, Span, TreeId};
+use crate::types::{KindId, NodeIndex, Span};
 
 /// The flags a record header holds above its kind field.
 pub mod flag {
@@ -28,7 +28,8 @@ pub mod flag {
 /// trailing side. A built record's are the gap members at the head of each
 /// side a write gave it, read before what the store's row holds for the
 /// side (`TriviaStore`); a read's record's is the blank-line kind its parse
-/// set it apart with, as its leading side's first (`Hydration::set_apart`).
+/// set the item after it apart with, as its trailing side's whole
+/// (`Hydration::set_apart`).
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct HeaderLayout {
     pub leading: [LayoutKinds; 3],
@@ -160,11 +161,11 @@ pub enum Cell {
     /// the edges whose neighbour this holder changed, a fact of this site as
     /// a child's are. Its sides are keyed by its site in the store.
     BuiltLeaf { kind: KindId, text: StringRef, changed: ChangedEdges },
-    /// A parsed node with no record a built record holds, through the link
-    /// record at `at`: its tree, row, subtree end and byte span, whose text
-    /// is its source's, and the edges whose neighbour this holder changed.
-    /// Its sides are its row's.
-    LinkedLeaf { kind: KindId, at: Address, tree: TreeId, row: NodeIndex, end: NodeIndex, span: Span, changed: ChangedEdges },
+    /// A parsed leaf as a render names it: `id` is its holder's own node for
+    /// a leaf that shares it, else its holder's cell site.
+    NamedLeaf { kind: KindId, span: Span, id: crate::types::NodeId },
+    /// A parsed unit as a render names it, by `id` as `NamedLeaf` is.
+    NamedUnit { kind: KindId, id: crate::types::NodeId },
     /// A node a read left with no record of its own, which a built record
     /// holds through the link record at `at`: the cell row `row` of the
     /// read's record at `holder` (1 for the content that shares the record's
@@ -268,7 +269,7 @@ impl Cell {
         match self {
             Cell::Absent => None,
             Cell::ParsedText { .. } | Cell::BuiltText { .. } => Some(KindId::BLANK),
-            Cell::ParsedLeaf { kind, .. } | Cell::Child { kind, .. } | Cell::Unit { kind, .. } | Cell::BuiltLeaf { kind, .. } | Cell::LinkedLeaf { kind, .. } | Cell::ReadLeaf { kind, .. } => Some(kind),
+            Cell::ParsedLeaf { kind, .. } | Cell::Child { kind, .. } | Cell::Unit { kind, .. } | Cell::BuiltLeaf { kind, .. } | Cell::NamedLeaf { kind, .. } | Cell::NamedUnit { kind, .. } | Cell::ReadLeaf { kind, .. } => Some(kind),
         }
     }
 
@@ -276,7 +277,7 @@ impl Cell {
     /// word 0, an unset slot; a unit for an address in chunk 0, whose word is
     /// the unit's kind, the blank arm at `BLANK_UNIT`; a record in a word chunk, a link record naming a parsed node's
     /// record (`Child` with its tree) or, with none, the node itself
-    /// (`LinkedLeaf`); a leaf entry in a string chunk, `[kind | length]` then
+    /// (`ReadLeaf`); a leaf entry in a string chunk, `[kind | length]` then
     /// its UTF-8 bytes, a blank kind for captured text.
     ///
     /// # Errors

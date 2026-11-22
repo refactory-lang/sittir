@@ -13,9 +13,10 @@
 //! of the records' tree takes its placement no step.
 #![cfg(feature = "arena")]
 
+use sittir_core::engine::Backing as _;
 use sittir_core::arena::source::Source;
 use sittir_core::arena::{HydrateNode, RunNodes, RunTable};
-use sittir_core::engine::{Engine, ParsedTree};
+use sittir_core::engine::Engine;
 use sittir_core::nodes::Nodes;
 use sittir_core::options::ResolvedOptions;
 use sittir_core::layout_kinds::LayoutKinds;
@@ -39,7 +40,7 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
     let Some(root) = parse.root else { return (Vec::new(), 0) };
     let built = engine.written().built();
     let text = Source::read(&*built, parse.source).expect("its source entry").text;
-    let records = ParsedTree::over_records(&engine, &built, root).expect("a tree over the records");
+    let records = sittir_core::engine::Records::over(&engine, &built, root).expect("a tree over the records");
     let table = RunTable::default();
     let mut runs = RunNodes::holding(&*built, text, root, &table).expect("its root");
     let placement = tree.placed_trivia();
@@ -67,7 +68,7 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
                 .place(run)
                 .and_then(|place| match place {
                     Place::Node(_) => engine.written().side(place, side, &*built).expect("a placed side"),
-                    _ => None,
+                    Place::RootLeaf => None,
                 })
                 .unwrap_or_default();
             let placed: Vec<Option<Bytes>> = stored
@@ -102,8 +103,8 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
                 let kid = theirs.kid(row);
                 apart.push(format!("{}..{} {} {side:?}: parse wrote {written:?}, the tree seats {looked_up:?}", kid.start, kid.end, G::kind_name(kid.grammar)));
             }
-            if side == TriviaSide::Leading {
-                let looked_up = seated.first().map_or(LayoutKinds::NONE, |entry| match entry {
+            if side == TriviaSide::Trailing {
+                let looked_up = seated.last().map_or(LayoutKinds::NONE, |entry| match entry {
                     SideEntry::Layout(entry) => blank_line_of(entry),
                     SideEntry::Source { .. } | SideEntry::Written(_) => LayoutKinds::NONE,
                 });
@@ -116,9 +117,6 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
         }
         let (met, kept) = (ours.kids(run), theirs.kids(row));
         pending.extend(met.iter().zip(kept.iter()).map(|(met, kept)| (met.index, kept.index, Some(row))));
-    }
-    if records.placement_steps() > 0 {
-        apart.push(format!("the records' tree placed its trivia in {} steps: a record tree reads its sides from the parse alone", records.placement_steps()));
     }
     (apart, assigned)
 }
@@ -182,7 +180,7 @@ fn placed_entries<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar:
     let mut engine = Engine::new(grammar, options()).expect("an engine");
     let root = engine.parse_records::<N>(source).expect("a parse").root.expect("a root");
     let built = engine.written().built();
-    let records = ParsedTree::over_records(&engine, &built, root).expect("a tree over the records");
+    let records = sittir_core::engine::Records::over(&engine, &built, root).expect("a tree over the records");
     let mut nodes = records.nodes();
     let (mut pending, mut placed) = (vec![NodeIndex::ROOT], 0);
     while let Some(at) = pending.pop() {
@@ -191,7 +189,7 @@ fn placed_entries<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar:
                 .place(at)
                 .and_then(|place| match place {
                     Place::Node(_) => engine.written().side(place, side, &*built).expect("a placed side"),
-                    _ => None,
+                    Place::RootLeaf => None,
                 })
                 .map_or(0, |entries| entries.iter().filter(|entry| matches!(entry, TriviaEntry::Record(_))).count());
         }
@@ -296,7 +294,7 @@ fn a_placed_error_is_the_entry_a_built_side_holds_for_it() {
     let mut runs = RunNodes::holding(&*built, text, root, &table).expect("its root");
     let error = runs.kids(NodeIndex::ROOT).iter().find(|kid| kid.grammar == sittir_core::types::KindId::ERROR).copied().expect("the source's ERROR");
     let Some(sittir_core::arena::NodeSite::Record(at)) = runs.site(error.index) else { panic!("the ERROR has a record of its own") };
-    let Some(place @ Place::Node(_)) = ParsedTree::over_records(&engine, &built, root).expect("a tree over the records").place(NodeIndex::ROOT) else { panic!("the root's place") };
+    let Some(place @ Place::Node(_)) = sittir_core::engine::Records::over(&engine, &built, root).expect("a tree over the records").place(NodeIndex::ROOT) else { panic!("the root's place") };
     let stored = engine.written().side(place, TriviaSide::Inner, &*built).expect("a placed side").expect("the root's inner side");
     assert_eq!(stored.len(), 1, "the root's inner holds the ERROR alone");
     let TriviaEntry::Record(entry) = &stored[0] else { panic!("the ERROR is named by its record, as a built side names it: {:?}", stored[0]) };
@@ -364,8 +362,9 @@ fn holds_entries<G: sittir_core::arena::RecordGrammar + Copy, N: HydrateNode>(gr
     let mut engine = Engine::new(grammar, options()).expect("an engine");
     let root = engine.parse_records::<N>(source).expect("a parse").root.expect("a root");
     let built = engine.written().built();
-    let records = ParsedTree::over_records(&engine, &built, root).expect("a tree over the records");
-    (tree.holds_entries(), records.holds_entries())
+    let records = sittir_core::engine::Records::over(&engine, &built, root).expect("a tree over the records");
+    let holds = (tree.holds_entries(&mut tree.nodes(), NodeIndex::ROOT), records.holds_entries(&mut records.nodes(), NodeIndex::ROOT));
+    holds
 }
 
 #[test]
@@ -380,14 +379,13 @@ fn a_tree_holds_entries_where_its_grammar_has_trivia_that_isn_t_whitespace_or_it
 /// What `Backing::entries_within` answers over the records an arena parse
 /// of `source` left, for its root and for each top-level node.
 fn entries_within_of(source: &str) -> (bool, Vec<bool>) {
-    use sittir_core::engine::{Backing, Records};
     let mut engine = Engine::new(sittir_rust::RustGrammar, sittir_rust::render::options::defaults()).expect("an engine");
     let root = engine.parse_records::<sittir_rust::render::AnyNode>(source).expect("a parse").root.expect("a root");
     let built = engine.written().built();
-    let records = ParsedTree::over_records(&engine, &built, root).expect("a tree over the records");
+    let records = sittir_core::engine::Records::over(&engine, &built, root).expect("a tree over the records");
     let mut nodes = records.nodes();
     let kids = nodes.kids(NodeIndex::ROOT);
-    let within = |span| Records::entries_within(&records, span);
+    let within = |span| records.entries_within(span);
     (within(nodes.kid(NodeIndex::ROOT).span()), kids.iter().filter(|kid| kid.holder()).map(|kid| within(kid.span())).collect())
 }
 
@@ -396,6 +394,6 @@ fn a_read_answers_which_nodes_can_hold_an_entry_from_where_its_entries_are() {
     assert_eq!(entries_within_of("fn a() {}\nfn b() {}\n"), (false, vec![false, false]), "a read with no entry");
     assert_eq!(entries_within_of("fn a() {}\n// c\nfn b() {}\n"), (true, vec![false, true]), "a comment leading the second item");
     assert_eq!(entries_within_of("fn a() { /* c */ x; }\nfn b() {}\n"), (true, vec![true, false]), "a comment inside the first item, none past it");
-    assert_eq!(entries_within_of("fn a() {}\n\nfn b() {}\n"), (true, vec![false, true]), "a blank line setting the second item apart");
+    assert_eq!(entries_within_of("fn a() {}\n\nfn b() {}\n"), (true, vec![true, false]), "a blank line the first item owns, setting the second apart");
     assert_eq!(entries_within_of("fn a() {} // c\nfn b() {}\n"), (true, vec![true, false]), "a comment trailing the first item");
 }

@@ -907,10 +907,8 @@ function buildTypedTemplateBody(
 			lines.push(`        template: ${template},`);
 			if (separatorText !== undefined) {
 				lines.push(`        token: node.separator_kind().map_or(${fallback}, ${ident}_separator),`);
-				lines.push(`        separators: Some((::sittir_core::layout::BodyLayout::slot_tokens(node.layout(), ${wireKey}), ${ident}_separator)),`);
 			} else {
 				lines.push(`        token: ${fieldSepLiteral},`);
-				lines.push(`        separators: None,`);
 			}
 			lines.push(`        before: ${spaced(spacing.before)},`);
 			lines.push(`        after: ${spaced(spacing.after)},`);
@@ -2678,7 +2676,7 @@ function renderRecordFn(): string[] {
 		`    store: &::sittir_core::trivia_store::TriviaStore<${TRIVIA_NODE}>,`,
 		"    ctx: &::sittir_core::prepare::RenderContext<'_>,"
 	];
-	const sourceRoot = 'if let Some(coord) = ::sittir_core::arena::source_root(root, built, reads, store, ctx.sources, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)? {';
+	const sourceRoot = 'if let Some(at) = ::sittir_core::arena::source_root(root, built, reads, store, ctx.sources, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)? {';
 	return [
 		'::sittir_core::records_codec! {',
 		'/// Render the record `root` names: a parsed root its source renders as',
@@ -2689,9 +2687,20 @@ function renderRecordFn(): string[] {
 		...params,
 		') -> Result<String, ::sittir_core::render::RenderError> {',
 		`    ${sourceRoot}`,
-		'        return render_node_parts(::sittir_core::SlotValue::Coord(coord), ctx).map(|(_, text)| text);',
+		'        return render_source_root(at, ctx);',
 		'    }',
 		'    with_record_node(root, reads, built, store, ctx, |node| render_root(ctx, |_| ::sittir_core::view::KindOf::kind_in(node, kind::ROOT_KINDS), |w| node.render(w)))',
+		'}',
+		'',
+		'/// Render the node a read left that `at` names as a render root: its',
+		'/// source bytes between its kind\'s edges, by the writer a node renders',
+		'/// through.',
+		'pub fn render_source_root(',
+		"    at: ::sittir_core::slot::NodeIdOrCoordinate<'_>,",
+		"    ctx: &::sittir_core::prepare::RenderContext<'_>,",
+		') -> Result<String, ::sittir_core::render::RenderError> {',
+		'    let at = ::sittir_core::prepare::prepared_source(at, ctx)?;',
+		'    render_root(ctx, |w| w.kind_of(at).is_some_and(|kind| kind::ROOT_KINDS.contains(&kind)), |w| ::sittir_core::slot::write_coordinate(at, false, w))',
 		'}',
 		'',
 		'/// Write the built record `root` names into `w` as a trivia entry in',
@@ -2702,7 +2711,7 @@ function renderRecordFn(): string[] {
 		'    w: &mut dyn ::sittir_core::render::RenderSink,',
 		') -> ::sittir_core::render::RenderResult {',
 		`    ${sourceRoot}`,
-		`        return ::sittir_core::render::Render::render(&::sittir_core::SlotValue::<${TRIVIA_NODE}>::Coord(coord), w);`,
+		'        return ::sittir_core::slot::write_coordinate(at, false, w);',
 		'    }',
 		'    with_record_node(root, reads, built, store, ctx, |node| node.render(w))',
 		'}',
@@ -2714,7 +2723,7 @@ function renderRecordFn(): string[] {
 		`    body: impl FnOnce(&${view}<'_>) -> Result<R, ::sittir_core::render::RenderError>,`,
 		') -> Result<R, ::sittir_core::render::RenderError> {',
 		`    let prepared = ::sittir_core::arena::prepare_root::<${TRIVIA_NODE}, AnyNode>(reads, built, store, root, ctx, kind::KIND_BITS)?;`,
-		'    let view = ::sittir_core::arena::RecordCtx::of(root.tree, built, reads, ctx.sources, store, &prepared, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)?;',
+		'    let view = ::sittir_core::arena::RecordCtx::of(root.node, built, reads, ctx.sources, store, &prepared, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)?;',
 		`    let node = <${view}<'_> as ::sittir_core::arena::RecordView<'_, ${TRIVIA_NODE}>>::from_cell(view, root.cell, None).map_err(::sittir_core::render::RenderError::Record)?;`,
 		'    body(&node)',
 		'}',
@@ -2944,15 +2953,6 @@ function prepareEnumImpl(enumName: string, arms: readonly PrepareArm[], reads = 
 					...arms.map((a) =>
 						a.payload
 							? `            ${enumName}::${a.variant}(t) => t.source_coordinate(),`
-							: `            ${unit(a)} => None,`
-					),
-					`        }`,
-					`    }`,
-					`    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {`,
-					`        match self {`,
-					...arms.map((a) =>
-						a.payload
-							? `            ${enumName}::${a.variant}(t) => t.source_separator(ctx),`
 							: `            ${unit(a)} => None,`
 					),
 					`        }`,
@@ -3294,7 +3294,7 @@ function seatTargetStructImpl(
 			`        match ${content === 'content' ? held : `Some(${held})`} {`,
 			'            Some(::sittir_core::SlotValue::Node(inner)) => return inner.seat_target(table, ctx),',
 			'            Some(::sittir_core::SlotValue::Coord(coord)) => {',
-			'                if let Some(site) = ::sittir_core::prepare::coord_seat(coord, table, ctx) {',
+			'                if let Some(site) = ::sittir_core::prepare::coord_seat((&*coord).into(), table, ctx) {',
 			'                    return Some((self.layout.edges_mut(), site));',
 			'                }',
 			'            }',
@@ -3495,18 +3495,13 @@ function prepareStructImpl(
 			const value =
 				trailing === undefined
 					? fallback
-					: `::sittir_core::prepare::source_trailing_delimiter(${PREPARE_MOD}::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(${trailing.kind}), &[${trailing.separators.map((id) => `::sittir_core::types::KindId(${id})`).join(', ')}], ${fallback}, ctx)`;
+					: `::sittir_core::prepare::source_trailing_delimiter(${PREPARE_MOD}::LayoutTarget::sides(&parts.layout, overlay).as_ref(), ::sittir_core::types::KindId(${trailing.kind}), &[${trailing.separators.map((id) => `::sittir_core::types::KindId(${id})`).join(', ')}], ${fallback}, ctx)`;
 			body.push(`    let delimiter = ${value};`, `    ${PREPARE_MOD}::Setting::fill(&mut parts.delimiter, overlay, delimiter);`);
 		}
 		const sep = node instanceof AssembledList ? separatorSiteOf(plan, node) : undefined;
 		if (sep !== undefined && node instanceof AssembledList) {
 			const key = JSON.stringify(listItemWireKey(node));
-			const items = rustFieldIdent(listItemField(node).storageName);
 			body.push(
-				`    let chosen = ${PREPARE_MOD}::Setting::chosen(&parts.separator_kind, overlay);`,
-				`    if let Some(tokens) = ${PREPARE_MOD}::SlotTarget::separators(&parts.${items}, overlay, ${structName}::separator_kind_of, ctx).filter(|_| !chosen) {`,
-				`        ${PREPARE_MOD}::LayoutTarget::set_slot_tokens(&mut parts.layout, overlay, ${key}, tokens);`,
-				'    }',
 				`    if let Some(kind) = ${PREPARE_MOD}::LayoutTarget::slot(&parts.layout, overlay, ${key}).and_then(|slot| slot.separator).and_then(${structName}::separator_kind_of) {`,
 				`        ${PREPARE_MOD}::Setting::fill(&mut parts.separator_kind, overlay, kind);`,
 				'    }',
@@ -3525,9 +3520,6 @@ function prepareStructImpl(
 		`    }`,
 		`    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {`,
 		`        Some(self.layout.edges_mut())`,
-		`    }`,
-		`    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {`,
-		`        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)`,
 		`    }`,
 		`    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {`,
 		`        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)`,

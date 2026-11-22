@@ -10,6 +10,7 @@
 //! given with every node edited in place, and so does its snapshot
 //! (`packages/tools/tests/snapshot-one-rule.test.ts`).
 
+use sittir_core::engine::Backing as _;
 use sittir_parity_tests::renders_as_read;
 
 #[test]

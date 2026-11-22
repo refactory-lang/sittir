@@ -7,6 +7,7 @@
 //! edges have no neighbour, and an address that names no record is refused.
 #![cfg(feature = "arena")]
 
+use sittir_core::engine::Backing as _;
 use sittir_core::arena::{Address, HydrateNode, RecordCells, RecordGrammar, WriteCell};
 use sittir_core::engine::{claim_tree_id, Engine, EngineGrammar, ParsedTree};
 use sittir_core::options::ResolvedOptions;

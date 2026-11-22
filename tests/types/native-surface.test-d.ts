@@ -38,7 +38,7 @@ type ReadonlyArg<T> = T extends unknown[] ? Readonly<T> : T;
 type Accepting<F> = F extends (...args: infer A) => unknown ? (...args: { [I in keyof A]: ReadonlyArg<A[I]> }) => unknown : F;
 type Admits<Generated, Declaration> = Accepting<Generated> extends Taking<Declaration> ? true : false;
 type ReturnsExactly<Generated, Declaration, Kind = never> = Same<KindIdAsNumber<Ret<Generated>, Kind>, Ret<Declaration>>;
-type KindIdReturns = 'slotSeparator' | 'separatorBefore' | 'readSlotSeparator' | 'readSeparatorBefore';
+type KindIdReturns = 'slotSeparator' | 'readSlotSeparator';
 type Member<M> = keyof Declared & keyof M;
 type Arity<F> = F extends (...args: infer A) => unknown ? A['length'] : never;
 
@@ -131,7 +131,6 @@ expectTypeOf<ReturnsExactly<() => PythonKindId | null, () => number | null, Rust
 expectTypeOf<ReturnsExactly<() => RustKindId | null, () => RustKindId | null, RustKindId>>().toEqualTypeOf<false>();
 expectTypeOf<Drift<CounterAsKindId, RustKindId>['returns']>().toEqualTypeOf<'treeMemory'>();
 expectTypeOf<Drift<MixedKindIds<'slotSeparator'>, RustKindId>['returns']>().toEqualTypeOf<'slotSeparator'>();
-expectTypeOf<Drift<MixedKindIds<'separatorBefore'>, RustKindId>['returns']>().toEqualTypeOf<'separatorBefore'>();
 expectTypeOf<ReturnsExactly<() => [number, object][], () => readonly (readonly [number, object])[]>>().toEqualTypeOf<true>();
 expectTypeOf<ReturnsExactly<() => [number, object][], () => readonly (readonly [object, number])[]>>().toEqualTypeOf<false>();
 expectTypeOf<ReturnsExactly<() => [...number[], object], () => WireNode[]>>().toEqualTypeOf<false>();

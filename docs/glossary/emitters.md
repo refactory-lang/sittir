@@ -2688,9 +2688,8 @@ The closure a list whose separator is chosen per instance renders its
 separator kinds by: `|kind| match kind { <id> => "<text>", ..., _ => <fallback> }`,
 one arm per candidate kind (`separatorCandidateKindNames`, the arms the
 wire capture reads), so the render never stores separator text and only
-spells a kind. The list's view binds it once (`<slot>_separator`) and both
-its default token (`node.separator_kind()`) and each item's own separator
-(`ListView::separators`, `BodyLayout::slot_tokens`) read it. `undefined` when no
+spells a kind. The list's view binds it once (`<slot>_separator`) and its
+token (`node.separator_kind()`) reads it. `undefined` when no
 candidate has a kind id, and the plain literal is the token.
 
 When the plan holds a separator site for the list, the `_ =>` fallback is
@@ -11531,6 +11530,12 @@ The unit kinds (`unitKindIds`) the parser names in its tree, read from the kind 
 
 The sorted kind ids of the unit kinds (keyword or punctuation model type, with a kind id) that `keep` accepts: the one walk behind `unitKindIds` and `namedUnitKindIds`.
 
+### `packages/codegen/src/emitters/wrap.ts::elementWrapperKindIds`
+
+The sorted, distinct kind ids of the wrappers a list seats around each of its elements: every seated compound that is a value of a list kind's multiple slot (rust's `_attributed_field_declaration`, `_argument` and their siblings). The list's iterator hands out the element, and a rebuild constructs the wrapper afresh around it, so the surface exposes the element in the wrapper's place. Emitted as `SurfaceKinds::wrappers` in each grammar's `kind_ids.rs` (`emitKindIdRust`). Parse and the placement then pass the wrapper's edge sides to its edge members, as they pass a list's to its edge items (`SurfaceKinds::exposes_in_place`), so a member keeps its comments and its blank-line fact through a rebuild.
+
+A display form also seats on its parent (`StructItemBrace` is the struct itself), but it is no list's element, so it is not among these. These are a subset of `rebuildWrapperKindIds`.
+
 
 ### `packages/codegen/src/emitters/render-module.ts::module`
 
@@ -13176,7 +13181,7 @@ A `Prepare` impl for a generated enum: payload variants delegate to the
 payload's `prepare(ctx)`, unit variants (literals) are `Ok(())`. The match
 is the tail expression, so the impl's result is whichever arm ran. An enum
 with payloads or edged units (`PrepareArm.edged`) also delegates
-`gap_edges`, `snapshot_edge`, `source_coordinate` and `source_separator`, an edged unit
+`gap_edges`, `snapshot_edge` and `source_coordinate`, an edged unit
 answering `gap_edges` with the edges it holds and nothing else,
 so a list's gap fill reaches the edges and the geometry of
 whichever kind the item is. An enum the reader reads into also reads a
@@ -13243,9 +13248,7 @@ function with itself and `&mut ()`, its overlay, so a native node is written
 in place and its callers are unchanged.
 
 Every struct also answers `gap_edges` with its own base edges, made when the
-layout holds none, `source_separator` from its layout
-(`layout::source_separator`: the one it carries, else its source's while its
-neighbour before is unchanged), `snapshot_edge` from its layout's span
+layout holds none, `snapshot_edge` from its layout's span
 and trivia, so a snapshot root's edges read geometry, and
 `source_coordinate` from its layout's `at`, the coordinate a read node came
 from, by which a read node with no write in its range prepares and renders
@@ -13264,9 +13267,8 @@ when unset; the seat calls (`seatLoops`) write each seated element's gap into
 that element's own base `after` edge; a separated list takes its `delimiter`
 from its site when unset, its `separator_kind` from its slot's stored
 separator (`listItemWireKey`, read through the derive's `separator_kind_of`)
-before its site, and each item's own separator where its source spells
-another than the slot's (`SlotTarget::separators` over the list's item field,
-stored by `LayoutTarget::set_slot_tokens`); and a required registered choice
+before its site, so every gap of a rebuilt list writes the list's separator;
+and a required registered choice
 option the caller left unset is built from its option site's resolved arm
 (`optionDefaultFills`). Only then does it walk the children (each field
 `preparesSlot` admits, through `SlotTarget::prepare`). The order matters: a

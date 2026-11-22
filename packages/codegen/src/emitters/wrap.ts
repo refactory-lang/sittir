@@ -3,7 +3,7 @@ import { emitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
 import { continuationTriviaKinds, emptyForms, layoutTriviaKinds } from '../compiler/model/trivia.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { AbstractAssembledCompound, AssembledAlias, AssembledList, AssembledNonterminal, spelledReadOf, storesNodes } from '../compiler/model/node-map.ts';
+import { AbstractAssembledCompound, AssembledAlias, AssembledList, AssembledNonterminal, isNodeRef, spelledReadOf, storageKindOfRef, storesNodes } from '../compiler/model/node-map.ts';
 import { envelopeListOf, envelopesOverList } from './node-projection.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import { storedTextKinds } from './built-from-text.ts';
@@ -77,11 +77,26 @@ export function rootKindIds(nodeMap: NodeMap): number[] {
 	return [...nodeMap.nodes.values()].flatMap((node) => (node.grammarRoot === true && node.kindId !== undefined ? [node.kindId] : [])).sort((a, b) => a - b);
 }
 
-export function rebuildWrapperKindIds(nodeMap: NodeMap): number[] {
-	const hoisted = [...nodeMap.nodes.values()].flatMap((node) =>
-		node instanceof AbstractAssembledCompound && node.seated && node.kindId !== undefined ? [node.kindId] : []
+function seatedCompounds(nodeMap: NodeMap): AbstractAssembledCompound[] {
+	return [...nodeMap.nodes.values()].flatMap((node) => (node instanceof AbstractAssembledCompound && node.seated && node.kindId !== undefined ? [node] : []));
+}
+
+export function elementWrapperKindIds(nodeMap: NodeMap): number[] {
+	const wrappers = [...nodeMap.nodes.values()].flatMap((list) =>
+		list instanceof AssembledList && list.kindId !== undefined
+			? list.slots.filter(isMultiple).flatMap((slot) =>
+					slot.values.flatMap((value) => {
+						const element = isNodeRef(value) ? nodeMap.nodes.get(storageKindOfRef(value.node)) : undefined;
+						return element instanceof AbstractAssembledCompound && element.seated && element.kindId !== undefined ? [element.kindId] : [];
+					})
+				)
+			: []
 	);
-	return [...new Set([...aliasEnvelopeIds(aliasEnvelopesOf(nodeMap)), ...hoisted])].sort((a, b) => a - b);
+	return [...new Set(wrappers)].sort((a, b) => a - b);
+}
+
+export function rebuildWrapperKindIds(nodeMap: NodeMap): number[] {
+	return [...new Set([...aliasEnvelopeIds(aliasEnvelopesOf(nodeMap)), ...seatedCompounds(nodeMap).map((node) => node.kindId!)])].sort((a, b) => a - b);
 }
 
 interface SlotModel {

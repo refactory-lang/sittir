@@ -522,7 +522,6 @@ export function selfContainedRenderInput(
 	const layoutOf = (layout: NodeDataLayout): Record<string, unknown> => ({
 		...(layout.trivia === undefined ? {} : { trivia: mapTriviaEntries(layout.trivia as TriviaSides<unknown>, walkTrivia) }),
 		...(layout.slots === undefined ? {} : { slots: layout.slots }),
-		...(layout.separator === undefined ? {} : { separator: layout.separator }),
 		...(layout.changed === undefined ? {} : { changed: layout.changed }),
 		...(layout.units === undefined ? {} : { units: layout.units.map((unit) => ({ ...(unit as object), ...mapTriviaEntries(unit as TriviaSides<unknown>, walkTrivia) })) })
 	});

@@ -284,8 +284,8 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             quote!(#common #(#members)*),
             quote! {
                 match cell {
-                    ::sittir_core::arena::Cell::ParsedLeaf { kind, span, row } if #accepts => {
-                        let place = ::sittir_core::arena::leaf_place(ctx, row, site)?;
+                    ::sittir_core::arena::Cell::NamedLeaf { kind, span, id } if #accepts => {
+                        let place = ::sittir_core::arena::leaf_place(ctx, id, site)?;
                         ::core::result::Result::Ok(Self {
                             __layout: ::sittir_core::arena::RecordLayout::new(ctx, place, site, ::sittir_core::options::Edges::default(), ::sittir_core::slot::ChangedEdges::default(), ::core::option::Option::None),
                             #text: ctx.source_text(span)?,
@@ -300,12 +300,12 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                             #(#inits)*
                         })
                     }
-                    ::sittir_core::arena::Cell::LinkedLeaf { kind, at: record, tree, row, end, span, changed } if #accepts => {
-                        let leaf = ::sittir_core::arena::Sides { tree, index: row, end, span };
-                        let place = ::sittir_core::arena::linked_leaf_place(ctx, record, leaf, site)?;
+                    ::sittir_core::arena::Cell::ReadLeaf { kind, at: record, name, span, changed } if #accepts => {
+                        let leaf = ::sittir_core::arena::Sides::named(name, span);
+                        let place = ::sittir_core::arena::linked_leaf_place(ctx, record, name, site)?;
                         ::core::result::Result::Ok(Self {
                             __layout: ::sittir_core::arena::RecordLayout::new(ctx, place, site, ::sittir_core::options::Edges::default(), changed, ::core::option::Option::Some(leaf)),
-                            #text: ctx.linked(tree)?.source_text(span)?,
+                            #text: ctx.linked(name)?.source_text(span)?,
                             #(#inits)*
                         })
                     }
@@ -339,7 +339,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                     ),
                     _ => return ::core::result::Result::Err(#refused),
                 };
-                let (words, side) = ::sittir_core::arena::record_of(ctx, at, if ctx.tree().is_none() { #built_words } else { #words }, kind)?;
+                let (words, side) = ::sittir_core::arena::record_of(ctx, at, if ctx.node().is_none() { #built_words } else { #words }, kind)?;
                 let place = ::sittir_core::arena::place_of(ctx, at)?;
                 let layout = ::sittir_core::arena::RecordLayout::new(ctx, place, site, side.edges.unwrap_or_default(), ::sittir_core::arena::held_changed(site.is_some(), held, &side), side.sides);
                 ::core::result::Result::Ok(Self {
@@ -509,7 +509,7 @@ pub fn choice(ident: &Ident, attrs: &KindAttrs, variants: &[WireVariant<'_>]) ->
                 site: ::core::option::Option<::sittir_core::trivia_store::Site<::sittir_core::arena::PrepPlace>>,
             ) -> ::core::result::Result<Self, ::sittir_core::arena::ArenaError> {
                 let kind = cell.kind().ok_or(#refused)?;
-                if let ::sittir_core::arena::Cell::Unit { .. } = cell {
+                if let ::sittir_core::arena::Cell::Unit { .. } | ::sittir_core::arena::Cell::NamedUnit { .. } = cell {
                     #(#units)*
                 }
                 #(#dispatch)*
@@ -541,7 +541,7 @@ pub fn members(ident: &Ident) -> TokenStream {
                 _: ::core::option::Option<::sittir_core::trivia_store::Site<::sittir_core::arena::PrepPlace>>,
             ) -> ::core::result::Result<Self, ::sittir_core::arena::ArenaError> {
                 match cell {
-                    ::sittir_core::arena::Cell::Unit { kind, .. } => __member(kind, kind).ok_or(#refused),
+                    ::sittir_core::arena::Cell::Unit { kind, .. } | ::sittir_core::arena::Cell::NamedUnit { kind, .. } => __member(kind, kind).ok_or(#refused),
                     _ => ::core::result::Result::Err(#refused),
                 }
             }
@@ -596,7 +596,7 @@ mod tests {
         assert!(has(&out, "::sittir_core::records_codec! { #[doc = \"A record of `BlockNode`, read in place.\"] #[derive(Clone, Copy)] pub struct BlockNodeRecord<'a> {"));
         assert!(has(&out, "impl ::sittir_core::arena::HasRecord for BlockNode { type Record<'a> = BlockNodeRecord<'a>; }"));
         assert!(has(&out, "fn claims(kind: ::sittir_core::types::KindId) -> bool { (kind == kind::BLOCK) }"));
-        assert!(has(&out, "let (words, side) = ::sittir_core::arena::record_of(ctx, at, if ctx.tree().is_none() { 5u32 } else { 7u32 }, kind)?;"));
+        assert!(has(&out, "let (words, side) = ::sittir_core::arena::record_of(ctx, at, if ctx.node().is_none() { 5u32 } else { 7u32 }, kind)?;"));
         assert!(has(&out, "ctx.child(at)?, at, changed,"));
         assert!(has(&out, "let layout = ::sittir_core::arena::RecordLayout::new(ctx, place, site, side.edges.unwrap_or_default(), ::sittir_core::arena::held_changed(site.is_some(), held, &side), side.sides);"));
         assert!(has(&out, "__layout: layout, __words: words, __at: at,"));
@@ -786,12 +786,12 @@ mod tests {
             }
         })
         .expect("expands");
-        assert!(has(&out, "::sittir_core::arena::Cell::ParsedLeaf { kind, span, row } if (kind == kind::IDENTIFIER) =>"));
-        assert!(has(&out, "let place = ::sittir_core::arena::leaf_place(ctx, row, site)?;"));
+        assert!(has(&out, "::sittir_core::arena::Cell::NamedLeaf { kind, span, id } if (kind == kind::IDENTIFIER) =>"));
+        assert!(has(&out, "let place = ::sittir_core::arena::leaf_place(ctx, id, site)?;"));
         assert!(has(&out, "text: ctx.source_text(span)?,"));
         assert!(has(&out, "let place = ::sittir_core::arena::built_leaf_place(site)?;"));
-        assert!(has(&out, "::sittir_core::arena::Cell::LinkedLeaf { kind, at: record, tree, row, end, span, changed } if (kind == kind::IDENTIFIER) =>"));
-        assert!(has(&out, "text: ctx.linked(tree)?.source_text(span)?,"));
+        assert!(has(&out, "::sittir_core::arena::Cell::ReadLeaf { kind, at: record, name, span, changed } if (kind == kind::IDENTIFIER) =>"));
+        assert!(has(&out, "text: ctx.linked(name)?.source_text(span)?,"));
         assert!(has(&out, "text: ctx.string(text)?,"));
         assert!(has(&out, "fn text(&self) -> &str { self.text }"));
     }
@@ -849,7 +849,7 @@ mod tests {
         })
         .expect("expands");
         assert!(has(&members, "impl ::sittir_core::arena::HasRecord for OperatorNode { type Record<'a> = OperatorNode; }"));
-        assert!(has(&members, "::sittir_core::arena::Cell::Unit { kind, .. } => __member(kind, kind).ok_or("));
+        assert!(has(&members, "::sittir_core::arena::Cell::Unit { kind, .. } | ::sittir_core::arena::Cell::NamedUnit { kind, .. } => __member(kind, kind).ok_or("));
     }
 
     #[test]

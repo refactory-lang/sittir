@@ -1,6 +1,6 @@
 import type { Snapshot } from '@sittir/types';
 import { isCoordinate, type TreeHandle } from './read.ts';
-import { coordinateIndex, coordinateOf, enterPath, envelopeKindOf, isDataKey, isStorageKey, mapSideEntries, mapUnitSides, nodeText, separatorOf, sidesOf, slotsOf, unitSidesOf } from './node-data.ts';
+import { coordinateIndex, coordinateOf, enterPath, envelopeKindOf, isDataKey, isStorageKey, mapSideEntries, mapUnitSides, nodeText, sidesOf, slotsOf, unitSidesOf } from './node-data.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { TriviaSides } from './trivia.ts';
 import { builtEntryNode, isBuiltEntry, readCoordinate } from './built-arena.ts';
@@ -142,12 +142,10 @@ function finishCopy(value: Record<string, unknown>, out: Record<string, unknown>
 	const unitSides = unitSidesOf(value);
 	const units = unitSides === undefined ? undefined : mapUnitSides(unitSides, each);
 	const slots = slotsOf(value);
-	const separator = separatorOf(value);
 	const layout = {
 		...(sides === undefined ? {} : { trivia: mapSideEntries(sides as TriviaSides<unknown>, each) }),
 		...(units === undefined || units.length === 0 ? {} : { units }),
-		...(slots === undefined || slots.length === 0 ? {} : { slots }),
-		...(separator === undefined ? {} : { separator })
+		...(slots === undefined || slots.length === 0 ? {} : { slots })
 	};
 	if (Object.keys(layout).length > 0) out.$_layout = layout;
 }

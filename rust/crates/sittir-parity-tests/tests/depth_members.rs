@@ -3,6 +3,7 @@
 //! subtree counts them, the interiors of `ERROR`s and extras included. A
 //! render finds them only when something after a slice reads its depth.
 
+use sittir_core::engine::Backing as _;
 use sittir_core::tree_sitter;
 use sittir_core::trivia_table::{DepthMembers, SurfaceKinds};
 use sittir_core::types::NodeIndex;
@@ -74,10 +75,10 @@ fn a_tree_counts_its_depth_members_from_its_first_depth_move() {
     let table = DepthMembers::of(&mut tree.nodes(), sittir_python::render::kind_ids::SURFACE_KINDS).heap_bytes();
     assert_ne!(table, 0, "the source has depth members");
     assert!(!tree.take_grown(), "nothing grew before a depth move");
-    assert_eq!(tree.seating().depth_move(&coord), 0, "the whole tree opens as many levels as it closes");
+    assert_eq!(tree.seating().depth_move((&coord).into()), 0, "the whole tree opens as many levels as it closes");
     assert!(tree.take_grown(), "the first depth move grows the tree");
     assert_eq!(tree.native_bytes(), parsed + table, "by its depth members");
-    assert_eq!(tree.seating().depth_move(&coord), 0);
+    assert_eq!(tree.seating().depth_move((&coord).into()), 0);
     assert!(!tree.take_grown(), "a later move finds them made");
     assert_eq!(tree.native_bytes(), parsed + table);
 }

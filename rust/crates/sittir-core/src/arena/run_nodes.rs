@@ -53,12 +53,26 @@ struct Table {
     ids: HashMap<NodeSite, NodeIndex, crate::heap::IndexState>,
     sides: HashMap<Address, usize, crate::heap::IndexState>,
     read: Vec<Read>,
-    shared: HashMap<Address, Vec<Address>, crate::heap::IndexState>,
     refused: Option<ArenaError>,
+    spans: Option<Vec<std::ops::Range<Address>>>,
+    bound: Option<Bound>,
 }
 
-/// The nodes the navigations of one call have met in one source, by the
-/// ids they gave them: every navigation over the table names a node alike.
+/// A place in a read's records: a span of the read's (`read_spans`) and an
+/// address in it.
+type SpanPlace = (usize, u32);
+
+/// The records under the node kept at `of`, as its read drafted them, in
+/// order: from the first to the last on its rightmost path; none for a row
+/// that holds no record.
+struct Bound {
+    of: NodeSite,
+    places: Option<(SpanPlace, SpanPlace)>,
+}
+
+/// The nodes the navigations of one call have met under one root record
+/// (`RunNodes::holding`), by the ids they gave them: every navigation over
+/// the table names a node alike.
 #[derive(Default)]
 pub struct RunTable(crate::engine::PerCall<Table>);
 
@@ -91,22 +105,25 @@ fn malformed(what: &'static str, at: Address) -> ArenaError {
 }
 
 impl<'t> RunNodes<'t> {
-    /// Navigation of the source the record at `record` was read from, its
-    /// bytes indexing `text`, over `table`, which holds that source's nodes
-    /// alone: the source's root, which the parents of `record` lead to, is
-    /// its first.
+    /// Navigation of the node the record at `record` was read as and the
+    /// nodes under it, its bytes indexing `text`, the source it was read
+    /// from, over `table`, which holds those nodes alone: that node is its
+    /// root, with no parent, as a built node is, so nothing above it is
+    /// read and it answers whether or not the records above it are still
+    /// held.
     ///
     /// # Errors
     ///
-    /// What reading the record or a record above it refuses.
+    /// What reading the record refuses, and `ArenaError::Malformed` for a
+    /// record an `ERROR` holds, whose interior no view names
+    /// (`SideRecord::held_by_error`).
     pub fn holding(arena: &'t dyn ArenaRead, text: &'t str, record: Address, table: &'t RunTable) -> Result<Self, ArenaError> {
         let nodes = Self { arena, text, table };
         nodes.answering(|walk| {
-            let mut root = record;
-            while let Some(parent) = walk.side(root)?.parent {
-                root = parent;
+            if walk.side(record)?.held_by_error {
+                return Err(ArenaError::Malformed { what: "record an ERROR holds", word: record.0 });
             }
-            walk.record(root, Parent::Root)
+            walk.record(record, Parent::Root)
         })?;
         Ok(nodes)
     }
@@ -141,7 +158,7 @@ impl<'t> RunNodes<'t> {
     ///
     /// What reading the record refuses.
     pub fn index_of(&mut self, at: Address) -> Result<NodeIndex, ArenaError> {
-        self.answering(|walk| walk.record(at, Parent::Unknown))
+        self.answering(|walk| walk.record(at, Parent::Root))
     }
 
     /// The id of the node a cell of the record at `holder` names by `row`:
@@ -161,10 +178,40 @@ impl<'t> RunNodes<'t> {
     pub fn index_at(&mut self, site: NodeSite) -> Option<NodeIndex> {
         self.answering(|walk| {
             let met = match site {
-                NodeSite::Record(at) => walk.record(at, Parent::Unknown),
+                NodeSite::Record(at) => walk.named_record(at),
                 NodeSite::Row { holder, entry } => walk.row_index(holder, entry + 2),
             };
             walk.answer(met.map(Some), None)
+        })
+    }
+
+    /// Whether the node kept at `site` is its source's root: a record whose
+    /// side record has no parent. A row never is.
+    pub fn is_source_root(&mut self, site: NodeSite) -> bool {
+        self.answering(|walk| {
+            let root = match site {
+                NodeSite::Record(at) => walk.node_record(at).and_then(|at| Ok(walk.side(at)?.parent.is_none())),
+                NodeSite::Row { .. } => Ok(false),
+            };
+            walk.answer(root, false)
+        })
+    }
+
+    /// Whether the node at `index` is the one kept at `site`.
+    pub fn keeps(&mut self, index: NodeIndex, site: NodeSite) -> bool {
+        self.answering(|walk| {
+            let kept = walk.kept_at(site).map(|site| walk.site(index) == Some(site));
+            walk.answer(kept, false)
+        })
+    }
+
+    /// Whether the node kept at `site` lies under the node at `index`, read
+    /// from that node down: a row by its place in the run, a record by the
+    /// bound of the records under the node (`Walk::bound_of`).
+    pub fn under(&mut self, index: NodeIndex, site: NodeSite) -> bool {
+        self.answering(|walk| {
+            let under = walk.under(index, site);
+            walk.answer(under, false)
         })
     }
 
@@ -192,14 +239,115 @@ impl<'t> RunNodes<'t> {
 
 }
 
+/// The record that is the node of the record at `at`: itself, or, for a
+/// content read from its envelope's own node (`SideRecord::content`), its
+/// envelope's.
+///
+/// # Errors
+///
+/// What reading a side record refuses.
+pub fn node_record(arena: &dyn ArenaRead, mut at: Address) -> Result<Address, ArenaError> {
+    loop {
+        let (side, _) = SideRecord::read_facts(arena, super::side_of(arena, at)?)?;
+        let Some(parent) = side.parent.filter(|_| side.content) else { return Ok(at) };
+        at = parent;
+    }
+}
+
 impl Walk<'_> {
     fn site(&self, index: NodeIndex) -> Option<NodeSite> {
         self.table.met.get(index.0 as usize).map(|met| met.site)
     }
 
+    /// `site`, a record of a content read from its envelope's node as that
+    /// envelope's: where the node it names is kept.
+    fn kept_at(&mut self, site: NodeSite) -> Result<NodeSite, ArenaError> {
+        Ok(match site {
+            NodeSite::Record(at) => NodeSite::Record(self.node_record(at)?),
+            row @ NodeSite::Row { .. } => row,
+        })
+    }
+
+    /// The last record on the rightmost path from the record at `at`.
+    fn rightmost(&mut self, mut at: Address) -> Result<Address, ArenaError> {
+        while let Some(child) = self.run(at)?.iter().rev().find_map(|entry| match *entry {
+            RunEntry::Record { at, .. } => Some(at),
+            RunEntry::Row { .. } => None,
+        }) {
+            at = child;
+        }
+        Ok(at)
+    }
+
+    /// The first and last record under the node kept at `of`, itself
+    /// included for a record: a read drafted every record of a subtree in
+    /// turn, from its root to the last on its rightmost path, so these bound
+    /// them, and nothing above the node is read.
+    fn records_under(&mut self, of: NodeSite) -> Result<Option<(Address, Address)>, ArenaError> {
+        match of {
+            NodeSite::Record(at) => Ok(Some((at, self.rightmost(at)?))),
+            NodeSite::Row { holder, entry } => {
+                let run = self.run(holder)?;
+                let Some(&RunEntry::Row { inner, .. }) = run.get(entry as usize) else { return Err(malformed("run row", holder)) };
+                let inside = run.get(entry as usize + 1..entry as usize + 1 + inner as usize).ok_or(malformed("run row entries", holder))?;
+                let mut records = inside.iter().filter_map(|entry| match *entry {
+                    RunEntry::Record { at, .. } => Some(at),
+                    RunEntry::Row { .. } => None,
+                });
+                let Some(first) = records.next() else { return Ok(None) };
+                let last = records.next_back().unwrap_or(first);
+                Ok(Some((first, self.rightmost(last)?)))
+            }
+        }
+    }
+
+    /// The bound of the records under the node kept at `of`, kept for the
+    /// node last asked about, its read's spans kept for the call.
+    fn bound_of(&mut self, of: NodeSite) -> Result<Option<(SpanPlace, SpanPlace)>, ArenaError> {
+        if let Some(bound) = self.table.bound.as_ref().filter(|bound| bound.of == of) {
+            return Ok(bound.places);
+        }
+        if self.table.spans.is_none() {
+            let (NodeSite::Record(at) | NodeSite::Row { holder: at, .. }) = of;
+            let source = self.side(at)?.source.map(Address).ok_or(malformed("parsed record source", at))?;
+            self.table.spans = Some(super::read_spans(self.arena, source)?);
+        }
+        let records = self.records_under(of)?;
+        let spans = self.table.spans.as_deref().unwrap_or_default();
+        let place = |at: Address| spans.iter().position(|span| span.contains(&at)).map(|span| (span, at.0)).ok_or(malformed("parsed record outside its read's spans", at));
+        let places = records.map(|(first, last)| Ok::<_, ArenaError>((place(first)?, place(last)?))).transpose()?;
+        self.table.bound = Some(Bound { of, places });
+        Ok(places)
+    }
+
+    /// Whether the node kept at `site` lies under the node at `index`.
+    fn under(&mut self, index: NodeIndex, site: NodeSite) -> Result<bool, ArenaError> {
+        let of = self.site(index).ok_or(ArenaError::Malformed { what: "node id", word: index.0 })?;
+        let site = self.kept_at(site)?;
+        if let (NodeSite::Row { holder, entry }, NodeSite::Row { holder: at, entry: row }) = (of, site) {
+            if holder == at {
+                let Some(&RunEntry::Row { inner, .. }) = self.run(holder)?.get(entry as usize) else { return Err(malformed("run row", holder)) };
+                return Ok(entry < row && row <= entry + inner);
+            }
+        }
+        let (NodeSite::Record(held) | NodeSite::Row { holder: held, .. }) = site;
+        let Some((first, last)) = self.bound_of(of)? else { return Ok(false) };
+        let spans = self.table.spans.as_deref().unwrap_or_default();
+        Ok(spans.iter().position(|span| span.contains(&held)).is_some_and(|span| (first..=last).contains(&(span, held.0))))
+    }
+
+    /// The id of the node of the record at `at`, named on its own: nothing
+    /// above it is read. A record an `ERROR` holds names no node.
+    fn named_record(&mut self, at: Address) -> Result<NodeIndex, ArenaError> {
+        if self.side(at)?.held_by_error {
+            return Err(malformed("record an ERROR holds", at));
+        }
+        self.record(at, Parent::Root)
+    }
+
     fn row_index(&mut self, holder: Address, row: u32) -> Result<NodeIndex, ArenaError> {
         if row == 1 {
-            return self.record(holder, Parent::Unknown);
+            return self.named_record(holder);
         }
         let entry = row.checked_sub(2).ok_or(malformed("cell row", holder))?;
         let Some(&RunEntry::Row { facts, span, inner }) = self.run(holder)?.get(entry as usize) else { return Err(malformed("cell row", holder)) };
@@ -223,7 +371,7 @@ impl Walk<'_> {
         }
         match inside {
             Some((entry, facts, span)) => Ok(self.meet(NodeSite::Row { holder, entry: crate::types::narrow(entry) }, facts, span, false, Parent::Unknown)),
-            None => self.record(holder, Parent::Unknown),
+            None => self.record(holder, Parent::Root),
         }
     }
 
@@ -260,34 +408,16 @@ impl Walk<'_> {
     }
 
     /// The record that is the node of the record at `at`: itself, or, for a
-    /// content read from its envelope's own node, its envelope's.
+    /// content read from its envelope's own node (`SideRecord::content`),
+    /// its envelope's. Only a content's parent is read.
     fn node_record(&mut self, mut at: Address) -> Result<Address, ArenaError> {
         loop {
-            let Some(parent) = self.side(at)?.parent else { return Ok(at) };
-            if !self.shares(parent, at)? {
-                return Ok(at);
-            }
+            let side = self.side(at)?;
+            let Some(parent) = side.parent.filter(|_| side.content) else { return Ok(at) };
             at = parent;
         }
     }
 
-    /// Whether the record at `content` is a content the record at `holder`
-    /// reads from its own node: the contents its run marks shared, found
-    /// once.
-    fn shares(&mut self, holder: Address, content: Address) -> Result<bool, ArenaError> {
-        if !self.table.shared.contains_key(&holder) {
-            let contents = self
-                .run(holder)?
-                .iter()
-                .filter_map(|entry| match *entry {
-                    RunEntry::Record { at, shared: true } => Some(at),
-                    _ => None,
-                })
-                .collect();
-            self.table.shared.insert(holder, contents);
-        }
-        Ok(self.table.shared.get(&holder).is_some_and(|contents| contents.contains(&content)))
-    }
 
     /// Whether the node whose record is at `at` has no children: its run
     /// holds none, nor does a content it shares its node with.
@@ -311,8 +441,9 @@ impl Walk<'_> {
     fn meet(&mut self, site: NodeSite, facts: NodeFacts, span: Span, childless: bool, parent: Parent) -> NodeIndex {
         let table = &mut *self.table;
         if let Some(&index) = table.ids.get(&site) {
-            if table.met[index.0 as usize].parent == Parent::Unknown {
-                table.met[index.0 as usize].parent = parent;
+            let known = &mut table.met[index.0 as usize].parent;
+            if *known == Parent::Unknown || (*known == Parent::Root && matches!(parent, Parent::Node(_))) {
+                *known = parent;
             }
             return index;
         }
@@ -401,10 +532,7 @@ impl Walk<'_> {
         }
         let parent = match site {
             NodeSite::Row { holder, entry } => Some(self.above(holder, entry)?),
-            NodeSite::Record(at) => match self.side(at)?.parent {
-                Some(parent) => Some(self.record(parent, Parent::Unknown)?),
-                None => None,
-            },
+            NodeSite::Record(_) => None,
         };
         self.table.met[index.0 as usize].parent = parent.map_or(Parent::Root, Parent::Node);
         Ok(parent)
@@ -501,6 +629,14 @@ impl<'t> Nodes<'t> for RunNodes<'t> {
 
     fn holds_error(&mut self, index: NodeIndex) -> bool {
         self.answering(|walk| walk.facts(index).is_some_and(|facts| facts.holds_error))
+    }
+
+    /// A record an `ERROR` holds names no node (`SideRecord::held_by_error`),
+    /// so a node's own `ERROR` is the only one to find, and nothing above it
+    /// is read.
+    fn error_holding(&mut self, index: NodeIndex) -> Option<Kid> {
+        let kid = self.kid(index);
+        kid.error().then_some(kid)
     }
 
     fn bound(&mut self) -> Option<u32> {

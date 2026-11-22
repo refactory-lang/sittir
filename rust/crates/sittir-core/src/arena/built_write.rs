@@ -36,6 +36,7 @@ pub struct ReadWriter<'a> {
     spans: Vec<std::ops::Range<Address>>,
     open: Option<usize>,
     sourced: u32,
+    read_side: Option<Address>,
 }
 
 /// Where a read's writer took the words of a record.
@@ -49,7 +50,7 @@ enum Taken {
 impl<'a> ReadWriter<'a> {
     /// A writer appending to the chunk `chunks` has open for reads.
     pub fn new(chunks: &'a mut BuiltChunks) -> Self {
-        Self { chunks, spans: Vec::new(), open: None, sourced: 0 }
+        Self { chunks, spans: Vec::new(), open: None, sourced: 0, read_side: None }
     }
 
     /// The addresses the writer's records lie in, one range for each run of
@@ -64,16 +65,30 @@ impl<'a> ReadWriter<'a> {
         self.sourced += 1;
     }
 
+    /// The side record at `at` is the read's own: its spans and entry
+    /// starts.
+    pub fn keeps_read_side(&mut self, at: Address) {
+        self.read_side = Some(at);
+    }
+
     /// Ends the read whose source's entry is `source` and whose root's
     /// record is `root`: each side record that names the source holds a
-    /// count of it in place of the read's own, and the root's one count is
-    /// its handle's.
+    /// count of it in place of the read's own, and a count of the read's
+    /// own side record, which the source names, so its spans and starts
+    /// live as long as the source does; the root's one count is its
+    /// handle's.
     ///
     /// # Errors
     ///
-    /// What reaching the source's or the root's count refuses.
+    /// What reaching the source's, the read's side record's or the root's
+    /// count refuses.
     pub fn finish(self, source: Address, root: Option<Address>) -> Result<(), ArenaError> {
         self.chunks.hold_texts(source, self.sourced)?;
+        if let Some(read) = self.read_side {
+            self.chunks.name_read_side(source, read)?;
+            self.chunks.hold_more(read, self.sourced)?;
+            self.chunks.release(super::count::Held::Side(read), false, &mut |_| Vec::new())?;
+        }
         self.chunks.release(super::count::Held::Text(source), false, &mut |_| Vec::new())?;
         root.map_or(Ok(()), |root| self.chunks.hand_to_handle(root))
     }
