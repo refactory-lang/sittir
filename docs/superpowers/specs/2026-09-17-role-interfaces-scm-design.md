@@ -88,7 +88,7 @@ Names are sittir's throughout, namespaced and hierarchical (§3.2.1). Two ecosys
 | `attribute` | sittir | `attribute` (`.inner`) — Rust `attribute_item`, TS/Python `decorator` |
 | `trivia` | sittir | `whitespace` `newline` |
 
-**Projections, not sources.** `highlights.scm` and `tags.scm` for authored grammars are *generated* from `roles.scm`: leaves by a rename table (`literal.string → @string`, `identifier.lifetime → @label`, `literal.number.integer → @number`), identifier occurrence roles from (kind, member) (`(declaration.parameter, name) → @variable.parameter`, `(expression.call, function) → @function.call`, `(declaration.method, name) → @function.method`), tags by coarsening (`declaration.{struct,enum,union,type_alias} → definition.class`). SCIP `SyntaxKind` is a third, optional. None are authored; editor compatibility is an output.
+**Projections, not sources.** `highlights.scm` and `tags.scm` for authored grammars are *generated* from `roles.scm`: leaves by a rename table (`literal.string → @string`, `identifier.lifetime → @label`, `literal.number.integer → @number`), identifier occurrence roles from (kind, member) (`(declaration.parameter, name) → @variable.parameter`, `(expression.call, function) → @function.call`, `(declaration.member.method, name) → @function.method`), tags by coarsening (`declaration.{struct,enum,union,type_alias} → definition.class`). SCIP `SyntaxKind` is a third, optional. None are authored; editor compatibility is an output.
 
 Why `declaration.*` rather than tags' `definition.*`: a bodiless prototype is a declaration and not a definition; SCIP and tags elide the distinction, LSP does not. `declaration` stays correct if the distinction is ever needed as a refinement.
 
@@ -111,7 +111,7 @@ v1's recorded `lifetime` gap is a coverage finding, not a naming one: upstream R
 
 ### 3.3 Kind is a (node, context) fact
 
-The same node kind claims different vocabulary kinds under different nesting — Rust `function_item` is `declaration.function` at module level, `declaration.method` in an `impl_item` body, `declaration.method.trait` in a `trait_item` body. Context is ordinary scm nesting; no directive.
+The same node kind claims different vocabulary kinds under different nesting — Rust `function_item` is `declaration.function` at module level, `declaration.member.method` in an `impl_item` body, `declaration.member.method.trait` in a `trait_item` body. Context is ordinary scm nesting; no directive.
 
 ### 3.4 SCIP projection (optional, derived)
 
@@ -139,7 +139,7 @@ If SCIP occurrence emission is ever wanted, `SyntaxKind` is a small table over (
 ```scheme
 (impl_item
   (declaration_list
-    (function_item (identifier) @name) @declaration.method   ; @name → the method
+    (function_item (identifier) @name) @declaration.member.method   ; @name → the method
   ) @body
 ) @declaration.impl                                          ; @body → the impl (ext)
 ```
@@ -179,7 +179,7 @@ Authored `roles.scm` therefore never needs `field:` syntax. Generated `shape.scm
 `roles.scm` may claim a distinction the grammar does not make. Rust has no method kind (`function_item` in an `impl_item` body), one `boolean_literal` (no `true`/`false` kinds), TS one `comment` kind (no line/block). The claim is written the same way as any other — the pattern supplies the discriminating context or predicate:
 
 ```scheme
-(impl_item (declaration_list (function_item) @declaration.method))           ; context
+(impl_item (declaration_list (function_item) @declaration.member.method))           ; context
 ((boolean_literal) @literal.boolean.true  (#eq? @literal.boolean.true  "true"))   ; literal-token arm
 ((boolean_literal) @literal.boolean.false (#eq? @literal.boolean.false "false"))
 ((comment) @comment.line  (#match? @comment.line  "^//"))                    ; token text
@@ -213,7 +213,7 @@ The refinement always exists in the vocabulary; what varies is whether the parse
 
 ### 4.2 Operator refinements — leaf per operator
 
-`binary`, `unary`, `update`, and compound `assignment` refine down to **the operator**, with the class as the intermediate level: `expression.binary.arithmetic.add`, `expression.binary.comparison.strict_equal`, `expression.unary.not`. The reason is caller ergonomics on both sides: a reader asks for `expression.binary.arithmetic.add` and gets exactly `+` nodes with no post-filter on operator text; a builder gets `binary.arithmetic.add(left, right)` from the `roles` overlay with the operator baked in, instead of `binary(left, '+', right)`. Class queries still cost nothing — `expression.binary.arithmetic` is a prefix kind-set.
+`binary`, `unary`, `update`, and compound `assignment` refine down to **the operator**, with the class as a namespace between them: `expression.binary.arithmetic.add`, `expression.binary.comparison.strict_equal`, `expression.unary.not`. The reason is caller ergonomics on both sides: a reader asks for `expression.binary.arithmetic.add` and gets exactly `+` nodes with no post-filter on operator text; a builder gets `binary.arithmetic.add(left, right)` from the `roles` overlay with the operator baked in, instead of `binary(left, '+', right)`. Class queries still cost nothing — `expression.binary.arithmetic` is a prefix kind-set.
 
 The discriminator is a literal arm (the operator slot is a `choice` of literal tokens), so the override realization is always available, and the library's `binaryLadder` — one arm per precedence level × operator — already has exactly the arms to alias. The vocabulary cost is bounded and finite (~30 binary leaves per grammar); the hierarchy keeps it navigable.
 
@@ -243,12 +243,12 @@ Declarations carry modifiers (`pub` `async` `static` `unsafe` `readonly` `abstra
 **Rules.**
 
 - **Keyword and punctuation markers are members, never kinds.** An anonymous token has no kind to claim; its meaning is its slot. Named modifier *nodes* (`visibility_modifier`, `accessibility_modifier`, `function_modifiers`, `extern_modifier`, `mutable_specifier`) are kinds under `modifier.*`, and their literal arms refine (`modifier.accessibility.public`).
-- **Combinable → boolean member; exclusive → union-literal member or refinement.** `async` + `unsafe` + `const` co-occur, so they are booleans. `get`/`set` are exclusive, so `accessorKind` is a union member *and* `Declaration.Method.Getter` is a refinement narrowing it. A refinement is a named narrowing of a member (§5.5 rule 3); it is never the only place a modifier lives.
+- **Combinable → boolean member; exclusive → union-literal member or refinement.** `async` + `unsafe` + `const` co-occur, so they are booleans. `get`/`set` are exclusive, so `accessorKind` is a union member *and* `Declaration.Member.Method.Getter` is a refinement narrowing it. A refinement is a named narrowing of a member (§5.5 rule 3); it is never the only place a modifier lives.
 - **Keyword modifiers normalize to one bitflag member.** `modifiers: Modifier.Flags` — a number, per the bitflag spec — holds every keyword-shaped modifier the language has: `fn.modifiers & M.Async`, built as `{ modifiers: M.Pub | M.Async }`. Exclusive groups (accessibility) are bits under a group mask with at-most-one enforced by the checker and the builder. Structured modifiers (`visibility` with a path, `extern` with an ABI) set their presence bit *and* carry a node member for the payload. **Bit positions are assigned once, in the base vocabulary**; each grammar's `Modifier.Flags` enum is the winnowed subset with the same positions, so a flags value built against one grammar means the same thing everywhere it is representable. `M.Static` on Python does not exist — compile error — exactly as with winnowed kinds.
 - **Base carries the union via a mixin**, per-grammar deltas winnow: `Base.Declaration.Function = Base.Modifiers & { name … }` where `Base.Modifiers = { modifiers: Modifier.Flags; visibility?: Modifier.Visibility; extern?: Modifier.Extern }` and `Base.Modifier.Flags` enumerates `Async Static Const Unsafe Abstract Readonly Override Declare Default Mutable Public Private Protected Pub …`. Python's delta narrows the enum to `{ Async }` — the member is the same, the representable bits differ.
 - **Encoding → member is derived from rule shape, not authored.** `optional(literal)` → boolean; named `choice(literals)` → union literal; `repeat(choice(literals…))` → set storage projected to booleans; named node → node member. Whatever marker-field convention the grammar side settles on (`*_marker` today), the mapping is one rule in the overlay, never per-field captures in `roles.scm`. Consequence: **the encoding can keep changing without touching `roles.scm` or the type tree** — only the derivation moves. An authored capture is needed only where a marker's slot is unfielded or an upstream grammar's own name diverges from the member.
 
-**Where a grammar can only reach a modifier by predicate**, the refinement is the claim and it sets the same bit. Python has no `static` keyword — `@staticmethod` is a decorator — so `(decorated_definition (decorator (identifier) @_d) (function_definition) @declaration.method.static) (#eq? @_d "staticmethod")` claims the refinement, and `Python.Declaration.Method.Static = Method & { modifiers: M.Static | … }`. TS reaches the bit by field, Python by predicate; `m.modifiers & M.Static` is correct on both.
+**Where a grammar can only reach a modifier by predicate**, the refinement is the claim and it sets the same bit. Python has no `static` keyword — `@staticmethod` is a decorator — so `(decorated_definition (decorator (identifier) @_d) (function_definition) @declaration.member.method.static) (#eq? @_d "staticmethod")` claims the refinement, and `Python.Declaration.Member.Method.Static = Method & { modifiers: M.Static | … }`. TS reaches the bit by field, Python by predicate; `m.modifiers & M.Static` is correct on both.
 
 **Declaring modifiers in `roles.scm`.** The declaration is one list member, `@modifiers`, captured at every modifier position of the claim — §4.4's multi-position form. Whether the grammar spreads modifiers over N separate optional fields (TS), packs them into one repeat (Rust), or has a single marker (Python), the *declaration* is the same shape and the *positions* are the only grammar-specific part:
 
@@ -259,7 +259,7 @@ Declarations carry modifiers (`pub` `async` `static` `unsafe` `readonly` `abstra
   static_marker:          _?    @modifiers
   override_modifier:      (_)?  @modifiers
   readonly_marker:        _?    @modifiers
-  async_marker:           _?    @modifiers) @declaration.method
+  async_marker:           _?    @modifiers) @declaration.member.method
 
 ; Rust — one repeat + one structured node → the same list member
 (function_item
@@ -314,7 +314,7 @@ Examples, against the current grammars:
 (class_declaration
   (class_heritage
     (class_heritage_extends_clause (_) @heritage)
-    (implements_clause type: (_) @heritage))) @declaration.class          ; heritage: (Expression | Type)[]
+    (implements_clause type: (_) @heritage))) @declaration.type.class          ; heritage: (Expression | Type)[]
 
 ; quantified repeat → list member. Rust's modifier set (before projection to booleans, §4.3):
 (function_item (function_modifiers modifier: (_)* @modifiers)) @declaration.function
@@ -425,22 +425,22 @@ export namespace Declaration {
     whereClause?: Rust.WhereClause                                   // added: grammar field the base doesn't name
     visibility?:  Rust.VisibilityModifier
   }
-  export type Method = Require<Base.Declaration.Method<RustContext>, 'body' | 'receiver'> & {
+  export type Method = Require<Base.Declaration.Member.Method<RustContext>, 'body' | 'receiver'> & {
     whereClause?: Rust.WhereClause; visibility?: Rust.VisibilityModifier
   }
 }
 ```
 
-The key list is generated from the slot model (members whose slot is not `optional()` in the rule); `Require` is a named alias, so hover and errors show `Require<Base.Declaration.Method<RustContext>, "body" | "receiver">` rather than a mapped-type expansion. Both operands are subtypes of the base instantiation by construction, so assignability to `Base.Declaration.Method<BaseContext>` remains structural with no assertion.
+The key list is generated from the slot model (members whose slot is not `optional()` in the rule); `Require` is a named alias, so hover and errors show `Require<Base.Declaration.Member.Method<RustContext>, "body" | "receiver">` rather than a mapped-type expansion. Both operands are subtypes of the base instantiation by construction, so assignability to `Base.Declaration.Member.Method<BaseContext>` remains structural with no assertion.
 
 **Rejected alternative — mapped types over member descriptors.** All four operations *can* be expressed uniformly by generating a per-grammar member table (`{ 'declaration.function': { body: { kind: 'statement.block', required: true }, … } }`) and computing every type with a mapped type. It is more uniform and emits less, but the shipped `.d.ts` then reads as mapped-type machinery on hover and in errors, and legible errors are the point of shipping types (`Python.Declaration.Trait` must fail with a message a person can read). Generic-plus-delta keeps the base readable, the context readable, and the delta tiny.
 
 ### 5.4 Groupings
 
-Unions, never nominal supertypes — now with the prefix case falling out of the namespace: `Expression.Binary.Arithmetic` *is* the kind-set of its leaves (each leaf is assignable to it). Cross-cutting sets that have no shared parent remain explicit unions:
+Unions, never nominal supertypes — now with the prefix case falling out of the namespace: `Expression.Binary.Arithmetic.Any` *is* the kind-set of its leaves (each leaf is assignable to it). Cross-cutting sets that have no shared parent remain explicit unions:
 
 ```ts
-export type Callable = Declaration.Function | Declaration.Method | Declaration.Constructor | Declaration.Method.Getter | Declaration.Method.Setter | Declaration.Method.Trait
+export type Callable = Declaration.Function | Declaration.Member.Method | Declaration.Member.Constructor | Declaration.Member.Method.Getter | Declaration.Member.Method.Setter | Declaration.Member.Method.Trait
 ```
 
 ### 5.5 What remains to check
@@ -458,7 +458,7 @@ The generated, vocabulary-level API — read side and build side — is the **no
 
 **0. Naming.** The vocabulary and `roles.scm` captures are `snake_case` (`declaration.parameter.self`, `expression.binary.comparison.less_equal`) — they are data, and they match SCIP and grammar spelling. The TypeScript surface is camelCase for builders and members (`d.parameter.self()`, `e.lessEqual`, `d.typedDefault`), PascalCase for types and enum bits (`Declaration.Parameter.Self`, `M.Async`). The mapping is mechanical and one-directional (snake → camel); nothing is authored twice.
 
-SCIP compound names whose prefix is itself a kind are **nested rather than flattened**, so the hierarchy carries the qualifier and the API reads naturally: `SelfParameter` → `declaration.parameter.self` (`d.parameter.self()`, hoisted `d.self()`), `TypeParameter` → `declaration.parameter.type`, `TraitMethod` → `declaration.method.trait`, `EnumMember` → `declaration.enum.member`. The SCIP → path table is recorded in `vocabulary.ts` so provenance stays traceable; "verbatim" applies to the name, the path is sittir's.
+SCIP compound names whose prefix is itself a kind are **nested rather than flattened**, so the hierarchy carries the qualifier and the API reads naturally: `SelfParameter` → `declaration.parameter.self` (`d.parameter.self()`, hoisted `d.self()`), `TypeParameter` → `declaration.parameter.type`, `TraitMethod` → `declaration.member.method.trait`, `EnumMember` → `declaration.type.enum.member`. The SCIP → path table is recorded in `vocabulary.ts` so provenance stays traceable; "verbatim" applies to the name, the path is sittir's.
 
 **1. Hoisting.** A kind is reachable at every ancestor level where its leaf name is unique within that namespace; the full path always remains valid. Uniqueness is computed over the **base** vocabulary, so a hoisted name means the same thing in every grammar that has it.
 
@@ -469,7 +469,7 @@ SCIP compound names whose prefix is itself a kind are **nested rather than flatt
 | `expression.unary.not` | `e.not` | unique |
 | `expression.call.member` | `e.call.member` | `member` collides with `expression.member` → stays |
 | `literal.number.float` | `l.float` | unique |
-| `declaration.method.static` | `d.method.static` | `static` also under `declaration.variable` |
+| `declaration.member.method.static` | `d.method.static` | `static` also under `declaration.variable` |
 | `declaration.parameter.typed_default` | `d.typedDefault` | unique; camelCase on the API |
 
 **2. Coercion.** Builders accept the loosest input the slot can disambiguate, using the factory layer's existing `coerceTo*`. Rules, by the slot's accepted kinds:
@@ -544,9 +544,9 @@ Computed against the current patched dumps (hidden symbols followed, so fields s
 
 ```scheme
 (function_item) @declaration.function
-(impl_item (declaration_list (function_item) @declaration.method))
-(trait_item (declaration_list (function_item) @declaration.method.trait))
-(struct_item) @declaration.struct   (enum_item) @declaration.enum   (trait_item) @declaration.trait
+(impl_item (declaration_list (function_item) @declaration.member.method))
+(trait_item (declaration_list (function_item) @declaration.member.method.trait))
+(struct_item) @declaration.type.struct   (enum_item) @declaration.type.enum   (trait_item) @declaration.trait
 (parameter) @declaration.parameter  (self_parameter) @declaration.parameter.self
 (let_declaration (_) @name) @declaration.variable            ; alias: upstream field is `pattern`
 (field_expression (_) @object (_) @property) @expression.member   ; alias: upstream `value` / `field`
@@ -560,9 +560,9 @@ Computed against the current patched dumps (hidden symbols followed, so fields s
 
 ```scheme
 (function_declaration) @declaration.function
-(method_definition) @declaration.method
-((method_definition) @declaration.method.getter (#eq? accessor_kind "get"))   ; literal slot → lifts
-((method_definition (property_identifier) @name) @declaration.constructor (#eq? @name "constructor"))
+(method_definition) @declaration.member.method
+((method_definition) @declaration.member.method.getter (#eq? accessor_kind "get"))   ; literal slot → lifts
+((method_definition (property_identifier) @name) @declaration.member.constructor (#eq? @name "constructor"))
 (required_parameter (_) @name) @declaration.parameter        ; alias: upstream `pattern`
 (optional_parameter (_) @name) @declaration.parameter.optional
 (for_in_statement (_) @pattern) @statement.for.in            ; refinement; alias: upstream `left`
@@ -574,8 +574,8 @@ Computed against the current patched dumps (hidden symbols followed, so fields s
 
 ```scheme
 (function_definition) @declaration.function
-(class_definition (block (function_definition) @declaration.method)) @declaration.class
-((function_definition (identifier) @name) @declaration.constructor (#eq? @name "__init__"))
+(class_definition (block (function_definition) @declaration.member.method)) @declaration.type.class
+((function_definition (identifier) @name) @declaration.member.constructor (#eq? @name "__init__"))
 (typed_parameter (_) @name) @declaration.parameter           ; MISSING upstream; slot kinds disjoint
                                                              ; from `type` → kind-addressed, no lift
 (default_parameter) @declaration.parameter
@@ -633,9 +633,9 @@ Open item (unchanged): structural facts (`sepBy`, bitflags) as anchored sequence
 6b. **Operator derivation:** `operator.*` token kinds are generated from expression leaves; the highlights projection consumes the generated table. `binary.arithmetic.add(l, r)` is emitted by the `roles` overlay and round-trips to a `+` node.
 6e. **Multiplicity:** TS `heritage` reads both clauses in order as one list; Rust `modifiers` repeat and Python nested `parameters` read as lists; a pattern with two member captures on one position is rejected; `@_x` helpers never appear in generated types; a multi-position list member lifts to the same field name at every position and `childrenByFieldName` returns them all.
 6f. **Modifier declaration uniformity:** the TS multi-field, Rust repeat, and Python single-marker `@modifiers` declarations all produce the same member forms through the same derivation; changing a marker's field name in the grammar changes one position in one pattern and nothing downstream.
-6d. **Modifier projection:** Rust `pub const unsafe fn` reads as `{ visibility: {…}, const: true, unsafe: true, async: false }`; TS `public static async` reads as `{ accessibility: 'public', static: true, async: true }`; Python `@staticmethod` claims `Method.Static` with `static: true`; a `Base.Declaration.Method` consumer reading `.static` compiles and is correct on all three.
-6c. **Keyword-promotion lift:** Python `__init__` realized as an arm split; `(function_definition name: (identifier))` upstream queries still match the constructor's name node; `roles.find('declaration.constructor')` identical to the predicate realization.
-6a. **Refinement realization:** `literal.boolean.true`/`.false` realized both ways on Rust — as an `alias()` split (node-types gains `true`/`false`; parent preserved; ast-grep `kind: boolean_literal` still matches) and as a `refines` overlay (node-types unchanged; `$kind` refined) — with identical `roles.find` results. `declaration.method` vs `declaration.method.trait` on Rust demonstrates the shared-`declaration_list` duplication cost and defaults to overlay.
+6d. **Modifier projection:** Rust `pub const unsafe fn` reads as `{ visibility: {…}, const: true, unsafe: true, async: false }`; TS `public static async` reads as `{ accessibility: 'public', static: true, async: true }`; Python `@staticmethod` claims `Method.Static` with `static: true`; a `Base.Declaration.Member.Method` consumer reading `.static` compiles and is correct on all three.
+6c. **Keyword-promotion lift:** Python `__init__` realized as an arm split; `(function_definition name: (identifier))` upstream queries still match the constructor's name node; `roles.find('declaration.member.constructor')` identical to the predicate realization.
+6a. **Refinement realization:** `literal.boolean.true`/`.false` realized both ways on Rust — as an `alias()` split (node-types gains `true`/`false`; parent preserved; ast-grep `kind: boolean_literal` still matches) and as a `refines` overlay (node-types unchanged; `$kind` refined) — with identical `roles.find` results. `declaration.member.method` vs `declaration.member.method.trait` on Rust demonstrates the shared-`declaration_list` duplication cost and defaults to overlay.
 7. **Overlay chain:** `roles` overlay emits `<Grammar>.d.ts` as `Base & Delta` per claimed kind; a required member with no binding makes the generated materializer fail to compile; `Python.Declaration.Trait` does not typecheck; a deliberately widened delta is caught by the codegen-suite narrowness test, not by the shipped types.
 7a. **Transform fidelity:** Rust `Function.body` is required and `name` is `Identifier | Identifier.Metavariable`; Python gains `Parameter.Typed`; TS `Method` gains `accessorKind`; a `Base.Declaration.Function` consumer compiles unchanged against all three.
 8. **User scm:** project-supplied pattern adds a claim with no regeneration.
@@ -745,13 +745,13 @@ Column entries are `node kind → claimed kind`, with the discriminator class wh
 |---|---|---|---|---|
 | Import | `import_from_statement → statement.import.from` | `import_statement → statement.import` | `use_declaration → statement.import` | synonym across grammars; Python's `from` form is a distinct upstream kind → refined |
 | Doc on the type | `expression_statement(string)` in first body position → `literal.string.docstring`, bound as `@doc` | `comment` matching `^/\*\*` → `comment.block.doc` (token-text refinement) | `line_comment(line_comment_doc_outer)` → `comment.line.doc` (sittir form-split) | three routes, one member: `doc` on the declaration. Python's is not a comment at all |
-| The type | `class_definition → declaration.class` | `class_declaration → declaration.class` | `struct_item → declaration.struct` **and** `impl_item → declaration.impl` | Rust separates data from behaviour; the vocabulary keeps both kinds. "Type with methods" is the `TypeDecl` union, not a forced `class` |
+| The type | `class_definition → declaration.type.class` | `class_declaration → declaration.type.class` | `struct_item → declaration.type.struct` **and** `impl_item → declaration.impl` | Rust separates data from behaviour; the vocabulary keeps both kinds. "Type with methods" is the `TypeDecl` union, not a forced `class` |
 | Exported / visible | — (module-level is public by convention) | `export_statement` wrapper → context-derived `exported: true` on the wrapped declaration | `visibility_modifier → modifier.visibility.pub`, member `visibility` | not conflated: `exported` and `visibility` are distinct members; "is public API" is a consumer helper |
-| Class constant | `assignment` with annotation in class body → `declaration.field` | `public_field_definition` with `static_marker` → `declaration.field`, `static: true` | `const_item` in impl → `declaration.constant`, `visibility` | |
-| Constructor | `function_definition` named `__init__` → `declaration.constructor` (finite text → keyword-liftable) | `method_definition` named `constructor` → `declaration.constructor` (finite text → liftable) | — by the language; `fn new` is convention. A project can claim it from `user.scm`: `((function_item name: (identifier) @name) @declaration.constructor (#eq? @name "new"))` | the language-absent rule vs user-pluggable scm, side by side |
+| Class constant | `assignment` with annotation in class body → `declaration.member.field` | `public_field_definition` with `static_marker` → `declaration.member.field`, `static: true` | `const_item` in impl → `declaration.constant`, `visibility` | |
+| Constructor | `function_definition` named `__init__` → `declaration.member.constructor` (finite text → keyword-liftable) | `method_definition` named `constructor` → `declaration.member.constructor` (finite text → liftable) | — by the language; `fn new` is convention. A project can claim it from `user.scm`: `((function_item name: (identifier) @name) @declaration.member.constructor (#eq? @name "new"))` | the language-absent rule vs user-pluggable scm, side by side |
 | Constructor parameter properties | — | `required_parameter` with `accessibility_modifier` / `readonly_marker` → `declaration.parameter` with `accessibility: 'public'`, `readonly: true` | — | modifiers on a parameter: same `@modifiers` derivation as on declarations |
-| Static / associated | `@staticmethod` decorator → `declaration.method.static` (predicate; sets `M.Static`) | `method_definition` with `static_marker` → `declaration.method`, `M.Static` | `function_item` in impl body whose first parameter is not `self_parameter` → `declaration.method.static` (structural context) | three discriminator classes, one bit. Rust *has* the method/associated-fn distinction; its grammar doesn't |
-| Getter | `@property` decorator → `declaration.method.getter` (predicate) | `accessor_kind: "get"` → `declaration.method.getter` (literal arm → liftable) | — (`is_overdrawn(&self)` is a plain `declaration.method`) | `Rust.Declaration.Method.Getter` does not exist |
+| Static / associated | `@staticmethod` decorator → `declaration.member.method.static` (predicate; sets `M.Static`) | `method_definition` with `static_marker` → `declaration.member.method`, `M.Static` | `function_item` in impl body whose first parameter is not `self_parameter` → `declaration.member.method.static` (structural context) | three discriminator classes, one bit. Rust *has* the method/associated-fn distinction; its grammar doesn't |
+| Getter | `@property` decorator → `declaration.member.method.getter` (predicate) | `accessor_kind: "get"` → `declaration.member.method.getter` (literal arm → liftable) | — (`is_overdrawn(&self)` is a plain `declaration.member.method`) | `Rust.Declaration.Member.Method.Getter` does not exist |
 | Async method | `async_marker` → `M.Async` | `async_marker` → `M.Async` | `function_modifiers` item `"async"` → `M.Async` | one `@modifiers` list declaration each; one bit, same position everywhere |
 | Receiver | `parameters . (identifier)` anchored → `declaration.parameter.self` | — (`this` is implicit) | `self_parameter` (`&mut self`) → `declaration.parameter.self`, bound as `@receiver` | |
 | Typed parameter with default | `typed_default_parameter → declaration.parameter.typed_default` `{name,type,default}` | `required_parameter` `{pattern→name, type, default}` | `parameter` `{name: pattern, type}` (no defaults in the language) | Python's four parameter kinds are four leaves (injectivity); `Rust.Declaration.Parameter.default` is winnowed |
@@ -773,27 +773,27 @@ Every row is one vocabulary kind reached by whatever the grammar offers — kind
 
 ### A.3 One kind, three deltas
 
-`declaration.method` for `deposit`. The base is the permissive union; each grammar's delta is what it actually does.
+`declaration.member.method` for `deposit`. The base is the permissive union; each grammar's delta is what it actually does.
 
 ```ts
 // Base — generic over the grammar context; member kinds resolve through G
-Base.Declaration.Method<G> = Base.Modifiers<G> & {
+Base.Declaration.Member.Method<G> = Base.Modifiers<G> & {
   name?: G['identifier']; parameters: G['declaration.parameter'][]; typeParameters?: G['declaration.parameter.type'][]
   returnType?: G['type']; body?: G['statement.block']; receiver?: G['declaration.parameter.self']; doc?: G['doc']
 }
 
 // Per grammar: the context does the narrowing; the delta says only what G cannot
-Python.Declaration.Method     = Require<Base.Declaration.Method<PythonContext>, 'name' | 'body'>
+Python.Declaration.Member.Method     = Require<Base.Declaration.Member.Method<PythonContext>, 'name' | 'body'>
                                                           // PythonContext['doc'] = Literal.String.Docstring; M = { Async, Static }
-TypeScript.Declaration.Method = Require<Base.Declaration.Method<TypeScriptContext>, 'name' | 'body'>
+TypeScript.Declaration.Member.Method = Require<Base.Declaration.Member.Method<TypeScriptContext>, 'name' | 'body'>
                                 & { accessorKind?: 'get' | 'set' | '*' }      // added: grammar field
                                                           // no 'declaration.parameter.self' in TypeScriptContext → receiver absent
-Rust.Declaration.Method       = Require<Base.Declaration.Method<RustContext>, 'body' | 'receiver'>
+Rust.Declaration.Member.Method       = Require<Base.Declaration.Member.Method<RustContext>, 'body' | 'receiver'>
                                 & { whereClause?: Rust.WhereClause; visibility?: Rust.VisibilityModifier; extern?: Rust.ExternModifier }
                                                           // RustContext['identifier'] = Identifier | Metavariable; M = { Async, Const, Unsafe, Default, Pub }
 ```
 
-Each is a generic instantiation over the grammar's context plus a residual intersection, so each is assignable to `Base.Declaration.Method<BaseContext>` with no assertion (§5.2–5.3). `TypeScript.Declaration.Method.receiver` is `never`; `Rust.Declaration.Method.receiver` is required — both are facts about the language, expressed as types.
+Each is a generic instantiation over the grammar's context plus a residual intersection, so each is assignable to `Base.Declaration.Member.Method<BaseContext>` with no assertion (§5.2–5.3). `TypeScript.Declaration.Member.Method.receiver` is `never`; `Rust.Declaration.Member.Method.receiver` is required — both are facts about the language, expressed as types.
 
 ### A.4 Consumers
 
@@ -801,10 +801,10 @@ Written once against `Base`, correct on all three parses:
 
 ```ts
 const asyncMethods = (root: NodeData) =>
-  roles.find(root, 'declaration.method').filter(m => m.modifiers & M.Async)   // Base.Declaration.Method[]
+  roles.find(root, 'declaration.member.method').filter(m => m.modifiers & M.Async)   // Base.Declaration.Member.Method[]
 
 const staticLike = (root: NodeData) =>
-  roles.find(root, 'declaration.method.static')                          // decorator predicate (py), marker field (ts),
+  roles.find(root, 'declaration.member.method.static')                          // decorator predicate (py), marker field (ts),
                                                                          // structural no-receiver (rs) — one query
 
 const floats = (root: NodeData) => roles.find(root, 'literal.number')     // prefix kind-set: .float leaves and TS's parent
@@ -815,13 +815,13 @@ Written against a grammar, with what that grammar actually has:
 
 ```ts
 const pubAsync = (root: NodeData) =>
-  roles.find<Rust>(root, 'declaration.method')
+  roles.find<Rust>(root, 'declaration.member.method')
        .filter(m => m.modifiers & (M.Async | M.Pub))                          // M.Pub exists only on Rust's enum
 
 const docstrings = (root: NodeData) =>
-  roles.find<Python>(root, 'declaration.class').map(c => c.doc?.text)              // doc is a docstring only on Python
+  roles.find<Python>(root, 'declaration.type.class').map(c => c.doc?.text)              // doc is a docstring only on Python
 
-// roles.find<Rust>(root, 'declaration.method.getter')   → compile error: winnowed
+// roles.find<Rust>(root, 'declaration.member.method.getter')   → compile error: winnowed
 ```
 
 And the build side, from the `roles` overlay:

@@ -1,0 +1,49 @@
+rust expression (_expression): 57 paths beneath expression; from elsewhere:
+  (unclaimed) [2]: (unclaimed boolean_literal) (unclaimed qualified_identifier)
+  literal [11]: literal.character literal.number.float literal.number.integer literal.number.integer.binary literal.number.integer.hex literal.number.integer.octal literal.string.bytes literal.string.bytes.raw literal.string.c literal.string.c.raw literal.string.raw
+  statement [9]: statement.block statement.break statement.continue statement.if statement.loop statement.loop.for_each statement.loop.while statement.match statement.return
+  identifier [3]: identifier identifier.metavariable identifier.receiver
+rust type (_type): 11 paths beneath type; from elsewhere:
+  expression [1]: expression.call.macro
+  identifier [2]: identifier identifier.metavariable
+  (unclaimed) [2]: (unclaimed primitive_type) (unclaimed qualified_identifier)
+  clause [1]: clause.bounds.removed
+rust pattern (_pattern): 14 paths beneath pattern; from elsewhere:
+  (unclaimed) [2]: (unclaimed boolean_literal) (unclaimed qualified_identifier)
+  literal [12]: literal.character literal.number.float literal.number.integer literal.number.integer.binary literal.number.integer.hex literal.number.integer.octal literal.number.negative literal.string.bytes literal.string.bytes.raw literal.string.c literal.string.c.raw literal.string.raw
+  expression [2]: expression.block.const expression.call.macro
+  identifier [1]: identifier
+rust statement (_statement): 18 paths beneath statement; from elsewhere:
+  declaration [19]: declaration.constant declaration.extension declaration.extension.conformance declaration.function declaration.function.signature declaration.macro.brace declaration.macro.bracket declaration.macro.paren declaration.module declaration.module.foreign declaration.type.enum declaration.type.interface.trait declaration.type.struct declaration.type.struct.tuple declaration.type.struct.unit declaration.type.type_alias declaration.type.type_alias.associated declaration.type.union declaration.variable
+  attribute [1]: attribute
+  (unclaimed) [2]: (unclaimed boolean_literal) (unclaimed qualified_identifier)
+  literal [11]: literal.character literal.number.float literal.number.integer literal.number.integer.binary literal.number.integer.hex literal.number.integer.octal literal.string.bytes literal.string.bytes.raw literal.string.c literal.string.c.raw literal.string.raw
+  expression [57]: expression.assignment expression.assignment.compound.add expression.assignment.compound.bitwise_and expression.assignment.compound.bitwise_or expression.assignment.compound.bitwise_xor expression.assignment.compound.divide expression.assignment.compound.modulo expression.assignment.compound.multiply expression.assignment.compound.shift_left expression.assignment.compound.shift_right expression.assignment.compound.subtract expression.await expression.binary.arithmetic.add expression.binary.arithmetic.divide expression.binary.arithmetic.modulo expression.binary.arithmetic.multiply expression.binary.arithmetic.subtract expression.binary.bitwise.and expression.binary.bitwise.or expression.binary.bitwise.xor expression.binary.comparison.equal expression.binary.comparison.greater expression.binary.comparison.greater_equal expression.binary.comparison.less expression.binary.comparison.less_equal expression.binary.comparison.not_equal expression.binary.logical.and expression.binary.logical.or expression.binary.shift.left expression.binary.shift.right expression.block.async expression.block.const expression.block.generator expression.block.try expression.block.unsafe expression.call.macro expression.call.member expression.call.qualified expression.cast.conversion expression.collection.list expression.collection.list.repeat expression.collection.struct expression.collection.tuple expression.instantiation expression.lambda expression.member expression.parenthesized expression.propagate expression.range.exclusive expression.range.inclusive.legacy expression.reference expression.subscript expression.unary.deref expression.unary.negation expression.unary.not expression.unit expression.yield
+  identifier [3]: identifier identifier.metavariable identifier.receiver
+typescript expression (expression): 71 paths beneath expression; from elsewhere:
+  literal [18]: literal.boolean.false literal.boolean.true literal.null literal.null.undefined literal.number.float literal.number.float.leading_point literal.number.float.scientific literal.number.integer literal.number.integer.big literal.number.integer.big.binary literal.number.integer.big.hex literal.number.integer.big.octal literal.number.integer.binary literal.number.integer.hex literal.number.integer.octal literal.regex literal.string literal.string.interpolated
+  identifier [3]: identifier identifier.receiver identifier.super
+typescript type (type): 21 paths beneath type; from elsewhere:
+  (unclaimed) [2]: (unclaimed predefined_type) (unclaimed qualified_identifier)
+  identifier [2]: identifier identifier.qualified
+typescript pattern (pattern): 3 paths beneath pattern; from elsewhere:
+  identifier [1]: identifier
+  expression [3]: expression.cast.non_null expression.member expression.subscript
+  literal [1]: literal.null.undefined
+typescript statement (statement): 21 paths beneath statement; from elsewhere:
+  declaration [12]: declaration.ambient declaration.function declaration.function.signature declaration.module declaration.module.external declaration.type.class declaration.type.enum declaration.type.interface declaration.type.type_alias declaration.variable.constant declaration.variable.reassignable declaration.variable.reassignable.function_scoped
+  (unclaimed) [1]: (unclaimed using_declaration)
+  expression [72]: expression.assignment expression.assignment.compound.add expression.assignment.compound.and expression.assignment.compound.bitwise_and expression.assignment.compound.bitwise_or expression.assignment.compound.bitwise_xor expression.assignment.compound.coalesce expression.assignment.compound.divide expression.assignment.compound.exponent expression.assignment.compound.modulo expression.assignment.compound.multiply expression.assignment.compound.or expression.assignment.compound.shift_left expression.assignment.compound.shift_right expression.assignment.compound.shift_right_unsigned expression.assignment.compound.subtract expression.await expression.binary.arithmetic.add expression.binary.arithmetic.divide expression.binary.arithmetic.exponent expression.binary.arithmetic.modulo expression.binary.arithmetic.multiply expression.binary.arithmetic.subtract expression.binary.bitwise.and expression.binary.bitwise.or expression.binary.bitwise.xor expression.binary.coalesce expression.binary.comparison.equal expression.binary.comparison.greater expression.binary.comparison.greater_equal expression.binary.comparison.less expression.binary.comparison.less_equal expression.binary.comparison.loose_equal expression.binary.comparison.loose_not_equal expression.binary.comparison.not_equal expression.binary.logical.and expression.binary.logical.or expression.binary.membership.in expression.binary.membership.instanceof expression.binary.shift.left expression.binary.shift.right expression.binary.shift.right_unsigned expression.call expression.call.construct.bare expression.call.member expression.call.template expression.cast.assertion expression.cast.assertion.angle_bracket expression.cast.non_null expression.cast.satisfies expression.class expression.collection.list expression.collection.object expression.conditional expression.function expression.instantiation expression.lambda expression.member expression.meta expression.parenthesized expression.sequence expression.subscript expression.unary.bitwise_not expression.unary.delete expression.unary.negation expression.unary.not expression.unary.plus expression.unary.typeof expression.unary.void expression.update.decrement expression.update.increment expression.yield.delegate
+  literal [18]: literal.boolean.false literal.boolean.true literal.null literal.null.undefined literal.number.float literal.number.float.leading_point literal.number.float.scientific literal.number.integer literal.number.integer.big literal.number.integer.big.binary literal.number.integer.big.hex literal.number.integer.big.octal literal.number.integer.binary literal.number.integer.hex literal.number.integer.octal literal.regex literal.string literal.string.interpolated
+  identifier [3]: identifier identifier.receiver identifier.super
+python expression (expression): 45 paths beneath expression; from elsewhere:
+  (unclaimed) [3]: (unclaimed as_pattern) (unclaimed lambda_expression) (unclaimed rest_pattern)
+  literal [26]: literal.boolean.false literal.boolean.true literal.ellipsis literal.null literal.number.float literal.number.float.leading_point literal.number.float.scientific literal.number.integer literal.number.integer.big literal.number.integer.big.binary literal.number.integer.big.hex literal.number.integer.big.octal literal.number.integer.binary literal.number.integer.hex literal.number.integer.imaginary literal.number.integer.octal literal.string.bytes.multiline literal.string.bytes.raw.multiline literal.string.concatenated literal.string.interpolated.deferred.multiline literal.string.interpolated.deferred.raw.multiline literal.string.interpolated.multiline literal.string.interpolated.raw.multiline literal.string.multiline literal.string.raw.multiline literal.string.unicode
+  identifier [1]: identifier
+python pattern (pattern): 2 paths beneath pattern; from elsewhere:
+  expression [2]: expression.member expression.subscript
+  identifier [1]: identifier
+  (unclaimed) [1]: (unclaimed rest_pattern)
+python statement (_statement): 6 paths beneath statement; from elsewhere:
+  declaration [2]: declaration.function declaration.type.class
+  (unclaimed) [1]: (unclaimed _simple_statement)
