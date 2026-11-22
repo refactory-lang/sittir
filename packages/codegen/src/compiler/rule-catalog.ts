@@ -301,6 +301,11 @@ export function rebasedRuleId(id: RuleId, hostId: RuleId): RuleId {
 	return path === 'root' ? hostId : `${hostId}/${path}`;
 }
 
+export function memberRuleId(hostId: RuleId, indices: readonly number[]): RuleId {
+	const segment = `members.${indices.join('.')}`;
+	return ruleIdPath(hostId) === 'root' ? `${hostId.slice(0, -'root'.length)}${segment}` : `${hostId}/${segment}`;
+}
+
 export function isRuleIdUnder(id: RuleId, ancestor: RuleId): boolean {
 	const path = ruleIdPath(ancestor);
 	return id !== ancestor && id.startsWith(path === 'root' ? ancestor.slice(0, -path.length) : `${ancestor}/`);

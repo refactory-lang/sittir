@@ -39,7 +39,7 @@ import {
 } from '../dsl/rule-transforms.ts';
 import { flattenRules } from './flatten.ts';
 import { runToFixpoint } from './fixpoint.ts';
-import { absorbAlignedIds, absorbIds, withAttrsFrom, withKindFacts, rebaseRuleIds } from '../dsl/rule-attrs.ts';
+import { absorbAlignedIds, absorbIds, factoredSeqOf, withAttrsFrom, withKindFacts, rebaseRuleIds } from '../dsl/rule-attrs.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { collectGeneratedKindEntries } from '../dsl/symbol-table.ts';
@@ -441,12 +441,6 @@ function extractFactoredChoiceBody(
 		nonEmpty.push(body.length === 1 ? body[0]! : { type: SEQ, members: body });
 	}
 	return { prefix, suffix, nonEmpty, hasEmpty };
-}
-
-function factoredSeqOf([members, arms]: readonly [Rule<'link'>[], readonly SeqRule<'link'>[]]): Rule<'link'> {
-	const ids = new Set(arms.map((arm) => arm.id));
-	const copies = arms.length > 0 && ids.size === 1 && !ids.has(undefined);
-	return copies ? { ...arms[0]!, members } : absorbIds({ type: SEQ, members }, ...arms);
 }
 
 export function factorChoiceBranches(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<'link'> {

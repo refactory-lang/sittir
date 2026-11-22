@@ -1,5 +1,5 @@
-import { CHOICE } from '../types/rule-types.ts'; // @rule-type-consts
-import type { AnyRule, Rule, RuleBase, Multiplicity, RuleId, RuleAnnotations } from '../types/rule.ts';
+import { CHOICE, SEQ } from '../types/rule-types.ts'; // @rule-type-consts
+import type { AnyRule, PhaseName, Rule, RuleBase, Multiplicity, RuleId, RuleAnnotations, SeqRule } from '../types/rule.ts';
 import { RuleWalker } from './rule-walker.ts';
 import { separatorFactsEqual } from './rule-patterns.ts';
 import { rebasedRuleId, reownedRuleId } from '../compiler/rule-catalog.ts';
@@ -62,6 +62,12 @@ type RuleBag = {
 	readonly content?: AnyRule;
 	readonly separator?: { readonly value: AnyRule };
 };
+
+export function factoredSeqOf<T extends PhaseName>([members, arms]: readonly [Rule<T>[], readonly SeqRule<T>[]]): Rule<T> {
+	const ids = new Set(arms.map((arm) => arm.id));
+	const copies = arms.length > 0 && ids.size === 1 && !ids.has(undefined);
+	return copies ? { ...arms[0]!, members } : absorbIds({ type: SEQ, members }, ...arms);
+}
 
 export function absorbAlignedIds<R extends AnyRule>(host: R, ...absorbed: readonly AnyRule[]): R {
 	const merged = absorbIds(host, ...absorbed);

@@ -311,3 +311,63 @@ describe('shared literals factored out of a choice of seqs', () => {
 		expect(shape(out['header']!)).toBe("['(' ([type name 'in' expression] | [expression 'in' expression]) ')']");
 	});
 });
+
+describe('a factored choice keeps its identity', () => {
+	const lit = (value: string, id?: string): Rule<'link'> => ({ type: STRING, value, nonterminal: false, ...(id === undefined ? {} : { id }) }) as Rule<'link'>;
+	const named = (name: string, id: string): Rule<'link'> => ({ type: SYMBOL, name, id }) as Rule<'link'>;
+	const seq = (id: string, ...members: Rule<'link'>[]): Rule<'link'> => ({ type: SEQ, id, members }) as Rule<'link'>;
+	const choice = (id: string, ...members: Rule<'link'>[]): Rule<'link'> => ({ type: CHOICE, id, members }) as Rule<'link'>;
+	type Out = { type: string; id?: string; absorbedIds?: readonly string[]; members?: Out[] };
+
+	it("a choice of seqs that differ at one member becomes the seq around a choice that carries the source choice's id", () => {
+		const out = flattenRules({
+			k: choice('C', seq('S', lit('(', 'p'), named('x', 'x'), lit(')', 'q')), seq('S', lit('(', 'p'), named('y', 'y'), lit(')', 'q')))
+		})['k'] as unknown as Out;
+		expect(out.type).toBe(SEQ);
+		expect(out.id).toBe('S');
+		expect(out.absorbedIds ?? []).not.toContain('C');
+		expect(out.members![1]!.type).toBe(CHOICE);
+		expect(out.members![1]!.id).toBe('C');
+	});
+
+	it("a choice whose arms share their edge literals becomes the seq around a choice that carries the source choice's id", () => {
+		const out = flattenRules({
+			k: choice('C', seq('S', lit('{', 'o'), named('n', 'n'), lit('}', 'c')), seq('S', lit('{', 'o'), lit(',', 'm0'), named('m', 'm'), lit('}', 'c')))
+		})['k'] as unknown as Out;
+		expect(out.type).toBe(SEQ);
+		expect(out.id).toBe('S');
+		expect(out.absorbedIds ?? []).not.toContain('C');
+		const inner = out.members![1]!;
+		expect(inner.type).toBe(CHOICE);
+		expect(inner.id).toBe('C');
+		expect(inner.members!.map((arm) => arm.id)).toEqual(['n', undefined]);
+	});
+
+	it('a seq factored from some arms of a choice, and the choice inside it, take ids that name the source choice and those arms', () => {
+		const out = flattenRules({
+			k: choice(
+				'rule:k:root',
+				named('z', 'rule:k:members.0'),
+				seq('rule:k:members.1', lit('(', 'rule:k:members.1/members.0'), named('x', 'rule:k:members.1/members.1'), lit(')', 'rule:k:members.1/members.2')),
+				seq('rule:k:members.2', lit('(', 'rule:k:members.2/members.0'), named('y', 'rule:k:members.2/members.1'), lit(')', 'rule:k:members.2/members.2'))
+			)
+		})['k'] as unknown as Out;
+		expect(out.type).toBe(CHOICE);
+		expect(out.id).toBe('rule:k:root');
+		const factored = out.members!.find((arm) => arm.type === SEQ)!;
+		expect(factored.id).toBe('rule:k:members.1.2');
+		expect(factored.absorbedIds).toEqual(expect.arrayContaining(['rule:k:members.1', 'rule:k:members.2']));
+		expect(factored.members![1]!.type).toBe(CHOICE);
+		expect(factored.members![1]!.id).toBe('rule:k:members.1.2/members.1');
+	});
+
+	it('a seq factored out of arms that are different seqs carries no id of its own and absorbs theirs', () => {
+		const out = flattenRules({
+			k: choice('C', seq('S1', lit('(', 'p'), named('x', 'x'), lit(')', 'q')), seq('S2', lit('(', 'p2'), named('y', 'y'), lit(')', 'q2')))
+		})['k'] as unknown as Out;
+		expect(out.type).toBe(SEQ);
+		expect(out.id).toBeUndefined();
+		expect(out.absorbedIds).toEqual(expect.arrayContaining(['S1', 'S2']));
+		expect(out.members![1]!.id).toBe('C');
+	});
+});

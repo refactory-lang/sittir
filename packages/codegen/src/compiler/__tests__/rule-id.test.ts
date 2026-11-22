@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
-import { buildRuleCatalog, createRuleId, ruleIdPath } from '../rule-catalog.ts';
+import { buildRuleCatalog, createRuleId, isRuleIdUnder, memberRuleId, ruleIdPath } from '../rule-catalog.ts';
 import { collapseRenamedRules } from '../link.ts';
 import { collectGeneratedKindEntries, stampVisibleExternals } from '../../dsl/symbol-table.ts';
 import { loadGeneratedIdTables } from '../generated-metadata.ts';
@@ -21,6 +21,16 @@ describe('rule ids', () => {
 		expect(ruleIdPath(createRuleId('a:b', { path: [{ edge: 'content' }, { edge: 'members', index: 2 }] }))).toBe(
 			'content/members.2'
 		);
+	});
+
+	it('a node that stands for several arms of a choice sits under the choice and under none of those arms', () => {
+		const choice = createRuleId('k', { path: [{ edge: 'members', index: 1 }] });
+		const arms = memberRuleId(choice, [0, 3]);
+		expect(arms).toBe('rule:k:members.1/members.0.3');
+		expect(memberRuleId(createRuleId('k', { path: [] }), [1, 2])).toBe('rule:k:members.1.2');
+		expect(isRuleIdUnder(arms, choice)).toBe(true);
+		expect(isRuleIdUnder(arms, memberRuleId(choice, [0]))).toBe(false);
+		expect(isRuleIdUnder(memberRuleId(arms, [0]), arms)).toBe(true);
 	});
 
 	it('rebaseRuleIds re-roots a body under the host id', () => {

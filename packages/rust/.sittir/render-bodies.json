@@ -3273,18 +3273,8 @@
 			]
 		},
 		{
-			"kind": "if",
-			"arms": [
-				{
-					"test": "content",
-					"body": [
-						{
-							"kind": "slot",
-							"name": "content"
-						}
-					]
-				}
-			]
+			"kind": "slot",
+			"name": "content"
 		},
 		{
 			"kind": "slot",

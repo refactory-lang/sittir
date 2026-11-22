@@ -9175,6 +9175,10 @@ Whether every site of the named field, reached through the owner's transparent h
 
 Gives each rule id a new owner.
 
+### `packages/codegen/src/dsl/rule-attrs.ts::factoredSeqOf`
+
+The seq factored out of a choice of seqs: the factored members, holding the arm seqs' ids. When every arm is a copy of one seq (all carry the same id, as `fanOutSeqChoices` leaves them), it is that seq again, with all its attrs. Otherwise it has no id of its own and absorbs each arm's ids, because it stands for the arms' shared parts rather than any one source seq. Normalize's `factorChoiceBranches` and flatten's `factorChoiceArms` and `factorSharedLiterals` build their seq with it, at either phase.
+
 ### `packages/codegen/src/dsl/rule-metadata.ts::aliasStorageOf`
 
 The storage a rule's alias envelope holds.

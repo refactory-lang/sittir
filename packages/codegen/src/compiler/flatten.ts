@@ -15,15 +15,16 @@ import {
 	SYMBOL,
 	TOKEN,
 } from '../types/rule-types.ts'; // @rule-type-consts
-import type { ChoiceRule, RenderRule, Rule, RuleSeparator, SeqRule } from '../types/rule.ts';
+import type { ChoiceRule, RenderRule, Rule, RuleId, RuleSeparator, SeqRule } from '../types/rule.ts';
 import { fuseHeadRepeatLists } from '../dsl/rule-transforms.ts';
 import { selfReferentialFoldOf, collectFixedLiteral } from '../dsl/rule-patterns.ts';
 import { runToFixpoint } from './fixpoint.ts';
 import { attributeBuilder, buildOptional, carryNodeFacts } from '../dsl/builders.ts';
-import { withId, withKindFacts, withAttrsFrom, sharedArmAttrs, absorbIds, absorbAlignedIds, structuralKey } from '../dsl/rule-attrs.ts';
+import { withId, withKindFacts, withAttrsFrom, sharedArmAttrs, absorbIds, absorbAlignedIds, factoredSeqOf, structuralKey } from '../dsl/rule-attrs.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import { reservedWordsetsOf, withReservedWordsets } from '../dsl/rule-metadata.ts';
 import { supertypeArmsOf } from '../dsl/symbol-table.ts';
+import { memberRuleId } from './rule-catalog.ts';
 import { LAYOUT_SUPERTYPE } from '../dsl/primitives/spacing.ts';
 
 function applySelfReferentialFold(ownName: string, rule: Rule<'link'>): Rule<'link'> {
@@ -186,16 +187,13 @@ function factorChoiceArms(rule: RenderRule): RenderRule {
 		variantAt.set(key, variants.length);
 		variants.push(m);
 	}
-	const shared = sharedArmAttrs({ type: CHOICE, members: variants });
-	const choice: RenderRule = {
-		...b.choice(...variants),
-		...(shared.fieldName !== undefined ? { fieldName: shared.fieldName } : {}),
-		...(shared.multiplicity !== undefined ? { multiplicity: shared.multiplicity } : {})
-	};
+	const whole = seqArms.length === rule.members.length;
+	const seqId = whole || rule.id === undefined ? undefined : memberRuleId(rule.id, seqArms.map((arm) => rule.members.indexOf(arm)));
+	const choice = factoredChoiceOf(variants, whole ? rule : seqId === undefined ? undefined : { id: memberRuleId(seqId, [at]) });
 	const others = seqArms.slice(1);
 	const members = seqArms[0]!.members.map((m, i) => (i === at ? choice : absorbAlignedIds(m, ...others.map((arm) => arm.members[i]!))));
-	const factored = absorbIds({ ...seqArms[0]!, members }, ...others);
-	if (seqArms.length === rule.members.length) return withAttrsFrom(rule, factored);
+	const factored = seqId === undefined ? factoredSeqOf([members, seqArms]) : absorbIds({ type: SEQ, id: seqId, members }, ...seqArms);
+	if (whole) return withAttrsFrom(withoutIdentity(rule), factored);
 	let placed = false;
 	const rebuilt: RenderRule[] = [];
 	for (const arm of rule.members) {
@@ -225,23 +223,34 @@ function factorSharedLiterals(rule: RenderRule): RenderRule {
 	if (prefix + suffix === 0) return rule;
 	const middle = (arm: SeqRule<'normalize'>): RenderRule => {
 		const members = arm.members.slice(prefix, arm.members.length - suffix);
-		return members.length === 1 ? members[0]! : { ...arm, members };
+		if (members.length === 1) return members[0]!;
+		const { id: _id, absorbedIds: _absorbedIds, ...attrs } = arm;
+		return { ...attrs, members };
 	};
 	const first = seqArms[0]!;
 	const others = seqArms.slice(1);
-	const variants = seqArms.map(middle);
-	const shared = sharedArmAttrs({ type: CHOICE, members: variants });
-	const inner: RenderRule = {
-		...b.choice(...variants),
-		...(shared.fieldName !== undefined ? { fieldName: shared.fieldName } : {}),
-		...(shared.multiplicity !== undefined ? { multiplicity: shared.multiplicity } : {})
-	};
+	const inner = factoredChoiceOf(seqArms.map(middle), rule);
 	const sharedMembers = (from: (arm: SeqRule<'normalize'>, offset: number) => RenderRule, count: number): RenderRule[] =>
 		Array.from({ length: count }, (_, offset) => absorbAlignedIds(from(first, offset), ...others.map((arm) => from(arm, offset))));
 	const head = sharedMembers((arm, i) => arm.members[i]!, prefix);
 	const tail = sharedMembers((arm, i) => arm.members[arm.members.length - 1 - i]!, suffix).reverse();
-	const members = [...head, inner, ...tail];
-	return withAttrsFrom(rule, absorbIds({ ...first, members }, ...others));
+	return withAttrsFrom(withoutIdentity(rule), factoredSeqOf([[...head, inner, ...tail], seqArms]));
+}
+
+function factoredChoiceOf(variants: RenderRule[], source: { readonly id?: RuleId; readonly absorbedIds?: readonly RuleId[] } | undefined): RenderRule {
+	const shared = sharedArmAttrs({ type: CHOICE, members: variants });
+	return {
+		...b.choice(...variants),
+		...(source?.id !== undefined ? { id: source.id } : {}),
+		...(source?.absorbedIds !== undefined ? { absorbedIds: source.absorbedIds } : {}),
+		...(shared.fieldName !== undefined ? { fieldName: shared.fieldName } : {}),
+		...(shared.multiplicity !== undefined ? { multiplicity: shared.multiplicity } : {})
+	};
+}
+
+function withoutIdentity(rule: RenderRule): RenderRule {
+	const { id: _id, absorbedIds: _absorbedIds, ...attrs } = rule;
+	return attrs;
 }
 
 function permutationKey(rule: RenderRule): string {

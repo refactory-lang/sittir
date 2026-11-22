@@ -10,8 +10,7 @@ export default grammar(enrich(base), wire({
 		'token-interior-unstructurable': ['identifier_token'],
 		'unclassifiable-shape': ['interpolated_string_expression', 'recursive_pattern', 'using_directive'],
 		'union-slot-mixed-row': ['recursive_pattern', 'using_directive'],
-		'union-slot-routed-repeated': ['for_statement_conditions_initializer'],
-		'union-slot-unaddressable': ['foreach_statement']
+		'union-slot-routed-repeated': ['for_statement_conditions_initializer']
 	},
 	renderAs: (_$) => ({
 		_optional_semi: string(';'),
