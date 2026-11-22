@@ -44,6 +44,7 @@ import { profile } from './profile.ts';
 import { profileFactory } from './profile-factory.ts';
 import { propose14 } from './propose-14.ts';
 import { separatedLists } from './separated-lists.ts';
+import { testFailures } from './test-failures.ts';
 import { testHistory } from './test-history.ts';
 import { textKindOverlap } from './text-kind-overlap.ts';
 import { spelledTrivia } from './spelled-trivia.ts';
@@ -101,6 +102,7 @@ export const toolModules: readonly CommandModule[] = [
 	profileFactory,
 	propose14,
 	separatedLists,
+	testFailures,
 	testHistory,
 	textKindOverlap,
 	spelledTrivia,

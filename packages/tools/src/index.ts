@@ -121,6 +121,7 @@ export type { TestRun } from './test-history.ts';
 
 export { recordTestRun, recordFromReport, formatReport as formatTestRunReport } from './scripts/record-test-run.ts';
 export type { TestRunResult, VitestJsonReport } from './scripts/record-test-run.ts';
+export { run as testFailures, type TestFailuresOptions } from './scripts/test-failures.ts';
 
 export {
 	runCountsCli,

@@ -860,6 +860,22 @@ Census separated-list shapes: flank-carrying (visible-kind hoist) vs flankless (
 pnpm exec tsx packages/cli/src/cli.ts tool separated-lists [options]
 ```
 
+### `tool test-failures`
+
+Group the failures in a vitest JSON report by error message
+
+**Options**
+
+- `--report <path>` — Vitest JSON report (default: .vitest-report.json in the cwd)
+- `--json` — Machine-readable JSON output
+- `--examples <n>` — Examples shown per group (default: `3`)
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool test-failures [options]
+```
+
 ### `tool test-history`
 
 Record or show `vitest run` result history (test-history.jsonl)

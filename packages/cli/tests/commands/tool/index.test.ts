@@ -47,6 +47,7 @@ const EXPECTED = [
 	'propose-14',
 	'separated-lists',
 	'sync-base',
+	'test-failures',
 	'test-history',
 	'text-kind-overlap',
 	'spelled-trivia',

@@ -445,3 +445,35 @@ The count of shallow read-render-parse matches that needed spelling normalizatio
 ### `packages/tools/src/history.ts::ValidationRun::readRenderParseSpellingNormalized`
 
 The count of read-render-parse matches that needed spelling normalization.
+
+### `packages/tools/src/scripts/record-test-run.ts::VitestJsonAssertionResult`
+
+One assertion in a vitest JSON report's `assertionResults`. `fullName` is the assertion's full title; `failureMessages` holds the messages of a failed assertion, first message first.
+
+### `packages/tools/src/scripts/record-test-run.ts::VitestJsonTestResult`
+
+One test file in a vitest JSON report's `testResults`. `message` is the file-level message, the reason a file with no assertion results failed (a collection or load failure).
+
+### `packages/tools/src/scripts/test-failures.ts::TestFailuresOptions`
+
+Options for `run`: the report path (default `.vitest-report.json` in the working directory), whether to print JSON, and how many examples each group shows.
+
+### `packages/tools/src/scripts/test-failures.ts::FailureGroup`
+
+One group of failures that share a signature: the number of failures, the count per package (the `packages/<name>/` segment of the test file, or `(root)`), and up to the requested number of examples as `<repo-relative file> > <full name>`, or the file alone for a file-level failure.
+
+### `packages/tools/src/scripts/test-failures.ts::FailureSummary`
+
+The grouped result: total failures, the groups in order, and the split between failed assertions and failed files that have no assertion results. `failures` equals `failedTests + failedFiles`.
+
+### `packages/tools/src/scripts/test-failures.ts::summarizeFailures`
+
+Groups the failures of a parsed vitest JSON report. A failure is one failed assertion, or one test file that failed with no assertion results. Its signature is the headline of its first failure message, with ANSI escapes removed, file paths replaced by `<path>` (a comma-separated list of them collapsed to one `<path>`), each digit run replaced by `#`, and the text from the first ` on <Type>._<slot>` defect location onward dropped. The headline is the first non-empty line, except that an `Error: Command failed:` wrapper yields its first later line that starts with an error name. Nothing else is normalized, so a kind name in the message survives into the signature. Groups are sorted by count descending, then by signature. Throws when the failed assertion count differs from the report's `numFailedTests`, so a report that does not add up is never summarized silently.
+
+### `packages/tools/src/scripts/test-failures.ts::formatFailureSummary`
+
+Renders a summary as plain text: each group's count and signature, its per-package counts, and its examples, followed by the totals line.
+
+### `packages/tools/src/scripts/test-failures.ts::run`
+
+Reads the vitest JSON report, summarizes it, and prints the text or JSON form. Returns 0 when the report was read and grouped, even when it holds failures. Returns 1, printing the reason to stderr, when the report cannot be read or its failure count does not match `numFailedTests`.
