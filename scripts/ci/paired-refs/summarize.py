@@ -85,6 +85,8 @@ def phase(sample, ph):
 CORPUS_PHASES = ['pipelineMs', 'matchedPipelineMs', 'parseMs', 'renderMs', 'editMs', 'releaseMs', 'editReleaseMs', 'wholeReadMs']
 samplesOf = lambda x, ph: x['samplesMatched'] if ph == 'matchedPipelineMs' else x['samples']
 CONSTRUCTION_PHASES = ['pipelineMs', 'buildMs', 'renderMs', 'editMs', 'releaseMs', 'editReleaseMs']
+LONG_LIST_PHASES = ['editMs', 'renderMs', 'releaseMs', 'editReleaseMs']
+LONG_LIST_PAIRS = [(a, b) for a, b in dict.fromkeys(PAIRS + [(f'{t}-arena', t) for t in TREES] + [('feature-arena', 'master-arena')]) if a in VERSIONS and b in VERSIONS]
 
 
 def entryHashes(g, x):
@@ -96,12 +98,14 @@ def entryHashes(g, x):
 
 def entryOf(key):
     g, at, name, what = key
+    if g == 'long list':
+        return f'{at} parsed items'
     return f'{at} function roots, {name}' if g == 'construction' else f'#{at} {name}'
 
 
 def described(key):
     g, at, name, what = key
-    return f'construction, {entryOf(key)}' if g == 'construction' else f'{g} {entryOf(key)}: {what}'
+    return f'{g}, {entryOf(key)}' if g in ('construction', 'long list') else f'{g} {entryOf(key)}: {what}'
 
 
 def roundsOf(rounds):
@@ -152,6 +156,17 @@ for n in [2000, 8000]:
                 hashes[v][r][('construction', n, name, '')] = held
         med = {v: {ph: [median(phase(s, ph) for s in x) for x in data[v]] for ph in CONSTRUCTION_PHASES} for v in VERSIONS}
         construction.append({'functionRoots': n, 'reusedName': reuse, 'manyNames': many, 'ms': {v: {ph: median(xs) for ph, xs in med[v].items()} for v in VERSIONS}, 'pairs': pairs(med)})
+listRounds = {v: [read(f'timing-rust-{v}-{r}.json')['longList'] for r in range(ROUNDS)] for v in VERSIONS}
+listItems = listRounds[VERSIONS[0]][0][0]['items']
+for v, xs in listRounds.items():
+    for r, x in enumerate(xs):
+        held = sorted({s['renderSha256'] for s in x})
+        if len(held) != 1:
+            mismatches.append(f'long list {listItems} {v} round {r}: its samples render apart')
+        hashes[v][r][('long list', listItems, 'edited', '')] = held
+listMed = {v: {ph: [median(phase(s, ph) for s in x) for x in listRounds[v]] for ph in LONG_LIST_PHASES} for v in VERSIONS}
+longList = {'items': listItems, 'ms': {v: {ph: median(xs) for ph, xs in listMed[v].items()} for v in VERSIONS},
+            'pairs': {f'{a}/{b}': {ph: ratio(listMed[a][ph], listMed[b][ph]) for ph in LONG_LIST_PHASES if ph != 'releaseMs'} for a, b in LONG_LIST_PAIRS}}
 memory = {}
 for v in VERSIONS:
     ds = [read(f'memory-rust-{v}-{r}.json') for r in range(3)]
@@ -182,7 +197,7 @@ result = {'refs': refs, 'versions': {v: {'tree': treeOf(v), 'nodeStorage': stora
           'buildProfiles': sorted(profiles), 'processes': len(receipts), 'meanLoad1': statistics.mean(load), 'maxLoad1': max(load), 'machine': machine, 'runner': runner,
           'trees': {t: {'commit': x['commit'], 'workingTreeDiffSha256': x['workingTreeDiffSha256'], 'sections': {k: {'files': s['files'], 'sha256': s['sha256']} for k, s in x['sections'].items()}} for t, x in trees.items()},
           'buildPath': {'path': refs.get('buildPath'), 'trees': {t: json.loads((out / f'build-path-{t}.json').read_text()) for t in TREES}},
-          'corpus': corpus, 'construction': construction, 'memory': memory}
+          'corpus': corpus, 'construction': construction, 'longList': longList, 'memory': memory}
 (out / 'summary.json').write_text(json.dumps(result, indent=2) + '\n')
 
 old = {r['grammar']: r['timings'] for r in earlier['corpus']}
@@ -204,7 +219,7 @@ lines = [
     'Each ratio is the median over five rounds of the ratio of process medians, with a bootstrap 95% range. Every edit result and built root is released after its timed edit; release is its own time (ms only, since a version without counted release releases nothing) and edit+release is what a caller pays under explicit release. The 10-29 column is feature/master in object storage from docs/reviews/2026-10-29-paired-backends.md (a local macOS run against master 7471447a2).', '',
     f"Pipeline (parse + render) against base above ×{BAR:.2f}: {', '.join(over) if over else 'none'}.",
     f"Renders and edits that differ from the identity tree, {IDENTITY}: {'; '.join(mismatches) if mismatches else 'none'}.",
-    *([f"Entries where {IDENTITY} differs from base: {len(fromBase)}" + (f" ({', '.join(f'{g} {sum(k[0] == g for k in fromBase)}' for g in GRAMMARS + ['construction'] if any(k[0] == g for k in fromBase))})." if fromBase else '.')] if IDENTITY != 'base' else []), '',
+    *([f"Entries where {IDENTITY} differs from base: {len(fromBase)}" + (f" ({', '.join(f'{g} {sum(k[0] == g for k in fromBase)}' for g in GRAMMARS + ['construction', 'long list'] if any(k[0] == g for k in fromBase))})." if fromBase else '.')] if IDENTITY != 'base' else []), '',
     '### Corpus', '',
     f'| grammar | phase | 10-29 f/m | {heads} | {msHeads} |',
     '|' + '---|' * (3 + len(PAIRS) + len(VERSIONS)),
@@ -224,7 +239,15 @@ for row in construction:
     o = {} if row['manyNames'] else oldConstruction[(row['functionRoots'], row['reusedName'])]
     for ph in CONSTRUCTION_PHASES:
         lines.append(f"| {row['functionRoots']} | {NAMING[row['reusedName'], row['manyNames']]} | {NAMES.get(ph, ph[:-2])} | {earlierCell(o, ph)} | {ratios(ph, row)} | {ms(ph, row)} |")
-lines += ['', '### Retained memory (32,000 function roots, forced GC)', '', '| version | heap + external MiB | rss MiB | 10-29 heap + external MiB |', '|---|---|---|---|']
+listHeads = ' | '.join(f'{a}/{b}' + (' (cross-storage)' if storageOf(a) != storageOf(b) else '') for a, b in LONG_LIST_PAIRS)
+lines += ['', f'### Rust parsed long list ({listItems} items, edited to hold them and one more, then rendered)', '',
+          f'| phase | {listHeads} | {msHeads} |',
+          '|' + '---|' * (1 + len(LONG_LIST_PAIRS) + len(VERSIONS))]
+for ph in LONG_LIST_PHASES:
+    listCells = ' | '.join(cell(f'{a}/{b}', ph, longList) for a, b in LONG_LIST_PAIRS)
+    listMs = ' | '.join(f"{longList['ms'][v][ph]:.3f}" for v in VERSIONS)
+    lines.append(f"| {NAMES.get(ph, ph[:-2])} | {listCells} | {listMs} |")
+lines += ['', '### Retained memory (32,000 function roots, forced GC)', '','| version | heap + external MiB | rss MiB | 10-29 heap + external MiB |', '|---|---|---|---|']
 for v in VERSIONS:
     before = earlier['memory'].get(v)
     lines.append(f"| {v} | {memory[v]['medianDeltaHeapPlusExternalBytes'] / 2**20:.3f} | {memory[v]['medianDeltaBytes']['rss'] / 2**20:.3f} | " + (f"{before['medianDeltaHeapPlusExternalBytes'] / 2**20:.3f}" if before else '-') + ' |')

@@ -62,7 +62,14 @@ function measured(dir, held) {
 					}));
 				})
 			);
-			json(`runs/timing-rust-${version}-${round}.json`, { buildProfile: 'release', samples });
+			const longList = Array.from({ length: 7 }, () => ({
+				items: 49153,
+				editMs: 1,
+				renderMs: version.endsWith('-arena') ? 2 : 1,
+				releaseMs: 0,
+				renderSha256: held(version, 'long list', 49153, 'edited', round)
+			}));
+			json(`runs/timing-rust-${version}-${round}.json`, { buildProfile: 'release', samples, longList });
 		}
 		for (let round = 0; round < 3; round++) {
 			json(`runs/memory-rust-${version}-${round}.json`, {
@@ -210,6 +217,25 @@ test('a construction case is keyed by its roots and its naming, so one naming ap
 	assert.deepEqual(summary.mismatches, [
 		'master rounds 0, 1, 2, 3, 4: 1 apart from feature: construction, 2000 function roots, many names',
 		'master-arena rounds 0, 1, 2, 3, 4: 1 apart from feature: construction, 2000 function roots, many names'
+	]);
+});
+
+test('the parsed long list reports arena over object for each tree, and the feature over master in arena', () => {
+	const { status, summary } = summarize(outputOf, 'feature');
+	assert.equal(status, 0);
+	assert.equal(summary.longList.items, 49153);
+	for (const tree of TREES) assert.equal(summary.longList.pairs[`${tree}-arena/${tree}`].renderMs.ratio, 2, tree);
+	assert.equal(summary.longList.pairs['feature-arena/master-arena'].renderMs.ratio, 1);
+});
+
+test('a version whose edited long list renders apart is named', () => {
+	const held = (version, grammar, at, key) =>
+		version.startsWith('master') && grammar === 'long list' ? 'third' : outputOf(version, grammar, at, key);
+	const { status, summary } = summarize(held, 'feature');
+	assert.equal(status, 1);
+	assert.deepEqual(summary.mismatches, [
+		'master rounds 0, 1, 2, 3, 4: 1 apart from feature: long list, 49153 parsed items',
+		'master-arena rounds 0, 1, 2, 3, 4: 1 apart from feature: long list, 49153 parsed items'
 	]);
 });
 
