@@ -164,18 +164,18 @@ errors. The row is a union of tuples and not a set of function overloads, becaus
 `ArgsOf` and `Parameters` read only an overload's last signature.
 
 A slot the branch requires goes with the branch, and a slot optional inside it is
-allowed only while the branch is present. A nested optional branch adds an arm per
-depth: C's `gnu_asm_expression` holds its outputs, inputs, clobbers and goto labels
-each inside the last, and `asm("x" : : "r0")` gives the first two as empty lists.
-Go's `const_spec` is the two-arm case, with `type` optional and `value` required
-inside its branch. A flag is not a slot, so it is outside this rule.
+allowed only while the branch is present. Such a branch lives inside a token, where
+the parse tree has no node for a hidden group to seat. Everywhere else an optional
+sequence of several slots is a group, as Go's `const_spec` and C's nested
+`gnu_asm_expression` are, and the group's own typing covers it. A flag is not a slot,
+so it is outside this rule.
 
 A node of such a kind is typed branch-present or branch-absent, as a node with a
 flattened group is (the user, 2026-11-21). With the branch absent, its setters take
 only a slot the branch requires and has no default for: `n.$with.exponent(2)` gives
 the present shape, and `n.$with.exponentSign('+')` is a type error. With it present,
-clearing a slot the branch requires clears the whole branch, nested branches
-included, so `n.$with.exponent()` removes the marker, the sign and the digits.
+clearing a slot the branch requires clears the whole branch, so
+`n.$with.exponent()` removes the marker, the sign and the digits.
 
 A mandatory single group is the degenerate case with one overload. Today's
 forwarded parent already accepts the group's Config that way
