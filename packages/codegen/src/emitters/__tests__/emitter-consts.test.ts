@@ -1,4 +1,4 @@
-import { withGeneratedIdTablesNode } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { withGeneratedIdTablesNode, withParseName } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { describe, it, expect } from 'vitest';
 import { emitConsts } from '../consts.ts';
 import type { NodeMap } from '../../compiler/types.ts';
@@ -33,7 +33,7 @@ function field(
 	values: readonly { value: string; multiplicity: 'array' | 'nonEmptyArray' }[] = []
 ): AssembledNonterminal {
 	return new AssembledNonterminal({
-		values,
+		values: withParseName(fieldName, values),
 		fieldName,
 		hasTrailingDelimiter: false,
 		hasLeadingDelimiter: false,

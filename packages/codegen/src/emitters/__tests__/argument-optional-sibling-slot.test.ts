@@ -13,7 +13,7 @@ import {
 import { flatten } from '../../compiler/flatten.ts';
 import { emptyDefaultOf } from '../shared.ts';
 import { collectKindEntries } from '../kind-discriminant.ts';
-import { makeNodeMapWith, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { makeNodeMapWith, withGeneratedIdTables, withParseName } from '../../__tests__/helpers/node-map-fixtures.ts';
 
 /**
  * Mirrors rust's `async_block`: an optional keyword-presence slot
@@ -33,7 +33,7 @@ function makeNodeMap(kindEntries: readonly GeneratedKindEntry[]) {
 	const block = new AssembledBranch('block', rule, rule, { kindEntries, slots: [] });
 	const bodyRef: NodeOrTerminal = { node: block, storageKindId: idOf(kindEntries, 'block'), multiplicity: 'single' };
 	const bodySlot = new AssembledNonterminal({
-		values: [bodyRef],
+		values: withParseName('body', [bodyRef]),
 		hasTrailingDelimiter: false,
 		hasLeadingDelimiter: false,
 		sourceRuleIds: [],
@@ -41,7 +41,7 @@ function makeNodeMap(kindEntries: readonly GeneratedKindEntry[]) {
 	});
 	const moveMarkerValue: NodeOrTerminal = { value: 'move', multiplicity: 'optional' };
 	const moveMarkerSlot = new AssembledNonterminal({
-		values: [moveMarkerValue],
+		values: withParseName('move', [moveMarkerValue]),
 		hasTrailingDelimiter: false,
 		hasLeadingDelimiter: false,
 		sourceRuleIds: [],
@@ -74,7 +74,7 @@ describe('a required field targeting a node with an optional sibling slot defaul
 	const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
 	const asyncBlock = nodeMap.nodes.get('async_block')!;
 	const field = new AssembledNonterminal({
-		values: [{ node: asyncBlock, storageKindId: asyncBlock.kindEntry!.id, multiplicity: 'single' }],
+		values: withParseName('outer', [{ node: asyncBlock, storageKindId: asyncBlock.kindEntry!.id, multiplicity: 'single' }]),
 		hasTrailingDelimiter: false,
 		hasLeadingDelimiter: false,
 		sourceRuleIds: [],
@@ -98,7 +98,7 @@ describe('a required field whose sole kind is a fixed-text leaf defaults to that
 	const newline = nodeMap.nodes.get('newline')!;
 	const qmarkId = kindEntries.find((entry) => entry.kind === 'qmark')!.id;
 	const field = new AssembledNonterminal({
-		values: [{ node: newline, storageKindId: newline.kindEntry!.id, multiplicity: 'single' }],
+		values: withParseName('newline', [{ node: newline, storageKindId: newline.kindEntry!.id, multiplicity: 'single' }]),
 		hasTrailingDelimiter: false,
 		hasLeadingDelimiter: false,
 		sourceRuleIds: [],
@@ -111,7 +111,7 @@ describe('a required field whose sole kind is a fixed-text leaf defaults to that
 
 	it('emptyDefaultOf answers with the kind id of a required literal', () => {
 		const literal = new AssembledNonterminal({
-			values: [{ value: '?', resolvedKindId: qmarkId, multiplicity: 'single' }],
+			values: withParseName('content', [{ value: '?', resolvedKindId: qmarkId, multiplicity: 'single' }]),
 			hasTrailingDelimiter: false,
 			hasLeadingDelimiter: false,
 			sourceRuleIds: [],
@@ -122,7 +122,7 @@ describe('a required field whose sole kind is a fixed-text leaf defaults to that
 
 	it('emptyDefaultOf has no default when a literal arm shares the slot, since the choice is free', () => {
 		const mixed = new AssembledNonterminal({
-			values: [{ value: ';', multiplicity: 'single' }, ...field.values],
+			values: withParseName('terminator', [{ value: ';', multiplicity: 'single' }, ...field.values]),
 			hasTrailingDelimiter: false,
 			hasLeadingDelimiter: false,
 			sourceRuleIds: [],
@@ -136,7 +136,7 @@ function lazyNodeMap(kindEntries: readonly GeneratedKindEntry[]) {
 	const rule = flatten({ type: STRING, value: '?' });
 	const qmarkId = kindEntries.find((entry) => entry.kind === 'qmark')?.id;
 	const content = new AssembledNonterminal({
-		values: [{ value: '?', ...(qmarkId === undefined ? {} : { resolvedKindId: qmarkId }), multiplicity: 'single' }],
+		values: withParseName('content', [{ value: '?', ...(qmarkId === undefined ? {} : { resolvedKindId: qmarkId }), multiplicity: 'single' }]),
 		hasTrailingDelimiter: false,
 		hasLeadingDelimiter: false,
 		sourceRuleIds: [],

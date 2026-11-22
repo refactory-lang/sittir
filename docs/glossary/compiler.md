@@ -1213,6 +1213,8 @@ The classification left after every structural check: an all-text subtree is `'p
  * Slot values retain the grammar-derived multiplicity, including for
  * `content` fields. Slot naming is owned by AssembledNonterminal and
  * cannot weaken a required repeat to a zero-or-more repeat.
+ * A fielded occurrence stamps its field on every value it derives
+ * (`parseName`): the field that value's child is read under.
  */
 ```
 

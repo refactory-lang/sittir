@@ -17,7 +17,7 @@ import {
 	AssembledSupertype,
 	isFixedTextLeaf
 } from '../../compiler/model/node-map.ts';
-import type { AssembledNode } from '../../compiler/model/node-map.ts';
+import type { AssembledNode, NodeOrTerminal } from '../../compiler/model/node-map.ts';
 import type { ChoiceRule, SeqRule } from '../../types/rule.ts';
 import type { KindParserMetadata, NodeMap } from '../../compiler/types.ts';
 import { ERROR_KIND_ROW, collectGeneratedKindEntries } from '../../dsl/symbol-table.ts';
@@ -29,6 +29,10 @@ import { queryRoutesOf } from '../../emitters/client-utils.ts';
 import { admittedLineEndings } from '../../compiler/model/line-endings.ts';
 
 export const FIXTURE_LINE_ENDINGS = admittedLineEndings({ name: 'fixture', rules: {} }, null);
+
+export function withParseName(fieldName: string, values: readonly NodeOrTerminal[]): NodeOrTerminal[] {
+	return values.map((value) => ({ ...value, parseName: fieldName }));
+}
 
 export function makeNodeMapWith(nodes: Map<string, AssembledNode>): NodeMap {
 	const nodeMap: NodeMap = {

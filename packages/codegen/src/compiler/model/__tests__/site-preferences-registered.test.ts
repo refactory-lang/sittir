@@ -2,14 +2,14 @@ import type { GeneratedKindEntry } from '../../../dsl/symbol-table.ts';
 import { describe, expect, it } from 'vitest';
 import type { RenderRule } from '../../../types/rule.ts';
 import { AssembledBranch, AssembledNonterminal, type AssembledNode, type NodeOrTerminal } from '../node-map.ts';
-import { makeNodeMapWith, withGeneratedIdTablesFixture } from '../../../__tests__/helpers/node-map-fixtures.ts';
+import { makeNodeMapWith, withGeneratedIdTablesFixture, withParseName } from '../../../__tests__/helpers/node-map-fixtures.ts';
 import { collectSitePreferences } from '../site-preferences.ts';
 import { preference } from '../../../dsl/primitives/preference.ts';
 
 const rule = { type: 'SEQ', members: [] } as unknown as RenderRule;
 
 const slot = (fieldName: string, values: readonly NodeOrTerminal[]): AssembledNonterminal =>
-	new AssembledNonterminal({ fieldName, values, hasTrailingDelimiter: false, hasLeadingDelimiter: false, sourceRuleIds: [] });
+	new AssembledNonterminal({ fieldName, values: withParseName(fieldName, values), hasTrailingDelimiter: false, hasLeadingDelimiter: false, sourceRuleIds: [] });
 
 const text = (value: string): NodeOrTerminal => ({ kind: 'terminal', value, multiplicity: 'single' }) as unknown as NodeOrTerminal;
 
@@ -50,7 +50,7 @@ describe('collectSitePreferences — spelling sites', () => {
 		const kindText = (v: string): NodeOrTerminal => ({ kind: 'terminal', value: v, multiplicity: 'single' }) as unknown as NodeOrTerminal;
 		const terminator = new AssembledNonterminal({
 			fieldName: 'terminator',
-			values: [kindText(';'), kindText(':')],
+			values: withParseName('terminator', [kindText(';'), kindText(':')]),
 			hasTrailingDelimiter: false,
 			hasLeadingDelimiter: false,
 			sourceRuleIds: []

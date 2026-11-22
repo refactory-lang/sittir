@@ -7,7 +7,7 @@ export default grammar(enrich(base), wire({
 	resolutions,
 	options: { indent: preference('    ') },
 	expectDiagnostics: {
-		'storagename-collision': ['preproc_line_arm2', 'preproc_pragma_arm2', 'recursive_pattern'],
+		'storagename-collision': ['preproc_line_arm2', 'preproc_pragma_arm2'],
 		'token-interior-unstructurable': ['identifier_token'],
 		'unclassifiable-shape': ['interpolated_string_expression', 'recursive_pattern', 'using_directive'],
 		'union-slot-mixed-row': ['recursive_pattern', 'using_directive'],

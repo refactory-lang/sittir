@@ -1,8 +1,8 @@
 import type { QuerySlotEntry, StructureRow } from '@sittir/types';
 import type { NodeMap } from '../compiler/types.ts';
 import { innerRegions, whitespaceTrivia, type WhitespaceTrivia } from '../compiler/model/trivia.ts';
-import { compareOrdinal, keywordPresenceStorage, wireRoutesOf, type WireRoutes } from './shared.ts';
-import { AssembledSupertype, spelledReadOf, storageKeyOf, type AssembledNonterminal } from '../compiler/model/node-map.ts';
+import { compareOrdinal, expandToConcreteParseKinds, keywordPresenceStorage, type WireRoutes } from './shared.ts';
+import { AssembledSupertype, spelledReadOf, storageKeyOf, valueParseKindsOf, valueParseLabelsOf, type AssembledNonterminal } from '../compiler/model/node-map.ts';
 import { hasBlankArm } from '../compiler/model/site-preferences.ts';
 import { grammarTypeMapName } from './engine.ts';
 import { nodeSlotNumbers } from './render-module.ts';
@@ -76,7 +76,8 @@ function emitTriviaFacts(
 const RECORDER_FLAG_KEY = 'is';
 
 export function queryRoutesOf(slot: AssembledNonterminal, nodeMap: NodeMap): WireRoutes {
-	return slot.fieldName === undefined ? wireRoutesOf(slot, nodeMap) : { fields: [slot.fieldName], kinds: [] };
+	const unlabelled = slot.values.filter((value) => value.parseName === undefined);
+	return { fields: valueParseLabelsOf(slot), kinds: expandToConcreteParseKinds(valueParseKindsOf({ values: unlabelled }), nodeMap) };
 }
 
 export function querySlotRows(nodeMap: NodeMap): ReadonlyMap<number, readonly QuerySlotEntry[]> {

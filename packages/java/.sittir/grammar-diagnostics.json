@@ -635,19 +635,6 @@
   },
   {
     "scope": "grammar",
-    "code": "storagename-collision",
-    "severity": "error",
-    "grammar": "java",
-    "ownerKind": "object_creation_expression_arm",
-    "message": "[assemble] storageName collision: kind 'object_creation_expression_arm' has 2 slots with storageName 'class_body':\n    class_body (positional, multiplicity: optional, values: [class_body])\n    class_body (positional, multiplicity: optional, values: [class_body])",
-    "canProceed": false,
-    "details": {
-      "storageName": "class_body",
-      "slotCount": 2
-    }
-  },
-  {
-    "scope": "grammar",
     "code": "union-slot-routed-repeated",
     "severity": "error",
     "grammar": "java",

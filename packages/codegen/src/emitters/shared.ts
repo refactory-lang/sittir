@@ -55,9 +55,7 @@ import {
 	slotFilledWhenOmitted,
 	isTextStorage,
 	textStoragesOf,
-	unresolvedEnumTexts,
-	valueParseKindsOf,
-	valueParseLabelsOf
+	unresolvedEnumTexts
 } from '../compiler/model/node-map.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
 import { findOwnKindEntry } from '../dsl/symbol-table.ts';
@@ -1231,13 +1229,6 @@ export function expandToConcreteParseKinds(names: readonly string[], nodeMap: No
 export interface WireRoutes {
 	readonly fields: readonly string[];
 	readonly kinds: readonly string[];
-}
-
-export function wireRoutesOf(slot: AssembledNonterminal, nodeMap: NodeMap): WireRoutes {
-	if (!slot.isUnnamed) return { fields: [], kinds: [] };
-	const fields = valueParseLabelsOf(slot);
-	const kindNames = valueParseKindsOf(slot).filter((k) => !fields.includes(k));
-	return { fields, kinds: kindNames.length > 0 ? expandToConcreteParseKinds(kindNames, nodeMap) : [] };
 }
 
 export function classifyFactoryEmission(

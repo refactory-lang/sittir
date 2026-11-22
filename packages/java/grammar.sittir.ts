@@ -7,7 +7,7 @@ export default grammar(enrich(base), wire({
 	resolutions,
 	options: { indent: preference('    ') },
 	expectDiagnostics: {
-		'storagename-collision': ['assert_statement_arm', 'object_creation_expression_arm'],
+		'storagename-collision': ['assert_statement_arm'],
 		'token-interior-unstructurable': ['hex_floating_point_literal_arm1'],
 		'unclassifiable-shape': ['_unqualified_object_creation_expression', 'cast_expression', 'object_creation_expression_arm'],
 		'union-slot-mixed-row': ['cast_expression'],

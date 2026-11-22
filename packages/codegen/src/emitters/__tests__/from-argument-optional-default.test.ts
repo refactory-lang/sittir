@@ -9,7 +9,7 @@ import {
 	type NodeOrTerminal
 } from '../../compiler/model/node-map.ts';
 import { flatten } from '../../compiler/flatten.ts';
-import { makeNodeMapWith, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { makeNodeMapWith, withGeneratedIdTables, withParseName } from '../../__tests__/helpers/node-map-fixtures.ts';
 
 /**
  * Mirrors rust's `try_block.body`: a wrapper whose one required field
@@ -27,7 +27,7 @@ function makeNodeMap(kindEntries: readonly GeneratedKindEntry[]) {
 	const block = new AssembledBranch('block', rule, rule, { kindEntries, slots: [] });
 	const bodyRef: NodeOrTerminal = { node: block, storageKindId: 1, multiplicity: 'single' };
 	const bodySlot = new AssembledNonterminal({
-		values: [bodyRef],
+		values: withParseName('body', [bodyRef]),
 		hasTrailingDelimiter: false,
 		hasLeadingDelimiter: false,
 		sourceRuleIds: [],

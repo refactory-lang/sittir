@@ -486,11 +486,12 @@ export function safeParamName(name: string): string {
 
 function _deriveSlotsInternal(rule: SimplifiedRule, ctx: DeriveCtx): AssembledNonterminal[] {
 	const kindName = ctx.kindName;
-	let slots = mergeSlotsByName(collectSlots(rule, kindName, ctx, undefined, undefined, ctx.diagnostics));
+	const collected = (): AssembledNonterminal[] =>
+		mergeExclusiveSlots(mergeSlotsByName(collectSlots(rule, kindName, ctx, undefined, undefined, ctx.diagnostics)), { rule });
+	let slots = collected();
 	const unionChoiceIds = drainSynthesizedUnionChoiceIds();
 	if (unionChoiceIds.size > 0) {
 		const isUnionSlot = (s: AssembledNonterminal): boolean => s.sourceRuleIds.some((id) => unionChoiceIds.has(id));
-		slots = mergeExclusiveUnionSlots(slots, { rule, isUnionSlot });
 		const colliding = slots.filter(
 			(s) => isUnionSlot(s) && slots.some((other) => other !== s && other.storageName === s.storageName)
 		);
@@ -506,7 +507,7 @@ function _deriveSlotsInternal(rule: SimplifiedRule, ctx: DeriveCtx): AssembledNo
 			});
 			const prev = setUnionSlotRouting(false);
 			try {
-				slots = mergeSlotsByName(collectSlots(rule, kindName, ctx, undefined, undefined, ctx.diagnostics));
+				slots = collected();
 			} finally {
 				setUnionSlotRouting(prev);
 				drainSynthesizedUnionChoiceIds();
@@ -539,7 +540,7 @@ function sequenceValues([rest, last]: readonly [AssembledNonterminal, AssembledN
 }
 
 function mergedSlot([existing, f]: readonly [AssembledNonterminal, AssembledNonterminal]): AssembledNonterminal {
-	return existing.with({
+	return (existing.isUnnamed && !f.isUnnamed ? f : existing).with({
 		values: sequenceValues([existing, f]),
 		hasTrailingDelimiter: existing.hasTrailingDelimiter || f.hasTrailingDelimiter,
 		hasLeadingDelimiter: existing.hasLeadingDelimiter || f.hasLeadingDelimiter,
@@ -570,12 +571,11 @@ function ruleIdsUnder(rule: SimplifiedRule): ReadonlyMap<SimplifiedRule, Readonl
 	return under;
 }
 
-interface UnionSlotMergeCtx {
+interface SlotMergeCtx {
 	readonly rule: SimplifiedRule;
-	readonly isUnionSlot: (slot: AssembledNonterminal) => boolean;
 }
 
-function mergeExclusiveUnionSlots(slots: readonly AssembledNonterminal[], ctx: UnionSlotMergeCtx): AssembledNonterminal[] {
+function mergeExclusiveSlots(slots: readonly AssembledNonterminal[], ctx: SlotMergeCtx): AssembledNonterminal[] {
 	const under = ruleIdsUnder(ctx.rule);
 	const inExclusiveArms = ([a, b]: readonly [AssembledNonterminal, AssembledNonterminal]): boolean => {
 		const holdsBoth = (child: SimplifiedRule): boolean => {
@@ -586,17 +586,16 @@ function mergeExclusiveUnionSlots(slots: readonly AssembledNonterminal[], ctx: U
 		for (let next = ruleChildren(node).find(holdsBoth); next !== undefined; next = ruleChildren(node).find(holdsBoth)) node = next;
 		return node.type === CHOICE && (node.id === undefined || (!a.sourceRuleIds.includes(node.id) && !b.sourceRuleIds.includes(node.id)));
 	};
+	const copies = ([a, b]: readonly [AssembledNonterminal, AssembledNonterminal]): boolean =>
+		a.sourceRuleIds.length === b.sourceRuleIds.length && a.sourceRuleIds.every((id) => b.sourceRuleIds.includes(id));
 	const out: AssembledNonterminal[] = [];
 	for (const slot of slots) {
-		const at = ctx.isUnionSlot(slot)
-			? out.findIndex(
-					(prior) =>
-						ctx.isUnionSlot(prior) &&
-						prior.storageName === slot.storageName &&
-						slotKindsKey(prior) === slotKindsKey(slot) &&
-						inExclusiveArms([prior, slot])
-				)
-			: -1;
+		const at = out.findIndex(
+			(prior) =>
+				prior.storageName === slot.storageName &&
+				slotKindsKey(prior) === slotKindsKey(slot) &&
+				(copies([prior, slot]) || inExclusiveArms([prior, slot]))
+		);
 		if (at === -1) out.push(slot);
 		else out[at] = mergedSlot([out[at]!, slot]);
 	}

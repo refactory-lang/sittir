@@ -123,7 +123,7 @@ takes, shared by the loose resolver's kind tags.
 ### `packages/codegen/src/compiler/model/node-map.ts::_deriveSlotsInternal`
 
 The fields-side walk over the simplified rule, as `computeSimplifiedRules` produced it; the exported surface is
-`deriveSlots`. It does not re-flatten: collect-slots reports a shape it has no model for as `unclassifiable-shape`. Before the union-slot collision check, `mergeExclusiveUnionSlots` folds same-named, same-kind union slots of exclusive arms.
+`deriveSlots`. It does not re-flatten: collect-slots reports a shape it has no model for as `unclassifiable-shape`. Each collection of slots, the first and the one re-derived with union routing off, folds same-named fields (`mergeSlotsByName`) and then same-named, same-kind slots of exclusive arms (`mergeExclusiveSlots`).
 
 #### body
 
@@ -628,20 +628,7 @@ Distinct from `hidden`, which means "has no factory".
 
 ### `packages/codegen/src/compiler/model/node-map.ts::valueParseLabelsOf`
 
-```text
-/**
- * Distinct per-value field-LABEL routing keys from a slot's `values[]`
- * (union-slot design §5) — the subset of `parseNames` that came from a
- * degenerate arm's `parseName`, not from a plain CST `parseKind`. For a
- * label-routed value, `storageName != parseName` by construction (the wire
- * key IS the tree-sitter field name, e.g. `_declaration`) — a supertype
- * expansion of the label (treating it as a kind to expand, e.g. `declaration`
- * as the supertype) would replace the literal wire key with its subtype kinds
- * and never match. Consumers that expand `parseNames` through the supertype
- * tree (`shared.ts::wireRoutesOf`) keep these UNEXPANDED, as field routes.
- * Empty for a slot no field label routes into.
- */
-```
+The distinct field labels (`NodeRef::parseName`) of a slot's values: the fields its children arrive under. A label stays unexpanded, because it is a field name and not a kind: expanding it through the supertype tree would replace the field with subtype kinds that never match. `queryRoutesOf` takes a slot's fields from it.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::aliasTargetToSourceMapOf`
 
@@ -1699,15 +1686,7 @@ member arm reached through an enum reference takes that enum's token seams
 
 ### `packages/codegen/src/compiler/model/node-map.ts::NodeRef::parseName`
 
-```text
-// Field-label routing key (union-slot design §5): set when this value
-// came from a DEGENERATE fielded arm of a union-routed choice
-// (`partitionChoiceArms`'s `degenerateNamedArms`) — tree-sitter labels
-// this child by FIELD NAME, not by kind, so `parseKind` alone would route
-// it wrong. Absent for plain union-member (by-kind) values. `parseNames`
-// projects `parseName ?? parseKind?.name` per value, so the union slot's
-// routing keys become `fieldLabels ∪ kinds`.
-```
+The field a parsed child of this value arrives under, stamped where the value is made: `buildSlot` stamps a fielded occurrence's field on every value it derives, and a sanctioned union's arm stamps its own field on its values (`DeriveCtx::stampArmFieldNamesAsParseName`). A value without one arrives untagged and is read by its kind. `queryRoutesOf` takes a slot's routes from it, so a slot's `fieldName` names the slot and does not route it.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::NodeRef::optionalElement`
 
@@ -6283,7 +6262,7 @@ Whether the list's separator also comes after its last item: the elements slot's
 
 ### `packages/codegen/src/compiler/model/node-map.ts::mergedSlot`
 
-One slot from two of the same name: the values sequenced and deduplicated by kind, the delimiter flags joined, the source rule ids merged. `mergeSlotsByName` folds same-named fields with it, and `mergeExclusiveUnionSlots` folds same-named union slots of exclusive arms.
+One slot from two of the same name: the values sequenced and deduplicated by kind, the delimiter flags joined, the source rule ids merged. The named one of the two is the merged slot's identity, whichever comes first. `mergeSlotsByName` folds same-named fields with it, and `mergeExclusiveSlots` folds same-named slots of exclusive arms.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::ruleChildren`
 
@@ -6293,17 +6272,17 @@ The rules directly under a simplified rule: a SEQ's or CHOICE's members, a wrapp
 
 A slot's kinds as one comparable key: the storage kind of each value, deduplicated and sorted.
 
-### `packages/codegen/src/compiler/model/node-map.ts::mergeExclusiveUnionSlots`
+### `packages/codegen/src/compiler/model/node-map.ts::mergeExclusiveSlots`
 
-Folds union slots that share a storage name and hold the same kinds (`slotKindsKey`), and that come from different arms of one choice, into one slot, the way a field of one name across arms is one slot: a node takes one arm, so the two never stand side by side. Two slots sit in different arms when the deepest rule holding both (by `ruleIdsUnder`) is a CHOICE that is neither slot's own rule. When a SEQ is the deepest rule holding both, the slots stand in sequence. It runs before the union-slot collision check in `_deriveSlotsInternal`. Union slots of one name with different kinds, or in sequence, still collide there, and union routing stays disabled for that rule.
+Folds slots that share a storage name and hold the same kinds (`slotKindsKey`), and that come from different arms of one choice, into one slot, the way a field of one name across arms is one slot: a node takes one arm, so the two never stand side by side. Two slots sit in different arms when the deepest rule holding both (by `ruleIdsUnder`) is a CHOICE that is neither slot's own rule. When a SEQ is the deepest rule holding both, the slots stand in sequence. Two slots with identical source rule ids are copies of one occurrence that fan-out placed in each branch, and they fold too: since a rule id names one source occurrence, no walk can tell the copies' branches apart. A named slot and an unnamed one fold under the named one (`mergedSlot`), and each value keeps the field it is read under. It runs on every collection of slots in `_deriveSlotsInternal`, before the union-slot collision check. Union slots of one name with different kinds, or in sequence, still collide there, and union routing stays disabled for that rule.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::ruleIdsUnder`
 
-For each rule in a simplified rule's tree, the rule ids it or any rule under it carries. The tree is indexed once, so `mergeExclusiveUnionSlots` can ask whether a rule holds a slot (one of the slot's source rule ids) without walking its subtree each time.
+For each rule in a simplified rule's tree, the rule ids it or any rule under it carries. The tree is indexed once, so `mergeExclusiveSlots` can ask whether a rule holds a slot (one of the slot's source rule ids) without walking its subtree each time.
 
-### `packages/codegen/src/compiler/model/node-map.ts::UnionSlotMergeCtx`
+### `packages/codegen/src/compiler/model/node-map.ts::SlotMergeCtx`
 
-What `mergeExclusiveUnionSlots` reads besides the slots: the rule whose slots are being derived, and whether a slot is a union slot (one built from a choice that routed its arms into a union slot during this derivation).
+What `mergeExclusiveSlots` reads besides the slots: the rule whose slots are being derived, which places each slot in its arm.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::hasArmEdgeSeams`
 

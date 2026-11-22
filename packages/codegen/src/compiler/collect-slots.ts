@@ -226,8 +226,9 @@ function buildSlot(
 		unnamedChoiceWarner(rule.id ?? kindForName);
 	}
 
+	const fieldName = (rule as { fieldName?: string }).fieldName;
 	const rawValues = deriveValuesForRule(rule, { ...deriveCtx, stampArmFieldNamesAsParseName: sanctionedUnion }, mult);
-	const dedupedValues = dedupeValues(rawValues);
+	const dedupedValues = dedupeValues(fieldName === undefined ? rawValues : rawValues.map((value) => ({ ...value, parseName: value.parseName ?? fieldName })));
 	if (dedupedValues.length === 0) return null;
 
 	const isMultiSlot = dedupedValues.some((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
@@ -269,7 +270,7 @@ function buildSlot(
 
 	return new AssembledNonterminal({
 		values,
-		fieldName: (rule as { fieldName?: string }).fieldName,
+		fieldName,
 		inlinedFrom: rule.inlinedFrom,
 		hasTrailingDelimiter,
 		hasLeadingDelimiter,

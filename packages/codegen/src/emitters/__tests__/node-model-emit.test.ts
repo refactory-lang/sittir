@@ -11,7 +11,7 @@ import {
 } from '../../compiler/model/node-map.ts';
 import type { RenderRule, SeqRule, SimplifiedRule } from '../../types/rule.ts';
 import { buildNodeModel, emitNodeModel, printNodeModel } from '../node-model.ts';
-import { makeNodeMapWith, withGeneratedIdTables, type NodeMapWithIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { makeNodeMapWith, withGeneratedIdTables, withParseName, type NodeMapWithIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { flatten } from '../../compiler/flatten.ts';
 import { clauseNodeMap, comparisonNodeMap, twoChoiceSlotsNodeMap } from '../../compiler/model/__tests__/sub-factories.test.ts';
 
@@ -158,7 +158,7 @@ describe('node-model emitter', () => {
 				slots: Object.freeze([
 					new AssembledNonterminal({
 						fieldName: 'value',
-						values: [
+						values: withParseName('value', [
 							{
 								node: { kind: 'unresolved-ref', name: 'identifier' },
 								// Kind-id stamps stay in memory: names are the identity
@@ -168,7 +168,7 @@ describe('node-model emitter', () => {
 								parseKindId: 7,
 								multiplicity: 'single'
 							}
-						],
+						]),
 						hasTrailingDelimiter: false,
 						hasLeadingDelimiter: false,
 						sourceRuleIds: []

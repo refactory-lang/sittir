@@ -2,13 +2,13 @@ import { collectKindEntries } from '../kind-discriminant.ts';
 import { describe, expect, it } from 'vitest';
 import type { RenderRule } from '../../types/rule.ts';
 import { AssembledBranch, AssembledNonterminal, type AssembledNode, type NodeOrTerminal } from '../../compiler/model/node-map.ts';
-import { makeNodeMapWith, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { makeNodeMapWith, withGeneratedIdTables, withParseName } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { buildFactoryMap } from '../factory-map.ts';
 
 const rule = { type: 'SEQ', members: [] } as unknown as RenderRule;
 const text = (value: string): NodeOrTerminal => ({ kind: 'terminal', value, multiplicity: 'single' }) as unknown as NodeOrTerminal;
 const slot = (fieldName: string, values: readonly NodeOrTerminal[], registered: boolean): AssembledNonterminal => {
-	const s = new AssembledNonterminal({ fieldName, values, hasTrailingDelimiter: false, hasLeadingDelimiter: false, sourceRuleIds: [] });
+	const s = new AssembledNonterminal({ fieldName, values: withParseName(fieldName, values), hasTrailingDelimiter: false, hasLeadingDelimiter: false, sourceRuleIds: [] });
 	if (registered) s.registeredOption = 'choice';
 	return s;
 };

@@ -2360,17 +2360,9 @@ One `kind_ids.rs` constant: its name and the kind id it holds.
 
 The constants of a grammar's kind table, one per kind row, plus one for each alias parse id that has no row of its own: the parser symbol an alias site is read under (`let_chain`, `lhs_expression`), named from its parse name so the reader names every id it matches by constant. An alias whose name another kind already holds is a diagnostic.
 
-### `packages/codegen/src/emitters/shared.ts::wireRoutesOf`
-
-The parser keys that land in an unnamed slot: its field labels
-(`valueParseLabelsOf`, the tree-sitter field names routed into the slot) and
-its values' parse kinds expanded to concrete kinds
-(`expandToConcreteParseKinds`), with the labels excluded from the kinds. A
-named slot has no routes, since its field is its name.
-
 ### `packages/codegen/src/emitters/shared.ts::WireRoutes`
 
-The fields and the concrete kinds `wireRoutesOf` finds for one slot.
+The fields and the concrete kinds a slot's children arrive under, as `queryRoutesOf` reads them from its values.
 
 ### `packages/codegen/src/emitters/refine-emit.ts::collectRefineKindInfos`
 
@@ -9286,7 +9278,7 @@ The facts carry no `comment` builder and no render or edit: a node renders and e
 
 ### `packages/codegen/src/emitters/client-utils.ts::queryRoutesOf`
 
-How the parser delivers a slot's children: a named slot by its field alone, and an unnamed slot by the routes `wireRoutesOf` finds (its field labels, and the concrete kinds that arrive under no field). The node's `#[slot]` attributes are derived from it, so the native read routes children by it, and a query reads a slot through that read.
+How the parser delivers a slot's children, read from its values: a value with a field label (`parseName`) arrives under that field, and a value with none arrives untagged, as one of its concrete kinds (`expandToConcreteParseKinds`). A named slot's values carry its field, so it reads by that field alone; a slot that holds a fielded occurrence and a bare one reads both ways. The node's `#[slot]` attributes are derived from it, so the native read routes children by it, and a query reads a slot through that read.
 
 ### `packages/codegen/src/emitters/client-utils.ts::querySlotRows`
 
