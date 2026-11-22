@@ -7769,7 +7769,7 @@ the package's own id tables, then `compileGrammar` on that package.
 
 ### `packages/codegen/src/compiler/flatten.ts::factorSharedLiterals`
 
-The choice counterpart of `factorChoiceArms` for arms of different lengths: when every arm is a seq and every arm opens (or closes) with the same render-only literal, the shared literals are hoisted out and the arms' remainders become one choice between them. `{ n }` and `{ , m }` read as `{`, a choice of `n` and `, m`, then `}`. Only literals stamped `nonterminal: false` are shared, and never the last member of an arm. A literal an arm keeps after the shared edges is dropped from that arm's remainder when the remainder has a slot, because a literal that belongs to one arm cannot be gated on the slot the arms share; the dropped-token census names it.
+The choice counterpart of `factorChoiceArms` for arms of different lengths: when every arm is a seq and every arm opens (or closes) with the same render-only literal, the shared literals are hoisted out and the arms' remainders become one choice between them. `{ n }` and `{ , m }` read as `{`, a choice of `n` and `, m`, then `}`. Only literals stamped `nonterminal: false` are shared, and never the last member of an arm. Each arm's remainder keeps every member, its own literals included: a remainder of one member is that member, and a longer one is the arm's seq narrowed to those members. A literal that only one arm holds is written by that arm's branch of the lowered choice, which emit tells apart from the others by a slot's presence or by the kind at a shared slot.
 
 ### `packages/codegen/src/compiler/flatten.ts::rebuiltLeaf`
 

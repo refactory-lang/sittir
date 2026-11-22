@@ -225,10 +225,7 @@ function factorSharedLiterals(rule: RenderRule): RenderRule {
 	if (prefix + suffix === 0) return rule;
 	const middle = (arm: SeqRule<'normalize'>): RenderRule => {
 		const members = arm.members.slice(prefix, arm.members.length - suffix);
-		const slots = members.filter((m) => !isLiteral(m));
-		const kept = slots.length > 0 ? slots : members;
-		const dropped = members.filter((m) => !kept.includes(m));
-		return kept.length === 1 ? absorbIds(kept[0]!, ...dropped) : absorbIds({ ...arm, members: kept }, ...dropped);
+		return members.length === 1 ? members[0]! : { ...arm, members };
 	};
 	const first = seqArms[0]!;
 	const others = seqArms.slice(1);

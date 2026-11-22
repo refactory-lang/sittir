@@ -283,3 +283,31 @@ describe('flatten — rule-id precedence', () => {
 	});
 });
 
+
+describe('shared literals factored out of a choice of seqs', () => {
+	const lit = (value: string): Rule<'link'> => ({ type: STRING, value, nonterminal: false }) as Rule<'link'>;
+	const seq = (...members: Rule<'link'>[]): Rule<'link'> => ({ type: SEQ, members }) as Rule<'link'>;
+	const choice = (...members: Rule<'link'>[]): Rule<'link'> => ({ type: CHOICE, members }) as Rule<'link'>;
+	const shape = (rule: RuleBase & { type: string }): string => {
+		const r = rule as { type: string; value?: string; name?: string; members?: (RuleBase & { type: string })[] };
+		if (r.type === STRING) return `'${r.value}'`;
+		if (r.type === SYMBOL) return r.name!;
+		const inner = (r.members ?? []).map(shape);
+		return r.type === CHOICE ? `(${inner.join(' | ')})` : `[${inner.join(' ')}]`;
+	};
+
+	it("keeps a literal of one arm's middle: `{ n }` and `{ , m }` read as `{`, a choice of `n` and `, m`, then `}`", () => {
+		const out = flattenRules({ count: choice(seq(lit('{'), sym('n'), lit('}')), seq(lit('{'), lit(','), sym('m'), lit('}'))) });
+		expect(shape(out['count']!)).toBe("['{' (n | [',' m]) '}']");
+	});
+
+	it('keeps the keyword in each middle of a choice whose arms share only their brackets: `( T x in e )` and `( e in e )`', () => {
+		const out = flattenRules({
+			header: choice(
+				seq(lit('('), sym('type'), sym('name'), lit('in'), sym('expression'), lit(')')),
+				seq(lit('('), sym('expression'), lit('in'), sym('expression'), lit(')'))
+			)
+		});
+		expect(shape(out['header']!)).toBe("['(' ([type name 'in' expression] | [expression 'in' expression]) ')']");
+	});
+});

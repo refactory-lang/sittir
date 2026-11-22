@@ -175,6 +175,8 @@ pub enum AnyNode {
     Qmark,
     #[kind(kind::LBRACE)]
     Lbrace,
+    #[kind(kind::COMMA)]
+    Comma,
     #[kind(kind::RBRACE)]
     Rbrace,
     #[kind(kind::BSLASHK)]
@@ -183,8 +185,6 @@ pub enum AnyNode {
     Lt,
     #[kind(kind::LPAREN_QMARK_P_EQ)]
     LparenQmarkPEq,
-    #[kind(kind::COMMA)]
-    Comma,
     #[kind(kind::COLON)]
     Colon,
     #[node(error)]
@@ -268,11 +268,11 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Plus => Ok(()),
             AnyNode::Qmark => Ok(()),
             AnyNode::Lbrace => Ok(()),
+            AnyNode::Comma => Ok(()),
             AnyNode::Rbrace => Ok(()),
             AnyNode::Bslashk => Ok(()),
             AnyNode::Lt => Ok(()),
             AnyNode::LparenQmarkPEq => Ok(()),
-            AnyNode::Comma => Ok(()),
             AnyNode::Colon => Ok(()),
             AnyNode::Verbatim(t) => t.prepare(ctx),
         }
@@ -353,11 +353,11 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Plus => None,
             AnyNode::Qmark => None,
             AnyNode::Lbrace => None,
+            AnyNode::Comma => None,
             AnyNode::Rbrace => None,
             AnyNode::Bslashk => None,
             AnyNode::Lt => None,
             AnyNode::LparenQmarkPEq => None,
-            AnyNode::Comma => None,
             AnyNode::Colon => None,
             AnyNode::Verbatim(t) => t.gap_edges(),
         }
@@ -438,11 +438,11 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Plus => None,
             AnyNode::Qmark => None,
             AnyNode::Lbrace => None,
+            AnyNode::Comma => None,
             AnyNode::Rbrace => None,
             AnyNode::Bslashk => None,
             AnyNode::Lt => None,
             AnyNode::LparenQmarkPEq => None,
-            AnyNode::Comma => None,
             AnyNode::Colon => None,
             AnyNode::Verbatim(t) => t.snapshot_edge(),
         }
@@ -523,11 +523,11 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Plus => None,
             AnyNode::Qmark => None,
             AnyNode::Lbrace => None,
+            AnyNode::Comma => None,
             AnyNode::Rbrace => None,
             AnyNode::Bslashk => None,
             AnyNode::Lt => None,
             AnyNode::LparenQmarkPEq => None,
-            AnyNode::Comma => None,
             AnyNode::Colon => None,
             AnyNode::Verbatim(t) => t.source_coordinate(),
         }
@@ -608,11 +608,11 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Plus => None,
             AnyNode::Qmark => None,
             AnyNode::Lbrace => None,
+            AnyNode::Comma => None,
             AnyNode::Rbrace => None,
             AnyNode::Bslashk => None,
             AnyNode::Lt => None,
             AnyNode::LparenQmarkPEq => None,
-            AnyNode::Comma => None,
             AnyNode::Colon => None,
             AnyNode::Verbatim(t) => t.source_separator(ctx),
         }
@@ -3558,7 +3558,7 @@ fn prepare_optional<N: OptionalPrepare + ?Sized>(node: &mut N, overlay: &mut N::
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::COUNT_QUANTIFIER, layout = [kind::LBRACE, kind::RBRACE], words = 14, built_words = 4, fields = CountQuantifierFields, prepare = CountQuantifierPrepare, view = CountQuantifierNodeRecord, prepare_fn = prepare_count_quantifier)]
+#[node(kind = kind::COUNT_QUANTIFIER, layout = [kind::LBRACE, kind::COMMA, kind::RBRACE], words = 14, built_words = 4, fields = CountQuantifierFields, prepare = CountQuantifierPrepare, view = CountQuantifierNodeRecord, prepare_fn = prepare_count_quantifier)]
 pub struct CountQuantifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -6158,6 +6158,37 @@ impl ::sittir_core::render::Render for LbraceNode {
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp)]
+pub enum CommaNode {
+    #[kind(kind::COMMA)]
+    Comma,
+}
+
+impl ::sittir_core::view::KindOf for CommaNode {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(29)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for CommaNode {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
+        Ok(())
+    }
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(cursor, ctx))
+    }
+    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
+        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
+    }
+}
+
+impl ::sittir_core::render::Render for CommaNode {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_comma(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice, stamp = stamp)]
 pub enum RbraceNode {
     #[kind(kind::RBRACE)]
     Rbrace,
@@ -6282,37 +6313,6 @@ impl ::sittir_core::render::Render for LparenQmarkPEqNode {
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp)]
-pub enum CommaNode {
-    #[kind(kind::COMMA)]
-    Comma,
-}
-
-impl ::sittir_core::view::KindOf for CommaNode {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(29)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for CommaNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        Ok(())
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-impl ::sittir_core::render::Render for CommaNode {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_comma(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
 pub enum ColonNode {
     #[kind(kind::COLON)]
     Colon,
@@ -6355,7 +6355,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyNode {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::TermGroup(t) => t.seat_target(table, ctx),
-            Self::Pattern { .. } | Self::Alternation { .. } | Self::Term { .. } | Self::LookaroundAssertion { .. } | Self::LookaheadAssertion { .. } | Self::LookbehindAssertion { .. } | Self::PatternCharacter { .. } | Self::CharacterClass { .. } | Self::PosixCharacterClass { .. } | Self::PosixClassName { .. } | Self::ClassRange { .. } | Self::ClassCharacter { .. } | Self::AnonymousCapturingGroup { .. } | Self::NamedCapturingGroup { .. } | Self::NonCapturingGroup { .. } | Self::Flags { .. } | Self::ZeroOrMore { .. } | Self::OneOrMore { .. } | Self::Optional { .. } | Self::CountQuantifier { .. } | Self::BackreferenceEscape { .. } | Self::NamedGroupBackreference { .. } | Self::DecimalEscape { .. } | Self::CharacterClassEscape { .. } | Self::UnicodeCharacterEscape { .. } | Self::UnicodePropertyValueExpression { .. } | Self::UnicodePropertyValue { .. } | Self::ControlEscape { .. } | Self::ControlLetterEscape { .. } | Self::IdentityEscape { .. } | Self::GroupName { .. } | Self::DecimalDigits { .. } | Self::CountQuantifierGroup { .. } | Self::CountQuantifierArm { .. } | Self::CharacterClassEscapeArm { .. } | Self::UnicodePropertyValueExpressionGroup { .. } | Self::CharacterClassEscapeText1 { .. } | Self::CharacterClassEscapeText2 { .. } | Self::InlineFlagsGroupEnable { .. } | Self::InlineFlagsGroupToggle { .. } | Self::InlineFlagsGroupDisable { .. } | Self::UnicodePropertyName { .. } | Self::AnyCharacter { .. } | Self::StartAssertion { .. } | Self::EndAssertion { .. } | Self::BoundaryAssertion { .. } | Self::NonBoundaryAssertion { .. } | Self::Lazy { .. } | Self::Negation { .. } | Self::Tight { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::Caret { .. } | Self::LparenQmark { .. } | Self::Eq { .. } | Self::Bang { .. } | Self::Rparen { .. } | Self::LparenQmarkLt { .. } | Self::Lbrack { .. } | Self::Dash { .. } | Self::BslashDash { .. } | Self::Rbrack { .. } | Self::LbrackColon { .. } | Self::ColonRbrack { .. } | Self::Lparen { .. } | Self::LparenQmarkPLt { .. } | Self::Gt { .. } | Self::LparenQmarkColon { .. } | Self::Star { .. } | Self::Plus { .. } | Self::Qmark { .. } | Self::Lbrace { .. } | Self::Rbrace { .. } | Self::Bslashk { .. } | Self::Lt { .. } | Self::LparenQmarkPEq { .. } | Self::Comma { .. } | Self::Colon { .. } | Self::Verbatim { .. } => None,
+            Self::Pattern { .. } | Self::Alternation { .. } | Self::Term { .. } | Self::LookaroundAssertion { .. } | Self::LookaheadAssertion { .. } | Self::LookbehindAssertion { .. } | Self::PatternCharacter { .. } | Self::CharacterClass { .. } | Self::PosixCharacterClass { .. } | Self::PosixClassName { .. } | Self::ClassRange { .. } | Self::ClassCharacter { .. } | Self::AnonymousCapturingGroup { .. } | Self::NamedCapturingGroup { .. } | Self::NonCapturingGroup { .. } | Self::Flags { .. } | Self::ZeroOrMore { .. } | Self::OneOrMore { .. } | Self::Optional { .. } | Self::CountQuantifier { .. } | Self::BackreferenceEscape { .. } | Self::NamedGroupBackreference { .. } | Self::DecimalEscape { .. } | Self::CharacterClassEscape { .. } | Self::UnicodeCharacterEscape { .. } | Self::UnicodePropertyValueExpression { .. } | Self::UnicodePropertyValue { .. } | Self::ControlEscape { .. } | Self::ControlLetterEscape { .. } | Self::IdentityEscape { .. } | Self::GroupName { .. } | Self::DecimalDigits { .. } | Self::CountQuantifierGroup { .. } | Self::CountQuantifierArm { .. } | Self::CharacterClassEscapeArm { .. } | Self::UnicodePropertyValueExpressionGroup { .. } | Self::CharacterClassEscapeText1 { .. } | Self::CharacterClassEscapeText2 { .. } | Self::InlineFlagsGroupEnable { .. } | Self::InlineFlagsGroupToggle { .. } | Self::InlineFlagsGroupDisable { .. } | Self::UnicodePropertyName { .. } | Self::AnyCharacter { .. } | Self::StartAssertion { .. } | Self::EndAssertion { .. } | Self::BoundaryAssertion { .. } | Self::NonBoundaryAssertion { .. } | Self::Lazy { .. } | Self::Negation { .. } | Self::Tight { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::Caret { .. } | Self::LparenQmark { .. } | Self::Eq { .. } | Self::Bang { .. } | Self::Rparen { .. } | Self::LparenQmarkLt { .. } | Self::Lbrack { .. } | Self::Dash { .. } | Self::BslashDash { .. } | Self::Rbrack { .. } | Self::LbrackColon { .. } | Self::ColonRbrack { .. } | Self::Lparen { .. } | Self::LparenQmarkPLt { .. } | Self::Gt { .. } | Self::LparenQmarkColon { .. } | Self::Star { .. } | Self::Plus { .. } | Self::Qmark { .. } | Self::Lbrace { .. } | Self::Comma { .. } | Self::Rbrace { .. } | Self::Bslashk { .. } | Self::Lt { .. } | Self::LparenQmarkPEq { .. } | Self::Colon { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -6622,6 +6622,11 @@ fn render_count_quantifier<N: CountQuantifierFields + ?Sized>(node: &N, w: &mut 
     w.edge(::sittir_core::types::KindId(70), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("{")?;
     w.site_at(options::SITE_COUNT_QUANTIFIER_LBRACE_AFTER);
+    if content.kind_in(&*w, &[::sittir_core::types::KindId(39)]) {
+        w.site_at(options::SITE_COUNT_QUANTIFIER_COMMA_BEFORE);
+        w.text(",")?;
+        w.site_at(options::SITE_COUNT_QUANTIFIER_COMMA_AFTER);
+    }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     w.site_at(options::SITE_COUNT_QUANTIFIER_RBRACE_BEFORE);
     w.text("}")?;
@@ -6970,6 +6975,10 @@ fn render_lbrace(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core
     NodeLayout::render(None, Some(::sittir_core::types::KindId(28)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("{"))
 }
 
+fn render_comma(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(29)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(","))
+}
+
 fn render_rbrace(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     NodeLayout::render(None, Some(::sittir_core::types::KindId(30)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("}"))
 }
@@ -6984,10 +6993,6 @@ fn render_lt(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::re
 
 fn render_lparen_qmark_peq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     NodeLayout::render(None, Some(::sittir_core::types::KindId(33)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("(?P="))
-}
-
-fn render_comma(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(29)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(","))
 }
 
 fn render_colon(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -7161,11 +7166,11 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::Plus => [::sittir_core::types::KindId(26)].iter().any(|k| kinds.contains(k)),
             Self::Qmark => [::sittir_core::types::KindId(27)].iter().any(|k| kinds.contains(k)),
             Self::Lbrace => [::sittir_core::types::KindId(28)].iter().any(|k| kinds.contains(k)),
+            Self::Comma => [::sittir_core::types::KindId(29)].iter().any(|k| kinds.contains(k)),
             Self::Rbrace => [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k)),
             Self::Bslashk => [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k)),
             Self::Lt => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
             Self::LparenQmarkPEq => [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k)),
-            Self::Comma => [::sittir_core::types::KindId(29)].iter().any(|k| kinds.contains(k)),
             Self::Colon => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => false,
         }
@@ -7249,11 +7254,11 @@ impl ::sittir_core::render::Render for AnyNode {
             AnyNode::Plus => render_plus(w),
             AnyNode::Qmark => render_qmark(w),
             AnyNode::Lbrace => render_lbrace(w),
+            AnyNode::Comma => render_comma(w),
             AnyNode::Rbrace => render_rbrace(w),
             AnyNode::Bslashk => render_bslashk(w),
             AnyNode::Lt => render_lt(w),
             AnyNode::LparenQmarkPEq => render_lparen_qmark_peq(w),
-            AnyNode::Comma => render_comma(w),
             AnyNode::Colon => render_colon(w),
             AnyNode::Verbatim(t) => t.render(w),
         }
@@ -7338,11 +7343,11 @@ impl ::sittir_core::view::KindOf for AnyNodeRecord<'_> {
             Self::Plus => [::sittir_core::types::KindId(26)].iter().any(|k| kinds.contains(k)),
             Self::Qmark => [::sittir_core::types::KindId(27)].iter().any(|k| kinds.contains(k)),
             Self::Lbrace => [::sittir_core::types::KindId(28)].iter().any(|k| kinds.contains(k)),
+            Self::Comma => [::sittir_core::types::KindId(29)].iter().any(|k| kinds.contains(k)),
             Self::Rbrace => [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k)),
             Self::Bslashk => [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k)),
             Self::Lt => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
             Self::LparenQmarkPEq => [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k)),
-            Self::Comma => [::sittir_core::types::KindId(29)].iter().any(|k| kinds.contains(k)),
             Self::Colon => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => false,
         }
@@ -7426,11 +7431,11 @@ impl ::sittir_core::render::Render for AnyNodeRecord<'_> {
             AnyNodeRecord::Plus => render_plus(w),
             AnyNodeRecord::Qmark => render_qmark(w),
             AnyNodeRecord::Lbrace => render_lbrace(w),
+            AnyNodeRecord::Comma => render_comma(w),
             AnyNodeRecord::Rbrace => render_rbrace(w),
             AnyNodeRecord::Bslashk => render_bslashk(w),
             AnyNodeRecord::Lt => render_lt(w),
             AnyNodeRecord::LparenQmarkPEq => render_lparen_qmark_peq(w),
-            AnyNodeRecord::Comma => render_comma(w),
             AnyNodeRecord::Colon => render_colon(w),
             AnyNodeRecord::Verbatim(t) => t.render(w),
         }
@@ -7503,7 +7508,7 @@ const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueExpressionNode>
 const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueNode>() <= 256, "UnicodePropertyValueNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ZeroOrMoreNode>() <= 256, "ZeroOrMoreNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_nodes!(TriviaNode; AnyNode, PatternContentNodeSlot, LookaroundAssertionContentNodeSlot, LookaheadAssertionOperatorNodeSlot, CharacterClassClassAtomsNodeSlot, ClassRangeStartNodeSlot, NamedCapturingGroupOperatorNodeSlot, CountQuantifierContentNodeSlot, CharacterClassEscapeContentNodeSlot, TermGroupQuantifierNodeSlot, TermGroupContentNodeSlot, PatternNode, AlternationNode, TermNode, AnyCharacterNode, StartAssertionNode, EndAssertionNode, BoundaryAssertionNode, NonBoundaryAssertionNode, LookaroundAssertionNode, LookaheadAssertionNode, LookbehindAssertionNode, PatternCharacterNode, CharacterClassNode, PosixCharacterClassNode, PosixClassNameNode, ClassRangeNode, ClassCharacterNode, AnonymousCapturingGroupNode, NamedCapturingGroupNode, NonCapturingGroupNode, FlagsNode, ZeroOrMoreNode, OneOrMoreNode, OptionalNode, CountQuantifierNode, BackreferenceEscapeNode, NamedGroupBackreferenceNode, DecimalEscapeNode, CharacterClassEscapeNode, UnicodeCharacterEscapeNode, UnicodePropertyValueExpressionNode, UnicodePropertyValueNode, ControlEscapeNode, ControlLetterEscapeNode, IdentityEscapeNode, GroupNameNode, DecimalDigitsNode, LazyNode, TermGroupNode, CountQuantifierGroupNode, CountQuantifierArmNode, CharacterClassEscapeArmNode, UnicodePropertyValueExpressionGroupNode, CharacterClassEscapeText1Node, CharacterClassEscapeText2Node, NegationNode, InlineFlagsGroupEnableNode, InlineFlagsGroupToggleNode, InlineFlagsGroupDisableNode, TightNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, CaretNode, LparenQmarkNode, EqNode, BangNode, RparenNode, LparenQmarkLtNode, LbrackNode, DashNode, BslashDashNode, RbrackNode, LbrackColonNode, ColonRbrackNode, LparenNode, LparenQmarkPLtNode, GtNode, LparenQmarkColonNode, StarNode, PlusNode, QmarkNode, LbraceNode, RbraceNode, BslashkNode, LtNode, LparenQmarkPEqNode, CommaNode, ColonNode, TriviaNode);
+::sittir_core::grammar_nodes!(TriviaNode; AnyNode, PatternContentNodeSlot, LookaroundAssertionContentNodeSlot, LookaheadAssertionOperatorNodeSlot, CharacterClassClassAtomsNodeSlot, ClassRangeStartNodeSlot, NamedCapturingGroupOperatorNodeSlot, CountQuantifierContentNodeSlot, CharacterClassEscapeContentNodeSlot, TermGroupQuantifierNodeSlot, TermGroupContentNodeSlot, PatternNode, AlternationNode, TermNode, AnyCharacterNode, StartAssertionNode, EndAssertionNode, BoundaryAssertionNode, NonBoundaryAssertionNode, LookaroundAssertionNode, LookaheadAssertionNode, LookbehindAssertionNode, PatternCharacterNode, CharacterClassNode, PosixCharacterClassNode, PosixClassNameNode, ClassRangeNode, ClassCharacterNode, AnonymousCapturingGroupNode, NamedCapturingGroupNode, NonCapturingGroupNode, FlagsNode, ZeroOrMoreNode, OneOrMoreNode, OptionalNode, CountQuantifierNode, BackreferenceEscapeNode, NamedGroupBackreferenceNode, DecimalEscapeNode, CharacterClassEscapeNode, UnicodeCharacterEscapeNode, UnicodePropertyValueExpressionNode, UnicodePropertyValueNode, ControlEscapeNode, ControlLetterEscapeNode, IdentityEscapeNode, GroupNameNode, DecimalDigitsNode, LazyNode, TermGroupNode, CountQuantifierGroupNode, CountQuantifierArmNode, CharacterClassEscapeArmNode, UnicodePropertyValueExpressionGroupNode, CharacterClassEscapeText1Node, CharacterClassEscapeText2Node, NegationNode, InlineFlagsGroupEnableNode, InlineFlagsGroupToggleNode, InlineFlagsGroupDisableNode, TightNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, CaretNode, LparenQmarkNode, EqNode, BangNode, RparenNode, LparenQmarkLtNode, LbrackNode, DashNode, BslashDashNode, RbrackNode, LbrackColonNode, ColonRbrackNode, LparenNode, LparenQmarkPLtNode, GtNode, LparenQmarkColonNode, StarNode, PlusNode, QmarkNode, LbraceNode, CommaNode, RbraceNode, BslashkNode, LtNode, LparenQmarkPEqNode, ColonNode, TriviaNode);
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AlternationNode>() == 48, "AlternationNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]

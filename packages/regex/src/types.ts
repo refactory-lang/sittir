@@ -74,11 +74,11 @@ export type LeafStringMap = {
 	[TSKindId.Plus]: '+';
 	[TSKindId.Qmark]: '?';
 	[TSKindId.Lbrace]: '{';
+	[TSKindId.Comma]: ',';
 	[TSKindId.Rbrace]: '}';
 	[TSKindId.Bslashk]: '\\k';
 	[TSKindId.Lt]: '<';
 	[TSKindId.LparenQmarkPEq]: '(?P=';
-	[TSKindId.Comma]: ',';
 	[TSKindId.Colon]: ':';
 };
 
@@ -1377,6 +1377,7 @@ export namespace CountQuantifier {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceKindId;
 			readonly before?: WhitespaceKindId;
+			readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 			readonly lbrace?: { readonly after?: WhitespaceKindId };
 			readonly qmark?: { readonly before?: WhitespaceKindId };
 			readonly rbrace?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
@@ -2171,11 +2172,11 @@ export type FixedTextKindId =
 	| TSKindId.Plus
 	| TSKindId.Qmark
 	| TSKindId.Lbrace
+	| TSKindId.Comma
 	| TSKindId.Rbrace
 	| TSKindId.Bslashk
 	| TSKindId.Lt
 	| TSKindId.LparenQmarkPEq
-	| TSKindId.Comma
 	| TSKindId.Colon;
 
 export interface TypeKeyOf {

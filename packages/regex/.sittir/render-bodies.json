@@ -249,14 +249,29 @@
 			"arms": [
 				{
 					"test": "content",
+					"kinds": [
+						"decimal_digits"
+					],
 					"body": [
 						{
-							"kind": "slot",
-							"name": "content"
+							"kind": "seam",
+							"field": "comma_before"
+						},
+						{
+							"kind": "text",
+							"text": ","
+						},
+						{
+							"kind": "seam",
+							"field": "comma_after"
 						}
 					]
 				}
 			]
+		},
+		{
+			"kind": "slot",
+			"name": "content"
 		},
 		{
 			"kind": "seam",

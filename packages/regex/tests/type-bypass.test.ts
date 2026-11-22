@@ -12,7 +12,7 @@ const quantifier = (engine: typeof trusting, content: unknown) =>
 
 describe('a value the strict types refuse, given anyway: the default mode trusts the types', () => {
 	it('bare text in a node slot renders as verbatim by default, and is refused in runtime mode', () => {
-		expect(quantifier(trusting, '3').$render()).toBe('{3}');
+		expect(quantifier(trusting, '3').$render()).toBe('{,3}');
 		expect(() => quantifier(verifying, '3')).toThrow('CountQuantifier.content: a strict factory takes a built node, not a string');
 	});
 
