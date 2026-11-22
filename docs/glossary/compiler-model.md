@@ -52,8 +52,9 @@ takes, shared by the loose resolver's kind tags.
 
 ```text
 /**
- * True when EVERY value in the slot is guaranteed to be present:
- * `single` or `nonEmptyArray`.
+ * True when the slot is guaranteed to be present: every value is `single`
+ * or `nonEmptyArray`, or the fold that built the slot stamped it `required`
+ * (`foldedRequired`).
  *
  * Plain `array` slots are optional at the native node and render surface: a
  * repeated field with zero occurrences is emitted as a missing slot, not
@@ -79,9 +80,10 @@ takes, shared by the loose resolver's kind tags.
 
 ```text
 /**
- * True when EVERY multi-valued value is `nonEmptyArray` (and there is at
- * least one multi-valued value). A mixed `array` + `nonEmptyArray` slot
- * returns `false` — the `array` form allows empty.
+ * True for a list slot (at least one multi-valued value) that cannot be
+ * empty: every multi-valued value is `nonEmptyArray`, or a fold stamped the
+ * slot `required`. Otherwise a mixed `array` + `nonEmptyArray` slot returns
+ * `false`, since the `array` form allows empty.
  */
 ```
 
@@ -6265,6 +6267,30 @@ For each rule in a simplified rule's tree, the rule ids it or any rule under it 
 ### `packages/codegen/src/compiler/model/node-map.ts::SlotMergeCtx`
 
 What `mergeExclusiveSlots` reads besides the slots: the rule whose slots are being derived, which places each slot in its arm.
+
+### `packages/codegen/src/compiler/model/node-map.ts::foldedRequired`
+
+The `required` stamp for a slot folded from two parts. Positions in sequence are all written, so one required part makes the slot required. Arms of a choice are exclusive, so every arm must require it. The stamp is set only when the folded values no longer say so themselves, as for java's `array_creation_expression_arm1.dimensions` (`repeat1` beside an optional position) and rust's `match_block_arms.arms` (`repeat` beside a required last arm).
+
+### `packages/codegen/src/compiler/model/node-map.ts::everyValuePresent`
+
+Whether a slot's values alone guarantee it is present: at least one value, and each is `single` or `nonEmptyArray`.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal::required`
+
+Set by `foldedRequired` when a slot folded from several positions is always present although its values, read one by one, do not say so. `isRequired` and `isNonEmpty` read it. `relaxToOptional` clears it.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminalInit::required`
+
+The slot's `required` stamp (`AssembledNonterminal.required`), passed through `with`.
+
+### `packages/codegen/src/compiler/model/node-map.ts::SlotFoldCtx`
+
+What a slot fold reads besides its parts: whether they stand in sequence or are arms of a choice, which decides `foldedRequired`.
+
+### `packages/codegen/src/compiler/model/node-map.ts::SlotFoldCtx::inSequence`
+
+True when the folded parts are positions of one sequence, so all are written. False when they are arms of a choice, so a node takes one.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::hasArmEdgeSeams`
 

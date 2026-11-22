@@ -9,7 +9,6 @@ export const build: PortableBuildTable = {
 		argumentList: 'spread',
 		arrayAccess: 'config',
 		arrayCreationExpression: 'config',
-		'arrayCreationExpression.arm1': 'config',
 		arrayInitializer: 'forwarded',
 		arrayType: 'config',
 		assertStatement: 'direct',
@@ -10922,130 +10921,6 @@ export const build: PortableBuildTable = {
 						[283, 'value'],
 						[308, 'value'],
 						[314, 'items']
-					]
-				},
-				{
-					kind: 181,
-					builder: 'arrayCreationExpression',
-					slots: [
-						{
-							name: 'annotations',
-							steps: [
-								{
-									key: 'annotations',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [181, 'annotations'],
-									kinds: [233, 234],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [181, 'type'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 289, 290, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'content',
-									builder: 'arrayCreationExpression.arm1',
-									mounted: {
-										call: 'keyedArgs',
-										key: 'content',
-										seats: 'spread'
-									}
-								}
-							]
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: ['content', 'variableInitializers'],
-							required: ['type']
-						}
-					],
-					holders: [
-						[167, 'expression'],
-						[171, 'value'],
-						[172, 'right'],
-						[173, 'left'],
-						[173, 'right'],
-						[174, 'left'],
-						[175, 'body'],
-						[177, 'condition'],
-						[177, 'consequence'],
-						[177, 'alternative'],
-						[178, 'operand'],
-						[182, 'expression'],
-						[183, 'expression'],
-						[187, 'object'],
-						[188, 'templateProcessor'],
-						[189, 'array'],
-						[189, 'index'],
-						[191, 'expressions'],
-						[192, 'content'],
-						[207, 'expression'],
-						[210, 'expression'],
-						[212, 'content'],
-						[216, 'expression'],
-						[217, 'expression'],
-						[219, 'expression'],
-						[230, 'condition'],
-						[230, 'updates'],
-						[231, 'value'],
-						[235, 'contents'],
-						[236, 'value'],
-						[276, 'value'],
-						[283, 'value'],
-						[310, 'items'],
-						[313, 'object'],
-						[314, 'items'],
-						[315, 'value'],
-						[317, 'primaryExpression'],
-						[318, 'object'],
-						[320, 'contents'],
-						[322, 'condition'],
-						[322, 'message'],
-						[323, 'value'],
-						[324, 'inits'],
-						[331, 'expression'],
-						[332, 'expression']
 					]
 				},
 				{

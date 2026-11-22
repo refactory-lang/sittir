@@ -3644,6 +3644,7 @@ export const structure: StructureTable = Object.freeze({
 	},
 	434: {
 		kind: 'match_block_arms',
+		nonEmpty: [['_arms', 'match_block_arms.children']],
 		final: [['_arms', 'match_block_arms.children', [294], [295]]],
 		nodeOnly: [['_arms', 'MatchBlockArms.arms', 'a built MatchArm / LastMatchArm', [294, 295]]],
 		lists: [['arms', false, 0]]

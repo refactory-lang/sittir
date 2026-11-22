@@ -9160,7 +9160,7 @@ export function buildMatchBlock(): T.EmptyMatchBlock;
 export function buildMatchBlock<V extends Admit<T.MatchBlockArms>>(
 	...value: [value?: V] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildMatchBlock>;
-export function buildMatchBlock<A extends Admit<[...T.MatchArm[], T.LastMatchArm]>>(
+export function buildMatchBlock<A extends [...Admit<T.MatchArm>[], Admit<T.LastMatchArm>]>(
 	...children: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildMatchBlock>;
 export function buildMatchBlock(...args: unknown[]) {
@@ -20117,10 +20117,12 @@ function buildTypeArgument$with$traitBounds(this: Received<Held>, ...args: unkno
 	return buildTypeArgument$with(receiverOf(this, '$with.traitBounds'), 'traitBounds', args);
 }
 
-export function buildMatchBlockArms<A extends Admit<[...T.MatchArm[], T.LastMatchArm]>>(
+export function buildMatchBlockArms<A extends [...Admit<T.MatchArm>[], Admit<T.LastMatchArm>]>(
 	...children: A & RefuseUndeclared<A>
 ): T.MatchBlockArms.Bound;
-export function buildMatchBlockArms(...children: Admit<[...T.MatchArm[], T.LastMatchArm]>): T.MatchBlockArms.Bound {
+export function buildMatchBlockArms(
+	...children: [...Admit<T.MatchArm>[], Admit<T.LastMatchArm>]
+): T.MatchBlockArms.Bound {
 	currentHandle()?.admit(TSKindId.MatchBlockArms, children);
 	const _arms = children;
 	const handle = currentHandle();

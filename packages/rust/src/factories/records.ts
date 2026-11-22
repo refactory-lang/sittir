@@ -12600,7 +12600,7 @@ export function buildMatchBlock(): T.EmptyMatchBlock;
 export function buildMatchBlock<V extends Admit<T.MatchBlockArms>>(
 	...value: [value?: V] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildMatchBlock>;
-export function buildMatchBlock<A extends Admit<[...T.MatchArm[], T.LastMatchArm]>>(
+export function buildMatchBlock<A extends [...Admit<T.MatchArm>[], Admit<T.LastMatchArm>]>(
 	...children: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildMatchBlock>;
 export function buildMatchBlock(...args: unknown[]) {
@@ -27397,10 +27397,12 @@ function withTypeArgument(node: object, setter: string, args: readonly unknown[]
 	throw new Error(`type_argument has no $with.${setter}`);
 }
 
-export function buildMatchBlockArms<A extends Admit<[...T.MatchArm[], T.LastMatchArm]>>(
+export function buildMatchBlockArms<A extends [...Admit<T.MatchArm>[], Admit<T.LastMatchArm>]>(
 	...children: A & RefuseUndeclared<A>
 ): T.MatchBlockArms.Bound;
-export function buildMatchBlockArms(...children: Admit<[...T.MatchArm[], T.LastMatchArm]>): T.MatchBlockArms.Bound {
+export function buildMatchBlockArms(
+	...children: [...Admit<T.MatchArm>[], Admit<T.LastMatchArm>]
+): T.MatchBlockArms.Bound {
 	currentHandle()?.admit(TSKindId.MatchBlockArms, children);
 	const _arms = children;
 	const handle = currentHandle();
@@ -27417,7 +27419,7 @@ export function buildMatchBlockArms(...children: Admit<[...T.MatchArm[], T.LastM
 
 function buildMatchBlockArms$patch(
 	source: object,
-	...children: Admit<[...T.MatchArm[], T.LastMatchArm]>
+	...children: [...Admit<T.MatchArm>[], Admit<T.LastMatchArm>]
 ): T.MatchBlockArms.Bound {
 	currentHandle()?.admit(TSKindId.MatchBlockArms, children);
 	const _arms = children;

@@ -391,7 +391,10 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.arrayCreationExpression({
 				type: TSKindId.VoidType as never,
-				content: { $type: TSKindId.ArrayCreationExpressionArm1, dimensions: [] } as never
+				content: {
+					$type: TSKindId.ArrayCreationExpressionArm1,
+					dimensions: [{ $type: TSKindId.DimensionsExpr, annotations: [], expression: TSKindId.This as never } as never]
+				} as never
 			});
 			expect(node.$type).toBe(TSKindId.ArrayCreationExpression);
 			expectBuiltNode(node);
@@ -399,7 +402,10 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.arrayCreationExpression({
 				type: TSKindId.VoidType as never,
-				content: { $type: TSKindId.ArrayCreationExpressionArm1, dimensions: [] } as never
+				content: {
+					$type: TSKindId.ArrayCreationExpressionArm1,
+					dimensions: [{ $type: TSKindId.DimensionsExpr, annotations: [], expression: TSKindId.This as never } as never]
+				} as never
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
@@ -737,7 +743,10 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const node = ir.methodReference.arrayCreation({
 				name: { $type: TSKindId.Identifier, text: 'test' } as never,
 				type: TSKindId.VoidType as never,
-				content: { $type: TSKindId.ArrayCreationExpressionArm1, dimensions: [] } as never
+				content: {
+					$type: TSKindId.ArrayCreationExpressionArm1,
+					dimensions: [{ $type: TSKindId.DimensionsExpr, annotations: [], expression: TSKindId.This as never } as never]
+				} as never
 			});
 			expect(node.$type).toBe(TSKindId.MethodReference);
 			expect((node as any).content()).toBeDefined();

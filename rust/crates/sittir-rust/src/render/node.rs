@@ -40615,7 +40615,7 @@ pub struct MatchBlockArmsNode {
     height: u16,
     #[wire(key = "_arms")]
     #[slot(field = field::ARMS, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
-    pub arms: Vec<::sittir_core::SlotValue<MatchBlockArmsArmsNodeSlot>>,
+    pub arms: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<MatchBlockArmsArmsNodeSlot>>,
     #[wire(key = "_arms_separator_space")]
     #[space(slot = 2, side = after, site = options::SITE_MATCH_BLOCK_ARMS_ARMS_SEPARATOR_SPACE)]
     pub arms_separator_space: Option<KindId>,
@@ -53158,7 +53158,7 @@ fn render_match_block_arms<N: MatchBlockArmsFields + ?Sized>(node: &N, w: &mut d
         join: ::sittir_core::render::JoinArm::NEXT,
     };
     w.edge(::sittir_core::types::KindId(434), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    if arms.is_present() { w.join_arm(::sittir_core::render::JoinArm::NEXT); }
+    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     arms.render(w)?;
     w.edge(::sittir_core::types::KindId(434), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())

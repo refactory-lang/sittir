@@ -316,20 +316,32 @@ export function isUnresolvedRef(v: NodeRef['node']): v is UnresolvedRef {
 	return typeof v === 'object' && (v as { kind?: unknown }).kind === 'unresolved-ref';
 }
 
-export function isRequired(slot: { values: readonly NodeOrTerminal[] }): boolean {
-	return (
-		slot.values.length > 0 &&
-		slot.values.every((v) => v.multiplicity === 'single' || v.multiplicity === 'nonEmptyArray')
-	);
+function everyValuePresent(values: readonly NodeOrTerminal[]): boolean {
+	return values.length > 0 && values.every((v) => v.multiplicity === 'single' || v.multiplicity === 'nonEmptyArray');
+}
+
+export function isRequired(slot: { values: readonly NodeOrTerminal[]; readonly required?: true }): boolean {
+	return slot.required === true || everyValuePresent(slot.values);
+}
+
+export interface SlotFoldCtx {
+	readonly inSequence: boolean;
+}
+
+export function foldedRequired(
+	fold: { readonly parts: readonly [AssembledNonterminal, AssembledNonterminal]; readonly values: readonly NodeOrTerminal[] },
+	ctx: SlotFoldCtx
+): true | undefined {
+	return (ctx.inSequence ? fold.parts.some(isRequired) : fold.parts.every(isRequired)) && !everyValuePresent(fold.values) ? true : undefined;
 }
 
 export function isMultiple(slot: { values: readonly NodeOrTerminal[] }): boolean {
 	return slot.values.some((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
 }
 
-export function isNonEmpty(slot: { values: readonly NodeOrTerminal[] }): boolean {
+export function isNonEmpty(slot: { values: readonly NodeOrTerminal[]; readonly required?: true }): boolean {
 	const multis = slot.values.filter((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
-	return multis.length > 0 && multis.every((v) => v.multiplicity === 'nonEmptyArray');
+	return multis.length > 0 && (slot.required === true || multis.every((v) => v.multiplicity === 'nonEmptyArray'));
 }
 
 export function hasOptionalElements(slot: { values: readonly NodeOrTerminal[] }): boolean {
@@ -539,9 +551,11 @@ function sequenceValues([rest, last]: readonly [AssembledNonterminal, AssembledN
 	return dedupeValues([...settled, ...(finalSeat ? last.values.map((v) => ({ ...v, final: true as const })) : last.values)]);
 }
 
-function mergedSlot([existing, f]: readonly [AssembledNonterminal, AssembledNonterminal]): AssembledNonterminal {
+function mergedSlot([existing, f]: readonly [AssembledNonterminal, AssembledNonterminal], ctx: SlotFoldCtx): AssembledNonterminal {
+	const values = sequenceValues([existing, f]);
 	return (existing.isUnnamed && !f.isUnnamed ? f : existing).with({
-		values: sequenceValues([existing, f]),
+		values,
+		required: foldedRequired({ parts: [existing, f], values }, ctx),
 		hasTrailingDelimiter: existing.hasTrailingDelimiter || f.hasTrailingDelimiter,
 		hasLeadingDelimiter: existing.hasLeadingDelimiter || f.hasLeadingDelimiter,
 		trailingDelimiter: mergeDelimiterMode([existing.trailingDelimiter, f.trailingDelimiter]),
@@ -597,7 +611,7 @@ function mergeExclusiveSlots(slots: readonly AssembledNonterminal[], ctx: SlotMe
 				(copies([prior, slot]) || inExclusiveArms([prior, slot]))
 		);
 		if (at === -1) out.push(slot);
-		else out[at] = mergedSlot([out[at]!, slot]);
+		else out[at] = mergedSlot([out[at]!, slot], { inSequence: false });
 	}
 	return out;
 }
@@ -617,7 +631,7 @@ export function mergeSlotsByName(slots: AssembledNonterminal[]): AssembledNonter
 			out.push(f);
 			continue;
 		}
-		out[idx] = mergedSlot([out[idx]!, f]);
+		out[idx] = mergedSlot([out[idx]!, f], { inSequence: true });
 	}
 	return out;
 }
@@ -1299,6 +1313,7 @@ export interface AssembledNonterminalInit {
 	readonly sourceRuleIds: readonly RuleId[];
 	readonly metadata?: OpaqueFacts;
 	readonly ruleMetadata?: RuleMetadata;
+	readonly required?: true;
 	storageInfo?: FieldStorageInfo;
 }
 
@@ -1326,6 +1341,7 @@ export class AssembledNonterminal {
 	readonly sourceRuleIds: readonly RuleId[];
 	readonly metadata: OpaqueFacts;
 	readonly ruleMetadata?: RuleMetadata;
+	readonly required?: true;
 	storageInfo?: FieldStorageInfo;
 	optionDefaultArm?: string;
 	optionDefaultKind?: string;
@@ -1378,6 +1394,7 @@ export class AssembledNonterminal {
 		this.sourceRuleIds = init.sourceRuleIds;
 		this.metadata = init.metadata ?? opaqueFacts({});
 		this.ruleMetadata = init.ruleMetadata;
+		this.required = init.required;
 		this.storageInfo = init.storageInfo;
 	}
 
@@ -1393,6 +1410,7 @@ export class AssembledNonterminal {
 			sourceRuleIds: this.sourceRuleIds,
 			metadata: this.metadata,
 			ruleMetadata: this.ruleMetadata,
+			required: this.required,
 			storageInfo: this.storageInfo,
 			...overrides
 		});

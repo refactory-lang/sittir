@@ -134,7 +134,6 @@ export interface JavaMap extends V.GrammarMap {
 				| V.Unmapped<'java:package_declaration'>
 				| V.Unmapped<'java:synchronized_statement'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssertStatement.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
@@ -878,7 +877,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -995,7 +993,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -1112,7 +1109,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -1229,7 +1225,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -1346,7 +1341,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -1463,7 +1457,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -1580,7 +1573,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -1697,7 +1689,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -1814,7 +1805,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -1931,7 +1921,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -2048,7 +2037,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -2165,7 +2153,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -2276,7 +2263,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -2384,7 +2370,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -2494,7 +2479,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -2602,7 +2586,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -2713,7 +2696,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -2821,7 +2803,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -2932,7 +2913,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -3040,7 +3020,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -3151,7 +3130,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -3259,7 +3237,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -3370,7 +3347,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -3478,7 +3454,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -3589,7 +3564,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -3697,7 +3671,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -3808,7 +3781,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -3916,7 +3888,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -4027,7 +3998,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -4135,7 +4105,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -4246,7 +4215,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -4354,7 +4322,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -4465,7 +4432,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -4573,7 +4539,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -4684,7 +4649,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -4792,7 +4756,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -4903,7 +4866,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -5011,7 +4973,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -5122,7 +5083,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -5230,7 +5190,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -5341,7 +5300,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -5449,7 +5407,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -5560,7 +5517,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -5668,7 +5624,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -5779,7 +5734,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -5887,7 +5841,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -5998,7 +5951,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -6119,7 +6071,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -6255,7 +6206,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -6393,7 +6343,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -6448,7 +6397,6 @@ export interface JavaMap extends V.GrammarMap {
 		readonly 'expression.collection.list': {
 			readonly $forms:
 				| V.Form<never, 'annotations' | 'content' | 'type'>
-				| V.Form<'type', 'content' | 'variableInitializers'>
 				| V.Form<'content' | 'type', 'variableInitializers'>;
 		};
 		readonly 'expression.conditional': {
@@ -6540,7 +6488,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -6648,7 +6595,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -6756,7 +6702,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -6867,7 +6812,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -6979,7 +6923,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -7054,7 +6997,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
 				| T.DecimalFloatingPointLiteral.Parsed
 				| T.DecimalIntegerLiteralArm2.Parsed
@@ -7156,7 +7098,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -7267,7 +7208,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -7504,7 +7444,6 @@ export interface JavaMap extends V.GrammarMap {
 				| V.Unmapped<'java:package_declaration'>
 				| V.Unmapped<'java:synchronized_statement'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssertStatement.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
@@ -7662,7 +7601,6 @@ export interface JavaMap extends V.GrammarMap {
 				| V.Unmapped<'java:package_declaration'>
 				| V.Unmapped<'java:synchronized_statement'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssertStatement.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
@@ -7806,7 +7744,6 @@ export interface JavaMap extends V.GrammarMap {
 				| V.Unmapped<'java:package_declaration'>
 				| V.Unmapped<'java:synchronized_statement'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssertStatement.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
@@ -7958,7 +7895,6 @@ export interface JavaMap extends V.GrammarMap {
 				| V.Unmapped<'java:package_declaration'>
 				| V.Unmapped<'java:synchronized_statement'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssertStatement.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
@@ -8073,7 +8009,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -8212,7 +8147,6 @@ export interface JavaMap extends V.GrammarMap {
 				| V.Unmapped<'java:package_declaration'>
 				| V.Unmapped<'java:synchronized_statement'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssertStatement.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
@@ -8359,7 +8293,6 @@ export interface JavaMap extends V.GrammarMap {
 				| V.Unmapped<'java:package_declaration'>
 				| V.Unmapped<'java:synchronized_statement'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssertStatement.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
@@ -8505,7 +8438,6 @@ export interface JavaMap extends V.GrammarMap {
 				| V.Unmapped<'java:package_declaration'>
 				| V.Unmapped<'java:synchronized_statement'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssertStatement.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
@@ -8628,7 +8560,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed
@@ -8741,7 +8672,6 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void'
 				| V.Unmapped<'java:method_reference'>
 				| T.ArrayAccess.Parsed
-				| T.ArrayCreationExpression.Parsed
 				| T.AssignmentExpression.Parsed
 				| T.BinaryExpression.Parsed
 				| T.BinaryIntegerLiteral.Parsed

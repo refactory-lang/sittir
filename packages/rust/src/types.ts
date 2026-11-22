@@ -27236,7 +27236,7 @@ export namespace MatchBlockArms {
 	}
 	export type Loose = LooseFor<TSKindId.MatchBlockArms>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchBlockArms>;
-	export type BuildArgs = [...children: Admit<[...T.MatchArm[], T.LastMatchArm]>];
+	export type BuildArgs = [...children: [...Admit<T.MatchArm>[], Admit<T.LastMatchArm>]];
 	export type LooseArgs =
 		| [
 				...children: [
@@ -27253,6 +27253,9 @@ export namespace MatchBlockArms {
 				>
 		  ];
 	export type Kind = TSKindId.MatchBlockArms;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'arms'>, KeyRefusesEmpty<LooseConfig, 'arms'>, SetterRefusesEmpty<Bound, 'arms'>]
+	>;
 }
 export namespace ArrayExpressionSemi {
 	export type Config = ConfigFor<TSKindId.ArrayExpressionSemi>;

@@ -22,6 +22,7 @@ import {
 	dedupeValues,
 	extractSeparatorKindId,
 	extractSeparatorString,
+	foldedRequired,
 	mergeDelimiterMode,
 	mergeSlotsByName,
 	mergeSourceRuleIds,
@@ -152,10 +153,12 @@ function mergeChoiceArms(arms: AssembledNonterminal[][]): AssembledNonterminal[]
 				merged.set(slot.name, slot);
 				continue;
 			}
+			const values = dedupeValues([...prev.values, ...slot.values]);
 			merged.set(
 				slot.name,
 				prev.with({
-					values: dedupeValues([...prev.values, ...slot.values]),
+					values,
+					required: foldedRequired({ parts: [prev, slot], values }, { inSequence: false }),
 					hasTrailingDelimiter: prev.hasTrailingDelimiter || slot.hasTrailingDelimiter,
 					hasLeadingDelimiter: prev.hasLeadingDelimiter || slot.hasLeadingDelimiter,
 					trailingDelimiter: mergeDelimiterMode([prev.trailingDelimiter, slot.trailingDelimiter]),
@@ -175,6 +178,7 @@ function mergeChoiceArms(arms: AssembledNonterminal[][]): AssembledNonterminal[]
 
 function relaxToOptional(slot: AssembledNonterminal): AssembledNonterminal {
 	return slot.with({
+		required: undefined,
 		values: slot.values.map((v) =>
 			v.multiplicity === 'single'
 				? { ...v, multiplicity: 'optional' as const }

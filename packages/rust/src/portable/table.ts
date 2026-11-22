@@ -53579,8 +53579,7 @@ export const build: PortableBuildTable = {
 									seated: 'spread'
 								},
 								{
-									key: 'arms',
-									optional: true
+									key: 'arms'
 								}
 							],
 							multiple: false,
