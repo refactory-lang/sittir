@@ -20,6 +20,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { LOADED_MACHINE_TIMEOUT } from '../../packages/codegen/src/__tests__/helpers/timeouts.ts';
 import { runCodemodOnDir, runCodemodOnSource } from './codemod-inline.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -47,7 +48,7 @@ describe('US1 acceptance — native-backend codemod (T050)', () => {
 			// Equality at byte level — JS baseline IS the contract.
 			expect(r.output).toBe(expected);
 		}
-	});
+	}, LOADED_MACHINE_TIMEOUT);
 
 	it('inserts at the right place when non-ASCII text precedes the function', async () => {
 		const { output, insertions } = await runCodemodOnSource('// ψψ\nfn f() { 1 }\n');

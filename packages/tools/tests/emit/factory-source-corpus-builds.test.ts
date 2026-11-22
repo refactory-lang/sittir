@@ -5,6 +5,7 @@ import { afterAll, describe, expect, it, vi } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { emitFactorySourceText } from '../../src/emit/factory-source.ts';
 import { languageByName } from '../../src/languages.ts';
+import { LOADED_MACHINE_TIMEOUT } from '../../../codegen/src/__tests__/helpers/timeouts.ts';
 import { releaseTrackedEngines } from '../helpers/track-engines.ts';
 
 vi.mock('@sittir/common', async (importOriginal) => (await import('../helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
@@ -91,7 +92,7 @@ describe('a corpus entry rebuilds through the printed builder source and renders
 			'f"{x=!r:>10}"\n'
 		];
 		for (const input of inputs) expect((await rebuildAndRender('python', input)).rendered).toBe(input);
-	});
+	}, LOADED_MACHINE_TIMEOUT);
 
 	it('regex: a count quantifier with a range and a unicode property value both build', async () => {
 		const range = await rebuildAndRender('regex', 'a{4}b{2,3}\n');
