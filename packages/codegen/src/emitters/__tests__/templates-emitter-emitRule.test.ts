@@ -713,6 +713,33 @@ describe('emitRule — token seams', () => {
 		expect(shown(rule, makeCtx({ nodeMap: ownedBy(slots) }))).not.toContain('adjacent');
 	});
 
+	it('writes no adjacent mark inside a trailing gate that ends in a token seam', () => {
+		const member = (name: string) => ({ type: SYMBOL, name, id: name, fieldName: name, nonterminal: true });
+		const newline = { type: STRING, value: '\n' };
+		const rule = {
+			type: SEQ,
+			members: [member('condition'), { type: SEQ, multiplicity: 'optional', members: [member('mid'), newline] }, { ...member('items'), staticSeamBefore: 'glued' }]
+		} as unknown as SeqRule;
+		const slots = Object.fromEntries(
+			['condition', 'mid', 'items'].map((name) => [name, makeSlot({ name, propertyName: name, storageName: name, ...(name === 'mid' ? { values: [{ value: 'x', multiplicity: 'optional' }] as never } : {}) })])
+		);
+		const shownBody = shown(rule, makeCtx({ nodeMap: ownedBy(slots) }));
+		expect(shownBody).toContain('tokenSeam');
+		expect(shownBody).not.toContain('adjacent');
+	});
+
+	it('still writes an adjacent mark inside a trailing gate that ends in a slot', () => {
+		const member = (name: string) => ({ type: SYMBOL, name, id: name, fieldName: name, nonterminal: true });
+		const rule = {
+			type: SEQ,
+			members: [member('condition'), { type: SEQ, multiplicity: 'optional', members: [member('mid')] }, { ...member('items'), staticSeamBefore: 'glued' }]
+		} as unknown as SeqRule;
+		const slots = Object.fromEntries(
+			['condition', 'mid', 'items'].map((name) => [name, makeSlot({ name, propertyName: name, storageName: name, ...(name === 'mid' ? { values: [{ value: 'x', multiplicity: 'optional' }] as never } : {}) })])
+		);
+		expect(shown(rule, makeCtx({ nodeMap: ownedBy(slots) }))).toContain('⟨adjacent⟩');
+	});
+
 	it('leaves a boundary to the seams a choice slot writes in its arms, over a stamped static join', () => {
 		const slotted = (members: readonly unknown[]) => {
 			const choice = { type: CHOICE, id: 'kind', fieldName: 'kind', nonterminal: true, members };

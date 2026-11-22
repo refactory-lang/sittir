@@ -643,16 +643,20 @@ function classifySeqBoundary(
 	return STATIC_SPACED;
 }
 
-function withinTrailingGate(body: Body, tail: Body): Body {
+function soleTrailingArm(body: Body): IfArm | undefined {
 	const last = body.at(-1);
-	if (last?.kind !== 'if' || last.fallback !== undefined || last.arms.length !== 1) return concat(body, tail);
-	const arm = last.arms[0]!;
-	return [...body.slice(0, -1), { ...last, arms: [{ ...arm, body: concat(arm.body, tail) }] }];
+	return last?.kind === 'if' && last.fallback === undefined && last.arms.length === 1 ? last.arms[0] : undefined;
+}
+
+function withinTrailingGate(body: Body, tail: Body): Body {
+	const arm = soleTrailingArm(body);
+	if (arm === undefined) return concat(body, tail);
+	return [...body.slice(0, -1), { ...(body.at(-1) as Extract<BodyNode, { kind: 'if' }>), arms: [{ ...arm, body: concat(arm.body, tail) }] }];
 }
 
 function joinStaticSeam(body: Body, segment: Body, spaced: boolean, seams: Body = EMPTY): Body {
 	if (spaced) return concat(body, seams.length > 0 ? seams : SPACE, segment);
-	if (seams.length === 0 && isExpression(segment) && segment[0]!.kind !== 'tokenSeam' && body.at(-1)?.kind !== 'tokenSeam') {
+	if (seams.length === 0 && isExpression(segment) && segment[0]!.kind !== 'tokenSeam' && (soleTrailingArm(body)?.body ?? body).at(-1)?.kind !== 'tokenSeam') {
 		return concat(withinTrailingGate(body, ADJACENT), segment);
 	}
 	return concat(body, seams, segment);

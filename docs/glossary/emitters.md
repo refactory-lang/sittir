@@ -13726,6 +13726,10 @@ Renders a choice from its stamped partition. It emits every arm, restoring the c
 
 The body of a partition tree. A leaf is one group of arms, whose bodies must be equal; bodies that differ are an internal error. A test becomes an `IfArm` over the present side, with the absent side as its fallback, and an absent side that is itself one `if` joins the same branches.
 
+### `packages/codegen/src/emitters/templates.ts::soleTrailingArm`
+
+The one arm of a body's trailing gate, when the body ends in an `if` with a single arm and no fallback. A mark appended to such a body is written at the end of this arm, so `withinTrailingGate` writes there and `joinStaticSeam` reads that same tail to see whether a token seam already holds the boundary.
+
 ### `packages/codegen/src/emitters/factories.ts::patternMismatchThrow`
 
 The one place a pattern guard's refusal is worded: `<label>: text does not match pattern: <value>`, with the value written through `describeValue`. It refuses a string the pattern rejects; a non-string has already been refused by the type guard (`textTypeMismatchThrow`). The leaf-text guard and the per-slot interior guard both emit it, so the message cannot differ between them.
