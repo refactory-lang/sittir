@@ -8715,6 +8715,14 @@ The key under which an evaluated grammar carries its word matcher: `'__enrichedW
 
 Whether a `repeat` of a lone reference to `name`, in a rule that references it once, gets a field named for the referent: the referent is a declared supertype, or a hidden rule `isHiddenPureUnionRule` accepts, one whose every arm is already a node. It uses that test rather than the wider `isSupertypeLike` because the field holds one node per item, and this path does not promote the referent's literal arms into `_kw_` symbols as `promoteLiteralChoiceArms` does for a repeat's inline choice. `isSupertypeLike` also accepts arms that are token text, such as rust's `_primitive_type` (`u8`, `i8`, …) and typescript's `_semicolon` (`_automatic_semicolon` or `;`), and would admit each of those as a referent whose items are not nodes.
 
+### `packages/codegen/src/dsl/enrich.ts::authoredFieldAt`
+
+The field name an authored `field()` patch gives at exactly this index path, or `undefined` when no patch addresses it.
+
+### `packages/codegen/src/dsl/enrich.ts::oneFieldArmsOf`
+
+The seq arms of a rule's choices that the clause hoist must not mint, by rule key. A choice is one list slot only when every arm, a blank aside, holds one and the same field, whether that field is already on the rule or an authored patch will put it there. Reading both is what keeps the layer an enrich fixpoint: the check re-runs enrich over the patched rule, with no authored sites. Any other arm in the choice, including an unfielded one or one holding a second field, leaves all of its arms to mint as usual. An arm key that also occurs in a choice that does not qualify is not held.
+
 ### `packages/codegen/src/dsl/layer.ts::LayerConfig::contexts`
 
 The contexts the layer declares (`ContextsConfig`).

@@ -236,7 +236,8 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 			grp: 0,
 			arm: 0,
 			supertypeNames,
-			elementChoices: elementChoiceSlots(rule, authored.fieldSites?.get(name) ?? [], ruleOrigins)
+			elementChoices: elementChoiceSlots(rule, authored.fieldSites?.get(name) ?? [], ruleOrigins),
+			oneFieldArms: oneFieldArmsOf(rule, authored.fieldSites?.get(name) ?? [])
 		});
 	}
 	for (const owners of [enrichedRules, clauseGroupRules]) {
@@ -1772,6 +1773,7 @@ interface ClauseHoistCounter {
 	arm: number;
 	readonly supertypeNames?: ReadonlySet<string>;
 	readonly elementChoices?: ReadonlyMap<string, ElementSlot>;
+	readonly oneFieldArms?: ReadonlySet<string>;
 }
 
 function appendTrailingMemberToOptionalSeq(optSeqRule: Rule, trailingOptional: Rule): Rule {
@@ -2048,7 +2050,7 @@ function applyClauseHoist(
 			const out = applyClauseHoist(parentKind, m, ctx, counter, ambientPrec);
 			const literalOnlySplit = members.some((sib) => sib !== m && armsDifferOnlyByLiteralChoice(out, sib, ctx.sourceSymbols, ctx.kwRules));
 			const structured =
-				permutationChoice || literalOnlySplit || selfFold
+				permutationChoice || literalOnlySplit || selfFold || counter.oneFieldArms?.has(ruleKey(m as RuntimeRule)) === true
 					? null
 					: mintStructuredChoiceArm(out, armParent, ctx, armCounter, collidingLeadingNames, ambientPrec);
 			const routed = structured !== null || permutationChoice || literalOnlySplit || selfFold || !fieldRoutedArms.includes(m)
@@ -2271,14 +2273,64 @@ function elementSlotName(
 	);
 }
 
+function authoredFieldAt(authoredSites: readonly AuthoredFieldSite[], path: readonly number[]): string | undefined {
+	return authoredSites.find((site) => site.path.length === path.length && site.path.every((step, i) => step === path[i]))?.name;
+}
+
+function oneFieldArmsOf(rule: Rule, authoredSites: readonly AuthoredFieldSite[]): ReadonlySet<string> {
+	const held = new Set<string>();
+	const declined = new Set<string>();
+	const fieldAt = (node: AnyRule, path: readonly number[]): string | undefined => {
+		const core = unwrapPrec(node) as AnyRule;
+		return authoredFieldAt(authoredSites, path) ?? (core.type === FIELD ? core.name : undefined);
+	};
+	const armField = (arm: AnyRule, path: readonly number[]): string | undefined => {
+		const core = unwrapPrec(arm) as AnyRule;
+		if (core.type !== SEQ) return fieldAt(core, path);
+		const names = new Set(core.members.map((m, i) => fieldAt(m, [...path, i])));
+		return names.size === 1 ? [...names][0] : undefined;
+	};
+	const walk = (node: AnyRule, path: readonly number[]): void => {
+		if (isPrecWrapper(node)) {
+			walk((node as { content: AnyRule }).content, path);
+			return;
+		}
+		switch (node.type) {
+			case CHOICE: {
+				const arms = node.members.map((arm, i) => ({ arm, path: [...path, i] })).filter(({ arm }) => (arm.type as string) !== 'BLANK');
+				const fields = new Set(arms.map(({ arm, path: at }) => armField(arm, at)));
+				const oneList = fields.size === 1 && !fields.has(undefined);
+				for (const { arm } of arms) {
+					if ((unwrapPrec(arm) as AnyRule).type === SEQ) (oneList ? held : declined).add(ruleKey(arm as RuntimeRule));
+				}
+				node.members.forEach((m, i) => walk(m, [...path, i]));
+				return;
+			}
+			case SEQ:
+				node.members.forEach((m, i) => walk(m, [...path, i]));
+				return;
+			case REPEAT:
+			case REPEAT1:
+			case OPTIONAL:
+			case FIELD:
+				walk((node as { content: AnyRule }).content, [...path, 0]);
+				return;
+			default:
+				return;
+		}
+	};
+	walk(rule as AnyRule, []);
+	for (const key of declined) held.delete(key);
+	return held;
+}
+
 function elementChoiceSlots(
 	rule: Rule,
 	authoredSites: readonly AuthoredFieldSite[],
 	ruleOrigins: ReadonlyMap<string, EnrichRuleOrigin>
 ): ReadonlyMap<string, ElementSlot> {
 	const slots = new Map<string, ElementSlot>();
-	const authoredAt = (path: readonly number[]): string | undefined =>
-		authoredSites.find((site) => site.path.length === path.length && site.path.every((step, i) => step === path[i]))?.name;
+	const authoredAt = (path: readonly number[]): string | undefined => authoredFieldAt(authoredSites, path);
 	const walk = (node: AnyRule, path: readonly number[], repeat: { readonly path: readonly number[]; readonly separated: boolean } | undefined): void => {
 		if (isPrecWrapper(node)) {
 			walk((node as { content: AnyRule }).content, path, repeat);
