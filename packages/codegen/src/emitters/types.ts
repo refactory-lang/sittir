@@ -1117,14 +1117,14 @@ function emitSlotHints(
 	if (groupSeats.length > 0) {
 		const flat = groupSeats.map((seat) => {
 			const keys = seat.keys.map((key) => `readonly ${JSON.stringify(key.name)}: ${JSON.stringify(key.field)}`).join('; ');
-			return `FlatHint<${JSON.stringify(seat.slot)}, T.${seat.group}, { ${keys} }, ${seat.optional}, ${JSON.stringify(seat.stored)}>`;
+			return `FlatHint<${JSON.stringify(seat.slot)}, T.${seat.group}, { ${keys} }, ${seat.optional}>`;
 		});
 		lines.push(`    readonly $flat: ${flat.join(' | ')};`);
 	}
 	const branch = coOptionalBranchOfNode(node);
 	if (branch !== undefined) {
 		const union = (names: readonly string[]): string => names.map((name) => JSON.stringify(name)).join(' | ');
-		lines.push(`    readonly $branch: BranchHint<${union([...branch.keys, ...branch.options])}, ${union(branch.required)}, ${union(branch.needed)}, ${JSON.stringify(branch.stored)}>;`);
+		lines.push(`    readonly $branch: BranchHint<${union([...branch.keys, ...branch.options])}, ${union(branch.required)}, ${union(branch.needed)}>;`);
 	}
 	if (listSlots.length > 0) {
 		lines.push('    readonly $listSlots: {');

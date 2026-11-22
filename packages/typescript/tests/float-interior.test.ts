@@ -1,13 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import type * as T from '../src/types.ts';
 import typescript from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const ts = await createEngine(typescript);
 const tsStrict = await createEngine(typescript, { api: 'strict' });
-
-const hasExponent = (node: T.NumberFloatPoint.Bound): node is Extract<T.NumberFloatPoint.Bound, { readonly _exponent: string }> =>
-	node.exponent() !== undefined;
 
 describe('typescript float number arms name their parts', () => {
 	it('a point float takes an integer part, an optional fraction and an optional exponent group', () => {
@@ -32,7 +28,7 @@ describe('typescript float number arms name their parts', () => {
 		expect(ts.build.number.floatPoint({ integer: '1', fraction: '5' }).$render()).toBe('1.5');
 		expect(ts.build.number.floatPoint({ integer: '1', exponent: '3' }, { marker: 'E' }).$render()).toBe('1.E3');
 		const built = ts.build.number.floatPoint({ integer: '1', exponent: '3' });
-		if (!hasExponent(built)) throw new Error('a float built with an exponent reads it');
+		if (!built.$has('exponent')) throw new Error('a float built with an exponent reads it');
 		expect(built.$with.marker('E').$render()).toBe('1.E3');
 	});
 

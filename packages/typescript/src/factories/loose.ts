@@ -292,7 +292,8 @@ export const numberFloatPoint$seated: Seat<
 	ReturnType<typeof C.coerceToNumberFloatPoint>,
 	false,
 	false,
-	{ integer: true; fraction: true; exponent: true }
+	{ integer: true; fraction: true; exponent: true },
+	'exponent'
 > = K.numberFloatPoint$branch(C.coerceToNumberFloatPoint);
 
 export const numberFloatLeadingPoint$seated: Seat<
@@ -300,7 +301,8 @@ export const numberFloatLeadingPoint$seated: Seat<
 	ReturnType<typeof C.coerceToNumberFloatLeadingPoint>,
 	false,
 	false,
-	{ fraction: true; exponent: true }
+	{ fraction: true; exponent: true },
+	'exponent'
 > = K.numberFloatLeadingPoint$branch(C.coerceToNumberFloatLeadingPoint);
 
 export const formalParametersElementsReceiver$seated: Seat<

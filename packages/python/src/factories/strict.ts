@@ -245,7 +245,8 @@ export const floatPoint$seated: Seat<
 	ReturnType<typeof F.buildFloatPoint>,
 	false,
 	undefined,
-	{ integer: true; fraction: true; exponent: true }
+	{ integer: true; fraction: true; exponent: true },
+	'exponent'
 > = K.floatPoint$branch(F.buildFloatPoint);
 
 export const floatLeadingPoint$seated: Seat<
@@ -253,7 +254,8 @@ export const floatLeadingPoint$seated: Seat<
 	ReturnType<typeof F.buildFloatLeadingPoint>,
 	false,
 	undefined,
-	{ integer: true; fraction: true; exponent: true }
+	{ integer: true; fraction: true; exponent: true },
+	'exponent'
 > = K.floatLeadingPoint$branch(F.buildFloatLeadingPoint);
 
 export const slice$seated: Seat<T.Slice.BuildArgs, ReturnType<typeof F.buildSlice>> = K.slice$flatten$step(

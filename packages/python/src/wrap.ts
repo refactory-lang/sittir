@@ -32,6 +32,7 @@ import {
 	isCoordinate,
 	readNode,
 	listOption,
+	hasSlot,
 	rebuilt,
 	renderText,
 	refuseJSON,
@@ -6449,6 +6450,7 @@ export function wrapSlice(data: T.Slice, tree: TreeHandle): T.Slice.Parsed {
 			data._step === undefined
 				? undefined
 				: () => groupField(hydrateSlot<T.SliceGroup | undefined>(node, '_step', tree), 'expression'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -8594,6 +8596,7 @@ export function wrapString(data: T.String, tree: TreeHandle): T.String.Parsed {
 			data._string_start === undefined
 				? undefined
 				: () => groupField(hydrateSlot<T.StringStart | undefined>(node, '_string_start', tree), 'prefix'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -11989,6 +11992,7 @@ export function wrapFloatPoint(data: T.FloatPoint, tree: TreeHandle): T.FloatPoi
 			return hydrateSlot<string | undefined>(this, '_imaginary', tree);
 		},
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -12117,6 +12121,7 @@ export function wrapFloatLeadingPoint(data: T.FloatLeadingPoint, tree: TreeHandl
 			return hydrateSlot<string | undefined>(this, '_imaginary', tree);
 		},
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -18687,6 +18692,7 @@ function viewSlice(data: RecordPosition, tree: TreeHandle): T.Slice.Parsed {
 		step: viewSlice$step,
 		expression: undefined as typeof viewSlice$expression | undefined,
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
@@ -19861,6 +19867,7 @@ function viewString(data: RecordPosition, tree: TreeHandle): T.String.Parsed {
 		stringEnd: viewString$stringEnd,
 		prefix: undefined as typeof viewString$prefix | undefined,
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
@@ -21848,6 +21855,7 @@ function viewFloatPoint(data: RecordPosition, tree: TreeHandle): T.FloatPoint.Pa
 		exponent: viewFloatPoint$exponent,
 		imaginary: viewFloatPoint$imaginary,
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
@@ -21905,6 +21913,7 @@ function viewFloatLeadingPoint(data: RecordPosition, tree: TreeHandle): T.FloatL
 		exponent: viewFloatLeadingPoint$exponent,
 		imaginary: viewFloatLeadingPoint$imaginary,
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,

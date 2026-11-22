@@ -41,3 +41,15 @@ export function theRowIsAUnionOfTuples(): void {
 	// @ts-expect-error the absent tuple takes no marker
 	strictCall({ integer: 1 }, { marker: 'E' });
 }
+
+type Equals<A, B> = (<X>() => X extends A ? 1 : 2) extends <X>() => X extends B ? 1 : 2 ? true : false;
+function expectTrue<_T extends true>(): void {}
+
+export function theBuiltShapeFollowsTheConfig(): void {
+	const present = ir.float.point({ integer: 1, exponent: 2 });
+	expectTrue<Equals<undefined extends ReturnType<typeof present.exponent> ? true : false, false>>();
+	const absent = ir.float.point({ integer: 1 });
+	expectTrue<Equals<ReturnType<typeof absent.exponent>, undefined>>();
+	// @ts-expect-error a built absent branch has no sign setter
+	absent.$with.exponentSign('+');
+}

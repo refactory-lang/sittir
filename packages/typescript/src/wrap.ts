@@ -34,6 +34,7 @@ import {
 	readNode,
 	listOption,
 	checkDelimited,
+	hasSlot,
 	rebuilt,
 	renderText,
 	refuseJSON,
@@ -2522,6 +2523,7 @@ export function wrapCatchClause(data: T.CatchClause, tree: TreeHandle): T.CatchC
 			data._catch_clause_group === undefined
 				? undefined
 				: () => groupField(hydrateSlot<T.CatchClauseGroup | undefined>(node, '_catch_clause_group', tree), 'type'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -14311,6 +14313,7 @@ export function wrapNumberFloatPoint(data: T.NumberFloatPoint, tree: TreeHandle)
 			return hydrateSlot<string | undefined>(this, '_exponent', tree);
 		},
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -14435,6 +14438,7 @@ export function wrapNumberFloatLeadingPoint(
 			return hydrateSlot<string | undefined>(this, '_exponent', tree);
 		},
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -23249,6 +23253,7 @@ function viewCatchClause(data: RecordPosition, tree: TreeHandle): T.CatchClause.
 		parameter: undefined as typeof viewCatchClause$parameter | undefined,
 		type: undefined as typeof viewCatchClause$type | undefined,
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
@@ -28920,6 +28925,7 @@ function viewNumberFloatPoint(data: RecordPosition, tree: TreeHandle): T.NumberF
 		exponentSign: viewNumberFloatPoint$exponentSign,
 		exponent: viewNumberFloatPoint$exponent,
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
@@ -28968,6 +28974,7 @@ function viewNumberFloatLeadingPoint(data: RecordPosition, tree: TreeHandle): T.
 		exponentSign: viewNumberFloatLeadingPoint$exponentSign,
 		exponent: viewNumberFloatLeadingPoint$exponent,
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,

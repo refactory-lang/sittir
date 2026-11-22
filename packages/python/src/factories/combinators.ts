@@ -192,14 +192,14 @@ export const classPattern$fields = <PF extends (config: never) => unknown, CF ex
 };
 
 export const floatPoint$branch =
-	<PF extends (...args: never[]) => unknown>(parent: PF) =>
-	(...args: readonly unknown[]): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(...args);
+	<PF extends (...args: never[]) => unknown, R = ReturnType<PF>>(parent: PF) =>
+	(...args: readonly unknown[]): R =>
+		_s<R>(parent)(...args);
 
 export const floatLeadingPoint$branch =
-	<PF extends (...args: never[]) => unknown>(parent: PF) =>
-	(...args: readonly unknown[]): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(...args);
+	<PF extends (...args: never[]) => unknown, R = ReturnType<PF>>(parent: PF) =>
+	(...args: readonly unknown[]): R =>
+		_s<R>(parent)(...args);
 
 export const slice$flatten$step =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>

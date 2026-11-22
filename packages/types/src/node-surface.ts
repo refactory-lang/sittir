@@ -56,20 +56,17 @@ export interface FlatHint<
 	Slot extends string,
 	Group,
 	Keys extends { readonly [Name: string]: string },
-	Optional extends boolean,
-	Stored extends string = string
+	Optional extends boolean
 > {
 	readonly slot: Slot;
 	readonly group: Group;
 	readonly keys: Keys;
 	readonly optional: Optional;
-	readonly stored: Stored;
 }
-export interface BranchHint<Names extends string, Required extends string, Needed extends string, Stored extends string> {
+export interface BranchHint<Names extends string, Required extends string, Needed extends string> {
 	readonly names: Names;
 	readonly required: Required;
 	readonly needed: Needed;
-	readonly stored: Stored;
 }
 type IsBroadNumber<X> = (<Y>() => Y extends number ? 1 : 2) extends <Y>() => Y extends X ? 1 : 2 ? true : false;
 export type NarrowTo<T, D extends number> = T extends number
@@ -93,7 +90,7 @@ export type SlotFlagsHintOf<Self> = Self extends { readonly __slotFlags__?: infe
 export type SlotHintsOf<Self> = Remap<HintsOf<Self>, '$listView' | '$listSlots' | '$flat' | '$branch'>;
 type FlatOf<Self> = HintsOf<Self> extends { readonly $flat: infer F } ? F : never;
 type BranchOf<Self> = HintsOf<Self> extends { readonly $branch: infer B } ? B : never;
-type BranchNames<B> = B extends BranchHint<infer Names, string, string, string> ? Names : never;
+type BranchNames<B> = B extends BranchHint<infer Names, string, string> ? Names : never;
 type FlatNames<F> = F extends FlatHint<string, unknown, infer Keys, boolean> ? keyof Keys & string : never;
 type FlatSeatSlots<F> = F extends FlatHint<infer S, unknown, { readonly [Name: string]: string }, boolean> ? S : never;
 type FlatKeyNames<Self> = FlatNames<FlatOf<Self>>;
@@ -310,8 +307,39 @@ export type Seat<
 	R,
 	Signed extends boolean = false,
 	Bare extends boolean | undefined = undefined,
-	W extends Readonly<Record<string, boolean>> = {}
-> = <const A extends Args>(...args: A & RefuseUndeclared<A, Args, Signed> & RefuseLoneEmptyList<A, Args> & RefuseNumericFirst<A, Bare, W>) => R;
+	W extends Readonly<Record<string, boolean>> = {},
+	Needed extends string = never
+> = <const A extends Args>(...args: A & RefuseUndeclared<A, Args, Signed> & RefuseLoneEmptyList<A, Args> & RefuseNumericFirst<A, Bare, W>) => BuiltShape<A, R, Needed>;
+
+type PresentOf<R, Needed extends string> = R extends unknown
+	? Needed extends keyof R
+		? R[Needed] extends () => infer V
+			? [undefined] extends [V]
+				? never
+				: R
+			: never
+		: never
+	: never;
+
+type AbsentOf<R, Needed extends string> = R extends unknown
+	? Needed extends keyof R
+		? R[Needed] extends () => infer V
+			? [V] extends [undefined]
+				? R
+				: never
+			: never
+		: never
+	: never;
+
+type BuiltShape<A extends readonly unknown[], R, Needed extends string> = [Needed] extends [never]
+	? R
+	: A extends readonly [infer C, ...unknown[]]
+		? C extends { readonly [K in Needed]: unknown }
+			? PresentOf<R, Needed>
+			: [Extract<keyof C, Needed>] extends [never]
+				? AbsentOf<R, Needed>
+				: R
+		: R;
 
 type RefuseNumericFirst<A extends readonly unknown[], Bare extends boolean | undefined, W extends Readonly<Record<string, boolean>>> = [
 	Bare,
@@ -492,6 +520,7 @@ type SoleKey<U> = [U] extends [never] ? never : [IntersectionOf<U>] extends [nev
 
 type ShapeNode<Surface, N, H, F, Present extends boolean, ByChild> = Surface &
 	ShapesOf<Surface, N, H, Exclude<H, F>, ByChild> &
+	FlatHas<Surface, N, H, F, ByChild> &
 	(Present extends true ? PresentMembers<Surface, N, H, F, ByChild> : AbsentMembers<Surface, N, H, F, ByChild>);
 
 type SeatSetter<Surface, N, H, F, ByChild> =
@@ -501,8 +530,8 @@ type SeatSetter<Surface, N, H, F, ByChild> =
 		: never;
 
 type PresentMembers<Surface, N, H, F, ByChild> =
-	F extends FlatHint<infer S, infer G, infer Keys, boolean, infer Stored>
-		? { readonly [K in Stored]: NonNullable<N[K & keyof N]> } & FlatGetters<N, F, ByChild> & {
+	F extends FlatHint<infer S, infer G, infer Keys, boolean>
+		? FlatGetters<N, F, ByChild> & {
 				readonly $with: {
 					[P in keyof Keys & string]: KeySetter<G, Keys[P], ShapeNode<Surface, N, H, F, true, ByChild>>;
 				} & { [P in S]: SeatSetter<Surface, N, H, F, ByChild> };
@@ -510,8 +539,8 @@ type PresentMembers<Surface, N, H, F, ByChild> =
 		: never;
 
 type AbsentMembers<Surface, N, H, F, ByChild> =
-	F extends FlatHint<infer S, infer G, infer Keys, boolean, infer Stored>
-		? { readonly [K in Stored]?: undefined } & { readonly [P in FlatGetterNames<F>]?: undefined } & {
+	F extends FlatHint<infer S, infer G, infer Keys, boolean>
+		? { readonly [P in FlatGetterNames<F>]?: undefined } & {
 				[P in S & MethodKeys<N>]: () => undefined;
 			} & {
 				readonly $with: {
@@ -523,11 +552,21 @@ type AbsentMembers<Surface, N, H, F, ByChild> =
 			}
 		: never;
 
+/** `node.$has(name)`: whether the node's flattened group is present. Naming its seat or its one required key narrows the node to its present shape when true and to its absent shape when false; naming any other key of the group answers a boolean and narrows nothing. */
+type FlatHas<Surface, N, H, F, ByChild> =
+	F extends FlatHint<infer S, unknown, infer Keys, boolean>
+		? {
+				$has(name: S | SoleKey<RequiredFlatKeys<F>>): this is ShapeNode<Surface, N, H, F, true, ByChild>;
+				$has(name: Exclude<keyof Keys & string, SoleKey<RequiredFlatKeys<F>>>): boolean;
+			}
+		: never;
+
 type FlatShape<Surface, N, H, F, ByChild> =
 	F extends FlatHint<string, unknown, AnyKeys, infer O>
-		? O extends true
-			? PresentMembers<Surface, N, H, F, ByChild> | AbsentMembers<Surface, N, H, F, ByChild>
-			: PresentMembers<Surface, N, H, F, ByChild>
+		? FlatHas<Surface, N, H, F, ByChild> &
+				(O extends true
+					? PresentMembers<Surface, N, H, F, ByChild> | AbsentMembers<Surface, N, H, F, ByChild>
+					: PresentMembers<Surface, N, H, F, ByChild>)
 		: never;
 
 type IntersectionOf<U> = (U extends unknown ? (u: U) => void : never) extends (i: infer I) => void ? I : never;
@@ -550,7 +589,9 @@ type BranchGetter<N, ByChild, P, Present extends boolean, Required extends strin
 
 type Edited<Surface> = Remap<Surface, '$query' | '$snapshot'>;
 
-type BranchNode<Surface, N, B, ByChild, Present extends boolean> = Edited<Surface> & BranchMembers<Edited<Surface>, N, B, ByChild, Present>;
+type BranchNode<Surface, N, B, ByChild, Present extends boolean> = Edited<Surface> &
+	BranchHas<Edited<Surface>, N, B, ByChild> &
+	BranchMembers<Edited<Surface>, N, B, ByChild, Present>;
 
 type BranchSetter<Surface, N, B, ByChild, P extends string, Needed extends string> = AdmitsOne<
 	Admit<SlotInput<N, P & keyof SlotHintsOf<N>>>,
@@ -563,8 +604,8 @@ type BranchSetter<Surface, N, B, ByChild, P extends string, Needed extends strin
 			: unknown);
 
 type BranchMembers<Surface, N, B, ByChild, Present extends boolean> =
-	B extends BranchHint<infer Names, infer Required, infer Needed, infer Stored>
-		? (Present extends true ? { readonly [K in Stored]: NonNullable<N[K & keyof N]> } : { readonly [K in Stored]?: undefined }) & {
+	B extends BranchHint<infer Names, infer Required, infer Needed>
+		? {
 				readonly [P in Names]: BranchGetter<N, ByChild, P, Present, Required>;
 			} & {
 				readonly $with: Present extends true
@@ -573,9 +614,19 @@ type BranchMembers<Surface, N, B, ByChild, Present extends boolean> =
 			}
 		: never;
 
+/** `node.$has(name)`: whether the node's optional branch is present. Naming a slot the branch requires narrows the node to its present shape when true and to its absent shape when false; naming any other slot of the branch answers a boolean and narrows nothing. */
+type BranchHas<Surface, N, B, ByChild> =
+	B extends BranchHint<infer Names, string, infer Needed>
+		? {
+				$has(name: Needed): this is BranchNode<Surface, N, B, ByChild, true>;
+				$has(name: Exclude<Names, Needed>): boolean;
+			}
+		: never;
+
 export type BranchShapesOf<Surface, N, ByChild> = [BranchOf<N>] extends [never]
 	? {}
-	: BranchMembers<Surface, N, BranchOf<N>, ByChild, true> | BranchMembers<Surface, N, BranchOf<N>, ByChild, false>;
+	: BranchHas<Surface, N, BranchOf<N>, ByChild> &
+			(BranchMembers<Surface, N, BranchOf<N>, ByChild, true> | BranchMembers<Surface, N, BranchOf<N>, ByChild, false>);
 
 type SurfaceOf<N, ByChild, S = Storage<N>> = S &
 	Accessors<N, ByChild> &

@@ -4227,7 +4227,7 @@ export interface Slice {
 		readonly start: SlotHint<NonNullable<T.Slice.Config>['start'], true>;
 		readonly stop: SlotHint<NonNullable<T.Slice.Config>['stop'], true>;
 		readonly step: SlotHint<T.SliceGroup, true>;
-		readonly $flat: FlatHint<'step', T.SliceGroup, { readonly expression: 'expression' }, true, '_step'>;
+		readonly $flat: FlatHint<'step', T.SliceGroup, { readonly expression: 'expression' }, true>;
 	};
 	readonly start: () => Expression | undefined;
 	readonly stop: () => Expression | undefined;
@@ -4860,8 +4860,8 @@ export interface String {
 		readonly contents: SlotHint<(T.Interpolation | T.StringContent)[], true, true>;
 		readonly stringEnd: SlotHint<T.StringEnd>;
 		readonly $flat:
-			| FlatHint<'stringStart', T.StringStart, { readonly prefix: 'prefix' }, false, '_string_start'>
-			| FlatHint<'stringEnd', T.StringEnd, {}, false, '_string_end'>;
+			| FlatHint<'stringStart', T.StringStart, { readonly prefix: 'prefix' }, false>
+			| FlatHint<'stringEnd', T.StringEnd, {}, false>;
 	};
 	readonly stringStart: () => StringStart;
 	readonly contents: () => readonly (Interpolation | StringContent)[];
@@ -5592,12 +5592,7 @@ export interface FloatPoint {
 		readonly exponent: SlotHint<string | number | bigint, true>;
 		readonly imaginary: SlotHint<string, true>;
 		readonly marker: SlotHint<'e' | 'E', true>;
-		readonly $branch: BranchHint<
-			'exponentSign' | 'exponent' | 'marker',
-			'marker' | 'exponent',
-			'exponent',
-			'_exponent'
-		>;
+		readonly $branch: BranchHint<'exponentSign' | 'exponent' | 'marker', 'marker' | 'exponent', 'exponent'>;
 	};
 	readonly integer: () => string;
 	readonly fraction: () => string | undefined;
@@ -5630,12 +5625,7 @@ export interface FloatLeadingPoint {
 		readonly exponent: SlotHint<string | number | bigint, true>;
 		readonly imaginary: SlotHint<string, true>;
 		readonly marker: SlotHint<'e' | 'E', true>;
-		readonly $branch: BranchHint<
-			'exponentSign' | 'exponent' | 'marker',
-			'marker' | 'exponent',
-			'exponent',
-			'_exponent'
-		>;
+		readonly $branch: BranchHint<'exponentSign' | 'exponent' | 'marker', 'marker' | 'exponent', 'exponent'>;
 	};
 	readonly integer: () => string | undefined;
 	readonly fraction: () => string;

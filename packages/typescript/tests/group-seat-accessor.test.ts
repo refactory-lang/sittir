@@ -20,7 +20,7 @@ const presentCatchOf = (source: string) => {
 
 const absentCatchOf = (source: string) => {
 	const handler = catchOf(source);
-	if (handler._catch_clause_group !== undefined) throw new Error('a catch group');
+	if (handler.$has('catchClauseGroup')) throw new Error('a catch group');
 	return handler;
 };
 
@@ -37,7 +37,7 @@ describe('a group seat flattens its group fields onto the parent', () => {
 	it('clears the whole group through the seat setter', () => {
 		const cleared = presentCatchOf('try { a } catch (e) { b }\n').$with.catchClauseGroup();
 		expect(cleared.$render()).toBe('catch { b }');
-		expect(cleared._catch_clause_group).toBeUndefined();
+		expect(cleared.$has('catchClauseGroup')).toBe(false);
 	});
 });
 

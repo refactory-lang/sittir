@@ -1135,7 +1135,6 @@ interface CoOptionalBranch {
 	readonly needed: readonly string[];
 	readonly options: readonly string[];
 	readonly required: readonly string[];
-	readonly stored: string;
 	readonly storageKeys: readonly string[];
 }
 
@@ -1153,8 +1152,7 @@ export function coOptionalBranchOf(node: FieldCarryingNode, slots: readonly Asse
 	if (needed.length === 0) {
 		throw new Error(`[factories] kind '${node.kind}': its optional branch has no required config slot to tell it present from absent`);
 	}
-	const holder = stamped.find((slot) => !registered.has(slot) && slot.coOptional?.required === true)!;
-	return { keys, needed, options: named((slot) => registered.has(slot)), required: named((slot) => slot.coOptional?.required === true), stored: holder.storageKey, storageKeys: stamped.map((slot) => slot.storageKey) };
+	return { keys, needed, options: named((slot) => registered.has(slot)), required: named((slot) => slot.coOptional?.required === true), storageKeys: stamped.map((slot) => slot.storageKey) };
 }
 
 export function coOptionalBranchOfNode(node: AssembledNode): CoOptionalBranch | undefined {
@@ -2272,6 +2270,7 @@ function fieldCarryingFactoryText(
 			extra: [...(view?.members ?? []), ...groupSeatMembers(plan, (hint) => hint.stored)],
 			tail: view?.tail,
 			trivia,
+			...(hasShapes(node, nodeMap, kindEntries) ? { shapes: true as const } : {}),
 			root: node.grammarRoot
 		});
 		lines.push(...members.members, '  };', ...members.after);
@@ -2721,6 +2720,14 @@ export interface GroupSeatHint {
 	readonly factory: string;
 	readonly optional: boolean;
 	readonly keys: readonly GroupSeatKey[];
+}
+
+export function hasShapes(node: AssembledNode, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): boolean {
+	return groupSeatHints(node, nodeMap, kindEntries).length > 0 || coOptionalBranchOfNode(node) !== undefined;
+}
+
+export function anyShapes(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): boolean {
+	return [...nodeMap.nodes.values()].some((node) => hasShapes(node, nodeMap, kindEntries));
 }
 
 export function groupSeatHints(
@@ -3444,7 +3451,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		if (hasDelimited(nodeMap)) lines.push(`import type { DelimitedSpec } from '@sittir/common/utils';`);
 		lines.push(`import type { ${OBJECT_MEMBER_TYPES.join(', ')} } from '@sittir/common/utils';`);
-		const utilsImports = ['currentHandle', 'admitChildren', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'refuseJSON', 'releaseNothing', 'RECEIVER', 'SOURCE', 'Source', 'hydrateStoredSlot', 'hydrateStoredSlots', ...OBJECT_MEMBER_VALUES, ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...blankArmImports(nodeMap), ...spelledReadImports(nodeMap), ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports];
+		const utilsImports = ['currentHandle', 'admitChildren', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...(anyShapes(nodeMap, kindEntries) ? ['hasSlot'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'refuseJSON', 'releaseNothing', 'RECEIVER', 'SOURCE', 'Source', 'hydrateStoredSlot', 'hydrateStoredSlots', ...OBJECT_MEMBER_VALUES, ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...blankArmImports(nodeMap), ...spelledReadImports(nodeMap), ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports];
 		const utilsImportAt = lines.length;
 		lines.push(utilsImportLine(utilsImports));
 		lines.push('');

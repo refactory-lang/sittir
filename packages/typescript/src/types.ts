@@ -3703,8 +3703,7 @@ export interface CatchClause {
 			'catchClauseGroup',
 			T.CatchClauseGroup,
 			{ readonly parameter: 'parameter'; readonly type: 'type' },
-			true,
-			'_catch_clause_group'
+			true
 		>;
 	};
 	readonly catchClauseGroup: () => CatchClauseGroup | undefined;
@@ -8840,12 +8839,7 @@ export interface NumberFloatPoint {
 		readonly exponentSign: SlotHint<'-' | '+', true>;
 		readonly exponent: SlotHint<string | number | bigint, true>;
 		readonly marker: SlotHint<'e' | 'E', true>;
-		readonly $branch: BranchHint<
-			'exponentSign' | 'exponent' | 'marker',
-			'marker' | 'exponent',
-			'exponent',
-			'_exponent'
-		>;
+		readonly $branch: BranchHint<'exponentSign' | 'exponent' | 'marker', 'marker' | 'exponent', 'exponent'>;
 	};
 	readonly integer: () => string;
 	readonly fraction: () => string | undefined;
@@ -8871,12 +8865,7 @@ export interface NumberFloatLeadingPoint {
 		readonly exponentSign: SlotHint<'-' | '+', true>;
 		readonly exponent: SlotHint<string | number | bigint, true>;
 		readonly marker: SlotHint<'e' | 'E', true>;
-		readonly $branch: BranchHint<
-			'exponentSign' | 'exponent' | 'marker',
-			'marker' | 'exponent',
-			'exponent',
-			'_exponent'
-		>;
+		readonly $branch: BranchHint<'exponentSign' | 'exponent' | 'marker', 'marker' | 'exponent', 'exponent'>;
 	};
 	readonly fraction: () => string;
 	readonly marker: () => 'e' | 'E' | undefined;

@@ -58,3 +58,18 @@ export function theRowsAreAUnionOfTuples(): void {
 	// @ts-expect-error the loose absent tuple takes no sign
 	looseCall({ integer: 1, exponentSign: '+' });
 }
+
+type Equals<A, B> = (<X>() => X extends A ? 1 : 2) extends <X>() => X extends B ? 1 : 2 ? true : false;
+function expectTrue<_T extends true>(): void {}
+
+export function theBuiltShapeFollowsTheConfig(): void {
+	const present = engine.build.numberFloatPoint({ integer: 1, exponent: 2 });
+	expectTrue<Equals<undefined extends ReturnType<typeof present.exponent> ? true : false, false>>();
+	present.$with.exponentSign('+');
+	const absent = engine.build.numberFloatPoint({ integer: 1 });
+	expectTrue<Equals<ReturnType<typeof absent.exponent>, undefined>>();
+	// @ts-expect-error a built absent branch has no sign setter
+	absent.$with.exponentSign('+');
+	const leading = engine.build.numberFloatLeadingPoint({ fraction: 5, exponent: 2 }, { marker: 'E' });
+	expectTrue<Equals<undefined extends ReturnType<typeof leading.marker> ? true : false, false>>();
+}

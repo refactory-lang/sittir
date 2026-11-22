@@ -280,14 +280,14 @@ export const typeQueryMemberExpression$qmarkDot =
 		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
 
 export const numberFloatPoint$branch =
-	<PF extends (...args: never[]) => unknown>(parent: PF) =>
-	(...args: readonly unknown[]): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(...args);
+	<PF extends (...args: never[]) => unknown, R = ReturnType<PF>>(parent: PF) =>
+	(...args: readonly unknown[]): R =>
+		_s<R>(parent)(...args);
 
 export const numberFloatLeadingPoint$branch =
-	<PF extends (...args: never[]) => unknown>(parent: PF) =>
-	(...args: readonly unknown[]): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(...args);
+	<PF extends (...args: never[]) => unknown, R = ReturnType<PF>>(parent: PF) =>
+	(...args: readonly unknown[]): R =>
+		_s<R>(parent)(...args);
 
 export const constraint$extends =
 	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>

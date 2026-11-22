@@ -85,7 +85,7 @@ interface TwoRequired {
 	readonly __slotHints__?: {
 		readonly left: SlotHint<string, true, false, never>;
 		readonly right: SlotHint<string, true, false, never>;
-		readonly $branch: BranchHint<'left' | 'right', 'left' | 'right', 'left' | 'right', '_left' | '_right'>;
+		readonly $branch: BranchHint<'left' | 'right', 'left' | 'right', 'left' | 'right'>;
 	};
 }
 type TwoShapes = BranchShapesOf<TwoRequired, TwoRequired, never>;

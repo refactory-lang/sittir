@@ -15553,6 +15553,14 @@ Reads a kind's `coOptional` stamps into its `CoOptionalBranch`, or `undefined` w
 
 The optional branch of an assembled compound, read from the `coOptional` stamps on its own slots (`coOptionalBranchOf`), or `undefined` when no slot is stamped. The wrap emitter's `$with` setters, the builders' setters and the type emitter's branch hint all read the branch through it, so a setter that clears the branch's required slot, the node's present and absent shapes and the builder rows agree on one set of keys. A node whose stamps name more than one branch, or a branch with no required config slot, throws a shape failure at emit time.
 
+### `packages/codegen/src/emitters/factories.ts::hasShapes`
+
+Whether a kind's node has a present and an absent shape: it seats a flattened group (`groupSeatHints`) or has an optional branch (`coOptionalBranchOfNode`). The node-member emitters read it to put `$has` on exactly the nodes whose type declares it, so the type and the runtime answer from one predicate.
+
+### `packages/codegen/src/emitters/factories.ts::anyShapes`
+
+Whether any kind of the grammar has a present and an absent shape (`hasShapes`). The generated factories and wrap files import `hasSlot` only when it does, so a grammar with no such kind gains no unused import.
+
 ### `packages/codegen/src/emitters/node-members.ts::HoistSet`
 
 What a hoisted slot's `$with` setter takes from the emitter: the storage key, the wrapper slot it sets through, whether the holder slot is optional, the list spec, the wrap expression, the kind the value may already be, and the placed setter bodies for a whole wrapper and for a list.

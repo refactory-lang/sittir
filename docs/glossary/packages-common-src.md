@@ -1379,6 +1379,10 @@ A hop of a hoisted read over a built holder: the wrapper's one slot, read as `st
 
 `wrapHoisted` over each item of a list slot's value; one item is a one-item list.
 
+### `packages/common/src/utils.ts::hasSlot`
+
+The runtime of a node's `$has(name)`: whether the slot `name` holds a value, answered by calling the node's own getter and testing the result against `undefined`. It reads no stored property, so a node held as an object and a view over an arena chunk answer alike. The guard is exact only for a name the type declares as deciding the shape (a branch's required slot, a flattened group's seat or its one required key); for any other name it is a plain presence test. It is a node member, not data (`MEMBER_KEYS`), so a copy of a node's data never carries it.
+
 ### `packages/common/src/verify-structure.ts::checkHoisted`
 
 Checks the values given to a hoisted slot against the kinds its structure row names for that property, refusing a node of another kind with the strict factory's message.

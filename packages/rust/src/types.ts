@@ -5637,13 +5637,7 @@ export interface UseWildcard {
 	};
 	readonly __slotHints__?: {
 		readonly useWildcardGroup: SlotHint<T.UseWildcardGroup, true>;
-		readonly $flat: FlatHint<
-			'useWildcardGroup',
-			T.UseWildcardGroup,
-			{ readonly path: 'path' },
-			true,
-			'_use_wildcard_group'
-		>;
+		readonly $flat: FlatHint<'useWildcardGroup', T.UseWildcardGroup, { readonly path: 'path' }, true>;
 	};
 	readonly useWildcardGroup: () => UseWildcardGroup | undefined;
 }
@@ -7686,8 +7680,7 @@ export interface LastMatchArm {
 			'match',
 			T.MatchPattern,
 			{ readonly pattern: 'pattern'; readonly condition: 'condition' },
-			false,
-			'_match'
+			false
 		>;
 	};
 	readonly attributes: () => readonly (AttributeItem | InnerAttributeItem)[];
@@ -8308,14 +8301,8 @@ export interface RawStringLiteral {
 		readonly stringContent: SlotHint<T.RawStringLiteralContent>;
 		readonly rawStringLiteralEnd: SlotHint<T.RawStringLiteralEnd>;
 		readonly $flat:
-			| FlatHint<
-					'rawStringLiteralStart',
-					T.RawStringLiteralStart,
-					{ readonly prefix: 'prefix' },
-					false,
-					'_raw_string_literal_start'
-			  >
-			| FlatHint<'rawStringLiteralEnd', T.RawStringLiteralEnd, {}, false, '_raw_string_literal_end'>;
+			| FlatHint<'rawStringLiteralStart', T.RawStringLiteralStart, { readonly prefix: 'prefix' }, false>
+			| FlatHint<'rawStringLiteralEnd', T.RawStringLiteralEnd, {}, false>;
 	};
 	readonly rawStringLiteralStart: () => RawStringLiteralStart;
 	readonly stringContent: () => RawStringLiteralContent;
@@ -10132,8 +10119,7 @@ export interface MatchArmWithComma {
 			'match',
 			T.MatchPattern,
 			{ readonly pattern: 'pattern'; readonly condition: 'condition' },
-			false,
-			'_match'
+			false
 		>;
 	};
 	readonly attributes: () => readonly (AttributeItem | InnerAttributeItem)[];
@@ -10182,8 +10168,7 @@ export interface MatchArmBlockEnding {
 			'match',
 			T.MatchPattern,
 			{ readonly pattern: 'pattern'; readonly condition: 'condition' },
-			false,
-			'_match'
+			false
 		>;
 	};
 	readonly attributes: () => readonly (AttributeItem | InnerAttributeItem)[];
@@ -11427,8 +11412,7 @@ export interface ParametersElementsReceiver {
 			'receiver',
 			T.AttributedParameterReceiver,
 			{ readonly attributeItem: 'attributeItem'; readonly content: 'content' },
-			false,
-			'_receiver'
+			false
 		>;
 		readonly $listSlots: {
 			readonly parametersElementsReceiverGroup: ListSlotHint<

@@ -427,12 +427,13 @@ function seatedDeclarationOf(
 	name: string,
 	nodeMap: NodeMap
 ): (surface: 'strict' | 'loose', argsType: string, returnType: string, expr: string) => string {
+	const branch = coOptionalBranchOfNode(node);
 	return (surface, argsType, returnType, expr) =>
 		seatDeclaration(
 			nodeMap,
 			node.kind,
 			name,
-			functionTypeOf(refusingParam('args', argsType, { rest: true, loose: looseRefusal(nodeMap), numeric: numericSeatRefusal(node, nodeMap, surface) }), returnType),
+			functionTypeOf(refusingParam('args', argsType, { rest: true, loose: looseRefusal(nodeMap), numeric: numericSeatRefusal(node, nodeMap, surface), ...(branch === undefined ? {} : { branch: branch.needed.map((name) => JSON.stringify(name)).join(' | ') }) }), returnType),
 			expr
 		);
 }
@@ -449,8 +450,8 @@ function composeBranch(wireSet: PolymorphWireSet, wires: PolymorphWires, nodeMap
 	const name = seatedKeyOf(wireSet.parentKey);
 	const m = methodName(wireSet.parentKey, 'branch');
 	out.combinators.push(
-		`export const ${m} = <PF extends (...args: never[]) => unknown>(parent: PF) =>`,
-		'	(...args: readonly unknown[]): ReturnType<PF> => _s<ReturnType<PF>>(parent)(...args);'
+		`export const ${m} = <PF extends (...args: never[]) => unknown, R = ReturnType<PF>>(parent: PF) =>`,
+		'	(...args: readonly unknown[]): R => _s<R>(parent)(...args);'
 	);
 	const branched = seatedDeclarationOf(wireSet.node, name, nodeMap);
 	out.seated.strict.push(branched('strict', `T.${wireSet.node.typeName}.BuildArgs`, `ReturnType<${p.strict.type}>`, `K.${m}(${p.strict.value})`));
