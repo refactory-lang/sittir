@@ -50,6 +50,14 @@ describe('a choice arm whose positions are all authored into one field', () => {
 		expect(minted(seq(choice(seq(f('parts', sym('text')), f('parts', sym('identifier'))), seq(f('parts', sym('identifier')), f('parts', sym('text')))), sym('text')))).toEqual([]);
 	});
 
+	it('is not minted when an arm holds its field through a repeat', () => {
+		expect(minted(choice(seq(f('parts', sym('text')), repeat(f('parts', sym('identifier')))), seq(f('parts', sym('identifier')), f('parts', sym('text')))))).toEqual([]);
+	});
+
+	it('mints when fixed text sits between an arm\'s fields, since a list would lose it', () => {
+		expect(minted(choice(seq(f('parts', sym('text')), str(','), f('parts', sym('identifier'))), seq(f('parts', sym('identifier')), f('parts', sym('text')))))).toEqual(['joined_arm1', 'joined_arm2']);
+	});
+
 	it('is not minted as an arm beside a blank', () => {
 		expect(minted(seq(sym('text'), choice(seq(f('parts', sym('text')), f('parts', sym('identifier'))), { type: 'BLANK' }))).filter((name) => name.includes('_arm'))).toEqual([]);
 	});

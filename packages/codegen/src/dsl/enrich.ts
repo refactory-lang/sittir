@@ -2280,15 +2280,25 @@ function authoredFieldAt(authoredSites: readonly AuthoredFieldSite[], path: read
 function oneFieldArmsOf(rule: Rule, authoredSites: readonly AuthoredFieldSite[]): ReadonlySet<string> {
 	const held = new Set<string>();
 	const declined = new Set<string>();
-	const fieldAt = (node: AnyRule, path: readonly number[]): string | undefined => {
-		const core = unwrapPrec(node) as AnyRule;
-		return authoredFieldAt(authoredSites, path) ?? (core.type === FIELD ? core.name : undefined);
-	};
 	const armField = (arm: AnyRule, path: readonly number[]): string | undefined => {
+		const authored = authoredFieldAt(authoredSites, path);
+		if (authored !== undefined) return authored;
 		const core = unwrapPrec(arm) as AnyRule;
-		if (core.type !== SEQ) return fieldAt(core, path);
-		const names = new Set(core.members.map((m, i) => fieldAt(m, [...path, i])));
-		return names.size === 1 ? [...names][0] : undefined;
+		switch (core.type) {
+			case FIELD:
+				return core.name;
+			case REPEAT:
+			case REPEAT1:
+			case OPTIONAL:
+				return armField((core as { content: AnyRule }).content, [...path, 0]);
+			case SEQ:
+			case CHOICE: {
+				const names = new Set(core.members.flatMap((m, i) => (isBlank(m) ? [] : [armField(m, [...path, i])])));
+				return names.size === 1 ? [...names][0] : undefined;
+			}
+			default:
+				return undefined;
+		}
 	};
 	const walk = (node: AnyRule, path: readonly number[]): void => {
 		if (isPrecWrapper(node)) {
@@ -2297,7 +2307,7 @@ function oneFieldArmsOf(rule: Rule, authoredSites: readonly AuthoredFieldSite[])
 		}
 		switch (node.type) {
 			case CHOICE: {
-				const arms = node.members.map((arm, i) => ({ arm, path: [...path, i] })).filter(({ arm }) => (arm.type as string) !== 'BLANK');
+				const arms = node.members.map((arm, i) => ({ arm, path: [...path, i] })).filter(({ arm }) => !isBlank(arm));
 				const fields = new Set(arms.map(({ arm, path: at }) => armField(arm, at)));
 				const oneList = fields.size === 1 && !fields.has(undefined);
 				for (const { arm } of arms) {
