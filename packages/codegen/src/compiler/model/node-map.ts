@@ -1968,7 +1968,8 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 
 			const byName = new Map<string, AssembledNonterminal>();
 			for (const slot of resolvedSlots) {
-				byName.set(slot.name, slot);
+				const dropped = byName.get(slot.name);
+				byName.set(slot.name, dropped === undefined ? slot : slot.with({ sourceRuleIds: mergeSourceRuleIds(slot.sourceRuleIds, dropped.sourceRuleIds) }));
 			}
 
 			const byStorageName = new Map<string, AssembledNonterminal[]>();

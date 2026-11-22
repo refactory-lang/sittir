@@ -159,4 +159,23 @@ describe('slot structural signals', () => {
 		expect(collisionWarnings).toHaveLength(1);
 		expect(collisionWarnings[0]!.details).toMatchObject({ storageName: 'identifier', slotCount: 2 });
 	});
+
+	it('the slot a storage-name collision keeps holds the rule ids of the occurrence it drops', () => {
+		const { nodeMap } = buildNodeMap({
+			host: {
+				type: 'SEQ',
+				members: [
+					{ type: 'SYMBOL', name: 'identifier' },
+					{ type: 'STRING', value: '+' },
+					{ type: 'SYMBOL', name: 'identifier' }
+				]
+			},
+			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
+		});
+		const occurrences = (nodeMap.normalizedRules!.host as unknown as { members: readonly { name?: string; id: string }[] }).members.filter((member) => member.name === 'identifier').map((member) => member.id);
+		expect(occurrences).toHaveLength(2);
+		const slots = getCompound(nodeMap, 'host').slots.filter((slot) => slot.storageName === 'identifier');
+		expect(slots).toHaveLength(1);
+		expect(slots[0]!.sourceRuleIds).toEqual(expect.arrayContaining(occurrences));
+	});
 });

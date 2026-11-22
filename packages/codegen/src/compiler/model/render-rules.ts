@@ -212,7 +212,7 @@ function collectGaps(config: RenderRulesConfig, rules: Readonly<Record<string, R
 		walker.fold(rule, undefined, (_, r) => {
 			const id = bag(r).id;
 			if (id === undefined || !isRepeated(r) || gaps.has(id)) return undefined;
-			const slot = config.nodeMap.slotByRuleId.get(id)?.name;
+			const slot = config.nodeMap.slotByRuleId.get(kind)?.get(id)?.name;
 			if (slot === undefined || admitsNoExtras(r, rules, externals)) return undefined;
 			const gap = gapOf(kind, r, config);
 			if (gap !== undefined) gaps.set(id, { kind, slot, id, ...gap });
@@ -566,7 +566,7 @@ function isOptionalRule(rule: RenderRule): boolean {
 	return r.multiplicity === 'optional' || (r.type === CHOICE && (r.members ?? []).some(isOptionalRule));
 }
 
-function literalSlotOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {
+function literalSlotOf(rule: RenderRule, kind: string, config: RenderRulesConfig): string | undefined {
 	const r = bag(rule);
 	if (r.type === STRING && r.nonterminal !== true) return undefined;
 	if (r.type !== CHOICE && (r.fieldName === undefined || literalLeafText(rule) === undefined)) return undefined;
@@ -576,7 +576,7 @@ function literalSlotOf(rule: RenderRule, config: RenderRulesConfig): string | un
 	if (!texts.some((text) => text.trim() !== '')) return undefined;
 	const punctuated = texts.some((text) => text.trim() !== '' && !matchesWordShape(text, config.nodeMap.wordMatcher));
 	if (!punctuated && isOptionalRule(rule)) return undefined;
-	if (r.id !== undefined && config.nodeMap.slotByRuleId.get(r.id)?.registeredOption === 'choice') {
+	if (r.id !== undefined && config.nodeMap.slotByRuleId.get(kind)?.get(r.id)?.registeredOption === 'choice') {
 		const spellings = new Set(texts.filter((text) => text.trim() !== ''));
 		return spellings.size === 1 ? tokenNameOfText([...spellings][0]!, config.kindEntries) : undefined;
 	}
@@ -617,9 +617,9 @@ function keywordSlotOf(rule: RenderRule, config: RenderRulesConfig): string | un
 	return target instanceof AssembledKeyword ? r.fieldName : undefined;
 }
 
-function seamNameOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {
+function seamNameOf(rule: RenderRule, kind: string, config: RenderRulesConfig): string | undefined {
 	if (isDisplayedLiteral(rule)) return undefined;
-	return literalTokenOf(rule, config) ?? punctuationReferenceTokenOf(rule, config) ?? literalSlotOf(rule, config) ?? enumSlotOf(rule, config) ?? keywordSlotOf(rule, config);
+	return literalTokenOf(rule, config) ?? punctuationReferenceTokenOf(rule, config) ?? literalSlotOf(rule, kind, config) ?? enumSlotOf(rule, config) ?? keywordSlotOf(rule, config);
 }
 
 function inlinedRuleNames(rules: Readonly<Record<string, RenderRule>>): ReadonlySet<string> {
@@ -755,13 +755,13 @@ function withTokenSeams(rule: RenderRule, kind: string, config: RenderRulesConfi
 		let right = r.members[i]!;
 		if (!isAnyWhitespaceChoice(left) && !isAnyWhitespaceChoice(right)) {
 			const leftArms =
-				seamNameOf(left, config) === undefined ? withArmEdgeSeams(left, 'last', kind, config, resolver, seams) : undefined;
+				seamNameOf(left, kind, config) === undefined ? withArmEdgeSeams(left, 'last', kind, config, resolver, seams) : undefined;
 			if (leftArms !== undefined) {
 				members[members.length - 1] = leftArms;
 				changed = true;
 			}
 			const rightArms =
-				seamNameOf(right, config) === undefined ? withArmEdgeSeams(right, 'first', kind, config, resolver, seams) : undefined;
+				seamNameOf(right, kind, config) === undefined ? withArmEdgeSeams(right, 'first', kind, config, resolver, seams) : undefined;
 			if (rightArms !== undefined) {
 				right = rightArms;
 				changed = true;
@@ -770,8 +770,8 @@ function withTokenSeams(rule: RenderRule, kind: string, config: RenderRulesConfi
 			const leftEdge = edgeMember(leftNow, 'last');
 			const rightEdge = edgeMember(right, 'first');
 			const rightImmediate = isImmediateWhenPresent(r.members[i]!, config);
-			const leftToken = seamNameOf(leftEdge ?? leftNow, config);
-			const rightToken = seamNameOf(rightEdge ?? right, config);
+			const leftToken = seamNameOf(leftEdge ?? leftNow, kind, config);
+			const rightToken = seamNameOf(rightEdge ?? right, kind, config);
 			if (!rightImmediate && leftToken !== undefined && !(leftEdge !== undefined && isAnyWhitespaceChoice(leftEdge))) {
 				const seam = seamChoice(kind, { at: 'seam', token: leftToken, side: 'after' }, resolver, seams, undefined, isKeywordSeam(leftEdge ?? leftNow, config));
 				if (leftEdge === undefined) members.push(seam);
@@ -864,7 +864,7 @@ function withKindEdges(
 		if (r.type !== SEQ || r.members === undefined || flanksOf(rule) !== undefined) return;
 		const beside = side === 'before' ? r.members[0] : r.members[r.members.length - 1];
 		const slot = beside === undefined || bag(beside).multiplicity !== undefined ? undefined : bag(beside).id;
-		if (slot === undefined || !config.nodeMap.slotByRuleId.has(slot)) return;
+		if (slot === undefined || !config.nodeMap.slotByRuleId.get(kind)?.has(slot)) return;
 		const first = new Map<string, EdgeToken>();
 		for (const edgeToken of edgeTokensOf(rule, side === 'before' ? 'first' : 'last', config) ?? []) if (!first.has(edgeToken.token)) first.set(edgeToken.token, edgeToken);
 		if (first.size < 2) return;
@@ -1043,7 +1043,7 @@ export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): Rule
 
 function slotOf(kind: string, rule: RenderRule, nodeMap: NodeMap): string {
 	const id = bag(rule).id;
-	const slot = id === undefined ? undefined : nodeMap.slotByRuleId.get(id)?.name;
+	const slot = id === undefined ? undefined : nodeMap.slotByRuleId.get(kind)?.get(id)?.name;
 	if (slot === undefined) throw new Error(`render rules: the spaced separator in '${kind}' belongs to no slot`);
 	return slot;
 }
@@ -1079,7 +1079,7 @@ function renderedElementKinds(kind: string, nodeMap: NodeMap, edged: (kind: stri
 function seatedElementKinds(seats: readonly Seat[], nodeMap: NodeMap, edged: (kind: string) => boolean): Map<string, { kind: string; slot: string; children: Set<string> }> {
 	const admitted = new Map<string, { kind: string; slot: string; children: Set<string> }>();
 	for (const seat of seats) {
-		const slot = nodeMap.slotByRuleId.get(seat.id);
+		const slot = nodeMap.slotByRuleId.get(seat.kind)?.get(seat.id);
 		if (slot === undefined) continue;
 		const key = `${seat.kind}\u0000${seat.slot}`;
 		const entry = admitted.get(key) ?? { kind: seat.kind, slot: seat.slot, children: new Set<string>() };

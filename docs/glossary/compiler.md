@@ -1363,7 +1363,7 @@ The classification left after every structural check: an all-text subtree is `'p
 // of leaves IS one union-valued slot, so its members' ids belong to it —
 // this holds for any CHOICE slot, not only the sanctioned-union-routing
 // path, since `emitChoice`'s per-arm scan resolves EACH arm symbol
-// independently via `lookupSlot`'s primary `slotByRuleId` path.
+// independently via `lookupSlot`.
 ```
 
 #### body
@@ -4988,10 +4988,12 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
 
 ```text
 /**
-	 * Rule-id → AssembledNonterminal back-pointer. Populated at assembly when
-	 * each slot's source-rule positions are registered. Lets consumers walking a
-	 * rule tree look up the slot's propertyName / storageName / paramName directly.
-	 * See feedback_ruleid_backpointer.
+	 * Owner kind → rule id → AssembledNonterminal back-pointer. Populated at
+	 * assembly from each slot's `sourceRuleIds`. Lets consumers walking a kind's
+	 * rule tree look up the slot's propertyName / storageName / paramName
+	 * directly. Scoped to the owner because kinds that share a hidden rule's body
+	 * hold the same rule ids in slots of their own; within one kind an id belongs
+	 * to one slot.
 	 */
 ```
 

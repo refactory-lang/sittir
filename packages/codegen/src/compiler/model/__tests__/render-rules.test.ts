@@ -49,7 +49,7 @@ function nodeMapOf(
 			, { kindEntries })
 		);
 	}
-	const slotByRuleId = new Map(
+	const slotsById = new Map(
 		Object.entries(slots).map(([id, name]) => [
 			id,
 			{ name, values: (opts.slotKinds?.[id] ?? []).map((kind) => ({ node: { kind }, multiplicity: 'array' })) }
@@ -59,7 +59,7 @@ function nodeMapOf(
 		name: 'test',
 		nodes,
 		normalizedRules: rules,
-		slotByRuleId,
+		slotByRuleId: new Map(Object.keys(rules).map((kind) => [kind, slotsById])),
 		externals: (opts.externals ?? []).map((name) => ({ type: 'SYMBOL' as const, name })),
 		lineEndings: FIXTURE_LINE_ENDINGS
 	} as unknown as NodeMap;

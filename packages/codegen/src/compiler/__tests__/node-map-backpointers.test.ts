@@ -116,7 +116,7 @@ describe('NodeMap back-pointer maps', () => {
 		expect(fieldRule).toBeDefined();
 		expect(fieldRule!.id).toBeTruthy();
 
-		const slot = nodeMap.slotByRuleId.get(fieldRule!.id!);
+		const slot = nodeMap.slotByRuleId.get('call_expression')?.get(fieldRule!.id!);
 		expect(slot).toBeDefined();
 		expect(slot!.name).toBe(fieldRule!.fieldName);
 	});
@@ -142,7 +142,7 @@ describe('NodeMap back-pointer maps', () => {
 
 		expect(slot!.sourceRuleIds).toEqual(expect.arrayContaining(simplifiedIds));
 		for (const id of slot!.sourceRuleIds) {
-			expect(nodeMap.slotByRuleId.get(id)).toBe(slot);
+			expect(nodeMap.slotByRuleId.get('test')?.get(id)).toBe(slot);
 		}
 	});
 
@@ -182,7 +182,7 @@ describe('NodeMap back-pointer maps', () => {
 		expect(expectedIds.length).toBeGreaterThanOrEqual(3);
 		expect(slot!.sourceRuleIds).toEqual(expect.arrayContaining(expectedIds));
 		for (const id of expectedIds) {
-			expect(nodeMap.slotByRuleId.get(id)).toBe(slot);
+			expect(nodeMap.slotByRuleId.get('test')?.get(id)).toBe(slot);
 		}
 	});
 });

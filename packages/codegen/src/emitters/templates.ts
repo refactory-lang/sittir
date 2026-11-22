@@ -18,7 +18,6 @@ import {
 	storageKindOfValue,
 	fixedTextOfKind,
 	isNodeRef,
-	isSurfaceHiddenIn,
 	surfaceHiddenOfRef,
 	isUnresolvedRef,
 	isFixedTextLeaf
@@ -131,6 +130,7 @@ export interface EmitCtx {
 	readonly joinPairClassCombos?: ReadonlySet<string>;
 	readonly joinPairLeftChars?: ReadonlySet<string>;
 	readonly joinPairRightChars?: ReadonlySet<string>;
+	readonly ownerKind?: string;
 	readonly ownerSlots?: Readonly<Record<string, AssembledNonterminal>>;
 	readonly lexedTop?: RenderRule;
 	readonly currentKind?: string;
@@ -599,6 +599,7 @@ export function emitBranchTemplate(node: SlotBearingCompound, ctx: EmitCtx): Bod
 	const top = ctx.rules[node.kind] ?? node.renderRule;
 	const ctxWithSlots: EmitCtx = {
 		...ctx,
+		ownerKind: node.kind,
 		ownerSlots: ownerSlotsFor(node),
 		...(node instanceof AssembledLexedPattern ? { lexedTop: top } : {})
 	};
@@ -678,17 +679,9 @@ function emitRuleShape(rule: RenderRule, ctx: EmitCtx): Body {
 		case PATTERN: {
 			const slot = lookupSlot(rule, ctx);
 			if (slot !== undefined) return emitSlotReference(rule, slot, ctx);
-			const patternFieldName = (rule as { fieldName?: string }).fieldName;
-			if (patternFieldName !== undefined) return emitFieldNameSlot(patternFieldName, rule, ctx);
-			const ownerSlotNames = ctx.ownerSlots ? Object.keys(ctx.ownerSlots) : [];
-			if (ownerSlotNames.length === 1) {
-				return emitSlotReference(rule, ctx.ownerSlots![ownerSlotNames[0]!]!, ctx);
-			}
 			throw new Error(
-				`emitRule: PATTERN with no field name and no lookupSlot hit for kind '${ctx.currentKind ?? '(unknown)'}' — ` +
-					`owner has ${ownerSlotNames.length} registered slot(s) [${ownerSlotNames.join(', ')}], not exactly ` +
-					`one, so there is no unambiguous slot to read. Extend lookupSlot's fallbacks for this shape instead ` +
-					`of reaching for a hardcoded placeholder name.`
+				`emitRule: PATTERN in kind '${ctx.ownerKind ?? '(unknown)'}' has no slot: its rule id ` +
+					`(${rule.id ?? 'none'}) is not among the sourceRuleIds of any of that kind's slots.`
 			);
 		}
 
@@ -868,40 +861,7 @@ function emitRuleShape(rule: RenderRule, ctx: EmitCtx): Body {
 }
 
 function lookupSlot(rule: RenderRule, ctx: EmitCtx): AssembledNonterminal | undefined {
-	if (rule.id) {
-		const byId = ctx.nodeMap.slotByRuleId.get(rule.id);
-		if (byId) return byId;
-	}
-	let recovered: AssembledNonterminal | undefined;
-	if (ctx.ownerSlots) {
-		const boundaryFieldName = (rule as { fieldName?: string }).fieldName;
-		if (boundaryFieldName !== undefined) {
-			const byFieldName = ctx.ownerSlots[boundaryFieldName];
-			if (byFieldName) {
-				recovered = byFieldName;
-			}
-		}
-		if (
-			recovered === undefined &&
-			rule.type === SYMBOL &&
-			(rule as { fieldName?: string }).fieldName === undefined &&
-			!isSurfaceHiddenIn(rule.name, ctx.nodeMap)
-		) {
-			const exactName = rule.name;
-			const byExactName = ctx.ownerSlots[exactName];
-			if (byExactName) {
-				recovered = byExactName;
-			}
-		}
-		if (recovered === undefined && rule.type === SYMBOL && rule.aliasedTo !== undefined) {
-			const aliasSourceName = rule.name.replace(/^_+/, '');
-			const byAliasSource = ctx.ownerSlots[aliasSourceName];
-			if (byAliasSource) {
-				recovered = byAliasSource;
-			}
-		}
-	}
-	return recovered;
+	return rule.id === undefined || ctx.ownerKind === undefined ? undefined : ctx.nodeMap.slotByRuleId.get(ctx.ownerKind)?.get(rule.id);
 }
 
 function separatorTokenOf(rule: RenderRule): RenderRule | undefined {
@@ -1099,6 +1059,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 				const helperRenderRule = ctx.rules[rule.name] ?? (targetNode as { renderRule: RenderRule }).renderRule;
 				const helperCtx: EmitCtx = {
 					...ctx,
+					ownerKind: targetNode.kind,
 					ownerSlots: ownerSlotsFor(targetNode)
 				};
 				const helperBody = emitRule(helperRenderRule, helperCtx);

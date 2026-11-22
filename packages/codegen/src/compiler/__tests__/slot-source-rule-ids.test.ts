@@ -27,8 +27,8 @@ describe("C#'s recursive_pattern: every occurrence of a slot is among its source
 	});
 
 	it("an arm's seq is no slot's source: the designation slot holds the designation choices, not arms 0 and 2", () => {
-		expect(nodeMap.slotByRuleId.get(at('members.0'))).toBeUndefined();
-		expect(nodeMap.slotByRuleId.get(at('members.2'))).toBeUndefined();
+		expect(nodeMap.slotByRuleId.get('recursive_pattern')?.get(at('members.0'))).toBeUndefined();
+		expect(nodeMap.slotByRuleId.get('recursive_pattern')?.get(at('members.2'))).toBeUndefined();
 		const designation = slotNamed('variable_designation').flatMap((slot) => slot.sourceRuleIds);
 		expect(designation).toEqual(expect.arrayContaining([at('members.0/members.3'), at('members.2/members.1')]));
 	});
@@ -50,6 +50,23 @@ describe("C#'s query clause slot keeps the name of the hidden rule it was inline
 	}
 });
 
+describe('a rule id held by two kinds resolves to each kind its own slot', () => {
+	const shared = 'rule:_import_list:members.0';
+	let nodeMap: Awaited<ReturnType<typeof compileGrammar>>['nodeMap'];
+
+	beforeAll(async () => {
+		({ nodeMap } = await compileGrammar({ package: grammarPackage('python') }));
+	}, FULL_PIPELINE_TIMEOUT);
+
+	for (const kind of ['import_list', 'names']) {
+		it(`python's ${kind}`, () => {
+			const own = (nodeMap.nodes.get(kind) as unknown as { slots: readonly { sourceRuleIds: readonly string[] }[] }).slots.find((slot) => slot.sourceRuleIds.includes(shared));
+			expect(own).toBeDefined();
+			expect(nodeMap.slotByRuleId.get(kind)?.get(shared)).toBe(own);
+		});
+	}
+});
+
 describe("C's _Generic controlling expression is its own slot", () => {
 	const controlling = 'rule:generic_expression:members.2';
 	let nodeMap: Awaited<ReturnType<typeof compileGrammar>>['nodeMap'];
@@ -59,7 +76,7 @@ describe("C's _Generic controlling expression is its own slot", () => {
 	}, FULL_PIPELINE_TIMEOUT);
 
 	it('its position resolves to controlling_expression', () => {
-		expect((nodeMap.slotByRuleId.get(controlling) as unknown as { storageName: string }).storageName).toBe('controlling_expression');
+		expect((nodeMap.slotByRuleId.get('generic_expression')?.get(controlling) as unknown as { storageName: string } | undefined)?.storageName).toBe('controlling_expression');
 	});
 
 	it('the repeated expression slot does not claim it', () => {

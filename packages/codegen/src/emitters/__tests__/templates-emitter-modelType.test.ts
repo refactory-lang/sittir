@@ -67,7 +67,7 @@ function makeSlot(overrides: Partial<AssembledNonterminal>): AssembledNontermina
 // (RenderRule, wrapper-free shape) for both plain branches and link-minted
 // compounds; mocks supply it directly.
 function mockBranch(renderRule: Rule): AssembledBranch {
-	return { modelType: 'branch', renderRule } as unknown as AssembledBranch;
+	return { modelType: 'branch', kind: 'test', renderRule } as unknown as AssembledBranch;
 }
 
 function mockGroup(renderRule: Rule, name = 'g', kind = name): AssembledBranch {
@@ -91,7 +91,7 @@ describe('emitBranchTemplate', () => {
 		const slot = makeSlot({ name: 'name', propertyName: 'name', storageName: 'name' });
 		const ctx = makeCtx({
 			nodeMap: {
-				slotByRuleId: new Map([['r1', slot]]),
+				slotByRuleId: new Map([['test', new Map([['r1', slot]])]]),
 				nodeByRuleId: new Map(),
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
@@ -122,8 +122,13 @@ describe('emitBranchTemplate', () => {
 		const ctx = makeCtx({
 			nodeMap: {
 				slotByRuleId: new Map([
-					['rL', slotL],
-					['rR', slotR]
+					[
+						'test',
+						new Map([
+							['rL', slotL],
+							['rR', slotR]
+						])
+					]
 				]),
 				nodeByRuleId: new Map(),
 				nodes: new Map()
@@ -165,7 +170,7 @@ describe('emitBranchTemplate — separatedList nonterminal separator', () => {
 		});
 		const ctx = makeCtx({
 			nodeMap: {
-				slotByRuleId: new Map([['rContent', slot]]),
+				slotByRuleId: new Map([['test', new Map([['rContent', slot]])]]),
 				nodeByRuleId: new Map(),
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
@@ -189,7 +194,7 @@ describe('emitBranchTemplate — separatedList nonterminal separator', () => {
 		});
 		const ctx = makeCtx({
 			nodeMap: {
-				slotByRuleId: new Map([['rContent2', slot]]),
+				slotByRuleId: new Map([['test', new Map([['rContent2', slot]])]]),
 				nodeByRuleId: new Map(),
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
@@ -214,7 +219,7 @@ describe('emitBranchTemplate — link-minted (formerly group) node', () => {
 		const slot = makeSlot({ name: 'name', propertyName: 'name', storageName: 'name' });
 		const ctx = makeCtx({
 			nodeMap: {
-				slotByRuleId: new Map([['rg1', slot]]),
+				slotByRuleId: new Map([['g', new Map([['rg1', slot]])]]),
 				nodeByRuleId: new Map(),
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']

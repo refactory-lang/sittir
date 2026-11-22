@@ -35,6 +35,7 @@ import { parseSpacingAddress } from '../../dsl/primitives/spacing.ts';
 
 function makeCtx(overrides: Partial<EmitCtx> = {}): EmitCtx {
 	return {
+		ownerKind: 'test',
 		nodeMap: {
 			slotByRuleId: new Map(),
 			nodeByRuleId: new Map(),
@@ -102,27 +103,29 @@ describe('emitRule — join arms', () => {
 });
 
 describe('emitRule — pattern', () => {
-	it('throws when no slot is registered and the owner has no unambiguous single slot', () => {
-		// Patterns are nonterminal slots (classifyByType) — they emit a slot
-		// REFERENCE, not inline text. With no registered slot, no fieldName,
-		// and no single owner slot to fall back to, there is no unambiguous
-		// storageName to read — emitRule throws rather than guessing a
-		// hardcoded placeholder name (see emitRule's PATTERN case).
-		const rule: PatternRule = { type: PATTERN, value: '[a-z]+' };
-		expect(() => emitRule(rule, makeCtx())).toThrow(/no unambiguous slot to read/);
+	it('throws naming its kind when its rule id is not among a slot of that kind', () => {
+		const rule: PatternRule = { type: PATTERN, value: '[a-z]+', id: 'r-pattern' };
+		expect(() => emitRule(rule, makeCtx())).toThrow(/PATTERN in kind 'test' has no slot: its rule id \(r-pattern\)/);
 	});
 
-	it("reads the owner's sole registered slot by its stamped storageName when lookupSlot misses", () => {
-		// Same no-lookupSlot-hit, no-fieldName shape as above, but the owner
-		// has exactly one registered slot — unambiguous, so its stamped
-		// storageName is read directly rather than a hardcoded placeholder.
-		const rule: PatternRule = { type: PATTERN, value: '[a-z]+' };
+	it("does not read a slot by the owner's sole slot or by its field name", () => {
 		const slot = makeSlot({ storageName: 'body' });
-		expect(shown(rule, makeCtx({ ownerSlots: { body: slot } }))).toBe('⟨body⟩');
+		const fielded = { type: PATTERN, value: '[a-z]+', id: 'r-pattern', fieldName: 'body' } as PatternRule;
+		expect(() => emitRule({ type: PATTERN, value: '[a-z]+' }, makeCtx({ ownerSlots: { body: slot } }))).toThrow(/has no slot/);
+		expect(() => emitRule(fielded, makeCtx({ ownerSlots: { body: slot } }))).toThrow(/has no slot/);
+	});
+
+	it('reads the slot its rule id belongs to', () => {
+		const slot = makeSlot({ name: 'body', propertyName: 'body', storageName: 'body' });
+		const rule: PatternRule = { type: PATTERN, value: '[a-z]+', id: 'r-pattern' };
+		const nodeMap = { slotByRuleId: new Map([['test', new Map([['r-pattern', slot]])]]), nodeByRuleId: new Map(), nodes: new Map() } as unknown as EmitCtx['nodeMap'];
+		expect(shown(rule, makeCtx({ nodeMap }))).toBe('⟨body⟩');
 	});
 });
 
 describe('emitRule — kind-gated literal', () => {
+	const ownedBy = (slots: Record<string, AssembledNonterminal>) =>
+		({ slotByRuleId: new Map([['test', new Map(Object.entries(slots))]]), nodeByRuleId: new Map(), nodes: new Map() }) as unknown as EmitCtx['nodeMap'];
 	// `for (init; cond; inc)`: the initializer is a choice of a declaration arm,
 	// an expression arm followed by `;`, and an empty-statement arm. The slot
 	// is emitted once and the `;` under a gate naming the expression arm's kinds.
@@ -131,25 +134,26 @@ describe('emitRule — kind-gated literal', () => {
 			type: CHOICE,
 			id: 'for_initializer',
 			members: [
-				{ type: SYMBOL, name: 'lexical_declaration', fieldName: 'initializer' } as SymbolRule,
+				{ type: SYMBOL, name: 'lexical_declaration', id: 'initializer', fieldName: 'initializer' } as SymbolRule,
 				{
 					type: SEQ,
-					members: [{ type: SYMBOL, name: '_expressions', fieldName: 'initializer' } as SymbolRule, { type: STRING, value: ';' }]
+					members: [{ type: SYMBOL, name: '_expressions', id: 'initializer', fieldName: 'initializer' } as SymbolRule, { type: STRING, value: ';' }]
 				} as SeqRule,
-				{ type: SYMBOL, name: 'empty_statement', fieldName: 'initializer' } as SymbolRule
+				{ type: SYMBOL, name: 'empty_statement', id: 'initializer', fieldName: 'initializer' } as SymbolRule
 			]
 		} as ChoiceRule;
 	}
 	const slot = makeSlot({ name: 'initializer', storageName: 'initializer', propertyName: 'initializer', fieldName: 'initializer' });
 
 	it('folds arms that share a slot and gates the arm literal on the arm kinds', () => {
-		const ctx = makeCtx({ ownerSlots: { initializer: slot } });
+		const ctx = makeCtx({ nodeMap: ownedBy({ initializer: slot }), ownerSlots: { initializer: slot } });
 		expect(shown(forInitializer(), ctx)).toBe('⟨initializer⟩⟨if initializer:_expressions⟩;⟨end⟩');
 	});
 
 	it('gates the literal inside a fielded choice by pushing the field onto the arms', () => {
 		const rule: ChoiceRule = {
 			type: CHOICE,
+			id: 'condition',
 			fieldName: 'condition',
 			members: [
 				{ type: SEQ, members: [{ type: SYMBOL, name: '_expressions' } as SymbolRule, { type: STRING, value: ';' }] } as SeqRule,
@@ -157,7 +161,7 @@ describe('emitRule — kind-gated literal', () => {
 			]
 		} as ChoiceRule;
 		const conditionSlot = makeSlot({ name: 'condition', storageName: 'condition', propertyName: 'condition', fieldName: 'condition' });
-		const ctx = makeCtx({ ownerSlots: { condition: conditionSlot } });
+		const ctx = makeCtx({ nodeMap: ownedBy({ condition: conditionSlot }), ownerSlots: { condition: conditionSlot } });
 		expect(shown(rule, ctx)).toBe('⟨condition⟩⟨if condition:_expressions⟩;⟨end⟩');
 	});
 
@@ -165,12 +169,12 @@ describe('emitRule — kind-gated literal', () => {
 		const rule: ChoiceRule = {
 			type: CHOICE,
 			members: [
-				{ type: SYMBOL, name: 'declaration_list', fieldName: 'body' } as SymbolRule,
+				{ type: SYMBOL, name: 'declaration_list', id: 'body', fieldName: 'body' } as SymbolRule,
 				{ type: SEQ, members: [{ type: STRING, value: ';' }] } as SeqRule
 			]
 		} as ChoiceRule;
 		const bodySlot = makeSlot({ name: 'body', storageName: 'body', propertyName: 'body', fieldName: 'body' });
-		const ctx = makeCtx({ ownerSlots: { body: bodySlot } });
+		const ctx = makeCtx({ nodeMap: ownedBy({ body: bodySlot }), ownerSlots: { body: bodySlot } });
 		expect(shown(rule, ctx)).not.toContain(':');
 	});
 });
@@ -291,7 +295,7 @@ describe('emitRule — symbol with fieldName attribute (RenderRule field path)',
 		const slot = makeSlot({ name: 'name', propertyName: 'name', storageName: 'name' });
 		const ctx = makeCtx({
 			nodeMap: {
-				slotByRuleId: new Map([['r1', slot]]),
+				slotByRuleId: new Map([['test', new Map([['r1', slot]])]]),
 				nodeByRuleId: new Map(),
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
@@ -310,7 +314,7 @@ describe('emitRule — symbol with fieldName attribute (RenderRule field path)',
 		const slot = makeSlot({ name: 'args', propertyName: 'args', storageName: 'args' });
 		const ctx = makeCtx({
 			nodeMap: {
-				slotByRuleId: new Map([['r2', slot]]),
+				slotByRuleId: new Map([['test', new Map([['r2', slot]])]]),
 				nodeByRuleId: new Map(),
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
@@ -335,7 +339,7 @@ describe('emitRule — symbol with fieldName attribute (RenderRule field path)',
 		const slot = makeSlot({ name: 'args', propertyName: 'args', storageName: 'args' });
 		const ctx = makeCtx({
 			nodeMap: {
-				slotByRuleId: new Map([['r3', slot]]),
+				slotByRuleId: new Map([['test', new Map([['r3', slot]])]]),
 				nodeByRuleId: new Map(),
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
@@ -354,7 +358,7 @@ describe('emitRule — symbol with fieldName attribute (RenderRule field path)',
 		const slot = makeSlot({ name: 'value', propertyName: 'value', storageName: 'value' });
 		const ctx = makeCtx({
 			nodeMap: {
-				slotByRuleId: new Map([['r4', slot]]),
+				slotByRuleId: new Map([['test', new Map([['r4', slot]])]]),
 				nodeByRuleId: new Map(),
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
@@ -383,7 +387,7 @@ describe('emitRule — symbol', () => {
 		});
 		const ctx = makeCtx({
 			nodeMap: {
-				slotByRuleId: new Map([['s1', slot]]),
+				slotByRuleId: new Map([['test', new Map([['s1', slot]])]]),
 				nodeByRuleId: new Map(),
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
@@ -464,7 +468,7 @@ describe('emitRule — symbol with multiplicity array (RenderRule repeat path)',
 		const slot = makeSlot({ name: 'item', propertyName: 'item', storageName: 'item' });
 		const ctx = makeCtx({
 			nodeMap: {
-				slotByRuleId: new Map([['r10', slot]]),
+				slotByRuleId: new Map([['test', new Map([['r10', slot]])]]),
 				nodeByRuleId: new Map(),
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
@@ -492,7 +496,7 @@ describe('emitRule — symbol with multiplicity array (RenderRule repeat path)',
 		});
 		const ctx = makeCtx({
 			nodeMap: {
-				slotByRuleId: new Map([['r11', slot]]),
+				slotByRuleId: new Map([['test', new Map([['r11', slot]])]]),
 				nodeByRuleId: new Map(),
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
@@ -511,7 +515,7 @@ describe('emitRule — symbol with multiplicity array (RenderRule repeat path)',
 		const slot = makeSlot({ name: 'item', propertyName: 'item', storageName: 'item' });
 		const ctx = makeCtx({
 			nodeMap: {
-				slotByRuleId: new Map([['r11', slot]]),
+				slotByRuleId: new Map([['test', new Map([['r11', slot]])]]),
 				nodeByRuleId: new Map(),
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
@@ -530,7 +534,7 @@ describe('emitRule — symbol with multiplicity array (RenderRule repeat path)',
 		const slot = makeSlot({ name: 'item', propertyName: 'item', storageName: 'item' });
 		const ctx = makeCtx({
 			nodeMap: {
-				slotByRuleId: new Map([['r12', slot]]),
+				slotByRuleId: new Map([['test', new Map([['r12', slot]])]]),
 				nodeByRuleId: new Map(),
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
@@ -613,7 +617,7 @@ describe('emitRule — tag-boundary seams', () => {
 	// boundary with a `varies` edge stays glued for the runtime writer.
 	const slot = makeSlot({ name: 'left', propertyName: 'left', storageName: 'left' });
 	const nodeMap = {
-		slotByRuleId: new Map([['r-left', slot]]),
+		slotByRuleId: new Map([['test', new Map([['r-left', slot]])]]),
 		nodeByRuleId: new Map(),
 		nodes: new Map()
 	} as unknown as EmitCtx['nodeMap'];
@@ -704,7 +708,7 @@ describe('emitRule — token seams', () => {
 			const object = { type: SYMBOL, name: 'object', id: 'object', fieldName: 'object', nonterminal: true, staticSeamBefore: 'glued' };
 			const rule = { type: SEQ, members: [choice, object] } as unknown as SeqRule;
 			const slots = ['kind', 'object'].map((name) => [name, makeSlot({ name, propertyName: name, storageName: name })] as const);
-			const nodeMap = { slotByRuleId: new Map(slots), nodeByRuleId: new Map(), nodes: new Map() };
+			const nodeMap = { slotByRuleId: new Map([['test', new Map(slots)]]), nodeByRuleId: new Map(), nodes: new Map() };
 			return shown(rule, makeCtx({ nodeMap: nodeMap as unknown as EmitCtx['nodeMap'] }));
 		};
 		const seamed = (text: string) => ({ type: SEQ, nonterminal: true, members: [{ type: STRING, value: text }, seamChoice(`${text}_after`)] });

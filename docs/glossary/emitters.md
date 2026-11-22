@@ -4765,20 +4765,11 @@ its seams are decided from are the catalog's.
 
 ```text
 /**
- * Look up an `AssembledNonterminal` for a rule from two sources:
- *
- * 1. `slotByRuleId` — registered during assembly via `slot.sourceRuleIds`.
- *    Fast O(1) lookup. Fails when `simplifyRule` creates new rule objects
- *    without preserving the original ID, or when the FieldRule ID doesn't
- *    match the renderRule's symbol ID.
- *
- * 2. `ctx.ownerSlots` fallback — keyed by `storageName` (which equals
- *    `rule.fieldName.toLowerCase()` for named fields). Used when the
- *    slotByRuleId lookup fails. Safe because `storageName` is unique within
- *    a node's slot set.
- *
- * Returns `undefined` when neither source finds a slot (test fixtures,
- * transient sub-rules without a registered slot).
+ * The slot at a rule's position, within the kind being emitted (`ownerKind`).
+ * `slotByRuleId` is scoped to its owner because kinds that share a hidden
+ * rule's body hold the same rule ids in slots of their own. A rule with no id,
+ * or an id its owner registers no slot for, has no slot here, and nothing
+ * recovers one by name.
  */
 ```
 
@@ -4786,54 +4777,6 @@ its seams are decided from are the catalog's.
 // ---------------------------------------------------------------------------
 // Slot emission helpers
 // ---------------------------------------------------------------------------
-```
-
-#### body
-
-```text
-// Primary: slotByRuleId (by registered rule ID)
-```
-
-#### body
-
-```text
-// PRIMARY MISSED (no id, or id not registered — the rule-ID-not-preserved
-// gap). Try the name-based fallbacks and record the miss for the diagnostic.
-```
-
-#### body
-
-```text
-// Fallback A: fieldName → storageName. For grammar-named fields whose
-// FieldRule ID doesn't match the renderRule symbol's ID (because
-// simplifyRule created new objects without preserving the original ID),
-// look up the slot by the field name the symbol carries.
-```
-
-#### body
-
-```text
-// Fallback B: symbol name (exact, no underscore-stripping) → storageName.
-// For inferred slots derived from tree-sitter's node-types.json children,
-// the slot's storageName equals the dominant choice-arm kind name. When
-// a symbol in the renderRule has the same name as the slot's storageName,
-// map it. Only fires for symbols without fieldName (fieldName symbols are
-// handled by Fallback A). Uses the EXACT name (no leading-_ stripping) to
-// avoid false positives where `_hidden_rule` would match slot `hidden_rule`.
-```
-
-#### body
-
-```text
-// Fallback C: alias source → storageName. A singular `alias($._hidden,
-// $.visible)` reference survives wrapper-deletion as
-// `SYMBOL(name:'_hidden', aliasedTo:'visible')` with no id (rebuilt, not
-// preserved), so slotByRuleId, Fallback A (no fieldName), and Fallback B
-// (gated to non-`_`-prefixed names, so it never even attempts an aliased
-// symbol) all miss. `.name` already IS the hidden target — the guard is
-// `aliasedTo !== undefined` (this occurrence is aliased at all), then
-// join on `rule.name` (underscore-stripped) instead of the alias's
-// display name.
 ```
 
 ### `packages/codegen/src/emitters/templates.ts::separatorToString`
@@ -6868,12 +6811,9 @@ The grammar's word-class test for a single char (`wordCharPredicate`), used for 
 ```text
 /**
 	 * Owner-level slots for the current node being emitted, keyed by
-	 * `storageName` (snake_case, matches `rule.fieldName.toLowerCase()`).
-	 * Used as a fallback when `slotByRuleId` lookup fails because the
-	 * symbol's rule `id` doesn't match any of the slot's `sourceRuleIds` — a gap
-	 * that occurs when `simplifyRule` creates new rule objects without
-	 * preserving the original ID. Set by `emitBranchTemplate` and
-	 * `emitGroupTemplate` before recursing into the node's `renderRule`.
+	 * slot name. Answers whether the owner has a slot of a given name, for a
+	 * presence gate's key. A rule's own slot comes from `slotByRuleId`. Set with
+	 * `ownerKind` before recursing into the node's `renderRule`.
 	 */
 ```
 
@@ -8624,7 +8564,7 @@ the edge of what the seam sits beside.
 ### `packages/codegen/src/emitters/templates.ts::ownerSlotsFor`
 
 ```text
-/** The owner's slots keyed by name for `lookupSlot`'s fallbacks. */
+/** The owner's slots keyed by name, for a presence gate's key. */
 ```
 
 ### `packages/codegen/src/emitters/templates.ts::emitOne`
@@ -8687,9 +8627,7 @@ the edge of what the seam sits beside.
 // wrapper-bearing). Wrapper attributes (fieldName, multiplicity,
 // separator) are on the leaf rules themselves.
 //
-// Populate ownerSlots so emitSymbol can fall back to name-based slot
-// lookup when slotByRuleId lookup fails (gap: simplifyRule may create
-// new rule objects without preserving IDs, breaking slotByRuleId).
+// Set the owner, so every slot lookup below resolves within this kind.
 ```
 
 #### token interior
@@ -8710,7 +8648,7 @@ For a lexed kind the top rule is recorded on the context (`lexedTop`) so `emitRu
 // - Reads the enriched attributes (`fieldName`, `multiplicity`, `nonterminal`,
 //   `separator`) directly from the rule.
 // - Looks up slot facts (propertyName / storageName / paramName) via
-//   `ctx.nodeMap.slotByRuleId.get(rule.id)` rather than re-deriving from
+//   `lookupSlot`, by rule id within the owner, rather than re-deriving from
 //   names.
 // - Reads through an injected flank triple (`flanksOf`) to the array it
 //   wraps: the flank choices render through the list view, not the body.
@@ -8743,25 +8681,10 @@ For a lexed kind the top rule is recorded on the context (`lexedTop`) so `emitRu
 #### body
 
 ```text
-// Patterns are NONTERMINAL slots (classifyByType), so they
-// emit a slot REFERENCE — not inline text. Previously pattern→'' and
-// enum→first-literal dropped the slot; once collectSlots makes them real
-// slots that fails slot-preservation. Prefer the registered slot (named
-// via field() → `{{ operator }}`, else the owner's sole slot when
-// lookupSlot's id/name-based paths all miss — emitSlotReference
-// handles multiplicity either way.
-```
-
-#### body
-
-```text
-// No field name and no lookupSlot hit — this PATTERN can only be
-// rendering its owner's OWN registered slot (e.g. a polymorph
-// parent's single discriminating union slot). Read that slot's
-// real storageName directly rather than guessing a name: when
-// the owner has exactly one slot, it's unambiguous; anything
-// else means lookupSlot's fallbacks have a real gap to fix, not
-// a case to paper over with a hardcoded placeholder.
+// Patterns are NONTERMINAL slots (classifyByType), so they emit a slot
+// REFERENCE, not inline text. A pattern's position must resolve to a
+// slot of its kind by rule id. One that doesn't is an error naming the
+// kind, so a missing id fails at compile time.
 ```
 
 #### body
@@ -13855,6 +13778,10 @@ A flat body renders any present subset in flat order, and the grammar accepts th
 ### `packages/codegen/src/emitters/templates.ts::unitSlotOf`
 
 The slot that a body node is a unit of, for `selfGatedSlotUnits`. That is either a bare slot reference, or a one-arm `if` with no fallback whose test is the one slot it renders, with no `or` slots and no kind test. An arm restricted to some kinds does not render its slot whenever the slot is present, so it is not a unit. Any other node gives `undefined`.
+
+### `packages/codegen/src/emitters/templates.ts::EmitCtx::ownerKind`
+
+The kind whose slots the rule being walked belongs to, which is the key `lookupSlot` reads `slotByRuleId` under. It differs from `currentKind` inside a hidden helper: the helper's body resolves against the helper's own slots while `currentKind` still names the kind being emitted, for diagnostics.
 
 ### `packages/codegen/src/emitters/factories.ts::patternMismatchThrow`
 

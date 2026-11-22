@@ -330,7 +330,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 
 	const nodeByRuleId = new Map<RuleId, AssembledNode>();
 	const nodeByKindId = new Map<number, AssembledNode>();
-	const slotByRuleId = new Map<RuleId, AssembledNonterminal>();
+	const slotByRuleId = new Map<string, ReadonlyMap<RuleId, AssembledNonterminal>>();
 	for (const node of nodes.values()) {
 		if (node.kindId !== undefined) nodeByKindId.set(node.kindId, node);
 	}
@@ -339,10 +339,8 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		if (!node) continue;
 		if (rule.id) nodeByRuleId.set(rule.id, node);
 	}
-	for (const node of nodes.values()) {
-		for (const slot of node.slots) {
-			for (const id of slot.sourceRuleIds) slotByRuleId.set(id, slot);
-		}
+	for (const [kind, node] of nodes) {
+		slotByRuleId.set(kind, new Map(node.slots.flatMap((slot) => slot.sourceRuleIds.map((id) => [id, slot] as const))));
 	}
 
 	linkAliasStorages(nodes, normalized.refineForms);
