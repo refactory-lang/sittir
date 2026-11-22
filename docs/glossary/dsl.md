@@ -9197,7 +9197,11 @@ Whether these arms are copies of one seq: every arm carries the same rule id, as
 
 ### `packages/codegen/src/dsl/rule-attrs.ts::nonPositionFactsOf`
 
-A rule's identity and facts without its structure and the six position attributes. This is what a factored inner choice keeps of its source choice, or the `optional` that takes its place when one arm body is left. `inlinedFrom` has to survive here because `buildSlot` names the slot from it. The position attributes go to the seq around it instead (`withAttrsFrom`).
+A rule's identity and facts without its structure and the six position attributes. This is what a factored inner choice keeps of its source choice, or the `optional` that takes its place when one arm body is left. `inlinedFrom` has to survive here because `buildSlot` names the slot from it. The position attributes go to the seq around it instead (`withAttrsFrom`). At a kind's root the factoring runs through `factoredAtRoot`, which has already taken `hidden` and `annotations` off, so those stay on the root alone.
+
+### `packages/codegen/src/dsl/rule-attrs.ts::factoredAtRoot`
+
+Runs a factoring over a kind's root so each root fact ends up on one node. `hidden` and `annotations` belong to the kind: the factoring runs without them and they go back on whatever replaces the root, so a factored root's inner choice does not read as `hoisted`. `inlinedFrom` stays with the choice, because `fanOutSeqChoices` leaves a nested choice at the root with its own id and `inlinedFrom`, and `buildSlot` names the slot from it. When a choice with the root's id remains below the result, the result does not take a copy. When none does, as when identical arms collapse or one arm body is left and flatten drops the `optional` that held it, the result keeps `inlinedFrom`. A root the factoring leaves unchanged is returned as it was.
 
 ### `packages/codegen/src/dsl/rule-metadata.ts::aliasStorageOf`
 

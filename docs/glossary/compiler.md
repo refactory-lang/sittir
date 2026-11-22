@@ -4038,7 +4038,9 @@ An id follows the node it identifies. When every arm is a seq, the rebuilt choic
 
 ```text
 /** `factorChoiceArms` then `foldPermutationArms`, bottom-up over every
- *  rule, to a fixpoint — nested choices factor inside-out. */
+ *  rule, to a fixpoint — nested choices factor inside-out. A kind's root
+ *  goes through `factoredAtRoot`, so a factored root holds `hidden` and
+ *  `annotations` and its inner choice holds `inlinedFrom`. */
 ```
 
 ### `packages/codegen/src/compiler/assemble.ts::AssembleCtx`

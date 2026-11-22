@@ -621,3 +621,40 @@ describe('a kind is not a variant of itself', () => {
 		expect(out.members![1]!.annotations).toEqual(own);
 	});
 });
+
+describe("a kind root's facts stay on the root when its choice factors", () => {
+	type Out = Record<string, unknown> & { type: string; members?: Out[] };
+	const kindFacts = { hidden: true, inlinedFrom: '_root', annotations: { hoisted: true } };
+	const lit = (value: string, id: string): Rule<'link'> => ({ type: STRING, value, nonterminal: false, id }) as Rule<'link'>;
+	const named = (name: string, id: string): Rule<'link'> => ({ type: SYMBOL, name, id }) as Rule<'link'>;
+	const seq = (id: string, ...members: Rule<'link'>[]): Rule<'link'> => ({ type: SEQ, id, members }) as Rule<'link'>;
+	const rootChoice = (...members: Rule<'link'>[]): Rule<'link'> => ({ type: CHOICE, id: 'C', ...kindFacts, members }) as Rule<'link'>;
+	const flat = (rule: Rule<'link'>): Out => flattenRules({ k: rule })['k'] as unknown as Out;
+	const expectOnRootOnly = (out: Out): void => {
+		expect(out.type).toBe(SEQ);
+		expect(out['hidden']).toBe(true);
+		expect(out['annotations']).toEqual({ hoisted: true });
+		expect(out['inlinedFrom']).toBeUndefined();
+		const inner = out.members![1]!;
+		expect(inner.type).toBe(CHOICE);
+		expect(inner.id).toBe('C');
+		expect(inner['hidden']).toBeUndefined();
+		expect(inner['annotations']).toBeUndefined();
+		expect(inner['inlinedFrom']).toBe('_root');
+	};
+
+	it('when arms that differ at one member factor', () => {
+		expectOnRootOnly(flat(rootChoice(seq('A', lit('(', 'p'), named('x', 'x')), seq('B', lit('(', 'q'), named('y', 'y')))));
+	});
+
+	it('when shared literals factor', () => {
+		expectOnRootOnly(flat(rootChoice(seq('A', lit('{', 'o'), named('n', 'n'), lit('}', 'c')), seq('B', lit('{', 'o2'), lit(',', 'm0'), named('m', 'm'), lit('}', 'c2')))));
+	});
+
+	it('a root that does not factor keeps its facts', () => {
+		const out = flat(rootChoice(named('x', 'x'), named('y', 'y')));
+		expect(out.type).toBe(CHOICE);
+		expect(out['inlinedFrom']).toBe('_root');
+		expect(out['annotations']).toEqual({ hoisted: true });
+	});
+});

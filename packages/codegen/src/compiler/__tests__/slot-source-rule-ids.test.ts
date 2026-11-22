@@ -33,3 +33,19 @@ describe("C#'s recursive_pattern: every occurrence of a slot is among its source
 		expect(designation).toEqual(expect.arrayContaining([at('members.0/members.3'), at('members.2/members.1')]));
 	});
 });
+
+describe("C#'s query clause slot keeps the name of the hidden rule it was inlined from", () => {
+	let nodeMap: Awaited<ReturnType<typeof compileGrammar>>['nodeMap'];
+
+	beforeAll(async () => {
+		({ nodeMap } = await compileGrammar({ package: grammarPackage('csharp') }));
+	}, FULL_PIPELINE_TIMEOUT);
+
+	for (const kind of ['query_expression', 'query_body_group']) {
+		it(`${kind} holds select_or_group_clause, not content`, () => {
+			const names = (nodeMap.nodes.get(kind) as unknown as { slots: readonly { storageName: string }[] }).slots.map((slot) => slot.storageName);
+			expect(names).toContain('select_or_group_clause');
+			expect(names).not.toContain('content');
+		});
+	}
+});

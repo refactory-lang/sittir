@@ -39,7 +39,7 @@ import {
 } from '../dsl/rule-transforms.ts';
 import { flattenRules } from './flatten.ts';
 import { runToFixpoint } from './fixpoint.ts';
-import { absorbAlignedIds, absorbIds, armsCanFactor, factoredSeqOf, nonPositionFactsOf, sharedSeqFacts, withAttrsFrom, withKindFacts, rebaseRuleIds } from '../dsl/rule-attrs.ts';
+import { absorbAlignedIds, absorbIds, armsCanFactor, factoredSeqOf, nonPositionFactsOf, sharedSeqFacts, withAttrsFrom, withKindFacts, factoredAtRoot, rebaseRuleIds } from '../dsl/rule-attrs.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { collectGeneratedKindEntries } from '../dsl/symbol-table.ts';
@@ -235,7 +235,7 @@ function applyNormalizationPasses(
 	let rules = rebuildEach(linkRules, blanksDropped);
 	rules = rebuildEach(rules, (rule) => collapseWrappers(rule, ctx));
 	rules = rebuildEach(rules, (rule) => fanOutSeqChoices(rule, ctx));
-	rules = rebuildEach(rules, (rule) => factorChoiceBranches(rule, ctx));
+	rules = Object.fromEntries(Object.entries(rules).map(([name, rule]) => [name, factoredAtRoot(rule, (bare) => factorChoiceBranches(bare, ctx))]));
 	const before = rules;
 	rules = inlineSingleUseHidden(rules, ctx, preserveKinds);
 	for (const name of Object.keys(rules)) {

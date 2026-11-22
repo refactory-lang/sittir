@@ -147,6 +147,17 @@ export function withKindFacts<R extends AnyRule>(result: R, source: AnyRule): R 
 	return Object.keys(patch).length === 0 ? result : { ...result, ...patch };
 }
 
+export function factoredAtRoot<R extends AnyRule>(rule: R, factor: (bare: R) => R): R {
+	const { hidden, annotations, ...rest } = rule;
+	const bare = rest as unknown as R;
+	const factored = factor(bare);
+	if (structuralKey(factored) === structuralKey(bare)) return rule;
+	const isInnerChoice = (node: AnyRule): boolean => (node.type === CHOICE && node.id === rule.id) || idWalker.childrenOf(node).some(isInnerChoice);
+	const onInnerChoice = rule.id !== undefined && idWalker.childrenOf(factored).some(isInnerChoice);
+	const kindFacts = { type: rule.type, hidden, annotations, ...(onInnerChoice ? {} : { inlinedFrom: rule.inlinedFrom }) } as AnyRule;
+	return withKindFacts(factored, kindFacts);
+}
+
 export interface SharedArmAttrs {
 	readonly fieldName?: string;
 	readonly multiplicity?: Multiplicity;

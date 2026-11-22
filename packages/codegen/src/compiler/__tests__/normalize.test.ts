@@ -599,3 +599,34 @@ describe('factorChoiceBranches loses no fact of its arms', () => {
 		expect(out.members[1].inlinedFrom).toBe('_choice');
 	});
 });
+
+describe("a kind root's facts stay on the root when normalize factors its choice", () => {
+	const sym = (name: string, id: string): Rule<'link'> => ({ type: SYMBOL, name, id }) as Rule<'link'>;
+	const seq = (id: string, ...members: Rule<'link'>[]): Rule<'link'> => ({ type: SEQ, id, members }) as Rule<'link'>;
+	const leaf = (value: string): Rule<'link'> => ({ type: STRING, value }) as Rule<'link'>;
+	const factoredRoot = (...arms: Rule<'link'>[]): any => {
+		const k = { type: CHOICE, id: 'C', inlinedFrom: '_root', annotations: { hoisted: true }, members: arms } as Rule<'link'>;
+		return normalizeGrammar(makeLinked({ k, a: leaf('a'), x: leaf('x'), y: leaf('y') })).normalizedRules['k'];
+	};
+
+	it('with several bodies left, the inner choice does not repeat them', () => {
+		const out = factoredRoot(seq('A', sym('a', 'a0'), sym('x', 'x0')), seq('B', sym('a', 'a1'), sym('y', 'y0')));
+		expect(out.type).toBe(SEQ);
+		expect(out.inlinedFrom).toBeUndefined();
+		expect(out.annotations).toEqual({ hoisted: true });
+		const inner = out.members[1];
+		expect(inner.type).toBe(CHOICE);
+		expect(inner.inlinedFrom).toBe('_root');
+		expect(inner.annotations).toBeUndefined();
+	});
+
+	it('with one body left, the optional does not repeat them', () => {
+		const out = factoredRoot(seq('A', sym('a', 'a0'), sym('x', 'x0')), seq('B', sym('a', 'a1')));
+		expect(out.type).toBe(SEQ);
+		expect(out.inlinedFrom).toBe('_root');
+		expect(out.annotations).toEqual({ hoisted: true });
+		const inner = out.members[1];
+		expect(inner.inlinedFrom).toBeUndefined();
+		expect(inner.annotations).toBeUndefined();
+	});
+});

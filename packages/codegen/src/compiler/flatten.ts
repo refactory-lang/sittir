@@ -20,7 +20,7 @@ import { fuseHeadRepeatLists } from '../dsl/rule-transforms.ts';
 import { selfReferentialFoldOf, collectFixedLiteral } from '../dsl/rule-patterns.ts';
 import { runToFixpoint } from './fixpoint.ts';
 import { attributeBuilder, buildOptional, carryNodeFacts } from '../dsl/builders.ts';
-import { withId, withKindFacts, withAttrsFrom, sharedArmAttrs, absorbIds, absorbAlignedIds, armsCanFactor, factoredSeqOf, nonPositionFactsOf, sharedSeqFacts, structuralKey } from '../dsl/rule-attrs.ts';
+import { withId, withKindFacts, withAttrsFrom, sharedArmAttrs, absorbIds, absorbAlignedIds, armsCanFactor, factoredSeqOf, nonPositionFactsOf, sharedSeqFacts, structuralKey, factoredAtRoot } from '../dsl/rule-attrs.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import { reservedWordsetsOf, withReservedWordsets } from '../dsl/rule-metadata.ts';
 import { supertypeArmsOf } from '../dsl/symbol-table.ts';
@@ -307,10 +307,10 @@ function factorChoiceArmsToFixpoint(rules: Record<string, RenderRule>): Record<s
 			cap: 16,
 			step: () => {
 				const step = (r: RenderRule): RenderRule => foldPermutationArms(factorSharedLiterals(factorChoiceArms(r)));
-				const next = step(ruleWalker.map(current, step));
-				const changed = !(next === current || structuralKey(next) === structuralKey(current));
+				const next = factoredAtRoot(current, (bare) => step(ruleWalker.map(bare, step)));
+				if (next === current) return false;
 				current = next;
-				return changed;
+				return true;
 			}
 		});
 		out[name] = current;
