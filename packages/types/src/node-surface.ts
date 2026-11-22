@@ -1,4 +1,5 @@
 import type { TriviaSetter } from './core-types.ts';
+import type { RefuseNumeric } from './index.ts';
 import type { KeysOfUnion } from 'type-fest';
 import type { IsExactly } from './type-utils.ts';
 
@@ -293,10 +294,25 @@ export type RefuseUndeclared<V, Declared = never, Signed extends boolean = false
  * @typeParam Args - the kind's row: `BuildArgs` in the strict table, `LooseArgs` in the default engine's.
  * @typeParam R - the node the builder returns.
  * @typeParam Signed - whether a negative number can build one of the grammar's numeric literals.
+ * @typeParam Bare - whether a bare number the row's first argument holds is an integer, or `undefined` when it takes none.
+ * @typeParam W - the numeric slots of a config the row's first argument holds, each mapped to whether it is an integer.
  */
-export type Seat<Args extends readonly unknown[], R, Signed extends boolean = false> = <const A extends Args>(
-	...args: A & RefuseUndeclared<A, Args, Signed> & RefuseLoneEmptyList<A, Args>
-) => R;
+export type Seat<
+	Args extends readonly unknown[],
+	R,
+	Signed extends boolean = false,
+	Bare extends boolean | undefined = undefined,
+	W extends Readonly<Record<string, boolean>> = {}
+> = <const A extends Args>(...args: A & RefuseUndeclared<A, Args, Signed> & RefuseLoneEmptyList<A, Args> & RefuseNumericFirst<A, Bare, W>) => R;
+
+type RefuseNumericFirst<A extends readonly unknown[], Bare extends boolean | undefined, W extends Readonly<Record<string, boolean>>> = [
+	Bare,
+	keyof W
+] extends [undefined, never]
+	? unknown
+	: A extends readonly [infer First, ...unknown[]]
+		? RefuseNumeric<First, Bare, W>
+		: unknown;
 
 type RefuseLoneEmptyList<A extends readonly unknown[], Args extends readonly unknown[]> = A extends readonly [infer Only]
 	? [Only] extends [never]

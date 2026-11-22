@@ -240,6 +240,22 @@ export const classPattern$seated: Seat<
 	ReturnType<typeof F.buildClassPattern>
 > = K.classPattern$fields(F.buildClassPattern, F.buildListPatternCasePatterns);
 
+export const floatPoint$seated: Seat<
+	T.FloatPoint.BuildArgs,
+	ReturnType<typeof F.buildFloatPoint>,
+	false,
+	undefined,
+	{ integer: true; fraction: true; exponent: true }
+> = K.floatPoint$branch(F.buildFloatPoint);
+
+export const floatLeadingPoint$seated: Seat<
+	T.FloatLeadingPoint.BuildArgs,
+	ReturnType<typeof F.buildFloatLeadingPoint>,
+	false,
+	undefined,
+	{ integer: true; fraction: true; exponent: true }
+> = K.floatLeadingPoint$branch(F.buildFloatLeadingPoint);
+
 export const slice$seated: Seat<T.Slice.BuildArgs, ReturnType<typeof F.buildSlice>> = K.slice$flatten$step(
 	F.buildSlice,
 	F.buildSliceGroup

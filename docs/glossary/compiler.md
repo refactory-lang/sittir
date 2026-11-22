@@ -1384,6 +1384,11 @@ The classification left after every structural check: an all-text subtree is `'p
  * `resolveMember`'s exception path (a list-less nested seq, or a
  * structural choice).
  *
+ * The slots it returns keep a `coOptional` stamp only when an optional
+ * sequence of this body is the branch (`SlotCoOptional.branch`); the stamp of a
+ * member whose optional lies outside the body (a group kind, seated by its
+ * parent) is dropped. The recursion is `collectSlotsWithin`.
+ *
  * @param rule        wrapper-free rule (post `flattenRules`)
  * @param kindForName owning branch kind name (for unnamed-choice warnings)
  * @param kindEntries generated kind table (for literal → kind resolution)

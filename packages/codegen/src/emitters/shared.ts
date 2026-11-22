@@ -1415,7 +1415,7 @@ export type SeatGeneric = 'Seat' | 'ConfigSeat' | 'OptionalConfigSeat';
 export interface RefusingParams {
 	readonly typeParams: string;
 	readonly params: string;
-	readonly seat?: { readonly generic: SeatGeneric; readonly declared: string; readonly signed: boolean };
+	readonly seat?: { readonly generic: SeatGeneric; readonly declared: string; readonly signed: boolean; readonly numeric?: string };
 }
 
 export function plainParams(params: string): RefusingParams {
@@ -1425,7 +1425,7 @@ export function plainParams(params: string): RefusingParams {
 export function refusingParam(
 	label: string,
 	type: string,
-	shape: { readonly optional?: boolean; readonly rest?: boolean; readonly loose?: LooseRefusal } = {}
+	shape: { readonly optional?: boolean; readonly rest?: boolean; readonly loose?: LooseRefusal; readonly numeric?: string } = {}
 ): RefusingParams {
 	const typeParam = shape.rest ? 'A' : 'V';
 	const refusal = refuseUndeclared(typeParam, shape.loose === undefined ? undefined : type, shape.loose);
@@ -1437,7 +1437,7 @@ export function refusingParam(
 			: shape.optional
 				? `...${label}: [${label}?: ${typeParam}] & ${refusal}`
 				: `${label}: ${typeParam} & ${refusal}`,
-		...(shape.loose === undefined ? {} : { seat: { generic, declared: type, signed: shape.loose.signed } })
+		...(shape.loose === undefined ? {} : { seat: { generic, declared: type, signed: shape.loose.signed, ...(shape.numeric === undefined ? {} : { numeric: shape.numeric }) } })
 	};
 }
 
@@ -1471,7 +1471,9 @@ export function declaredOverload(head: string, refusing: RefusingParams, returnT
 export function functionTypeOf(refusing: RefusingParams, returnType: string): string {
 	return refusing.seat === undefined
 		? `${refusing.typeParams}(${refusing.params}) => ${returnType}`
-		: `${refusing.seat.generic}<${refusing.seat.declared}, ${returnType}${refusing.seat.signed ? ', true' : ''}>`;
+		: `${refusing.seat.generic}<${refusing.seat.declared}, ${returnType}${
+					refusing.seat.numeric === undefined ? (refusing.seat.signed ? ', true' : '') : `, ${refusing.seat.signed}, ${refusing.seat.numeric}`
+				}>`;
 }
 
 export function withEmptyOverload(

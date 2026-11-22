@@ -490,6 +490,7 @@ const VOCABULARY_IMPORTS = [
 	'NoneOf',
 	'GatedList',
 	'WithoutGroup',
+	'CoOptionalRows',
 	'RenameKeys',
 	'GrammarTypeMap',
 	'NodeMethods',

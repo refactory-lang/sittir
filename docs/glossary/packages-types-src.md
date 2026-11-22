@@ -924,7 +924,7 @@ Whether structure is verified at compile time only, or also at run time.
 
 ### `packages/types/src/node-surface.ts::Seat`
 
-A row call's signature: generic over its arguments, refusing undeclared keys, and returning its result. A call with one argument that is an empty array is refused when the row takes items but never none: that argument is the item list, the reading the coercer gives a lone array, and an empty array inside the list or beside another argument stays one item.
+A row call's signature: generic over its arguments, refusing undeclared keys, and returning its result. A call with one argument that is an empty array is refused when the row takes items but never none: that argument is the item list, the reading the coercer gives a lone array, and an empty array inside the list or beside another argument stays one item. A seat that names the numeric slots of its config (`W`) or whether a bare value is an integer (`Bare`) also refuses the numeric literals `RefuseNumeric` refuses in the first argument, as the builder does; one that names neither, and a row called with no argument, refuse nothing more.
 
 ### `packages/types/src/node-surface.ts::ConfigSeat`
 
@@ -949,6 +949,10 @@ The numeric kind id a node carries at runtime, the `$type` property. `NarrowTo` 
 ### `packages/types/src/node-surface.ts::Admit::$type`
 
 The numeric kind id a node carries at runtime, the `$type` property. `Admit` requires that existing numeric tag on a value and attaches the node marker; the alias emits no code.
+
+### `packages/types/src/node-surface.ts::RefuseNumericFirst`
+
+The numeric refusal a `Seat` applies to the first argument of its row: `RefuseNumeric` of it, and `unknown` when the seat names no numeric slot or bare value, or the row is called with no argument.
 
 ### `packages/types/src/engine-api.ts::StructureRow::single`
 
@@ -1976,3 +1980,27 @@ A config type whose every key of `T` is optional and `never`: it names the keys 
 ### `packages/types/src/index.ts::WithoutGroup`
 
 A parent's own input where the group's flattened keys are forbidden beside the seat: `P` with `NoneOf<G>` added, so a config that gives the seat cannot give a key of the group beside it. A parent that is `undefined` (an optional argument left out) or already a built node (it has a `$type`) is let through as it is: a node is not a config, and its accessors share the group's key names.
+
+### `packages/types/src/index.ts::BranchPresent`
+
+A config row's first member with the branch present: the `Needed` keys are required. A member that is not an object (loose text, a number) or is a built node passes as it is.
+
+### `packages/types/src/index.ts::BranchAbsent`
+
+A config row's first member with the branch absent: none of the `Branch` keys. Only an object member that names a key of the branch has an absent shape; loose text, a number or a built node belongs to the present shape alone.
+
+### `packages/types/src/index.ts::CoOptionalRows`
+
+The argument tuples of a builder whose config holds an optional branch of several slots and has no group node to seat it, as a union of two tuples: `[config: BranchPresent, options?: O]`, and `[config: BranchPresent | BranchAbsent, options?: O without the branch's options]`. The branch is present as a whole, which needs its `Needed` keys, or absent as a whole, which names none of its `Branch` keys nor the options in `BranchOptions`. The second tuple keeps the other options, and takes a held union of both shapes, which no one tuple of the pair takes; it takes no option of the branch, since a union does not say the branch is present. The row is a union of tuples rather than overloads because `ArgsOf` reads only the last overload. A float's exponent is the example: `{ integer: 1, exponent: 2 }` takes `{ marker: 'E' }`, `{ integer: 1 }` does not, and `{ integer: 1, exponentSign: '+' }` takes neither. The emitter writes it from the kind's `coOptional` stamps (`coOptionalBranchOf`).
+
+### `packages/types/src/index.ts::RefusedSlots`
+
+The numeric slots of a config `C` (the keys of `W`) that hold a literal `NumericLiteral` refuses, each member of a union judged on its own. A value that is not a literal is never refused.
+
+### `packages/types/src/index.ts::RefuseNumeric`
+
+What `NumericInput` refuses, as a value an argument list holds or not, the way `RefuseUndeclared` is: `unknown` when `I` holds no refused literal, otherwise `{ readonly refused: … }`, which no argument carries, naming the refused slots (`a bare number` for the bare value). `NumericInput` itself is an intersection, which changes the argument list of a generic whose parameters are read at their constraint (`ArgsOf`); this is `unknown` there, so a row that carries the refusal is still the call it describes.
+
+### `packages/types/src/index.ts::NumericRefusals`
+
+The refusals `RefuseNumeric` reports, named once: `a bare number` when the bare value is a literal `NumericLiteral` refuses, and the numeric slots of a config that hold one (`RefusedSlots`). `never` when nothing is refused, which `RefuseNumeric` tests against.

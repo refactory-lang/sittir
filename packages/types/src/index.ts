@@ -340,6 +340,39 @@ type WithoutKinds<V, Kinds> = V extends readonly unknown[]
  * is; its accessors may share the group's key names.
  */
 export type WithoutGroup<P, G> = P extends undefined | { readonly $type: number } ? P : P & NoneOf<G>;
+type BranchPresent<C, Needed extends PropertyKey> = C extends { readonly $type: number }
+	? C
+	: C extends object
+		? [Needed] extends [keyof C]
+			? C & { readonly [K in Needed]-?: NonNullable<C[K]> }
+			: C
+		: C;
+type BranchAbsent<C, Branch extends PropertyKey> = C extends { readonly $type: number }
+	? never
+	: C extends object
+		? [Branch & keyof C] extends [never]
+			? never
+			: Omit<C, Branch> & { readonly [K in Branch]?: never }
+		: never;
+/**
+ * The argument tuples of a builder whose config holds an optional branch of several slots: the branch is present as a
+ * whole, which needs its `Needed` keys, or absent as a whole, which names none of its `Branch` keys nor the options in
+ * `BranchOptions`. A config member that is not an object (loose text, a number) or is a built node belongs to the
+ * present tuple only.
+ */
+export type CoOptionalRows<
+	Row extends readonly unknown[],
+	Branch extends PropertyKey,
+	Needed extends PropertyKey,
+	BranchOptions extends PropertyKey
+> = Row extends readonly [infer C, (infer O)?]
+	?
+			| [config: BranchPresent<C, Needed>, options?: O]
+			| [
+					config: BranchPresent<C, Needed> | BranchAbsent<C, Branch>,
+					options?: OmitEach<O, BranchOptions> & { readonly [K in BranchOptions]?: never }
+			  ]
+	: never;
 export type RenameKeys<T, M extends { readonly [From: string]: string }> = T extends unknown
 	? { [K in keyof T as K extends keyof M ? M[K] : K]: T[K] }
 	: never;
@@ -1392,3 +1425,21 @@ export type NumericInput<
 	Bare extends boolean | undefined,
 	W extends Readonly<Record<string, boolean>> = {}
 > = (Bare extends boolean ? RefusedValue<I, Bare> : unknown) & NumericConfig<I, W>;
+
+type RefusedSlots<C, W extends Readonly<Record<string, boolean>>> = C extends unknown
+	? { [K in keyof C & keyof W & string]-?: [RefusedValue<C[K], W[K]>] extends [C[K]] ? never : K }[keyof C & keyof W & string]
+	: never;
+
+type NumericRefusals<I, Bare extends boolean | undefined, W extends Readonly<Record<string, boolean>>> =
+	| (Bare extends boolean ? ([RefusedValue<I, Bare>] extends [I] ? never : 'a bare number') : never)
+	| RefusedSlots<I, W>;
+
+/**
+ * What {@link NumericInput} refuses, as a value an argument list can hold or not: `unknown` when `I` holds no refused
+ * literal, otherwise `{ readonly refused: … }`, which no argument carries, naming the refused slots (`a bare number` for
+ * the bare value). A value that is not a literal, such as the row's own types, is never refused, so a row the refusal
+ * is applied to keeps its argument list.
+ */
+export type RefuseNumeric<I, Bare extends boolean | undefined, W extends Readonly<Record<string, boolean>>> = [NumericRefusals<I, Bare, W>] extends [never]
+	? unknown
+	: { readonly refused: NumericRefusals<I, Bare, W> };

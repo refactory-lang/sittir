@@ -289,8 +289,21 @@ export function collectSlots(
 	inheritedSeparator: RuleBase<'normalize'>['separator'] = undefined,
 	diagnostics?: AssembleDiagnosticsCollector
 ): AssembledNonterminal[] {
+	return collectSlotsWithin(rule, kindForName, deriveCtx, inherited, inheritedSeparator, diagnostics).map((slot) =>
+		slot.coOptional !== undefined && slot.coOptional.branch === undefined ? slot.with({ coOptional: undefined }) : slot
+	);
+}
+
+function collectSlotsWithin(
+	rule: SimplifiedRule,
+	kindForName: string | undefined,
+	deriveCtx: SlotDeriveCtx,
+	inherited: Multiplicity = 'single',
+	inheritedSeparator: RuleBase<'normalize'>['separator'] = undefined,
+	diagnostics?: AssembleDiagnosticsCollector
+): AssembledNonterminal[] {
 	if (rule.tokenized === true && rule.type !== STRING && rule.type !== PATTERN && deriveCtx.lexical !== true) {
-		return collectSlots(rule, kindForName, { ...deriveCtx, lexical: true }, inherited, inheritedSeparator, diagnostics);
+		return collectSlotsWithin(rule, kindForName, { ...deriveCtx, lexical: true }, inherited, inheritedSeparator, diagnostics);
 	}
 	if (rule.type === SEQ) {
 		const seqMult = (rule as { multiplicity?: Multiplicity }).multiplicity ?? inherited;
@@ -350,7 +363,7 @@ function resolveMember(
 				(rule as { multiplicity?: Multiplicity }).multiplicity !== undefined ||
 				(rule as { separator?: RuleBase<'normalize'>['separator'] }).separator !== undefined;
 			if (!isList) recordUnclassifiableShape(kindForName, rule, 'nested-seq', diagnostics);
-			return collectSlots(rule, kindForName, deriveCtx, inherited, inheritedSeparator, diagnostics);
+			return collectSlotsWithin(rule, kindForName, deriveCtx, inherited, inheritedSeparator, diagnostics);
 		}
 
 		case CHOICE: {
@@ -419,7 +432,7 @@ function resolveMember(
 						});
 						if (unionSlotRouting) {
 							const namedArmSlots = partition.structuredNamedArms.map((m) =>
-								mergeSlotsByName(collectSlots(m, kindForName, deriveCtx, armMult, choiceSep, diagnostics))
+								mergeSlotsByName(collectSlotsWithin(m, kindForName, deriveCtx, armMult, choiceSep, diagnostics))
 							);
 							const restricted = {
 								...rule,
@@ -455,7 +468,7 @@ function resolveMember(
 					}
 				}
 				const armSlots = rule.members.map((m) =>
-					mergeSlotsByName(collectSlots(m, kindForName, deriveCtx, armMult, choiceSep, diagnostics))
+					mergeSlotsByName(collectSlotsWithin(m, kindForName, deriveCtx, armMult, choiceSep, diagnostics))
 				);
 				return mergeChoiceArms(armSlots);
 			}

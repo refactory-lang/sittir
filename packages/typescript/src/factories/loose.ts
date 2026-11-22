@@ -287,6 +287,22 @@ export const catchClause$seated: Seat<
 	ReturnType<typeof C.coerceToCatchClause>
 > = K.catchClause$flatten$catchClauseGroup(C.coerceToCatchClause, C.coerceToCatchClauseGroup);
 
+export const numberFloatPoint$seated: Seat<
+	T.NumberFloatPoint.LooseArgs,
+	ReturnType<typeof C.coerceToNumberFloatPoint>,
+	false,
+	false,
+	{ integer: true; fraction: true; exponent: true }
+> = K.numberFloatPoint$branch(C.coerceToNumberFloatPoint);
+
+export const numberFloatLeadingPoint$seated: Seat<
+	T.NumberFloatLeadingPoint.LooseArgs,
+	ReturnType<typeof C.coerceToNumberFloatLeadingPoint>,
+	false,
+	false,
+	{ fraction: true; exponent: true }
+> = K.numberFloatLeadingPoint$branch(C.coerceToNumberFloatLeadingPoint);
+
 export const formalParametersElementsReceiver$seated: Seat<
 	T.FormalParametersElementsReceiver.LooseArgs,
 	ReturnType<typeof C.coerceToFormalParametersElementsReceiver>

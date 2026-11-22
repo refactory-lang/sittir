@@ -1130,6 +1130,31 @@ export function slotSetter(
 	return { name: f.propertyName, input: elemType, optional: !isRequired(f), rest: false };
 }
 
+interface CoOptionalBranch {
+	readonly keys: readonly string[];
+	readonly needed: readonly string[];
+	readonly options: readonly string[];
+}
+
+export function coOptionalBranchOf(node: FieldCarryingNode, slots: readonly AssembledNonterminal[]): CoOptionalBranch | undefined {
+	const stamped = slots.filter((slot) => slot.coOptional !== undefined);
+	if (stamped.length === 0) return undefined;
+	const branches = new Set(stamped.map((slot) => slot.coOptional?.branch));
+	if (branches.size > 1 || branches.has(undefined)) {
+		throw new Error(`[factories] kind '${node.kind}': its co-optional slots do not share one optional branch (${[...branches].join(', ')})`);
+	}
+	const registered = new Set(registeredSlots(node));
+	const named = (pick: (slot: AssembledNonterminal) => boolean): string[] => stamped.filter(pick).map((slot) => slot.propertyName);
+	const keys = named((slot) => !registered.has(slot));
+	const needed = named((slot) => !registered.has(slot) && slot.coOptional?.required === true);
+	if (needed.length === 0) {
+		throw new Error(`[factories] kind '${node.kind}': its optional branch has no required config slot to tell it present from absent`);
+	}
+	return { keys, needed, options: named((slot) => registered.has(slot)) };
+}
+
+const keyUnion = (keys: readonly string[]): string => (keys.length === 0 ? 'never' : keys.map((key) => `'${key}'`).join(' | '));
+
 function fieldCarryingBuiltTypeSurface(
 	node: FieldCarryingNode,
 	slots: readonly AssembledNonterminal[],
@@ -1175,6 +1200,12 @@ function fieldCarryingBuiltTypeSurface(
 		surface.spreadFacts !== null && surface.spreadFacts.multiple
 			? ` | ${rowsOf(paramText({ ...surface.param, rest: false }, `Readonly<${surface.param.looseType}>`))}`
 			: '';
+	const branch = coOptionalBranchOf(node, slots);
+	if (branch !== undefined && (spreadTarget !== null || arrayArgs !== '' || surface.leadingOptions !== undefined || forwardedConstruction(node, surface, nodeMap, kindEntries) !== null)) {
+		throw new Error(`[factories] kind '${node.kind}': an optional branch is not typed on a builder that spreads, forwards or leads with options`);
+	}
+	const branchRows = (rows: string): string =>
+		branch === undefined ? rows : `CoOptionalRows<${rows}, ${keyUnion(branch.keys)}, ${keyUnion(branch.needed)}, ${keyUnion(branch.options)}>`;
 	return {
 		...(spreadTarget === null && surface.nullary !== true && !surface.param.rest ? { row: rowParamOf(node, surface.param, nodeMap, kindEntries) } : {}),
 		mainType: `T.${node.typeName}`,
@@ -1182,9 +1213,9 @@ function fieldCarryingBuiltTypeSurface(
 		setters,
 		buildArgs:
 			spreadTarget === null
-				? (forwardedConstruction(node, surface, nodeMap, kindEntries)?.rows.join(' | ') ?? rowsOf(surface.rowParams))
+				? (forwardedConstruction(node, surface, nodeMap, kindEntries)?.rows.join(' | ') ?? branchRows(rowsOf(surface.rowParams)))
 				: `${rowsOf(surface.rowParams)}${spreadArgs('BuildArgs')}`,
-		looseArgs: `${rowsOf(surface.rowLooseParams)}${arrayArgs}${spreadArgs('LooseArgs')}`,
+		looseArgs: `${branchRows(rowsOf(surface.rowLooseParams))}${arrayArgs}${spreadArgs('LooseArgs')}`,
 		maxArgs: spreadTarget === null ? surface.arity : undefined
 	};
 }

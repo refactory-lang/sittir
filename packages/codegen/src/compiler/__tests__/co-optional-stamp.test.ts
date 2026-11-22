@@ -5,6 +5,8 @@ import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { buildRuleCatalog } from '../rule-catalog.ts';
 import { isSlotBearingCompound } from '../../emitters/shared.ts';
+import { collectKindEntries } from '../../emitters/kind-discriminant.ts';
+import { builtTypeSurfaceOf } from '../../emitters/factories.ts';
 import type { NodeMap, RawGrammar } from '../types.ts';
 
 function synthetic(rules: Record<string, unknown>): NodeMap {
@@ -102,11 +104,29 @@ describe('coOptional stamp', () => {
 	describe('float kinds', () => {
 		let typescript: NodeMap;
 		let python: NodeMap;
+		let typescriptSurface: (kind: string) => ReturnType<typeof builtTypeSurfaceOf>;
 
 		beforeAll(async () => {
-			typescript = assemblePredicted(await evaluatePackage(grammarPackage('typescript'))).nodeMap;
+			const assembled = assemblePredicted(await evaluatePackage(grammarPackage('typescript')));
+			typescript = assembled.nodeMap;
+			const kindEntries = collectKindEntries(typescript, assembled.generatedIdTables);
+			typescriptSurface = (kind) => builtTypeSurfaceOf(typescript.nodes.get(kind)!, typescript, kindEntries);
 			python = assemblePredicted(await evaluatePackage(grammarPackage('python'))).nodeMap;
 		}, FULL_PIPELINE_TIMEOUT);
+
+		it('prints a float row as the helper over the config row, a lone-slot kind as it was', () => {
+			const surface = typescriptSurface('number_float_point')!;
+			expect(surface.buildArgs).toMatch(/^CoOptionalRows<\[config: /);
+			expect(surface.buildArgs).toMatch(/'exponentSign'/);
+			expect(surface.looseArgs).toMatch(/^CoOptionalRows<\[config: T\.NumberFloatPoint\.Loose/);
+			expect(typescriptSurface('number_float_scientific')!.buildArgs).not.toContain('CoOptionalRows');
+			expect(typescriptSurface('index_signature_colon')!.buildArgs).not.toContain('CoOptionalRows');
+		});
+
+		it('leaves a group kind unstamped, since its optional lies on the parent', () => {
+			const slots = stamps(typescript, 'index_signature_colon');
+			expect(Object.values(slots).every((s) => s === undefined)).toBe(true);
+		});
 
 		it.each([
 			['typescript', 'number_float_point'],

@@ -16,6 +16,7 @@ import type {
 	OmitRegistered,
 	NoneOf,
 	WithoutGroup,
+	CoOptionalRows,
 	GrammarTypeMap,
 	NodeMethods,
 	HoldsTrivia,
@@ -24676,14 +24677,24 @@ export namespace NumberFloatPoint {
 		OmitEach<LooseConfigFor<TSKindId.NumberFloatPoint>, 'marker'>,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>;
-	export type BuildArgs = [
-		config: WidenSlots<
-			OmitRegistered<ConfigOf<T.NumberFloatPoint>, 'marker'>,
-			{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
-		>,
-		options?: T.NumberFloatPoint.Options
-	];
-	export type LooseArgs = [config: T.NumberFloatPoint.Loose, options?: T.NumberFloatPoint.Options];
+	export type BuildArgs = CoOptionalRows<
+		[
+			config: WidenSlots<
+				OmitRegistered<ConfigOf<T.NumberFloatPoint>, 'marker'>,
+				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
+			>,
+			options?: T.NumberFloatPoint.Options
+		],
+		'exponentSign' | 'exponent',
+		'exponent',
+		'marker'
+	>;
+	export type LooseArgs = CoOptionalRows<
+		[config: T.NumberFloatPoint.Loose, options?: T.NumberFloatPoint.Options],
+		'exponentSign' | 'exponent',
+		'exponent',
+		'marker'
+	>;
 	export type Kind = TSKindId.NumberFloatPoint;
 }
 export namespace NumberFloatLeadingPoint {
@@ -24721,14 +24732,24 @@ export namespace NumberFloatLeadingPoint {
 		OmitEach<LooseConfigFor<TSKindId.NumberFloatLeadingPoint>, 'marker'>,
 		{ fraction: number | bigint; exponent: number | bigint }
 	>;
-	export type BuildArgs = [
-		config: WidenSlots<
-			OmitRegistered<ConfigOf<T.NumberFloatLeadingPoint>, 'marker'>,
-			{ fraction: number | bigint; exponent: number | bigint }
-		>,
-		options?: T.NumberFloatLeadingPoint.Options
-	];
-	export type LooseArgs = [config: T.NumberFloatLeadingPoint.Loose, options?: T.NumberFloatLeadingPoint.Options];
+	export type BuildArgs = CoOptionalRows<
+		[
+			config: WidenSlots<
+				OmitRegistered<ConfigOf<T.NumberFloatLeadingPoint>, 'marker'>,
+				{ fraction: number | bigint; exponent: number | bigint }
+			>,
+			options?: T.NumberFloatLeadingPoint.Options
+		],
+		'exponentSign' | 'exponent',
+		'exponent',
+		'marker'
+	>;
+	export type LooseArgs = CoOptionalRows<
+		[config: T.NumberFloatLeadingPoint.Loose, options?: T.NumberFloatLeadingPoint.Options],
+		'exponentSign' | 'exponent',
+		'exponent',
+		'marker'
+	>;
 	export type Kind = TSKindId.NumberFloatLeadingPoint;
 }
 export namespace NumberFloatScientific {

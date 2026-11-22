@@ -15273,6 +15273,10 @@ A declaration of a name bound to a reference.
 
 The import lines for the sittir types the generated code uses.
 
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatedDeclarationOf`
+
+The printer of a kind's `$seated` table entry, for the strict or the loose surface: a `Seat` over the surface's row and the builder's return, carrying the numeric refusal the surface applies (`numericSeatRefusal`). Both `composeSeats` and `composeBranch` declare their entries through it, so every seated parent with a numeric slot refuses the literals its builder refuses, and one without prints the seat it always did.
+
 ### `packages/codegen/src/emitters/overlays/refines.ts::RefinedEntry`
 
 A refined entry: the node it refines and the members it adds.
@@ -15324,6 +15328,10 @@ Whether a number shape has every part it needs to read a number.
 ### `packages/codegen/src/emitters/interior.ts::numberShapes`
 
 The number shapes of a node map, by kind.
+
+### `packages/codegen/src/emitters/interior.ts::bareNumberShape`
+
+The number shape of the bare value a kind's loose entry takes as its whole text: the shape of its interior when the kind is a lexed leaf that takes a bare string, otherwise that of its sole numeric slot, `undefined` when it takes none. `numericInputRefusal` (the coercer's own refusal) and `numericSeatRefusal` (a seat's) both read it, so a bare number is judged one way wherever it is refused.
 
 ### `packages/codegen/src/emitters/overlays/portable/build.ts::PickDiagnosticCode`
 
@@ -15532,6 +15540,14 @@ The expression of the hop that reads a list kind's stored elements: `listElement
 ### `packages/codegen/src/emitters/factories.ts::storedHoistOf`
 
 The hops a holder's hoisted read takes over a stored (built) holder: one stored hop per wrapper up to the list-elements hop, and whether the read is a list. `undefined` for a slot with no chain.
+
+### `packages/codegen/src/emitters/factories.ts::CoOptionalBranch`
+
+The optional branch of a kind that has no group node to seat it, in the keys the config rows name: `keys` are the config keys the branch holds, `needed` the ones the branch needs to be present (a required slot of the branch that is not an option), and `options` the options the branch holds (the marker of a float's exponent).
+
+### `packages/codegen/src/emitters/factories.ts::coOptionalBranchOf`
+
+Reads a kind's `coOptional` stamps into its `CoOptionalBranch`, or `undefined` when no slot carries one. The stamps must name one branch and the branch must have a required config slot, since that slot is what tells it present from absent; a kind that fails either throws, rather than leave its row untyped. `fieldCarryingBuiltTypeSurface` wraps the kind's config rows in `CoOptionalRows` from it, and the polymorph overlay seats the kind's builder (`composeBranch`) from it, so the row and the table entry read one answer. A branch on a builder that spreads, forwards or leads with options throws too, since no row of those wraps.
 
 ### `packages/codegen/src/emitters/node-members.ts::HoistSet`
 

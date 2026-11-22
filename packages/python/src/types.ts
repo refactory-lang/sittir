@@ -18,6 +18,7 @@ import type {
 	NoneOf,
 	GatedList,
 	WithoutGroup,
+	CoOptionalRows,
 	GrammarTypeMap,
 	NodeMethods,
 	HoldsTrivia,
@@ -17179,14 +17180,24 @@ export namespace FloatPoint {
 		OmitEach<LooseConfigFor<TSKindId.FloatPoint>, 'marker'>,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>;
-	export type BuildArgs = [
-		config: WidenSlots<
-			OmitRegistered<ConfigOf<T.FloatPoint>, 'marker'>,
-			{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
-		>,
-		options?: T.FloatPoint.Options
-	];
-	export type LooseArgs = [config: T.FloatPoint.Loose, options?: T.FloatPoint.Options];
+	export type BuildArgs = CoOptionalRows<
+		[
+			config: WidenSlots<
+				OmitRegistered<ConfigOf<T.FloatPoint>, 'marker'>,
+				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
+			>,
+			options?: T.FloatPoint.Options
+		],
+		'exponentSign' | 'exponent',
+		'exponent',
+		'marker'
+	>;
+	export type LooseArgs = CoOptionalRows<
+		[config: T.FloatPoint.Loose, options?: T.FloatPoint.Options],
+		'exponentSign' | 'exponent',
+		'exponent',
+		'marker'
+	>;
 	export type Kind = TSKindId.FloatPoint;
 }
 export namespace FloatLeadingPoint {
@@ -17223,14 +17234,24 @@ export namespace FloatLeadingPoint {
 		OmitEach<LooseConfigFor<TSKindId.FloatLeadingPoint>, 'marker'>,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>;
-	export type BuildArgs = [
-		config: WidenSlots<
-			OmitRegistered<ConfigOf<T.FloatLeadingPoint>, 'marker'>,
-			{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
-		>,
-		options?: T.FloatLeadingPoint.Options
-	];
-	export type LooseArgs = [config: T.FloatLeadingPoint.Loose, options?: T.FloatLeadingPoint.Options];
+	export type BuildArgs = CoOptionalRows<
+		[
+			config: WidenSlots<
+				OmitRegistered<ConfigOf<T.FloatLeadingPoint>, 'marker'>,
+				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
+			>,
+			options?: T.FloatLeadingPoint.Options
+		],
+		'exponentSign' | 'exponent',
+		'exponent',
+		'marker'
+	>;
+	export type LooseArgs = CoOptionalRows<
+		[config: T.FloatLeadingPoint.Loose, options?: T.FloatLeadingPoint.Options],
+		'exponentSign' | 'exponent',
+		'exponent',
+		'marker'
+	>;
 	export type Kind = TSKindId.FloatLeadingPoint;
 }
 export namespace FloatScientific {
