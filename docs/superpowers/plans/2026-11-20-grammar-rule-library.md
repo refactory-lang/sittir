@@ -4,13 +4,15 @@
 
 **Goal:** A shared library of grammar rules, organized by construct and written in the names the bindings converge on, which sittir grammars adopt as written in place of their own reauthorings.
 
-**Architecture:** First every claimed kind takes its converged name in the parser (the generated grammar bindings write `rename` entries). Then a seed report over seven grammars proposes the constructs grammars spell alike. Then a library package holds hand-written rules; a grammar adopts one by naming it, and the generated bindings layer applies it last, in bound names, with its path as that kind's claim.
+**Architecture:** First every claimed kind takes its converged name in the parser (the generated grammar bindings write `rename` entries). Then a seed report over six grammars proposes the constructs grammars spell alike. Then a library package holds hand-written rules; a grammar adopts one by naming it, and the generated bindings layer applies it last, in bound names, with its path as that kind's claim.
 
 **Tech Stack:** the tree-sitter grammar DSL and sittir's authoring DSL (`packages/codegen/src/dsl`), the bindings generator (`packages/codegen/src/bindings`), the inventory (`packages/tools/src/inventory`), vitest, the native validators.
 
 **Spec:** [docs/superpowers/specs/2026-11-20-grammar-rule-library-design.md](../specs/2026-11-20-grammar-rule-library-design.md). Read it before this plan; it is the authority.
 
 **Status:** Task 1 done (04ae9ea4f); Task 1b Steps 1, 2, 4 and 5 done (71a074905), Step 6 with design, Steps 3 and 7 in progress. Branch `feat/rule-library` (4e7dede2e: `author/csharp-fields` merged onto the body branch at e77b09679), worktree `scratchpad/wt-rule-library`.
+
+**Order (the maintainer, 2026-11-22):** generator defects come first: slot-claimed choices that lose an arm's fixed text, then C#'s join seam and the other stops whose root is in codegen. A repair that only authors one of the four grammars' layers is parked, and a test only that repair would clear stays a named failure (brainstorm's call). Task 2 starts once the vocabulary is settled, meaning the body branch has no pending path change and this branch has merged it, because a bound name derives from its path. The seed report covers six grammars; C# joins when it has bindings.
 
 ## Global Constraints
 
@@ -117,7 +119,7 @@ The seed report needs every grammar's node model and binding facts, so the gener
 **Files:**
 - Create: `docs/superpowers/probes/<date the probe starts>-rule-library-seed/` (`seed.mts`, `README.md`, `results/`)
 
-- [ ] **Step 1:** `seed.mts` reads, for each of the seven grammars, its `grammar.json` (bound names, after Task 3) and its binding facts. For each path two or more grammars bind, it writes the grammars' rules side by side, the shape they share with each grammar's difference, the kinds a shared shape references that some grammar lacks under that name, and which of today's reauthorings or edits in typescript, rust and python the path covers.
+- [ ] **Step 1:** `seed.mts` reads, for each of the six grammars with bindings, its `grammar.json` (bound names, after Task 3) and its binding facts. For each path two or more grammars bind, it writes the grammars' rules side by side, the shape they share with each grammar's difference, the kinds a shared shape references that some grammar lacks under that name, and which of today's reauthorings or edits in typescript, rust and python the path covers.
 - [ ] **Step 2:** `README.md` states the question, the run command, and the measure of "the same shape" chosen (Step 1's comparison, symbols set aside), and lists the candidates: construct, path, grammars, differences, the reauthoring it would replace.
 - [ ] **Step 3:** Commit the probe. Send brainstorm the candidate list. **Stop here** until the maintainer rules which library rules move, and how a part no path names is named if most candidates reference one.
 

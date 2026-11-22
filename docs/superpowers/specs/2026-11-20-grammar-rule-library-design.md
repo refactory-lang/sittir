@@ -18,13 +18,14 @@ The maintainer's direction: "maybe we should implement a shared rule library, (s
 - **A library rule is used as written** ("in theory we shouldn't have to compose rules from the library using our transformations - if written correctly, Java/c/c# should be able to reuse identical counted for declarations"). An adopting grammar takes the rule unchanged: no translation, no edit, no per-language variant.
 - **The goal is correct lexing and parsing** ("The goal is perhaps correct lexing and parsing not identical parsing/minimal changes to the upstream"). A library rule is written to the language's own grammar, its lexical grammar included, not to stay close to upstream. Differing from upstream is expected wherever upstream is wrong; parsing as upstream does is not a measure of a library rule.
 - **Kind renames reach the parser** ("Kind renames reach the parser"), replacing the 2026-10-10 ruling that low-level kind names stay upstream's. Every kind the bindings claim takes its converged name in the parser, as field names already do, so a library rule's references resolve in every grammar and a kind has one name at every level. A rename onto an existing kind is still a merge and still refused.
+- **Codegen bugs come first, and the renames wait for the vocabulary** (2026-11-22: "We should fix codegen bugs first"; "Seed over six, but i guess we should wait until the vocabulary is fixed"). The branch fixes the generator defects its four grammars surfaced. A repair that only authors one of those grammars' layers is parked (brainstorm's call). A bound name derives from a vocabulary path, so the kind renames and the seed report start once the vocabulary is settled.
 
 Rulings this builds on, from the same day: a portable path is defined by its slots and flags, so kinds whose slots and flags agree read as one path whatever rule produced them (portable spec, "A path is defined by its slots and flags"); a binding's rename reaches the field (portable spec, "A binding's rename reaches the field"); a position that admits fewer forms than its kind gets its own kinds, and the `for` loop owns its header's `;` (preference-address spec, "a position that admits fewer forms has its own kinds").
 
 ## Goals
 
 - Each library rule lexes and parses its construct as the language's specification says: what it accepts, what it refuses, and how the tree is shaped. "Correct" is drawn where the grammar-acceptance plan draws it: the language's grammar productions, lexical and syntactic. Early errors (strict mode, duplicate names, a label's context) stay out of the parser, as that plan rules. (The maintainer, 2026-11-20: "Grammar rules only".)
-- One rule per construct that two or more of the seven grammars spell alike, written once.
+- One rule per construct that two or more of the seed report's grammars spell alike, written once.
 - A library rule carries the portable path it binds, so a grammar that adopts it gets that binding without writing it.
 - A rule that holds one language's fact (an ECMAScript `_semicolon` with its automatic semicolon) is a library rule like any other, with its witnesses and the production it cites, and only that language's grammars adopt it. Where the shape settles a fact, no rule holds it: the counted `for` loop, with the header's own declaration kinds and the loop owning its `;`, admits no automatic semicolon in any grammar.
 - A grammar adopts one rule at a time.
@@ -60,7 +61,7 @@ The counted `for` loop, as an example: one rule for typescript, javascript, C, C
 - needs every other kind it references to exist in the grammar under that name. A referenced kind the grammar's bindings don't converge (often a hidden helper such as `_expressions`) is a gap in the bindings, and the adoption is refused naming it. If the seed report shows that most shared shapes reference such kinds, how those parts are named comes back to the maintainer before any rule moves.
 - is checked against the language, not against upstream. Its witnesses run through the grammar and the language's compiler, and they agree. Each validation row it moves is named with the reason, and a corpus case that now reads differently because upstream was wrong is replaced by a corrected local entry. Moving one of our own reauthorings into the library unchanged is the one place where nothing may move: that move's generated outputs are byte-identical.
 
-**The seed report.** A probe over the seven grammars, reading each where it lives (master, and the merged branch). For each path two or more grammars bind, it sets their rules side by side in bound names and reports:
+**The seed report.** A probe over six grammars, typescript, rust, python, C, Go and Java, reading each where it lives (master, and the merged branch). C# has no bindings, so its rules can't be compared in bound names: it joins when it has them, and the report names it as missing. For each path two or more grammars bind, it sets their rules side by side in bound names and reports:
 
 - the shape they share and where each grammar differs;
 - the kinds a shared shape references that some grammar's bindings don't name;
@@ -77,7 +78,7 @@ The counted `for` loop, as an example: one rule for typescript, javascript, C, C
 - `boundKindName` is the naming contract library rules are written to; the library's check verifies each rule's kind names against it, so it stays the one source.
 - The inventory checks captures against the derivation's own result, not the last generated grammar, so a renaming capture passes in one pass.
 
-**What moves in the first version.** Every typescript, rust or python reauthoring or edit whose construct the seed report finds two or more of the seven grammars spelling alike moves into the library, and its grammar adopts the library rule in its place. A shared path alone isn't enough: numeric literals share a path in every grammar but are spelled differently in each. The rest stay in their layers. The seed report gives the list, and the maintainer sees it, before any rule moves.
+**What moves in the first version.** Every typescript, rust or python reauthoring or edit whose construct the seed report finds two or more of its grammars spelling alike moves into the library, and its grammar adopts the library rule in its place. A shared path alone isn't enough: numeric literals share a path in every grammar but are spelled differently in each. The rest stay in their layers. The seed report gives the list, and the maintainer sees it, before any rule moves.
 
 ## Approaches
 
