@@ -186,7 +186,11 @@ Code tells the two shapes apart with one guard, on both storages, for an optiona
 branch and a flattened group alike (the user, 2026-11-22): `n.$has('exponent')`
 narrows a node to its present shape, and its false side to the absent shape. A stored
 property such as `_exponent` does not discriminate them, because an arena node holds
-no such property, so the shape types don't declare one.
+no such property, so the shape types don't declare one. `$has` narrows only for a name
+whose presence decides the shape: a slot the branch requires and has no default for,
+or a flattened group's seat or sole required key. For any other slot of the branch it
+answers a plain boolean, since an optional slot being unset says nothing about the
+branch.
 
 All of this is checked at compile time and lives on the client side (the user,
 2026-11-22). The types check configs, setters and shapes, and nothing validates them
