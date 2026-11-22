@@ -73,3 +73,17 @@ export function theBuiltShapeFollowsTheConfig(): void {
 	const leading = engine.build.numberFloatLeadingPoint({ fraction: 5, exponent: 2 }, { marker: 'E' });
 	expectTrue<Equals<undefined extends ReturnType<typeof leading.marker> ? true : false, false>>();
 }
+
+export function aBuiltShapeIsOnlyAsSureAsTheConfig(held: { integer: number; exponent?: number }, node: T.NumberFloatPoint.Bound): void {
+	const undefinedExponent = engine.build.numberFloatPoint({ integer: 1, exponent: undefined });
+	expectTrue<Equals<typeof undefinedExponent, T.NumberFloatPoint.Bound>>();
+	const text = engine.build.numberFloatPoint('1.5e3');
+	expectTrue<Equals<typeof text, T.NumberFloatPoint.Bound>>();
+	const number = engine.build.numberFloatPoint(1.5);
+	expectTrue<Equals<typeof number, T.NumberFloatPoint.Bound>>();
+	const reused = engine.build.numberFloatPoint(node);
+	expectTrue<Equals<typeof reused, T.NumberFloatPoint.Bound>>();
+	// @ts-expect-error a held config with an optional exponent is neither shape
+	const heldBuilt = engine.build.numberFloatPoint(held);
+	void heldBuilt;
+}

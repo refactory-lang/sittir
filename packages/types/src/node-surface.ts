@@ -334,11 +334,13 @@ type AbsentOf<R, Needed extends string> = R extends unknown
 type BuiltShape<A extends readonly unknown[], R, Needed extends string> = [Needed] extends [never]
 	? R
 	: A extends readonly [infer C, ...unknown[]]
-		? C extends { readonly [K in Needed]: unknown }
-			? PresentOf<R, Needed>
-			: [Extract<keyof C, Needed>] extends [never]
-				? AbsentOf<R, Needed>
-				: R
+		? C extends string | number | bigint | boolean | { readonly $type: unknown }
+			? R
+			: C extends { readonly [K in Needed]: {} }
+				? PresentOf<R, Needed>
+				: [Extract<keyof C, Needed>] extends [never]
+					? AbsentOf<R, Needed>
+					: R
 		: R;
 
 type RefuseNumericFirst<A extends readonly unknown[], Bare extends boolean | undefined, W extends Readonly<Record<string, boolean>>> = [

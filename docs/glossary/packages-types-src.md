@@ -984,7 +984,7 @@ The members of a branch-typed node type `R` that are the branch-absent shape: th
 
 ### `packages/types/src/node-surface.ts::BuiltShape`
 
-What a seat that builds a kind with an optional branch returns for its call `A`: the present shape (`PresentOf`) when the config names a slot the branch requires, the absent shape (`AbsentOf`) when it names none of them, and the whole node type when the config is a held value that may be either. A seat whose kind has no branch (`Needed` is `never`) returns its node type as before. The decision is made on the literal config, since the seat takes its arguments as `const`.
+What a seat that builds a kind with an optional branch returns for its call `A`: the present shape (`PresentOf`) when the config names a slot the branch requires, the absent shape (`AbsentOf`) when it names none of them, and the whole node type when the config does not prove it: a held value that may be either, a key set to `undefined`, text, a number, or a node passed as the config (its slots are read by getters, not named by key). A seat whose kind has no branch (`Needed` is `never`) returns its node type as before. The decision is made on the literal config, since the seat takes its arguments as `const`.
 
 ### `packages/types/src/node-surface.ts::FlatHas`
 
