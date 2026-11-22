@@ -20,7 +20,7 @@ import { DEDENT_TEXT, INDENT_TEXT, depthBreakOf, siteKey } from '../dsl/primitiv
 import type { SeamAddress, SeparatorSide, SpacingAddress } from '../types/spacing.ts';
 import { pathOf } from '../compiler/model/site-addresses.ts';
 import { comparePreferencePaths, formatPreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
-import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
+import { distinctNamer, toScreamingSnakeCase } from '../compiler/model/casing.ts';
 import type { BoundaryArm, BoundaryMark, KindBoundary } from './boundary-arms.ts';
 import { childIndexOf, optionKey, type AddressLeafEntry, type AddressTables, type ChildIndex } from './options.ts';
 import { lineBreakTerminatedKinds, lineTerminatedKinds } from '../compiler/model/trivia.ts';
@@ -200,6 +200,7 @@ export function planRenderOptions(
 	const delimiterPaths = new Map<DelimiterSite, readonly PreferenceSegment[]>();
 	const depthCapable: SpacingSite[] = [];
 	const paths = new Map<SpacingSite, readonly PreferenceSegment[]>();
+	const siteConstName = distinctNamer();
 	const pushSpacing = (row: SpacingSite, site: SitePreference): void => {
 		spacing.push(row);
 		paths.set(row, pathOf(site, kindEntries, nodeMap));
@@ -226,7 +227,7 @@ export function planRenderOptions(
 				slot: site.slot,
 				address: site.address,
 				label: site.label,
-				constName: `SITE_${screaming(source)}_${screaming(site.address)}`,
+				constName: siteConstName(`SITE_${screaming(source)}_${screaming(site.address)}`),
 				fieldIdent: 'separator_kind',
 				wireKey: '_separator',
 				defaultId: idOf(kindEntries, site.defaultArm, at),
@@ -254,7 +255,7 @@ export function planRenderOptions(
 			slot: site.slot,
 			address: site.address,
 			label: site.label,
-			constName: `SITE_${screaming(source)}_${screaming(field)}`,
+			constName: siteConstName(`SITE_${screaming(source)}_${screaming(field)}`),
 			fieldIdent: field,
 			wireKey: `_${field}`,
 			defaultId: armIdOf(kindEntries, defaultArm, at),

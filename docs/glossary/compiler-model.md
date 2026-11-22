@@ -5060,6 +5060,10 @@ name, re-attaching exactly the leading underscores the raw kind carries
 name's own leading underscores are dropped first so they never double up, and a
 member name with no lower-case letter is already screaming and passes through.
 
+### `packages/codegen/src/compiler/model/casing.ts::distinctNamer`
+
+A namer for one generated Rust namespace. Each call returns the name it is given, or, when that name is already taken in this namer, the name with the lowest free ordinal from 2 (`Inline`, `Inline2`, `Inline3`). Casing can collapse distinct tokens to one identifier, such as `inline` and `__inline`, or `u'` and `U'`. A namespace with no such collapse keeps every name unchanged, so its output does not move.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::slotFilledWhenOmitted`
 
 Whether a slot needs no value from the caller. An optional slot, and a required slot holding fixed text, always qualify. A required slot qualifies when it holds exactly one value, that value is a reference to a kind that has a factory, and that kind can itself be built with no argument (`argumentOptional`). A required array slot, or a slot with several alternatives (a reference beside a literal), never qualifies: a node-reference-plus-terminal choice has no single default to build. Nothing recurses through a forwarded target on its own; the target's own `argumentOptional` is the only question asked of it. `argumentOptional` and `emptyDefaultOf` both read this one predicate, so "this slot is filled when omitted" has one derivation.

@@ -113,7 +113,7 @@ import {
 	hasCatalogEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
-import { pascalCase } from '../compiler/model/casing.ts';
+import { distinctNamer, pascalCase } from '../compiler/model/casing.ts';
 import {
 	carriesPerNodeValue,
 	seatTableName,
@@ -4659,7 +4659,9 @@ function renderEnumType(node: AssembledEnum, kindEntries: readonly KindEnumEntry
 	const values = node.values;
 	const lines: string[] = [];
 
-	const arms = values.map((v) => ({ variant: literalToVariantName(v), ids: [enumMemberId(node, v)] }));
+	const nextVariant = distinctNamer();
+	const variantOf = new Map(values.map((v) => [v, nextVariant(literalToVariantName(v))]));
+	const arms = values.map((v) => ({ variant: variantOf.get(v)!, ids: [enumMemberId(node, v)] }));
 	const ownId = findKindEntry(kindEntries, node.kind)?.id;
 	if (ownId === undefined) throw new Error(`node.rs: enum kind '${node.kind}' has no kind id`);
 	lines.push(...nodeDeclaration(read, NODE_DERIVE_ENUM_KIND, enumKindArgs(ownId, read.ctx), 'enum', enumName));
@@ -4679,7 +4681,7 @@ function renderEnumType(node: AssembledEnum, kindEntries: readonly KindEnumEntry
 	);
 	if (seamPairs.size === 0) {
 		lines.push(`        w.text(match self {`);
-		for (const v of values) lines.push(`            Self::${literalToVariantName(v)} => ${rustStringLiteral(v)},`);
+		for (const v of values) lines.push(`            Self::${variantOf.get(v)!} => ${rustStringLiteral(v)},`);
 		lines.push(`        })`);
 	} else {
 		lines.push(`        match self {`);
@@ -4688,8 +4690,8 @@ function renderEnumType(node: AssembledEnum, kindEntries: readonly KindEnumEntry
 			const text = `w.text(${rustStringLiteral(v)})`;
 			lines.push(
 				pair === undefined
-					? `            Self::${literalToVariantName(v)} => ${text},`
-					: `            Self::${literalToVariantName(v)} => { w.site_at(options::${pair.before.constName}); ${text}?; w.site_at(options::${pair.after.constName}); Ok(()) }`
+					? `            Self::${variantOf.get(v)!} => ${text},`
+					: `            Self::${variantOf.get(v)!} => { w.site_at(options::${pair.before.constName}); ${text}?; w.site_at(options::${pair.after.constName}); Ok(()) }`
 			);
 		}
 		lines.push(`        }`);

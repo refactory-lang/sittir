@@ -33,6 +33,16 @@ export function irKeyOfTypeName(typeName: string): string {
 	return stripped.charAt(0).toLowerCase() + stripped.slice(1);
 }
 
+export function distinctNamer(): (name: string) => string {
+	const taken = new Set<string>();
+	return (name) => {
+		let distinct = name;
+		for (let ordinal = 2; taken.has(distinct); ordinal++) distinct = `${name}${ordinal}`;
+		taken.add(distinct);
+		return distinct;
+	};
+}
+
 export function screamingSnakeCase(s: string): string {
 	return casingWords(s)
 		.map((word) => word.toUpperCase())
