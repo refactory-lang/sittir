@@ -14,6 +14,8 @@
 
 **Order (the maintainer, 2026-11-22):** generator defects come first: slot-claimed choices that lose an arm's fixed text, then C#'s join seam and the other stops whose root is in codegen. A repair that only authors one of the four grammars' layers is parked, and a test only that repair would clear stays a named failure (brainstorm's call). Task 2 starts once the vocabulary is settled, meaning the body branch has no pending path change and this branch has merged it, because a bound name derives from its path. The seed report covers six grammars; C# joins when it has bindings.
 
+**A slot-claimed choice that would lose an arm's fixed text is refused at assemble** (brainstorm's call, 2026-11-22). That refusal is the generator's fix. A kind it refuses stays refused until its layer is taken up, so C and C# may stop there, and the seed report needs only their `grammar.json`. The kinds known so far are C's eight lists that reach `_empty_declaration`, its `enumerator_list` and `preproc_defined`, and C#'s `switch_statement`, `parameter_list` and `bracketed_parameter_list`. C#'s `yield_statement` is refused too unless the existing kind gate can write its `return`. When the layers are taken up, `_empty_declaration` is one construct and takes one visible kind, not a mint per holder, and `enumerator_list`'s comma is weighed against the ruling that an item owns no separator.
+
 ## Global Constraints
 
 - A library rule is used as written: no translation, no edit, no per-language variant.
