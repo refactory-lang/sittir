@@ -182,6 +182,12 @@ the present shape, and `n.$with.exponentSign('+')` is a type error. With it pres
 clearing a slot the branch requires clears the whole branch, so
 `n.$with.exponent()` removes the marker, the sign and the digits.
 
+Code tells the two shapes apart with one guard, on both storages, for an optional
+branch and a flattened group alike (the user, 2026-11-22): `n.$has('exponent')`
+narrows a node to its present shape, and its false side to the absent shape. A stored
+property such as `_exponent` does not discriminate them, because an arena node holds
+no such property, so the shape types don't declare one.
+
 A kind whose choice holds arms with different slots takes one config per arm, in
 the same union of tuples (the user, 2026-11-22). Java's cast holds `types` and
 `value`, or its `cast_expression_arm` group:
