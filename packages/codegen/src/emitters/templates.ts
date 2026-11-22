@@ -652,7 +652,7 @@ function withinTrailingGate(body: Body, tail: Body): Body {
 
 function joinStaticSeam(body: Body, segment: Body, spaced: boolean, seams: Body = EMPTY): Body {
 	if (spaced) return concat(body, seams.length > 0 ? seams : SPACE, segment);
-	if (seams.length === 0 && isExpression(segment) && segment[0]!.kind !== 'tokenSeam') {
+	if (seams.length === 0 && isExpression(segment) && segment[0]!.kind !== 'tokenSeam' && body.at(-1)?.kind !== 'tokenSeam') {
 		return concat(withinTrailingGate(body, ADJACENT), segment);
 	}
 	return concat(body, seams, segment);

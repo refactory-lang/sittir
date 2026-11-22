@@ -706,6 +706,13 @@ describe('emitRule — token seams', () => {
 		expect(shown(rule, hazardCtx)).toBe('..⟨seam eq_before⟩=> x');
 	});
 
+	it('writes no adjacent mark after a token seam: the token seam already holds that boundary', () => {
+		const member = (name: string) => ({ type: SYMBOL, name, id: name, fieldName: name, nonterminal: true });
+		const rule = { type: SEQ, members: [member('condition'), { type: STRING, value: '\n' }, member('items')] } as unknown as SeqRule;
+		const slots = Object.fromEntries(['condition', 'items'].map((name) => [name, makeSlot({ name, propertyName: name, storageName: name })]));
+		expect(shown(rule, makeCtx({ nodeMap: ownedBy(slots) }))).not.toContain('adjacent');
+	});
+
 	it('leaves a boundary to the seams a choice slot writes in its arms, over a stamped static join', () => {
 		const slotted = (members: readonly unknown[]) => {
 			const choice = { type: CHOICE, id: 'kind', fieldName: 'kind', nonterminal: true, members };
