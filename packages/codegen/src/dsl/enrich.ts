@@ -2280,25 +2280,49 @@ function authoredFieldAt(authoredSites: readonly AuthoredFieldSite[], path: read
 function oneFieldArmsOf(rule: Rule, authoredSites: readonly AuthoredFieldSite[]): ReadonlySet<string> {
 	const held = new Set<string>();
 	const declined = new Set<string>();
-	const armField = (arm: AnyRule, path: readonly number[]): string | undefined => {
-		const authored = authoredFieldAt(authoredSites, path);
-		if (authored !== undefined) return authored;
-		const core = unwrapPrec(arm) as AnyRule;
+	const everyPositionFielded = (node: AnyRule, path: readonly number[]): boolean => {
+		if (authoredFieldAt(authoredSites, path) !== undefined) return true;
+		const core = unwrapPrec(node) as AnyRule;
 		switch (core.type) {
 			case FIELD:
-				return core.name;
+				return true;
 			case REPEAT:
 			case REPEAT1:
 			case OPTIONAL:
-				return armField((core as { content: AnyRule }).content, [...path, 0]);
+				return everyPositionFielded((core as { content: AnyRule }).content, [...path, 0]);
 			case SEQ:
 			case CHOICE: {
-				const names = new Set(core.members.flatMap((m, i) => (isBlank(m) ? [] : [armField(m, [...path, i])])));
-				return names.size === 1 ? [...names][0] : undefined;
+				const held = core.members.map((m, i) => ({ m, i })).filter(({ m }) => !isBlank(m));
+				return held.length > 0 && held.every(({ m, i }) => everyPositionFielded(m, [...path, i]));
 			}
 			default:
-				return undefined;
+				return false;
 		}
+	};
+	const fieldNamesIn = (node: AnyRule, path: readonly number[], names: Set<string>): Set<string> => {
+		const authored = authoredFieldAt(authoredSites, path);
+		if (authored !== undefined) names.add(authored);
+		const core = unwrapPrec(node) as AnyRule;
+		switch (core.type) {
+			case FIELD:
+				names.add(core.name);
+				return fieldNamesIn((core as { content: AnyRule }).content, [...path, 0], names);
+			case REPEAT:
+			case REPEAT1:
+			case OPTIONAL:
+				return fieldNamesIn((core as { content: AnyRule }).content, [...path, 0], names);
+			case SEQ:
+			case CHOICE:
+				core.members.forEach((m, i) => fieldNamesIn(m, [...path, i], names));
+				return names;
+			default:
+				return names;
+		}
+	};
+	const armField = (arm: AnyRule, path: readonly number[]): string | undefined => {
+		if (!everyPositionFielded(arm, path)) return undefined;
+		const names = fieldNamesIn(arm, path, new Set());
+		return names.size === 1 ? [...names][0] : undefined;
 	};
 	const walk = (node: AnyRule, path: readonly number[]): void => {
 		if (isPrecWrapper(node)) {
