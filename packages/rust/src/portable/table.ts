@@ -53456,97 +53456,6 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							slot: 'type',
-							kinds: [265, 484]
-						},
-						{
-							absent: [],
-							required: ['type']
-						}
-					]
-				},
-				{
-					kind: 318,
-					builder: 'tupleStructPattern',
-					slots: [
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [318, 'type'],
-									kinds: [1, 247, 263],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'fields',
-									stored: '_fields',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [318, 'fields'],
-									kinds: []
-								},
-								{
-									at: [357, 'items'],
-									kinds: [
-										1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316,
-										317, 318, 319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387,
-										419, 422, 426
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'..': 321,
-										_: 426
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'patterns',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							slot: 'type',
-							kinds: [1, 247, 263]
-						},
-						{
 							absent: [],
 							required: ['type']
 						}
@@ -53733,6 +53642,94 @@ export const build: PortableBuildTable = {
 					presets: [],
 					flags: {},
 					when: []
+				}
+			]
+		},
+		'pattern.struct.tuple': {
+			root: true,
+			arms: [
+				{
+					kind: 318,
+					builder: 'tupleStructPattern',
+					slots: [
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [318, 'type'],
+									kinds: [1, 247, 263],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'fields',
+									stored: '_fields',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [318, 'fields'],
+									kinds: []
+								},
+								{
+									at: [357, 'items'],
+									kinds: [
+										1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316,
+										317, 318, 319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387,
+										419, 422, 426
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'..': 321,
+										_: 426
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'patterns',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						}
+					],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['type']
+						}
+					]
 				}
 			]
 		},

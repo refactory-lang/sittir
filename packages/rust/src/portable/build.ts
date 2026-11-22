@@ -1866,6 +1866,8 @@ type clause_let$288_pattern$Item =
 	| RustMap['nodes']['pattern.reference.value']
 	| BuildInput<RustMap, 'pattern.struct'>
 	| RustMap['nodes']['pattern.struct']
+	| BuildInput<RustMap, 'pattern.struct.tuple'>
+	| RustMap['nodes']['pattern.struct.tuple']
 	| BuildInput<RustMap, 'pattern.tuple'>
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
@@ -1984,12 +1986,9 @@ const clause_let$288_pattern = (value: clause_let$288_pattern$Item) => {
 		case 'pattern.reference.value':
 			return pattern_reference_value$326(value);
 		case 'pattern.struct':
-			if (
-				(value.type === undefined || [265, 484].includes(pattern_struct$319_type$kind(value.type) ?? -1)) &&
-				value.type !== undefined
-			)
-				return pattern_struct$319(value);
-			return pattern_struct$318(value);
+			return pattern_struct$319(value);
+		case 'pattern.struct.tuple':
+			return pattern_struct_tuple$318(value);
 		case 'pattern.tuple':
 			return pattern_tuple$316(value);
 		case 'statement.block.const':
@@ -6234,6 +6233,8 @@ type declaration_parameter_variadic$232_pattern$Item =
 	| RustMap['nodes']['pattern.reference.value']
 	| BuildInput<RustMap, 'pattern.struct'>
 	| RustMap['nodes']['pattern.struct']
+	| BuildInput<RustMap, 'pattern.struct.tuple'>
+	| RustMap['nodes']['pattern.struct.tuple']
 	| BuildInput<RustMap, 'pattern.tuple'>
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
@@ -6352,12 +6353,9 @@ const declaration_parameter_variadic$232_pattern = (value: declaration_parameter
 		case 'pattern.reference.value':
 			return pattern_reference_value$326(value);
 		case 'pattern.struct':
-			if (
-				(value.type === undefined || [265, 484].includes(pattern_struct$319_type$kind(value.type) ?? -1)) &&
-				value.type !== undefined
-			)
-				return pattern_struct$319(value);
-			return pattern_struct$318(value);
+			return pattern_struct$319(value);
+		case 'pattern.struct.tuple':
+			return pattern_struct_tuple$318(value);
 		case 'pattern.tuple':
 			return pattern_tuple$316(value);
 		case 'statement.block.const':
@@ -7291,6 +7289,8 @@ type declaration_variable$206_name$Item =
 	| RustMap['nodes']['pattern.reference.value']
 	| BuildInput<RustMap, 'pattern.struct'>
 	| RustMap['nodes']['pattern.struct']
+	| BuildInput<RustMap, 'pattern.struct.tuple'>
+	| RustMap['nodes']['pattern.struct.tuple']
 	| BuildInput<RustMap, 'pattern.tuple'>
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
@@ -7366,6 +7366,8 @@ const declaration_variable$206_name = (value: declaration_variable$206_name$Item
 		case 'pattern.reference.value':
 			return unbuilt('declaration.variable.name', value);
 		case 'pattern.struct':
+			return unbuilt('declaration.variable.name', value);
+		case 'pattern.struct.tuple':
 			return unbuilt('declaration.variable.name', value);
 		case 'pattern.tuple':
 			return unbuilt('declaration.variable.name', value);
@@ -8067,6 +8069,8 @@ type declaration_variable$223_name$Item =
 	| RustMap['nodes']['pattern.reference.value']
 	| BuildInput<RustMap, 'pattern.struct'>
 	| RustMap['nodes']['pattern.struct']
+	| BuildInput<RustMap, 'pattern.struct.tuple'>
+	| RustMap['nodes']['pattern.struct.tuple']
 	| BuildInput<RustMap, 'pattern.tuple'>
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
@@ -8185,12 +8189,9 @@ const declaration_variable$223_name = (value: declaration_variable$223_name$Item
 		case 'pattern.reference.value':
 			return pattern_reference_value$326(value);
 		case 'pattern.struct':
-			if (
-				(value.type === undefined || [265, 484].includes(pattern_struct$319_type$kind(value.type) ?? -1)) &&
-				value.type !== undefined
-			)
-				return pattern_struct$319(value);
-			return pattern_struct$318(value);
+			return pattern_struct$319(value);
+		case 'pattern.struct.tuple':
+			return pattern_struct_tuple$318(value);
 		case 'pattern.tuple':
 			return pattern_tuple$316(value);
 		case 'statement.block.const':
@@ -62885,6 +62886,8 @@ type pattern_as$325_pattern$Item =
 	| RustMap['nodes']['pattern.reference.value']
 	| BuildInput<RustMap, 'pattern.struct'>
 	| RustMap['nodes']['pattern.struct']
+	| BuildInput<RustMap, 'pattern.struct.tuple'>
+	| RustMap['nodes']['pattern.struct.tuple']
 	| BuildInput<RustMap, 'pattern.tuple'>
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
@@ -63003,12 +63006,9 @@ const pattern_as$325_pattern = (value: pattern_as$325_pattern$Item) => {
 		case 'pattern.reference.value':
 			return pattern_reference_value$326(value);
 		case 'pattern.struct':
-			if (
-				(value.type === undefined || [265, 484].includes(pattern_struct$319_type$kind(value.type) ?? -1)) &&
-				value.type !== undefined
-			)
-				return pattern_struct$319(value);
-			return pattern_struct$318(value);
+			return pattern_struct$319(value);
+		case 'pattern.struct.tuple':
+			return pattern_struct_tuple$318(value);
 		case 'pattern.tuple':
 			return pattern_tuple$316(value);
 		case 'statement.block.const':
@@ -63129,6 +63129,8 @@ type pattern_list$317_elements$item$Item =
 	| RustMap['nodes']['pattern.reference.value']
 	| BuildInput<RustMap, 'pattern.struct'>
 	| RustMap['nodes']['pattern.struct']
+	| BuildInput<RustMap, 'pattern.struct.tuple'>
+	| RustMap['nodes']['pattern.struct.tuple']
 	| BuildInput<RustMap, 'pattern.tuple'>
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
@@ -63247,12 +63249,9 @@ const pattern_list$317_elements$item = (value: pattern_list$317_elements$item$It
 		case 'pattern.reference.value':
 			return pattern_reference_value$326(value);
 		case 'pattern.struct':
-			if (
-				(value.type === undefined || [265, 484].includes(pattern_struct$319_type$kind(value.type) ?? -1)) &&
-				value.type !== undefined
-			)
-				return pattern_struct$319(value);
-			return pattern_struct$318(value);
+			return pattern_struct$319(value);
+		case 'pattern.struct.tuple':
+			return pattern_struct_tuple$318(value);
 		case 'pattern.tuple':
 			return pattern_tuple$316(value);
 		case 'statement.block.const':
@@ -63330,6 +63329,8 @@ type pattern_mutable$322_pattern$Item =
 	| RustMap['nodes']['pattern.reference.value']
 	| BuildInput<RustMap, 'pattern.struct'>
 	| RustMap['nodes']['pattern.struct']
+	| BuildInput<RustMap, 'pattern.struct.tuple'>
+	| RustMap['nodes']['pattern.struct.tuple']
 	| BuildInput<RustMap, 'pattern.tuple'>
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
@@ -63448,12 +63449,9 @@ const pattern_mutable$322_pattern = (value: pattern_mutable$322_pattern$Item) =>
 		case 'pattern.reference.value':
 			return pattern_reference_value$326(value);
 		case 'pattern.struct':
-			if (
-				(value.type === undefined || [265, 484].includes(pattern_struct$319_type$kind(value.type) ?? -1)) &&
-				value.type !== undefined
-			)
-				return pattern_struct$319(value);
-			return pattern_struct$318(value);
+			return pattern_struct$319(value);
+		case 'pattern.struct.tuple':
+			return pattern_struct_tuple$318(value);
 		case 'pattern.tuple':
 			return pattern_tuple$316(value);
 		case 'statement.block.const':
@@ -63531,6 +63529,8 @@ type pattern_or$386_left$Item =
 	| RustMap['nodes']['pattern.reference.value']
 	| BuildInput<RustMap, 'pattern.struct'>
 	| RustMap['nodes']['pattern.struct']
+	| BuildInput<RustMap, 'pattern.struct.tuple'>
+	| RustMap['nodes']['pattern.struct.tuple']
 	| BuildInput<RustMap, 'pattern.tuple'>
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
@@ -63649,12 +63649,9 @@ const pattern_or$386_left = (value: pattern_or$386_left$Item) => {
 		case 'pattern.reference.value':
 			return pattern_reference_value$326(value);
 		case 'pattern.struct':
-			if (
-				(value.type === undefined || [265, 484].includes(pattern_struct$319_type$kind(value.type) ?? -1)) &&
-				value.type !== undefined
-			)
-				return pattern_struct$319(value);
-			return pattern_struct$318(value);
+			return pattern_struct$319(value);
+		case 'pattern.struct.tuple':
+			return pattern_struct_tuple$318(value);
 		case 'pattern.tuple':
 			return pattern_tuple$316(value);
 		case 'statement.block.const':
@@ -63732,6 +63729,8 @@ type pattern_or$386_right$Item =
 	| RustMap['nodes']['pattern.reference.value']
 	| BuildInput<RustMap, 'pattern.struct'>
 	| RustMap['nodes']['pattern.struct']
+	| BuildInput<RustMap, 'pattern.struct.tuple'>
+	| RustMap['nodes']['pattern.struct.tuple']
 	| BuildInput<RustMap, 'pattern.tuple'>
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
@@ -63850,12 +63849,9 @@ const pattern_or$386_right = (value: pattern_or$386_right$Item) => {
 		case 'pattern.reference.value':
 			return pattern_reference_value$326(value);
 		case 'pattern.struct':
-			if (
-				(value.type === undefined || [265, 484].includes(pattern_struct$319_type$kind(value.type) ?? -1)) &&
-				value.type !== undefined
-			)
-				return pattern_struct$319(value);
-			return pattern_struct$318(value);
+			return pattern_struct$319(value);
+		case 'pattern.struct.tuple':
+			return pattern_struct_tuple$318(value);
 		case 'pattern.tuple':
 			return pattern_tuple$316(value);
 		case 'statement.block.const':
@@ -63933,6 +63929,8 @@ type pattern_or$387_right$Item =
 	| RustMap['nodes']['pattern.reference.value']
 	| BuildInput<RustMap, 'pattern.struct'>
 	| RustMap['nodes']['pattern.struct']
+	| BuildInput<RustMap, 'pattern.struct.tuple'>
+	| RustMap['nodes']['pattern.struct.tuple']
 	| BuildInput<RustMap, 'pattern.tuple'>
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
@@ -64051,12 +64049,9 @@ const pattern_or$387_right = (value: pattern_or$387_right$Item) => {
 		case 'pattern.reference.value':
 			return pattern_reference_value$326(value);
 		case 'pattern.struct':
-			if (
-				(value.type === undefined || [265, 484].includes(pattern_struct$319_type$kind(value.type) ?? -1)) &&
-				value.type !== undefined
-			)
-				return pattern_struct$319(value);
-			return pattern_struct$318(value);
+			return pattern_struct$319(value);
+		case 'pattern.struct.tuple':
+			return pattern_struct_tuple$318(value);
 		case 'pattern.tuple':
 			return pattern_tuple$316(value);
 		case 'statement.block.const':
@@ -64418,6 +64413,8 @@ type pattern_reference$324_pattern$Item =
 	| RustMap['nodes']['pattern.reference.value']
 	| BuildInput<RustMap, 'pattern.struct'>
 	| RustMap['nodes']['pattern.struct']
+	| BuildInput<RustMap, 'pattern.struct.tuple'>
+	| RustMap['nodes']['pattern.struct.tuple']
 	| BuildInput<RustMap, 'pattern.tuple'>
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
@@ -64536,12 +64533,9 @@ const pattern_reference$324_pattern = (value: pattern_reference$324_pattern$Item
 		case 'pattern.reference.value':
 			return pattern_reference_value$326(value);
 		case 'pattern.struct':
-			if (
-				(value.type === undefined || [265, 484].includes(pattern_struct$319_type$kind(value.type) ?? -1)) &&
-				value.type !== undefined
-			)
-				return pattern_struct$319(value);
-			return pattern_struct$318(value);
+			return pattern_struct$319(value);
+		case 'pattern.struct.tuple':
+			return pattern_struct_tuple$318(value);
 		case 'pattern.tuple':
 			return pattern_tuple$316(value);
 		case 'statement.block.const':
@@ -64619,6 +64613,8 @@ type pattern_reference_value$326_pattern$Item =
 	| RustMap['nodes']['pattern.reference.value']
 	| BuildInput<RustMap, 'pattern.struct'>
 	| RustMap['nodes']['pattern.struct']
+	| BuildInput<RustMap, 'pattern.struct.tuple'>
+	| RustMap['nodes']['pattern.struct.tuple']
 	| BuildInput<RustMap, 'pattern.tuple'>
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
@@ -64737,12 +64733,9 @@ const pattern_reference_value$326_pattern = (value: pattern_reference_value$326_
 		case 'pattern.reference.value':
 			return pattern_reference_value$326(value);
 		case 'pattern.struct':
-			if (
-				(value.type === undefined || [265, 484].includes(pattern_struct$319_type$kind(value.type) ?? -1)) &&
-				value.type !== undefined
-			)
-				return pattern_struct$319(value);
-			return pattern_struct$318(value);
+			return pattern_struct$319(value);
+		case 'pattern.struct.tuple':
+			return pattern_struct_tuple$318(value);
 		case 'pattern.tuple':
 			return pattern_tuple$316(value);
 		case 'statement.block.const':
@@ -64751,318 +64744,11 @@ const pattern_reference_value$326_pattern = (value: pattern_reference_value$326_
 			return unbuilt('pattern.reference.value.pattern', value);
 	}
 };
-type pattern_struct$318_fields$item$Item =
-	| '..'
-	| '_'
-	| 'false'
-	| 'true'
-	| Text<RustMap, 'identifier'>
-	| Text<RustMap, 'literal.character'>
-	| Text<RustMap, 'literal.number.float'>
-	| Text<RustMap, 'pattern.struct.rest'>
-	| Text<RustMap, 'pattern.wildcard'>
-	| number
-	| BuildInput<RustMap, 'expression.call.macro'>
-	| RustMap['nodes']['expression.call.macro']
-	| BuildInput<RustMap, 'identifier'>
-	| RustMap['nodes']['identifier']
-	| BuildInput<RustMap, 'identifier.qualified'>
-	| RustMap['nodes']['identifier.qualified']
-	| BuildInput<RustMap, 'literal.boolean.false'>
-	| RustMap['nodes']['literal.boolean.false']
-	| BuildInput<RustMap, 'literal.boolean.true'>
-	| RustMap['nodes']['literal.boolean.true']
-	| BuildInput<RustMap, 'literal.character'>
-	| RustMap['nodes']['literal.character']
-	| BuildInput<RustMap, 'literal.number.float'>
-	| RustMap['nodes']['literal.number.float']
-	| BuildInput<RustMap, 'literal.number.integer'>
-	| RustMap['nodes']['literal.number.integer']
-	| BuildInput<RustMap, 'literal.number.integer.binary'>
-	| RustMap['nodes']['literal.number.integer.binary']
-	| BuildInput<RustMap, 'literal.number.integer.hex'>
-	| RustMap['nodes']['literal.number.integer.hex']
-	| BuildInput<RustMap, 'literal.number.integer.octal'>
-	| RustMap['nodes']['literal.number.integer.octal']
-	| BuildInput<RustMap, 'literal.number.negative'>
-	| RustMap['nodes']['literal.number.negative']
-	| BuildInput<RustMap, 'literal.string'>
-	| RustMap['nodes']['literal.string']
-	| BuildInput<RustMap, 'literal.string.bytes'>
-	| RustMap['nodes']['literal.string.bytes']
-	| BuildInput<RustMap, 'literal.string.bytes.raw'>
-	| RustMap['nodes']['literal.string.bytes.raw']
-	| BuildInput<RustMap, 'literal.string.c'>
-	| RustMap['nodes']['literal.string.c']
-	| BuildInput<RustMap, 'literal.string.c.raw'>
-	| RustMap['nodes']['literal.string.c.raw']
-	| BuildInput<RustMap, 'literal.string.raw'>
-	| RustMap['nodes']['literal.string.raw']
-	| BuildInput<RustMap, 'pattern.as'>
-	| RustMap['nodes']['pattern.as']
-	| BuildInput<RustMap, 'pattern.generic'>
-	| RustMap['nodes']['pattern.generic']
-	| BuildInput<RustMap, 'pattern.list'>
-	| RustMap['nodes']['pattern.list']
-	| BuildInput<RustMap, 'pattern.mutable'>
-	| RustMap['nodes']['pattern.mutable']
-	| BuildInput<RustMap, 'pattern.or'>
-	| RustMap['nodes']['pattern.or']
-	| BuildInput<RustMap, 'pattern.range.exclusive'>
-	| RustMap['nodes']['pattern.range.exclusive']
-	| BuildInput<RustMap, 'pattern.range.inclusive'>
-	| RustMap['nodes']['pattern.range.inclusive']
-	| BuildInput<RustMap, 'pattern.range.inclusive.legacy'>
-	| RustMap['nodes']['pattern.range.inclusive.legacy']
-	| BuildInput<RustMap, 'pattern.reference'>
-	| RustMap['nodes']['pattern.reference']
-	| BuildInput<RustMap, 'pattern.reference.value'>
-	| RustMap['nodes']['pattern.reference.value']
-	| BuildInput<RustMap, 'pattern.struct'>
-	| RustMap['nodes']['pattern.struct']
-	| BuildInput<RustMap, 'pattern.struct.field'>
-	| RustMap['nodes']['pattern.struct.field']
-	| BuildInput<RustMap, 'pattern.tuple'>
-	| RustMap['nodes']['pattern.tuple']
-	| BuildInput<RustMap, 'statement.block.const'>
-	| RustMap['nodes']['statement.block.const'];
-const pattern_struct$318_fields$item = (value: pattern_struct$318_fields$item$Item) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case '..':
-				return 321;
-			case '_':
-				return 426;
-			default:
-				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
-				return b.identifier(value);
-		}
-	}
-	if (typeof value === 'number') {
-		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
-		}
-		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
-				]
-			)
-		)
-			return value;
-		return unseated('pattern.struct.fields', value);
-	}
-	switch (value.$path) {
-		case 'expression.call.macro':
-			return expression_call_macro$259(value);
-		case 'identifier':
-			return identifier$1(value);
-		case 'identifier.qualified':
-			return identifier_qualified$263(value);
-		case 'literal.boolean.false':
-			return unbuilt('pattern.struct.fields', value);
-		case 'literal.boolean.true':
-			return unbuilt('pattern.struct.fields', value);
-		case 'literal.character':
-			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$145(value);
-			if (
-				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
-				value.content !== undefined
-			)
-				return literal_character$150(value);
-			if (
-				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
-				value.content !== undefined
-			)
-				return literal_character$147(value);
-			if (
-				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
-				value.content !== undefined
-			)
-				return literal_character$149(value);
-			if (
-				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
-				value.content !== undefined
-			)
-				return literal_character$148(value);
-			return unbuilt('pattern.struct.fields', value);
-		case 'literal.number.float':
-			return literal_number_float$162(value);
-		case 'literal.number.integer':
-			return literal_number_integer$141(value);
-		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$143(value);
-		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$142(value);
-		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$144(value);
-		case 'literal.number.negative':
-			return literal_number_negative$330(value);
-		case 'literal.string':
-			return unbuilt('pattern.struct.fields', value);
-		case 'literal.string.bytes':
-			return unbuilt('pattern.struct.fields', value);
-		case 'literal.string.bytes.raw':
-			return unbuilt('pattern.struct.fields', value);
-		case 'literal.string.c':
-			return unbuilt('pattern.struct.fields', value);
-		case 'literal.string.c.raw':
-			return unbuilt('pattern.struct.fields', value);
-		case 'literal.string.raw':
-			return unbuilt('pattern.struct.fields', value);
-		case 'pattern.as':
-			return pattern_as$325(value);
-		case 'pattern.generic':
-			return pattern_generic$315(value);
-		case 'pattern.list':
-			return pattern_list$317(value);
-		case 'pattern.mutable':
-			return pattern_mutable$322(value);
-		case 'pattern.or':
-			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
-			return pattern_or$386(value);
-		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			return unbuilt('pattern.struct.fields', value);
-		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('pattern.struct.fields', value);
-		case 'pattern.range.inclusive.legacy':
-			return unbuilt('pattern.struct.fields', value);
-		case 'pattern.reference':
-			return pattern_reference$324(value);
-		case 'pattern.reference.value':
-			return pattern_reference_value$326(value);
-		case 'pattern.struct':
-			if (
-				(value.type === undefined || [265, 484].includes(pattern_struct$319_type$kind(value.type) ?? -1)) &&
-				value.type !== undefined
-			)
-				return pattern_struct$319(value);
-			return pattern_struct$318(value);
-		case 'pattern.struct.field':
-			return unbuilt('pattern.struct.fields', value);
-		case 'pattern.tuple':
-			return pattern_tuple$316(value);
-		case 'statement.block.const':
-			return statement_block_const$300(value);
-		default:
-			return unbuilt('pattern.struct.fields', value);
-	}
-};
-type pattern_struct$318_type$Item =
-	| Text<RustMap, 'identifier'>
-	| BuildInput<RustMap, 'identifier'>
-	| RustMap['nodes']['identifier']
-	| BuildInput<RustMap, 'identifier.qualified'>
-	| RustMap['nodes']['identifier.qualified']
-	| BuildInput<RustMap, 'type.generic.turbofish'>
-	| RustMap['nodes']['type.generic.turbofish'];
-const pattern_struct$318_type = (value: pattern_struct$318_type$Item) => {
-	if (typeof value === 'string') {
-		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
-		return b.identifier(value);
-	}
-	if (typeof value === 'number') {
-		if (seated(value, [1, 247, 263])) return value;
-		return unseated('pattern.struct.type', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [1, 247, 263])) return value;
-		return unseated('pattern.struct.type', value);
-	}
-	switch (value.$path) {
-		case 'identifier':
-			return identifier$1(value);
-		case 'identifier.qualified':
-			return identifier_qualified$263(value);
-		case 'type.generic.turbofish':
-			return type_generic_turbofish$247(value);
-		default:
-			return unbuilt('pattern.struct.type', value);
-	}
-};
 type pattern_struct$319_fields$item$Item =
 	| '..'
-	| '_'
-	| 'false'
-	| 'true'
-	| Text<RustMap, 'identifier'>
-	| Text<RustMap, 'literal.character'>
-	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'pattern.struct.rest'>
-	| Text<RustMap, 'pattern.wildcard'>
-	| number
-	| BuildInput<RustMap, 'expression.call.macro'>
-	| RustMap['nodes']['expression.call.macro']
-	| BuildInput<RustMap, 'identifier'>
-	| RustMap['nodes']['identifier']
-	| BuildInput<RustMap, 'identifier.qualified'>
-	| RustMap['nodes']['identifier.qualified']
-	| BuildInput<RustMap, 'literal.boolean.false'>
-	| RustMap['nodes']['literal.boolean.false']
-	| BuildInput<RustMap, 'literal.boolean.true'>
-	| RustMap['nodes']['literal.boolean.true']
-	| BuildInput<RustMap, 'literal.character'>
-	| RustMap['nodes']['literal.character']
-	| BuildInput<RustMap, 'literal.number.float'>
-	| RustMap['nodes']['literal.number.float']
-	| BuildInput<RustMap, 'literal.number.integer'>
-	| RustMap['nodes']['literal.number.integer']
-	| BuildInput<RustMap, 'literal.number.integer.binary'>
-	| RustMap['nodes']['literal.number.integer.binary']
-	| BuildInput<RustMap, 'literal.number.integer.hex'>
-	| RustMap['nodes']['literal.number.integer.hex']
-	| BuildInput<RustMap, 'literal.number.integer.octal'>
-	| RustMap['nodes']['literal.number.integer.octal']
-	| BuildInput<RustMap, 'literal.number.negative'>
-	| RustMap['nodes']['literal.number.negative']
-	| BuildInput<RustMap, 'literal.string'>
-	| RustMap['nodes']['literal.string']
-	| BuildInput<RustMap, 'literal.string.bytes'>
-	| RustMap['nodes']['literal.string.bytes']
-	| BuildInput<RustMap, 'literal.string.bytes.raw'>
-	| RustMap['nodes']['literal.string.bytes.raw']
-	| BuildInput<RustMap, 'literal.string.c'>
-	| RustMap['nodes']['literal.string.c']
-	| BuildInput<RustMap, 'literal.string.c.raw'>
-	| RustMap['nodes']['literal.string.c.raw']
-	| BuildInput<RustMap, 'literal.string.raw'>
-	| RustMap['nodes']['literal.string.raw']
-	| BuildInput<RustMap, 'pattern.as'>
-	| RustMap['nodes']['pattern.as']
-	| BuildInput<RustMap, 'pattern.generic'>
-	| RustMap['nodes']['pattern.generic']
-	| BuildInput<RustMap, 'pattern.list'>
-	| RustMap['nodes']['pattern.list']
-	| BuildInput<RustMap, 'pattern.mutable'>
-	| RustMap['nodes']['pattern.mutable']
-	| BuildInput<RustMap, 'pattern.or'>
-	| RustMap['nodes']['pattern.or']
-	| BuildInput<RustMap, 'pattern.range.exclusive'>
-	| RustMap['nodes']['pattern.range.exclusive']
-	| BuildInput<RustMap, 'pattern.range.inclusive'>
-	| RustMap['nodes']['pattern.range.inclusive']
-	| BuildInput<RustMap, 'pattern.range.inclusive.legacy'>
-	| RustMap['nodes']['pattern.range.inclusive.legacy']
-	| BuildInput<RustMap, 'pattern.reference'>
-	| RustMap['nodes']['pattern.reference']
-	| BuildInput<RustMap, 'pattern.reference.value'>
-	| RustMap['nodes']['pattern.reference.value']
-	| BuildInput<RustMap, 'pattern.struct'>
-	| RustMap['nodes']['pattern.struct']
 	| BuildInput<RustMap, 'pattern.struct.field'>
-	| RustMap['nodes']['pattern.struct.field']
-	| BuildInput<RustMap, 'pattern.tuple'>
-	| RustMap['nodes']['pattern.tuple']
-	| BuildInput<RustMap, 'statement.block.const'>
-	| RustMap['nodes']['statement.block.const'];
+	| RustMap['nodes']['pattern.struct.field'];
 const pattern_struct$319_fields$item = (value: pattern_struct$319_fields$item$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -65081,71 +64767,9 @@ const pattern_struct$319_fields$item = (value: pattern_struct$319_fields$item$It
 		return unseated('pattern.struct.fields', value);
 	}
 	switch (value.$path) {
-		case 'expression.call.macro':
-			return unbuilt('pattern.struct.fields', value);
-		case 'identifier':
-			return unbuilt('pattern.struct.fields', value);
-		case 'identifier.qualified':
-			return unbuilt('pattern.struct.fields', value);
-		case 'literal.boolean.false':
-			return unbuilt('pattern.struct.fields', value);
-		case 'literal.boolean.true':
-			return unbuilt('pattern.struct.fields', value);
-		case 'literal.character':
-			return unbuilt('pattern.struct.fields', value);
-		case 'literal.number.float':
-			return unbuilt('pattern.struct.fields', value);
-		case 'literal.number.integer':
-			return unbuilt('pattern.struct.fields', value);
-		case 'literal.number.integer.binary':
-			return unbuilt('pattern.struct.fields', value);
-		case 'literal.number.integer.hex':
-			return unbuilt('pattern.struct.fields', value);
-		case 'literal.number.integer.octal':
-			return unbuilt('pattern.struct.fields', value);
-		case 'literal.number.negative':
-			return unbuilt('pattern.struct.fields', value);
-		case 'literal.string':
-			return unbuilt('pattern.struct.fields', value);
-		case 'literal.string.bytes':
-			return unbuilt('pattern.struct.fields', value);
-		case 'literal.string.bytes.raw':
-			return unbuilt('pattern.struct.fields', value);
-		case 'literal.string.c':
-			return unbuilt('pattern.struct.fields', value);
-		case 'literal.string.c.raw':
-			return unbuilt('pattern.struct.fields', value);
-		case 'literal.string.raw':
-			return unbuilt('pattern.struct.fields', value);
-		case 'pattern.as':
-			return unbuilt('pattern.struct.fields', value);
-		case 'pattern.generic':
-			return unbuilt('pattern.struct.fields', value);
-		case 'pattern.list':
-			return unbuilt('pattern.struct.fields', value);
-		case 'pattern.mutable':
-			return unbuilt('pattern.struct.fields', value);
-		case 'pattern.or':
-			return unbuilt('pattern.struct.fields', value);
-		case 'pattern.range.exclusive':
-			return unbuilt('pattern.struct.fields', value);
-		case 'pattern.range.inclusive':
-			return unbuilt('pattern.struct.fields', value);
-		case 'pattern.range.inclusive.legacy':
-			return unbuilt('pattern.struct.fields', value);
-		case 'pattern.reference':
-			return unbuilt('pattern.struct.fields', value);
-		case 'pattern.reference.value':
-			return unbuilt('pattern.struct.fields', value);
-		case 'pattern.struct':
-			return unbuilt('pattern.struct.fields', value);
 		case 'pattern.struct.field':
 			if (value.name !== undefined && value.pattern === undefined) return pattern_struct_field$414(value);
 			return pattern_struct_field$415(value);
-		case 'pattern.tuple':
-			return unbuilt('pattern.struct.fields', value);
-		case 'statement.block.const':
-			return unbuilt('pattern.struct.fields', value);
 		default:
 			return unbuilt('pattern.struct.fields', value);
 	}
@@ -65154,10 +64778,8 @@ type pattern_struct$319_type$Item =
 	| Text<RustMap, 'identifier'>
 	| BuildInput<RustMap, 'identifier'>
 	| RustMap['nodes']['identifier']
-	| BuildInput<RustMap, 'identifier.qualified'>
-	| RustMap['nodes']['identifier.qualified']
-	| BuildInput<RustMap, 'type.generic.turbofish'>
-	| RustMap['nodes']['type.generic.turbofish'];
+	| PathInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified'];
 const pattern_struct$319_type = (value: pattern_struct$319_type$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -65174,38 +64796,11 @@ const pattern_struct$319_type = (value: pattern_struct$319_type$Item) => {
 	switch (value.$path) {
 		case 'identifier':
 			return unbuilt('pattern.struct.type', value);
+		case undefined:
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
-		case 'type.generic.turbofish':
-			return unbuilt('pattern.struct.type', value);
 		default:
 			return unbuilt('pattern.struct.type', value);
-	}
-};
-type pattern_struct$319_type$kind$Item =
-	| Text<RustMap, 'identifier'>
-	| BuildInput<RustMap, 'identifier'>
-	| RustMap['nodes']['identifier']
-	| BuildInput<RustMap, 'identifier.qualified'>
-	| RustMap['nodes']['identifier.qualified']
-	| BuildInput<RustMap, 'type.generic.turbofish'>
-	| RustMap['nodes']['type.generic.turbofish'];
-const pattern_struct$319_type$kind = (value: pattern_struct$319_type$kind$Item): number | undefined => {
-	if (typeof value === 'string') {
-		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value).$type;
-		return b.identifier(value).$type;
-	}
-	if (typeof value === 'number') {
-		return value;
-	}
-	if (isNode(value)) return value.$type;
-	switch (value.$path) {
-		case 'identifier':
-			return 484;
-		case 'identifier.qualified':
-			return 265;
-		default:
-			return undefined;
 	}
 };
 type pattern_struct_field$414_name$Item =
@@ -65325,6 +64920,8 @@ type pattern_struct_field$415_pattern$Item =
 	| RustMap['nodes']['pattern.reference.value']
 	| BuildInput<RustMap, 'pattern.struct'>
 	| RustMap['nodes']['pattern.struct']
+	| BuildInput<RustMap, 'pattern.struct.tuple'>
+	| RustMap['nodes']['pattern.struct.tuple']
 	| BuildInput<RustMap, 'pattern.tuple'>
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
@@ -65443,18 +65040,247 @@ const pattern_struct_field$415_pattern = (value: pattern_struct_field$415_patter
 		case 'pattern.reference.value':
 			return pattern_reference_value$326(value);
 		case 'pattern.struct':
-			if (
-				(value.type === undefined || [265, 484].includes(pattern_struct$319_type$kind(value.type) ?? -1)) &&
-				value.type !== undefined
-			)
-				return pattern_struct$319(value);
-			return pattern_struct$318(value);
+			return pattern_struct$319(value);
+		case 'pattern.struct.tuple':
+			return pattern_struct_tuple$318(value);
 		case 'pattern.tuple':
 			return pattern_tuple$316(value);
 		case 'statement.block.const':
 			return statement_block_const$300(value);
 		default:
 			return unbuilt('pattern.struct.field.pattern', value);
+	}
+};
+type pattern_struct_tuple$318_fields$item$Item =
+	| '..'
+	| '_'
+	| 'false'
+	| 'true'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'pattern.struct.rest'>
+	| Text<RustMap, 'pattern.wildcard'>
+	| number
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.number.negative'>
+	| RustMap['nodes']['literal.number.negative']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw']
+	| BuildInput<RustMap, 'pattern.as'>
+	| RustMap['nodes']['pattern.as']
+	| BuildInput<RustMap, 'pattern.generic'>
+	| RustMap['nodes']['pattern.generic']
+	| BuildInput<RustMap, 'pattern.list'>
+	| RustMap['nodes']['pattern.list']
+	| BuildInput<RustMap, 'pattern.mutable'>
+	| RustMap['nodes']['pattern.mutable']
+	| BuildInput<RustMap, 'pattern.or'>
+	| RustMap['nodes']['pattern.or']
+	| BuildInput<RustMap, 'pattern.range.exclusive'>
+	| RustMap['nodes']['pattern.range.exclusive']
+	| BuildInput<RustMap, 'pattern.range.inclusive'>
+	| RustMap['nodes']['pattern.range.inclusive']
+	| BuildInput<RustMap, 'pattern.range.inclusive.legacy'>
+	| RustMap['nodes']['pattern.range.inclusive.legacy']
+	| BuildInput<RustMap, 'pattern.reference'>
+	| RustMap['nodes']['pattern.reference']
+	| BuildInput<RustMap, 'pattern.reference.value'>
+	| RustMap['nodes']['pattern.reference.value']
+	| BuildInput<RustMap, 'pattern.struct'>
+	| RustMap['nodes']['pattern.struct']
+	| BuildInput<RustMap, 'pattern.struct.tuple'>
+	| RustMap['nodes']['pattern.struct.tuple']
+	| BuildInput<RustMap, 'pattern.tuple'>
+	| RustMap['nodes']['pattern.tuple']
+	| BuildInput<RustMap, 'statement.block.const'>
+	| RustMap['nodes']['statement.block.const'];
+const pattern_struct_tuple$318_fields$item = (value: pattern_struct_tuple$318_fields$item$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '..':
+				return 321;
+			case '_':
+				return 426;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+				]
+			)
+		)
+			return value;
+		return unseated('pattern.struct.tuple.fields', value);
+	}
+	switch (value.$path) {
+		case 'expression.call.macro':
+			return expression_call_macro$259(value);
+		case 'identifier':
+			return identifier$1(value);
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		case 'literal.boolean.false':
+			return unbuilt('pattern.struct.tuple.fields', value);
+		case 'literal.boolean.true':
+			return unbuilt('pattern.struct.tuple.fields', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return literal_character$145(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$150(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$147(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$149(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$148(value);
+			return unbuilt('pattern.struct.tuple.fields', value);
+		case 'literal.number.float':
+			return literal_number_float$162(value);
+		case 'literal.number.integer':
+			return literal_number_integer$141(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$143(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$142(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$144(value);
+		case 'literal.number.negative':
+			return literal_number_negative$330(value);
+		case 'literal.string':
+			return unbuilt('pattern.struct.tuple.fields', value);
+		case 'literal.string.bytes':
+			return unbuilt('pattern.struct.tuple.fields', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('pattern.struct.tuple.fields', value);
+		case 'literal.string.c':
+			return unbuilt('pattern.struct.tuple.fields', value);
+		case 'literal.string.c.raw':
+			return unbuilt('pattern.struct.tuple.fields', value);
+		case 'literal.string.raw':
+			return unbuilt('pattern.struct.tuple.fields', value);
+		case 'pattern.as':
+			return pattern_as$325(value);
+		case 'pattern.generic':
+			return pattern_generic$315(value);
+		case 'pattern.list':
+			return pattern_list$317(value);
+		case 'pattern.mutable':
+			return pattern_mutable$322(value);
+		case 'pattern.or':
+			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
+			return pattern_or$386(value);
+		case 'pattern.range.exclusive':
+			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
+			return unbuilt('pattern.struct.tuple.fields', value);
+		case 'pattern.range.inclusive':
+			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
+			return unbuilt('pattern.struct.tuple.fields', value);
+		case 'pattern.range.inclusive.legacy':
+			return unbuilt('pattern.struct.tuple.fields', value);
+		case 'pattern.reference':
+			return pattern_reference$324(value);
+		case 'pattern.reference.value':
+			return pattern_reference_value$326(value);
+		case 'pattern.struct':
+			return pattern_struct$319(value);
+		case 'pattern.struct.tuple':
+			return pattern_struct_tuple$318(value);
+		case 'pattern.tuple':
+			return pattern_tuple$316(value);
+		case 'statement.block.const':
+			return statement_block_const$300(value);
+		default:
+			return unbuilt('pattern.struct.tuple.fields', value);
+	}
+};
+type pattern_struct_tuple$318_type$Item =
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'type.generic.turbofish'>
+	| RustMap['nodes']['type.generic.turbofish'];
+const pattern_struct_tuple$318_type = (value: pattern_struct_tuple$318_type$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1, 247, 263])) return value;
+		return unseated('pattern.struct.tuple.type', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1, 247, 263])) return value;
+		return unseated('pattern.struct.tuple.type', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return identifier$1(value);
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		case 'type.generic.turbofish':
+			return type_generic_turbofish$247(value);
+		default:
+			return unbuilt('pattern.struct.tuple.type', value);
 	}
 };
 type pattern_tuple$316_elements$item$Item =
@@ -65528,6 +65354,8 @@ type pattern_tuple$316_elements$item$Item =
 	| RustMap['nodes']['pattern.reference.value']
 	| BuildInput<RustMap, 'pattern.struct'>
 	| RustMap['nodes']['pattern.struct']
+	| BuildInput<RustMap, 'pattern.struct.tuple'>
+	| RustMap['nodes']['pattern.struct.tuple']
 	| BuildInput<RustMap, 'pattern.tuple'>
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
@@ -65672,12 +65500,9 @@ const pattern_tuple$316_elements$item = (value: pattern_tuple$316_elements$item$
 		case 'pattern.reference.value':
 			return pattern_reference_value$326(value);
 		case 'pattern.struct':
-			if (
-				(value.type === undefined || [265, 484].includes(pattern_struct$319_type$kind(value.type) ?? -1)) &&
-				value.type !== undefined
-			)
-				return pattern_struct$319(value);
-			return pattern_struct$318(value);
+			return pattern_struct$319(value);
+		case 'pattern.struct.tuple':
+			return pattern_struct_tuple$318(value);
 		case 'pattern.tuple':
 			return pattern_tuple$316(value);
 		case 'statement.block.const':
@@ -77245,6 +77070,8 @@ type statement_loop_for_each$299_left$Item =
 	| RustMap['nodes']['pattern.reference.value']
 	| BuildInput<RustMap, 'pattern.struct'>
 	| RustMap['nodes']['pattern.struct']
+	| BuildInput<RustMap, 'pattern.struct.tuple'>
+	| RustMap['nodes']['pattern.struct.tuple']
 	| BuildInput<RustMap, 'pattern.tuple'>
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
@@ -77363,12 +77190,9 @@ const statement_loop_for_each$299_left = (value: statement_loop_for_each$299_lef
 		case 'pattern.reference.value':
 			return pattern_reference_value$326(value);
 		case 'pattern.struct':
-			if (
-				(value.type === undefined || [265, 484].includes(pattern_struct$319_type$kind(value.type) ?? -1)) &&
-				value.type !== undefined
-			)
-				return pattern_struct$319(value);
-			return pattern_struct$318(value);
+			return pattern_struct$319(value);
+		case 'pattern.struct.tuple':
+			return pattern_struct_tuple$318(value);
 		case 'pattern.tuple':
 			return pattern_tuple$316(value);
 		case 'statement.block.const':
@@ -85277,19 +85101,6 @@ const pattern_reference_value$326 = (
 		exclusive: (input.$flags ?? []).includes('exclusive')
 	});
 };
-const pattern_struct$318 = (input: PathInput<RustMap, 'pattern.struct'>): ReturnType<typeof b.tupleStructPattern> => {
-	const unroutedSlot = unroutedIn(input, ['fields', 'type']);
-	if (unroutedSlot !== undefined) return unrouted('pattern.struct', unroutedSlot);
-	const fields$first = (input.fields ?? [])[0];
-	const fields$rest = (input.fields ?? []).slice(1);
-	return b.tupleStructPattern({
-		type: input.type === undefined ? missing('pattern.struct.type') : pattern_struct$318_type(input.type),
-		fields:
-			fields$first === undefined
-				? undefined
-				: b.patterns(pattern_struct$318_fields$item(fields$first), ...fields$rest.map(pattern_struct$318_fields$item))
-	});
-};
 const pattern_struct$319 = (input: PathInput<RustMap, 'pattern.struct'>): ReturnType<typeof b.structPattern> => {
 	const unroutedSlot = unroutedIn(input, ['fields', 'type']);
 	if (unroutedSlot !== undefined) return unrouted('pattern.struct', unroutedSlot);
@@ -85330,6 +85141,24 @@ const pattern_struct_field$415 = (
 				: pattern_struct_field$415_pattern(input.pattern),
 		mutable: (input.$flags ?? []).includes('mutable'),
 		byReference: (input.$flags ?? []).includes('byReference')
+	});
+};
+const pattern_struct_tuple$318 = (
+	input: PathInput<RustMap, 'pattern.struct.tuple'>
+): ReturnType<typeof b.tupleStructPattern> => {
+	const unroutedSlot = unroutedIn(input, ['fields', 'type']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.struct.tuple', unroutedSlot);
+	const fields$first = (input.fields ?? [])[0];
+	const fields$rest = (input.fields ?? []).slice(1);
+	return b.tupleStructPattern({
+		type: input.type === undefined ? missing('pattern.struct.tuple.type') : pattern_struct_tuple$318_type(input.type),
+		fields:
+			fields$first === undefined
+				? undefined
+				: b.patterns(
+						pattern_struct_tuple$318_fields$item(fields$first),
+						...fields$rest.map(pattern_struct_tuple$318_fields$item)
+					)
 	});
 };
 const pattern_tuple$316 = (input: PathInput<RustMap, 'pattern.tuple'>): ReturnType<typeof b.tuplePattern> => {
@@ -86699,16 +86528,14 @@ const pattern_reference_value = (input: PathInput<RustMap, 'pattern.reference.va
 	return pattern_reference_value$326(input);
 };
 const pattern_struct = (input: PathInput<RustMap, 'pattern.struct'>) => {
-	if (
-		(input.type === undefined || [265, 484].includes(pattern_struct$319_type$kind(input.type) ?? -1)) &&
-		input.type !== undefined
-	)
-		return pattern_struct$319(input);
-	return pattern_struct$318(input);
+	return pattern_struct$319(input);
 };
 const pattern_struct_field = (input: PathInput<RustMap, 'pattern.struct.field'>) => {
 	if (input.name !== undefined && input.pattern === undefined) return pattern_struct_field$414(input);
 	return pattern_struct_field$415(input);
+};
+const pattern_struct_tuple = (input: PathInput<RustMap, 'pattern.struct.tuple'>) => {
+	return pattern_struct_tuple$318(input);
 };
 const pattern_tuple = (input: PathInput<RustMap, 'pattern.tuple'>) => {
 	return pattern_tuple$316(input);
@@ -86925,7 +86752,7 @@ export const portableBuild = {
 		mutable: pattern_mutable,
 		or: pattern_or,
 		reference: Object.assign(pattern_reference, { value: pattern_reference_value }),
-		struct: Object.assign(pattern_struct, { field: pattern_struct_field }),
+		struct: Object.assign(pattern_struct, { field: pattern_struct_field, tuple: pattern_struct_tuple }),
 		tuple: pattern_tuple
 	},
 	statement: {

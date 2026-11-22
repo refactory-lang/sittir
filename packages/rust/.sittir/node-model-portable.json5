@@ -20489,10 +20489,10 @@
       }
     },
     "tuple_struct_pattern": {
-      "vocab": "pattern.struct",
+      "vocab": "pattern.struct.tuple",
       "read": [
         {
-          "vocab": "pattern.struct",
+          "vocab": "pattern.struct.tuple",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -23517,14 +23517,14 @@
       {
         "depth": 2,
         "paths": 85,
-        "kinds": 119,
+        "kinds": 118,
         "refinements": 5
       },
       {
         "depth": 3,
-        "paths": 96,
-        "kinds": 112,
-        "refinements": 65
+        "paths": 97,
+        "kinds": 113,
+        "refinements": 66
       },
       {
         "depth": 4,

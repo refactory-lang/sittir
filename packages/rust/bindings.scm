@@ -413,7 +413,7 @@
 ; ── pattern ────────────────────────────────────────────────────────────────────
 (tuple_pattern) @pattern.tuple
 (struct_pattern) @pattern.struct
-(tuple_struct_pattern (patterns)? @fields) @pattern.struct
+(tuple_struct_pattern (patterns)? @fields) @pattern.struct.tuple
 (field_pattern ref: _? @byReference) @pattern.struct.field
 (remaining_field_pattern) @pattern.struct.rest
 (slice_pattern (patterns)? @elements) @pattern.slice

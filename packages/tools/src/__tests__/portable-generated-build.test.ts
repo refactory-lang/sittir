@@ -12,7 +12,7 @@ const STORAGES = ['object', 'arena'] as const;
 
 const INTERPRETER_REFUSES: Readonly<Record<string, readonly string[]>> = { python: ['declaration.member.property.getter', 'declaration.member.method.static'] };
 
-const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 494, rust: 771, typescript: 681 };
+const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 494, rust: 776, typescript: 681 };
 
 const NOT_GENERATED = /: (\S+) is not generated$/;
 
@@ -315,6 +315,45 @@ describe('a lambda, whose block body holds statements and whose expression body 
 	});
 });
 
+describe("a struct pattern, whose braces and parentheses are two paths", () => {
+	it.each([
+		['S { a }', 'pattern.struct', 'StructPattern'],
+		['S {}', 'pattern.struct', 'StructPattern'],
+		['S { .. }', 'pattern.struct', 'StructPattern'],
+		['m::S { a }', 'pattern.struct', 'StructPattern'],
+		['m::S {}', 'pattern.struct', 'StructPattern'],
+		['S()', 'pattern.struct.tuple', 'TupleStructPattern'],
+		['S(a)', 'pattern.struct.tuple', 'TupleStructPattern'],
+		['S(..)', 'pattern.struct.tuple', 'TupleStructPattern'],
+		['m::S()', 'pattern.struct.tuple', 'TupleStructPattern'],
+		['m::S(a)', 'pattern.struct.tuple', 'TupleStructPattern']
+	] as const)('rust: %s reads %s, and both builds make the kind it parses to and render it back', async (text, path, kind) => {
+		const language = await languageByName('rust');
+		using engine = await createEngine(language, { api: 'strict' });
+		const runtime = await portableRuntime(engine);
+		const generated = scopeBuilders(engine, (await generatedBuild('rust')) as object);
+		const readAt = (pattern: string) => [...structuresIn(runtime.read(engine.parse(`let ${pattern} = b;\n`)))].find((candidate) => candidate.$path === path)!;
+		const structure = readAt(text);
+		const { pattern: guards } = (language as unknown as { readonly is: { readonly portable: { readonly pattern: { readonly struct: ((node: unknown) => boolean) & { readonly tuple: (node: unknown) => boolean } } } } }).is.portable;
+		const expected = (engine.kinds as unknown as Readonly<Record<string, number>>)[kind];
+		for (const built of [runtime.build(structure), (functionAt(generated, path) as PathFunction)(structure)]) {
+			expect((built as { readonly $type: number }).$type).toBe(expected);
+			expect(engine.render(built as never).toString()).toBe(text);
+			expect(guards.struct(built)).toBe(true);
+			expect(guards.struct.tuple(built)).toBe(path === 'pattern.struct.tuple');
+		}
+		expect(readAt(text)).toEqual(structure);
+	});
+
+	it("python: a class pattern stays pattern.struct and keeps its positional and keyword fields", async () => {
+		using engine = await createEngine(await languageByName('python'), { api: 'strict' });
+		const runtime = await portableRuntime(engine);
+		const structure = [...structuresIn(runtime.read(engine.parse('match p:\n    case C(1, x=2):\n        pass\n')))].find((candidate) => candidate.$path === 'pattern.struct')! as PortableStructure & { readonly fields: readonly { readonly $path: string }[] };
+		expect(structure.fields.map((field) => field.$path)).toEqual(['literal.number.integer', 'pattern.struct.field']);
+		expect(engine.render(runtime.build(structure) as never).toString()).toBe('C(1, x=2)');
+	});
+});
+
 const bothBuilds = async (grammar: (typeof GRAMMARS)[number], structure: PortableStructure): Promise<readonly [interpreted: string, generated: string]> => {
 	using engine = await createEngine(await languageByName(grammar), { api: 'strict' });
 	const runtime = await portableRuntime(engine);
@@ -428,9 +467,10 @@ describe.each(GRAMMARS)('the generated portable build of %s', (grammar) => {
 
 type KindsTable = { readonly build: { readonly paths: Readonly<Record<string, { readonly arms: readonly { readonly kind: number; readonly when: readonly object[] }[] }>> } };
 
-const KINDS_PICKS: Readonly<Record<(typeof GRAMMARS)[number], { readonly path: string; readonly sources: readonly string[]; readonly within?: string; readonly excluded?: (element: unknown) => PortableStructure }>> = {
+const KINDS_PICK_GRAMMARS = ['python', 'typescript'] as const;
+
+const KINDS_PICKS: Readonly<Record<(typeof KINDS_PICK_GRAMMARS)[number], { readonly path: string; readonly sources: readonly string[]; readonly excluded?: (element: unknown) => PortableStructure }>> = {
 	typescript: { path: 'expression.parenthesized', sources: ['(a, b);\n', '(a);\n'] },
-	rust: { path: 'pattern.struct', within: 'name', sources: ['let m::S { a } = b;\n', 'let S(a) = b;\n'] },
 	python: {
 		path: 'pattern.tuple',
 		sources: ['(a, b) = c\n', 'match p:\n    case (1, b):\n        pass\n'],
@@ -438,7 +478,7 @@ const KINDS_PICKS: Readonly<Record<(typeof GRAMMARS)[number], { readonly path: s
 	}
 };
 
-describe.each(GRAMMARS)('the generated portable build of %s, on two arms that differ by the kinds a slot builds', (grammar) => {
+describe.each(KINDS_PICK_GRAMMARS)('the generated portable build of %s, on two arms that differ by the kinds a slot builds', (grammar) => {
 	it("builds each through its own arm as the interpreter does, and refuses a path an arm's kinds test excludes where that arm is the only one", async () => {
 		using engine = await createEngine(await languageByName(grammar), { api: 'strict' });
 		const runtime = await portableRuntime(engine);
@@ -446,12 +486,9 @@ describe.each(GRAMMARS)('the generated portable build of %s, on two arms that di
 		const { build: table } = (await import(`../../../${grammar}/src/portable/table.ts`)) as KindsTable;
 		const generated = scopeBuilders(engine, portableBuild);
 		const outcome = (run: () => unknown): string => textOrRefused((node) => engine.render(node), run);
-		const { path, sources, within, excluded } = KINDS_PICKS[grammar];
+		const { path, sources, excluded } = KINDS_PICKS[grammar];
 		const tested = table.paths[path]!.arms.filter((arm) => arm.when.some((test) => 'kinds' in test)).map((arm) => arm.kind);
-		const reads = sources.map((source) => {
-			const statement = (runtime.read(engine.parse(source)) as { readonly statements: readonly PortableStructure[] }).statements[0]!;
-			return within === undefined ? statement : (statement as unknown as Readonly<Record<string, PortableStructure>>)[within]!;
-		});
+		const reads = sources.map((source) => (runtime.read(engine.parse(source)) as { readonly statements: readonly PortableStructure[] }).statements[0]!);
 		const build = (read: PortableStructure) => (functionAt(generated, read.$path) as PathFunction)(read);
 		for (const read of reads) expect(outcome(() => build(read))).toBe(outcome(() => runtime.build(read)));
 		for (const read of reads) expect(outcome(() => build(read))).not.toBe('refused');

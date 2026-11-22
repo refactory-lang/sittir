@@ -154,18 +154,21 @@ describe('the portable build table', () => {
 	});
 
 	it('tells forms apart by the kinds a slot holds, where the slot reaches them through the containers its grammar slot holds', () => {
-		expect(armOf('rust', 'pattern.struct', rust.kinds.StructPattern).when).toEqual([
-			{ slot: 'type', kinds: [rust.kinds.ScopedTypeIdentifier, rust.kinds.TypeIdentifier] },
-			{ absent: [], required: ['type'] }
-		]);
-		expect(armOf('rust', 'pattern.struct', rust.kinds.TupleStructPattern).when).toEqual([
-			{ slot: 'type', kinds: [rust.kinds.Identifier, rust.kinds.GenericTypeWithTurbofish, rust.kinds.ScopedIdentifier] },
-			{ absent: [], required: ['type'] }
-		]);
 		expect(armOf('typescript', 'expression.parenthesized', typescript.kinds.ParenthesizedExpressionSequence).when).toContainEqual({
 			slot: 'expression',
 			kinds: [typescript.kinds.SequenceExpression]
 		});
+	});
+
+	it("gives rust's struct pattern forms a path each, so no pick by a slot's kinds lies between them", () => {
+		const paths = [
+			['pattern.struct', rust.kinds.StructPattern],
+			['pattern.struct.tuple', rust.kinds.TupleStructPattern]
+		] as const;
+		for (const [path, kind] of paths) {
+			expect(armsOf('rust', path).map((arm) => arm.kind)).toEqual([kind]);
+			expect(armOf('rust', path, kind).when.some((test) => 'kinds' in test)).toBe(false);
+		}
 	});
 
 	it("builds a form through its holder's mount, the step saying how the mount takes its input and which of its slot's forms it enters", () => {

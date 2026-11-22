@@ -2279,3 +2279,7 @@ The lambda's slot under valued blocks: an optional `trailingExpression`, the exp
 ### `packages/types/src/vocabulary/features/valued-blocks/expression.ts::Expression`
 
 The expressions valued blocks add slots to: `Expression.Lambda`, whose block may end with a value.
+
+### `packages/types/src/vocabulary/features/struct-patterns/structs/tuple-structs/pattern.ts::Pattern::Struct::Tuple`
+
+The parenthesized form of a struct pattern, gated by tuple structs: rust's `S(a)`, read apart from the braced `S { a }` that stays `pattern.struct`. It holds the `type` and `fields` of `Pattern.Struct`, and `is.pattern.struct` holds for it. Keeping the two forms on two paths is what lets `S {}` and `S()`, and `S { .. }` and `S(..)`, which mean different things, each rebuild as themselves. Python's `class_pattern` stays `pattern.struct`, since its positional and keyword fields share one form. Rust only.

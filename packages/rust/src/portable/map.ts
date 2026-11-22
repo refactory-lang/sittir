@@ -728,6 +728,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.reference.value'>
 				| V.Read<RustMap, 'pattern.struct'>
 				| V.Text<RustMap, 'pattern.struct.rest'>
+				| V.Read<RustMap, 'pattern.struct.tuple'>
 				| V.Read<RustMap, 'pattern.tuple'>
 				| V.Text<RustMap, 'pattern.wildcard'>
 				| V.Read<RustMap, 'statement.block.const'>
@@ -1372,6 +1373,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.reference.value'>
 				| V.Read<RustMap, 'pattern.struct'>
 				| V.Text<RustMap, 'pattern.struct.rest'>
+				| V.Read<RustMap, 'pattern.struct.tuple'>
 				| V.Read<RustMap, 'pattern.tuple'>
 				| V.Text<RustMap, 'pattern.wildcard'>
 				| V.Read<RustMap, 'statement.block.const'>
@@ -15101,6 +15103,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.reference.value'>
 				| V.Read<RustMap, 'pattern.struct'>
 				| V.Text<RustMap, 'pattern.struct.rest'>
+				| V.Read<RustMap, 'pattern.struct.tuple'>
 				| V.Read<RustMap, 'pattern.tuple'>
 				| V.Text<RustMap, 'pattern.wildcard'>
 				| V.Read<RustMap, 'statement.block.const'>
@@ -15283,6 +15286,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.reference.value'>
 				| V.Read<RustMap, 'pattern.struct'>
 				| V.Text<RustMap, 'pattern.struct.rest'>
+				| V.Read<RustMap, 'pattern.struct.tuple'>
 				| V.Read<RustMap, 'pattern.tuple'>
 				| V.Text<RustMap, 'pattern.wildcard'>
 				| V.Read<RustMap, 'statement.block.const'>
@@ -17899,6 +17903,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.reference.value'>
 				| V.Read<RustMap, 'pattern.struct'>
 				| V.Text<RustMap, 'pattern.struct.rest'>
+				| V.Read<RustMap, 'pattern.struct.tuple'>
 				| V.Read<RustMap, 'pattern.tuple'>
 				| V.Text<RustMap, 'pattern.wildcard'>
 				| V.Read<RustMap, 'statement.block.const'>
@@ -35265,6 +35270,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.reference.value'>
 				| V.Read<RustMap, 'pattern.struct'>
 				| V.Text<RustMap, 'pattern.struct.rest'>
+				| V.Read<RustMap, 'pattern.struct.tuple'>
 				| V.Read<RustMap, 'pattern.tuple'>
 				| V.Text<RustMap, 'pattern.wildcard'>
 				| V.Read<RustMap, 'statement.block.const'>
@@ -35337,6 +35343,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.reference.value'>
 				| V.Read<RustMap, 'pattern.struct'>
 				| V.Text<RustMap, 'pattern.struct.rest'>
+				| V.Read<RustMap, 'pattern.struct.tuple'>
 				| V.Read<RustMap, 'pattern.tuple'>
 				| V.Text<RustMap, 'pattern.wildcard'>
 				| V.Read<RustMap, 'statement.block.const'>
@@ -35399,6 +35406,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.reference.value'>
 				| V.Read<RustMap, 'pattern.struct'>
 				| V.Text<RustMap, 'pattern.struct.rest'>
+				| V.Read<RustMap, 'pattern.struct.tuple'>
 				| V.Read<RustMap, 'pattern.tuple'>
 				| V.Text<RustMap, 'pattern.wildcard'>
 				| V.Read<RustMap, 'statement.block.const'>
@@ -35462,6 +35470,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.reference.value'>
 				| V.Read<RustMap, 'pattern.struct'>
 				| V.Text<RustMap, 'pattern.struct.rest'>
+				| V.Read<RustMap, 'pattern.struct.tuple'>
 				| V.Read<RustMap, 'pattern.tuple'>
 				| V.Text<RustMap, 'pattern.wildcard'>
 				| V.Read<RustMap, 'statement.block.const'>
@@ -35522,6 +35531,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.reference.value'>
 				| V.Read<RustMap, 'pattern.struct'>
 				| V.Text<RustMap, 'pattern.struct.rest'>
+				| V.Read<RustMap, 'pattern.struct.tuple'>
 				| V.Read<RustMap, 'pattern.tuple'>
 				| V.Text<RustMap, 'pattern.wildcard'>
 				| V.Read<RustMap, 'statement.block.const'>
@@ -35900,6 +35910,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.reference.value'>
 				| V.Read<RustMap, 'pattern.struct'>
 				| V.Text<RustMap, 'pattern.struct.rest'>
+				| V.Read<RustMap, 'pattern.struct.tuple'>
 				| V.Read<RustMap, 'pattern.tuple'>
 				| V.Text<RustMap, 'pattern.wildcard'>
 				| V.Read<RustMap, 'statement.block.const'>
@@ -35963,6 +35974,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.reference.value'>
 				| V.Read<RustMap, 'pattern.struct'>
 				| V.Text<RustMap, 'pattern.struct.rest'>
+				| V.Read<RustMap, 'pattern.struct.tuple'>
 				| V.Read<RustMap, 'pattern.tuple'>
 				| V.Text<RustMap, 'pattern.wildcard'>
 				| V.Read<RustMap, 'statement.block.const'>
@@ -35995,98 +36007,16 @@ export interface RustMap extends V.GrammarMap {
 		};
 		readonly 'pattern.struct': {
 			readonly fields:
-				| V.Read<RustMap, 'expression.call.macro'>
-				| V.Read<RustMap, 'identifier'>
-				| V.Text<RustMap, 'identifier'>
-				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Read<RustMap, 'literal.boolean.false'>
-				| V.Read<RustMap, 'literal.boolean.true'>
-				| V.Read<RustMap, 'literal.character'>
-				| V.Read<RustMap, 'literal.number.float'>
-				| V.Read<RustMap, 'literal.number.integer'>
-				| V.Read<RustMap, 'literal.number.integer.binary'>
-				| V.Read<RustMap, 'literal.number.integer.hex'>
-				| V.Read<RustMap, 'literal.number.integer.octal'>
-				| V.Read<RustMap, 'literal.number.negative'>
-				| V.Read<RustMap, 'literal.string'>
-				| V.Read<RustMap, 'literal.string.bytes'>
-				| V.Read<RustMap, 'literal.string.bytes.raw'>
-				| V.Read<RustMap, 'literal.string.c'>
-				| V.Read<RustMap, 'literal.string.c.raw'>
-				| V.Read<RustMap, 'literal.string.raw'>
-				| V.Read<RustMap, 'pattern.as'>
-				| V.Read<RustMap, 'pattern.generic'>
-				| V.Read<RustMap, 'pattern.list'>
-				| V.Read<RustMap, 'pattern.mutable'>
-				| V.Read<RustMap, 'pattern.or'>
-				| V.Read<RustMap, 'pattern.range.exclusive'>
-				| V.Read<RustMap, 'pattern.range.inclusive'>
-				| V.Read<RustMap, 'pattern.range.inclusive.legacy'>
-				| V.Read<RustMap, 'pattern.reference'>
-				| V.Read<RustMap, 'pattern.reference.value'>
-				| V.Read<RustMap, 'pattern.struct'>
 				| V.Read<RustMap, 'pattern.struct.field'>
 				| V.Text<RustMap, 'pattern.struct.rest'>
-				| V.Read<RustMap, 'pattern.tuple'>
-				| V.Text<RustMap, 'pattern.wildcard'>
-				| V.Read<RustMap, 'statement.block.const'>
 				| '..'
-				| '_'
-				| 'false'
-				| 'true'
-				| T.CapturedPattern.Parsed
-				| T.CharLiteralEscapedHex.Parsed
-				| T.CharLiteralEscapedSimple.Parsed
-				| T.CharLiteralEscapedUnicodeBraced.Parsed
-				| T.CharLiteralEscapedUnicodeFixed.Parsed
-				| T.CharLiteralPlain.Parsed
-				| T.FieldPatternNamed.Parsed
-				| T.FloatLiteral.Parsed
-				| T.IntegerLiteralBinary.Parsed
-				| T.IntegerLiteralHex.Parsed
-				| T.IntegerLiteralOctal.Parsed
-				| T.MutPattern.Parsed
-				| T.NegativeLiteral.Parsed
-				| T.OrPatternBinary.Parsed
-				| T.OrPatternPrefix.Parsed
-				| T.RangePatternPrefix.Parsed
-				| T.RangePatternWithLeft.Parsed
-				| T.RawStringLiteral.Parsed
-				| T.RefPattern.Parsed
-				| T.ReferencePattern.Parsed
-				| T.ScopedIdentifier.Parsed
-				| T.StringLiteral.Parsed;
+				| T.FieldPatternNamed.Parsed;
 			readonly type:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
 				| V.Read<RustMap, 'identifier.qualified'>
-				| V.Read<RustMap, 'type.generic.turbofish'>
-				| T.ScopedIdentifier.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
-			readonly $forms:
-				| V.Form<
-						never,
-						never,
-						{
-							readonly type:
-								| V.Read<RustMap, 'identifier'>
-								| V.Text<RustMap, 'identifier'>
-								| V.Read<RustMap, 'identifier.qualified'>
-								| T.ScopedTypeIdentifier.Parsed;
-						}
-				  >
-				| V.Form<
-						never,
-						never,
-						{
-							readonly type:
-								| V.Read<RustMap, 'identifier'>
-								| V.Text<RustMap, 'identifier'>
-								| V.Read<RustMap, 'identifier.qualified'>
-								| V.Read<RustMap, 'type.generic.turbofish'>
-								| T.ScopedIdentifier.Parsed;
-						}
-				  >;
+			readonly $forms: V.Form<'type'>;
 		};
 		readonly 'pattern.struct.field': {
 			readonly fields: never;
@@ -36123,6 +36053,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.reference.value'>
 				| V.Read<RustMap, 'pattern.struct'>
 				| V.Text<RustMap, 'pattern.struct.rest'>
+				| V.Read<RustMap, 'pattern.struct.tuple'>
 				| V.Read<RustMap, 'pattern.tuple'>
 				| V.Text<RustMap, 'pattern.wildcard'>
 				| V.Read<RustMap, 'statement.block.const'>
@@ -36156,6 +36087,76 @@ export interface RustMap extends V.GrammarMap {
 		};
 		readonly 'pattern.struct.rest': {
 			readonly $text: PortableTexts['pattern.struct.rest'];
+		};
+		readonly 'pattern.struct.tuple': {
+			readonly fields:
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.number.negative'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'pattern.as'>
+				| V.Read<RustMap, 'pattern.generic'>
+				| V.Read<RustMap, 'pattern.list'>
+				| V.Read<RustMap, 'pattern.mutable'>
+				| V.Read<RustMap, 'pattern.or'>
+				| V.Read<RustMap, 'pattern.range.exclusive'>
+				| V.Read<RustMap, 'pattern.range.inclusive'>
+				| V.Read<RustMap, 'pattern.range.inclusive.legacy'>
+				| V.Read<RustMap, 'pattern.reference'>
+				| V.Read<RustMap, 'pattern.reference.value'>
+				| V.Read<RustMap, 'pattern.struct'>
+				| V.Text<RustMap, 'pattern.struct.rest'>
+				| V.Read<RustMap, 'pattern.struct.tuple'>
+				| V.Read<RustMap, 'pattern.tuple'>
+				| V.Text<RustMap, 'pattern.wildcard'>
+				| V.Read<RustMap, 'statement.block.const'>
+				| '..'
+				| '_'
+				| 'false'
+				| 'true'
+				| T.CapturedPattern.Parsed
+				| T.CharLiteralEscapedHex.Parsed
+				| T.CharLiteralEscapedSimple.Parsed
+				| T.CharLiteralEscapedUnicodeBraced.Parsed
+				| T.CharLiteralEscapedUnicodeFixed.Parsed
+				| T.CharLiteralPlain.Parsed
+				| T.FloatLiteral.Parsed
+				| T.IntegerLiteralBinary.Parsed
+				| T.IntegerLiteralHex.Parsed
+				| T.IntegerLiteralOctal.Parsed
+				| T.MutPattern.Parsed
+				| T.NegativeLiteral.Parsed
+				| T.OrPatternBinary.Parsed
+				| T.OrPatternPrefix.Parsed
+				| T.RangePatternPrefix.Parsed
+				| T.RangePatternWithLeft.Parsed
+				| T.RawStringLiteral.Parsed
+				| T.RefPattern.Parsed
+				| T.ReferencePattern.Parsed
+				| T.ScopedIdentifier.Parsed
+				| T.StringLiteral.Parsed;
+			readonly type:
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Read<RustMap, 'type.generic.turbofish'>
+				| T.ScopedIdentifier.Parsed;
+			readonly $forms: V.Form<'type'>;
 		};
 		readonly 'pattern.tuple': {
 			readonly elements:
@@ -36191,6 +36192,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.reference.value'>
 				| V.Read<RustMap, 'pattern.struct'>
 				| V.Text<RustMap, 'pattern.struct.rest'>
+				| V.Read<RustMap, 'pattern.struct.tuple'>
 				| V.Read<RustMap, 'pattern.tuple'>
 				| V.Text<RustMap, 'pattern.wildcard'>
 				| V.Read<RustMap, 'statement.block.const'>
@@ -39685,6 +39687,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'pattern.reference.value'>
 				| V.Read<RustMap, 'pattern.struct'>
 				| V.Text<RustMap, 'pattern.struct.rest'>
+				| V.Read<RustMap, 'pattern.struct.tuple'>
 				| V.Read<RustMap, 'pattern.tuple'>
 				| V.Text<RustMap, 'pattern.wildcard'>
 				| V.Read<RustMap, 'statement.block.const'>
@@ -42214,9 +42217,10 @@ export interface RustMap extends V.GrammarMap {
 			readonly 'pattern.range.inclusive.legacy': TSKindId.RangePatternWithLeft;
 			readonly 'pattern.reference': TSKindId.RefPattern;
 			readonly 'pattern.reference.value': TSKindId.ReferencePattern;
-			readonly 'pattern.struct': TSKindId.StructPattern | TSKindId.TupleStructPattern;
+			readonly 'pattern.struct': TSKindId.StructPattern;
 			readonly 'pattern.struct.field': TSKindId.FieldPatternNamed | TSKindId.FieldPatternShorthand;
 			readonly 'pattern.struct.rest': TSKindId.RemainingFieldPattern;
+			readonly 'pattern.struct.tuple': TSKindId.TupleStructPattern;
 			readonly 'pattern.tuple': TSKindId.TuplePattern;
 			readonly 'pattern.wildcard': TSKindId.WildcardPattern;
 			readonly 'statement.block': TSKindId.Block;
@@ -42545,6 +42549,7 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'pattern.struct': never;
 		readonly 'pattern.struct.field': 'byReference' | 'mutable';
 		readonly 'pattern.struct.rest': never;
+		readonly 'pattern.struct.tuple': never;
 		readonly 'pattern.tuple': never;
 		readonly 'pattern.wildcard': never;
 		readonly 'statement.block': never;
@@ -42882,6 +42887,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly name: 'identifier.qualified';
 			readonly typeArguments: 'element.type_argument';
 		};
+		readonly 'pattern.struct': { readonly type: 'identifier.qualified' };
 		readonly 'statement.block': { readonly label: 'identifier.label' };
 		readonly 'statement.break': { readonly label: 'identifier.label' };
 		readonly 'statement.continue': { readonly label: 'identifier.label' };

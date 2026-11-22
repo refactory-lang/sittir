@@ -4630,7 +4630,15 @@ declare module './pattern.ts' {
 				K extends gate.Under<'pattern.struct.field'> = 'pattern.struct.field'
 			> extends structPatterns.Pattern.Struct.Field<G, K> {}
 			type Rest<G extends GrammarMap> = tupleStructs.Pattern.Struct.Rest<G>;
-			type Any<G extends GrammarMap> = V.Pattern.Struct<G> | V.Pattern.Struct.Field<G> | V.Pattern.Struct.Rest<G>;
+			interface Tuple<
+				G extends GrammarMap,
+				K extends gate.Under<'pattern.struct.tuple'> = 'pattern.struct.tuple'
+			> extends tupleStructs.Pattern.Struct.Tuple<G, K> {}
+			type Any<G extends GrammarMap> =
+				| V.Pattern.Struct<G>
+				| V.Pattern.Struct.Field<G>
+				| V.Pattern.Struct.Rest<G>
+				| V.Pattern.Struct.Tuple<G>;
 		}
 		interface Tuple<G extends GrammarMap, K extends gate.Under<'pattern.tuple'> = 'pattern.tuple'> extends tuplePatterns
 			.Pattern.Tuple<G, K> {}
@@ -4674,6 +4682,7 @@ declare module './pattern.ts' {
 			| V.Pattern.Struct<G>
 			| V.Pattern.Struct.Field<G>
 			| V.Pattern.Struct.Rest<G>
+			| V.Pattern.Struct.Tuple<G>
 			| V.Pattern.Subscript<G>
 			| V.Pattern.Tuple<G>
 			| V.Pattern.Tuple.Bare<G>
@@ -6716,6 +6725,7 @@ declare module './map.ts' {
 		readonly 'pattern.struct': gate.In<G, features.StructPatterns, V.Pattern.Struct<G>>;
 		readonly 'pattern.struct.field': gate.In<G, features.StructPatterns, V.Pattern.Struct.Field<G>>;
 		readonly 'pattern.struct.rest': gate.In<G, features.TupleStructs, V.Pattern.Struct.Rest<G>>;
+		readonly 'pattern.struct.tuple': gate.In<G, features.TupleStructs, V.Pattern.Struct.Tuple<G>>;
 		readonly 'pattern.tuple': gate.In<G, features.TuplePatterns, V.Pattern.Tuple<G>>;
 		readonly 'pattern.tuple.bare': gate.In<G, features.PythonDestructuring, V.Pattern.Tuple.Bare<G>>;
 		readonly 'pattern.wildcard': gate.In<G, features.WildcardPatterns, V.Pattern.Wildcard<G>>;

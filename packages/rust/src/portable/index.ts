@@ -821,6 +821,7 @@ export interface PortableIds {
 		| TSKindId.TupleStructPattern;
 	'pattern.struct.field': TSKindId.FieldPatternNamed | TSKindId.FieldPatternShorthand;
 	'pattern.struct.rest': TSKindId.RemainingFieldPattern;
+	'pattern.struct.tuple': TSKindId.TupleStructPattern;
 	'pattern.subscript': TSKindId.IndexExpression;
 	'pattern.tuple': TSKindId.TuplePattern;
 	'pattern.wildcard': TSKindId.WildcardPattern;
@@ -1578,6 +1579,7 @@ export interface PortableTexts {
 	'pattern.struct': '..';
 	'pattern.struct.field': never;
 	'pattern.struct.rest': '..';
+	'pattern.struct.tuple': never;
 	'pattern.subscript': never;
 	'pattern.tuple': never;
 	'pattern.wildcard': '_';
@@ -2516,9 +2518,11 @@ export interface PortableKindsAt {
 		readonly $path: 'pattern.struct';
 		readonly field: PortableKindsAt['pattern.struct.field'];
 		readonly rest: PortableKindsAt['pattern.struct.rest'];
+		readonly tuple: PortableKindsAt['pattern.struct.tuple'];
 	};
 	'pattern.struct.field': { readonly $path: 'pattern.struct.field' };
 	'pattern.struct.rest': { readonly $path: 'pattern.struct.rest' };
+	'pattern.struct.tuple': { readonly $path: 'pattern.struct.tuple' };
 	'pattern.subscript': { readonly $namespace: 'pattern.subscript' };
 	'pattern.tuple': { readonly $path: 'pattern.tuple' };
 	'pattern.wildcard': { readonly $path: 'pattern.wildcard' };
@@ -4746,7 +4750,11 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['pattern.struct']
-	> & { readonly field: PortableIsAt['pattern.struct.field']; readonly rest: PortableIsAt['pattern.struct.rest'] };
+	> & {
+		readonly field: PortableIsAt['pattern.struct.field'];
+		readonly rest: PortableIsAt['pattern.struct.rest'];
+		readonly tuple: PortableIsAt['pattern.struct.tuple'];
+	};
 	'pattern.struct.field': PortableGuard<
 		PortableIds['pattern.struct.field'],
 		RustNode,
@@ -4758,6 +4766,12 @@ export interface PortableIsAt {
 		RustNode,
 		TSKindId,
 		PortableTexts['pattern.struct.rest']
+	> & {};
+	'pattern.struct.tuple': PortableGuard<
+		PortableIds['pattern.struct.tuple'],
+		RustNode,
+		TSKindId,
+		PortableTexts['pattern.struct.tuple']
 	> & {};
 	'pattern.subscript': PortableGuard<
 		PortableIds['pattern.subscript'],
@@ -6248,6 +6262,7 @@ const table: PortableTable = {
 		},
 		'pattern.struct.field': { ids: [TSKindId.FieldPatternNamed, TSKindId.FieldPatternShorthand], exact: true },
 		'pattern.struct.rest': { ids: [TSKindId.RemainingFieldPattern], exact: true },
+		'pattern.struct.tuple': { ids: [TSKindId.TupleStructPattern], exact: true },
 		'pattern.subscript': { ids: [TSKindId.IndexExpression], exact: true, targets: ['expression.subscript'] },
 		'pattern.tuple': { ids: [TSKindId.TuplePattern], exact: true },
 		'pattern.wildcard': { ids: [TSKindId.WildcardPattern], exact: true },
@@ -9076,7 +9091,7 @@ const table: PortableTable = {
 		[TSKindId.TtKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.TupleExpression]: [{ path: 'expression.collection.tuple', within: [], test: [] }],
 		[TSKindId.TuplePattern]: [{ path: 'pattern.tuple', within: [], test: [] }],
-		[TSKindId.TupleStructPattern]: [{ path: 'pattern.struct', within: [], test: [] }],
+		[TSKindId.TupleStructPattern]: [{ path: 'pattern.struct.tuple', within: [], test: [] }],
 		[TSKindId.TupleType]: [{ path: 'type.tuple', within: [], test: [] }],
 		[TSKindId.TyKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.TypeArgument]: [{ path: 'element.type_argument', within: [], test: [] }],
