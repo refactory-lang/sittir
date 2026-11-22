@@ -1122,7 +1122,7 @@ The text between the list's items: its elements slot's separator (`canonicalSepa
 	 * `AssembledList` alike. Stored as an array, derived in the
 	 * constructor (deriveSlots → collision resolution → name dedup).
 	 * The one name-keyed consumer (templates.ts
-	 * `ownerSlotsFor`) derives its own local index from this array.
+	 * `ownerSlotNames`) derives its own local set from this array.
 	 */
 ```
 

@@ -1,3 +1,4 @@
+import { AbstractAssembledCompound } from '../../compiler/model/node-map.ts';
 import { describe, expect, it } from 'vitest';
 import { CHOICE, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { AssembledKeyword, AssembledSupertype } from '../../compiler/model/node-map.ts';
@@ -16,6 +17,8 @@ const keyword = (kind: string) =>
 
 const vSlot = { name: 'v', storageName: 'v', propertyName: 'v', paramName: 'v', values: [{ value: 'x', multiplicity: 'single' }] };
 const ownedBy = (slots: Record<string, object>) => new Map([['owner', new Map(Object.entries(slots))]]);
+const ownerNode = (slots: Record<string, object>) =>
+	Object.defineProperties(Object.create(AbstractAssembledCompound.prototype) as object, { kind: { value: 'owner' }, slots: { value: Object.values(slots) } });
 
 function ctxWithLeaves(): EmitCtx {
 	return {
@@ -25,7 +28,8 @@ function ctxWithLeaves(): EmitCtx {
 			nodeByRuleId: new Map(),
 			nodes: new Map([
 				['yes', keyword('yes')],
-				['no', keyword('no')]
+				['no', keyword('no')],
+				['owner', ownerNode({ v: vSlot })]
 			])
 		} as unknown as EmitCtx['nodeMap'],
 		wordMatcher: /^\w+$/,
@@ -35,8 +39,7 @@ function ctxWithLeaves(): EmitCtx {
 		externals: [],
 		rules: {},
 		visitingHelpers: new Set<string>(),
-		emittedSlotNames: new Set(),
-		ownerSlots: { v: vSlot } as never
+		emittedSlotNames: new Set()
 	} as EmitCtx;
 }
 
@@ -65,7 +68,7 @@ const supertype = (kind: string, subtypeNames: string[]) =>
 	Object.defineProperties(Object.create(AssembledSupertype.prototype) as object, { kind: { value: kind }, subtypeNames: { value: subtypeNames } });
 
 function ctxWithKinds(nodes: Record<string, object>, slots: Record<string, object> = { v: vSlot }): EmitCtx {
-	return { ...ctxWithLeaves(), nodeMap: { slotByRuleId: ownedBy(slots), nodeByRuleId: new Map(), nodes: new Map(Object.entries(nodes)) } as unknown as EmitCtx['nodeMap'], emittedSlotNames: new Set() } as EmitCtx;
+	return { ...ctxWithLeaves(), nodeMap: { slotByRuleId: ownedBy(slots), nodeByRuleId: new Map(), nodes: new Map([...Object.entries(nodes), ['owner', ownerNode(slots)]]) } as unknown as EmitCtx['nodeMap'], emittedSlotNames: new Set() } as EmitCtx;
 }
 
 const v = (name: string) => ({ type: SYMBOL, name, id: 'v', fieldName: 'v' }) as unknown as RenderRule;
@@ -114,14 +117,14 @@ describe('emitRule — arms whose text before the slot differs, gated on the kin
 describe('emitRule — a choice between an optional slot and fixed text', () => {
 	it('writes the fixed text when the slot, whose arm is already gated on itself, is absent (`body` or `;`)', () => {
 		const optionalBody = { name: 'body', storageName: 'body', propertyName: 'body', paramName: 'body', values: [{ value: 'x', multiplicity: 'optional' }] };
-		const ctx = { ...ctxWithKinds({ block: branch('block') }, { body: optionalBody }), ownerSlots: { body: optionalBody } } as unknown as EmitCtx;
+		const ctx = ctxWithKinds({ block: branch('block') }, { body: optionalBody });
 		const body = emitRule(choice({ type: SYMBOL, name: 'block', id: 'body', fieldName: 'body', multiplicity: 'optional' } as unknown as RenderRule, str(';')), ctx);
 		expect(body).toEqual([{ kind: 'if', arms: [{ test: 'body', body: [{ kind: 'slot', name: 'body' }] }], fallback: [{ kind: 'text', text: ';' }] }]);
 	});
 
 	it('keeps the fixed text as the fallback when it carries its own seam', () => {
 		const optionalBody = { name: 'body', storageName: 'body', propertyName: 'body', paramName: 'body', values: [{ value: 'x', multiplicity: 'optional' }] };
-		const ctx = { ...ctxWithKinds({ block: branch('block') }, { body: optionalBody }), ownerSlots: { body: optionalBody } } as unknown as EmitCtx;
+		const ctx = ctxWithKinds({ block: branch('block') }, { body: optionalBody });
 		const semiBefore = {
 			type: CHOICE,
 			nonterminal: true,

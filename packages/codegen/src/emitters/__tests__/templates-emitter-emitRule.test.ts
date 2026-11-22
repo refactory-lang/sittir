@@ -23,13 +23,19 @@ import type {
 	StringRule,
 	SymbolRule
 } from '../../types/rule.ts';
-import type { AssembledNonterminal, NodeOrTerminal } from '../../compiler/model/node-map.ts';
+import { AbstractAssembledCompound, type AssembledNonterminal, type NodeOrTerminal } from '../../compiler/model/node-map.ts';
 import { emitRule, type EmitCtx } from '../templates.ts';
 import { NO_JOINS } from '../../compiler/model/join-seams/index.ts';
 import { showBody } from './support/show-body.ts';
 import type { RenderRule } from '../../types/rule.ts';
 
 const shown = (rule: RenderRule, ctx: EmitCtx): string => showBody(emitRule(rule, ctx));
+const ownedBy = (slots: Record<string, AssembledNonterminal>) =>
+	({
+		slotByRuleId: new Map([['test', new Map(Object.entries(slots))]]),
+		nodeByRuleId: new Map(),
+		nodes: new Map([['test', Object.defineProperties(Object.create(AbstractAssembledCompound.prototype) as object, { kind: { value: 'test' }, slots: { value: Object.values(slots) } })]])
+	}) as unknown as EmitCtx['nodeMap'];
 import { makeRuleMetadata } from '../../dsl/rule-metadata.ts';
 import { parseSpacingAddress } from '../../dsl/primitives/spacing.ts';
 
@@ -111,8 +117,8 @@ describe('emitRule — pattern', () => {
 	it("does not read a slot by the owner's sole slot or by its field name", () => {
 		const slot = makeSlot({ storageName: 'body' });
 		const fielded = { type: PATTERN, value: '[a-z]+', id: 'r-pattern', fieldName: 'body' } as PatternRule;
-		expect(() => emitRule({ type: PATTERN, value: '[a-z]+' }, makeCtx({ ownerSlots: { body: slot } }))).toThrow(/has no slot/);
-		expect(() => emitRule(fielded, makeCtx({ ownerSlots: { body: slot } }))).toThrow(/has no slot/);
+		expect(() => emitRule({ type: PATTERN, value: '[a-z]+' }, makeCtx({ nodeMap: ownedBy({ body: slot }) }))).toThrow(/has no slot/);
+		expect(() => emitRule(fielded, makeCtx({ nodeMap: ownedBy({ body: slot }) }))).toThrow(/has no slot/);
 	});
 
 	it('reads the slot its rule id belongs to', () => {
@@ -124,8 +130,6 @@ describe('emitRule — pattern', () => {
 });
 
 describe('emitRule — kind-gated literal', () => {
-	const ownedBy = (slots: Record<string, AssembledNonterminal>) =>
-		({ slotByRuleId: new Map([['test', new Map(Object.entries(slots))]]), nodeByRuleId: new Map(), nodes: new Map() }) as unknown as EmitCtx['nodeMap'];
 	// `for (init; cond; inc)`: the initializer is a choice of a declaration arm,
 	// an expression arm followed by `;`, and an empty-statement arm. The slot
 	// is emitted once and the `;` under a gate naming the expression arm's kinds.
@@ -146,7 +150,7 @@ describe('emitRule — kind-gated literal', () => {
 	const slot = makeSlot({ name: 'initializer', storageName: 'initializer', propertyName: 'initializer', fieldName: 'initializer' });
 
 	it('folds arms that share a slot and gates the arm literal on the arm kinds', () => {
-		const ctx = makeCtx({ nodeMap: ownedBy({ initializer: slot }), ownerSlots: { initializer: slot } });
+		const ctx = makeCtx({ nodeMap: ownedBy({ initializer: slot }) });
 		expect(shown(forInitializer(), ctx)).toBe('⟨initializer⟩⟨if initializer:_expressions⟩;⟨end⟩');
 	});
 
@@ -156,12 +160,12 @@ describe('emitRule — kind-gated literal', () => {
 			id: 'condition',
 			fieldName: 'condition',
 			members: [
-				{ type: SEQ, members: [{ type: SYMBOL, name: '_expressions' } as SymbolRule, { type: STRING, value: ';' }] } as SeqRule,
-				{ type: SYMBOL, name: 'empty_statement' } as SymbolRule
+				{ type: SEQ, members: [{ type: SYMBOL, name: '_expressions', id: 'condition' } as SymbolRule, { type: STRING, value: ';' }] } as SeqRule,
+				{ type: SYMBOL, name: 'empty_statement', id: 'condition' } as SymbolRule
 			]
 		} as ChoiceRule;
 		const conditionSlot = makeSlot({ name: 'condition', storageName: 'condition', propertyName: 'condition', fieldName: 'condition' });
-		const ctx = makeCtx({ nodeMap: ownedBy({ condition: conditionSlot }), ownerSlots: { condition: conditionSlot } });
+		const ctx = makeCtx({ nodeMap: ownedBy({ condition: conditionSlot }) });
 		expect(shown(rule, ctx)).toBe('⟨condition⟩⟨if condition:_expressions⟩;⟨end⟩');
 	});
 
@@ -174,7 +178,7 @@ describe('emitRule — kind-gated literal', () => {
 			]
 		} as ChoiceRule;
 		const bodySlot = makeSlot({ name: 'body', storageName: 'body', propertyName: 'body', fieldName: 'body' });
-		const ctx = makeCtx({ nodeMap: ownedBy({ body: bodySlot }), ownerSlots: { body: bodySlot } });
+		const ctx = makeCtx({ nodeMap: ownedBy({ body: bodySlot }) });
 		expect(shown(rule, ctx)).not.toContain(':');
 	});
 });
@@ -366,14 +370,14 @@ describe('emitRule — symbol with fieldName attribute (RenderRule field path)',
 		expect(shown(rule, ctx)).toBe('⟨if value⟩⟨value⟩⟨end⟩');
 	});
 
-	it('uses fieldName directly (no slot) when slot is absent', () => {
-		// When no slot back-pointer: fieldName drives the slot name directly.
-		const rule: SymbolRule = {
-			type: SYMBOL,
-			name: 'identifier',
-			fieldName: 'field_name'
-		};
-		expect(shown(rule, makeCtx())).toBe('⟨field_name⟩');
+	it('throws naming its kind when its rule id is among no slot of that kind', () => {
+		const rule: SymbolRule = { type: SYMBOL, name: 'identifier', id: 'r-field', fieldName: 'field_name' };
+		expect(() => emitRule(rule, makeCtx())).toThrow(/SYMBOL in kind 'test' has no slot: its rule id \(r-field\)/);
+	});
+
+	it('a fielded choice throws the same way', () => {
+		const rule = { type: CHOICE, id: 'r-choice', fieldName: 'field_name', members: [{ type: SYMBOL, name: 'a' }, { type: SYMBOL, name: 'b' }] } as unknown as ChoiceRule;
+		expect(() => emitRule(rule, makeCtx())).toThrow(/CHOICE in kind 'test' has no slot: its rule id \(r-choice\)/);
 	});
 });
 
@@ -720,9 +724,9 @@ describe('emitRule — token seams', () => {
 		const rule = {
 			type: SEQ,
 			multiplicity: 'optional',
-			members: [{ type: STRING, value: '->' }, seamChoice('arrow_after'), { type: SYMBOL, name: 'ret', fieldName: 'ret', nonterminal: true }]
+			members: [{ type: STRING, value: '->' }, seamChoice('arrow_after'), { type: SYMBOL, name: 'ret', id: 'ret', fieldName: 'ret', nonterminal: true }]
 		} as unknown as SeqRule;
-		expect(shown(rule, makeCtx())).toBe('⟨if ret⟩->⟨seam arrow_after⟩⟨ret⟩⟨end⟩');
+		expect(shown(rule, makeCtx({ nodeMap: ownedBy({ ret: makeSlot({ name: 'ret', propertyName: 'ret', storageName: 'ret' }) }) }))).toBe('⟨if ret⟩->⟨seam arrow_after⟩⟨ret⟩⟨end⟩');
 	});
 
 	it('never picks a list flank as the conditional key of an optional seq', () => {
@@ -730,8 +734,8 @@ describe('emitRule — token seams', () => {
 			const choice = seamChoice(`bounds_${side}`) as unknown as { members: { annotations: object }[] };
 			return { ...choice, members: choice.members.map((m) => ({ ...m, annotations: { ...m.annotations, spacing: { at: 'flank', side } } })) };
 		};
-		const list = { type: SEQ, nonterminal: true, members: [flank('start'), { type: SYMBOL, name: 'bound', fieldName: 'bounds', nonterminal: true, multiplicity: 'array' }, flank('end')] };
+		const list = { type: SEQ, nonterminal: true, members: [flank('start'), { type: SYMBOL, name: 'bound', id: 'bounds', fieldName: 'bounds', nonterminal: true, multiplicity: 'array' }, flank('end')] };
 		const rule = { type: SEQ, multiplicity: 'optional', members: [{ type: STRING, value: ':' }, list] } as unknown as SeqRule;
-		expect(shown(rule, makeCtx())).toMatch(/^⟨if bounds⟩/);
+		expect(shown(rule, makeCtx({ nodeMap: ownedBy({ bounds: makeSlot({ name: 'bounds', propertyName: 'bounds', storageName: 'bounds' }) }) }))).toMatch(/^⟨if bounds⟩/);
 	});
 });

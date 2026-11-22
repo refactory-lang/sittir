@@ -131,7 +131,6 @@ export interface EmitCtx {
 	readonly joinPairLeftChars?: ReadonlySet<string>;
 	readonly joinPairRightChars?: ReadonlySet<string>;
 	readonly ownerKind?: string;
-	readonly ownerSlots?: Readonly<Record<string, AssembledNonterminal>>;
 	readonly lexedTop?: RenderRule;
 	readonly currentKind?: string;
 	readonly diagnostics?: DiagnosticSink;
@@ -565,9 +564,16 @@ function renderRuleEdge(
 	}
 }
 
-function ownerSlotsFor(node: AssembledNode): Readonly<Record<string, AssembledNonterminal>> | undefined {
-	if (!(node instanceof AbstractAssembledCompound)) return undefined;
-	return Object.fromEntries(node.slots.map((slot) => [slot.name, slot]));
+function ownerSlotNames(ctx: EmitCtx): ReadonlySet<string> | undefined {
+	const owner = ctx.ownerKind === undefined ? undefined : ctx.nodeMap.nodes.get(ctx.ownerKind);
+	return owner instanceof AbstractAssembledCompound ? new Set(owner.slots.map((slot) => slot.name)) : undefined;
+}
+
+function noSlotError(rule: RenderRule, ctx: EmitCtx): Error {
+	return new Error(
+		`emitRule: ${rule.type} in kind '${ctx.ownerKind ?? '(unknown)'}' has no slot: its rule id ` +
+			`(${rule.id ?? 'none'}) is not among the sourceRuleIds of any of that kind's slots.`
+	);
 }
 
 function emitOne(node: AssembledNode, ctx: EmitCtx): Body | undefined {
@@ -600,7 +606,6 @@ export function emitBranchTemplate(node: SlotBearingCompound, ctx: EmitCtx): Bod
 	const ctxWithSlots: EmitCtx = {
 		...ctx,
 		ownerKind: node.kind,
-		ownerSlots: ownerSlotsFor(node),
 		...(node instanceof AssembledLexedPattern ? { lexedTop: top } : {})
 	};
 	return emitRule(top, ctxWithSlots);
@@ -679,10 +684,7 @@ function emitRuleShape(rule: RenderRule, ctx: EmitCtx): Body {
 		case PATTERN: {
 			const slot = lookupSlot(rule, ctx);
 			if (slot !== undefined) return emitSlotReference(rule, slot, ctx);
-			throw new Error(
-				`emitRule: PATTERN in kind '${ctx.ownerKind ?? '(unknown)'}' has no slot: its rule id ` +
-					`(${rule.id ?? 'none'}) is not among the sourceRuleIds of any of that kind's slots.`
-			);
+			throw noSlotError(rule, ctx);
 		}
 
 		case SEQ: {
@@ -997,19 +999,6 @@ function emitSlotReference(rule: RenderRule, slot: AssembledNonterminal, ctx: Em
 	return emitScalarSlot(slotName);
 }
 
-function emitFieldNameSlot(slotName: string, rule: RenderRule, ctx: EmitCtx): Body {
-	if (ctx.emittedSlotNames.has(slotName)) return EMPTY;
-	ctx.emittedSlotNames.add(slotName);
-	const mult = (rule as { multiplicity?: string }).multiplicity;
-	if (mult === 'array' || mult === 'nonEmptyArray') {
-		return emitListSlot(slotName, rule);
-	}
-	if (mult === 'optional') {
-		return gate(slotName, emitScalarSlot(slotName));
-	}
-	return emitScalarSlot(slotName);
-}
-
 function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx): Body {
 	const symbolFieldName = (rule as { fieldName?: string }).fieldName;
 	if (rule.literal !== undefined && symbolFieldName === undefined) {
@@ -1040,7 +1029,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 		if (slot) {
 			return emitSlotReference(rule, slot, ctx);
 		}
-		return emitFieldNameSlot(symbolFieldName, rule, ctx);
+		throw noSlotError(rule, ctx);
 	}
 
 	const slot = lookupSlot(rule, ctx);
@@ -1059,8 +1048,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 				const helperRenderRule = ctx.rules[rule.name] ?? (targetNode as { renderRule: RenderRule }).renderRule;
 				const helperCtx: EmitCtx = {
 					...ctx,
-					ownerKind: targetNode.kind,
-					ownerSlots: ownerSlotsFor(targetNode)
+					ownerKind: targetNode.kind
 				};
 				const helperBody = emitRule(helperRenderRule, helperCtx);
 				const multiplicity = (rule as { multiplicity?: Multiplicity }).multiplicity;
@@ -1075,7 +1063,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 					const symbolFieldKey = symbolFieldName;
 					const addressableFieldKey =
 						symbolFieldKey !== undefined &&
-						(ctx.ownerSlots === undefined || ctx.ownerSlots[symbolFieldKey] !== undefined)
+						(ownerSlotNames(ctx)?.has(symbolFieldKey) ?? true)
 							? symbolFieldKey
 							: undefined;
 					const condKey =
@@ -1146,7 +1134,7 @@ function pickConditionalKey(content: RenderRule, ctx: EmitCtx): string | undefin
 	const contentFieldName = (content as { fieldName?: string }).fieldName;
 	if (contentFieldName !== undefined) {
 		const key = contentFieldName;
-		if (ctx.ownerSlots === undefined || ctx.ownerSlots[key] !== undefined) return key;
+		if (ownerSlotNames(ctx)?.has(key) ?? true) return key;
 	}
 	if (content.type === SEQ) {
 		let fallback: string | undefined;
@@ -1570,7 +1558,7 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 				restoreEmittedSlotNames(ctx, beforeSlots);
 				if (body.length === 0) continue;
 				const { key, needsGate } = scanArmBody(body);
-				if (key === undefined || key === unionName || ctx.ownerSlots?.[key] === undefined) continue;
+				if (key === undefined || key === unionName || ownerSlotNames(ctx)?.has(key) !== true) continue;
 				const block = needsGate ? gate(key, body) : body;
 				const prev = blockByKey.get(key);
 				if (prev === undefined || weight(block) > weight(prev)) {
@@ -1587,7 +1575,7 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 	}
 	const choiceFieldName = (rule as { fieldName?: string }).fieldName;
 	if (choiceFieldName !== undefined) {
-		return emitFieldNameSlot(choiceFieldName, rule, ctx);
+		throw noSlotError(rule, ctx);
 	}
 	if (rule.id === '__synthetic_exclusive_choice__') {
 		return concat(...rule.members.map((m) => emitRule(m, ctx)));
@@ -1612,7 +1600,7 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 			if (body.length === 0) continue;
 			emitted.push({ index: rule.members.indexOf(arm), rule: arm as RenderRule, body, delta });
 			const { key, needsGate } = scanArmBody(body);
-			if (key === undefined || ctx.ownerSlots?.[key] === undefined) {
+			if (key === undefined || ownerSlotNames(ctx)?.has(key) !== true) {
 				if (isLiteralOnly(body)) {
 					if (literalFallback === undefined) literalFallback = body;
 					else if (!equalBodies(literalFallback, body)) literalFallbackAmbiguous = true;

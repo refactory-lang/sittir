@@ -4850,24 +4850,6 @@ its seams are decided from are the catalog's.
 // this SAME merged slot — emit the reference only once per kind.
 ```
 
-### `packages/codegen/src/emitters/templates.ts::emitFieldNameSlot`
-
-```text
-/**
- * Fallback slot emission keyed on a field name + the leaf `rule.multiplicity`,
- * for a field-wrapped rule that has NO registered back-pointer slot (rare —
- * e.g. a flatten-stamped fieldName whose rule id / fieldName didn't
- * resolve in `lookupSlot`). Prefer `emitSlotReference` whenever a slot exists.
- */
-```
-
-#### body
-
-```text
-// Same merged-slot guard as emitSlotReference (one storage key, one
-// reference per kind — see EmitCtx.emittedSlotNames).
-```
-
 ### `packages/codegen/src/emitters/templates.ts::emitSymbol`
 
 ```text
@@ -4937,8 +4919,8 @@ order regardless of how the printer orders its expression evaluation.
 // whose splice stamps the name on the seq node while the slot takes
 // its name from the field INSIDE the helper (infer_type: gate said
 // `constraint`, slot is `type`). Fall through to the structural
-// search so the gate lands on a real slot; without ownerSlots
-// (unit-test contexts) keep the historical name-trusting behavior.
+// search so the gate lands on a real slot. An owner that is not a
+// compound has no slot names to check, so the field name stands.
 ```
 
 #### body
@@ -6806,17 +6788,6 @@ The grammar's word-class test for a single char (`wordCharPredicate`), used for 
 	 */
 ```
 
-### `packages/codegen/src/emitters/templates.ts::EmitCtx::ownerSlots`
-
-```text
-/**
-	 * Owner-level slots for the current node being emitted, keyed by
-	 * slot name. Answers whether the owner has a slot of a given name, for a
-	 * presence gate's key. A rule's own slot comes from `slotByRuleId`. Set with
-	 * `ownerKind` before recursing into the node's `renderRule`.
-	 */
-```
-
 ### `packages/codegen/src/emitters/templates.ts::EmitCtx::currentKind`
 
 ```text
@@ -8451,9 +8422,8 @@ literal-default and fallback counts.
 // (rather than SEQ-local) guard the emitters would re-emit the merged
 // slot at each position, duplicating output; first occurrence wins (the
 // occurrences are mutually exclusive at parse time, so one reference is
-// the whole slot). Keyed by storage name — both emission paths
-// (`emitSlotReference`, `emitFieldNameSlot`) resolve to storage-key
-// spellings, and storage keys are unique per kind (content-collision
+// the whole slot). Keyed by storage name — `emitSlotReference` resolves
+// to storage-key spellings, and storage keys are unique per kind (content-collision
 // preflight). Cleared per node in `TemplateEmitter#emitNode` (mirrors
 // `visitingHelpers`).
 ```
@@ -8561,10 +8531,11 @@ the `keywordKindsOf` argument the emitter passes to `gateKeywordSlotSeams`.
 A seam choice among a seq's members is skipped: the edge of the seq is
 the edge of what the seam sits beside.
 
-### `packages/codegen/src/emitters/templates.ts::ownerSlotsFor`
+### `packages/codegen/src/emitters/templates.ts::ownerSlotNames`
 
 ```text
-/** The owner's slots keyed by name, for a presence gate's key. */
+/** The names of `ownerKind`'s slots, derived from the node, for a presence
+ *  gate's key. `undefined` when the owner is not a compound. */
 ```
 
 ### `packages/codegen/src/emitters/templates.ts::emitOne`
@@ -13782,6 +13753,10 @@ The slot that a body node is a unit of, for `selfGatedSlotUnits`. That is either
 ### `packages/codegen/src/emitters/templates.ts::EmitCtx::ownerKind`
 
 The kind whose slots the rule being walked belongs to, which is the key `lookupSlot` reads `slotByRuleId` under. It differs from `currentKind` inside a hidden helper: the helper's body resolves against the helper's own slots while `currentKind` still names the kind being emitted, for diagnostics.
+
+### `packages/codegen/src/emitters/templates.ts::noSlotError`
+
+The compile-time error for a position that must render a slot but whose rule id is among no slot of its kind. It names the rule type, the kind and the id. A symbol, choice or pattern never recovers a slot by name, so a missing id surfaces here.
 
 ### `packages/codegen/src/emitters/factories.ts::patternMismatchThrow`
 

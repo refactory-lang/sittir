@@ -29,7 +29,7 @@ function makeBranch(kind: string, label: string, kindEntries: readonly Generated
 function makeHiddenHelperNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap {
 	const helperRule: SeqRule<'link'> = {
 		type: SEQ,
-		members: [{ type: FIELD, name: 'right', content: { type: SYMBOL, name: 'identifier' } }]
+		members: [{ type: FIELD, id: 'right', name: 'right', content: { type: SYMBOL, name: 'identifier' } }]
 	};
 	const nodes = new Map<string, AssembledNode>();
 	const helperRender = flatten(helperRule);
@@ -37,7 +37,8 @@ function makeHiddenHelperNodeMap(kindEntries: readonly GeneratedKindEntry[]): No
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
 	for (const [kind, node] of layoutNodes(kindEntries)) nodes.set(kind, node);
 	resolveIrKeys(nodes);
-	return makeNodeMapWith(nodes);
+	const helperSlots = nodes.get('_assignment_eq')!.slots;
+	return { ...makeNodeMapWith(nodes), slotByRuleId: new Map([['_assignment_eq', new Map(helperSlots.flatMap((slot) => slot.sourceRuleIds.map((id) => [id, slot] as const)))]]) };
 }
 
 function makeHiddenSupertypeNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap {
