@@ -269,6 +269,7 @@ Task 5 planned these reads on records, but its no-tree test covered render, quer
   - "Close it". A parse made inside `engine.commit()` is released at the scope's end unless kept, as a build is, and nested scopes carry a kept root out.
   - What `keep` does with a child view of a parsed tree is not ruled. The maintainer: "I don't know if I even like keep". It stays as it is until `keep` itself is revisited.
   - Codex's other two findings stay in #1227: release no longer quadratic in a wide list, and holds past a saturated count batched so they don't cross to native one at a time.
+  - **The render's per-item `ParsedTree`** (the maintainer, 2026-11-21: stop the faster lookup and size removing it). A rebuilt list of parsed items makes a temporary `ParsedTree` for each item's record, and each lookup walks those already made, so arena render grows quadratically (4,000 items: 2,278 ms against object storage's 22 ms). The spec's Tree lifetime section names an arena node by its `NodeId`, builds no `NodeCoordinate` there, and has shared code take `NodeIdOrCoordinate`. The sizing comes before any code: what each `SourceTable` method the arena render reaches reads (the source, the call or the root), what a record cannot answer by `NodeId`, any public API rows, and whether the removal fits this task's PR.
 
 This is tree lifetime only, as the spec's Tree lifetime section rules. It adds no per-tree owner, slot, table or count, and it designs no node release.
 
