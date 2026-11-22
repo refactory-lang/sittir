@@ -365,13 +365,18 @@ export type CoOptionalRows<
 	Branch extends PropertyKey,
 	Needed extends PropertyKey,
 	BranchOptions extends PropertyKey
-> = Row extends readonly [infer C, (infer O)?]
+> = Row extends readonly [(infer C)?, (infer O)?]
 	?
 			| [config: BranchPresent<C, Needed>, options?: O]
-			| [
-					config: BranchPresent<C, Needed> | BranchAbsent<C, Branch>,
-					options?: OmitEach<O, BranchOptions> & { readonly [K in BranchOptions]?: never }
-			  ]
+			| (Row extends readonly [unknown, ...unknown[]]
+					? [
+							config: BranchPresent<C, Needed> | BranchAbsent<C, Branch>,
+							options?: OmitEach<O, BranchOptions> & { readonly [K in BranchOptions]?: never }
+					  ]
+					: [
+							config?: BranchPresent<C, Needed> | BranchAbsent<C, Branch>,
+							options?: OmitEach<O, BranchOptions> & { readonly [K in BranchOptions]?: never }
+					  ])
 	: never;
 export type RenameKeys<T, M extends { readonly [From: string]: string }> = T extends unknown
 	? { [K in keyof T as K extends keyof M ? M[K] : K]: T[K] }

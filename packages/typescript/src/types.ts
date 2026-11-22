@@ -17,6 +17,8 @@ import type {
 	NoneOf,
 	WithoutGroup,
 	CoOptionalRows,
+	BranchHint,
+	BranchShapesOf,
 	GrammarTypeMap,
 	NodeMethods,
 	HoldsTrivia,
@@ -8838,6 +8840,12 @@ export interface NumberFloatPoint {
 		readonly exponentSign: SlotHint<'-' | '+', true>;
 		readonly exponent: SlotHint<string | number | bigint, true>;
 		readonly marker: SlotHint<'e' | 'E', true>;
+		readonly $branch: BranchHint<
+			'exponentSign' | 'exponent' | 'marker',
+			'marker' | 'exponent',
+			'exponent',
+			'_exponent'
+		>;
 	};
 	readonly integer: () => string;
 	readonly fraction: () => string | undefined;
@@ -8863,6 +8871,12 @@ export interface NumberFloatLeadingPoint {
 		readonly exponentSign: SlotHint<'-' | '+', true>;
 		readonly exponent: SlotHint<string | number | bigint, true>;
 		readonly marker: SlotHint<'e' | 'E', true>;
+		readonly $branch: BranchHint<
+			'exponentSign' | 'exponent' | 'marker',
+			'marker' | 'exponent',
+			'exponent',
+			'_exponent'
+		>;
 	};
 	readonly fraction: () => string;
 	readonly marker: () => 'e' | 'E' | undefined;
@@ -24649,15 +24663,16 @@ export namespace NumberFloatPoint {
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>;
 	export type Options = { readonly marker?: 'e' | 'E' };
-	export interface Bound extends BoundOf<T.NumberFloatPoint, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	interface BoundSurface extends BoundOf<T.NumberFloatPoint, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.NumberFloatPoint['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
+		readonly $with: BoundWithNode<Bound, BoundByKindId, BoundSurface>;
 	}
-	export interface Parsed extends ParsedOf<T.NumberFloatPoint, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+	export type Bound = BoundSurface & BranchShapesOf<BoundSurface, T.NumberFloatPoint, BoundByKindId>;
+	interface ParsedSurface extends ParsedOf<T.NumberFloatPoint, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: T.NumberFloatPoint['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $with: WithNode<Parsed, BoundByKindId, ParsedSurface>;
 		readonly $query: () => QueryFacet<
-			this,
+			Parsed,
 			ParsedByKindId,
 			PortableQueryIds<PortableReads>,
 			KindMembers,
@@ -24665,6 +24680,7 @@ export namespace NumberFloatPoint {
 		>;
 		readonly $snapshot: () => Snapshot<T.NumberFloatPoint['$type']>;
 	}
+	export type Parsed = ParsedSurface & BranchShapesOf<ParsedSurface, T.NumberFloatPoint, ParsedByKindId>;
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.NumberFloatPoint>, 'marker'>
 		| WidenSlots<
@@ -24703,16 +24719,17 @@ export namespace NumberFloatLeadingPoint {
 		{ fraction: number | bigint; exponent: number | bigint }
 	>;
 	export type Options = { readonly marker?: 'e' | 'E' };
-	export interface Bound extends BoundOf<T.NumberFloatLeadingPoint, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	interface BoundSurface extends BoundOf<T.NumberFloatLeadingPoint, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.NumberFloatLeadingPoint['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
+		readonly $with: BoundWithNode<Bound, BoundByKindId, BoundSurface>;
 	}
-	export interface Parsed
+	export type Bound = BoundSurface & BranchShapesOf<BoundSurface, T.NumberFloatLeadingPoint, BoundByKindId>;
+	interface ParsedSurface
 		extends ParsedOf<T.NumberFloatLeadingPoint, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: T.NumberFloatLeadingPoint['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $with: WithNode<Parsed, BoundByKindId, ParsedSurface>;
 		readonly $query: () => QueryFacet<
-			this,
+			Parsed,
 			ParsedByKindId,
 			PortableQueryIds<PortableReads>,
 			KindMembers,
@@ -24720,6 +24737,7 @@ export namespace NumberFloatLeadingPoint {
 		>;
 		readonly $snapshot: () => Snapshot<T.NumberFloatLeadingPoint['$type']>;
 	}
+	export type Parsed = ParsedSurface & BranchShapesOf<ParsedSurface, T.NumberFloatLeadingPoint, ParsedByKindId>;
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.NumberFloatLeadingPoint>, 'marker'>
 		| WidenSlots<

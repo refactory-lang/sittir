@@ -12035,7 +12035,7 @@ function wrapFloatPoint$with(node: Held, setter: string, args: readonly unknown[
 		case 'marker':
 			return applySetter(args, (v: NonNullable<T.FloatPoint['_marker']>) =>
 				rebuilt(node, handle, () =>
-					wrapFloatPoint({ ...$edited(data), _marker: admitSlot(handle, 'float_point', 'marker', v) }, tree)
+					wrapFloatPoint({ ...$edited(data), _marker: admitSlot(handle, 'float_point', 'marker', v ?? 'e') }, tree)
 				)
 			);
 		case 'exponentSign':
@@ -12050,7 +12050,19 @@ function wrapFloatPoint$with(node: Held, setter: string, args: readonly unknown[
 		case 'exponent':
 			return applySetter(args, (v: NonNullable<T.FloatPoint['_exponent']>) =>
 				rebuilt(node, handle, () =>
-					wrapFloatPoint({ ...$edited(data), _exponent: admitSlot(handle, 'float_point', 'exponent', v) }, tree)
+					v === undefined
+						? wrapFloatPoint(
+								{ ...$edited(data), _marker: undefined, _exponent_sign: undefined, _exponent: undefined },
+								tree
+							)
+						: wrapFloatPoint(
+								{
+									...$edited(data),
+									_exponent: admitSlot(handle, 'float_point', 'exponent', v),
+									_marker: data._marker ?? 'e'
+								},
+								tree
+							)
 				)
 			);
 		case 'imaginary':
@@ -12158,7 +12170,7 @@ function wrapFloatLeadingPoint$with(node: Held, setter: string, args: readonly u
 			return applySetter(args, (v: NonNullable<T.FloatLeadingPoint['_marker']>) =>
 				rebuilt(node, handle, () =>
 					wrapFloatLeadingPoint(
-						{ ...$edited(data), _marker: admitSlot(handle, 'float_leading_point', 'marker', v) },
+						{ ...$edited(data), _marker: admitSlot(handle, 'float_leading_point', 'marker', v ?? 'e') },
 						tree
 					)
 				)
@@ -12175,10 +12187,19 @@ function wrapFloatLeadingPoint$with(node: Held, setter: string, args: readonly u
 		case 'exponent':
 			return applySetter(args, (v: NonNullable<T.FloatLeadingPoint['_exponent']>) =>
 				rebuilt(node, handle, () =>
-					wrapFloatLeadingPoint(
-						{ ...$edited(data), _exponent: admitSlot(handle, 'float_leading_point', 'exponent', v) },
-						tree
-					)
+					v === undefined
+						? wrapFloatLeadingPoint(
+								{ ...$edited(data), _marker: undefined, _exponent_sign: undefined, _exponent: undefined },
+								tree
+							)
+						: wrapFloatLeadingPoint(
+								{
+									...$edited(data),
+									_exponent: admitSlot(handle, 'float_leading_point', 'exponent', v),
+									_marker: data._marker ?? 'e'
+								},
+								tree
+							)
 				)
 			);
 		case 'imaginary':

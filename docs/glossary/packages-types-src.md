@@ -954,6 +954,26 @@ The numeric kind id a node carries at runtime, the `$type` property. `Admit` req
 
 The numeric refusal a `Seat` applies to the first argument of its row: `RefuseNumeric` of it, and `unknown` when the seat names no numeric slot or bare value, or the row is called with no argument.
 
+### `packages/types/src/node-surface.ts::BranchHint`
+
+The `$branch` entry of a node's `__slotHints__`: the names the optional branch holds (`Names`), the ones whose presence makes it present (`Required`), the config slots a present-shaped `$with` setter needs (`Needed`) and the stored property each name reads (`Stored`). `BranchShapesOf` reads it to type the node as branch-present or branch-absent; `SlotHintsOf` removes it so the hint never appears as a slot.
+
+### `packages/types/src/node-surface.ts::BranchGetter`
+
+The getter of one branch slot on one shape of a branch-typed node. On the present shape a required slot returns its value and an optional one its value or `undefined`; on the absent shape every branch getter returns `undefined`.
+
+### `packages/types/src/node-surface.ts::BranchSetter`
+
+The `$with` setter of one branch slot on one shape. On the absent shape only the slot the branch requires has one, and it returns the present shape; on the present shape each setter keeps the present shape, except that clearing a required slot clears the whole branch and returns the absent shape. Every setter returns an edited node, which has no `$query` or `$snapshot`, as `WithSlot` does.
+
+### `packages/types/src/node-surface.ts::BranchMembers`
+
+The properties of one shape of a branch-typed node: the stored property of each branch name, the narrowed getters (`BranchGetter`) and the shape's `$with` setters (`BranchSetter`). `BranchShapesOf` builds one for the present shape and one for the absent shape.
+
+### `packages/types/src/node-surface.ts::BranchShapesOf`
+
+The node surface of a kind that has an optional branch, as a union of its branch-present and branch-absent shapes, the way `FlatShapesOf` does for a flattened group. The generated `Bound` and `Parsed` of such a kind are the surface intersected with it, so a branch slot read or written without first narrowing to the shape that holds it is a type error, and the absent shape's `$with` takes only the slot the branch requires.
+
 ### `packages/types/src/engine-api.ts::StructureRow::single`
 
 The single-slot entries of a structure row, as storage key and label pairs.
@@ -1991,7 +2011,7 @@ A config row's first member with the branch absent: none of the `Branch` keys. O
 
 ### `packages/types/src/index.ts::CoOptionalRows`
 
-The argument tuples of a builder whose config holds an optional branch of several slots and has no group node to seat it, as a union of two tuples: `[config: BranchPresent, options?: O]`, and `[config: BranchPresent | BranchAbsent, options?: O without the branch's options]`. The branch is present as a whole, which needs its `Needed` keys, or absent as a whole, which names none of its `Branch` keys nor the options in `BranchOptions`. The second tuple keeps the other options, and takes a held union of both shapes, which no one tuple of the pair takes; it takes no option of the branch, since a union does not say the branch is present. The row is a union of tuples rather than overloads because `ArgsOf` reads only the last overload. A float's exponent is the example: `{ integer: 1, exponent: 2 }` takes `{ marker: 'E' }`, `{ integer: 1 }` does not, and `{ integer: 1, exponentSign: '+' }` takes neither. The emitter writes it from the kind's `coOptional` stamps (`coOptionalBranchOf`).
+The argument tuples of a builder whose config holds an optional branch of several slots and has no group node to seat it, as a union of two tuples: `[config: BranchPresent, options?: O]`, and `[config: BranchPresent | BranchAbsent, options?: O without the branch's options]`. The branch is present as a whole, which needs its `Needed` keys, or absent as a whole, which names none of its `Branch` keys nor the options in `BranchOptions`. The second tuple keeps the other options, and takes a held union of both shapes, which no one tuple of the pair takes; it takes no option of the branch, since a union does not say the branch is present. The row is a union of tuples rather than overloads because `ArgsOf` reads only the last overload. A float's exponent is the example: `{ integer: 1, exponent: 2 }` takes `{ marker: 'E' }`, `{ integer: 1 }` does not, and `{ integer: 1, exponentSign: '+' }` takes neither. A row whose config is optional (`[config?: C, options?: O]`, a kind made only of the branch) keeps that arity in the second tuple, so a call with no argument still compiles; the first tuple stays required, since it needs the branch's keys. The emitter writes it from the kind's `coOptional` stamps (`coOptionalBranchOf`).
 
 ### `packages/types/src/index.ts::RefusedSlots`
 

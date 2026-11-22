@@ -22,7 +22,7 @@ import {
 } from '../shared.ts';
 import { looseRefusal, numericSeatRefusal } from '../interior.ts';
 import {
-	coOptionalBranchOf,
+	coOptionalBranchOfNode,
 	constructorTargetKind,
 	leadingOptionsSplit,
 	listHasOptions,
@@ -236,7 +236,7 @@ export function collectPolymorphWires(nodeMap: NodeMap, options: { silent?: bool
 		const flattens = flattenSeatsOf(node, nodeMap).filter((seat) => isEmitted(seat.group.kind));
 		const elements = emittedElementsSeats(node, nodeMap, kindEntries);
 		const forwarded = forwardedSeatsOf(node);
-		const branched = isSlotBearingCompound(node) && !(node instanceof AssembledList) && coOptionalBranchOf(node, node.slots) !== undefined;
+		const branched = coOptionalBranchOfNode(node) !== undefined;
 		const claimed = new Set(subs.map((sub) => sub.slot));
 		const tuples = classifyFactoryShape(node, nodeMap) === 'forwarded' ? [] : tupleSeatOf(node, nodeMap).filter((e) => isEmitted(e.group.kind) && !claimed.has(e.slot));
 		visiting.add(node.kind);

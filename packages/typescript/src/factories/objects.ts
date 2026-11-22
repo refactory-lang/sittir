@@ -15513,7 +15513,14 @@ function buildNumberFloatPoint$with(node: Held, setter: string, args: readonly u
 			);
 		case 'exponent':
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildNumberFloatPoint({ ...config, exponent: value }, options))
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildNumberFloatPoint(
+								{ ...config, exponentSign: undefined, exponent: undefined },
+								{ ...options, marker: undefined }
+							)
+						: buildNumberFloatPoint({ ...config, exponent: value }, options)
+				)
 			);
 	}
 	throw new Error(`number_float_point has no $with.${setter}`);
@@ -15646,7 +15653,14 @@ function buildNumberFloatLeadingPoint$with(node: Held, setter: string, args: rea
 			);
 		case 'exponent':
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildNumberFloatLeadingPoint({ ...config, exponent: value }, options))
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildNumberFloatLeadingPoint(
+								{ ...config, exponentSign: undefined, exponent: undefined },
+								{ ...options, marker: undefined }
+							)
+						: buildNumberFloatLeadingPoint({ ...config, exponent: value }, options)
+				)
 			);
 	}
 	throw new Error(`number_float_leading_point has no $with.${setter}`);

@@ -9,6 +9,7 @@
  */
 
 import type { ArgsOf, CoOptionalRows, Seat } from '../src/index.ts';
+import type { BranchHint, BranchShapesOf, SlotHint } from '../src/node-surface.ts';
 import type { SameArguments } from './support/row-is-the-call.ts';
 
 interface Config {
@@ -74,4 +75,39 @@ export function aZeroArgumentRowStaysCallable(): void {
 	empty({ integer: 1 });
 	// @ts-expect-error a negative literal is not buildable
 	empty({ integer: -1 });
+}
+
+interface TwoRequired {
+	left(): string | undefined;
+	right(): string | undefined;
+	readonly _left?: string;
+	readonly _right?: string;
+	readonly __slotHints__?: {
+		readonly left: SlotHint<string, true, false, never>;
+		readonly right: SlotHint<string, true, false, never>;
+		readonly $branch: BranchHint<'left' | 'right', 'left' | 'right', 'left' | 'right', '_left' | '_right'>;
+	};
+}
+type TwoShapes = BranchShapesOf<TwoRequired, TwoRequired, never>;
+type AbsentOfTwo = Extract<TwoShapes, { readonly $with: unknown }> extends infer S ? (S extends { readonly _left?: undefined } ? S : never) : never;
+
+export function aBranchNeedingTwoSlotsGivesTheAbsentShapeNoSingleSlotSetter(absent: AbsentOfTwo): void {
+	// @ts-expect-error one of two required slots cannot make the branch present
+	absent.$with.left('1');
+	// @ts-expect-error one of two required slots cannot make the branch present
+	absent.$with.right('1');
+}
+
+type OptionalOnly = CoOptionalRows<[config?: Partial<Config>, options?: Options], 'exponentSign' | 'exponent', 'exponent', 'marker'>;
+declare const optionalOnly: (...args: OptionalOnly) => string;
+
+export function aRowWhoseConfigIsOptionalKeepsItsArity(): void {
+	optionalOnly();
+	optionalOnly({});
+	optionalOnly({ integer: 1 });
+	optionalOnly({ integer: 1, exponent: 2 }, { marker: 'E' });
+	// @ts-expect-error the absent tuple takes no marker
+	optionalOnly({ integer: 1 }, { marker: 'E' });
+	// @ts-expect-error the sign belongs to the exponent branch
+	optionalOnly({ integer: 1, exponentSign: '+' });
 }

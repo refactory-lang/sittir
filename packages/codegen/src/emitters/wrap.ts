@@ -32,7 +32,7 @@ import {
 } from './shared.ts';
 import { formDefinedProperties } from './refine-emit.ts';
 import { chainReadsAsList, wrapperChainFor } from '../compiler/model/wrapper-chain.ts';
-import { builtTypeSurfaceOf, chainItemsAt, chainItemsHop, delimitedCheck, delimitedSpecName, fieldElementType, listOptionKeys, listSelfViewPlan, seatPlanOf, separatedListSurface, splicedEnvelopeAdmission, splicedEnvelopeType, type GroupSeatHint, type ListViewPlan, type SeatPlan } from './factories.ts';
+import { builtTypeSurfaceOf, chainItemsAt, coOptionalBranchOfNode, chainItemsHop, delimitedCheck, delimitedSpecName, fieldElementType, listOptionKeys, listSelfViewPlan, seatPlanOf, separatedListSurface, splicedEnvelopeAdmission, splicedEnvelopeType, type GroupSeatHint, type ListViewPlan, type SeatPlan } from './factories.ts';
 import { collectKindEntries, errorKindEntry, findKindEntry, type KindEnumEntry } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { recordPlacesOf, recordVerbatimPlaceOf } from './record-construction.ts';
@@ -625,6 +625,7 @@ function inlineSetters(node: AuthoredCompound | AssembledList, nodeMap: NodeMap,
 			.map((setter) => setter.name)
 	);
 	const formDefined = formDefinedProperties(nodeMap, node.kind);
+	const branch = coOptionalBranchOfNode(node);
 	return node.slots.filter((f) => !formDefined.has(f.propertyName)).map((f) => {
 		const method = f.propertyName;
 		const envelopeType = splicedEnvelopeType(f, nodeMap);
@@ -641,10 +642,19 @@ function inlineSetters(node: AuthoredCompound | AssembledList, nodeMap: NodeMap,
 			};
 		}
 		const setterValueType = `NonNullable<T.${node.typeName}['${f.storageKey}']>${admitted}${hasBlankArm(f) ? ' | null' : ''}`;
+		const joinsBranch = branch?.needed.includes(method) === true;
+		const branchDefaults = joinsBranch
+			? node.slots
+					.filter((option) => branch!.options.includes(option.propertyName) && option.optionDefaultArm !== undefined)
+					.map((option) => `, ${option.storageKey}: data.${option.storageKey} ?? ${JSON.stringify(option.optionDefaultArm)}`)
+					.join('')
+			: '';
+		const input = branch?.options.includes(method) === true && f.optionDefaultArm !== undefined ? `(v ?? ${JSON.stringify(f.optionDefaultArm)})` : 'v';
+		const set = `${wrapFn}({ ...$edited(data), ${f.storageKey}: ${admittedSlot(node.kind, method, splicedEnvelopeAdmission(f, blankFromInput(hasBlankArm(f), input), nodeMap, kindEntries, node.typeName))}${branchDefaults} }, tree)`;
 		return {
 			name: method,
 			params: `v: ${setterValueType}`,
-			body: `${wrapFn}({ ...$edited(data), ${f.storageKey}: ${admittedSlot(node.kind, method, splicedEnvelopeAdmission(f, blankFromInput(hasBlankArm(f), 'v'), nodeMap, kindEntries, node.typeName))} }, tree)`
+			body: branch?.needed.includes(method) === true ? `v === undefined ? ${wrapFn}({ ...$edited(data), ${branch.storageKeys.map((key) => `${key}: undefined`).join(', ')} }, tree) : ${set}` : set
 		};
 	});
 }

@@ -1134,6 +1134,9 @@ interface CoOptionalBranch {
 	readonly keys: readonly string[];
 	readonly needed: readonly string[];
 	readonly options: readonly string[];
+	readonly required: readonly string[];
+	readonly stored: string;
+	readonly storageKeys: readonly string[];
 }
 
 export function coOptionalBranchOf(node: FieldCarryingNode, slots: readonly AssembledNonterminal[]): CoOptionalBranch | undefined {
@@ -1150,7 +1153,12 @@ export function coOptionalBranchOf(node: FieldCarryingNode, slots: readonly Asse
 	if (needed.length === 0) {
 		throw new Error(`[factories] kind '${node.kind}': its optional branch has no required config slot to tell it present from absent`);
 	}
-	return { keys, needed, options: named((slot) => registered.has(slot)) };
+	const holder = stamped.find((slot) => !registered.has(slot) && slot.coOptional?.required === true)!;
+	return { keys, needed, options: named((slot) => registered.has(slot)), required: named((slot) => slot.coOptional?.required === true), stored: holder.storageKey, storageKeys: stamped.map((slot) => slot.storageKey) };
+}
+
+export function coOptionalBranchOfNode(node: AssembledNode): CoOptionalBranch | undefined {
+	return isSlotBearingCompound(node) && !(node instanceof AssembledList) ? coOptionalBranchOf(node, node.slots) : undefined;
 }
 
 const keyUnion = (keys: readonly string[]): string => (keys.length === 0 ? 'never' : keys.map((key) => `'${key}'`).join(' | '));
@@ -2140,11 +2148,19 @@ function fieldCarryingFactoryText(
 		};
 		setters = [];
 		const optionsArg = registered.length === 0 && preference === undefined ? '' : ', options';
-		const slotSet = (f: AssembledNonterminal, value: string): Pick<SetterEntry, 'body' | 'reads'> =>
-			setBy(f, { local: configAccess, input: `Partial<${configType}>`, partial: true }, `{ ${f.propertyName}: ${value} }`, {
-				body: call(fn, `{ ...${configAccess}, ${f.propertyName}: ${value} }${optionsArg}`),
+		const branch = coOptionalBranchOf(node, slots);
+		const withoutBranch = (): string => {
+			const cleared = (keys: readonly string[]): string => keys.map((key) => `${key}: undefined`).join(', ');
+			const options = branch!.options.length === 0 ? '' : `, { ...options, ${cleared(branch!.options)} }`;
+			return call(fn, `{ ...${configAccess}, ${cleared(branch!.keys)} }${options}`);
+		};
+		const slotSet = (f: AssembledNonterminal, value: string): Pick<SetterEntry, 'body' | 'reads'> => {
+			const set = call(fn, `{ ...${configAccess}, ${f.propertyName}: ${value} }${optionsArg}`);
+			return setBy(f, { local: configAccess, input: `Partial<${configType}>`, partial: true }, `{ ${f.propertyName}: ${value} }`, {
+				body: branch?.needed.includes(f.propertyName) === true ? `${value} === undefined ? ${withoutBranch()} : ${set}` : set,
 				reads: optionsArg === '' ? [configAccess] : [configAccess, 'options']
 			});
+		};
 		const formDefined = formDefinedProperties(nodeMap, node.kind);
 		for (const f of slots) {
 			if (registeredSet.has(f) || formDefined.has(f.propertyName)) continue;

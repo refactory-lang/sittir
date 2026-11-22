@@ -65,6 +65,12 @@ export interface FlatHint<
 	readonly optional: Optional;
 	readonly stored: Stored;
 }
+export interface BranchHint<Names extends string, Required extends string, Needed extends string, Stored extends string> {
+	readonly names: Names;
+	readonly required: Required;
+	readonly needed: Needed;
+	readonly stored: Stored;
+}
 type IsBroadNumber<X> = (<Y>() => Y extends number ? 1 : 2) extends <Y>() => Y extends X ? 1 : 2 ? true : false;
 export type NarrowTo<T, D extends number> = T extends number
 	? Extract<T, D>
@@ -84,8 +90,10 @@ type HintsOf<Self> = Self extends { readonly __slotHints__?: infer H } ? NonNull
 export type FlagsHintOf<Self> = Self extends { readonly __flags__?: infer F } ? NonNullable<F> : never;
 /** The vocabulary flags a slot test can read on each of a node type's slots (its `__slotFlags__`), by slot accessor. */
 export type SlotFlagsHintOf<Self> = Self extends { readonly __slotFlags__?: infer F } ? NonNullable<F> : never;
-export type SlotHintsOf<Self> = Remap<HintsOf<Self>, '$listView' | '$listSlots' | '$flat'>;
+export type SlotHintsOf<Self> = Remap<HintsOf<Self>, '$listView' | '$listSlots' | '$flat' | '$branch'>;
 type FlatOf<Self> = HintsOf<Self> extends { readonly $flat: infer F } ? F : never;
+type BranchOf<Self> = HintsOf<Self> extends { readonly $branch: infer B } ? B : never;
+type BranchNames<B> = B extends BranchHint<infer Names, string, string, string> ? Names : never;
 type FlatNames<F> = F extends FlatHint<string, unknown, infer Keys, boolean> ? keyof Keys & string : never;
 type FlatSeatSlots<F> = F extends FlatHint<infer S, unknown, { readonly [Name: string]: string }, boolean> ? S : never;
 type FlatKeyNames<Self> = FlatNames<FlatOf<Self>>;
@@ -155,7 +163,7 @@ type ListOptionMembers<O> = Pick<O, Exclude<keyof O, 'separator'>> & { [K in Ext
 
 type MethodKeys<N> = keyof { [P in keyof N as N[P] extends () => unknown ? P : never]: 1 };
 type Accessors<N, ByKindId> = {
-	[P in MethodKeys<N> as P extends FlatKeyNames<N> | FlatSeatSlots<FlatOf<N>> ? never : P]: N[P] extends () => infer R
+	[P in MethodKeys<N> as P extends FlatKeyNames<N> | FlatSeatSlots<FlatOf<N>> | BranchNames<BranchOf<N>> ? never : P]: N[P] extends () => infer R
 		? () => Resolve<R, ByKindId>
 		: never;
 };
@@ -408,7 +416,7 @@ type SlotSetterOf<Self, Of, K extends keyof SlotHintsOf<Of>, ByBound, Reflect ex
 			: ValueSetter<Self, Of, K, ByBound, Reflect>
 		: ValueSetter<Self, Of, K, ByBound, Reflect>;
 
-type FlatOwned<Of> = FlatKeyNames<Of> | FlatSeatSlots<FlatOf<Of>>;
+type FlatOwned<Of> = FlatKeyNames<Of> | FlatSeatSlots<FlatOf<Of>> | BranchNames<BranchOf<Of>>;
 
 export type Setters<Self, ByBound, Reflect extends boolean = false, Of = Self> = {
 	[K in keyof SlotHintsOf<Of> as K extends FlatOwned<Of> ? never : K]: SlotSetterOf<Self, Of, K, ByBound, Reflect>;
@@ -533,6 +541,41 @@ type ShapesOf<Surface, N, H, Of, ByChild> = [Of] extends [never]
 		: {};
 
 export type FlatShapesOf<Surface, N, ByChild> = ShapesOf<Surface, N, FlatOf<N>, FlatOf<N>, ByChild>;
+
+type BranchGetter<N, ByChild, P, Present extends boolean, Required extends string> = P extends keyof N
+	? N[P] extends () => infer R
+		? () => Resolve<Present extends true ? (P extends Required ? NonNullable<R> : R) : undefined, ByChild>
+		: never
+	: never;
+
+type Edited<Surface> = Remap<Surface, '$query' | '$snapshot'>;
+
+type BranchNode<Surface, N, B, ByChild, Present extends boolean> = Edited<Surface> & BranchMembers<Edited<Surface>, N, B, ByChild, Present>;
+
+type BranchSetter<Surface, N, B, ByChild, P extends string, Needed extends string> = AdmitsOne<
+	Admit<SlotInput<N, P & keyof SlotHintsOf<N>>>,
+	BranchNode<Surface, N, B, ByChild, true>
+> &
+	(P extends Needed
+		? () => BranchNode<Surface, N, B, ByChild, false>
+		: SlotOptional<N, P & keyof SlotHintsOf<N>> extends true
+			? () => BranchNode<Surface, N, B, ByChild, true>
+			: unknown);
+
+type BranchMembers<Surface, N, B, ByChild, Present extends boolean> =
+	B extends BranchHint<infer Names, infer Required, infer Needed, infer Stored>
+		? (Present extends true ? { readonly [K in Stored]: NonNullable<N[K & keyof N]> } : { readonly [K in Stored]?: undefined }) & {
+				readonly [P in Names]: BranchGetter<N, ByChild, P, Present, Required>;
+			} & {
+				readonly $with: Present extends true
+					? { [P in Names]: BranchSetter<Surface, N, B, ByChild, P, Needed> }
+					: { [P in SoleKey<Needed>]: AdmitsOne<Admit<SlotInput<N, P & keyof SlotHintsOf<N>>>, BranchNode<Surface, N, B, ByChild, true>> };
+			}
+		: never;
+
+export type BranchShapesOf<Surface, N, ByChild> = [BranchOf<N>] extends [never]
+	? {}
+	: BranchMembers<Surface, N, BranchOf<N>, ByChild, true> | BranchMembers<Surface, N, BranchOf<N>, ByChild, false>;
 
 type SurfaceOf<N, ByChild, S = Storage<N>> = S &
 	Accessors<N, ByChild> &

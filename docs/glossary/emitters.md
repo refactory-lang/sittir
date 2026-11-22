@@ -15549,6 +15549,10 @@ The optional branch of a kind that has no group node to seat it, in the keys the
 
 Reads a kind's `coOptional` stamps into its `CoOptionalBranch`, or `undefined` when no slot carries one. The stamps must name one branch and the branch must have a required config slot, since that slot is what tells it present from absent; a kind that fails either throws, rather than leave its row untyped. `fieldCarryingBuiltTypeSurface` wraps the kind's config rows in `CoOptionalRows` from it, and the polymorph overlay seats the kind's builder (`composeBranch`) from it, so the row and the table entry read one answer. A branch on a builder that spreads, forwards or leads with options throws too, since no row of those wraps.
 
+### `packages/codegen/src/emitters/factories.ts::coOptionalBranchOfNode`
+
+The optional branch of an assembled compound, read from the `coOptional` stamps on its own slots (`coOptionalBranchOf`), or `undefined` when no slot is stamped. The wrap emitter's `$with` setters, the builders' setters and the type emitter's branch hint all read the branch through it, so a setter that clears the branch's required slot, the node's present and absent shapes and the builder rows agree on one set of keys. A node whose stamps name more than one branch, or a branch with no required config slot, throws a shape failure at emit time.
+
 ### `packages/codegen/src/emitters/node-members.ts::HoistSet`
 
 What a hoisted slot's `$with` setter takes from the emitter: the storage key, the wrapper slot it sets through, whether the holder slot is optional, the list spec, the wrap expression, the kind the value may already be, and the placed setter bodies for a whole wrapper and for a list.

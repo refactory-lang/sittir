@@ -12082,7 +12082,14 @@ function buildFloatPoint$with(node: Held, setter: string, args: readonly unknown
 			);
 		case 'exponent':
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildFloatPoint({ ...config, exponent: value }, options))
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildFloatPoint(
+								{ ...config, exponentSign: undefined, exponent: undefined },
+								{ ...options, marker: undefined }
+							)
+						: buildFloatPoint({ ...config, exponent: value }, options)
+				)
 			);
 		case 'imaginary':
 			return applySetter(args, (value?: Admit<string>) =>
@@ -12257,7 +12264,14 @@ function buildFloatLeadingPoint$with(node: Held, setter: string, args: readonly 
 			);
 		case 'exponent':
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, exponent: value }, options))
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildFloatLeadingPoint(
+								{ ...config, exponentSign: undefined, exponent: undefined },
+								{ ...options, marker: undefined }
+							)
+						: buildFloatLeadingPoint({ ...config, exponent: value }, options)
+				)
 			);
 		case 'imaginary':
 			return applySetter(args, (value?: Admit<string>) =>
