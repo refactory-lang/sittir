@@ -20,7 +20,7 @@ import { fuseHeadRepeatLists } from '../dsl/rule-transforms.ts';
 import { selfReferentialFoldOf, collectFixedLiteral } from '../dsl/rule-patterns.ts';
 import { runToFixpoint } from './fixpoint.ts';
 import { attributeBuilder, buildOptional, carryNodeFacts } from '../dsl/builders.ts';
-import { withId, withKindFacts, withAttrsFrom, sharedArmAttrs, absorbIds, absorbAlignedIds, factoredSeqOf, structuralKey } from '../dsl/rule-attrs.ts';
+import { withId, withKindFacts, withAttrsFrom, sharedArmAttrs, absorbIds, absorbAlignedIds, armsCanFactor, factoredSeqOf, sharedStampedAttrs, structuralKey, withoutStampedAttrs } from '../dsl/rule-attrs.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import { reservedWordsetsOf, withReservedWordsets } from '../dsl/rule-metadata.ts';
 import { supertypeArmsOf } from '../dsl/symbol-table.ts';
@@ -172,7 +172,7 @@ function factorChoiceArms(rule: RenderRule): RenderRule {
 		const first = structuralKey(seqArms[0]!.members[i]!);
 		if (seqArms.some((arm) => structuralKey(arm.members[i]!) !== first)) differing.push(i);
 	}
-	if (differing.length !== 1) return rule;
+	if (differing.length !== 1 || !armsCanFactor(rule, seqArms)) return rule;
 	const at = differing[0]!;
 	const variantAt = new Map<string, number>();
 	const variants: RenderRule[] = [];
@@ -192,7 +192,7 @@ function factorChoiceArms(rule: RenderRule): RenderRule {
 	const choice = factoredChoiceOf(variants, whole ? rule : seqId === undefined ? undefined : { id: memberRuleId(seqId, [at]) });
 	const others = seqArms.slice(1);
 	const members = seqArms[0]!.members.map((m, i) => (i === at ? choice : absorbAlignedIds(m, ...others.map((arm) => arm.members[i]!))));
-	const factored = seqId === undefined ? factoredSeqOf([members, seqArms]) : absorbIds({ type: SEQ, id: seqId, members }, ...seqArms);
+	const factored = seqId === undefined ? factoredSeqOf([members, seqArms]) : absorbIds({ type: SEQ, id: seqId, ...sharedStampedAttrs(seqArms), members }, ...seqArms);
 	if (whole) return withAttrsFrom(withoutIdentity(rule), factored);
 	let placed = false;
 	const rebuilt: RenderRule[] = [];
@@ -209,7 +209,7 @@ function factorChoiceArms(rule: RenderRule): RenderRule {
 function factorSharedLiterals(rule: RenderRule): RenderRule {
 	if (rule.type !== CHOICE || rule.members.length < 2) return rule;
 	const seqArms = rule.members.filter((arm): arm is SeqRule<'normalize'> => arm.type === SEQ);
-	if (seqArms.length !== rule.members.length) return rule;
+	if (seqArms.length !== rule.members.length || !armsCanFactor(rule, seqArms)) return rule;
 	const isLiteral = (m: RenderRule): boolean => m.type === STRING && m.nonterminal === false;
 	const shortest = Math.min(...seqArms.map((arm) => arm.members.length));
 	const sharedAt = (from: (arm: SeqRule<'normalize'>, offset: number) => RenderRule, offset: number): boolean => {
@@ -224,8 +224,8 @@ function factorSharedLiterals(rule: RenderRule): RenderRule {
 	const middle = (arm: SeqRule<'normalize'>): RenderRule => {
 		const members = arm.members.slice(prefix, arm.members.length - suffix);
 		if (members.length === 1) return members[0]!;
-		const { id: _id, absorbedIds: _absorbedIds, ...attrs } = arm;
-		return { ...attrs, members };
+		const { id: _id, absorbedIds: _absorbedIds, ...rest } = withoutStampedAttrs(arm);
+		return { ...rest, members };
 	};
 	const first = seqArms[0]!;
 	const others = seqArms.slice(1);
@@ -262,7 +262,7 @@ function permutationKey(rule: RenderRule): string {
 function foldPermutationArms(rule: RenderRule): RenderRule {
 	if (rule.type !== CHOICE) return rule;
 	const seqArms = rule.members.filter((arm): arm is SeqRule<'normalize'> => arm.type === SEQ);
-	if (seqArms.length < 2 || seqArms.length !== rule.members.length) return rule;
+	if (seqArms.length < 2 || seqArms.length !== rule.members.length || !armsCanFactor(rule, seqArms)) return rule;
 	const len = seqArms[0]!.members.length;
 	if (len < 2 || !seqArms.every((arm) => arm.members.length === len)) return rule;
 	const isSingle = (m: RenderRule): boolean => m.multiplicity === undefined || m.multiplicity === 'single';

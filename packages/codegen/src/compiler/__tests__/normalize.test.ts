@@ -506,3 +506,42 @@ describe('Normalize — collapseWrappers (T062)', () => {
 		expect(collapseWrappers(choice).type).toBe('STRING');
 	});
 });
+
+describe("factorChoiceBranches loses none of its arms' stamped attributes", () => {
+	const sym = (name: string, id: string): Rule<'link'> => ({ type: SYMBOL, name, id }) as Rule<'link'>;
+	const seq = (id: string, attrs: Record<string, unknown>, ...members: Rule<'link'>[]): Rule<'link'> =>
+		({ type: SEQ, id, ...attrs, members }) as Rule<'link'>;
+	const choice = (...members: Rule<'link'>[]): Rule<'link'> => ({ type: CHOICE, id: 'C', members }) as Rule<'link'>;
+
+	it('a field every arm shares stays on the factored seq', () => {
+		const out = factorChoiceBranches(choice(seq('A', { fieldName: 'f' }, sym('a', 'a0'), sym('x', 'x')), seq('B', { fieldName: 'f' }, sym('a', 'a1'), sym('y', 'y')))) as any;
+		expect(out.type).toBe(SEQ);
+		expect(out.fieldName).toBe('f');
+		expect(out.members[1].type).toBe(CHOICE);
+	});
+
+	it('arms that disagree on a field do not factor', () => {
+		const out = factorChoiceBranches(choice(seq('A', { fieldName: 'f' }, sym('a', 'a0'), sym('x', 'x')), seq('B', { fieldName: 'g' }, sym('a', 'a1'), sym('y', 'y')))) as any;
+		expect(out.type).toBe(CHOICE);
+		expect(out.members.map((arm: any) => arm.fieldName)).toEqual(['f', 'g']);
+	});
+
+	it('a seq arm with a field does not factor against a bare atom arm', () => {
+		const out = factorChoiceBranches(choice(seq('A', { fieldName: 'f' }, sym('a', 'a0'), sym('x', 'x')), sym('a', 'a1'))) as any;
+		expect(out.type).toBe(CHOICE);
+		expect(out.members[0].fieldName).toBe('f');
+	});
+
+	it('identical arms keep the field they share when nothing is left to choose between', () => {
+		const out = factorChoiceBranches(choice(seq('A', { fieldName: 'f' }, sym('a', 'a0'), sym('b', 'b0')), seq('B', { fieldName: 'f' }, sym('a', 'a1'), sym('b', 'b1')))) as any;
+		expect(out.type).toBe(SEQ);
+		expect(out.fieldName).toBe('f');
+	});
+
+	it('identical one-member arms keep the field they share on a seq around the member', () => {
+		const out = factorChoiceBranches(choice(seq('A', { fieldName: 'f' }, sym('a', 'a0')), seq('B', { fieldName: 'f' }, sym('a', 'a1')))) as any;
+		expect(out.type).toBe(SEQ);
+		expect(out.fieldName).toBe('f');
+		expect(out.members).toHaveLength(1);
+	});
+});

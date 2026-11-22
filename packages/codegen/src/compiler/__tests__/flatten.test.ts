@@ -371,3 +371,97 @@ describe('a factored choice keeps its identity', () => {
 		expect(out.members![1]!.id).toBe('C');
 	});
 });
+
+describe("a factoring loses none of its arms' stamped attributes", () => {
+	type Attrs = Record<string, unknown>;
+	type Out = Attrs & { type: string; id?: string; members?: Out[] };
+	const lit = (value: string, id: string): Rule<'link'> => ({ type: STRING, value, nonterminal: false, id }) as Rule<'link'>;
+	const named = (name: string, id: string, attrs: Attrs = {}): Rule<'link'> => ({ type: SYMBOL, name, id, ...attrs }) as Rule<'link'>;
+	const seq = (id: string, attrs: Attrs, ...members: Rule<'link'>[]): Rule<'link'> => ({ type: SEQ, id, ...attrs, members }) as Rule<'link'>;
+	const choice = (id: string, ...members: Rule<'link'>[]): Rule<'link'> => ({ type: CHOICE, id, members }) as Rule<'link'>;
+	const flat = (rule: Rule<'link'>): Out => flattenRules({ k: rule })['k'] as unknown as Out;
+	const comma = { value: { type: STRING, value: ',', nonterminal: false } };
+	const semi = { value: { type: STRING, value: ';', nonterminal: false } };
+	const stamped: readonly (readonly [string, unknown, unknown])[] = [
+		['fieldName', 'f', 'g'],
+		['multiplicity', 'optional', 'array'],
+		['separator', comma, semi],
+		['optionalElement', true, undefined],
+		['tokenized', true, undefined],
+		['immediate', true, undefined]
+	];
+	const armsOf = (a: Attrs, b: Attrs) => [
+		seq('rule:k:members.1', a, lit('(', 'rule:k:members.1/members.0'), named('x', 'rule:k:members.1/members.1')),
+		seq('rule:k:members.2', b, lit('(', 'rule:k:members.2/members.0'), named('y', 'rule:k:members.2/members.1'))
+	];
+	const edgeArmsOf = (a: Attrs, b: Attrs) => [
+		seq('A', a, lit('{', 'o'), named('n', 'n'), lit('}', 'c')),
+		seq('B', b, lit('{', 'o2'), lit(',', 'm0'), named('m', 'm'), lit('}', 'c2'))
+	];
+
+	for (const [attr, value, other] of stamped) {
+		const has = (v: unknown): Attrs => (v === undefined ? {} : { [attr]: v });
+
+		it(`${attr} every arm shares stays on the seq when the whole choice factors`, () => {
+			const out = flat(choice('rule:k:root', ...armsOf(has(value), has(value))));
+			expect(out.type).toBe(SEQ);
+			expect(out[attr]).toEqual(value);
+			expect(out.members![1]!.type).toBe(CHOICE);
+		});
+
+		it(`arms that disagree on ${attr} do not factor`, () => {
+			const out = flat(choice('rule:k:root', ...armsOf(has(value), has(other))));
+			expect(out.type).toBe(CHOICE);
+			expect(out.members!.map((arm) => arm[attr])).toEqual([value, other]);
+		});
+
+		it(`${attr} the factored arms share stays on the seq beside a choice's other arms`, () => {
+			const out = flat(choice('rule:k:root', named('z', 'rule:k:members.0'), ...armsOf(has(value), has(value))));
+			const factored = out.members!.find((arm) => arm.type === SEQ)!;
+			expect(out.members).toHaveLength(2);
+			expect(factored.id).toBe('rule:k:members.1.2');
+			expect(factored[attr]).toEqual(value);
+		});
+
+		it(`some arms that disagree on ${attr} do not factor beside a choice's other arms`, () => {
+			const out = flat(choice('rule:k:root', named('z', 'rule:k:members.0'), ...armsOf(has(value), has(other))));
+			expect(out.members).toHaveLength(3);
+			expect(out.members!.slice(1).map((arm) => arm[attr])).toEqual([value, other]);
+		});
+
+		it(`${attr} every arm shares stays on the seq when shared literals factor, and leaves the remainders`, () => {
+			const out = flat(choice('C', ...edgeArmsOf(has(value), has(value))));
+			expect(out.type).toBe(SEQ);
+			expect(out[attr]).toEqual(value);
+			const inner = out.members![1]!;
+			expect(inner.type).toBe(CHOICE);
+			expect(inner.members![1]![attr]).toBeUndefined();
+		});
+
+		it(`arms that disagree on ${attr} keep their shared literals`, () => {
+			const out = flat(choice('C', ...edgeArmsOf(has(value), has(other))));
+			expect(out.type).toBe(CHOICE);
+			expect(out.members!.map((arm) => arm[attr])).toEqual([value, other]);
+		});
+	}
+
+	it('arms in either order that disagree on a field do not fold into one seq', () => {
+		const out = flat(
+			choice(
+				'C',
+				seq('A', { fieldName: 'f' }, named('a', 'a0'), named('b', 'b0', { multiplicity: 'optional' })),
+				seq('B', { fieldName: 'g' }, named('b', 'b1'), named('a', 'a1', { multiplicity: 'optional' }))
+			)
+		);
+		expect(out.type).toBe(CHOICE);
+		expect(out.members!.map((arm) => arm['fieldName'])).toEqual(['f', 'g']);
+	});
+
+	it('arms that share a field but disagree with the choice around them do not factor', () => {
+		const fielded = { ...choice('rule:k:root', ...armsOf({ fieldName: 'f' }, { fieldName: 'f' })), fieldName: 'h' };
+		const out = flat(fielded as Rule<'link'>);
+		expect(out.type).toBe(CHOICE);
+		expect(out['fieldName']).toBe('h');
+		expect(out.members!.map((arm) => arm['fieldName'])).toEqual(['f', 'f']);
+	});
+});

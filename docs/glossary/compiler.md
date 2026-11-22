@@ -2957,7 +2957,9 @@ Why one group lift cannot apply, or `undefined` when it can. A path the resolver
  * empty one, the `optional` around it takes that identity. The factored
  * seq takes its arm seqs' ids (`factoredSeqOf`) and the choice's
  * positional attrs (fieldName, multiplicity, separator). Varying bodies
- * keep only their own ids.
+ * keep only their own ids. The seq carries the stamped attributes its
+ * arms share; a choice whose arms would lose one (`armsCanFactor`) stays
+ * a choice.
  */
 ```
 
@@ -4001,9 +4003,9 @@ parts with the space its parser needs.
 
 ### `packages/codegen/src/compiler/flatten.ts::factorChoiceArms`
 
-A choice distributed over seq arms is one seq with a choice at the position that varies: `choice(seq(l, op1, r), seq(l, op2, r), …)` becomes `seq(l, choice(op1, op2, …), r)`. It applies when the seq arms have equal length and differ (by `structuralKey`) at exactly one position; other arms (a lifted arm referenced as a symbol, such as typescript's `binary_expression_in`) stay beside the factored seq. The rebuilt choice directly wraps the varying members, so `attributeBuilder.choice` makes it the slot: this is how a fielded literal that differs between arms (`binary_expression.operator`) is an enum slot without any field-based rule. The choice carries the arms' unanimous fieldName and multiplicity (`sharedArmAttrs`).
+A choice distributed over seq arms is one seq with a choice at the position that varies: `choice(seq(l, op1, r), seq(l, op2, r), …)` becomes `seq(l, choice(op1, op2, …), r)`. It applies when the seq arms have equal length, differ (by `structuralKey`) at exactly one position, and can factor without losing a stamped attribute (`armsCanFactor`); other arms (a lifted arm referenced as a symbol, such as typescript's `binary_expression_in`) stay beside the factored seq. The rebuilt choice directly wraps the varying members, so `attributeBuilder.choice` makes it the slot: this is how a fielded literal that differs between arms (`binary_expression.operator`) is an enum slot without any field-based rule. The choice carries the arms' unanimous fieldName and multiplicity (`sharedArmAttrs`).
 
-An id follows the node it identifies. When every arm is a seq, the rebuilt choice is the source choice narrowed to the varying position, so it keeps the choice's id and absorbed ids, and the seq around it is `factoredSeqOf` the arms, taking the choice's positional attributes but not its id (`withoutIdentity`). When other arms stay beside it, the source choice keeps its id, and the factored seq and its choice are nodes no source rule names: the seq stands for the seq arms at their indices in the choice (`memberRuleId(choice, indices)`) and absorbs their ids, and the choice inside it is that seq's member at the varying position.
+An id follows the node it identifies. When every arm is a seq, the rebuilt choice is the source choice narrowed to the varying position, so it keeps the choice's id and absorbed ids, and the seq around it is `factoredSeqOf` the arms, taking the choice's positional attributes but not its id (`withoutIdentity`). When other arms stay beside it, the source choice keeps its id, and the factored seq and its choice are nodes no source rule names: the seq stands for the seq arms at their indices in the choice (`memberRuleId(choice, indices)`), absorbs their ids and carries the stamped attributes they share, and the choice inside it is that seq's member at the varying position.
 
 ### `packages/codegen/src/compiler/flatten.ts::permutationKey`
 
@@ -4020,7 +4022,9 @@ An id follows the node it identifies. When every arm is a seq, the rebuilt choic
  * seq(B, optional(A)))`, is one seq of presence flags: `seq(optional(A),
  * optional(B))` in the first arm's order (a member required in every arm
  * stays required). Applies when every arm is a seq of the same members
- * (by `permutationKey`, each single or optional) in a different order.
+ * (by `permutationKey`, each single or optional) in a different order,
+ * and the arms can factor without losing a stamped attribute
+ * (`armsCanFactor`).
  * A folded seq whose members are all optional drops an `optional`
  * multiplicity of its own — it is already optional — so simplify splices
  * it into the parent and each keyword is its own optional slot
@@ -7752,7 +7756,7 @@ the package's own id tables, then `compileGrammar` on that package.
 
 ### `packages/codegen/src/compiler/flatten.ts::factorSharedLiterals`
 
-The choice counterpart of `factorChoiceArms` for arms of different lengths: when every arm is a seq and every arm opens (or closes) with the same render-only literal, the shared literals are hoisted out and the arms' remainders become one choice between them. `{ n }` and `{ , m }` read as `{`, a choice of `n` and `, m`, then `}`. Only literals stamped `nonterminal: false` are shared, and never the last member of an arm. Each arm's remainder keeps every member, its own literals included: a remainder of one member is that member, and a longer one is the arm's seq narrowed to those members, without the arm's id, which the seq around the choice carries. The choice of remainders is the source choice, so it keeps its id and absorbed ids (`factoredChoiceOf`), and the seq around it is `factoredSeqOf` the arms, taking the choice's positional attributes but not its id. A literal that only one arm holds is written by that arm's branch of the lowered choice, which emit tells apart from the others by a slot's presence or by the kind at a shared slot.
+The choice counterpart of `factorChoiceArms` for arms of different lengths: when every arm is a seq, the arms can factor (`armsCanFactor`), and every arm opens (or closes) with the same render-only literal, the shared literals are hoisted out and the arms' remainders become one choice between them. `{ n }` and `{ , m }` read as `{`, a choice of `n` and `, m`, then `}`. Only literals stamped `nonterminal: false` are shared, and never the last member of an arm. Each arm's remainder keeps every member, its own literals included: a remainder of one member is that member, and a longer one is the arm's seq narrowed to those members, without the arm's id or stamped attributes, which the seq around the choice carries. The choice of remainders is the source choice, so it keeps its id and absorbed ids (`factoredChoiceOf`), and the seq around it is `factoredSeqOf` the arms, taking the choice's positional attributes but not its id. A literal that only one arm holds is written by that arm's branch of the lowered choice, which emit tells apart from the others by a slot's presence or by the kind at a shared slot.
 
 ### `packages/codegen/src/compiler/flatten.ts::rebuiltLeaf`
 

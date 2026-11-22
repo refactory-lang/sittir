@@ -4,22 +4,15 @@ import { RuleWalker } from './rule-walker.ts';
 import { separatorFactsEqual } from './rule-patterns.ts';
 import { rebasedRuleId, reownedRuleId } from '../compiler/rule-catalog.ts';
 
+const STAMPED_ATTRS = ['fieldName', 'multiplicity', 'separator', 'optionalElement', 'tokenized', 'immediate'] as const;
+
 export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): R {
 	const src = original as StampedAttrs & { id?: string };
-	const { fieldName, multiplicity, separator, optionalElement, id, tokenized, immediate } = src;
+	const { id } = src;
 	const patch: Record<string, unknown> = {};
-	if (fieldName !== undefined && !Object.prototype.hasOwnProperty.call(result, 'fieldName'))
-		patch['fieldName'] = fieldName;
-	if (multiplicity !== undefined && !Object.prototype.hasOwnProperty.call(result, 'multiplicity'))
-		patch['multiplicity'] = multiplicity;
-	if (separator !== undefined && !Object.prototype.hasOwnProperty.call(result, 'separator'))
-		patch['separator'] = separator;
-	if (optionalElement !== undefined && !Object.prototype.hasOwnProperty.call(result, 'optionalElement'))
-		patch['optionalElement'] = optionalElement;
-	if (tokenized !== undefined && !Object.prototype.hasOwnProperty.call(result, 'tokenized'))
-		patch['tokenized'] = tokenized;
-	if (immediate !== undefined && !Object.prototype.hasOwnProperty.call(result, 'immediate'))
-		patch['immediate'] = immediate;
+	for (const attr of STAMPED_ATTRS) {
+		if (src[attr] !== undefined && !Object.prototype.hasOwnProperty.call(result, attr)) patch[attr] = src[attr];
+	}
 	if (id !== undefined && !Object.prototype.hasOwnProperty.call(result, 'id')) patch['id'] = id;
 	const withPatch = Object.keys(patch).length === 0 ? result : { ...result, ...patch };
 	return absorbIds(withPatch, { ...original, id: original.id === withPatch.id ? undefined : original.id });
@@ -66,7 +59,32 @@ type RuleBag = {
 export function factoredSeqOf<T extends PhaseName>([members, arms]: readonly [Rule<T>[], readonly SeqRule<T>[]]): Rule<T> {
 	const ids = new Set(arms.map((arm) => arm.id));
 	const copies = arms.length > 0 && ids.size === 1 && !ids.has(undefined);
-	return copies ? { ...arms[0]!, members } : absorbIds({ type: SEQ, members }, ...arms);
+	return copies ? { ...arms[0]!, members } : absorbIds({ type: SEQ, ...sharedStampedAttrs(arms), members }, ...arms);
+}
+
+function stampedAttrEqual(attr: (typeof STAMPED_ATTRS)[number], [a, b]: readonly [StampedAttrs, StampedAttrs]): boolean {
+	return attr === 'separator' ? separatorFactsEqual(a.separator, b.separator) : a[attr] === b[attr];
+}
+
+export function sharedStampedAttrs(arms: readonly AnyRule[]): StampedAttrs | undefined {
+	const stamped = arms.map((arm) => (arm.type === SEQ ? arm : {}) as StampedAttrs);
+	const first = stamped[0] ?? {};
+	if (!STAMPED_ATTRS.every((attr) => stamped.every((arm) => stampedAttrEqual(attr, [arm, first])))) return undefined;
+	const shared: Record<string, unknown> = {};
+	for (const attr of STAMPED_ATTRS) if (first[attr] !== undefined) shared[attr] = first[attr];
+	return shared as StampedAttrs;
+}
+
+export function armsCanFactor(choice: AnyRule, arms: readonly AnyRule[]): boolean {
+	const shared = sharedStampedAttrs(arms);
+	const own = choice as StampedAttrs;
+	return shared !== undefined && STAMPED_ATTRS.every((attr) => own[attr] === undefined || shared[attr] === undefined || stampedAttrEqual(attr, [own, shared]));
+}
+
+export function withoutStampedAttrs<R extends AnyRule>(rule: R): R {
+	const rest: Record<string, unknown> = { ...rule };
+	for (const attr of STAMPED_ATTRS) delete rest[attr];
+	return rest as R;
 }
 
 export function absorbAlignedIds<R extends AnyRule>(host: R, ...absorbed: readonly AnyRule[]): R {
@@ -125,10 +143,7 @@ export interface SharedArmAttrs {
 
 const MULTIPLICITY_RANK: Record<Multiplicity, number> = { single: 0, optional: 1, array: 2, nonEmptyArray: 3 };
 
-type StampedAttrs = Pick<
-	RuleBase<'normalize'>,
-	'fieldName' | 'multiplicity' | 'nonterminal' | 'separator' | 'optionalElement' | 'tokenized' | 'immediate'
->;
+type StampedAttrs = Pick<RuleBase<'normalize'>, (typeof STAMPED_ATTRS)[number] | 'nonterminal'>;
 
 function armsOf(rule: AnyRule): readonly AnyRule[] {
 	if (rule.type === CHOICE) return rule.members;
