@@ -20,7 +20,7 @@ import { fuseHeadRepeatLists } from '../dsl/rule-transforms.ts';
 import { selfReferentialFoldOf, collectFixedLiteral } from '../dsl/rule-patterns.ts';
 import { runToFixpoint } from './fixpoint.ts';
 import { attributeBuilder, buildOptional, carryNodeFacts } from '../dsl/builders.ts';
-import { withId, withKindFacts, withAttrsFrom, sharedArmAttrs, absorbIds, absorbAlignedIds, armsCanFactor, factoredSeqOf, sharedStampedAttrs, structuralKey, withoutStampedAttrs } from '../dsl/rule-attrs.ts';
+import { withId, withKindFacts, withAttrsFrom, sharedArmAttrs, absorbIds, absorbAlignedIds, armsCanFactor, factoredSeqOf, nonPositionFactsOf, sharedSeqFacts, structuralKey } from '../dsl/rule-attrs.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import { reservedWordsetsOf, withReservedWordsets } from '../dsl/rule-metadata.ts';
 import { supertypeArmsOf } from '../dsl/symbol-table.ts';
@@ -120,7 +120,15 @@ export function flattenRules(rules: Record<string, Rule<'link'>>, wordMatcher?: 
 		const flat = fuseHeadRepeatLists(flatten(applySelfReferentialFold(name, rule)));
 		result[name] = withKindFacts(flat, rule);
 	}
-	return stampTerminality(factorChoiceArmsToFixpoint(result), wordMatcher);
+	const factored = stampTerminality(factorChoiceArmsToFixpoint(result), wordMatcher);
+	return Object.fromEntries(Object.entries(factored).map(([name, rule]) => [name, withoutSelfVariant([name, rule])]));
+}
+
+function withoutSelfVariant([kind, rule]: readonly [string, RenderRule]): RenderRule {
+	if (rule.type !== SEQ || rule.annotations?.variantOf !== kind) return rule;
+	const { variantOf: _variantOf, definedBy: _definedBy, ...annotations } = rule.annotations;
+	const { annotations: _annotations, ...bare } = rule;
+	return Object.keys(annotations).length === 0 ? bare : { ...bare, annotations };
 }
 
 function stampTerminality(rules: Record<string, RenderRule>, wordMatcher: RegExp | undefined): Record<string, RenderRule> {
@@ -192,7 +200,7 @@ function factorChoiceArms(rule: RenderRule): RenderRule {
 	const choice = factoredChoiceOf(variants, whole ? rule : seqId === undefined ? undefined : { id: memberRuleId(seqId, [at]) });
 	const others = seqArms.slice(1);
 	const members = seqArms[0]!.members.map((m, i) => (i === at ? choice : absorbAlignedIds(m, ...others.map((arm) => arm.members[i]!))));
-	const factored = seqId === undefined ? factoredSeqOf([members, seqArms]) : absorbIds({ type: SEQ, id: seqId, ...sharedStampedAttrs(seqArms), members }, ...seqArms);
+	const factored = seqId === undefined ? factoredSeqOf([members, seqArms]) : absorbIds({ type: SEQ, id: seqId, ...sharedSeqFacts(seqArms), members }, ...seqArms);
 	if (whole) return withAttrsFrom(withoutIdentity(rule), factored);
 	let placed = false;
 	const rebuilt: RenderRule[] = [];
@@ -223,9 +231,7 @@ function factorSharedLiterals(rule: RenderRule): RenderRule {
 	if (prefix + suffix === 0) return rule;
 	const middle = (arm: SeqRule<'normalize'>): RenderRule => {
 		const members = arm.members.slice(prefix, arm.members.length - suffix);
-		if (members.length === 1) return members[0]!;
-		const { id: _id, absorbedIds: _absorbedIds, ...rest } = withoutStampedAttrs(arm);
-		return { ...rest, members };
+		return members.length === 1 ? members[0]! : { type: SEQ, members };
 	};
 	const first = seqArms[0]!;
 	const others = seqArms.slice(1);
@@ -237,12 +243,11 @@ function factorSharedLiterals(rule: RenderRule): RenderRule {
 	return withAttrsFrom(withoutIdentity(rule), factoredSeqOf([[...head, inner, ...tail], seqArms]));
 }
 
-function factoredChoiceOf(variants: RenderRule[], source: { readonly id?: RuleId; readonly absorbedIds?: readonly RuleId[] } | undefined): RenderRule {
+function factoredChoiceOf(variants: RenderRule[], source: { readonly id?: RuleId } | undefined): RenderRule {
 	const shared = sharedArmAttrs({ type: CHOICE, members: variants });
 	return {
 		...b.choice(...variants),
-		...(source?.id !== undefined ? { id: source.id } : {}),
-		...(source?.absorbedIds !== undefined ? { absorbedIds: source.absorbedIds } : {}),
+		...(source === undefined ? {} : nonPositionFactsOf(source)),
 		...(shared.fieldName !== undefined ? { fieldName: shared.fieldName } : {}),
 		...(shared.multiplicity !== undefined ? { multiplicity: shared.multiplicity } : {})
 	};

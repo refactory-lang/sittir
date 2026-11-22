@@ -545,3 +545,57 @@ describe("factorChoiceBranches loses none of its arms' stamped attributes", () =
 		expect(out.members).toHaveLength(1);
 	});
 });
+
+describe('factorChoiceBranches loses no fact of its arms', () => {
+	const sym = (name: string, id: string, facts: Record<string, unknown> = {}): Rule<'link'> => ({ type: SYMBOL, name, id, ...facts }) as Rule<'link'>;
+	const seq = (id: string, facts: Record<string, unknown>, ...members: Rule<'link'>[]): Rule<'link'> =>
+		({ type: SEQ, id, ...facts, members }) as Rule<'link'>;
+	const choice = (facts: Record<string, unknown>, ...members: Rule<'link'>[]): Rule<'link'> => ({ type: CHOICE, id: 'C', ...facts, members }) as Rule<'link'>;
+
+	it('a fact every arm shares stays on the factored seq', () => {
+		const shared = { annotations: { variantOf: 'k' } };
+		const out = factorChoiceBranches(choice({}, seq('A', shared, sym('a', 'a0'), sym('x', 'x')), seq('B', shared, sym('a', 'a1'), sym('y', 'y')))) as any;
+		expect(out.type).toBe(SEQ);
+		expect(out.annotations).toEqual({ variantOf: 'k' });
+	});
+
+	it('arms that differ on a fact do not factor', () => {
+		const out = factorChoiceBranches(choice({}, seq('A', { inlinedFrom: '_a' }, sym('a', 'a0'), sym('x', 'x')), seq('B', { inlinedFrom: '_b' }, sym('a', 'a1'), sym('y', 'y')))) as any;
+		expect(out.type).toBe(CHOICE);
+		expect(out.members.map((arm: any) => arm.inlinedFrom)).toEqual(['_a', '_b']);
+	});
+
+	it('arms that each repeat do not factor', () => {
+		for (const multiplicity of ['array', 'nonEmptyArray']) {
+			const out = factorChoiceBranches(choice({}, seq('A', { multiplicity }, sym('a', 'a0'), sym('x', 'x')), seq('B', { multiplicity }, sym('a', 'a1'), sym('y', 'y')))) as any;
+			expect(out.type).toBe(CHOICE);
+		}
+	});
+
+	it('a seq arm and an atom arm holding the same fact factor, and one holding another fact does not', () => {
+		const label = { annotations: { variantOf: 'k' } };
+		const same = factorChoiceBranches(choice({}, seq('A', label, sym('a', 'a0'), sym('x', 'x')), sym('a', 'a1', label))) as any;
+		expect(same.type).toBe(SEQ);
+		expect(same.annotations).toEqual({ variantOf: 'k' });
+		const other = factorChoiceBranches(choice({}, seq('A', label, sym('a', 'a0'), sym('x', 'x')), sym('a', 'a1', { annotations: { variantOf: 'j' } }))) as any;
+		expect(other.type).toBe(CHOICE);
+	});
+
+	it("the choice's own facts stay on the optional when one arm body is left", () => {
+		const out = factorChoiceBranches(choice({ inlinedFrom: '_choice', metadata: { fieldSource: 'choice' } }, seq('A', {}, sym('a', 'a0'), sym('x', 'x')), seq('B', {}, sym('a', 'a1')))) as any;
+		expect(out.type).toBe(SEQ);
+		const inner = out.members[1];
+		expect(inner.type).toBe(OPTIONAL);
+		expect(inner.id).toBe('C');
+		expect(inner.inlinedFrom).toBe('_choice');
+		expect(inner.metadata).toEqual({ fieldSource: 'choice' });
+	});
+
+	it("the choice's own facts stay on the inner choice, and the arms' on the seq", () => {
+		const out = factorChoiceBranches(choice({ inlinedFrom: '_choice' }, seq('A', { inlinedFrom: '_arm' }, sym('a', 'a0'), sym('x', 'x')), seq('B', { inlinedFrom: '_arm' }, sym('a', 'a1'), sym('y', 'y')))) as any;
+		expect(out.type).toBe(SEQ);
+		expect(out.inlinedFrom).toBe('_arm');
+		expect(out.members[1].type).toBe(CHOICE);
+		expect(out.members[1].inlinedFrom).toBe('_choice');
+	});
+});

@@ -39,7 +39,7 @@ import {
 } from '../dsl/rule-transforms.ts';
 import { flattenRules } from './flatten.ts';
 import { runToFixpoint } from './fixpoint.ts';
-import { absorbAlignedIds, absorbIds, armsCanFactor, factoredSeqOf, sharedStampedAttrs, withAttrsFrom, withKindFacts, rebaseRuleIds } from '../dsl/rule-attrs.ts';
+import { absorbAlignedIds, absorbIds, armsCanFactor, factoredSeqOf, nonPositionFactsOf, sharedSeqFacts, withAttrsFrom, withKindFacts, rebaseRuleIds } from '../dsl/rule-attrs.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { collectGeneratedKindEntries } from '../dsl/symbol-table.ts';
@@ -457,13 +457,13 @@ export function factorChoiceBranches(rule: Rule<'link'>, _ctx?: NormalizeCtx): R
 			const { prefix, suffix, nonEmpty, hasEmpty } = extractFactoredChoiceBody(members, seqs, prefixLen, suffixLen);
 			const arms = members.filter((m): m is SeqRule<'link'> => m.type === SEQ);
 			if (nonEmpty.length === 0) {
-				return withAttrsFrom(rule, absorbIds(outerFromParts([prefix, suffix], sharedStampedAttrs(arms)), ...arms));
+				return withAttrsFrom(rule, absorbIds(outerFromParts([prefix, suffix], sharedSeqFacts(arms)), ...arms));
 			}
 			const core: Rule<'link'> = nonEmpty.length === 1 ? nonEmpty[0]! : { ...rule, type: CHOICE, members: nonEmpty };
 			const inner: Rule<'link'> = !hasEmpty
 				? core
 				: nonEmpty.length === 1
-					? absorbIds({ type: OPTIONAL, content: core, ...(rule.id !== undefined ? { id: rule.id } : {}) }, { ...rule, id: undefined })
+					? { ...nonPositionFactsOf(rule), type: OPTIONAL, content: core }
 					: { type: OPTIONAL, content: core };
 			const outerMembers: Rule<'link'>[] = [...prefix, inner, ...suffix];
 			return outerMembers.length === 1
@@ -718,13 +718,13 @@ export function collapseWrappers(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<
 	}
 }
 
-function outerFromParts([prefix, suffix]: readonly [Rule<'link'>[], Rule<'link'>[]], attrs: ReturnType<typeof sharedStampedAttrs>): Rule<'link'> {
+function outerFromParts([prefix, suffix]: readonly [Rule<'link'>[], Rule<'link'>[]], facts: ReturnType<typeof sharedSeqFacts>): Rule<'link'> {
 	const members = [...prefix, ...suffix];
 	if (members.length === 0) {
 		throw new Error('outerFromParts: no prefix or suffix to wrap');
 	}
-	if (members.length === 1 && Object.keys(attrs ?? {}).length === 0) return members[0]!;
-	return { type: SEQ, ...attrs, members };
+	if (members.length === 1 && Object.keys(facts ?? {}).length === 0) return members[0]!;
+	return { type: SEQ, ...facts, members };
 }
 
 export function rulesEqual(a: Rule<'link'>, b: Rule<'link'>): boolean {

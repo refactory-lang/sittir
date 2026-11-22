@@ -465,3 +465,159 @@ describe("a factoring loses none of its arms' stamped attributes", () => {
 		expect(out.members!.map((arm) => arm['fieldName'])).toEqual(['f', 'f']);
 	});
 });
+
+describe('a factoring loses no fact of its arms', () => {
+	type Facts = Record<string, unknown>;
+	type Out = Facts & { type: string; id?: string; members?: Out[] };
+	const lit = (value: string, id: string): Rule<'link'> => ({ type: STRING, value, nonterminal: false, id }) as Rule<'link'>;
+	const named = (name: string, id: string, facts: Facts = {}): Rule<'link'> => ({ type: SYMBOL, name, id, ...facts }) as Rule<'link'>;
+	const seq = (id: string, facts: Facts, ...members: Rule<'link'>[]): Rule<'link'> => ({ type: SEQ, id, ...facts, members }) as Rule<'link'>;
+	const choice = (id: string, facts: Facts, ...members: Rule<'link'>[]): Rule<'link'> => ({ type: CHOICE, id, ...facts, members }) as Rule<'link'>;
+	const flat = (rule: Rule<'link'>): Out => flattenRules({ k: rule })['k'] as unknown as Out;
+	const facts: readonly (readonly [string, unknown, unknown])[] = [
+		['annotations', { variant: 'a' }, { variant: 'b' }],
+		['metadata', { fieldSource: 'a' }, { fieldSource: 'b' }],
+		['inlinedFrom', '_a', '_b'],
+		['splicedBody', true, undefined],
+		['variantArms', ['a'], ['b']],
+		['lexed', true, undefined]
+	];
+	const armsOf = (a: Facts, b: Facts) => [
+		seq('rule:k:members.1', a, lit('(', 'rule:k:members.1/members.0'), named('x', 'rule:k:members.1/members.1')),
+		seq('rule:k:members.2', b, lit('(', 'rule:k:members.2/members.0'), named('y', 'rule:k:members.2/members.1'))
+	];
+	const edgeArmsOf = (a: Facts, b: Facts) => [
+		seq('A', a, lit('{', 'o'), named('n', 'n'), lit('}', 'c')),
+		seq('B', b, lit('{', 'o2'), lit(',', 'm0'), named('m', 'm'), lit('}', 'c2'))
+	];
+	const eitherOrderOf = (a: Facts, b: Facts) => [
+		seq('A', a, named('p', 'p0'), named('q', 'q0', { multiplicity: 'optional' })),
+		seq('B', b, named('q', 'q1'), named('p', 'p1', { multiplicity: 'optional' }))
+	];
+
+	for (const [fact, value, other] of facts) {
+		const has = (v: unknown): Facts => (v === undefined ? {} : { [fact]: v });
+
+		it(`${fact} every arm shares stays on the seq when the whole choice factors`, () => {
+			const out = flat(choice('rule:k:root', {}, ...armsOf(has(value), has(value))));
+			expect(out.type).toBe(SEQ);
+			expect(out[fact]).toEqual(value);
+		});
+
+		it(`arms that differ on ${fact} do not factor`, () => {
+			const out = flat(choice('rule:k:root', {}, ...armsOf(has(value), has(other))));
+			expect(out.type).toBe(CHOICE);
+			expect(out.members!.map((arm) => arm[fact])).toEqual([value, other]);
+		});
+
+		it(`${fact} the factored arms share stays on the seq beside a choice's other arms`, () => {
+			const out = flat(choice('rule:k:root', {}, named('z', 'rule:k:members.0'), ...armsOf(has(value), has(value))));
+			expect(out.members!.find((arm) => arm.type === SEQ)![fact]).toEqual(value);
+		});
+
+		it(`some arms that differ on ${fact} do not factor beside a choice's other arms`, () => {
+			const out = flat(choice('rule:k:root', {}, named('z', 'rule:k:members.0'), ...armsOf(has(value), has(other))));
+			expect(out.members).toHaveLength(3);
+		});
+
+		it(`${fact} every arm shares stays on the seq when shared literals factor, and leaves the remainders`, () => {
+			const out = flat(choice('C', {}, ...edgeArmsOf(has(value), has(value))));
+			expect(out.type).toBe(SEQ);
+			expect(out[fact]).toEqual(value);
+			expect(out.members![1]!.members![1]![fact]).toBeUndefined();
+		});
+
+		it(`arms that differ on ${fact} keep their shared literals`, () => {
+			expect(flat(choice('C', {}, ...edgeArmsOf(has(value), has(other)))).type).toBe(CHOICE);
+		});
+
+		it(`arms in either order that differ on ${fact} do not fold`, () => {
+			expect(flat(choice('C', {}, ...eitherOrderOf(has(value), has(other)))).type).toBe(CHOICE);
+		});
+	}
+
+	for (const multiplicity of ['array', 'nonEmptyArray']) {
+		const repeated = { multiplicity };
+
+		it(`arms that each repeat (${multiplicity}) do not factor, since (a x)* | (a y)* is not (a (x|y))*`, () => {
+			expect(flat(choice('rule:k:root', {}, ...armsOf(repeated, repeated))).type).toBe(CHOICE);
+			expect(flat(choice('rule:k:root', {}, named('z', 'rule:k:members.0'), ...armsOf(repeated, repeated))).members).toHaveLength(3);
+			expect(flat(choice('C', {}, ...edgeArmsOf(repeated, repeated))).type).toBe(CHOICE);
+			expect(flat(choice('C', {}, ...eitherOrderOf(repeated, repeated))).type).toBe(CHOICE);
+		});
+
+		it(`copies of one repeated seq (${multiplicity}) factor back into that seq`, () => {
+			const out = flat(
+				choice('C', {}, seq('S', repeated, lit('(', 'p'), named('x', 'x')), seq('S', repeated, lit('(', 'p'), named('y', 'y')))
+			);
+			expect(out.type).toBe(SEQ);
+			expect(out.id).toBe('S');
+			expect(out['multiplicity']).toBe(multiplicity);
+		});
+	}
+
+	it("the choice's own facts stay on the inner choice when its arms factor, beside the arms' on the seq", () => {
+		const own = { inlinedFrom: '_choice', metadata: { fieldSource: 'choice' } };
+		const out = flat(seq('rule:k:root', {}, lit('x', 'h'), choice('C', own, ...armsOf({ inlinedFrom: '_arm' }, { inlinedFrom: '_arm' }))));
+		const factored = out.members![1]!;
+		expect(factored.type).toBe(SEQ);
+		expect(factored['inlinedFrom']).toBe('_arm');
+		const inner = factored.members![1]!;
+		expect(inner.type).toBe(CHOICE);
+		expect(inner.id).toBe('C');
+		expect(inner['inlinedFrom']).toBe('_choice');
+		expect(inner['metadata']).toEqual({ fieldSource: 'choice' });
+	});
+
+	it("the choice's own facts stay on the choice of remainders when shared literals factor", () => {
+		const own = { inlinedFrom: '_choice' };
+		const out = flat(seq('rule:k:root', {}, lit('x', 'h'), choice('C', own, ...edgeArmsOf({ inlinedFrom: '_arm' }, { inlinedFrom: '_arm' }))));
+		const factored = out.members![1]!;
+		expect(factored['inlinedFrom']).toBe('_arm');
+		expect(factored.members![1]!['inlinedFrom']).toBe('_choice');
+	});
+});
+
+describe('a kind is not a variant of itself', () => {
+	type Out = { type: string; annotations?: Record<string, unknown>; members?: Out[] };
+	const own = { variantOf: 'k', definedBy: 'enrich' };
+	const lit = (value: string, id: string): Rule<'link'> => ({ type: STRING, value, nonterminal: false, id }) as Rule<'link'>;
+	const named = (name: string, id: string, annotations?: Record<string, unknown>): Rule<'link'> =>
+		({ type: SYMBOL, name, id, ...(annotations === undefined ? {} : { annotations }) }) as Rule<'link'>;
+	const seq = (id: string, annotations: Record<string, unknown> | undefined, ...members: Rule<'link'>[]): Rule<'link'> =>
+		({ type: SEQ, id, ...(annotations === undefined ? {} : { annotations }), members }) as Rule<'link'>;
+	const flat = (rule: Rule<'link'>): Out => flattenRules({ k: rule })['k'] as unknown as Out;
+
+	it("a seq that is k's root drops variantOf k and its definedBy", () => {
+		expect(flat(seq('S', own, lit('(', 'p'), named('x', 'x'))).annotations).toBeUndefined();
+	});
+
+	it("a seq factored into k's root from arms labelled as k's variants drops the label", () => {
+		const out = flat({
+			type: CHOICE,
+			id: 'C',
+			members: [seq('A', own, lit('(', 'p'), named('x', 'x')), seq('B', own, lit('(', 'q'), named('y', 'y'))]
+		} as Rule<'link'>);
+		expect(out.type).toBe(SEQ);
+		expect(out.annotations).toBeUndefined();
+	});
+
+	it('other annotations on the root stay', () => {
+		expect(flat(seq('S', { ...own, hoisted: true }, lit('(', 'p'), named('x', 'x'))).annotations).toEqual({ hoisted: true });
+	});
+
+	it('a seq labelled as a variant of another kind keeps its label', () => {
+		const label = { variantOf: 'other', definedBy: 'enrich' };
+		expect(flat(seq('S', label, lit('(', 'p'), named('x', 'x'))).annotations).toEqual(label);
+	});
+
+	it("a symbol root keeps its label, since it names a real variant child", () => {
+		expect(flat(named('x', 'x', { variant: 'v', variantOf: 'k', definedBy: 'enrich' })).annotations).toEqual({ variant: 'v', variantOf: 'k', definedBy: 'enrich' });
+	});
+
+	it('a seq arm below the root keeps its label', () => {
+		const out = flat({ type: CHOICE, id: 'C', members: [named('z', 'z'), seq('T', own, named('x', 'x'), named('y', 'y'))] } as Rule<'link'>);
+		expect(out.type).toBe(CHOICE);
+		expect(out.members![1]!.annotations).toEqual(own);
+	});
+});

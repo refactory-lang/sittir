@@ -5,6 +5,8 @@ import { separatorFactsEqual } from './rule-patterns.ts';
 import { rebasedRuleId, reownedRuleId } from '../compiler/rule-catalog.ts';
 
 const STAMPED_ATTRS = ['fieldName', 'multiplicity', 'separator', 'optionalElement', 'tokenized', 'immediate'] as const;
+const SEQ_IDENTITY_KEYS: ReadonlySet<string> = new Set(['type', 'members', 'id', 'absorbedIds']);
+const withoutIdentityKeys = (key: string, value: unknown): unknown => (key === 'id' || key === 'absorbedIds' ? undefined : value);
 
 export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): R {
 	const src = original as StampedAttrs & { id?: string };
@@ -57,34 +59,46 @@ type RuleBag = {
 };
 
 export function factoredSeqOf<T extends PhaseName>([members, arms]: readonly [Rule<T>[], readonly SeqRule<T>[]]): Rule<T> {
+	return armsAreCopies(arms) ? { ...arms[0]!, members } : absorbIds({ type: SEQ, ...sharedSeqFacts(arms), members }, ...arms);
+}
+
+function armsAreCopies(arms: readonly AnyRule[]): boolean {
 	const ids = new Set(arms.map((arm) => arm.id));
-	const copies = arms.length > 0 && ids.size === 1 && !ids.has(undefined);
-	return copies ? { ...arms[0]!, members } : absorbIds({ type: SEQ, ...sharedStampedAttrs(arms), members }, ...arms);
+	return arms.length > 0 && ids.size === 1 && !ids.has(undefined);
 }
 
-function stampedAttrEqual(attr: (typeof STAMPED_ATTRS)[number], [a, b]: readonly [StampedAttrs, StampedAttrs]): boolean {
-	return attr === 'separator' ? separatorFactsEqual(a.separator, b.separator) : a[attr] === b[attr];
+type RuleFacts = Readonly<Record<string, unknown>>;
+
+function factEqual(fact: string, [a, b]: readonly [RuleFacts, RuleFacts]): boolean {
+	return fact === 'separator'
+		? separatorFactsEqual(a['separator'] as Rule['separator'], b['separator'] as Rule['separator'])
+		: JSON.stringify(a[fact], withoutIdentityKeys) === JSON.stringify(b[fact], withoutIdentityKeys);
 }
 
-export function sharedStampedAttrs(arms: readonly AnyRule[]): StampedAttrs | undefined {
-	const stamped = arms.map((arm) => (arm.type === SEQ ? arm : {}) as StampedAttrs);
-	const first = stamped[0] ?? {};
-	if (!STAMPED_ATTRS.every((attr) => stamped.every((arm) => stampedAttrEqual(attr, [arm, first])))) return undefined;
+export function sharedSeqFacts(arms: readonly AnyRule[]): RuleFacts | undefined {
+	const seqs = arms.filter((arm) => arm.type === SEQ) as readonly RuleFacts[];
+	const first = seqs[0] ?? {};
 	const shared: Record<string, unknown> = {};
-	for (const attr of STAMPED_ATTRS) if (first[attr] !== undefined) shared[attr] = first[attr];
-	return shared as StampedAttrs;
+	for (const fact of new Set(seqs.flatMap((seq) => Object.keys(seq).filter((key) => !SEQ_IDENTITY_KEYS.has(key))))) {
+		if (!(arms as readonly RuleFacts[]).every((arm) => factEqual(fact, [arm, first]))) return undefined;
+		if (first[fact] !== undefined) shared[fact] = first[fact];
+	}
+	return shared;
 }
 
 export function armsCanFactor(choice: AnyRule, arms: readonly AnyRule[]): boolean {
-	const shared = sharedStampedAttrs(arms);
-	const own = choice as StampedAttrs;
-	return shared !== undefined && STAMPED_ATTRS.every((attr) => own[attr] === undefined || shared[attr] === undefined || stampedAttrEqual(attr, [own, shared]));
+	const shared = sharedSeqFacts(arms);
+	if (shared === undefined) return false;
+	const repeated = shared['multiplicity'] === 'array' || shared['multiplicity'] === 'nonEmptyArray';
+	if (repeated && !armsAreCopies(arms)) return false;
+	const own = choice as RuleFacts;
+	return STAMPED_ATTRS.every((attr) => own[attr] === undefined || shared[attr] === undefined || factEqual(attr, [own, shared]));
 }
 
-export function withoutStampedAttrs<R extends AnyRule>(rule: R): R {
+export function nonPositionFactsOf(rule: object): RuleFacts {
 	const rest: Record<string, unknown> = { ...rule };
-	for (const attr of STAMPED_ATTRS) delete rest[attr];
-	return rest as R;
+	for (const key of ['type', 'members', ...STAMPED_ATTRS]) delete rest[key];
+	return rest;
 }
 
 export function absorbAlignedIds<R extends AnyRule>(host: R, ...absorbed: readonly AnyRule[]): R {
@@ -118,7 +132,7 @@ export function absorbAlignedIds<R extends AnyRule>(host: R, ...absorbed: readon
 }
 
 export function structuralKey(rule: AnyRule): string {
-	return JSON.stringify(rule, (key, value: unknown) => (key === 'id' || key === 'absorbedIds' ? undefined : value));
+	return JSON.stringify(rule, withoutIdentityKeys);
 }
 
 export function withKindFacts<R extends AnyRule>(result: R, source: AnyRule): R {

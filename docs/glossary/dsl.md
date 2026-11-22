@@ -9177,23 +9177,27 @@ Gives each rule id a new owner.
 
 ### `packages/codegen/src/dsl/rule-attrs.ts::factoredSeqOf`
 
-The seq factored out of a choice of seqs: the factored members, holding the arm seqs' ids. When every arm is a copy of one seq (all carry the same id, as `fanOutSeqChoices` leaves them), it is that seq again, with all its attrs. Otherwise it has no id of its own and absorbs each arm's ids, because it stands for the arms' shared parts rather than any one source seq, and it carries the stamped attributes the arms share (`sharedStampedAttrs`). A factoring checks `armsCanFactor` first, so no arm's attribute is lost. Normalize's `factorChoiceBranches` and flatten's `factorChoiceArms` and `factorSharedLiterals` build their seq with it, at either phase.
+The seq factored out of a choice of seqs: the factored members, holding the arm seqs' ids. When every arm is a copy of one seq (all carry the same id, as `fanOutSeqChoices` leaves them), it is that seq again, with all its attrs. Otherwise it has no id of its own and absorbs each arm's ids, because it stands for the arms' shared parts rather than any one source seq, and it carries the facts the arms share (`sharedSeqFacts`). A factoring checks `armsCanFactor` first, so no arm's fact is lost. Normalize's `factorChoiceBranches` and flatten's `factorChoiceArms` and `factorSharedLiterals` build their seq with it, at either phase.
 
-### `packages/codegen/src/dsl/rule-attrs.ts::sharedStampedAttrs`
+### `packages/codegen/src/dsl/rule-attrs.ts::sharedSeqFacts`
 
-The stamped attributes (`fieldName`, `multiplicity`, `separator`, `optionalElement`, `tokenized`, `immediate`) every arm of a factoring shares, or `undefined` when two arms differ on one. A missing attribute counts as a value, so an arm with a field and an arm without one differ. Only a seq arm's own attributes count: a bare atom arm has no wrapper to carry any, and an attribute on the atom stays on it as a member. Separators compare by `separatorFactsEqual`, the others by identity.
+The facts every seq arm of a factoring shares, or `undefined` when an arm differs on one. A fact is anything on a seq other than its `type`, `members`, `id` and `absorbedIds`, so the comparison needs no list of them: field, multiplicity, separator, annotations, metadata, `inlinedFrom` and the rest. A missing fact counts as a value, so an arm with a field and an arm without one differ. A bare atom arm is compared by its own value of each fact a seq arm holds: rust's `return` arm carries the same `variantOf` as the `return x` arm, so the two agree (`factEqual`).
 
 ### `packages/codegen/src/dsl/rule-attrs.ts::armsCanFactor`
 
-Whether factoring these arms keeps every stamped attribute: the arms agree (`sharedStampedAttrs`), and what they share does not contradict an attribute on the choice itself, since the factored seq could carry only one of the two. Normalize's `factorChoiceBranches` and flatten's `factorChoiceArms`, `factorSharedLiterals` and `foldPermutationArms` check it before rebuilding. A choice that fails it stays a choice.
+Whether factoring these arms keeps every fact they carry. The arms must agree (`sharedSeqFacts`). Arms that each repeat do not factor, because `(a x)* | (a y)*` is not `(a (x|y))*`; copies of one source seq do (`armsAreCopies`), since factoring them restores that seq. Optional arms factor, because `(a x)? | (a y)?` is `(a (x|y))?`. Only the six position attributes (`fieldName`, `multiplicity`, `separator`, `optionalElement`, `tokenized`, `immediate`) compare the arms with the choice, because those are what `withAttrsFrom` moves from the choice to the seq; the choice's other facts stay on the inner choice (`nonPositionFactsOf`). Normalize's `factorChoiceBranches` and flatten's `factorChoiceArms`, `factorSharedLiterals` and `foldPermutationArms` check it before rebuilding. A choice that fails it stays a choice.
 
-### `packages/codegen/src/dsl/rule-attrs.ts::withoutStampedAttrs`
+### `packages/codegen/src/dsl/rule-attrs.ts::factEqual`
 
-A copy of the rule without its stamped attributes. `factorSharedLiterals` builds an arm's remainder with it: the arm's attributes are on the seq around the choice, so the remainder does not carry them a second time.
+Whether two rules hold the same value of one fact, ignoring rule ids inside it. A separator compares by `separatorFactsEqual`, the canonical comparison of a separator's token and flags. Any other fact compares by its JSON without `id` and `absorbedIds`. A fact missing from both counts as equal.
 
-### `packages/codegen/src/dsl/rule-attrs.ts::stampedAttrEqual`
+### `packages/codegen/src/dsl/rule-attrs.ts::armsAreCopies`
 
-Whether two rules hold the same value of one stamped attribute. A separator is a rule with flags, so it compares by `separatorFactsEqual`, which ignores ids; every other attribute is a primitive and compares by identity. An attribute missing from both counts as equal.
+Whether these arms are copies of one seq: every arm carries the same rule id, as `fanOutSeqChoices` leaves them. Factoring copies restores the source seq, so `factoredSeqOf` returns that seq with all its facts, and `armsCanFactor` lets repeated copies through.
+
+### `packages/codegen/src/dsl/rule-attrs.ts::nonPositionFactsOf`
+
+A rule's identity and facts without its structure and the six position attributes. This is what a factored inner choice keeps of its source choice, or the `optional` that takes its place when one arm body is left. `inlinedFrom` has to survive here because `buildSlot` names the slot from it. The position attributes go to the seq around it instead (`withAttrsFrom`).
 
 ### `packages/codegen/src/dsl/rule-metadata.ts::aliasStorageOf`
 
