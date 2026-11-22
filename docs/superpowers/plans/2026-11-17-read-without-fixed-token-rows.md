@@ -1,13 +1,19 @@
 # A parsed read stores no row for a fixed token or a unit: stage one
 
-> **Execution:** the engine-api session executes this plan inline, task by task, with superpowers:executing-plans. This repository uses no subagents for code. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Execution:** the prototype session executes this plan inline, task by task, with superpowers:executing-plans. This repository uses no subagents for code. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Status:** written 2026-11-17, updated 2026-11-18. Waiting for the hydrate-at-parse merge. Tasks 2–9 and 3a start when the hydrate-at-parse branch has merged to master, on a branch cut from that merge.
-- **Task 1** is done. It ran ahead of the merge, by brainstorm's word (2026-11-17), on `test/read-census`, cut from the hydrate-at-parse head. It wrote no production code. That branch is merged into the stage-one branch when the stage-one branch is cut. Both of its stops are ruled (2026-11-17):
+**Status:** written 2026-11-17, updated 2026-11-22. **It lands inside the hydrate-at-parse branch and its PR, and Task 10, the render's table, follows Task 9 there** (the maintainer, 2026-11-22: "2 and let's have prototype finish it in one shot"). Tasks 2–10 and 3a run straight through, by the rule in the arena plan's Task 6 status:
+- Each commit runs its own targeted tests, red then green, and each piece is pushed so CI runs its suite.
+- `validate:history`, the full suites, storage parity and the census run once, at Task 10's gates on the final head. A step below that names one of them is read that way. Task 3a's arena baseline still runs at Task 3a, since the final comparison reads it.
+- The stop conditions below still stop the work.
+- Public items are built without rows first, listed in the PR body, and judged at the merge question.
+
+Where the work stands:
+- **Task 1** is done. It ran ahead of the merge, by brainstorm's word (2026-11-17), on `test/read-census`, cut from the hydrate-at-parse head. It wrote no production code. That branch merges into the hydrate-at-parse branch before Task 2. Both of its stops are ruled (2026-11-17):
   - a parsed list's delimiter is its delimiter option, resolved by the generated read code by one logic for both storages (Task 4). This superseded the same day's "decided by kind" and "store nothing; the options decide";
   - named fixed tokens leave query results (Task 6).
 
-  Task 4 is written from the delimiter audit (2026-11-17). `probe/delimiter-by-kind` and `probe/delimiter-options-decide` are kept. The hydrate-at-parse branch replaces `NodeCoordinate` with the node's name, so this plan's `&NodeCoordinate` signature (Task 6's `$treeHandle` row) is re-anchored to it when the stage-one branch is cut.
+  Task 4 is written from the delimiter audit (2026-11-17). `probe/delimiter-by-kind` and `probe/delimiter-options-decide` are kept. In arena storage a node is named by its `NodeId`, so wherever this plan says a coordinate or a node's index, read that node's `NodeId`. A unit is named by its holder's `NodeId` and its slot, which is what `NodeSite::Unit` means below.
 - **The same-line comment branch** (`fix/same-line-comment-after-separator`): a comment last on its row after an item's separator is leading of the next item, as on master. The maintainer, 2026-11-17: "Preserve master's behavior - let's not solve this one right now". Replacing that item loses the comment; that is a known gap, filed as an issue. Giving the comment to the item before was built and withdrawn, and nothing of its tokens-between fact remains.
 
   The branch still carries:
@@ -17,7 +23,7 @@
   - `headerOf`.
 
   It merges into the hydrate-at-parse branch.
-- **The scanner change Task 4 relies on** (no automatic semicolon in a list's trailing spot) is one commit on `fix/ts-asi-before-same-line-comment`. It is not pushed and has no pull request. It waited for the placement fix, which is withdrawn. Under master's ownership, the comment after an interface member's automatic semicolon leads the next member, so the change adds the interface case to the known gap. Brainstorm decides whether it opens as it is.
+- **The scanner change Task 4 relies on** (no automatic semicolon in a list's trailing spot) is one commit on `fix/ts-asi-before-same-line-comment`. It is not pushed and has no pull request. It waited for the placement fix, which is withdrawn. Under master's ownership, the comment after an interface member's automatic semicolon leads the next member, so the change adds the interface case to the known gap. It merges into the hydrate-at-parse branch before Task 4 (brainstorm's call, 2026-11-22), after the spec's before-and-after tree checks, and the interface case is added to the known-gap issue.
 - **The storage audit** (2026-11-18): its table is `docs/superpowers/specs/2026-11-18-one-read-rule-per-fact-design.md`, "The four facts" and "Left unread by the audit". Its baseline is three numbers, measured on the validation corpus of the five grammars (440 sources, 15,024 nodes), comparing object and arena storage:
   - 0 root snapshots differ;
   - 0 untouched node renders differ;
@@ -36,7 +42,7 @@ How this line is kept:
   - Task 8: a placement change that is not beside a named fixed token;
   - Task 9: a failed gate.
 
-**Goal:** A parsed read writes no run row for a fixed token or a unit, and every reader answers as it does today on every fixture.
+**Goal:** A parsed read writes no run row for a fixed token or a unit, every reader answers as it does today on every fixture, and a render keeps no table of the nodes it visits.
 
 **Architecture:**
 - The hydration walk keeps every token in its working list, for seating, and writes only slot content and trivia to the run.
@@ -62,7 +68,8 @@ How this line is kept:
 - Facts are stamped where they are made and never re-derived from text at run time (working standard 3). Generated outputs are regenerated, never hand-edited (standard 6).
 - Ratchets only tighten: the `deep_read_words` pins and the lock-free census ceilings.
 - No comments in `packages/codegen/src/`; glossary entries carry the why. No spec, plan, PR or task numbers in code, docs or comments.
-- No release of parsed records. That stays held until this stage has landed and been measured.
+- Once a parse has written its records, a fixed token is no child and has no site and no `NodeId`. Its holder's template writes it (the maintainer, 2026-11-22: "Fixed tokens NEVER get a site", "It's in the template").
+- Release of parsed records stays as the branch built it (2026-11-20: "A: release like built"). A row holds no reference, so removing rows changes no count.
 
 ## Review Focus
 
@@ -74,7 +81,7 @@ How this line is kept:
 
 ## Public surfaces this stage changes
 
-These rows are from the spec's § Public surfaces, approved by the maintainer. The rows marked *new* come from the 2026-11-17 rulings and go to the maintainer before Task 4.
+These rows are from the spec's § Public surfaces, approved by the maintainer. The rows marked *new* come from the 2026-11-17 rulings and are listed in the PR body with the rest, for the merge question.
 
 | surface | change | task |
 |---|---|---|
@@ -82,7 +89,6 @@ These rows are from the spec's § Public surfaces, approved by the maintainer. T
 | addon `descendants` / `readDescendants`, `$children`, `$descendants` | a named fixed token of a pair in the spec's "What navigation lists" is no longer yielded (29,447 items across the census corpora); every other item is unchanged; resume paths renumber | 6, 9 |
 | *new:* `$query()` views (`$children`, `$descendants`, `ofType`, `where`, `find` and the rest) | a query for such a token's kind finds none of them; a query for the holder's kind finds each, as for a built node: `ofType(kinds.SelfParameter)` matches `&self`, and `ofType(kinds.Self)` finds nothing inside it | 6, 9 |
 | *new:* a parsed list whose delimiter option is cleared (`$with.delimiter(undefined)`) | it renders the options' trailing separator, where it rendered its source's: rust `f(a, b,)` renders `a, b`. `.delimiter` and `_delimiter` are unchanged | 4 |
-| `NodeCoordinate.$treeHandle`, `$end` | values renumber | 6 |
 | `$text`, `lineStartsInsideTokens`, the parse's error list | unchanged | 1, 7 |
 | `$snapshot` | lists no fixed token (Task 1's test); its `_delimiter` changes as the delimiter row says | 1, 4 |
 
@@ -218,14 +224,14 @@ As a result, the layout-runs lane of `validate --node-storage arena` describes o
 
 **Interfaces:**
 - Consumes the runs that `backerParity` already computes from an arena read's records: 13,880 on the validation corpus, 0 apart from the object tree's.
-- What each call takes in place of a tree id for an arena tree is an addon signature change. It goes to brainstorm, and through brainstorm to the maintainer, before code.
+- What each call takes in place of a tree id for an arena tree is an addon signature change, listed in the PR body.
 
 - [ ] **Step 1: Write the failing tests.** `layout-baseline.test.ts` runs under `nodeStorage: 'arena'` as well as object. For every validation-corpus source of the five grammars:
   - `layoutRunsOf` under arena answers the records' runs, equal to `backerParity`'s (0 apart);
   - `storedLayoutOf` and `layoutWorkOf` answer from the arena tree, not from a bare parse.
 - [ ] **Step 2: Run them.** Run `pnpm exec vitest run --config vitest.config.ts packages/tools/tests/layout-baseline.test.ts`. Expected: FAIL, since the arena lane has no tree id to pass.
 - [ ] **Step 3: Implement.**
-  - The three calls answer from an arena tree's records, by the signature brainstorm returned.
+  - The three calls answer from an arena tree's records.
   - `layout-runs.ts` parses with the engine of the storage the lane names.
 - [ ] **Step 4: Run.**
   - Step 2's command. Expected: PASS.
@@ -238,7 +244,7 @@ As a result, the layout-runs lane of `validate --node-storage arena` describes o
 The maintainer's rulings (2026-11-17, the spec's Decided list):
 - A list carries a delimiter option. The generated read resolves its value from the tree once, by the same code for both storages.
 - Where the storages differ, object storage's read is the reference.
-- The automatic semicolon is not permitted in a list's trailing spot. The grammar cannot say it, because the scanner emits the token wherever a gap admits it. It is fixed in typescript's vendored scanner, which inserts the token before a same-line `//` comment as tree-sitter-javascript 0.25 does. That lands ahead of this stage on its own branch, so the reader's test is unchanged.
+- The automatic semicolon is not permitted in a list's trailing spot. The grammar cannot say it, because the scanner emits the token wherever a gap admits it. It is fixed in typescript's vendored scanner, which inserts the token before a same-line `//` comment as tree-sitter-javascript 0.25 does. That commit merges into this branch before this task, so the reader's test is unchanged.
 
 **Audited** on the hydrate-at-parse head (`36e7493cf`), in both storages, over the spec's fixed sources and the 1,251 flanked lists of the paired corpora:
 - The storages already share the delimiter's resolution. `read::delimiter` is called by the derive at parse, by `list_inits` for object and by `hydrate::routed` for arena, over the same tree-sitter children. The two agree on every list.
@@ -408,9 +414,31 @@ The maintainer's rulings (2026-11-17, the spec's Decided list):
   - Rerun the census.
 
   Expected: read words at or below the spec's "stage one" column on every corpus, less the choice-list slot entries Task 1 counted.
-- [ ] **Step 5: Run the gates.** These are the spec's § Gates, with each result reported as numbers.
+- [ ] **Step 5: Commit:** `feat(core): a parsed read stores no row for a fixed token or a unit`.
+
+### Task 10: A render keeps no table of the nodes it visits
+
+The arena spec's "A render keeps no table of the nodes it visits" (the maintainer, 2026-11-22). After Task 9 a render needs no row per node: a fixed token is written by its holder's template, an edge comes from the body facts, and a list's separators, depth moves and line starts come from stamps.
+
+**Files:**
+- Modify `rust/crates/sittir-core/src/arena/run_nodes.rs` (`RunTable`, `Table`, `Met`), `arena/site.rs` (`row_sites`), `trivia_table.rs` (`Spans::Met`), `engine.rs` (`Records`, `Lookups`), `nodes.rs` and `arena.rs`.
+- Test: `stage_one_parity.rs`.
+
+**Interfaces:**
+- Consumes Task 2's `RecordShape`, Task 5's edge walk and Task 7's stamps.
+- The render walk names a node by its `NodeId`, its holder and the slot that holds it.
+- `Spans::Met` and `row_sites` go, and `RunTable`, `Table` and `Met` leave the render path. A navigation outside a render keeps only what it uses, for that navigation alone.
+- No public item changes.
+
+- [ ] **Step 1: Write the failing tests.**
+  - `a_render_keeps_no_row_per_node`: at a fixed depth, a render's peak heap above its output does not grow with the number of nodes it visits.
+  - `a_wide_list_renders_in_linear_run_decodes`: rendering a parsed list of `n` items decodes each run entry at most once.
+- [ ] **Step 2: Run them.** Run `PARITY -- a_render_keeps a_wide_list`. Expected: FAIL while the render builds its table.
+- [ ] **Step 3: Implement.** The walk follows a record's cells and reads a parsed node by its record's address. `Records` holds no row per node for a render, and release builds neither a tree nor a table.
+- [ ] **Step 4: Run and commit.** Run Step 2's command and the stage-one parity tests. Expected: PASS. Commit: `feat(core): a render keeps no table of the nodes it visits`.
+- [ ] **Step 5: Run the gates.** These are the spec's § Gates, run once on the final head, with each result reported as numbers.
   - **The three-way verification** (working standard 5):
-    1. targeted probes of the cases this stage changes, wrap and render layers: Tasks 4–8's named tests, rerun on the final tree;
+    1. targeted probes of the cases this stage changes, wrap and render layers: the named tests of Tasks 4–8 and Task 10, rerun on the final tree;
     2. `pnpm run validate:native`, then `pnpm run validate:history` against master's recorded baseline. Every row of all three grammars is compared. Each row is unchanged, except as Task 4 records;
     3. the full unit suites, with any new failure isolated by reapplying the stage's diff in reverse and rebuilding before it is accepted as already present:
        - `cargo test --workspace --no-default-features`;
@@ -420,8 +448,6 @@ The maintainer's rulings (2026-11-17, the spec's Decided list):
        - `pnpm run lint`.
   - **Read words:** `CENSUS` rerun on every census corpus. Report each corpus's read words as a share of today, beside the spec's "stage one" column, with each row's lowest in bold.
   - **Ratchets:** the `deep_read_words` pins from Step 4, and the lock-free census at or under its ceilings.
-  - **Timings:** CI's paired run against master's arena, parse and render per grammar. Report the ratio per grammar and phase, with each row's winner in bold.
+  - **Timings:** CI's paired run on the arm runner against master's arena, parse and render per grammar, which is also the branch's landing gate (arena plan Task 6). Report the ratio per grammar and phase, with each row's winner in bold.
   - Any failure stops the task and is reported with its numbers; nothing is reverted to pass a gate.
-- [ ] **Step 6: Commit and mark the plan.**
-  - Commit: `feat(core): a parsed read stores no row for a fixed token or a unit`.
-  - Tick this plan's tasks and set its Status line.
+- [ ] **Step 6: Mark the plan.** Tick this plan's tasks and set its Status line.

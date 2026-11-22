@@ -1,6 +1,6 @@
 # A parsed read stores no row for a fixed token or a unit
 
-**Status:** approved by the maintainer, 2026-11-17, with every open question ruled (§ Decided by the maintainer). Written by the engine-api session from the coordinate census (`docs/superpowers/probes/2026-11-17-read-coordinate-census/`) and the code on the hydrate-at-parse branch at `1f0170702`. Entries marked "to verify" are checked by a probe or parity test before they are built. This is the task after the hydrate-at-parse branch lands. The release of parsed records stays held until stage one has landed and been measured.
+**Status:** approved by the maintainer, 2026-11-17, with every open question ruled (§ Decided by the maintainer). Written by the engine-api session from the coordinate census (`docs/superpowers/probes/2026-11-17-read-coordinate-census/`) and the code on the hydrate-at-parse branch at `1f0170702`. Entries marked "to verify" are checked by a probe or parity test before they are built. It lands inside the hydrate-at-parse branch (§ Decided by the maintainer).
 
 ## Decided by the maintainer
 
@@ -15,6 +15,7 @@
   - So removing the separator's row adds no new form. The list's delimiter and separator choices are read where the declared preference is already read and stamped, and the body of this spec is to be reconciled with that: no bit beside the run and no new place in `SideSlot::tokens` are introduced. An earlier line of this entry read the answer as "stored nowhere"; that was brainstorm's misreading.
 - **A parsed list's delimiter is its delimiter option, resolved by the generated read code, by one logic for both storages** (2026-11-17, on seeing the measurement of "store nothing": "It's not a delimiter slot, it's a delimiter option? And the generated parse code can resolve what we apply (just like it does in object storage) - in fact maybe our problem is that … object storage and arena storage are interpreting the values from tree-sitter differently - apart from the laziness, they should share the logic - it should simply be a matter of which storage is being used."). A list carries a delimiter option, as a built list given one does, and the read resolves its value from the tree-sitter tree once. That resolution is the same code whichever storage holds the result; a second reader of the same fact (the span test in `read::delimiter`, the width test in `last_list_child`) is a second derivation and goes. This supersedes the same day's "By kind" (measured +159 typescript rows, kept on `probe/delimiter-by-kind`) and "Store nothing from the source; the options decide" (measured +502 rows, with one-item lists changing meaning: rust `let (a,) = t`, python `a[1,]`, `print a,`; kept on `probe/delimiter-options-decide`). Where the two differ, object storage's read is the reference ("object storage for the most part is the 'mature' reader in this sense"): the shared logic starts from what it resolves, and a case where arena's answer is the right one is shown by example before it is taken. Before code: an audit of every place that derives a list's delimiter or separator from the tree, per storage, showing where the two storages or two readers differ, and the one rule they unify on with validation under it.
 - **The automatic semicolon is not permitted in a list's trailing spot** (2026-11-17: "Can the grammar be adjusted so that automatic semicolon is not permitted in the trailing spot"). The one case where two readers of a list's delimiter disagree is typescript `type T = {\n  a: string // c\n}`: the zero-width automatic semicolon lands after the comment as the list's last child, so the list's span runs past its last member, the read resolves trailing, and a rebuild writes a stray `;`. The fix is in the grammar, not in a reader's test: the member list's separator choice admits the automatic arm between members and not after the last one, so the parse never has a zero-width trailing separator and the delimiter option resolves to none there. The grammar alone cannot say it: the external scanner emits the token, declines when the next character is `/`, and is called again after the comment, and dropping the arm from the trailing choice makes the parser insert a MISSING member in every line-separated list (measured). So the fix is in the vendored scanner ("Patch the vendored scanner as tree-sitter-javascript 0.25 does"): it scans a same-line `//` comment before deciding, as tree-sitter-javascript 0.25.0's does, and places the token at the member's end, where it already sits when no comment follows. The list's span then ends at its last member and the read resolves no trailing delimiter. No node is added. Before it lands: the trees of the commented, the plain, the explicit-`;`, the explicit-`,`, the interface and the one-member list before and after, the same check for every other site the scanner's automatic semicolon serves (statements, class members), and validation.
+- **The row removal lands inside the hydrate-at-parse branch, and the render's table goes after it there** (2026-11-22, choosing that order: "2 and let's have prototype finish it in one shot").
 - **Named fixed tokens leave navigation** ("Accept", 2026-11-17, open question 4): a polymorph form's named fixed text (`self`, `mutable_specifier`, a getter's `formal_parameters`, `this`, doc-comment markers, python's `newline`, `indent` and `dedent`) has no row and is not listed; a comment beside one is seated as a built node seats it. The parity test lists every placement that changes.
 - **Two stages, rows first** (2026-11-17, open question 5): the rows go, measured; then the one-word parsed cell, measured.
 - **The public surface rows are approved** (2026-11-17, open question 6) as § Public surfaces has them. The two marked "to verify" (the parse's error list, `$snapshot`) are checked before code, and a `$snapshot` that lists a fixed token today comes back as its own row.
@@ -289,7 +290,7 @@ The fixed-token rows are 16.2% of a read's words on matter.js and 13.5% on next.
 
 ## Release under this layout
 
-Release stays held until stage one has landed and been measured (§ Decided by the maintainer, question 7). This section is what it will be ruled against: what a parsed record holds under the layout above, and how it and its source are counted and freed.
+Release was ruled 2026-11-20 ("A: release like built") and is built on the hydrate-at-parse branch. Its design is the arena plan's Task 6d, which stands wherever this section differs: a JavaScript view holds no count, so gap 2 below is dropped. This section shows what a parsed record holds under the layout above, and why removing rows changes no count.
 
 **What a parsed record holds:**
 
@@ -307,7 +308,7 @@ Release stays held until stage one has landed and been measured (§ Decided by t
 
 **Rows hold no reference.** A row is facts, span and inner count, with no address. Removing fixed-token rows, and unit rows, removes offsets, not holders. The release's rules are the same under both layouts. It walks fewer run entries and frees fewer words.
 
-**The four gaps, restated against this layout.** They are proposed and not approved (plan, "Four corrections found against the code").
+**The four gaps, restated against this layout,** as they were proposed (plan, "Four corrections found against the code").
 
 1. **Who holds the source.** Every parsed side record holds it, one count per side record, added once at the end of the parse. Under this layout every stored offset still lies in some record: its `AT`, its leaf cells, captured strings and rows. Every record has `SOURCE`. Fixed tokens and units read no source at all, since their text is their kind's. So the holder set is unchanged.
    - Header-only and zero-width records hold only `AT`, and still need the count.
@@ -359,10 +360,8 @@ The cascade over a parsed record walks its parsed cells (child cells and list ru
 3. **Rows go** (stage one). The walk stops writing fixed-token and unit rows; unit cells take the built form, a unit is listed from its cell, and unit sides are keyed by site; the readers read the stored facts, and the tests that pin rows are retaken.
 4. **The one-word parsed cell** (stage two), as its own change.
 
-Release (the four gaps) stays held until step 3 has landed and been measured.
-
 ## Open questions for the maintainer
 
 1. ~~Do unit rows go too?~~ Ruled 2026-11-17: yes (see Decided by the maintainer).
 2–6. Ruled 2026-11-17 (see Decided by the maintainer): a unit is listed from its cell, in its render body's order; a list's trailing separator is its delimiter preference; named fixed tokens leave navigation; two stages, rows first; the public surface rows are approved.
-7. **Release.** Ruled 2026-11-17: "Keep holding". The four gaps stay proposed until the row removal has landed and been measured, and the hydrate-at-parse branch lands without parsed release (a parsed record is freed with its engine, as before it).
+7. **Release.** Ruled 2026-11-20: "A: release like built", which replaces 2026-11-17's "Keep holding". The hydrate-at-parse branch releases a parsed record as it does a built one.
