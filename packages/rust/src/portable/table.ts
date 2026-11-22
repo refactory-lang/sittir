@@ -48336,6 +48336,287 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
+					kind: 370,
+					builder: 'closureExpressionExpr',
+					slots: [
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									stored: '_parameters'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [370, 'parameters'],
+									kinds: []
+								},
+								{
+									at: [302, 'parameters'],
+									kinds: [233, 476],
+									leaf: 'identifier',
+									texts: [1, 476],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'closureParameters',
+											key: 'parameters',
+											optional: true
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [370, 'body'],
+									kinds: [
+										1, 116, 117, 124, 127, 136, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259,
+										263, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297,
+										298, 299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336,
+										367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										_: 136,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							reads: [
+								1, 116, 117, 124, 127, 136, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267,
+								268, 270, 271, 272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 304, 305, 306,
+								307, 308, 309, 310, 311, 312, 332, 333, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'block',
+									kinds: [313]
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							emptyContainer: true,
+							list: true,
+							seats: [
+								{
+									at: [313, 'statements'],
+									kinds: [
+										177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259,
+										377, 378, 384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+									],
+									tokens: {
+										';': 178
+									},
+									many: true
+								},
+								{
+									at: [179, 'content'],
+									kinds: [287, 292, 297, 298, 299, 300, 309, 310, 311, 312, 313],
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [394, 'expression'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement.withSemi',
+											key: 'expression',
+											through: ['content'],
+											sets: {
+												kind: 394,
+												flags: ['terminated'],
+												elements: [259]
+											}
+										}
+									]
+								},
+								{
+									at: [190, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'attributeItem',
+											key: 'attribute'
+										}
+									]
+								},
+								{
+									at: [191, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'innerAttributeItem',
+											key: 'attribute',
+											sets: {
+												kind: 191,
+												flags: ['inner']
+											}
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'trailingExpression',
+							steps: [
+								{
+									key: 'body',
+									builder: 'block',
+									kinds: [313]
+								},
+								{
+									key: 'trailingExpression',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [313, 'trailingExpression'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						}
+					],
+					owners: [
+						[0, 1],
+						[0, 2, 3]
+					],
+					presets: [],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'static',
+											optional: true
+										}
+									],
+									kind: 128,
+									presence: true
+								}
+							]
+						},
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 112,
+									presence: true
+								}
+							]
+						},
+						move: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'move',
+											optional: true
+										}
+									],
+									kind: 129,
+									presence: true
+								}
+							]
+						}
+					},
+					when: [
+						{
+							variant: 'closure_expression',
+							value: 370,
+							default: true
+						},
+						{
+							absent: ['returnType'],
+							required: ['parameters']
+						}
+					]
+				},
+				{
 					kind: 369,
 					builder: 'closureExpressionBlock',
 					slots: [
@@ -48421,139 +48702,129 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'statements',
 							steps: [
 								{
-									key: 'body'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [369, 'body'],
-									kinds: [313]
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'static',
-											optional: true
-										}
-									],
-									kind: 128,
-									presence: true
-								}
-							]
-						},
-						async: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'async',
-											optional: true
-										}
-									],
-									kind: 112,
-									presence: true
-								}
-							]
-						},
-						move: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'move',
-											optional: true
-										}
-									],
-									kind: 129,
-									presence: true
-								}
-							]
-						}
-					},
-					when: [
-						{
-							slot: 'body',
-							kinds: [313]
-						},
-						{
-							absent: [],
-							required: ['body', 'parameters']
-						}
-					]
-				},
-				{
-					kind: 370,
-					builder: 'closureExpressionExpr',
-					slots: [
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									stored: '_parameters'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [370, 'parameters'],
-									kinds: []
+									key: 'body',
+									builder: 'block'
 								},
 								{
-									at: [302, 'parameters'],
-									kinds: [233, 476],
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [313, 'statements'],
+									kinds: [
+										177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259,
+										377, 378, 384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+									],
+									tokens: {
+										';': 178
+									},
+									many: true
+								},
+								{
+									at: [179, 'content'],
+									kinds: [287, 292, 297, 298, 299, 300, 309, 310, 311, 312, 313],
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [394, 'expression'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
 									leaf: 'identifier',
-									texts: [1, 476],
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
 									pattern: {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
 									},
 									within: [
 										{
-											builder: 'closureParameters',
-											key: 'parameters',
-											optional: true
+											builder: 'expressionStatement.withSemi',
+											key: 'expression',
+											through: ['content'],
+											sets: {
+												kind: 394,
+												flags: ['terminated'],
+												elements: [259]
+											}
 										}
-									],
-									many: true
+									]
+								},
+								{
+									at: [190, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'attributeItem',
+											key: 'attribute'
+										}
+									]
+								},
+								{
+									at: [191, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'innerAttributeItem',
+											key: 'attribute',
+											sets: {
+												kind: 191,
+												flags: ['inner']
+											}
+										}
+									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
-							name: 'body',
+							name: 'trailingExpression',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									builder: 'block'
+								},
+								{
+									key: 'trailingExpression',
+									optional: true
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
 								{
-									at: [370, 'body'],
+									at: [313, 'trailingExpression'],
 									kinds: [
-										1, 116, 117, 124, 127, 136, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259,
-										263, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297,
-										298, 299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336,
-										367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
 										'()': 281,
-										_: 136,
 										self: 124
 									},
 									pattern: {
@@ -48615,17 +48886,12 @@ export const build: PortableBuildTable = {
 					},
 					when: [
 						{
-							slot: 'body',
-							kinds: [
-								1, 116, 117, 124, 127, 136, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-								266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299,
-								300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370,
-								371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-							]
+							variant: 'closure_expression',
+							value: 369
 						},
 						{
-							absent: ['returnType'],
-							required: ['body', 'parameters']
+							absent: ['body'],
+							required: ['parameters']
 						}
 					]
 				}

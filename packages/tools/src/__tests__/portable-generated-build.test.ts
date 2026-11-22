@@ -230,6 +230,91 @@ describe('a list read through a container that may be left out, where the list m
 	});
 });
 
+describe('a lambda, whose block body holds statements and whose expression body stays body', () => {
+	const LAMBDA_SLOTS = ['body', 'statements', 'trailingExpression'] as const;
+	const LAMBDA_UNGENERATED: ReadonlySet<string> = new Set(['typescript']);
+	const inSource: Readonly<Record<(typeof GRAMMARS)[number], (lambda: string) => string>> = {
+		python: (lambda) => `a = ${lambda}\n`,
+		rust: (lambda) => `let a = ${lambda};\n`,
+		typescript: (lambda) => `const a = ${lambda};\n`
+	};
+	const lambdaIn = (runtime: { read(tree: never): unknown }, engine: { parse(source: string): unknown }, source: string): PortableStructure =>
+		[...structuresIn(runtime.read(engine.parse(source) as never))].find((candidate) => candidate.$path === 'expression.lambda')!;
+	const shapeOf = (lambda: PortableStructure): Readonly<Record<string, number | 'one'>> => {
+		const held = lambda as unknown as Readonly<Record<string, unknown>>;
+		return Object.fromEntries(LAMBDA_SLOTS.filter((slot) => slot in held).map((slot) => [slot, Array.isArray(held[slot]) ? held[slot].length : 'one']));
+	};
+
+	it.each([
+		['typescript', '() => { x(); }', { statements: 1 }, '() => {\n  x();\n}'],
+		['typescript', '() => {}', { statements: 0 }, '() => {}'],
+		['typescript', '(x) => x + 1', { body: 'one' }, '(x) => x + 1'],
+		['rust', '|| { g(); 1 }', { statements: 1, trailingExpression: 'one' }, '|| {\n    g();\n    1\n}'],
+		['rust', '|| {}', { statements: 0 }, '|| {}'],
+		['rust', '|| -> i32 { 1 }', { statements: 0, trailingExpression: 'one' }, '|| -> i32 {\n    1\n}'],
+		['rust', '|| 1', { body: 'one' }, '|| 1'],
+		['rust', 'move |x| unsafe { x }', { body: 'one' }, 'move |x| unsafe {\n    x\n}'],
+		['python', 'lambda x: x + 1', { body: 'one' }, 'lambda x: x + 1']
+	] as const)('%s: %j reads %j, and both builds render it back to a text that rereads the same', async (grammar, text, shape, rendered) => {
+		using engine = await createEngine(await languageByName(grammar), { api: 'strict' });
+		const runtime = await portableRuntime(engine);
+		const generated = scopeBuilders(engine, (await generatedBuild(grammar)) as object);
+		const lambda = lambdaIn(runtime, engine, inSource[grammar](text));
+		const run = functionAt(generated, 'expression.lambda') as PathFunction | undefined;
+		expect(shapeOf(lambda)).toEqual(shape);
+		expect(engine.render(runtime.build(lambda) as never).toString()).toBe(rendered);
+		expect(typeof run).toBe(LAMBDA_UNGENERATED.has(grammar) ? 'undefined' : 'function');
+		if (run !== undefined) {
+			const generatedText = outcomeOf(() => engine.render(run(lambda) as never).toString());
+			if (!('error' in generatedText && NOT_GENERATED.test(generatedText.error))) expect(generatedText).toEqual({ text: rendered });
+		}
+		expect(lambdaIn(runtime, engine, inSource[grammar](rendered))).toEqual(lambda);
+	});
+
+	it.each([
+		['typescript', '() => { x(); }', '(x) => x + 1'],
+		['rust', '|| { g(); }', '|| 1']
+	] as const)('%s: both builds refuse an input that states a block body and an expression body', async (grammar, block, expression) => {
+		using engine = await createEngine(await languageByName(grammar), { api: 'strict' });
+		const runtime = await portableRuntime(engine);
+		const generated = scopeBuilders(engine, (await generatedBuild(grammar)) as object);
+		const { body } = lambdaIn(runtime, engine, inSource[grammar](expression)) as unknown as { readonly body: unknown };
+		const both = { ...lambdaIn(runtime, engine, inSource[grammar](block)), body } as PortableStructure;
+		const render = engine.render.bind(engine) as (node: never) => { toString(): string };
+		const run = functionAt(generated, 'expression.lambda') as PathFunction | undefined;
+		expect(textOrRefused(render, () => runtime.build(both))).toBe('refused');
+		if (run !== undefined) expect(textOrRefused(render, () => run(both))).toBe('refused');
+	});
+
+	it.each([
+		['|| { g(); 1 }', false],
+		['|| { a; 1 }', true],
+		['|| {}', true],
+		['|| 1', true],
+		['|| -> i32 { 1 }', true]
+	] as const)('rust: %s builds the closure kind its text parses to', async (text, generates) => {
+		using engine = await createEngine(await languageByName('rust'), { api: 'strict' });
+		const runtime = await portableRuntime(engine);
+		const generated = scopeBuilders(engine, (await generatedBuild('rust')) as object);
+		const run = functionAt(generated, 'expression.lambda') as PathFunction;
+		const { build: table } = (await import('../../../rust/src/portable/table.ts')) as { readonly build: { readonly paths: Readonly<Record<string, { readonly arms: readonly { readonly kind: number }[] }>> } };
+		const closures = new Set(table.paths['expression.lambda']!.arms.map((arm) => arm.kind));
+		const childrenOf = (node: unknown): readonly unknown[] => (engine as unknown as { query(item: unknown): { readonly $children: readonly unknown[] } }).query(node).$children;
+		const parsedKind = (node: unknown): number | undefined => {
+			if (typeof node === 'number') return undefined;
+			const kind = (node as { readonly $type: number }).$type;
+			return closures.has(kind) ? kind : childrenOf(node).map(parsedKind).find((found) => found !== undefined);
+		};
+		const source = inSource.rust(text);
+		const parsed = parsedKind(engine.parse(source));
+		const lambda = lambdaIn(runtime, engine, source);
+		expect(parsed).toBeDefined();
+		expect((runtime.build(lambda) as { readonly $type: number }).$type).toBe(parsed);
+		if (generates) expect((run(lambda) as { readonly $type: number }).$type).toBe(parsed);
+		else expect(() => run(lambda)).toThrow(NOT_GENERATED);
+	});
+});
+
 const bothBuilds = async (grammar: (typeof GRAMMARS)[number], structure: PortableStructure): Promise<readonly [interpreted: string, generated: string]> => {
 	using engine = await createEngine(await languageByName(grammar), { api: 'strict' });
 	const runtime = await portableRuntime(engine);
@@ -343,9 +428,9 @@ describe.each(GRAMMARS)('the generated portable build of %s', (grammar) => {
 
 type KindsTable = { readonly build: { readonly paths: Readonly<Record<string, { readonly arms: readonly { readonly kind: number; readonly when: readonly object[] }[] }>> } };
 
-const KINDS_PICKS: Readonly<Record<(typeof GRAMMARS)[number], { readonly path: string; readonly sources: readonly string[]; readonly excluded?: (element: unknown) => PortableStructure }>> = {
+const KINDS_PICKS: Readonly<Record<(typeof GRAMMARS)[number], { readonly path: string; readonly sources: readonly string[]; readonly within?: string; readonly excluded?: (element: unknown) => PortableStructure }>> = {
 	typescript: { path: 'expression.parenthesized', sources: ['(a, b);\n', '(a);\n'] },
-	rust: { path: 'expression.lambda', sources: ['|| { 1 };\n', '|| 1 + 1;\n'] },
+	rust: { path: 'pattern.struct', within: 'name', sources: ['let m::S { a } = b;\n', 'let S(a) = b;\n'] },
 	python: {
 		path: 'pattern.tuple',
 		sources: ['(a, b) = c\n', 'match p:\n    case (1, b):\n        pass\n'],
@@ -361,9 +446,12 @@ describe.each(GRAMMARS)('the generated portable build of %s, on two arms that di
 		const { build: table } = (await import(`../../../${grammar}/src/portable/table.ts`)) as KindsTable;
 		const generated = scopeBuilders(engine, portableBuild);
 		const outcome = (run: () => unknown): string => textOrRefused((node) => engine.render(node), run);
-		const { path, sources, excluded } = KINDS_PICKS[grammar];
+		const { path, sources, within, excluded } = KINDS_PICKS[grammar];
 		const tested = table.paths[path]!.arms.filter((arm) => arm.when.some((test) => 'kinds' in test)).map((arm) => arm.kind);
-		const reads = sources.map((source) => (runtime.read(engine.parse(source)) as { readonly statements: readonly PortableStructure[] }).statements[0]!);
+		const reads = sources.map((source) => {
+			const statement = (runtime.read(engine.parse(source)) as { readonly statements: readonly PortableStructure[] }).statements[0]!;
+			return within === undefined ? statement : (statement as unknown as Readonly<Record<string, PortableStructure>>)[within]!;
+		});
 		const build = (read: PortableStructure) => (functionAt(generated, read.$path) as PathFunction)(read);
 		for (const read of reads) expect(outcome(() => build(read))).toBe(outcome(() => runtime.build(read)));
 		for (const read of reads) expect(outcome(() => build(read))).not.toBe('refused');

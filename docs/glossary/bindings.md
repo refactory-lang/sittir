@@ -2192,6 +2192,10 @@ Marks the routes of a slot that the read takes and no build does. A slot's route
 
 Whether some parse of a kind writes text that is not layout. A layout node writes none. Any other kind writes text when it has a text or a pattern of its own, enum members, a token it spells (`spells`) or a slot holding a terminal, or when a subtype or a kind one of its slots holds writes text. It is the least fixed point over the model, so kinds that only hold each other write none, and it is computed once per model. A kind the model doesn't hold counts as writing text, so an unknown never passes as empty. Python's `suite_empty` holds only `_newline`, a layout node, so it writes none; typescript's `debugger_statement` spells `debugger`, so it writes text. The portable table names a step's `empty` form only among the kinds that read no slot and write no text.
 
+### `packages/codegen/src/bindings/routes.ts::droppedForms`
+
+The concrete kinds a `@dropped` capture takes out of one grammar slot while the slot's other forms stay routed. It answers only for a capture that names a kind on a grammar field, as rust's `(closure_expression_expr body: (block) @dropped)` does. It returns nothing for a wildcard, a token or a position, and nothing when the named kind covers every form the slot holds, so those captures still drop the whole slot. `slotsOf` feeds the result into the slot route's `except`, opening any supertype that holds a named form.
+
 ### `packages/codegen/src/bindings/vocabulary.ts::DeclaredAlias`
 
 An alias as the vocabulary reader finds it: a type alias in a namespace whose right side is a `V.`-qualified name, such as `type If<G> = V.Statement.If<G>`. `target` is that name as written, `.Any` included.

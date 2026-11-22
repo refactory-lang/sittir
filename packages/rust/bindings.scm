@@ -366,7 +366,13 @@
 (assignment_expression) @expression.assignment
 (field_expression value: (_) @object field: (_) @property) @expression.field
 (index_expression (_) @object (_) @index) @expression.index
-(closure_expression body: (_)? @body) @expression.closure
+(closure_expression) @expression.closure
+(closure_expression_expr body: (_) @body)
+((closure_expression_expr body: (block) @dropped) (#set! reason "a block body is read as statements and trailingExpression"))
+(closure_expression_block body: (block statements: (_) @statements))
+(closure_expression_block body: (block trailing_expression: (_) @trailingExpression))
+(closure_expression_expr body: (block statements: (_) @statements))
+(closure_expression_expr body: (block trailing_expression: (_) @trailingExpression))
 (await_expression (_)? @expression) @expression.await
 (yield_expression) @expression.yield
 (range_expression) @expression.range

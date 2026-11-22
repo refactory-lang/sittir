@@ -32518,6 +32518,11 @@ export const build: PortableBuildTable = {
 									}
 								}
 							],
+							reads: [
+								1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 237, 238, 242, 245, 248, 250, 252,
+								257, 258, 259, 260, 262, 264, 268, 269, 270, 274, 276, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308,
+								417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
+							],
 							takers: {
 								integer: 'literal.number',
 								float: 'literal.number',
@@ -32703,11 +32708,112 @@ export const build: PortableBuildTable = {
 								}
 							],
 							requires: [['parameters']]
+						},
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'statementBlock',
+									kinds: [211]
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							emptyContainer: true,
+							list: true,
+							seats: [
+								{
+									at: [211, 'statements'],
+									kinds: [
+										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
+										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
+									],
+									refined: [228],
+									tokens: {
+										';': 227
+									},
+									many: true
+								},
+								{
+									at: [206, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242,
+										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427,
+										428, 441, 442
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'import.meta': 442,
+										'new.target': 441,
+										super: 280,
+										this: 279
+									},
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
+								},
+								{
+									at: [228, 'body'],
+									kinds: [211, 215, 216, 218, 219],
+									within: [
+										{
+											builder: 'labeledStatement',
+											key: 'body',
+											slots: [
+												{
+													name: 'label',
+													steps: [
+														{
+															key: 'label'
+														}
+													],
+													multiple: false,
+													list: false,
+													seats: [
+														{
+															at: [228, 'label'],
+															kinds: [507],
+															leaf: 'identifier',
+															texts: [1, 507],
+															pattern: {
+																source:
+																	'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+																flags: 'u'
+															}
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number',
+								float: 'literal.number',
+								bigint: 'literal.number'
+							}
 						}
 					],
 					owners: [
 						[0, 1],
-						[0, 2, 3, 4]
+						[0, 2, 3, 4],
+						[1, 5],
+						[2, 3, 4, 5]
 					],
 					presets: [],
 					flags: {
@@ -32726,12 +32832,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					},
-					when: [
-						{
-							absent: [],
-							required: ['body']
-						}
-					]
+					when: []
 				}
 			],
 			flags: ['async']

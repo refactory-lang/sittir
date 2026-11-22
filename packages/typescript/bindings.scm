@@ -378,6 +378,8 @@
 (arrow_function (call_signature (formal_parameters (formal_parameters_elements item: (_)* @parameters)?)))
 (arrow_function (call_signature type_parameters: (_) @typeParameters))
 (arrow_function (call_signature return_type: (_) @returnType))
+(arrow_function body: (statement_block statements: (_) @statements))
+(arrow_function body: (_) @body)
 (function_expression) @expression.function
 (generator_function) @expression.function
 (function_expression body: (statement_block statements: (_) @statements))

@@ -1199,6 +1199,9 @@
           "name": "body",
           "route": "slot",
           "slot": "body",
+          "except": [
+            "statement_block"
+          ],
           "path": [
             {
               "owner": "arrow_function",
@@ -1388,6 +1391,31 @@
             {
               "owner": "call_signature",
               "slot": "return_type"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "statement_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "statement_block",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "arrow_function",
+              "slot": "body"
+            },
+            {
+              "owner": "statement_block",
+              "slot": "statements"
             }
           ]
         }

@@ -1318,6 +1318,18 @@ describe("keptKinds over a supertype the slot holds", () => {
 		expect(routes.slots.get('struct_tuple')?.map((r) => r.name)).toEqual(['fields']);
 	});
 
+	it('takes only the form a @dropped capture names on a grammar field out of the slot, and every other form stays', async () => {
+		const routes = resolveRoutes(await grammar('(loop_x) @expression.tuple\n(loop_x body: (_) @body)\n(loop_x body: (block_x) @dropped)'));
+		expect(routes.slots.get('loop_x')?.filter((m) => m.name === 'body')).toEqual([
+			expect.objectContaining({ route: 'slot', slot: expect.objectContaining({ name: 'body', kinds: ['expr_x', 'if_x'] }), except: ['block_x'], path: [{ owner: 'loop_x', slot: 'body' }] })
+		]);
+	});
+
+	it('drops the whole slot where the kind a @dropped capture names covers every form the slot holds', async () => {
+		const routes = resolveRoutes(await grammar('(loop_x) @expression.tuple\n(loop_x body: (_stmt_x) @dropped)'));
+		expect(routes.slots.get('loop_x')?.some((m) => m.name === 'body')).toBe(false);
+	});
+
 	it.each([
 		{ kind: 'binary', token: '+', vocab: 'expression.binary', slots: ['left', 'right'] },
 		{ kind: 'span', token: '..', vocab: 'expression.range', slots: ['lo'] }

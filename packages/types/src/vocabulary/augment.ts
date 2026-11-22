@@ -3753,6 +3753,11 @@ declare module './expression.ts' {
 				annotatedLambdas.Expression.Lambda<G, K>['returnType']
 			>;
 			readonly static?: gate.In<G, features.GeneratorBlocks, generatorBlocks.Expression.Lambda<G, K>['static']>;
+			readonly trailingExpression?: gate.In<
+				G,
+				features.ValuedBlocks,
+				valuedBlocks.Expression.Lambda<G, K>['trailingExpression']
+			>;
 			readonly typeParameters?: gate.In<
 				G,
 				features.GenericLambdas,

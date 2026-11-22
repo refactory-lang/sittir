@@ -58882,7 +58882,7 @@ const expression_lambda$219 = (input: PathInput<PythonMap, 'expression.lambda'>)
 			: input.parameters === undefined
 				? undefined
 				: expression_lambda$219_parameters(input.parameters),
-		body: expression_lambda$219_body(input.body)
+		body: input.body === undefined ? missing('expression.lambda.body') : expression_lambda$219_body(input.body)
 	});
 };
 const expression_lambda$220 = (
@@ -58905,7 +58905,7 @@ const expression_lambda$220 = (
 			: input.parameters === undefined
 				? undefined
 				: expression_lambda$220_parameters(input.parameters),
-		body: expression_lambda$220_body(input.body)
+		body: input.body === undefined ? missing('expression.lambda.body') : expression_lambda$220_body(input.body)
 	});
 };
 const expression_parenthesized$247 = (

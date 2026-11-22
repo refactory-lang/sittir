@@ -201,7 +201,8 @@ export namespace Expression {
 	export interface Lambda<G extends GrammarMap, K extends Under<'expression.lambda'> = 'expression.lambda'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by prt
 		readonly $path: K;
-		readonly body: Slot<G, K, 'body', V.Statement.Any<G> | string>;
+		readonly body?: Slot<G, K, 'body', V.Expression.Any<G> | string>;
+		readonly statements?: Slot<G, K, 'statements', V.Statement.Any<G>>[];
 		readonly parameters?:
 			Slot<
 			G,

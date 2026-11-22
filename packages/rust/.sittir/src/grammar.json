@@ -6839,7 +6839,8 @@
           "name": "closure_expression_expr",
           "annotations": {
             "variant": "expr",
-            "variantOf": "closure_expression"
+            "variantOf": "closure_expression",
+            "default": true
           }
         }
       ]

@@ -559,9 +559,13 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const pattern = node === undefined ? undefined : leafReDeclaration(plain[0]!, node)?.regex;
 		return { leaf, texts, ...(pattern === undefined ? {} : { pattern }) };
 	};
+	const holdsOnlyForms = (kinds: readonly string[], forms: readonly string[]): boolean => {
+		const entered = new Set(concreteKinds(model, [...forms]).map(storageName));
+		return kinds.every((kind) => entered.has(storageName(kind)));
+	};
 	const formKinds = (slot: AssembledNonterminal, form: string): readonly number[] | undefined => {
 		const entered = new Set(concreteKinds(model, [form]).map(storageName));
-		if (admitted(slot).every((kind) => entered.has(storageName(kind)))) return undefined;
+		if (holdsOnlyForms(admitted(slot), [form])) return undefined;
 		const ids = sortedIds([...entered].flatMap((kind) => typeOf(kind) ?? []));
 		return ids.length === 0 ? undefined : ids;
 	};
@@ -644,7 +648,15 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const ids = sortedIds(kinds.flatMap((kind) => typeOf(kind) ?? []));
 		return all.flatMap((kind) => typeOf(kind) ?? []).every((id) => ids.includes(id)) ? undefined : ids;
 	};
-	const emptinessOf = (path: readonly SlotStep[], seats: readonly Seat[]): Pick<PortableSlotRoute, 'nonEmpty' | 'emptyContainer'> => {
+	const otherFormHoldsNoRoute = (path: readonly SlotStep[], same: readonly SlotRoute[], guaranteed?: Guaranteed): boolean =>
+		path.slice(0, -1).some((step, i) => {
+			const slot = slotOf(step.owner, step.slot);
+			if (slot === undefined) return false;
+			const prefix = path.slice(0, i + 1);
+			const sharing = same.flatMap(({ path: other }) => (other !== undefined && other.length > i && prefix.every((at, j) => sameStep(at, other[j]!)) ? [other] : []));
+			return !sharing.some((other) => other.length === i + 1) && !holdsOnlyForms(guaranteed?.present(prefix) ?? admitted(slot), sharing.map((other) => other[i + 1]!.owner));
+		});
+	const emptinessOf = (path: readonly SlotStep[], seats: readonly Seat[], same: readonly SlotRoute[], guaranteed?: Guaranteed): Pick<PortableSlotRoute, 'nonEmpty' | 'emptyContainer'> => {
 		const lists = seats.filter((seat) => seat.many);
 		if (lists.length === 0) return {};
 		const required = (step: SlotStep): boolean => {
@@ -654,9 +666,9 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		if (lists.every((seat) => isNonEmpty(seat.slot))) return lists.every((seat) => seat.within.every((container) => container.optional !== true)) && path.every(required) ? { nonEmpty: true } : {};
 		if (lists.some((seat) => isNonEmpty(seat.slot) || (seat.final && isRequired(seat.slot)))) return {};
 		const leftOut = (seat: Seat): boolean => seat.within.slice(0, -1).some((container) => container.optional === true) || path.some((step) => slotOf(step.owner, step.slot) !== seat.slot && !required(step));
-		return lists.every(leftOut) ? { emptyContainer: true } : {};
+		return otherFormHoldsNoRoute(path, same, guaranteed) || lists.every(leftOut) ? { emptyContainer: true } : {};
 	};
-	const portableSlotOf = (route: SlotRoute, guaranteed?: Guaranteed): { readonly slot: PortableSlotRoute; readonly seats: readonly Seat[] } | undefined => {
+	const portableSlotOf = (route: SlotRoute, guaranteed?: Guaranteed, siblings: readonly SlotRoute[] = [route]): { readonly slot: PortableSlotRoute; readonly seats: readonly Seat[] } | undefined => {
 		if (route.flag === true || route.spelled === true || route.path === undefined) return undefined;
 		const steps = stepsOf(route.path, guaranteed);
 		const slot = lastSlot(route.path);
@@ -668,7 +680,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				name: route.name,
 				steps,
 				multiple: route.route === 'nested' ? route.multiple : isMultiple(slot),
-				...emptinessOf(route.path, seats),
+				...emptinessOf(route.path, seats, siblings.filter((other) => other.name === route.name), guaranteed),
 				...(route.list === undefined ? {} : { list: route.list }),
 				seats: seats.map((seat) => seatRecord(seat, route.name === VALUE)),
 				...(reads === undefined ? {} : { reads })
@@ -989,7 +1001,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			const path = route.path;
 			if (path === undefined) return [];
 			if (outOfForms(path, refined)) return (pinnedOut.add(path), []);
-			const built = portableSlotOf(route, guaranteed);
+			const built = portableSlotOf(route, guaranteed, entryRoutes(entry));
 			if (built === undefined) return [];
 			const seats = built.seats.flatMap((seat) => pinnedSeat(path, seat, refined) ?? []);
 			if (seats.length === 0 && built.seats.length > 0) return (pinnedOut.add(path), []);

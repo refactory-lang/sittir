@@ -373,13 +373,20 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 				.filter((route) => route.name === name)
 				.map((route): Operand | true => {
 					const given = dot(value, name);
+					const spelled = (text: Primary): Operand | true => {
+						const fit = spelledFit(arm, route, text);
+						return fit === true ? true : fit === false ? notText(text) : paren(binary(notText(text), '||', fit));
+					};
 					if (isListed(route)) {
 						const fit = spelledFit(arm, route, id('item'));
 						return fit === true ? true : call(dot(listOf(given), 'every'), lambda(fit === false ? notText(id('item')) : binary(notText(id('item')), '||', fit), 'item'));
 					}
+					if (eitherArity(route)) {
+						const [one, each] = [spelled(given), spelled(id('item'))];
+						return one === true || each === true ? true : paren(ternary(call(id(uses('listed')), given), call(dot(given, 'every'), lambda(each, 'item')), one));
+					}
 					if (route.seats.some((seat) => seat.many === true)) return fail(`a pick by the texts ${name} spells, which takes one value or a list`);
-					const fit = spelledFit(arm, route, given);
-					return fit === true ? true : fit === false ? notText(given) : paren(binary(notText(given), '||', fit));
+					return spelled(given);
 				});
 			const either = fits.filter((fit): fit is Operand => fit !== true);
 			return fits.includes(true) ? true : either.length === 1 ? either[0]! : paren(either.reduce((left, right) => binary(left, '||', right)));
@@ -892,7 +899,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	const isListed = (slot: PortableSlotRoute): boolean => slot.multiple || slot.list === true;
 	const eitherArity = (slot: PortableSlotRoute): boolean => slot.list !== true && slot.seats.some((seat) => seat.many === true && !(slot.list === false && (seat.within ?? []).length === 0));
 	const absent = (slot: PortableSlotRoute, value: Primary): Operand =>
-		isListed(slot) ? binary(dot(listOf(dot(value, slot.name)), 'length'), '===', num(0)) : binary(dot(value, slot.name), '===', id('undefined'));
+		isListed(slot) && slot.emptyContainer !== true ? binary(dot(listOf(dot(value, slot.name)), 'length'), '===', num(0)) : binary(dot(value, slot.name), '===', id('undefined'));
 
 	const throughSteps = (slot: PortableSlotRoute): PortableSlotRoute => {
 		const { steps } = slot;

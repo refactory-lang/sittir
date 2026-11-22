@@ -2729,13 +2729,52 @@
           ]
         },
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block",
+          "slot": "statements",
+          "multiple": false,
           "path": [
             {
               "owner": "closure_expression_block",
               "slot": "body"
+            },
+            {
+              "owner": "block",
+              "slot": "statements"
+            }
+          ]
+        },
+        {
+          "name": "trailingExpression",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block",
+          "slot": "trailing_expression",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "closure_expression_block",
+              "slot": "body"
+            },
+            {
+              "owner": "block",
+              "slot": "trailing_expression"
             }
           ]
         }
@@ -2804,10 +2843,63 @@
           "name": "body",
           "route": "slot",
           "slot": "body",
+          "except": [
+            "block"
+          ],
           "path": [
             {
               "owner": "closure_expression_expr",
               "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "closure_expression_expr",
+              "slot": "body"
+            },
+            {
+              "owner": "block",
+              "slot": "statements"
+            }
+          ]
+        },
+        {
+          "name": "trailingExpression",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block",
+          "slot": "trailing_expression",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "closure_expression_expr",
+              "slot": "body"
+            },
+            {
+              "owner": "block",
+              "slot": "trailing_expression"
             }
           ]
         }

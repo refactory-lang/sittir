@@ -1,5 +1,6 @@
 export type * from './clause.ts';
 export type * from './declaration.ts';
+export type * from './expression.ts';
 export type * from './statement.ts';
 
 import type { RustExpressions } from '../rust-expressions/index.ts';

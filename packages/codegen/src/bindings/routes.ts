@@ -184,6 +184,12 @@ function capturedSlot(model: SlotModel, capture: SlotCapture, form: string): Mod
 
 export const holdsCapture = (model: SlotModel, capture: SlotCapture): boolean => heldForms(model, capture.owner).some((form) => capturedSlot(model, capture, form) !== undefined);
 
+function droppedForms(model: SlotModel, fact: SlotCapture, slot: ModelSlot): readonly string[] {
+	if (fact.route !== 'dropped' || fact.field === null || fact.kind === null || fact.kind === WILDCARD) return [];
+	const named = concreteKinds(model, [fact.kind]);
+	return concreteKinds(model, slot.kinds).every((kind) => named.includes(kind)) ? [] : named;
+}
+
 const tokenOf = (selector: SlotSelector | ContainerCapture): string | null => ('token' in selector ? selector.token : null);
 
 function spellsToken(model: SlotModel, form: string, token: string): boolean {
@@ -1024,8 +1030,9 @@ function slotsOf(
 		}
 		const kept = keptKinds(input.model, slot, capturesOf(slot));
 		const own = slotNameOf(slotNames, slot.name, slot.propertyName);
-		const taken = (k: string): boolean => via.has(k) || entered.has(`${slot.name} ${k}`);
-		const form = (k: string): boolean => entered.get(`${slot.name} ${k}`)?.has(own) === true;
+		const dropped = new Set(input.bindings.slots.flatMap((m) => (m.route === 'dropped' && owns(m) && slotFor(input.model, slots, m) === slot ? droppedForms(input.model, m, slot) : [])));
+		const taken = (k: string): boolean => dropped.has(k) || via.has(k) || entered.has(`${slot.name} ${k}`);
+		const form = (k: string): boolean => dropped.has(k) || entered.get(`${slot.name} ${k}`)?.has(own) === true;
 		const below = concreteKinds(input.model, slot.kinds).some((k) => form(k) && !slot.kinds.includes(k));
 		const keptBelow = new Set(concreteKinds(input.model, [...kept]));
 		const out = (k: string): boolean => form(k) || !keptBelow.has(k);
@@ -1598,7 +1605,7 @@ export function resolveRoutes(given: GrammarInput): GrammarRoutes {
 		if ((fact.route !== 'rename' && fact.route !== 'dropped') || (fact.route === 'rename' && fact.flag === true)) continue;
 		for (const form of formsOf(input.model, fact.owner)) {
 			const slot = capturedSlot(input.model, fact, form);
-			if (slot !== undefined && (fact.route === 'dropped' || namesEvery(fact, reads.get(form) ?? [], declaredBy(input.vocabulary)))) (slotNames.get(form) ?? slotNames.set(form, new Map<string, string | null>()).get(form))?.set(slot.name, fact.route === 'rename' ? fact.name : null);
+			if (slot !== undefined && droppedForms(input.model, fact, slot).length === 0 && (fact.route === 'dropped' || namesEvery(fact, reads.get(form) ?? [], declaredBy(input.vocabulary)))) (slotNames.get(form) ?? slotNames.set(form, new Map<string, string | null>()).get(form))?.set(slot.name, fact.route === 'rename' ? fact.name : null);
 		}
 		if (heldForms(input.model, fact.owner).some((form) => modelNode(input.model, form) !== undefined) && !holdsCapture(input.model, fact)) {
 			const token = droppedToken(fact);

@@ -952,12 +952,29 @@ const clause_else$291_statements = (value: clause_else$291_statements$Item) => {
 			return b.expressionStatement.withSemi(expression_instantiation$245(value));
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return b.expressionStatement.withSemi(expression_lambda$369(value));
-			return b.expressionStatement.withSemi(expression_lambda$370(value));
+				return b.expressionStatement.withSemi(expression_lambda$370(value));
+			return b.expressionStatement.withSemi(expression_lambda$369(value));
 		case 'expression.member':
 			return b.expressionStatement.withSemi(expression_member$308(value));
 		case 'expression.parenthesized':
@@ -1426,12 +1443,29 @@ const clause_else$291_trailingExpression = (value: clause_else$291_trailingExpre
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -2259,12 +2293,29 @@ const clause_let$288_value = (value: clause_let$288_value$Item) => {
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -2699,12 +2750,29 @@ const clause_let_chain$289_left = (value: clause_let_chain$289_left$Item) => {
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -3135,12 +3203,29 @@ const clause_let_chain$289_rights = (value: clause_let_chain$289_rights$Item) =>
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -4123,12 +4208,29 @@ const declaration_constant$205_value = (value: declaration_constant$205_value$It
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -4807,12 +4909,29 @@ const declaration_member_enum_member$200_value = (value: declaration_member_enum
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -7711,12 +7830,29 @@ const declaration_variable$206_value = (value: declaration_variable$206_value$It
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -8518,12 +8654,29 @@ const declaration_variable$223_value = (value: declaration_variable$223_value$It
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -8962,12 +9115,29 @@ const element_attributed$363_value = (value: element_attributed$363_value$Item) 
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -18371,12 +18541,29 @@ const element_struct_base$286_value = (value: element_struct_base$286_value$Item
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -18911,12 +19098,29 @@ const element_struct_field$285_value = (value: element_struct_field$285_value$It
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -19541,12 +19745,29 @@ const expression_assignment$271_left = (value: expression_assignment$271_left$It
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -19973,12 +20194,29 @@ const expression_assignment$271_right = (value: expression_assignment$271_right$
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -20405,12 +20643,29 @@ const expression_assignment_compound_add$272_left = (value: expression_assignmen
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -20837,12 +21092,29 @@ const expression_assignment_compound_add$272_right = (value: expression_assignme
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -21271,12 +21543,29 @@ const expression_assignment_compound_bitwise_and$272_left = (
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -21705,12 +21994,29 @@ const expression_assignment_compound_bitwise_and$272_right = (
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -22139,12 +22445,29 @@ const expression_assignment_compound_bitwise_or$272_left = (
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -22573,12 +22896,29 @@ const expression_assignment_compound_bitwise_or$272_right = (
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -23007,12 +23347,29 @@ const expression_assignment_compound_bitwise_xor$272_left = (
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -23441,12 +23798,29 @@ const expression_assignment_compound_bitwise_xor$272_right = (
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -23873,12 +24247,29 @@ const expression_assignment_compound_divide$272_left = (value: expression_assign
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -24307,12 +24698,29 @@ const expression_assignment_compound_divide$272_right = (
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -24739,12 +25147,29 @@ const expression_assignment_compound_modulo$272_left = (value: expression_assign
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -25173,12 +25598,29 @@ const expression_assignment_compound_modulo$272_right = (
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -25607,12 +26049,29 @@ const expression_assignment_compound_multiply$272_left = (
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -26041,12 +26500,29 @@ const expression_assignment_compound_multiply$272_right = (
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -26475,12 +26951,29 @@ const expression_assignment_compound_shift_left$272_left = (
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -26909,12 +27402,29 @@ const expression_assignment_compound_shift_left$272_right = (
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -27343,12 +27853,29 @@ const expression_assignment_compound_shift_right$272_left = (
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -27777,12 +28304,29 @@ const expression_assignment_compound_shift_right$272_right = (
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -28211,12 +28755,29 @@ const expression_assignment_compound_subtract$272_left = (
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -28645,12 +29206,29 @@ const expression_assignment_compound_subtract$272_right = (
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -29077,12 +29655,29 @@ const expression_await$307_expression = (value: expression_await$307_expression$
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -29509,12 +30104,29 @@ const expression_binary_arithmetic_add$270_left = (value: expression_binary_arit
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -29941,12 +30553,29 @@ const expression_binary_arithmetic_add$270_right = (value: expression_binary_ari
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -30373,12 +31002,29 @@ const expression_binary_arithmetic_divide$270_left = (value: expression_binary_a
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -30805,12 +31451,29 @@ const expression_binary_arithmetic_divide$270_right = (value: expression_binary_
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -31237,12 +31900,29 @@ const expression_binary_arithmetic_modulo$270_left = (value: expression_binary_a
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -31669,12 +32349,29 @@ const expression_binary_arithmetic_modulo$270_right = (value: expression_binary_
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -32101,12 +32798,29 @@ const expression_binary_arithmetic_multiply$270_left = (value: expression_binary
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -32535,12 +33249,29 @@ const expression_binary_arithmetic_multiply$270_right = (
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -32967,12 +33698,29 @@ const expression_binary_arithmetic_subtract$270_left = (value: expression_binary
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -33401,12 +34149,29 @@ const expression_binary_arithmetic_subtract$270_right = (
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -33833,12 +34598,29 @@ const expression_binary_bitwise_and$270_left = (value: expression_binary_bitwise
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -34265,12 +35047,29 @@ const expression_binary_bitwise_and$270_right = (value: expression_binary_bitwis
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -34697,12 +35496,29 @@ const expression_binary_bitwise_or$270_left = (value: expression_binary_bitwise_
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -35129,12 +35945,29 @@ const expression_binary_bitwise_or$270_right = (value: expression_binary_bitwise
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -35561,12 +36394,29 @@ const expression_binary_bitwise_xor$270_left = (value: expression_binary_bitwise
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -35993,12 +36843,29 @@ const expression_binary_bitwise_xor$270_right = (value: expression_binary_bitwis
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -36425,12 +37292,29 @@ const expression_binary_comparison_equal$270_left = (value: expression_binary_co
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -36857,12 +37741,29 @@ const expression_binary_comparison_equal$270_right = (value: expression_binary_c
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -37289,12 +38190,29 @@ const expression_binary_comparison_greater$270_left = (value: expression_binary_
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -37721,12 +38639,29 @@ const expression_binary_comparison_greater$270_right = (value: expression_binary
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -38155,12 +39090,29 @@ const expression_binary_comparison_greater_equal$270_left = (
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -38589,12 +39541,29 @@ const expression_binary_comparison_greater_equal$270_right = (
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -39021,12 +39990,29 @@ const expression_binary_comparison_less$270_left = (value: expression_binary_com
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -39453,12 +40439,29 @@ const expression_binary_comparison_less$270_right = (value: expression_binary_co
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -39887,12 +40890,29 @@ const expression_binary_comparison_less_equal$270_left = (
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -40321,12 +41341,29 @@ const expression_binary_comparison_less_equal$270_right = (
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -40755,12 +41792,29 @@ const expression_binary_comparison_not_equal$270_left = (
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -41189,12 +42243,29 @@ const expression_binary_comparison_not_equal$270_right = (
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -41621,12 +42692,29 @@ const expression_binary_logical_and$270_left = (value: expression_binary_logical
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -42053,12 +43141,29 @@ const expression_binary_logical_and$270_right = (value: expression_binary_logica
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -42485,12 +43590,29 @@ const expression_binary_logical_or$270_left = (value: expression_binary_logical_
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -42917,12 +44039,29 @@ const expression_binary_logical_or$270_right = (value: expression_binary_logical
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -43349,12 +44488,29 @@ const expression_binary_shift_left$270_count = (value: expression_binary_shift_l
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -43781,12 +44937,29 @@ const expression_binary_shift_left$270_operand = (value: expression_binary_shift
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -44213,12 +45386,29 @@ const expression_binary_shift_right$270_count = (value: expression_binary_shift_
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -44645,12 +45835,29 @@ const expression_binary_shift_right$270_operand = (value: expression_binary_shif
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -45133,12 +46340,29 @@ const expression_cast_conversion$273_expression = (value: expression_cast_conver
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -45729,12 +46953,29 @@ const expression_collection_list$436_elements$item = (value: expression_collecti
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -46161,12 +47402,29 @@ const expression_collection_list_repeat$435_element = (value: expression_collect
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -46593,12 +47851,29 @@ const expression_collection_list_repeat$435_length = (value: expression_collecti
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -47085,12 +48360,29 @@ const expression_collection_tuple$280_elements$item = (value: expression_collect
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -47269,566 +48561,6 @@ const expression_instantiation$245_typeArguments$item = (
 		return unseated('expression.instantiation.typeArguments', value);
 	}
 	return unbuilt('expression.instantiation.typeArguments', value);
-};
-type expression_lambda$369_body$Item =
-	| '()'
-	| '_'
-	| 'false'
-	| 'self'
-	| 'true'
-	| Text<RustMap, 'expression.unit'>
-	| Text<RustMap, 'identifier'>
-	| Text<RustMap, 'identifier.receiver'>
-	| Text<RustMap, 'literal.character'>
-	| Text<RustMap, 'literal.number.float'>
-	| number
-	| BuildInput<RustMap, 'expression.assignment'>
-	| RustMap['nodes']['expression.assignment']
-	| BuildInput<RustMap, 'expression.assignment.compound.add'>
-	| RustMap['nodes']['expression.assignment.compound.add']
-	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_and'>
-	| RustMap['nodes']['expression.assignment.compound.bitwise_and']
-	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_or'>
-	| RustMap['nodes']['expression.assignment.compound.bitwise_or']
-	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_xor'>
-	| RustMap['nodes']['expression.assignment.compound.bitwise_xor']
-	| BuildInput<RustMap, 'expression.assignment.compound.divide'>
-	| RustMap['nodes']['expression.assignment.compound.divide']
-	| BuildInput<RustMap, 'expression.assignment.compound.modulo'>
-	| RustMap['nodes']['expression.assignment.compound.modulo']
-	| BuildInput<RustMap, 'expression.assignment.compound.multiply'>
-	| RustMap['nodes']['expression.assignment.compound.multiply']
-	| BuildInput<RustMap, 'expression.assignment.compound.shift_left'>
-	| RustMap['nodes']['expression.assignment.compound.shift_left']
-	| BuildInput<RustMap, 'expression.assignment.compound.shift_right'>
-	| RustMap['nodes']['expression.assignment.compound.shift_right']
-	| BuildInput<RustMap, 'expression.assignment.compound.subtract'>
-	| RustMap['nodes']['expression.assignment.compound.subtract']
-	| BuildInput<RustMap, 'expression.await'>
-	| RustMap['nodes']['expression.await']
-	| BuildInput<RustMap, 'expression.binary.arithmetic.add'>
-	| RustMap['nodes']['expression.binary.arithmetic.add']
-	| BuildInput<RustMap, 'expression.binary.arithmetic.divide'>
-	| RustMap['nodes']['expression.binary.arithmetic.divide']
-	| BuildInput<RustMap, 'expression.binary.arithmetic.modulo'>
-	| RustMap['nodes']['expression.binary.arithmetic.modulo']
-	| BuildInput<RustMap, 'expression.binary.arithmetic.multiply'>
-	| RustMap['nodes']['expression.binary.arithmetic.multiply']
-	| BuildInput<RustMap, 'expression.binary.arithmetic.subtract'>
-	| RustMap['nodes']['expression.binary.arithmetic.subtract']
-	| BuildInput<RustMap, 'expression.binary.bitwise.and'>
-	| RustMap['nodes']['expression.binary.bitwise.and']
-	| BuildInput<RustMap, 'expression.binary.bitwise.or'>
-	| RustMap['nodes']['expression.binary.bitwise.or']
-	| BuildInput<RustMap, 'expression.binary.bitwise.xor'>
-	| RustMap['nodes']['expression.binary.bitwise.xor']
-	| BuildInput<RustMap, 'expression.binary.comparison.equal'>
-	| RustMap['nodes']['expression.binary.comparison.equal']
-	| BuildInput<RustMap, 'expression.binary.comparison.greater'>
-	| RustMap['nodes']['expression.binary.comparison.greater']
-	| BuildInput<RustMap, 'expression.binary.comparison.greater_equal'>
-	| RustMap['nodes']['expression.binary.comparison.greater_equal']
-	| BuildInput<RustMap, 'expression.binary.comparison.less'>
-	| RustMap['nodes']['expression.binary.comparison.less']
-	| BuildInput<RustMap, 'expression.binary.comparison.less_equal'>
-	| RustMap['nodes']['expression.binary.comparison.less_equal']
-	| BuildInput<RustMap, 'expression.binary.comparison.not_equal'>
-	| RustMap['nodes']['expression.binary.comparison.not_equal']
-	| BuildInput<RustMap, 'expression.binary.logical.and'>
-	| RustMap['nodes']['expression.binary.logical.and']
-	| BuildInput<RustMap, 'expression.binary.logical.or'>
-	| RustMap['nodes']['expression.binary.logical.or']
-	| BuildInput<RustMap, 'expression.binary.shift.left'>
-	| RustMap['nodes']['expression.binary.shift.left']
-	| BuildInput<RustMap, 'expression.binary.shift.right'>
-	| RustMap['nodes']['expression.binary.shift.right']
-	| BuildInput<RustMap, 'expression.call'>
-	| RustMap['nodes']['expression.call']
-	| BuildInput<RustMap, 'expression.call.macro'>
-	| RustMap['nodes']['expression.call.macro']
-	| BuildInput<RustMap, 'expression.call.member'>
-	| RustMap['nodes']['expression.call.member']
-	| BuildInput<RustMap, 'expression.call.qualified'>
-	| RustMap['nodes']['expression.call.qualified']
-	| BuildInput<RustMap, 'expression.cast.conversion'>
-	| RustMap['nodes']['expression.cast.conversion']
-	| BuildInput<RustMap, 'expression.collection.list'>
-	| RustMap['nodes']['expression.collection.list']
-	| BuildInput<RustMap, 'expression.collection.list.repeat'>
-	| RustMap['nodes']['expression.collection.list.repeat']
-	| BuildInput<RustMap, 'expression.collection.struct'>
-	| RustMap['nodes']['expression.collection.struct']
-	| BuildInput<RustMap, 'expression.collection.tuple'>
-	| RustMap['nodes']['expression.collection.tuple']
-	| BuildInput<RustMap, 'expression.instantiation'>
-	| RustMap['nodes']['expression.instantiation']
-	| BuildInput<RustMap, 'expression.lambda'>
-	| RustMap['nodes']['expression.lambda']
-	| BuildInput<RustMap, 'expression.member'>
-	| RustMap['nodes']['expression.member']
-	| BuildInput<RustMap, 'expression.parenthesized'>
-	| RustMap['nodes']['expression.parenthesized']
-	| BuildInput<RustMap, 'expression.propagate'>
-	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range.exclusive'>
-	| RustMap['nodes']['expression.range.exclusive']
-	| BuildInput<RustMap, 'expression.range.inclusive'>
-	| RustMap['nodes']['expression.range.inclusive']
-	| BuildInput<RustMap, 'expression.range.inclusive.legacy'>
-	| RustMap['nodes']['expression.range.inclusive.legacy']
-	| BuildInput<RustMap, 'expression.reference'>
-	| RustMap['nodes']['expression.reference']
-	| BuildInput<RustMap, 'expression.subscript'>
-	| RustMap['nodes']['expression.subscript']
-	| BuildInput<RustMap, 'expression.unary.deref'>
-	| RustMap['nodes']['expression.unary.deref']
-	| BuildInput<RustMap, 'expression.unary.negation'>
-	| RustMap['nodes']['expression.unary.negation']
-	| BuildInput<RustMap, 'expression.unary.not'>
-	| RustMap['nodes']['expression.unary.not']
-	| BuildInput<RustMap, 'expression.yield'>
-	| RustMap['nodes']['expression.yield']
-	| BuildInput<RustMap, 'identifier'>
-	| RustMap['nodes']['identifier']
-	| BuildInput<RustMap, 'identifier.metavariable'>
-	| RustMap['nodes']['identifier.metavariable']
-	| BuildInput<RustMap, 'identifier.qualified'>
-	| RustMap['nodes']['identifier.qualified']
-	| BuildInput<RustMap, 'literal.boolean.false'>
-	| RustMap['nodes']['literal.boolean.false']
-	| BuildInput<RustMap, 'literal.boolean.true'>
-	| RustMap['nodes']['literal.boolean.true']
-	| BuildInput<RustMap, 'literal.character'>
-	| RustMap['nodes']['literal.character']
-	| BuildInput<RustMap, 'literal.number.float'>
-	| RustMap['nodes']['literal.number.float']
-	| BuildInput<RustMap, 'literal.number.integer'>
-	| RustMap['nodes']['literal.number.integer']
-	| BuildInput<RustMap, 'literal.number.integer.binary'>
-	| RustMap['nodes']['literal.number.integer.binary']
-	| BuildInput<RustMap, 'literal.number.integer.hex'>
-	| RustMap['nodes']['literal.number.integer.hex']
-	| BuildInput<RustMap, 'literal.number.integer.octal'>
-	| RustMap['nodes']['literal.number.integer.octal']
-	| BuildInput<RustMap, 'literal.string'>
-	| RustMap['nodes']['literal.string']
-	| BuildInput<RustMap, 'literal.string.bytes'>
-	| RustMap['nodes']['literal.string.bytes']
-	| BuildInput<RustMap, 'literal.string.bytes.raw'>
-	| RustMap['nodes']['literal.string.bytes.raw']
-	| BuildInput<RustMap, 'literal.string.c'>
-	| RustMap['nodes']['literal.string.c']
-	| BuildInput<RustMap, 'literal.string.c.raw'>
-	| RustMap['nodes']['literal.string.c.raw']
-	| BuildInput<RustMap, 'literal.string.raw'>
-	| RustMap['nodes']['literal.string.raw']
-	| BuildInput<RustMap, 'statement.block'>
-	| RustMap['nodes']['statement.block']
-	| BuildInput<RustMap, 'statement.block.async'>
-	| RustMap['nodes']['statement.block.async']
-	| BuildInput<RustMap, 'statement.block.const'>
-	| RustMap['nodes']['statement.block.const']
-	| BuildInput<RustMap, 'statement.block.generator'>
-	| RustMap['nodes']['statement.block.generator']
-	| BuildInput<RustMap, 'statement.block.try'>
-	| RustMap['nodes']['statement.block.try']
-	| BuildInput<RustMap, 'statement.block.unsafe'>
-	| RustMap['nodes']['statement.block.unsafe']
-	| BuildInput<RustMap, 'statement.break'>
-	| RustMap['nodes']['statement.break']
-	| BuildInput<RustMap, 'statement.continue'>
-	| RustMap['nodes']['statement.continue']
-	| BuildInput<RustMap, 'statement.if'>
-	| RustMap['nodes']['statement.if']
-	| BuildInput<RustMap, 'statement.loop'>
-	| RustMap['nodes']['statement.loop']
-	| BuildInput<RustMap, 'statement.loop.for_each'>
-	| RustMap['nodes']['statement.loop.for_each']
-	| BuildInput<RustMap, 'statement.loop.while'>
-	| RustMap['nodes']['statement.loop.while']
-	| BuildInput<RustMap, 'statement.match'>
-	| RustMap['nodes']['statement.match']
-	| BuildInput<RustMap, 'statement.return'>
-	| RustMap['nodes']['statement.return'];
-const expression_lambda$369_body = (value: expression_lambda$369_body$Item) => {
-	if (typeof value === 'string') {
-		return untexted('expression.lambda.body', value);
-	}
-	if (typeof value === 'number') {
-		if (seated(value, [313])) return value;
-		return unseated('expression.lambda.body', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [313])) return value;
-		return unseated('expression.lambda.body', value);
-	}
-	switch (value.$path) {
-		case 'expression.assignment':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.assignment.compound.add':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.assignment.compound.bitwise_and':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.assignment.compound.bitwise_or':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.assignment.compound.bitwise_xor':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.assignment.compound.divide':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.assignment.compound.modulo':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.assignment.compound.multiply':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.assignment.compound.shift_left':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.assignment.compound.shift_right':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.assignment.compound.subtract':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.await':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.binary.arithmetic.add':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.binary.arithmetic.divide':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.binary.arithmetic.modulo':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.binary.arithmetic.multiply':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.binary.arithmetic.subtract':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.binary.bitwise.and':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.binary.bitwise.or':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.binary.bitwise.xor':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.binary.comparison.equal':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.binary.comparison.greater':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.binary.comparison.greater_equal':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.binary.comparison.less':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.binary.comparison.less_equal':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.binary.comparison.not_equal':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.binary.logical.and':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.binary.logical.or':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.binary.shift.left':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.binary.shift.right':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.call':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.call.macro':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.call.member':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.call.qualified':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.cast.conversion':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.collection.list':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.collection.list.repeat':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.collection.struct':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.collection.tuple':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.instantiation':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.lambda':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.member':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.parenthesized':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.propagate':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.range.exclusive':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.range.inclusive':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.range.inclusive.legacy':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.reference':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.subscript':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.unary.deref':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.unary.negation':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.unary.not':
-			return unbuilt('expression.lambda.body', value);
-		case 'expression.yield':
-			return unbuilt('expression.lambda.body', value);
-		case 'identifier':
-			return unbuilt('expression.lambda.body', value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.lambda.body', value);
-		case 'identifier.qualified':
-			return unbuilt('expression.lambda.body', value);
-		case 'literal.boolean.false':
-			return unbuilt('expression.lambda.body', value);
-		case 'literal.boolean.true':
-			return unbuilt('expression.lambda.body', value);
-		case 'literal.character':
-			return unbuilt('expression.lambda.body', value);
-		case 'literal.number.float':
-			return unbuilt('expression.lambda.body', value);
-		case 'literal.number.integer':
-			return unbuilt('expression.lambda.body', value);
-		case 'literal.number.integer.binary':
-			return unbuilt('expression.lambda.body', value);
-		case 'literal.number.integer.hex':
-			return unbuilt('expression.lambda.body', value);
-		case 'literal.number.integer.octal':
-			return unbuilt('expression.lambda.body', value);
-		case 'literal.string':
-			return unbuilt('expression.lambda.body', value);
-		case 'literal.string.bytes':
-			return unbuilt('expression.lambda.body', value);
-		case 'literal.string.bytes.raw':
-			return unbuilt('expression.lambda.body', value);
-		case 'literal.string.c':
-			return unbuilt('expression.lambda.body', value);
-		case 'literal.string.c.raw':
-			return unbuilt('expression.lambda.body', value);
-		case 'literal.string.raw':
-			return unbuilt('expression.lambda.body', value);
-		case 'statement.block':
-			return statement_block$313(value);
-		case 'statement.block.async':
-			return unbuilt('expression.lambda.body', value);
-		case 'statement.block.const':
-			return unbuilt('expression.lambda.body', value);
-		case 'statement.block.generator':
-			return unbuilt('expression.lambda.body', value);
-		case 'statement.block.try':
-			return unbuilt('expression.lambda.body', value);
-		case 'statement.block.unsafe':
-			return unbuilt('expression.lambda.body', value);
-		case 'statement.break':
-			return unbuilt('expression.lambda.body', value);
-		case 'statement.continue':
-			return unbuilt('expression.lambda.body', value);
-		case 'statement.if':
-			return unbuilt('expression.lambda.body', value);
-		case 'statement.loop':
-			return unbuilt('expression.lambda.body', value);
-		case 'statement.loop.for_each':
-			return unbuilt('expression.lambda.body', value);
-		case 'statement.loop.while':
-			return unbuilt('expression.lambda.body', value);
-		case 'statement.match':
-			return unbuilt('expression.lambda.body', value);
-		case 'statement.return':
-			return unbuilt('expression.lambda.body', value);
-		default:
-			return unbuilt('expression.lambda.body', value);
-	}
-};
-type expression_lambda$369_body$kind$Item =
-	| '()'
-	| '_'
-	| 'false'
-	| 'self'
-	| 'true'
-	| Text<RustMap, 'expression.unit'>
-	| Text<RustMap, 'identifier'>
-	| Text<RustMap, 'identifier.receiver'>
-	| Text<RustMap, 'literal.character'>
-	| Text<RustMap, 'literal.number.float'>
-	| number
-	| BuildInput<RustMap, 'expression.assignment'>
-	| RustMap['nodes']['expression.assignment']
-	| BuildInput<RustMap, 'expression.assignment.compound.add'>
-	| RustMap['nodes']['expression.assignment.compound.add']
-	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_and'>
-	| RustMap['nodes']['expression.assignment.compound.bitwise_and']
-	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_or'>
-	| RustMap['nodes']['expression.assignment.compound.bitwise_or']
-	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_xor'>
-	| RustMap['nodes']['expression.assignment.compound.bitwise_xor']
-	| BuildInput<RustMap, 'expression.assignment.compound.divide'>
-	| RustMap['nodes']['expression.assignment.compound.divide']
-	| BuildInput<RustMap, 'expression.assignment.compound.modulo'>
-	| RustMap['nodes']['expression.assignment.compound.modulo']
-	| BuildInput<RustMap, 'expression.assignment.compound.multiply'>
-	| RustMap['nodes']['expression.assignment.compound.multiply']
-	| BuildInput<RustMap, 'expression.assignment.compound.shift_left'>
-	| RustMap['nodes']['expression.assignment.compound.shift_left']
-	| BuildInput<RustMap, 'expression.assignment.compound.shift_right'>
-	| RustMap['nodes']['expression.assignment.compound.shift_right']
-	| BuildInput<RustMap, 'expression.assignment.compound.subtract'>
-	| RustMap['nodes']['expression.assignment.compound.subtract']
-	| BuildInput<RustMap, 'expression.await'>
-	| RustMap['nodes']['expression.await']
-	| BuildInput<RustMap, 'expression.binary.arithmetic.add'>
-	| RustMap['nodes']['expression.binary.arithmetic.add']
-	| BuildInput<RustMap, 'expression.binary.arithmetic.divide'>
-	| RustMap['nodes']['expression.binary.arithmetic.divide']
-	| BuildInput<RustMap, 'expression.binary.arithmetic.modulo'>
-	| RustMap['nodes']['expression.binary.arithmetic.modulo']
-	| BuildInput<RustMap, 'expression.binary.arithmetic.multiply'>
-	| RustMap['nodes']['expression.binary.arithmetic.multiply']
-	| BuildInput<RustMap, 'expression.binary.arithmetic.subtract'>
-	| RustMap['nodes']['expression.binary.arithmetic.subtract']
-	| BuildInput<RustMap, 'expression.binary.bitwise.and'>
-	| RustMap['nodes']['expression.binary.bitwise.and']
-	| BuildInput<RustMap, 'expression.binary.bitwise.or'>
-	| RustMap['nodes']['expression.binary.bitwise.or']
-	| BuildInput<RustMap, 'expression.binary.bitwise.xor'>
-	| RustMap['nodes']['expression.binary.bitwise.xor']
-	| BuildInput<RustMap, 'expression.binary.comparison.equal'>
-	| RustMap['nodes']['expression.binary.comparison.equal']
-	| BuildInput<RustMap, 'expression.binary.comparison.greater'>
-	| RustMap['nodes']['expression.binary.comparison.greater']
-	| BuildInput<RustMap, 'expression.binary.comparison.greater_equal'>
-	| RustMap['nodes']['expression.binary.comparison.greater_equal']
-	| BuildInput<RustMap, 'expression.binary.comparison.less'>
-	| RustMap['nodes']['expression.binary.comparison.less']
-	| BuildInput<RustMap, 'expression.binary.comparison.less_equal'>
-	| RustMap['nodes']['expression.binary.comparison.less_equal']
-	| BuildInput<RustMap, 'expression.binary.comparison.not_equal'>
-	| RustMap['nodes']['expression.binary.comparison.not_equal']
-	| BuildInput<RustMap, 'expression.binary.logical.and'>
-	| RustMap['nodes']['expression.binary.logical.and']
-	| BuildInput<RustMap, 'expression.binary.logical.or'>
-	| RustMap['nodes']['expression.binary.logical.or']
-	| BuildInput<RustMap, 'expression.binary.shift.left'>
-	| RustMap['nodes']['expression.binary.shift.left']
-	| BuildInput<RustMap, 'expression.binary.shift.right'>
-	| RustMap['nodes']['expression.binary.shift.right']
-	| BuildInput<RustMap, 'expression.call'>
-	| RustMap['nodes']['expression.call']
-	| BuildInput<RustMap, 'expression.call.macro'>
-	| RustMap['nodes']['expression.call.macro']
-	| BuildInput<RustMap, 'expression.call.member'>
-	| RustMap['nodes']['expression.call.member']
-	| BuildInput<RustMap, 'expression.call.qualified'>
-	| RustMap['nodes']['expression.call.qualified']
-	| BuildInput<RustMap, 'expression.cast.conversion'>
-	| RustMap['nodes']['expression.cast.conversion']
-	| BuildInput<RustMap, 'expression.collection.list'>
-	| RustMap['nodes']['expression.collection.list']
-	| BuildInput<RustMap, 'expression.collection.list.repeat'>
-	| RustMap['nodes']['expression.collection.list.repeat']
-	| BuildInput<RustMap, 'expression.collection.struct'>
-	| RustMap['nodes']['expression.collection.struct']
-	| BuildInput<RustMap, 'expression.collection.tuple'>
-	| RustMap['nodes']['expression.collection.tuple']
-	| BuildInput<RustMap, 'expression.instantiation'>
-	| RustMap['nodes']['expression.instantiation']
-	| BuildInput<RustMap, 'expression.lambda'>
-	| RustMap['nodes']['expression.lambda']
-	| BuildInput<RustMap, 'expression.member'>
-	| RustMap['nodes']['expression.member']
-	| BuildInput<RustMap, 'expression.parenthesized'>
-	| RustMap['nodes']['expression.parenthesized']
-	| BuildInput<RustMap, 'expression.propagate'>
-	| RustMap['nodes']['expression.propagate']
-	| BuildInput<RustMap, 'expression.range.exclusive'>
-	| RustMap['nodes']['expression.range.exclusive']
-	| BuildInput<RustMap, 'expression.range.inclusive'>
-	| RustMap['nodes']['expression.range.inclusive']
-	| BuildInput<RustMap, 'expression.range.inclusive.legacy'>
-	| RustMap['nodes']['expression.range.inclusive.legacy']
-	| BuildInput<RustMap, 'expression.reference'>
-	| RustMap['nodes']['expression.reference']
-	| BuildInput<RustMap, 'expression.subscript'>
-	| RustMap['nodes']['expression.subscript']
-	| BuildInput<RustMap, 'expression.unary.deref'>
-	| RustMap['nodes']['expression.unary.deref']
-	| BuildInput<RustMap, 'expression.unary.negation'>
-	| RustMap['nodes']['expression.unary.negation']
-	| BuildInput<RustMap, 'expression.unary.not'>
-	| RustMap['nodes']['expression.unary.not']
-	| BuildInput<RustMap, 'expression.yield'>
-	| RustMap['nodes']['expression.yield']
-	| BuildInput<RustMap, 'identifier'>
-	| RustMap['nodes']['identifier']
-	| BuildInput<RustMap, 'identifier.metavariable'>
-	| RustMap['nodes']['identifier.metavariable']
-	| BuildInput<RustMap, 'identifier.qualified'>
-	| RustMap['nodes']['identifier.qualified']
-	| BuildInput<RustMap, 'literal.boolean.false'>
-	| RustMap['nodes']['literal.boolean.false']
-	| BuildInput<RustMap, 'literal.boolean.true'>
-	| RustMap['nodes']['literal.boolean.true']
-	| BuildInput<RustMap, 'literal.character'>
-	| RustMap['nodes']['literal.character']
-	| BuildInput<RustMap, 'literal.number.float'>
-	| RustMap['nodes']['literal.number.float']
-	| BuildInput<RustMap, 'literal.number.integer'>
-	| RustMap['nodes']['literal.number.integer']
-	| BuildInput<RustMap, 'literal.number.integer.binary'>
-	| RustMap['nodes']['literal.number.integer.binary']
-	| BuildInput<RustMap, 'literal.number.integer.hex'>
-	| RustMap['nodes']['literal.number.integer.hex']
-	| BuildInput<RustMap, 'literal.number.integer.octal'>
-	| RustMap['nodes']['literal.number.integer.octal']
-	| BuildInput<RustMap, 'literal.string'>
-	| RustMap['nodes']['literal.string']
-	| BuildInput<RustMap, 'literal.string.bytes'>
-	| RustMap['nodes']['literal.string.bytes']
-	| BuildInput<RustMap, 'literal.string.bytes.raw'>
-	| RustMap['nodes']['literal.string.bytes.raw']
-	| BuildInput<RustMap, 'literal.string.c'>
-	| RustMap['nodes']['literal.string.c']
-	| BuildInput<RustMap, 'literal.string.c.raw'>
-	| RustMap['nodes']['literal.string.c.raw']
-	| BuildInput<RustMap, 'literal.string.raw'>
-	| RustMap['nodes']['literal.string.raw']
-	| BuildInput<RustMap, 'statement.block'>
-	| RustMap['nodes']['statement.block']
-	| BuildInput<RustMap, 'statement.block.async'>
-	| RustMap['nodes']['statement.block.async']
-	| BuildInput<RustMap, 'statement.block.const'>
-	| RustMap['nodes']['statement.block.const']
-	| BuildInput<RustMap, 'statement.block.generator'>
-	| RustMap['nodes']['statement.block.generator']
-	| BuildInput<RustMap, 'statement.block.try'>
-	| RustMap['nodes']['statement.block.try']
-	| BuildInput<RustMap, 'statement.block.unsafe'>
-	| RustMap['nodes']['statement.block.unsafe']
-	| BuildInput<RustMap, 'statement.break'>
-	| RustMap['nodes']['statement.break']
-	| BuildInput<RustMap, 'statement.continue'>
-	| RustMap['nodes']['statement.continue']
-	| BuildInput<RustMap, 'statement.if'>
-	| RustMap['nodes']['statement.if']
-	| BuildInput<RustMap, 'statement.loop'>
-	| RustMap['nodes']['statement.loop']
-	| BuildInput<RustMap, 'statement.loop.for_each'>
-	| RustMap['nodes']['statement.loop.for_each']
-	| BuildInput<RustMap, 'statement.loop.while'>
-	| RustMap['nodes']['statement.loop.while']
-	| BuildInput<RustMap, 'statement.match'>
-	| RustMap['nodes']['statement.match']
-	| BuildInput<RustMap, 'statement.return'>
-	| RustMap['nodes']['statement.return'];
-const expression_lambda$369_body$kind = (value: expression_lambda$369_body$kind$Item): number | undefined => {
-	if (typeof value === 'string') {
-		return undefined;
-	}
-	if (typeof value === 'number') {
-		return value;
-	}
-	if (isNode(value)) return value.$type;
-	switch (value.$path) {
-		case 'statement.block':
-			return 313;
-		default:
-			return undefined;
-	}
 };
 type expression_lambda$369_parameters$Item =
 	| string
@@ -48047,9 +48779,859 @@ const expression_lambda$369_returnType = (value: expression_lambda$369_returnTyp
 			return unbuilt('expression.lambda.returnType', value);
 	}
 };
-type expression_lambda$370_body$Item =
+type expression_lambda$369_statements$Item =
 	| '()'
-	| '_'
+	| ';'
+	| 'false'
+	| 'self'
+	| 'true'
+	| Text<RustMap, 'expression.unit'>
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'statement.empty'>
+	| number
+	| BuildInput<RustMap, 'attribute'>
+	| RustMap['nodes']['attribute']
+	| BuildInput<RustMap, 'declaration.constant'>
+	| RustMap['nodes']['declaration.constant']
+	| BuildInput<RustMap, 'declaration.constant.private'>
+	| RustMap['nodes']['declaration.constant.private']
+	| BuildInput<RustMap, 'declaration.constant.public'>
+	| RustMap['nodes']['declaration.constant.public']
+	| BuildInput<RustMap, 'declaration.constant.public.internal'>
+	| RustMap['nodes']['declaration.constant.public.internal']
+	| BuildInput<RustMap, 'declaration.constant.public.parent'>
+	| RustMap['nodes']['declaration.constant.public.parent']
+	| BuildInput<RustMap, 'declaration.constant.public.restricted'>
+	| RustMap['nodes']['declaration.constant.public.restricted']
+	| BuildInput<RustMap, 'declaration.extension'>
+	| RustMap['nodes']['declaration.extension']
+	| BuildInput<RustMap, 'declaration.extension.conformance'>
+	| RustMap['nodes']['declaration.extension.conformance']
+	| BuildInput<RustMap, 'declaration.function'>
+	| RustMap['nodes']['declaration.function']
+	| BuildInput<RustMap, 'declaration.function.private'>
+	| RustMap['nodes']['declaration.function.private']
+	| BuildInput<RustMap, 'declaration.function.public'>
+	| RustMap['nodes']['declaration.function.public']
+	| BuildInput<RustMap, 'declaration.function.public.internal'>
+	| RustMap['nodes']['declaration.function.public.internal']
+	| BuildInput<RustMap, 'declaration.function.public.parent'>
+	| RustMap['nodes']['declaration.function.public.parent']
+	| BuildInput<RustMap, 'declaration.function.public.restricted'>
+	| RustMap['nodes']['declaration.function.public.restricted']
+	| BuildInput<RustMap, 'declaration.function.signature'>
+	| RustMap['nodes']['declaration.function.signature']
+	| BuildInput<RustMap, 'declaration.function.signature.private'>
+	| RustMap['nodes']['declaration.function.signature.private']
+	| BuildInput<RustMap, 'declaration.function.signature.public'>
+	| RustMap['nodes']['declaration.function.signature.public']
+	| BuildInput<RustMap, 'declaration.function.signature.public.internal'>
+	| RustMap['nodes']['declaration.function.signature.public.internal']
+	| BuildInput<RustMap, 'declaration.function.signature.public.parent'>
+	| RustMap['nodes']['declaration.function.signature.public.parent']
+	| BuildInput<RustMap, 'declaration.function.signature.public.restricted'>
+	| RustMap['nodes']['declaration.function.signature.public.restricted']
+	| BuildInput<RustMap, 'declaration.macro.brace'>
+	| RustMap['nodes']['declaration.macro.brace']
+	| BuildInput<RustMap, 'declaration.macro.bracket'>
+	| RustMap['nodes']['declaration.macro.bracket']
+	| BuildInput<RustMap, 'declaration.macro.paren'>
+	| RustMap['nodes']['declaration.macro.paren']
+	| BuildInput<RustMap, 'declaration.module'>
+	| RustMap['nodes']['declaration.module']
+	| BuildInput<RustMap, 'declaration.module.foreign'>
+	| RustMap['nodes']['declaration.module.foreign']
+	| BuildInput<RustMap, 'declaration.module.private'>
+	| RustMap['nodes']['declaration.module.private']
+	| BuildInput<RustMap, 'declaration.module.public'>
+	| RustMap['nodes']['declaration.module.public']
+	| BuildInput<RustMap, 'declaration.module.public.internal'>
+	| RustMap['nodes']['declaration.module.public.internal']
+	| BuildInput<RustMap, 'declaration.module.public.parent'>
+	| RustMap['nodes']['declaration.module.public.parent']
+	| BuildInput<RustMap, 'declaration.module.public.restricted'>
+	| RustMap['nodes']['declaration.module.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.enum'>
+	| RustMap['nodes']['declaration.type.enum']
+	| BuildInput<RustMap, 'declaration.type.enum.private'>
+	| RustMap['nodes']['declaration.type.enum.private']
+	| BuildInput<RustMap, 'declaration.type.enum.public'>
+	| RustMap['nodes']['declaration.type.enum.public']
+	| BuildInput<RustMap, 'declaration.type.enum.public.internal'>
+	| RustMap['nodes']['declaration.type.enum.public.internal']
+	| BuildInput<RustMap, 'declaration.type.enum.public.parent'>
+	| RustMap['nodes']['declaration.type.enum.public.parent']
+	| BuildInput<RustMap, 'declaration.type.enum.public.restricted'>
+	| RustMap['nodes']['declaration.type.enum.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.interface.trait'>
+	| RustMap['nodes']['declaration.type.interface.trait']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.private'>
+	| RustMap['nodes']['declaration.type.interface.trait.private']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public'>
+	| RustMap['nodes']['declaration.type.interface.trait.public']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.internal'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.internal']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.parent'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.parent']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.restricted'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct'>
+	| RustMap['nodes']['declaration.type.struct']
+	| BuildInput<RustMap, 'declaration.type.struct.private'>
+	| RustMap['nodes']['declaration.type.struct.private']
+	| BuildInput<RustMap, 'declaration.type.struct.public'>
+	| RustMap['nodes']['declaration.type.struct.public']
+	| BuildInput<RustMap, 'declaration.type.struct.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple'>
+	| RustMap['nodes']['declaration.type.struct.tuple']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.private'>
+	| RustMap['nodes']['declaration.type.struct.tuple.private']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.unit'>
+	| RustMap['nodes']['declaration.type.struct.unit']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.private'>
+	| RustMap['nodes']['declaration.type.struct.unit.private']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public'>
+	| RustMap['nodes']['declaration.type.struct.unit.public']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.type_alias'>
+	| RustMap['nodes']['declaration.type.type_alias']
+	| BuildInput<RustMap, 'declaration.type.type_alias.associated'>
+	| RustMap['nodes']['declaration.type.type_alias.associated']
+	| BuildInput<RustMap, 'declaration.type.type_alias.private'>
+	| RustMap['nodes']['declaration.type.type_alias.private']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public'>
+	| RustMap['nodes']['declaration.type.type_alias.public']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.internal'>
+	| RustMap['nodes']['declaration.type.type_alias.public.internal']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.parent'>
+	| RustMap['nodes']['declaration.type.type_alias.public.parent']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.restricted'>
+	| RustMap['nodes']['declaration.type.type_alias.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.union'>
+	| RustMap['nodes']['declaration.type.union']
+	| BuildInput<RustMap, 'declaration.type.union.private'>
+	| RustMap['nodes']['declaration.type.union.private']
+	| BuildInput<RustMap, 'declaration.type.union.public'>
+	| RustMap['nodes']['declaration.type.union.public']
+	| BuildInput<RustMap, 'declaration.type.union.public.internal'>
+	| RustMap['nodes']['declaration.type.union.public.internal']
+	| BuildInput<RustMap, 'declaration.type.union.public.parent'>
+	| RustMap['nodes']['declaration.type.union.public.parent']
+	| BuildInput<RustMap, 'declaration.type.union.public.restricted'>
+	| RustMap['nodes']['declaration.type.union.public.restricted']
+	| BuildInput<RustMap, 'declaration.variable'>
+	| RustMap['nodes']['declaration.variable']
+	| BuildInput<RustMap, 'declaration.variable.private'>
+	| RustMap['nodes']['declaration.variable.private']
+	| BuildInput<RustMap, 'declaration.variable.public'>
+	| RustMap['nodes']['declaration.variable.public']
+	| BuildInput<RustMap, 'declaration.variable.public.internal'>
+	| RustMap['nodes']['declaration.variable.public.internal']
+	| BuildInput<RustMap, 'declaration.variable.public.parent'>
+	| RustMap['nodes']['declaration.variable.public.parent']
+	| BuildInput<RustMap, 'declaration.variable.public.restricted'>
+	| RustMap['nodes']['declaration.variable.public.restricted']
+	| BuildInput<RustMap, 'expression.assignment'>
+	| RustMap['nodes']['expression.assignment']
+	| BuildInput<RustMap, 'expression.assignment.compound.add'>
+	| RustMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_and'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_or'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_xor'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<RustMap, 'expression.assignment.compound.divide'>
+	| RustMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<RustMap, 'expression.assignment.compound.modulo'>
+	| RustMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<RustMap, 'expression.assignment.compound.multiply'>
+	| RustMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_left'>
+	| RustMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_right'>
+	| RustMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<RustMap, 'expression.assignment.compound.subtract'>
+	| RustMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<RustMap, 'expression.await'>
+	| RustMap['nodes']['expression.await']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.add'>
+	| RustMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.divide'>
+	| RustMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.modulo'>
+	| RustMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.multiply'>
+	| RustMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.subtract'>
+	| RustMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<RustMap, 'expression.binary.bitwise.and'>
+	| RustMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<RustMap, 'expression.binary.bitwise.or'>
+	| RustMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<RustMap, 'expression.binary.bitwise.xor'>
+	| RustMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<RustMap, 'expression.binary.comparison.equal'>
+	| RustMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater'>
+	| RustMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater_equal'>
+	| RustMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.less'>
+	| RustMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<RustMap, 'expression.binary.comparison.less_equal'>
+	| RustMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.not_equal'>
+	| RustMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<RustMap, 'expression.binary.logical.and'>
+	| RustMap['nodes']['expression.binary.logical.and']
+	| BuildInput<RustMap, 'expression.binary.logical.or'>
+	| RustMap['nodes']['expression.binary.logical.or']
+	| BuildInput<RustMap, 'expression.binary.shift.left'>
+	| RustMap['nodes']['expression.binary.shift.left']
+	| BuildInput<RustMap, 'expression.binary.shift.right'>
+	| RustMap['nodes']['expression.binary.shift.right']
+	| BuildInput<RustMap, 'expression.call'>
+	| RustMap['nodes']['expression.call']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'expression.call.member'>
+	| RustMap['nodes']['expression.call.member']
+	| BuildInput<RustMap, 'expression.call.qualified'>
+	| RustMap['nodes']['expression.call.qualified']
+	| BuildInput<RustMap, 'expression.cast.conversion'>
+	| RustMap['nodes']['expression.cast.conversion']
+	| BuildInput<RustMap, 'expression.collection.list'>
+	| RustMap['nodes']['expression.collection.list']
+	| BuildInput<RustMap, 'expression.collection.list.repeat'>
+	| RustMap['nodes']['expression.collection.list.repeat']
+	| BuildInput<RustMap, 'expression.collection.struct'>
+	| RustMap['nodes']['expression.collection.struct']
+	| BuildInput<RustMap, 'expression.collection.tuple'>
+	| RustMap['nodes']['expression.collection.tuple']
+	| BuildInput<RustMap, 'expression.instantiation'>
+	| RustMap['nodes']['expression.instantiation']
+	| BuildInput<RustMap, 'expression.lambda'>
+	| RustMap['nodes']['expression.lambda']
+	| BuildInput<RustMap, 'expression.member'>
+	| RustMap['nodes']['expression.member']
+	| BuildInput<RustMap, 'expression.parenthesized'>
+	| RustMap['nodes']['expression.parenthesized']
+	| BuildInput<RustMap, 'expression.propagate'>
+	| RustMap['nodes']['expression.propagate']
+	| BuildInput<RustMap, 'expression.range.exclusive'>
+	| RustMap['nodes']['expression.range.exclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive'>
+	| RustMap['nodes']['expression.range.inclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive.legacy'>
+	| RustMap['nodes']['expression.range.inclusive.legacy']
+	| BuildInput<RustMap, 'expression.reference'>
+	| RustMap['nodes']['expression.reference']
+	| BuildInput<RustMap, 'expression.subscript'>
+	| RustMap['nodes']['expression.subscript']
+	| BuildInput<RustMap, 'expression.unary.deref'>
+	| RustMap['nodes']['expression.unary.deref']
+	| BuildInput<RustMap, 'expression.unary.negation'>
+	| RustMap['nodes']['expression.unary.negation']
+	| BuildInput<RustMap, 'expression.unary.not'>
+	| RustMap['nodes']['expression.unary.not']
+	| BuildInput<RustMap, 'expression.yield'>
+	| RustMap['nodes']['expression.yield']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw']
+	| BuildInput<RustMap, 'statement.block'>
+	| RustMap['nodes']['statement.block']
+	| BuildInput<RustMap, 'statement.block.async'>
+	| RustMap['nodes']['statement.block.async']
+	| BuildInput<RustMap, 'statement.block.const'>
+	| RustMap['nodes']['statement.block.const']
+	| BuildInput<RustMap, 'statement.block.generator'>
+	| RustMap['nodes']['statement.block.generator']
+	| BuildInput<RustMap, 'statement.block.try'>
+	| RustMap['nodes']['statement.block.try']
+	| BuildInput<RustMap, 'statement.block.unsafe'>
+	| RustMap['nodes']['statement.block.unsafe']
+	| BuildInput<RustMap, 'statement.break'>
+	| RustMap['nodes']['statement.break']
+	| BuildInput<RustMap, 'statement.continue'>
+	| RustMap['nodes']['statement.continue']
+	| BuildInput<RustMap, 'statement.if'>
+	| RustMap['nodes']['statement.if']
+	| BuildInput<RustMap, 'statement.import'>
+	| RustMap['nodes']['statement.import']
+	| BuildInput<RustMap, 'statement.import.package'>
+	| RustMap['nodes']['statement.import.package']
+	| BuildInput<RustMap, 'statement.import.package.private'>
+	| RustMap['nodes']['statement.import.package.private']
+	| BuildInput<RustMap, 'statement.import.package.public'>
+	| RustMap['nodes']['statement.import.package.public']
+	| BuildInput<RustMap, 'statement.import.package.public.internal'>
+	| RustMap['nodes']['statement.import.package.public.internal']
+	| BuildInput<RustMap, 'statement.import.package.public.parent'>
+	| RustMap['nodes']['statement.import.package.public.parent']
+	| BuildInput<RustMap, 'statement.import.package.public.restricted'>
+	| RustMap['nodes']['statement.import.package.public.restricted']
+	| BuildInput<RustMap, 'statement.import.private'>
+	| RustMap['nodes']['statement.import.private']
+	| BuildInput<RustMap, 'statement.import.public'>
+	| RustMap['nodes']['statement.import.public']
+	| BuildInput<RustMap, 'statement.import.public.internal'>
+	| RustMap['nodes']['statement.import.public.internal']
+	| BuildInput<RustMap, 'statement.import.public.parent'>
+	| RustMap['nodes']['statement.import.public.parent']
+	| BuildInput<RustMap, 'statement.import.public.restricted'>
+	| RustMap['nodes']['statement.import.public.restricted']
+	| BuildInput<RustMap, 'statement.loop'>
+	| RustMap['nodes']['statement.loop']
+	| BuildInput<RustMap, 'statement.loop.for_each'>
+	| RustMap['nodes']['statement.loop.for_each']
+	| BuildInput<RustMap, 'statement.loop.while'>
+	| RustMap['nodes']['statement.loop.while']
+	| BuildInput<RustMap, 'statement.match'>
+	| RustMap['nodes']['statement.match']
+	| BuildInput<RustMap, 'statement.return'>
+	| RustMap['nodes']['statement.return'];
+const expression_lambda$369_statements = (value: expression_lambda$369_statements$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case ';':
+				return 178;
+			case '()':
+				return b.expressionStatement.withSemi(281);
+			case 'self':
+				return b.expressionStatement.withSemi(124);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.expressionStatement.withSemi(b.identifier(value));
+				return b.expressionStatement.withSemi(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.expressionStatement.withSemi(
+				literal_number_integer$141({ $path: 'literal.number.integer', $value: value })
+			);
+		}
+		return b.expressionStatement.withSemi(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
+					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+				]
+			)
+		)
+			return value;
+		if (seated(value, [287, 292, 297, 298, 299, 300, 309, 310, 311, 312, 313])) return b.expressionStatement(value);
+		if (
+			seated(
+				value,
+				[
+					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
+					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+				]
+			)
+		)
+			return b.expressionStatement.withSemi(value);
+		if (seated(value, [192])) return b.attributeItem(value);
+		return unseated('expression.lambda.statements', value);
+	}
+	switch (value.$path) {
+		case 'attribute':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.constant':
+			return declaration_constant$205(value);
+		case 'declaration.constant.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.constant.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.constant.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.constant.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.constant.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.extension':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.extension.conformance':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.function':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.function.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.function.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.function.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.function.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.function.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.function.signature':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.function.signature.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.function.signature.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.function.signature.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.function.signature.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.function.signature.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.macro.brace':
+			return declaration_macro_brace$418(value);
+		case 'declaration.macro.bracket':
+			return declaration_macro_bracket$417(value);
+		case 'declaration.macro.paren':
+			return declaration_macro_paren$416(value);
+		case 'declaration.module':
+			if (value.name !== undefined && value.statements === undefined) return declaration_module$384(value);
+			return declaration_module$385(value);
+		case 'declaration.module.foreign':
+			if (value.extern !== undefined && value.statements === undefined) return declaration_module_foreign$395(value);
+			return declaration_module_foreign$396(value);
+		case 'declaration.module.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.module.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.module.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.module.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.module.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.enum':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.enum.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.enum.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.enum.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.enum.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.enum.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.interface.trait':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.interface.trait.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.interface.trait.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.interface.trait.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.interface.trait.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.interface.trait.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.tuple':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.tuple.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.tuple.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.tuple.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.tuple.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.tuple.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.unit':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.unit.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.unit.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.unit.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.unit.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.unit.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.type_alias':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.type_alias.associated':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.type_alias.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.type_alias.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.type_alias.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.type_alias.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.type_alias.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.union':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.union.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.union.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.union.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.union.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.union.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.variable':
+			if (
+				(value.$flags ?? []).includes('static') &&
+				value.name !== undefined &&
+				value.type !== undefined &&
+				value.alternative === undefined
+			)
+				return declaration_variable$206(value);
+			return declaration_variable$223(value);
+		case 'declaration.variable.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.variable.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.variable.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.variable.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.variable.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'expression.assignment':
+			return b.expressionStatement.withSemi(expression_assignment$271(value));
+		case 'expression.assignment.compound.add':
+			return b.expressionStatement.withSemi(expression_assignment_compound_add$272(value));
+		case 'expression.assignment.compound.bitwise_and':
+			return b.expressionStatement.withSemi(expression_assignment_compound_bitwise_and$272(value));
+		case 'expression.assignment.compound.bitwise_or':
+			return b.expressionStatement.withSemi(expression_assignment_compound_bitwise_or$272(value));
+		case 'expression.assignment.compound.bitwise_xor':
+			return b.expressionStatement.withSemi(expression_assignment_compound_bitwise_xor$272(value));
+		case 'expression.assignment.compound.divide':
+			return b.expressionStatement.withSemi(expression_assignment_compound_divide$272(value));
+		case 'expression.assignment.compound.modulo':
+			return b.expressionStatement.withSemi(expression_assignment_compound_modulo$272(value));
+		case 'expression.assignment.compound.multiply':
+			return b.expressionStatement.withSemi(expression_assignment_compound_multiply$272(value));
+		case 'expression.assignment.compound.shift_left':
+			return b.expressionStatement.withSemi(expression_assignment_compound_shift_left$272(value));
+		case 'expression.assignment.compound.shift_right':
+			return b.expressionStatement.withSemi(expression_assignment_compound_shift_right$272(value));
+		case 'expression.assignment.compound.subtract':
+			return b.expressionStatement.withSemi(expression_assignment_compound_subtract$272(value));
+		case 'expression.await':
+			return b.expressionStatement.withSemi(expression_await$307(value));
+		case 'expression.binary.arithmetic.add':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_add$270(value));
+		case 'expression.binary.arithmetic.divide':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_divide$270(value));
+		case 'expression.binary.arithmetic.modulo':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_modulo$270(value));
+		case 'expression.binary.arithmetic.multiply':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_multiply$270(value));
+		case 'expression.binary.arithmetic.subtract':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_subtract$270(value));
+		case 'expression.binary.bitwise.and':
+			return b.expressionStatement.withSemi(expression_binary_bitwise_and$270(value));
+		case 'expression.binary.bitwise.or':
+			return b.expressionStatement.withSemi(expression_binary_bitwise_or$270(value));
+		case 'expression.binary.bitwise.xor':
+			return b.expressionStatement.withSemi(expression_binary_bitwise_xor$270(value));
+		case 'expression.binary.comparison.equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_equal$270(value));
+		case 'expression.binary.comparison.greater':
+			return b.expressionStatement.withSemi(expression_binary_comparison_greater$270(value));
+		case 'expression.binary.comparison.greater_equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_greater_equal$270(value));
+		case 'expression.binary.comparison.less':
+			return b.expressionStatement.withSemi(expression_binary_comparison_less$270(value));
+		case 'expression.binary.comparison.less_equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_less_equal$270(value));
+		case 'expression.binary.comparison.not_equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_not_equal$270(value));
+		case 'expression.binary.logical.and':
+			return b.expressionStatement.withSemi(expression_binary_logical_and$270(value));
+		case 'expression.binary.logical.or':
+			return b.expressionStatement.withSemi(expression_binary_logical_or$270(value));
+		case 'expression.binary.shift.left':
+			return b.expressionStatement.withSemi(expression_binary_shift_left$270(value));
+		case 'expression.binary.shift.right':
+			return b.expressionStatement.withSemi(expression_binary_shift_right$270(value));
+		case 'expression.call':
+			return unbuilt('expression.lambda.statements', value);
+		case 'expression.call.macro': {
+			if (!(value.$flags ?? []).includes('terminated')) return expression_call_macro$259(value);
+			if ((value.$flags ?? []).includes('terminated'))
+				return b.expressionStatement.withSemi(expression_call_macro$259(withoutFlags(value, ['terminated'])));
+			throw new Error("expression.call.macro: no seat of statements's seats sets the flags it states");
+		}
+		case 'expression.call.member':
+			return unbuilt('expression.lambda.statements', value);
+		case 'expression.call.qualified':
+			return unbuilt('expression.lambda.statements', value);
+		case 'expression.cast.conversion':
+			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
+		case 'expression.collection.list':
+			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+		case 'expression.collection.list.repeat':
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+		case 'expression.collection.struct':
+			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
+		case 'expression.collection.tuple':
+			return b.expressionStatement.withSemi(expression_collection_tuple$280(value));
+		case 'expression.instantiation':
+			return b.expressionStatement.withSemi(expression_instantiation$245(value));
+		case 'expression.lambda':
+			if (
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
+			)
+				return b.expressionStatement.withSemi(expression_lambda$370(value));
+			return b.expressionStatement.withSemi(expression_lambda$369(value));
+		case 'expression.member':
+			return b.expressionStatement.withSemi(expression_member$308(value));
+		case 'expression.parenthesized':
+			return b.expressionStatement.withSemi(expression_parenthesized$279(value));
+		case 'expression.propagate':
+			return b.expressionStatement.withSemi(expression_propagate$268(value));
+		case 'expression.range.exclusive':
+			if (value.end === undefined && value.start === undefined)
+				return b.expressionStatement.withSemi(expression_range_exclusive$393(value));
+			if (value.start !== undefined && value.end === undefined)
+				return b.expressionStatement.withSemi(expression_range_exclusive$391(value));
+			if (value.end !== undefined && value.start === undefined)
+				return b.expressionStatement.withSemi(expression_range_exclusive$392(value));
+			return b.expressionStatement.withSemi(expression_range_exclusive$390(value));
+		case 'expression.range.inclusive':
+			return b.expressionStatement.withSemi(expression_range_inclusive$390(value));
+		case 'expression.range.inclusive.legacy':
+			return b.expressionStatement.withSemi(expression_range_inclusive_legacy$390(value));
+		case 'expression.reference':
+			if ((value.$flags ?? []).includes('exclusive') && value.argument !== undefined)
+				return b.expressionStatement.withSemi(expression_reference$373(value));
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return b.expressionStatement.withSemi(expression_reference$372(value));
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				!(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return b.expressionStatement.withSemi(expression_reference$371(value));
+			return b.expressionStatement.withSemi(expression_reference$374(value));
+		case 'expression.subscript':
+			return b.expressionStatement.withSemi(expression_subscript$306(value));
+		case 'expression.unary.deref':
+			return b.expressionStatement.withSemi(expression_unary_deref$267(value));
+		case 'expression.unary.negation':
+			return b.expressionStatement.withSemi(expression_unary_negation$267(value));
+		case 'expression.unary.not':
+			return b.expressionStatement.withSemi(expression_unary_not$267(value));
+		case 'expression.yield':
+			return b.expressionStatement.withSemi(expression_yield$275(value));
+		case 'identifier':
+			return b.expressionStatement.withSemi(identifier$1(value));
+		case 'identifier.metavariable':
+			return unbuilt('expression.lambda.statements', value);
+		case 'identifier.qualified':
+			return b.expressionStatement.withSemi(identifier_qualified$263(value));
+		case 'literal.boolean.false':
+			return unbuilt('expression.lambda.statements', value);
+		case 'literal.boolean.true':
+			return unbuilt('expression.lambda.statements', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.expressionStatement.withSemi(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$148(value));
+			return unbuilt('expression.lambda.statements', value);
+		case 'literal.number.float':
+			return b.expressionStatement.withSemi(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.expressionStatement.withSemi(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.expressionStatement.withSemi(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.expressionStatement.withSemi(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('expression.lambda.statements', value);
+		case 'literal.string.bytes':
+			return unbuilt('expression.lambda.statements', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('expression.lambda.statements', value);
+		case 'literal.string.c':
+			return unbuilt('expression.lambda.statements', value);
+		case 'literal.string.c.raw':
+			return unbuilt('expression.lambda.statements', value);
+		case 'literal.string.raw':
+			return unbuilt('expression.lambda.statements', value);
+		case 'statement.block':
+			return b.expressionStatement(statement_block$313(value));
+		case 'statement.block.async':
+			return b.expressionStatement(statement_block_async$310(value));
+		case 'statement.block.const':
+			return b.expressionStatement(statement_block_const$300(value));
+		case 'statement.block.generator':
+			return b.expressionStatement(statement_block_generator$311(value));
+		case 'statement.block.try':
+			return b.expressionStatement(statement_block_try$312(value));
+		case 'statement.block.unsafe':
+			return b.expressionStatement(statement_block_unsafe$309(value));
+		case 'statement.break':
+			return b.expressionStatement.withSemi(statement_break$304(value));
+		case 'statement.continue':
+			return b.expressionStatement.withSemi(statement_continue$305(value));
+		case 'statement.if':
+			return b.expressionStatement(statement_if$287(value));
+		case 'statement.import':
+			return statement_import$224(value);
+		case 'statement.import.package':
+			return statement_import_package$204(value);
+		case 'statement.import.package.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'statement.import.package.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'statement.import.package.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'statement.import.package.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'statement.import.package.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'statement.import.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'statement.import.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'statement.import.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'statement.import.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'statement.import.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'statement.loop':
+			return b.expressionStatement(statement_loop$298(value));
+		case 'statement.loop.for_each':
+			return b.expressionStatement(statement_loop_for_each$299(value));
+		case 'statement.loop.while':
+			return b.expressionStatement(statement_loop_while$297(value));
+		case 'statement.match':
+			return unbuilt('expression.lambda.statements', value);
+		case 'statement.return':
+			return b.expressionStatement.withSemi(statement_return$274(value));
+		default:
+			return unbuilt('expression.lambda.statements', value);
+	}
+};
+type expression_lambda$369_trailingExpression$Item =
+	| '()'
 	| 'false'
 	| 'self'
 	| 'true'
@@ -48227,6 +49809,454 @@ type expression_lambda$370_body$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| RustMap['nodes']['statement.return'];
+const expression_lambda$369_trailingExpression = (value: expression_lambda$369_trailingExpression$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '()':
+				return 281;
+			case 'self':
+				return 124;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
+					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
+					390, 391, 392, 393, 435, 436
+				]
+			)
+		)
+			return value;
+		return unseated('expression.lambda.trailingExpression', value);
+	}
+	switch (value.$path) {
+		case 'expression.assignment':
+			return expression_assignment$271(value);
+		case 'expression.assignment.compound.add':
+			return expression_assignment_compound_add$272(value);
+		case 'expression.assignment.compound.bitwise_and':
+			return expression_assignment_compound_bitwise_and$272(value);
+		case 'expression.assignment.compound.bitwise_or':
+			return expression_assignment_compound_bitwise_or$272(value);
+		case 'expression.assignment.compound.bitwise_xor':
+			return expression_assignment_compound_bitwise_xor$272(value);
+		case 'expression.assignment.compound.divide':
+			return expression_assignment_compound_divide$272(value);
+		case 'expression.assignment.compound.modulo':
+			return expression_assignment_compound_modulo$272(value);
+		case 'expression.assignment.compound.multiply':
+			return expression_assignment_compound_multiply$272(value);
+		case 'expression.assignment.compound.shift_left':
+			return expression_assignment_compound_shift_left$272(value);
+		case 'expression.assignment.compound.shift_right':
+			return expression_assignment_compound_shift_right$272(value);
+		case 'expression.assignment.compound.subtract':
+			return expression_assignment_compound_subtract$272(value);
+		case 'expression.await':
+			return expression_await$307(value);
+		case 'expression.binary.arithmetic.add':
+			return expression_binary_arithmetic_add$270(value);
+		case 'expression.binary.arithmetic.divide':
+			return expression_binary_arithmetic_divide$270(value);
+		case 'expression.binary.arithmetic.modulo':
+			return expression_binary_arithmetic_modulo$270(value);
+		case 'expression.binary.arithmetic.multiply':
+			return expression_binary_arithmetic_multiply$270(value);
+		case 'expression.binary.arithmetic.subtract':
+			return expression_binary_arithmetic_subtract$270(value);
+		case 'expression.binary.bitwise.and':
+			return expression_binary_bitwise_and$270(value);
+		case 'expression.binary.bitwise.or':
+			return expression_binary_bitwise_or$270(value);
+		case 'expression.binary.bitwise.xor':
+			return expression_binary_bitwise_xor$270(value);
+		case 'expression.binary.comparison.equal':
+			return expression_binary_comparison_equal$270(value);
+		case 'expression.binary.comparison.greater':
+			return expression_binary_comparison_greater$270(value);
+		case 'expression.binary.comparison.greater_equal':
+			return expression_binary_comparison_greater_equal$270(value);
+		case 'expression.binary.comparison.less':
+			return expression_binary_comparison_less$270(value);
+		case 'expression.binary.comparison.less_equal':
+			return expression_binary_comparison_less_equal$270(value);
+		case 'expression.binary.comparison.not_equal':
+			return expression_binary_comparison_not_equal$270(value);
+		case 'expression.binary.logical.and':
+			return expression_binary_logical_and$270(value);
+		case 'expression.binary.logical.or':
+			return expression_binary_logical_or$270(value);
+		case 'expression.binary.shift.left':
+			return expression_binary_shift_left$270(value);
+		case 'expression.binary.shift.right':
+			return expression_binary_shift_right$270(value);
+		case 'expression.call':
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'expression.call.macro':
+			return expression_call_macro$259(value);
+		case 'expression.call.member':
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'expression.call.qualified':
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'expression.cast.conversion':
+			return expression_cast_conversion$273(value);
+		case 'expression.collection.list':
+			return expression_collection_list$436(value);
+		case 'expression.collection.list.repeat':
+			return expression_collection_list_repeat$435(value);
+		case 'expression.collection.struct':
+			return expression_collection_struct$282(value);
+		case 'expression.collection.tuple':
+			return expression_collection_tuple$280(value);
+		case 'expression.instantiation':
+			return expression_instantiation$245(value);
+		case 'expression.lambda':
+			if (
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
+			)
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
+		case 'expression.member':
+			return expression_member$308(value);
+		case 'expression.parenthesized':
+			return expression_parenthesized$279(value);
+		case 'expression.propagate':
+			return expression_propagate$268(value);
+		case 'expression.range.exclusive':
+			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
+			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
+			if (value.end !== undefined && value.start === undefined) return expression_range_exclusive$392(value);
+			return expression_range_exclusive$390(value);
+		case 'expression.range.inclusive':
+			return expression_range_inclusive$390(value);
+		case 'expression.range.inclusive.legacy':
+			return expression_range_inclusive_legacy$390(value);
+		case 'expression.reference':
+			if ((value.$flags ?? []).includes('exclusive') && value.argument !== undefined)
+				return expression_reference$373(value);
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return expression_reference$372(value);
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				!(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return expression_reference$371(value);
+			return expression_reference$374(value);
+		case 'expression.subscript':
+			return expression_subscript$306(value);
+		case 'expression.unary.deref':
+			return expression_unary_deref$267(value);
+		case 'expression.unary.negation':
+			return expression_unary_negation$267(value);
+		case 'expression.unary.not':
+			return expression_unary_not$267(value);
+		case 'expression.yield':
+			return expression_yield$275(value);
+		case 'identifier':
+			return identifier$1(value);
+		case 'identifier.metavariable':
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		case 'literal.boolean.false':
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'literal.boolean.true':
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return literal_character$145(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$150(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$147(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$149(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$148(value);
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'literal.number.float':
+			return literal_number_float$162(value);
+		case 'literal.number.integer':
+			return literal_number_integer$141(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$143(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$142(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$144(value);
+		case 'literal.string':
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'literal.string.bytes':
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'literal.string.c':
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'literal.string.c.raw':
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'literal.string.raw':
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'statement.block':
+			return statement_block$313(value);
+		case 'statement.block.async':
+			return statement_block_async$310(value);
+		case 'statement.block.const':
+			return statement_block_const$300(value);
+		case 'statement.block.generator':
+			return statement_block_generator$311(value);
+		case 'statement.block.try':
+			return statement_block_try$312(value);
+		case 'statement.block.unsafe':
+			return statement_block_unsafe$309(value);
+		case 'statement.break':
+			return statement_break$304(value);
+		case 'statement.continue':
+			return statement_continue$305(value);
+		case 'statement.if':
+			return statement_if$287(value);
+		case 'statement.loop':
+			return statement_loop$298(value);
+		case 'statement.loop.for_each':
+			return statement_loop_for_each$299(value);
+		case 'statement.loop.while':
+			return statement_loop_while$297(value);
+		case 'statement.match':
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'statement.return':
+			return statement_return$274(value);
+		default:
+			return unbuilt('expression.lambda.trailingExpression', value);
+	}
+};
+type expression_lambda$370_body$Item =
+	| '()'
+	| '_'
+	| 'false'
+	| 'self'
+	| 'true'
+	| Text<RustMap, 'expression.unit'>
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| number
+	| BuildInput<RustMap, 'expression.assignment'>
+	| RustMap['nodes']['expression.assignment']
+	| BuildInput<RustMap, 'expression.assignment.compound.add'>
+	| RustMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_and'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_or'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_xor'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<RustMap, 'expression.assignment.compound.divide'>
+	| RustMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<RustMap, 'expression.assignment.compound.modulo'>
+	| RustMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<RustMap, 'expression.assignment.compound.multiply'>
+	| RustMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_left'>
+	| RustMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_right'>
+	| RustMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<RustMap, 'expression.assignment.compound.subtract'>
+	| RustMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<RustMap, 'expression.await'>
+	| RustMap['nodes']['expression.await']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.add'>
+	| RustMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.divide'>
+	| RustMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.modulo'>
+	| RustMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.multiply'>
+	| RustMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.subtract'>
+	| RustMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<RustMap, 'expression.binary.bitwise.and'>
+	| RustMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<RustMap, 'expression.binary.bitwise.or'>
+	| RustMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<RustMap, 'expression.binary.bitwise.xor'>
+	| RustMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<RustMap, 'expression.binary.comparison.equal'>
+	| RustMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater'>
+	| RustMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater_equal'>
+	| RustMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.less'>
+	| RustMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<RustMap, 'expression.binary.comparison.less_equal'>
+	| RustMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.not_equal'>
+	| RustMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<RustMap, 'expression.binary.logical.and'>
+	| RustMap['nodes']['expression.binary.logical.and']
+	| BuildInput<RustMap, 'expression.binary.logical.or'>
+	| RustMap['nodes']['expression.binary.logical.or']
+	| BuildInput<RustMap, 'expression.binary.shift.left'>
+	| RustMap['nodes']['expression.binary.shift.left']
+	| BuildInput<RustMap, 'expression.binary.shift.right'>
+	| RustMap['nodes']['expression.binary.shift.right']
+	| BuildInput<RustMap, 'expression.call'>
+	| RustMap['nodes']['expression.call']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'expression.call.member'>
+	| RustMap['nodes']['expression.call.member']
+	| BuildInput<RustMap, 'expression.call.qualified'>
+	| RustMap['nodes']['expression.call.qualified']
+	| BuildInput<RustMap, 'expression.cast.conversion'>
+	| RustMap['nodes']['expression.cast.conversion']
+	| BuildInput<RustMap, 'expression.collection.list'>
+	| RustMap['nodes']['expression.collection.list']
+	| BuildInput<RustMap, 'expression.collection.list.repeat'>
+	| RustMap['nodes']['expression.collection.list.repeat']
+	| BuildInput<RustMap, 'expression.collection.struct'>
+	| RustMap['nodes']['expression.collection.struct']
+	| BuildInput<RustMap, 'expression.collection.tuple'>
+	| RustMap['nodes']['expression.collection.tuple']
+	| BuildInput<RustMap, 'expression.instantiation'>
+	| RustMap['nodes']['expression.instantiation']
+	| BuildInput<RustMap, 'expression.lambda'>
+	| RustMap['nodes']['expression.lambda']
+	| BuildInput<RustMap, 'expression.member'>
+	| RustMap['nodes']['expression.member']
+	| BuildInput<RustMap, 'expression.parenthesized'>
+	| RustMap['nodes']['expression.parenthesized']
+	| BuildInput<RustMap, 'expression.propagate'>
+	| RustMap['nodes']['expression.propagate']
+	| BuildInput<RustMap, 'expression.range.exclusive'>
+	| RustMap['nodes']['expression.range.exclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive'>
+	| RustMap['nodes']['expression.range.inclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive.legacy'>
+	| RustMap['nodes']['expression.range.inclusive.legacy']
+	| BuildInput<RustMap, 'expression.reference'>
+	| RustMap['nodes']['expression.reference']
+	| BuildInput<RustMap, 'expression.subscript'>
+	| RustMap['nodes']['expression.subscript']
+	| BuildInput<RustMap, 'expression.unary.deref'>
+	| RustMap['nodes']['expression.unary.deref']
+	| BuildInput<RustMap, 'expression.unary.negation'>
+	| RustMap['nodes']['expression.unary.negation']
+	| BuildInput<RustMap, 'expression.unary.not'>
+	| RustMap['nodes']['expression.unary.not']
+	| BuildInput<RustMap, 'expression.yield'>
+	| RustMap['nodes']['expression.yield']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw']
+	| BuildInput<RustMap, 'statement.block.async'>
+	| RustMap['nodes']['statement.block.async']
+	| BuildInput<RustMap, 'statement.block.const'>
+	| RustMap['nodes']['statement.block.const']
+	| BuildInput<RustMap, 'statement.block.generator'>
+	| RustMap['nodes']['statement.block.generator']
+	| BuildInput<RustMap, 'statement.block.try'>
+	| RustMap['nodes']['statement.block.try']
+	| BuildInput<RustMap, 'statement.block.unsafe'>
+	| RustMap['nodes']['statement.block.unsafe']
+	| BuildInput<RustMap, 'statement.break'>
+	| RustMap['nodes']['statement.break']
+	| BuildInput<RustMap, 'statement.continue'>
+	| RustMap['nodes']['statement.continue']
+	| BuildInput<RustMap, 'statement.if'>
+	| RustMap['nodes']['statement.if']
+	| BuildInput<RustMap, 'statement.loop'>
+	| RustMap['nodes']['statement.loop']
+	| BuildInput<RustMap, 'statement.loop.for_each'>
+	| RustMap['nodes']['statement.loop.for_each']
+	| BuildInput<RustMap, 'statement.loop.while'>
+	| RustMap['nodes']['statement.loop.while']
+	| BuildInput<RustMap, 'statement.match'>
+	| RustMap['nodes']['statement.match']
+	| BuildInput<RustMap, 'statement.return'>
+	| RustMap['nodes']['statement.return'];
 const expression_lambda$370_body = (value: expression_lambda$370_body$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -48345,12 +50375,29 @@ const expression_lambda$370_body = (value: expression_lambda$370_body$Item) => {
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -48450,8 +50497,6 @@ const expression_lambda$370_body = (value: expression_lambda$370_body$Item) => {
 			return unbuilt('expression.lambda.body', value);
 		case 'literal.string.raw':
 			return unbuilt('expression.lambda.body', value);
-		case 'statement.block':
-			return statement_block$313(value);
 		case 'statement.block.async':
 			return statement_block_async$310(value);
 		case 'statement.block.const':
@@ -48537,6 +50582,1306 @@ const expression_lambda$370_parameters$item = (value: expression_lambda$370_para
 			return unbuilt('expression.lambda.parameters', value);
 		default:
 			return unbuilt('expression.lambda.parameters', value);
+	}
+};
+type expression_lambda$370_statements$Item =
+	| '()'
+	| ';'
+	| 'false'
+	| 'self'
+	| 'true'
+	| Text<RustMap, 'expression.unit'>
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'statement.empty'>
+	| number
+	| BuildInput<RustMap, 'attribute'>
+	| RustMap['nodes']['attribute']
+	| BuildInput<RustMap, 'declaration.constant'>
+	| RustMap['nodes']['declaration.constant']
+	| BuildInput<RustMap, 'declaration.constant.private'>
+	| RustMap['nodes']['declaration.constant.private']
+	| BuildInput<RustMap, 'declaration.constant.public'>
+	| RustMap['nodes']['declaration.constant.public']
+	| BuildInput<RustMap, 'declaration.constant.public.internal'>
+	| RustMap['nodes']['declaration.constant.public.internal']
+	| BuildInput<RustMap, 'declaration.constant.public.parent'>
+	| RustMap['nodes']['declaration.constant.public.parent']
+	| BuildInput<RustMap, 'declaration.constant.public.restricted'>
+	| RustMap['nodes']['declaration.constant.public.restricted']
+	| BuildInput<RustMap, 'declaration.extension'>
+	| RustMap['nodes']['declaration.extension']
+	| BuildInput<RustMap, 'declaration.extension.conformance'>
+	| RustMap['nodes']['declaration.extension.conformance']
+	| BuildInput<RustMap, 'declaration.function'>
+	| RustMap['nodes']['declaration.function']
+	| BuildInput<RustMap, 'declaration.function.private'>
+	| RustMap['nodes']['declaration.function.private']
+	| BuildInput<RustMap, 'declaration.function.public'>
+	| RustMap['nodes']['declaration.function.public']
+	| BuildInput<RustMap, 'declaration.function.public.internal'>
+	| RustMap['nodes']['declaration.function.public.internal']
+	| BuildInput<RustMap, 'declaration.function.public.parent'>
+	| RustMap['nodes']['declaration.function.public.parent']
+	| BuildInput<RustMap, 'declaration.function.public.restricted'>
+	| RustMap['nodes']['declaration.function.public.restricted']
+	| BuildInput<RustMap, 'declaration.function.signature'>
+	| RustMap['nodes']['declaration.function.signature']
+	| BuildInput<RustMap, 'declaration.function.signature.private'>
+	| RustMap['nodes']['declaration.function.signature.private']
+	| BuildInput<RustMap, 'declaration.function.signature.public'>
+	| RustMap['nodes']['declaration.function.signature.public']
+	| BuildInput<RustMap, 'declaration.function.signature.public.internal'>
+	| RustMap['nodes']['declaration.function.signature.public.internal']
+	| BuildInput<RustMap, 'declaration.function.signature.public.parent'>
+	| RustMap['nodes']['declaration.function.signature.public.parent']
+	| BuildInput<RustMap, 'declaration.function.signature.public.restricted'>
+	| RustMap['nodes']['declaration.function.signature.public.restricted']
+	| BuildInput<RustMap, 'declaration.macro.brace'>
+	| RustMap['nodes']['declaration.macro.brace']
+	| BuildInput<RustMap, 'declaration.macro.bracket'>
+	| RustMap['nodes']['declaration.macro.bracket']
+	| BuildInput<RustMap, 'declaration.macro.paren'>
+	| RustMap['nodes']['declaration.macro.paren']
+	| BuildInput<RustMap, 'declaration.module'>
+	| RustMap['nodes']['declaration.module']
+	| BuildInput<RustMap, 'declaration.module.foreign'>
+	| RustMap['nodes']['declaration.module.foreign']
+	| BuildInput<RustMap, 'declaration.module.private'>
+	| RustMap['nodes']['declaration.module.private']
+	| BuildInput<RustMap, 'declaration.module.public'>
+	| RustMap['nodes']['declaration.module.public']
+	| BuildInput<RustMap, 'declaration.module.public.internal'>
+	| RustMap['nodes']['declaration.module.public.internal']
+	| BuildInput<RustMap, 'declaration.module.public.parent'>
+	| RustMap['nodes']['declaration.module.public.parent']
+	| BuildInput<RustMap, 'declaration.module.public.restricted'>
+	| RustMap['nodes']['declaration.module.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.enum'>
+	| RustMap['nodes']['declaration.type.enum']
+	| BuildInput<RustMap, 'declaration.type.enum.private'>
+	| RustMap['nodes']['declaration.type.enum.private']
+	| BuildInput<RustMap, 'declaration.type.enum.public'>
+	| RustMap['nodes']['declaration.type.enum.public']
+	| BuildInput<RustMap, 'declaration.type.enum.public.internal'>
+	| RustMap['nodes']['declaration.type.enum.public.internal']
+	| BuildInput<RustMap, 'declaration.type.enum.public.parent'>
+	| RustMap['nodes']['declaration.type.enum.public.parent']
+	| BuildInput<RustMap, 'declaration.type.enum.public.restricted'>
+	| RustMap['nodes']['declaration.type.enum.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.interface.trait'>
+	| RustMap['nodes']['declaration.type.interface.trait']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.private'>
+	| RustMap['nodes']['declaration.type.interface.trait.private']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public'>
+	| RustMap['nodes']['declaration.type.interface.trait.public']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.internal'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.internal']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.parent'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.parent']
+	| BuildInput<RustMap, 'declaration.type.interface.trait.public.restricted'>
+	| RustMap['nodes']['declaration.type.interface.trait.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct'>
+	| RustMap['nodes']['declaration.type.struct']
+	| BuildInput<RustMap, 'declaration.type.struct.private'>
+	| RustMap['nodes']['declaration.type.struct.private']
+	| BuildInput<RustMap, 'declaration.type.struct.public'>
+	| RustMap['nodes']['declaration.type.struct.public']
+	| BuildInput<RustMap, 'declaration.type.struct.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple'>
+	| RustMap['nodes']['declaration.type.struct.tuple']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.private'>
+	| RustMap['nodes']['declaration.type.struct.tuple.private']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.tuple.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.tuple.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.struct.unit'>
+	| RustMap['nodes']['declaration.type.struct.unit']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.private'>
+	| RustMap['nodes']['declaration.type.struct.unit.private']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public'>
+	| RustMap['nodes']['declaration.type.struct.unit.public']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.internal'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.internal']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.parent'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.parent']
+	| BuildInput<RustMap, 'declaration.type.struct.unit.public.restricted'>
+	| RustMap['nodes']['declaration.type.struct.unit.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.type_alias'>
+	| RustMap['nodes']['declaration.type.type_alias']
+	| BuildInput<RustMap, 'declaration.type.type_alias.associated'>
+	| RustMap['nodes']['declaration.type.type_alias.associated']
+	| BuildInput<RustMap, 'declaration.type.type_alias.private'>
+	| RustMap['nodes']['declaration.type.type_alias.private']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public'>
+	| RustMap['nodes']['declaration.type.type_alias.public']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.internal'>
+	| RustMap['nodes']['declaration.type.type_alias.public.internal']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.parent'>
+	| RustMap['nodes']['declaration.type.type_alias.public.parent']
+	| BuildInput<RustMap, 'declaration.type.type_alias.public.restricted'>
+	| RustMap['nodes']['declaration.type.type_alias.public.restricted']
+	| BuildInput<RustMap, 'declaration.type.union'>
+	| RustMap['nodes']['declaration.type.union']
+	| BuildInput<RustMap, 'declaration.type.union.private'>
+	| RustMap['nodes']['declaration.type.union.private']
+	| BuildInput<RustMap, 'declaration.type.union.public'>
+	| RustMap['nodes']['declaration.type.union.public']
+	| BuildInput<RustMap, 'declaration.type.union.public.internal'>
+	| RustMap['nodes']['declaration.type.union.public.internal']
+	| BuildInput<RustMap, 'declaration.type.union.public.parent'>
+	| RustMap['nodes']['declaration.type.union.public.parent']
+	| BuildInput<RustMap, 'declaration.type.union.public.restricted'>
+	| RustMap['nodes']['declaration.type.union.public.restricted']
+	| BuildInput<RustMap, 'declaration.variable'>
+	| RustMap['nodes']['declaration.variable']
+	| BuildInput<RustMap, 'declaration.variable.private'>
+	| RustMap['nodes']['declaration.variable.private']
+	| BuildInput<RustMap, 'declaration.variable.public'>
+	| RustMap['nodes']['declaration.variable.public']
+	| BuildInput<RustMap, 'declaration.variable.public.internal'>
+	| RustMap['nodes']['declaration.variable.public.internal']
+	| BuildInput<RustMap, 'declaration.variable.public.parent'>
+	| RustMap['nodes']['declaration.variable.public.parent']
+	| BuildInput<RustMap, 'declaration.variable.public.restricted'>
+	| RustMap['nodes']['declaration.variable.public.restricted']
+	| BuildInput<RustMap, 'expression.assignment'>
+	| RustMap['nodes']['expression.assignment']
+	| BuildInput<RustMap, 'expression.assignment.compound.add'>
+	| RustMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_and'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_or'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_xor'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<RustMap, 'expression.assignment.compound.divide'>
+	| RustMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<RustMap, 'expression.assignment.compound.modulo'>
+	| RustMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<RustMap, 'expression.assignment.compound.multiply'>
+	| RustMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_left'>
+	| RustMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_right'>
+	| RustMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<RustMap, 'expression.assignment.compound.subtract'>
+	| RustMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<RustMap, 'expression.await'>
+	| RustMap['nodes']['expression.await']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.add'>
+	| RustMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.divide'>
+	| RustMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.modulo'>
+	| RustMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.multiply'>
+	| RustMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.subtract'>
+	| RustMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<RustMap, 'expression.binary.bitwise.and'>
+	| RustMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<RustMap, 'expression.binary.bitwise.or'>
+	| RustMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<RustMap, 'expression.binary.bitwise.xor'>
+	| RustMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<RustMap, 'expression.binary.comparison.equal'>
+	| RustMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater'>
+	| RustMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater_equal'>
+	| RustMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.less'>
+	| RustMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<RustMap, 'expression.binary.comparison.less_equal'>
+	| RustMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.not_equal'>
+	| RustMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<RustMap, 'expression.binary.logical.and'>
+	| RustMap['nodes']['expression.binary.logical.and']
+	| BuildInput<RustMap, 'expression.binary.logical.or'>
+	| RustMap['nodes']['expression.binary.logical.or']
+	| BuildInput<RustMap, 'expression.binary.shift.left'>
+	| RustMap['nodes']['expression.binary.shift.left']
+	| BuildInput<RustMap, 'expression.binary.shift.right'>
+	| RustMap['nodes']['expression.binary.shift.right']
+	| BuildInput<RustMap, 'expression.call'>
+	| RustMap['nodes']['expression.call']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'expression.call.member'>
+	| RustMap['nodes']['expression.call.member']
+	| BuildInput<RustMap, 'expression.call.qualified'>
+	| RustMap['nodes']['expression.call.qualified']
+	| BuildInput<RustMap, 'expression.cast.conversion'>
+	| RustMap['nodes']['expression.cast.conversion']
+	| BuildInput<RustMap, 'expression.collection.list'>
+	| RustMap['nodes']['expression.collection.list']
+	| BuildInput<RustMap, 'expression.collection.list.repeat'>
+	| RustMap['nodes']['expression.collection.list.repeat']
+	| BuildInput<RustMap, 'expression.collection.struct'>
+	| RustMap['nodes']['expression.collection.struct']
+	| BuildInput<RustMap, 'expression.collection.tuple'>
+	| RustMap['nodes']['expression.collection.tuple']
+	| BuildInput<RustMap, 'expression.instantiation'>
+	| RustMap['nodes']['expression.instantiation']
+	| BuildInput<RustMap, 'expression.lambda'>
+	| RustMap['nodes']['expression.lambda']
+	| BuildInput<RustMap, 'expression.member'>
+	| RustMap['nodes']['expression.member']
+	| BuildInput<RustMap, 'expression.parenthesized'>
+	| RustMap['nodes']['expression.parenthesized']
+	| BuildInput<RustMap, 'expression.propagate'>
+	| RustMap['nodes']['expression.propagate']
+	| BuildInput<RustMap, 'expression.range.exclusive'>
+	| RustMap['nodes']['expression.range.exclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive'>
+	| RustMap['nodes']['expression.range.inclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive.legacy'>
+	| RustMap['nodes']['expression.range.inclusive.legacy']
+	| BuildInput<RustMap, 'expression.reference'>
+	| RustMap['nodes']['expression.reference']
+	| BuildInput<RustMap, 'expression.subscript'>
+	| RustMap['nodes']['expression.subscript']
+	| BuildInput<RustMap, 'expression.unary.deref'>
+	| RustMap['nodes']['expression.unary.deref']
+	| BuildInput<RustMap, 'expression.unary.negation'>
+	| RustMap['nodes']['expression.unary.negation']
+	| BuildInput<RustMap, 'expression.unary.not'>
+	| RustMap['nodes']['expression.unary.not']
+	| BuildInput<RustMap, 'expression.yield'>
+	| RustMap['nodes']['expression.yield']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw']
+	| BuildInput<RustMap, 'statement.block'>
+	| RustMap['nodes']['statement.block']
+	| BuildInput<RustMap, 'statement.block.async'>
+	| RustMap['nodes']['statement.block.async']
+	| BuildInput<RustMap, 'statement.block.const'>
+	| RustMap['nodes']['statement.block.const']
+	| BuildInput<RustMap, 'statement.block.generator'>
+	| RustMap['nodes']['statement.block.generator']
+	| BuildInput<RustMap, 'statement.block.try'>
+	| RustMap['nodes']['statement.block.try']
+	| BuildInput<RustMap, 'statement.block.unsafe'>
+	| RustMap['nodes']['statement.block.unsafe']
+	| BuildInput<RustMap, 'statement.break'>
+	| RustMap['nodes']['statement.break']
+	| BuildInput<RustMap, 'statement.continue'>
+	| RustMap['nodes']['statement.continue']
+	| BuildInput<RustMap, 'statement.if'>
+	| RustMap['nodes']['statement.if']
+	| BuildInput<RustMap, 'statement.import'>
+	| RustMap['nodes']['statement.import']
+	| BuildInput<RustMap, 'statement.import.package'>
+	| RustMap['nodes']['statement.import.package']
+	| BuildInput<RustMap, 'statement.import.package.private'>
+	| RustMap['nodes']['statement.import.package.private']
+	| BuildInput<RustMap, 'statement.import.package.public'>
+	| RustMap['nodes']['statement.import.package.public']
+	| BuildInput<RustMap, 'statement.import.package.public.internal'>
+	| RustMap['nodes']['statement.import.package.public.internal']
+	| BuildInput<RustMap, 'statement.import.package.public.parent'>
+	| RustMap['nodes']['statement.import.package.public.parent']
+	| BuildInput<RustMap, 'statement.import.package.public.restricted'>
+	| RustMap['nodes']['statement.import.package.public.restricted']
+	| BuildInput<RustMap, 'statement.import.private'>
+	| RustMap['nodes']['statement.import.private']
+	| BuildInput<RustMap, 'statement.import.public'>
+	| RustMap['nodes']['statement.import.public']
+	| BuildInput<RustMap, 'statement.import.public.internal'>
+	| RustMap['nodes']['statement.import.public.internal']
+	| BuildInput<RustMap, 'statement.import.public.parent'>
+	| RustMap['nodes']['statement.import.public.parent']
+	| BuildInput<RustMap, 'statement.import.public.restricted'>
+	| RustMap['nodes']['statement.import.public.restricted']
+	| BuildInput<RustMap, 'statement.loop'>
+	| RustMap['nodes']['statement.loop']
+	| BuildInput<RustMap, 'statement.loop.for_each'>
+	| RustMap['nodes']['statement.loop.for_each']
+	| BuildInput<RustMap, 'statement.loop.while'>
+	| RustMap['nodes']['statement.loop.while']
+	| BuildInput<RustMap, 'statement.match'>
+	| RustMap['nodes']['statement.match']
+	| BuildInput<RustMap, 'statement.return'>
+	| RustMap['nodes']['statement.return'];
+const expression_lambda$370_statements = (value: expression_lambda$370_statements$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case ';':
+				return 178;
+			case '()':
+				return b.expressionStatement.withSemi(281);
+			case 'self':
+				return b.expressionStatement.withSemi(124);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.expressionStatement.withSemi(b.identifier(value));
+				return b.expressionStatement.withSemi(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.expressionStatement.withSemi(
+				literal_number_integer$141({ $path: 'literal.number.integer', $value: value })
+			);
+		}
+		return b.expressionStatement.withSemi(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
+					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+				]
+			)
+		)
+			return value;
+		if (seated(value, [287, 292, 297, 298, 299, 300, 309, 310, 311, 312, 313])) return b.expressionStatement(value);
+		if (
+			seated(
+				value,
+				[
+					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
+					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+				]
+			)
+		)
+			return b.expressionStatement.withSemi(value);
+		if (seated(value, [192])) return b.attributeItem(value);
+		return unseated('expression.lambda.statements', value);
+	}
+	switch (value.$path) {
+		case 'attribute':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.constant':
+			return declaration_constant$205(value);
+		case 'declaration.constant.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.constant.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.constant.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.constant.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.constant.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.extension':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.extension.conformance':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.function':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.function.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.function.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.function.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.function.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.function.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.function.signature':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.function.signature.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.function.signature.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.function.signature.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.function.signature.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.function.signature.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.macro.brace':
+			return declaration_macro_brace$418(value);
+		case 'declaration.macro.bracket':
+			return declaration_macro_bracket$417(value);
+		case 'declaration.macro.paren':
+			return declaration_macro_paren$416(value);
+		case 'declaration.module':
+			if (value.name !== undefined && value.statements === undefined) return declaration_module$384(value);
+			return declaration_module$385(value);
+		case 'declaration.module.foreign':
+			if (value.extern !== undefined && value.statements === undefined) return declaration_module_foreign$395(value);
+			return declaration_module_foreign$396(value);
+		case 'declaration.module.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.module.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.module.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.module.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.module.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.enum':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.enum.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.enum.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.enum.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.enum.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.enum.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.interface.trait':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.interface.trait.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.interface.trait.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.interface.trait.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.interface.trait.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.interface.trait.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.tuple':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.tuple.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.tuple.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.tuple.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.tuple.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.tuple.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.unit':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.unit.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.unit.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.unit.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.unit.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.struct.unit.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.type_alias':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.type_alias.associated':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.type_alias.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.type_alias.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.type_alias.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.type_alias.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.type_alias.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.union':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.union.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.union.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.union.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.union.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.type.union.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.variable':
+			if (
+				(value.$flags ?? []).includes('static') &&
+				value.name !== undefined &&
+				value.type !== undefined &&
+				value.alternative === undefined
+			)
+				return declaration_variable$206(value);
+			return declaration_variable$223(value);
+		case 'declaration.variable.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.variable.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.variable.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.variable.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'declaration.variable.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'expression.assignment':
+			return b.expressionStatement.withSemi(expression_assignment$271(value));
+		case 'expression.assignment.compound.add':
+			return b.expressionStatement.withSemi(expression_assignment_compound_add$272(value));
+		case 'expression.assignment.compound.bitwise_and':
+			return b.expressionStatement.withSemi(expression_assignment_compound_bitwise_and$272(value));
+		case 'expression.assignment.compound.bitwise_or':
+			return b.expressionStatement.withSemi(expression_assignment_compound_bitwise_or$272(value));
+		case 'expression.assignment.compound.bitwise_xor':
+			return b.expressionStatement.withSemi(expression_assignment_compound_bitwise_xor$272(value));
+		case 'expression.assignment.compound.divide':
+			return b.expressionStatement.withSemi(expression_assignment_compound_divide$272(value));
+		case 'expression.assignment.compound.modulo':
+			return b.expressionStatement.withSemi(expression_assignment_compound_modulo$272(value));
+		case 'expression.assignment.compound.multiply':
+			return b.expressionStatement.withSemi(expression_assignment_compound_multiply$272(value));
+		case 'expression.assignment.compound.shift_left':
+			return b.expressionStatement.withSemi(expression_assignment_compound_shift_left$272(value));
+		case 'expression.assignment.compound.shift_right':
+			return b.expressionStatement.withSemi(expression_assignment_compound_shift_right$272(value));
+		case 'expression.assignment.compound.subtract':
+			return b.expressionStatement.withSemi(expression_assignment_compound_subtract$272(value));
+		case 'expression.await':
+			return b.expressionStatement.withSemi(expression_await$307(value));
+		case 'expression.binary.arithmetic.add':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_add$270(value));
+		case 'expression.binary.arithmetic.divide':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_divide$270(value));
+		case 'expression.binary.arithmetic.modulo':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_modulo$270(value));
+		case 'expression.binary.arithmetic.multiply':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_multiply$270(value));
+		case 'expression.binary.arithmetic.subtract':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_subtract$270(value));
+		case 'expression.binary.bitwise.and':
+			return b.expressionStatement.withSemi(expression_binary_bitwise_and$270(value));
+		case 'expression.binary.bitwise.or':
+			return b.expressionStatement.withSemi(expression_binary_bitwise_or$270(value));
+		case 'expression.binary.bitwise.xor':
+			return b.expressionStatement.withSemi(expression_binary_bitwise_xor$270(value));
+		case 'expression.binary.comparison.equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_equal$270(value));
+		case 'expression.binary.comparison.greater':
+			return b.expressionStatement.withSemi(expression_binary_comparison_greater$270(value));
+		case 'expression.binary.comparison.greater_equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_greater_equal$270(value));
+		case 'expression.binary.comparison.less':
+			return b.expressionStatement.withSemi(expression_binary_comparison_less$270(value));
+		case 'expression.binary.comparison.less_equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_less_equal$270(value));
+		case 'expression.binary.comparison.not_equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_not_equal$270(value));
+		case 'expression.binary.logical.and':
+			return b.expressionStatement.withSemi(expression_binary_logical_and$270(value));
+		case 'expression.binary.logical.or':
+			return b.expressionStatement.withSemi(expression_binary_logical_or$270(value));
+		case 'expression.binary.shift.left':
+			return b.expressionStatement.withSemi(expression_binary_shift_left$270(value));
+		case 'expression.binary.shift.right':
+			return b.expressionStatement.withSemi(expression_binary_shift_right$270(value));
+		case 'expression.call':
+			return unbuilt('expression.lambda.statements', value);
+		case 'expression.call.macro': {
+			if (!(value.$flags ?? []).includes('terminated')) return expression_call_macro$259(value);
+			if ((value.$flags ?? []).includes('terminated'))
+				return b.expressionStatement.withSemi(expression_call_macro$259(withoutFlags(value, ['terminated'])));
+			throw new Error("expression.call.macro: no seat of statements's seats sets the flags it states");
+		}
+		case 'expression.call.member':
+			return unbuilt('expression.lambda.statements', value);
+		case 'expression.call.qualified':
+			return unbuilt('expression.lambda.statements', value);
+		case 'expression.cast.conversion':
+			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
+		case 'expression.collection.list':
+			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+		case 'expression.collection.list.repeat':
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+		case 'expression.collection.struct':
+			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
+		case 'expression.collection.tuple':
+			return b.expressionStatement.withSemi(expression_collection_tuple$280(value));
+		case 'expression.instantiation':
+			return b.expressionStatement.withSemi(expression_instantiation$245(value));
+		case 'expression.lambda':
+			if (
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
+			)
+				return b.expressionStatement.withSemi(expression_lambda$370(value));
+			return b.expressionStatement.withSemi(expression_lambda$369(value));
+		case 'expression.member':
+			return b.expressionStatement.withSemi(expression_member$308(value));
+		case 'expression.parenthesized':
+			return b.expressionStatement.withSemi(expression_parenthesized$279(value));
+		case 'expression.propagate':
+			return b.expressionStatement.withSemi(expression_propagate$268(value));
+		case 'expression.range.exclusive':
+			if (value.end === undefined && value.start === undefined)
+				return b.expressionStatement.withSemi(expression_range_exclusive$393(value));
+			if (value.start !== undefined && value.end === undefined)
+				return b.expressionStatement.withSemi(expression_range_exclusive$391(value));
+			if (value.end !== undefined && value.start === undefined)
+				return b.expressionStatement.withSemi(expression_range_exclusive$392(value));
+			return b.expressionStatement.withSemi(expression_range_exclusive$390(value));
+		case 'expression.range.inclusive':
+			return b.expressionStatement.withSemi(expression_range_inclusive$390(value));
+		case 'expression.range.inclusive.legacy':
+			return b.expressionStatement.withSemi(expression_range_inclusive_legacy$390(value));
+		case 'expression.reference':
+			if ((value.$flags ?? []).includes('exclusive') && value.argument !== undefined)
+				return b.expressionStatement.withSemi(expression_reference$373(value));
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return b.expressionStatement.withSemi(expression_reference$372(value));
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				!(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return b.expressionStatement.withSemi(expression_reference$371(value));
+			return b.expressionStatement.withSemi(expression_reference$374(value));
+		case 'expression.subscript':
+			return b.expressionStatement.withSemi(expression_subscript$306(value));
+		case 'expression.unary.deref':
+			return b.expressionStatement.withSemi(expression_unary_deref$267(value));
+		case 'expression.unary.negation':
+			return b.expressionStatement.withSemi(expression_unary_negation$267(value));
+		case 'expression.unary.not':
+			return b.expressionStatement.withSemi(expression_unary_not$267(value));
+		case 'expression.yield':
+			return b.expressionStatement.withSemi(expression_yield$275(value));
+		case 'identifier':
+			return b.expressionStatement.withSemi(identifier$1(value));
+		case 'identifier.metavariable':
+			return unbuilt('expression.lambda.statements', value);
+		case 'identifier.qualified':
+			return b.expressionStatement.withSemi(identifier_qualified$263(value));
+		case 'literal.boolean.false':
+			return unbuilt('expression.lambda.statements', value);
+		case 'literal.boolean.true':
+			return unbuilt('expression.lambda.statements', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.expressionStatement.withSemi(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$148(value));
+			return unbuilt('expression.lambda.statements', value);
+		case 'literal.number.float':
+			return b.expressionStatement.withSemi(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.expressionStatement.withSemi(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.expressionStatement.withSemi(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.expressionStatement.withSemi(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('expression.lambda.statements', value);
+		case 'literal.string.bytes':
+			return unbuilt('expression.lambda.statements', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('expression.lambda.statements', value);
+		case 'literal.string.c':
+			return unbuilt('expression.lambda.statements', value);
+		case 'literal.string.c.raw':
+			return unbuilt('expression.lambda.statements', value);
+		case 'literal.string.raw':
+			return unbuilt('expression.lambda.statements', value);
+		case 'statement.block':
+			return b.expressionStatement(statement_block$313(value));
+		case 'statement.block.async':
+			return b.expressionStatement(statement_block_async$310(value));
+		case 'statement.block.const':
+			return b.expressionStatement(statement_block_const$300(value));
+		case 'statement.block.generator':
+			return b.expressionStatement(statement_block_generator$311(value));
+		case 'statement.block.try':
+			return b.expressionStatement(statement_block_try$312(value));
+		case 'statement.block.unsafe':
+			return b.expressionStatement(statement_block_unsafe$309(value));
+		case 'statement.break':
+			return b.expressionStatement.withSemi(statement_break$304(value));
+		case 'statement.continue':
+			return b.expressionStatement.withSemi(statement_continue$305(value));
+		case 'statement.if':
+			return b.expressionStatement(statement_if$287(value));
+		case 'statement.import':
+			return statement_import$224(value);
+		case 'statement.import.package':
+			return statement_import_package$204(value);
+		case 'statement.import.package.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'statement.import.package.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'statement.import.package.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'statement.import.package.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'statement.import.package.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'statement.import.private':
+			return unbuilt('expression.lambda.statements', value);
+		case 'statement.import.public':
+			return unbuilt('expression.lambda.statements', value);
+		case 'statement.import.public.internal':
+			return unbuilt('expression.lambda.statements', value);
+		case 'statement.import.public.parent':
+			return unbuilt('expression.lambda.statements', value);
+		case 'statement.import.public.restricted':
+			return unbuilt('expression.lambda.statements', value);
+		case 'statement.loop':
+			return b.expressionStatement(statement_loop$298(value));
+		case 'statement.loop.for_each':
+			return b.expressionStatement(statement_loop_for_each$299(value));
+		case 'statement.loop.while':
+			return b.expressionStatement(statement_loop_while$297(value));
+		case 'statement.match':
+			return unbuilt('expression.lambda.statements', value);
+		case 'statement.return':
+			return b.expressionStatement.withSemi(statement_return$274(value));
+		default:
+			return unbuilt('expression.lambda.statements', value);
+	}
+};
+type expression_lambda$370_trailingExpression$Item =
+	| '()'
+	| 'false'
+	| 'self'
+	| 'true'
+	| Text<RustMap, 'expression.unit'>
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| number
+	| BuildInput<RustMap, 'expression.assignment'>
+	| RustMap['nodes']['expression.assignment']
+	| BuildInput<RustMap, 'expression.assignment.compound.add'>
+	| RustMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_and'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_or'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_xor'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<RustMap, 'expression.assignment.compound.divide'>
+	| RustMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<RustMap, 'expression.assignment.compound.modulo'>
+	| RustMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<RustMap, 'expression.assignment.compound.multiply'>
+	| RustMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_left'>
+	| RustMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_right'>
+	| RustMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<RustMap, 'expression.assignment.compound.subtract'>
+	| RustMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<RustMap, 'expression.await'>
+	| RustMap['nodes']['expression.await']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.add'>
+	| RustMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.divide'>
+	| RustMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.modulo'>
+	| RustMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.multiply'>
+	| RustMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.subtract'>
+	| RustMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<RustMap, 'expression.binary.bitwise.and'>
+	| RustMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<RustMap, 'expression.binary.bitwise.or'>
+	| RustMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<RustMap, 'expression.binary.bitwise.xor'>
+	| RustMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<RustMap, 'expression.binary.comparison.equal'>
+	| RustMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater'>
+	| RustMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater_equal'>
+	| RustMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.less'>
+	| RustMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<RustMap, 'expression.binary.comparison.less_equal'>
+	| RustMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.not_equal'>
+	| RustMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<RustMap, 'expression.binary.logical.and'>
+	| RustMap['nodes']['expression.binary.logical.and']
+	| BuildInput<RustMap, 'expression.binary.logical.or'>
+	| RustMap['nodes']['expression.binary.logical.or']
+	| BuildInput<RustMap, 'expression.binary.shift.left'>
+	| RustMap['nodes']['expression.binary.shift.left']
+	| BuildInput<RustMap, 'expression.binary.shift.right'>
+	| RustMap['nodes']['expression.binary.shift.right']
+	| BuildInput<RustMap, 'expression.call'>
+	| RustMap['nodes']['expression.call']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'expression.call.member'>
+	| RustMap['nodes']['expression.call.member']
+	| BuildInput<RustMap, 'expression.call.qualified'>
+	| RustMap['nodes']['expression.call.qualified']
+	| BuildInput<RustMap, 'expression.cast.conversion'>
+	| RustMap['nodes']['expression.cast.conversion']
+	| BuildInput<RustMap, 'expression.collection.list'>
+	| RustMap['nodes']['expression.collection.list']
+	| BuildInput<RustMap, 'expression.collection.list.repeat'>
+	| RustMap['nodes']['expression.collection.list.repeat']
+	| BuildInput<RustMap, 'expression.collection.struct'>
+	| RustMap['nodes']['expression.collection.struct']
+	| BuildInput<RustMap, 'expression.collection.tuple'>
+	| RustMap['nodes']['expression.collection.tuple']
+	| BuildInput<RustMap, 'expression.instantiation'>
+	| RustMap['nodes']['expression.instantiation']
+	| BuildInput<RustMap, 'expression.lambda'>
+	| RustMap['nodes']['expression.lambda']
+	| BuildInput<RustMap, 'expression.member'>
+	| RustMap['nodes']['expression.member']
+	| BuildInput<RustMap, 'expression.parenthesized'>
+	| RustMap['nodes']['expression.parenthesized']
+	| BuildInput<RustMap, 'expression.propagate'>
+	| RustMap['nodes']['expression.propagate']
+	| BuildInput<RustMap, 'expression.range.exclusive'>
+	| RustMap['nodes']['expression.range.exclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive'>
+	| RustMap['nodes']['expression.range.inclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive.legacy'>
+	| RustMap['nodes']['expression.range.inclusive.legacy']
+	| BuildInput<RustMap, 'expression.reference'>
+	| RustMap['nodes']['expression.reference']
+	| BuildInput<RustMap, 'expression.subscript'>
+	| RustMap['nodes']['expression.subscript']
+	| BuildInput<RustMap, 'expression.unary.deref'>
+	| RustMap['nodes']['expression.unary.deref']
+	| BuildInput<RustMap, 'expression.unary.negation'>
+	| RustMap['nodes']['expression.unary.negation']
+	| BuildInput<RustMap, 'expression.unary.not'>
+	| RustMap['nodes']['expression.unary.not']
+	| BuildInput<RustMap, 'expression.yield'>
+	| RustMap['nodes']['expression.yield']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw']
+	| BuildInput<RustMap, 'statement.block'>
+	| RustMap['nodes']['statement.block']
+	| BuildInput<RustMap, 'statement.block.async'>
+	| RustMap['nodes']['statement.block.async']
+	| BuildInput<RustMap, 'statement.block.const'>
+	| RustMap['nodes']['statement.block.const']
+	| BuildInput<RustMap, 'statement.block.generator'>
+	| RustMap['nodes']['statement.block.generator']
+	| BuildInput<RustMap, 'statement.block.try'>
+	| RustMap['nodes']['statement.block.try']
+	| BuildInput<RustMap, 'statement.block.unsafe'>
+	| RustMap['nodes']['statement.block.unsafe']
+	| BuildInput<RustMap, 'statement.break'>
+	| RustMap['nodes']['statement.break']
+	| BuildInput<RustMap, 'statement.continue'>
+	| RustMap['nodes']['statement.continue']
+	| BuildInput<RustMap, 'statement.if'>
+	| RustMap['nodes']['statement.if']
+	| BuildInput<RustMap, 'statement.loop'>
+	| RustMap['nodes']['statement.loop']
+	| BuildInput<RustMap, 'statement.loop.for_each'>
+	| RustMap['nodes']['statement.loop.for_each']
+	| BuildInput<RustMap, 'statement.loop.while'>
+	| RustMap['nodes']['statement.loop.while']
+	| BuildInput<RustMap, 'statement.match'>
+	| RustMap['nodes']['statement.match']
+	| BuildInput<RustMap, 'statement.return'>
+	| RustMap['nodes']['statement.return'];
+const expression_lambda$370_trailingExpression = (value: expression_lambda$370_trailingExpression$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '()':
+				return 281;
+			case 'self':
+				return 124;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
+					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
+					390, 391, 392, 393, 435, 436
+				]
+			)
+		)
+			return value;
+		return unseated('expression.lambda.trailingExpression', value);
+	}
+	switch (value.$path) {
+		case 'expression.assignment':
+			return expression_assignment$271(value);
+		case 'expression.assignment.compound.add':
+			return expression_assignment_compound_add$272(value);
+		case 'expression.assignment.compound.bitwise_and':
+			return expression_assignment_compound_bitwise_and$272(value);
+		case 'expression.assignment.compound.bitwise_or':
+			return expression_assignment_compound_bitwise_or$272(value);
+		case 'expression.assignment.compound.bitwise_xor':
+			return expression_assignment_compound_bitwise_xor$272(value);
+		case 'expression.assignment.compound.divide':
+			return expression_assignment_compound_divide$272(value);
+		case 'expression.assignment.compound.modulo':
+			return expression_assignment_compound_modulo$272(value);
+		case 'expression.assignment.compound.multiply':
+			return expression_assignment_compound_multiply$272(value);
+		case 'expression.assignment.compound.shift_left':
+			return expression_assignment_compound_shift_left$272(value);
+		case 'expression.assignment.compound.shift_right':
+			return expression_assignment_compound_shift_right$272(value);
+		case 'expression.assignment.compound.subtract':
+			return expression_assignment_compound_subtract$272(value);
+		case 'expression.await':
+			return expression_await$307(value);
+		case 'expression.binary.arithmetic.add':
+			return expression_binary_arithmetic_add$270(value);
+		case 'expression.binary.arithmetic.divide':
+			return expression_binary_arithmetic_divide$270(value);
+		case 'expression.binary.arithmetic.modulo':
+			return expression_binary_arithmetic_modulo$270(value);
+		case 'expression.binary.arithmetic.multiply':
+			return expression_binary_arithmetic_multiply$270(value);
+		case 'expression.binary.arithmetic.subtract':
+			return expression_binary_arithmetic_subtract$270(value);
+		case 'expression.binary.bitwise.and':
+			return expression_binary_bitwise_and$270(value);
+		case 'expression.binary.bitwise.or':
+			return expression_binary_bitwise_or$270(value);
+		case 'expression.binary.bitwise.xor':
+			return expression_binary_bitwise_xor$270(value);
+		case 'expression.binary.comparison.equal':
+			return expression_binary_comparison_equal$270(value);
+		case 'expression.binary.comparison.greater':
+			return expression_binary_comparison_greater$270(value);
+		case 'expression.binary.comparison.greater_equal':
+			return expression_binary_comparison_greater_equal$270(value);
+		case 'expression.binary.comparison.less':
+			return expression_binary_comparison_less$270(value);
+		case 'expression.binary.comparison.less_equal':
+			return expression_binary_comparison_less_equal$270(value);
+		case 'expression.binary.comparison.not_equal':
+			return expression_binary_comparison_not_equal$270(value);
+		case 'expression.binary.logical.and':
+			return expression_binary_logical_and$270(value);
+		case 'expression.binary.logical.or':
+			return expression_binary_logical_or$270(value);
+		case 'expression.binary.shift.left':
+			return expression_binary_shift_left$270(value);
+		case 'expression.binary.shift.right':
+			return expression_binary_shift_right$270(value);
+		case 'expression.call':
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'expression.call.macro':
+			return expression_call_macro$259(value);
+		case 'expression.call.member':
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'expression.call.qualified':
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'expression.cast.conversion':
+			return expression_cast_conversion$273(value);
+		case 'expression.collection.list':
+			return expression_collection_list$436(value);
+		case 'expression.collection.list.repeat':
+			return expression_collection_list_repeat$435(value);
+		case 'expression.collection.struct':
+			return expression_collection_struct$282(value);
+		case 'expression.collection.tuple':
+			return expression_collection_tuple$280(value);
+		case 'expression.instantiation':
+			return expression_instantiation$245(value);
+		case 'expression.lambda':
+			if (
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
+			)
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
+		case 'expression.member':
+			return expression_member$308(value);
+		case 'expression.parenthesized':
+			return expression_parenthesized$279(value);
+		case 'expression.propagate':
+			return expression_propagate$268(value);
+		case 'expression.range.exclusive':
+			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
+			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
+			if (value.end !== undefined && value.start === undefined) return expression_range_exclusive$392(value);
+			return expression_range_exclusive$390(value);
+		case 'expression.range.inclusive':
+			return expression_range_inclusive$390(value);
+		case 'expression.range.inclusive.legacy':
+			return expression_range_inclusive_legacy$390(value);
+		case 'expression.reference':
+			if ((value.$flags ?? []).includes('exclusive') && value.argument !== undefined)
+				return expression_reference$373(value);
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return expression_reference$372(value);
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				!(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return expression_reference$371(value);
+			return expression_reference$374(value);
+		case 'expression.subscript':
+			return expression_subscript$306(value);
+		case 'expression.unary.deref':
+			return expression_unary_deref$267(value);
+		case 'expression.unary.negation':
+			return expression_unary_negation$267(value);
+		case 'expression.unary.not':
+			return expression_unary_not$267(value);
+		case 'expression.yield':
+			return expression_yield$275(value);
+		case 'identifier':
+			return identifier$1(value);
+		case 'identifier.metavariable':
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		case 'literal.boolean.false':
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'literal.boolean.true':
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return literal_character$145(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$150(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$147(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$149(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$148(value);
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'literal.number.float':
+			return literal_number_float$162(value);
+		case 'literal.number.integer':
+			return literal_number_integer$141(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$143(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$142(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$144(value);
+		case 'literal.string':
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'literal.string.bytes':
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'literal.string.c':
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'literal.string.c.raw':
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'literal.string.raw':
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'statement.block':
+			return statement_block$313(value);
+		case 'statement.block.async':
+			return statement_block_async$310(value);
+		case 'statement.block.const':
+			return statement_block_const$300(value);
+		case 'statement.block.generator':
+			return statement_block_generator$311(value);
+		case 'statement.block.try':
+			return statement_block_try$312(value);
+		case 'statement.block.unsafe':
+			return statement_block_unsafe$309(value);
+		case 'statement.break':
+			return statement_break$304(value);
+		case 'statement.continue':
+			return statement_continue$305(value);
+		case 'statement.if':
+			return statement_if$287(value);
+		case 'statement.loop':
+			return statement_loop$298(value);
+		case 'statement.loop.for_each':
+			return statement_loop_for_each$299(value);
+		case 'statement.loop.while':
+			return statement_loop_while$297(value);
+		case 'statement.match':
+			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'statement.return':
+			return statement_return$274(value);
+		default:
+			return unbuilt('expression.lambda.trailingExpression', value);
 	}
 };
 type expression_member$308_object$Item =
@@ -48834,12 +52179,29 @@ const expression_member$308_object = (value: expression_member$308_object$Item) 
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -49309,12 +52671,29 @@ const expression_parenthesized$279_expression = (value: expression_parenthesized
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -49741,12 +53120,29 @@ const expression_propagate$268_argument = (value: expression_propagate$268_argum
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -50173,12 +53569,29 @@ const expression_range$391_start = (value: expression_range$391_start$Item) => {
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -50605,12 +54018,29 @@ const expression_range$392_end = (value: expression_range$392_end$Item) => {
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -51037,12 +54467,29 @@ const expression_range_exclusive$390_end = (value: expression_range_exclusive$39
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -51469,12 +54916,29 @@ const expression_range_exclusive$390_start = (value: expression_range_exclusive$
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -51901,12 +55365,29 @@ const expression_range_exclusive$391_start = (value: expression_range_exclusive$
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -52333,12 +55814,29 @@ const expression_range_exclusive$392_end = (value: expression_range_exclusive$39
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -52765,12 +56263,29 @@ const expression_range_inclusive$390_end = (value: expression_range_inclusive$39
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -53197,12 +56712,29 @@ const expression_range_inclusive$390_start = (value: expression_range_inclusive$
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -53629,12 +57161,29 @@ const expression_range_inclusive_legacy$390_end = (value: expression_range_inclu
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -54061,12 +57610,29 @@ const expression_range_inclusive_legacy$390_start = (value: expression_range_inc
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -54493,12 +58059,29 @@ const expression_reference$371_argument = (value: expression_reference$371_argum
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -54925,12 +58508,29 @@ const expression_reference$372_argument = (value: expression_reference$372_argum
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -55357,12 +58957,29 @@ const expression_reference$373_argument = (value: expression_reference$373_argum
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -55789,12 +59406,29 @@ const expression_reference$374_argument = (value: expression_reference$374_argum
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -56221,12 +59855,29 @@ const expression_subscript$306_index = (value: expression_subscript$306_index$It
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -56653,12 +60304,29 @@ const expression_subscript$306_object = (value: expression_subscript$306_object$
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -57085,12 +60753,29 @@ const expression_unary_deref$267_argument = (value: expression_unary_deref$267_a
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -57517,12 +61202,29 @@ const expression_unary_negation$267_argument = (value: expression_unary_negation
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -57949,12 +61651,29 @@ const expression_unary_not$267_argument = (value: expression_unary_not$267_argum
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -58381,12 +62100,29 @@ const expression_yield$275_expression = (value: expression_yield$275_expression$
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -61833,12 +65569,29 @@ const pattern_tuple$316_elements$item = (value: pattern_tuple$316_elements$item$
 			return expression_call_macro$259(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'identifier':
 			return identifier$1(value);
 		case 'identifier.qualified':
@@ -62615,12 +66368,29 @@ const statement_block$313_statements = (value: statement_block$313_statements$It
 			return b.expressionStatement.withSemi(expression_instantiation$245(value));
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return b.expressionStatement.withSemi(expression_lambda$369(value));
-			return b.expressionStatement.withSemi(expression_lambda$370(value));
+				return b.expressionStatement.withSemi(expression_lambda$370(value));
+			return b.expressionStatement.withSemi(expression_lambda$369(value));
 		case 'expression.member':
 			return b.expressionStatement.withSemi(expression_member$308(value));
 		case 'expression.parenthesized':
@@ -63074,12 +66844,29 @@ const statement_block$313_trailingExpression = (value: statement_block$313_trail
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -63881,12 +67668,29 @@ const statement_block_async$310_statements = (value: statement_block_async$310_s
 			return b.expressionStatement.withSemi(expression_instantiation$245(value));
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return b.expressionStatement.withSemi(expression_lambda$369(value));
-			return b.expressionStatement.withSemi(expression_lambda$370(value));
+				return b.expressionStatement.withSemi(expression_lambda$370(value));
+			return b.expressionStatement.withSemi(expression_lambda$369(value));
 		case 'expression.member':
 			return b.expressionStatement.withSemi(expression_member$308(value));
 		case 'expression.parenthesized':
@@ -64340,12 +68144,29 @@ const statement_block_async$310_trailingExpression = (value: statement_block_asy
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -65147,12 +68968,29 @@ const statement_block_const$300_statements = (value: statement_block_const$300_s
 			return b.expressionStatement.withSemi(expression_instantiation$245(value));
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return b.expressionStatement.withSemi(expression_lambda$369(value));
-			return b.expressionStatement.withSemi(expression_lambda$370(value));
+				return b.expressionStatement.withSemi(expression_lambda$370(value));
+			return b.expressionStatement.withSemi(expression_lambda$369(value));
 		case 'expression.member':
 			return b.expressionStatement.withSemi(expression_member$308(value));
 		case 'expression.parenthesized':
@@ -65606,12 +69444,29 @@ const statement_block_const$300_trailingExpression = (value: statement_block_con
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -66413,12 +70268,29 @@ const statement_block_generator$311_statements = (value: statement_block_generat
 			return b.expressionStatement.withSemi(expression_instantiation$245(value));
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return b.expressionStatement.withSemi(expression_lambda$369(value));
-			return b.expressionStatement.withSemi(expression_lambda$370(value));
+				return b.expressionStatement.withSemi(expression_lambda$370(value));
+			return b.expressionStatement.withSemi(expression_lambda$369(value));
 		case 'expression.member':
 			return b.expressionStatement.withSemi(expression_member$308(value));
 		case 'expression.parenthesized':
@@ -66874,12 +70746,29 @@ const statement_block_generator$311_trailingExpression = (
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -67681,12 +71570,29 @@ const statement_block_try$312_statements = (value: statement_block_try$312_state
 			return b.expressionStatement.withSemi(expression_instantiation$245(value));
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return b.expressionStatement.withSemi(expression_lambda$369(value));
-			return b.expressionStatement.withSemi(expression_lambda$370(value));
+				return b.expressionStatement.withSemi(expression_lambda$370(value));
+			return b.expressionStatement.withSemi(expression_lambda$369(value));
 		case 'expression.member':
 			return b.expressionStatement.withSemi(expression_member$308(value));
 		case 'expression.parenthesized':
@@ -68140,12 +72046,29 @@ const statement_block_try$312_trailingExpression = (value: statement_block_try$3
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -68947,12 +72870,29 @@ const statement_block_unsafe$309_statements = (value: statement_block_unsafe$309
 			return b.expressionStatement.withSemi(expression_instantiation$245(value));
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return b.expressionStatement.withSemi(expression_lambda$369(value));
-			return b.expressionStatement.withSemi(expression_lambda$370(value));
+				return b.expressionStatement.withSemi(expression_lambda$370(value));
+			return b.expressionStatement.withSemi(expression_lambda$369(value));
 		case 'expression.member':
 			return b.expressionStatement.withSemi(expression_member$308(value));
 		case 'expression.parenthesized':
@@ -69406,12 +73346,29 @@ const statement_block_unsafe$309_trailingExpression = (value: statement_block_un
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -69838,12 +73795,29 @@ const statement_break$304_expression = (value: statement_break$304_expression$It
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -70314,12 +74288,29 @@ const statement_if$287_condition = (value: statement_if$287_condition$Item) => {
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -71121,12 +75112,29 @@ const statement_if$287_statements = (value: statement_if$287_statements$Item) =>
 			return b.expressionStatement.withSemi(expression_instantiation$245(value));
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return b.expressionStatement.withSemi(expression_lambda$369(value));
-			return b.expressionStatement.withSemi(expression_lambda$370(value));
+				return b.expressionStatement.withSemi(expression_lambda$370(value));
+			return b.expressionStatement.withSemi(expression_lambda$369(value));
 		case 'expression.member':
 			return b.expressionStatement.withSemi(expression_member$308(value));
 		case 'expression.parenthesized':
@@ -71580,12 +75588,29 @@ const statement_if$287_trailingExpression = (value: statement_if$287_trailingExp
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -72507,12 +76532,29 @@ const statement_loop$298_statements = (value: statement_loop$298_statements$Item
 			return b.expressionStatement.withSemi(expression_instantiation$245(value));
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return b.expressionStatement.withSemi(expression_lambda$369(value));
-			return b.expressionStatement.withSemi(expression_lambda$370(value));
+				return b.expressionStatement.withSemi(expression_lambda$370(value));
+			return b.expressionStatement.withSemi(expression_lambda$369(value));
 		case 'expression.member':
 			return b.expressionStatement.withSemi(expression_member$308(value));
 		case 'expression.parenthesized':
@@ -72966,12 +77008,29 @@ const statement_loop$298_trailingExpression = (value: statement_loop$298_trailin
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -73613,12 +77672,29 @@ const statement_loop_for_each$299_right = (value: statement_loop_for_each$299_ri
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -74420,12 +78496,29 @@ const statement_loop_for_each$299_statements = (value: statement_loop_for_each$2
 			return b.expressionStatement.withSemi(expression_instantiation$245(value));
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return b.expressionStatement.withSemi(expression_lambda$369(value));
-			return b.expressionStatement.withSemi(expression_lambda$370(value));
+				return b.expressionStatement.withSemi(expression_lambda$370(value));
+			return b.expressionStatement.withSemi(expression_lambda$369(value));
 		case 'expression.member':
 			return b.expressionStatement.withSemi(expression_member$308(value));
 		case 'expression.parenthesized':
@@ -74879,12 +78972,29 @@ const statement_loop_for_each$299_trailingExpression = (value: statement_loop_fo
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -75319,12 +79429,29 @@ const statement_loop_while$297_condition = (value: statement_loop_while$297_cond
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -76140,12 +80267,29 @@ const statement_loop_while$297_statements = (value: statement_loop_while$297_sta
 			return b.expressionStatement.withSemi(expression_instantiation$245(value));
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return b.expressionStatement.withSemi(expression_lambda$369(value));
-			return b.expressionStatement.withSemi(expression_lambda$370(value));
+				return b.expressionStatement.withSemi(expression_lambda$370(value));
+			return b.expressionStatement.withSemi(expression_lambda$369(value));
 		case 'expression.member':
 			return b.expressionStatement.withSemi(expression_member$308(value));
 		case 'expression.parenthesized':
@@ -76599,12 +80743,29 @@ const statement_loop_while$297_trailingExpression = (value: statement_loop_while
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -77031,12 +81192,29 @@ const statement_return$274_expression = (value: statement_return$274_expression$
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -77623,12 +81801,29 @@ const type_array$240_length = (value: type_array$240_length$Item) => {
 			return expression_instantiation$245(value);
 		case 'expression.lambda':
 			if (
-				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
-				value.body !== undefined &&
-				value.parameters !== undefined
+				(listed(value.parameters)
+					? value.parameters.every(
+							(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+						)
+					: typeof value.parameters !== 'string' ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.parameters)) &&
+				(typeof value.body !== 'string' ||
+					['()', '_', 'self'].includes(value.body) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.body)) &&
+				(value.statements ?? []).every(
+					(item) =>
+						typeof item !== 'string' ||
+						['()', ';', 'self'].includes(item) ||
+						/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				) &&
+				(typeof value.trailingExpression !== 'string' ||
+					['()', 'self'].includes(value.trailingExpression) ||
+					/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value.trailingExpression)) &&
+				value.parameters !== undefined &&
+				value.returnType === undefined
 			)
-				return expression_lambda$369(value);
-			return expression_lambda$370(value);
+				return expression_lambda$370(value);
+			return expression_lambda$369(value);
 		case 'expression.member':
 			return expression_member$308(value);
 		case 'expression.parenthesized':
@@ -80558,7 +84753,7 @@ const expression_instantiation$245 = (
 const expression_lambda$369 = (
 	input: PathInput<RustMap, 'expression.lambda'>
 ): ReturnType<typeof b.closureExpressionBlock> => {
-	const unroutedSlot = unroutedIn(input, ['body', 'parameters', 'returnType']);
+	const unroutedSlot = unroutedIn(input, ['parameters', 'returnType', 'statements', 'trailingExpression']);
 	if (unroutedSlot !== undefined) return unrouted('expression.lambda', unroutedSlot);
 	const parameters$first = (listed(input.parameters) ? input.parameters : [])[0];
 	const parameters$rest = (listed(input.parameters) ? input.parameters : []).slice(1);
@@ -80574,7 +84769,13 @@ const expression_lambda$369 = (
 				? missing('expression.lambda.parameters')
 				: expression_lambda$369_parameters(input.parameters),
 		returnType: input.returnType === undefined ? undefined : expression_lambda$369_returnType(input.returnType),
-		body: expression_lambda$369_body(input.body),
+		body: b.block({
+			statements: (input.statements ?? []).map(expression_lambda$369_statements),
+			trailingExpression:
+				input.trailingExpression === undefined
+					? undefined
+					: expression_lambda$369_trailingExpression(input.trailingExpression)
+		}),
 		static: (input.$flags ?? []).includes('static'),
 		async: (input.$flags ?? []).includes('async'),
 		move: (input.$flags ?? []).includes('move')
@@ -80583,26 +84784,51 @@ const expression_lambda$369 = (
 const expression_lambda$370 = (
 	input: PathInput<RustMap, 'expression.lambda'>
 ): ReturnType<typeof b.closureExpressionExpr> => {
-	const unroutedSlot = unroutedIn(input, ['body', 'parameters']);
+	const unroutedSlot = unroutedIn(input, ['body', 'parameters', 'statements', 'trailingExpression']);
 	if (unroutedSlot !== undefined) return unrouted('expression.lambda', unroutedSlot);
 	const parameters$first = (listed(input.parameters) ? input.parameters : [])[0];
 	const parameters$rest = (listed(input.parameters) ? input.parameters : []).slice(1);
-	return b.closureExpressionExpr({
-		parameters: listed(input.parameters)
-			? parameters$first === undefined
-				? b.closureParameters()
-				: b.closureParameters(
-						expression_lambda$370_parameters$item(parameters$first),
-						...parameters$rest.map(expression_lambda$370_parameters$item)
-					)
-			: input.parameters === undefined
-				? missing('expression.lambda.parameters')
-				: expression_lambda$370_parameters(input.parameters),
-		body: expression_lambda$370_body(input.body),
-		static: (input.$flags ?? []).includes('static'),
-		async: (input.$flags ?? []).includes('async'),
-		move: (input.$flags ?? []).includes('move')
-	});
+	if (input.statements === undefined && input.trailingExpression === undefined)
+		return b.closureExpressionExpr({
+			parameters: listed(input.parameters)
+				? parameters$first === undefined
+					? b.closureParameters()
+					: b.closureParameters(
+							expression_lambda$370_parameters$item(parameters$first),
+							...parameters$rest.map(expression_lambda$370_parameters$item)
+						)
+				: input.parameters === undefined
+					? missing('expression.lambda.parameters')
+					: expression_lambda$370_parameters(input.parameters),
+			body: input.body === undefined ? missing('expression.lambda.body') : expression_lambda$370_body(input.body),
+			static: (input.$flags ?? []).includes('static'),
+			async: (input.$flags ?? []).includes('async'),
+			move: (input.$flags ?? []).includes('move')
+		});
+	if (input.body === undefined)
+		return b.closureExpressionExpr({
+			parameters: listed(input.parameters)
+				? parameters$first === undefined
+					? b.closureParameters()
+					: b.closureParameters(
+							expression_lambda$370_parameters$item(parameters$first),
+							...parameters$rest.map(expression_lambda$370_parameters$item)
+						)
+				: input.parameters === undefined
+					? missing('expression.lambda.parameters')
+					: expression_lambda$370_parameters(input.parameters),
+			body: b.block({
+				statements: (input.statements ?? []).map(expression_lambda$370_statements),
+				trailingExpression:
+					input.trailingExpression === undefined
+						? undefined
+						: expression_lambda$370_trailingExpression(input.trailingExpression)
+			}),
+			static: (input.$flags ?? []).includes('static'),
+			async: (input.$flags ?? []).includes('async'),
+			move: (input.$flags ?? []).includes('move')
+		});
+	throw new Error('expression.lambda: no form of arm 370 takes the slots it states together');
 };
 const expression_member$308 = (
 	input: PathInput<RustMap, 'expression.member'>
@@ -82339,12 +86565,29 @@ const expression_instantiation = (input: PathInput<RustMap, 'expression.instanti
 };
 const expression_lambda = (input: PathInput<RustMap, 'expression.lambda'>) => {
 	if (
-		(input.body === undefined || [313].includes(expression_lambda$369_body$kind(input.body) ?? -1)) &&
-		input.body !== undefined &&
-		input.parameters !== undefined
+		(listed(input.parameters)
+			? input.parameters.every(
+					(item) => typeof item !== 'string' || /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+				)
+			: typeof input.parameters !== 'string' ||
+				/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(input.parameters)) &&
+		(typeof input.body !== 'string' ||
+			['()', '_', 'self'].includes(input.body) ||
+			/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(input.body)) &&
+		(input.statements ?? []).every(
+			(item) =>
+				typeof item !== 'string' ||
+				['()', ';', 'self'].includes(item) ||
+				/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
+		) &&
+		(typeof input.trailingExpression !== 'string' ||
+			['()', 'self'].includes(input.trailingExpression) ||
+			/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(input.trailingExpression)) &&
+		input.parameters !== undefined &&
+		input.returnType === undefined
 	)
-		return expression_lambda$369(input);
-	return expression_lambda$370(input);
+		return expression_lambda$370(input);
+	return expression_lambda$369(input);
 };
 const expression_member = (input: PathInput<RustMap, 'expression.member'>) => {
 	return expression_member$308(input);
