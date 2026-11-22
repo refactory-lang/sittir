@@ -234,7 +234,8 @@ impl<G: RecordGrammar> Engine<G> {
     ///
     /// # Errors
     ///
-    /// A name no read's record holds.
+    /// A name no read's record holds, and a name of another source than the
+    /// first's (`Records::address_index`).
     pub fn plan_holds_of(&self, addresses: &[crate::query::NamedAddress], plan: &crate::query::Plan) -> Result<Vec<bool>, String> {
         let Some(first) = addresses.first() else { return Ok(Vec::new()) };
         let built = self.written().built();

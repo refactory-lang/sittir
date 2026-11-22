@@ -1359,11 +1359,17 @@ impl<'a, G: crate::arena::RecordGrammar> Records<'a, G> {
     ///
     /// # Errors
     ///
-    /// A name no record of the source holds a node of, and a child past its
+    /// A name of another source, whose bytes this call's text does not hold,
+    /// a name no record of the source holds a node of, and a child past its
     /// parent's last.
     pub fn address_index(&self, nodes: &mut Navigation<'_>, address: crate::query::NamedAddress) -> Result<NodeIndex, String> {
         use crate::query::NamedAddress;
-        let index = |name: crate::types::NodeId| self.index_named(name).ok_or_else(|| format!("{name:?} names no node its source's records hold"));
+        let index = |name: crate::types::NodeId| {
+            if crate::arena::RunNodes::source_of(self.built, crate::arena::Address(name.address())).map_err(|e| e.to_string())? != self.source {
+                return Err(format!("{name:?} names a node of another source than the one this call reads"));
+            }
+            self.index_named(name).ok_or_else(|| format!("{name:?} names no node its source's records hold"))
+        };
         match address {
             NamedAddress::Own(name) => index(name),
             NamedAddress::Child { parent, index: child } => {

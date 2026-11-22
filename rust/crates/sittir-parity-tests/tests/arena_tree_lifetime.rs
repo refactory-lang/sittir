@@ -546,3 +546,22 @@ fn a_record_kept_past_its_root_s_release_keeps_its_read_s_entry_starts_until_its
     engine.written().release(Held::Record(deepest), false).expect("the kept record's release");
     assert_eq!(engine.written().built().allocated_bytes(), before, "the starts go with the last record of the read");
 }
+
+/// A plan call reads the nodes of one source: a name of another read is
+/// refused, whichever comes first, and never read against the first's text.
+#[test]
+fn a_plan_call_refuses_a_name_of_another_source() {
+    use sittir_core::query::{NamedAddress, Plan, PlanSpec};
+    use sittir_core::types::{ChildPosition, NodeId};
+    let mut engine = Engine::new(sittir_rust::RustGrammar, sittir_rust::render::options::defaults()).expect("an engine");
+    let mut read = |source: &str| engine.parse_records::<sittir_rust::render::AnyNode>(source).expect("a parse").root.expect("a root record");
+    let (first, second) = (read("fn a() {}\n"), read("\n\n// a source of other bytes\nfn second() {}\n"));
+    let plan = Plan::compile(PlanSpec::And { of: Vec::new() }).expect("a plan");
+    let own = |at: sittir_core::arena::Address| NamedAddress::Own(NodeId::record(at.0));
+    assert_eq!(engine.plan_holds_of(&[own(first), own(first)], &plan), Ok(vec![true, true]), "names of one source answer");
+    let child = NamedAddress::Child { parent: NodeId::record(second.0), index: ChildPosition::new(0) };
+    for names in [[own(first), own(second)], [own(second), own(first)], [own(first), child]] {
+        let refused = engine.plan_holds_of(&names, &plan).expect_err("a name of another source");
+        assert!(refused.contains("another source"), "{refused}");
+    }
+}
