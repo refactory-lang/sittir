@@ -432,7 +432,7 @@ export default grammar(enrich(base), wire({
 		},
 
 		finally_clause: {
-			2: field('block')
+			2: field('body')
 		},
 
 		generic_type: {
@@ -586,7 +586,7 @@ export default grammar(enrich(base), wire({
 					field('pattern', choice($.case_pattern, $.case_pattern_list)),
 					optional(field('guard', $.if_clause)),
 					':',
-					field('consequence', $._suite)
+					field('body', $._suite)
 				)
 		),
 		// See docs/python-grammar-sittir-glossary.md::tuple

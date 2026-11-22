@@ -3149,17 +3149,6 @@
       ],
       "slots": [
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
-          "path": [
-            {
-              "owner": "catch_clause",
-              "slot": "body"
-            }
-          ]
-        },
-        {
           "name": "name",
           "route": "nested",
           "via": [
@@ -3206,6 +3195,31 @@
             {
               "owner": "catch_clause_group",
               "slot": "type"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "statement_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "statement_block",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "catch_clause",
+              "slot": "body"
+            },
+            {
+              "owner": "statement_block",
+              "slot": "statements"
             }
           ]
         }
@@ -5469,13 +5483,27 @@
       ],
       "slots": [
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "statement_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "statement_block",
+          "slot": "statements",
+          "multiple": false,
           "path": [
             {
               "owner": "finally_clause",
               "slot": "body"
+            },
+            {
+              "owner": "statement_block",
+              "slot": "statements"
             }
           ]
         }
@@ -13833,17 +13861,6 @@
       ],
       "slots": [
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
-          "path": [
-            {
-              "owner": "try_statement",
-              "slot": "body"
-            }
-          ]
-        },
-        {
           "name": "handlers",
           "route": "slot",
           "slot": "handlers",
@@ -13862,6 +13879,31 @@
             {
               "owner": "try_statement",
               "slot": "finalizer"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "statement_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "statement_block",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "try_statement",
+              "slot": "body"
+            },
+            {
+              "owner": "statement_block",
+              "slot": "statements"
             }
           ]
         }

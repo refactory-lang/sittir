@@ -16,4 +16,9 @@ export namespace Clause {
 		>;
 		readonly statements?: Slot<G, K, 'statements', V.Statement.Any<G>>[];
 	}
+	export namespace Case {
+		export interface Match<G extends GrammarMap, K extends Under<'clause.case.match'> = 'clause.case.match'> {
+			readonly statements?: Slot<G, K, 'statements', V.Statement.Any<G>>[];
+		}
+	}
 }

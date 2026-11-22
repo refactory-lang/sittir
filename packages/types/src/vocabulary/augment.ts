@@ -260,6 +260,12 @@ declare module './clause.ts' {
 				K extends gate.Under<'clause.case.match'> = 'clause.case.match'
 			> extends matchExpressions.Clause.Case.Match<G, K> {
 				readonly attributes?: gate.In<G, features.Attributes, attributes.Clause.Case.Match<G, K>['attributes']>;
+				readonly body?: gate.In<G, features.RustExpressions, rustExpressions.Clause.Case.Match<G, K>['body']>;
+				readonly statements?: gate.In<
+					G,
+					features.PythonStatements,
+					pythonStatements.Clause.Case.Match<G, K>['statements']
+				>;
 			}
 			interface Switch<
 				G extends GrammarMap,

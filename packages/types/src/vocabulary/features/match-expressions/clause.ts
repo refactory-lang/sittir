@@ -6,7 +6,6 @@ export namespace Clause {
 		export interface Match<G extends GrammarMap, K extends Under<'clause.case.match'> = 'clause.case.match'> extends SubKindOf<V.Clause.Case<G, K>> {
 			// claimed by pr
 			readonly $path: K;
-			readonly body: Slot<G, K, 'body', V.Statement.Any<G>>;
 			readonly guard?: Slot<G, K, 'guard', V.Expression.AnyWithLet<G>>;
 			readonly pattern: Slot<
 				G,

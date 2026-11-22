@@ -221,6 +221,7 @@
 (enum_declaration body: (enum_body elements: (_) @members))
 (class body: (class_body members: (_) @members))
 (try_statement handler: (_)? @handlers) @statement.try
+(try_statement body: (statement_block statements: (_) @statements))
 (throw_statement) @statement.throw
 (import_statement) @statement.import
 (import_statement type_keyword: "type" @typeOnly)
@@ -261,7 +262,9 @@
 (catch_clause) @clause.catch
 (catch_clause (catch_clause_group parameter: (_) @name))
 (catch_clause (catch_clause_group type: (_) @type))
+(catch_clause body: (statement_block statements: (_) @statements))
 (finally_clause) @clause.finally
+(finally_clause body: (statement_block statements: (_) @statements))
 (switch_case) @clause.case.switch
 (switch_default) @clause.case.default
 (switch_case body: (_) @statements)

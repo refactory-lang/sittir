@@ -66,6 +66,9 @@
 (while_statement body: (_) @dropped)
 (return_statement (_)? @expression) @statement.return
 (try_statement (except_clause)* @handlers (else_clause)? @alternative (finally_clause)? @finalizer) @statement.try
+(try_statement body: (suite_block (block statements: (_) @statements)))
+(try_statement body: (suite_inline elements: (_) @statements))
+(try_statement body: (_) @dropped)
 (raise_statement (_)? @expression) @statement.raise
 (import_statement) @statement.import
 (import_from_statement) @statement.import.from
@@ -77,6 +80,9 @@
 (subjects "," @trailingComma .)
 ((subjects (_) @element) (#set! reason "a subject list with a comma reads as a tuple; one subject without one reads as itself"))
 (with_statement) @statement.resource
+(with_statement body: (suite_block (block statements: (_) @statements)))
+(with_statement body: (suite_inline elements: (_) @statements))
+(with_statement body: (_) @dropped)
 (assert_statement) @statement.assert
 (delete_statement) @statement.delete
 (pass_statement) @statement.pass
@@ -112,12 +118,18 @@
 (except_clause (except_clause_exception (except_clause_exception_as value: (_) @type)))
 (except_clause (except_clause_exception (except_clause_exception_as alias: (_) @name)))
 (except_clause (except_clause_exception (except_clause_exception_list) @type))
-(except_clause [(suite_block) (suite_empty) (suite_inline)] @body)
+(except_clause body: (suite_block (block statements: (_) @statements)))
+(except_clause body: (suite_inline elements: (_) @statements))
+(except_clause body: (_) @dropped)
 (finally_clause) @clause.finally
-(finally_clause block: (_) @body)
+(finally_clause body: (suite_block (block statements: (_) @statements)))
+(finally_clause body: (suite_inline elements: (_) @statements))
+(finally_clause body: (_) @dropped)
 (case_clause) @clause.case.match
 (case_clause guard: (if_clause condition: _ @guard))
-(case_clause consequence: _ @body)
+(case_clause body: (suite_block (block statements: (_) @statements)))
+(case_clause body: (suite_inline elements: (_) @statements))
+(case_clause body: (_) @dropped)
 (with_clause with_items: (_)? @items) @clause.resource
 (with_item) @clause.resource.item
 (with_item value: (as_pattern expression: (_) @value))

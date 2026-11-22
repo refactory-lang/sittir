@@ -1760,6 +1760,14 @@ Where clauses: an interface extending `BoundedQuantification` with `'where-claus
 
 The `clause.else_if` node, Python's `elif` clause, claimed by the `p` claim tag. Its `condition` slot holds an expression, identifier, literal or pattern. Its optional `statements` list holds the statements of its suite, indented or inline, as an `else` does.
 
+### `packages/types/src/vocabulary/features/python-statements/clause.ts::Clause::Case::Match`
+
+The match case's slot under Python's statements: an optional `statements` list, the statements of `case p:`'s suite, indented or inline, read and built as an `else` holds its suite. Rust's arm has no `statements`; it keeps its expression in `body`, gated by `rust-expressions`. Python only.
+
+### `packages/types/src/vocabulary/features/python-statements/clause.ts::Clause::Case`
+
+The cases Python's statements add slots to: `Clause.Case.Match`, whose suite holds statements.
+
 ### `packages/types/src/vocabulary/features/python-statements/statement.ts::Statement::Delete`
 
 The `statement.delete` node, Python's `del` statement, claimed by the `p` claim tag. Its `expressions` slot lists the targets to delete, each an expression, identifier, literal or pattern.
@@ -2283,3 +2291,15 @@ The expressions valued blocks add slots to: `Expression.Lambda`, whose block may
 ### `packages/types/src/vocabulary/features/struct-patterns/structs/tuple-structs/pattern.ts::Pattern::Struct::Tuple`
 
 The parenthesized form of a struct pattern, gated by tuple structs: rust's `S(a)`, read apart from the braced `S { a }` that stays `pattern.struct`. It holds the `type` and `fields` of `Pattern.Struct`, and `is.pattern.struct` holds for it. Keeping the two forms on two paths is what lets `S {}` and `S()`, and `S { .. }` and `S(..)`, which mean different things, each rebuild as themselves. Python's `class_pattern` stays `pattern.struct`, since its positional and keyword fields share one form. Rust only.
+
+### `packages/types/src/vocabulary/features/rust-expressions/clause.ts::Clause::Case::Match`
+
+The match case's slot under rust's expressions: `body`, the value of `p => expr`, which stays one slot as a lambda's expression body does. It is optional here so that a language without this feature is not asked for it, and rust's map requires it. Python's case has no `body`; it holds `statements`, gated by `python-statements`. Rust only.
+
+### `packages/types/src/vocabulary/features/rust-expressions/clause.ts::Clause::Case`
+
+The cases rust's expressions add slots to: `Clause.Case.Match`, whose arm holds an expression.
+
+### `packages/types/src/vocabulary/features/rust-expressions/clause.ts::Clause`
+
+The clauses rust's expressions add slots to: `Clause.Case`.

@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "00202958854d9788140530c0960650ba5ed2effd3c18faa47817bccb587449a0";
+export const hash = "ca09b25383037feba1f2cde5ed5425a5d9aadaf6a5499549f97543c96d161c53";
 
 export const renames = {
 	module: "file",
@@ -109,7 +109,7 @@ export default grammar(
 			assignment_type: { "0": field("name") },
 			assignment_typed: { "0": field("name"), "1/3": field("value") },
 			attribute: { "2": field("property") },
-			case_clause: [{ "4": field("body") }, { "1/0/1": alias("bare_tuple_pattern") }],
+			case_clause: { "1/0/1": alias("bare_tuple_pattern") },
 			case_pattern_list: { "0/0": field("elements"), "1/0/0": field("elements"), "2/0": field("elements") },
 			class_definition: [{ "3": field("bases") }, { "body:/(suite_block as suite_block_class_declaration)/(block_statement as block_class_declaration)/(function_definition)": ($, member) => choice(alias(member, $.method_declaration), alias(edit(copy("function_definition"), { "name:": alias("__init__", $.identifier) }), $.constructor_declaration)), "body:/(suite_block as suite_block_class_declaration)/(block_statement as block_class_declaration)/(decorated_definition as decorated_definition_class_declaration)/definition:/(function_definition)": ($, member) => choice(alias(member, $.method_declaration), alias(edit(copy("function_definition"), { "name:": alias("__init__", $.identifier) }), $.constructor_declaration)) }],
 			class_pattern: [{ "0": field("type"), "2": field("fields") }, { "0/0": alias("qualified_identifier") }],
@@ -120,7 +120,6 @@ export default grammar(
 			expression: { "-5": alias("lambda_expression") },
 			expression_list: { "0": field("elements"), "1/1/0/0/1": field("elements") },
 			expression_statement_tuple: { "0": field("elements"), "1/0/1": field("elements") },
-			finally_clause: { "2": field("body") },
 			import_from_statement: { "1/0/1": alias("qualified_identifier") },
 			keyword_pattern: { "2": field("pattern") },
 			list: { "1/0": field("elements") },

@@ -232,9 +232,9 @@ export function matchInSwitch(c: Clause.Case.Match<Core>): Statement.Switch<Core
 	return [c];
 }
 
-// A handler is one kind in every language: it names what it binds and the type it catches, and holds its body.
-export function handler(name: Identifier.Any<Core>, type: Type.Any<Core>, body: Clause.Catch<Core>['body']): Clause.Catch<Core> {
-	return { $path: 'clause.catch', name, type, body };
+// A handler is one kind in every language: it names what it binds and the type it catches, and holds its statements.
+export function handler(name: Identifier.Any<Core>, type: Type.Any<Core>, statements: NonNullable<Clause.Catch<Core>['statements']>): Clause.Catch<Core> {
+	return { $path: 'clause.catch', name, type, statements };
 }
 export function handlerException(c: Clause.Catch<Core>): unknown {
 	// @ts-expect-error what a handler catches is its `type`, in every language

@@ -120,8 +120,7 @@ describe('the portable build through the strict table', () => {
 	});
 
 	it("builds a catch parameter at the key its clause takes flattened, and an exported declaration without a default", () => {
-		const block = { $path: 'statement.block', statements: [] };
-		expect(render(runtime.build({ $path: 'clause.catch', name: 'e', body: block }))).toBe('catch (e) {}');
+		expect(render(runtime.build({ $path: 'clause.catch', name: 'e', statements: [] }))).toBe('catch (e) {}');
 		const declaration = { $path: 'declaration.function', name: 'f', parameters: [], statements: [] };
 		expect(render(runtime.build({ $path: 'statement.export', declaration }))).toBe('export function f() {}');
 	});

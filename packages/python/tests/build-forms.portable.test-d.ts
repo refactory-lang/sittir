@@ -33,10 +33,10 @@ export const constParameters: In<'declaration.type_parameter.parameters'> = { $p
 
 export const textName: In<'declaration.constant'> = { $path: 'declaration.constant', name: 'x', value };
 
-declare const body: At<'clause.case.match'>['body'];
-export const wildcard: In<'clause.case.match'> = { $path: 'clause.case.match', pattern: '_', body };
+declare const caseStatements: NonNullable<At<'clause.case.match'>['statements']>;
+export const wildcard: In<'clause.case.match'> = { $path: 'clause.case.match', pattern: '_', statements: caseStatements };
 // a bare number in a pattern is a number pattern, never a kind id
-export const numberPattern: In<'clause.case.match'> = { $path: 'clause.case.match', pattern: 1, body };
+export const numberPattern: In<'clause.case.match'> = { $path: 'clause.case.match', pattern: 1, statements: caseStatements };
 
 declare const functionName: At<'declaration.function'>['name'];
 declare const statement: At<'statement.empty'>;
@@ -46,12 +46,11 @@ export const bareStatements: In<'declaration.function'> = { $path: 'declaration.
 // @ts-expect-error a function holds its statements, never a body
 export const functionBody: In<'declaration.function'> = { $path: 'declaration.function', name: functionName, parameters: [], body: [statement] };
 
-declare const block: At<'clause.catch'>['body'];
-export const blockBody: In<'clause.catch'> = { $path: 'clause.catch', body: block };
-// @ts-expect-error a body is the block of its statements, never a bare statement
-export const bareBody: In<'clause.catch'> = { $path: 'clause.catch', body: statement };
-// @ts-expect-error a body is one block, never a list of statements
-export const listBody: In<'clause.catch'> = { $path: 'clause.catch', body: [statement] };
+export const catchStatements: In<'clause.catch'> = { $path: 'clause.catch', statements: [statement] };
+// @ts-expect-error a catch's statements are a list, never a bare statement
+export const bareCatchStatements: In<'clause.catch'> = { $path: 'clause.catch', statements: statement };
+// @ts-expect-error a catch holds its statements, never a body
+export const catchBody: In<'clause.catch'> = { $path: 'clause.catch', body: [statement] };
 
 declare const globalName: At<'statement.global'>['names'][number];
 export const oneGlobal: In<'statement.global'> = { $path: 'statement.global', names: [globalName] };

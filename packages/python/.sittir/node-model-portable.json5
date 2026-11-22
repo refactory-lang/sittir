@@ -1545,17 +1545,6 @@
           ]
         },
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
-          "path": [
-            {
-              "owner": "case_clause",
-              "slot": "body"
-            }
-          ]
-        },
-        {
           "name": "guard",
           "route": "nested",
           "via": [
@@ -1577,6 +1566,66 @@
             {
               "owner": "if_clause",
               "slot": "condition"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": "body",
+              "kind": "suite_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "case_clause",
+              "slot": "body"
+            },
+            {
+              "owner": "suite_block",
+              "slot": "block"
+            },
+            {
+              "owner": "block",
+              "slot": "statements"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "block_statement",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block_statement",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "case_clause",
+              "slot": "body"
+            },
+            {
+              "owner": "suite_inline",
+              "slot": "statements"
             }
           ]
         }
@@ -3738,17 +3787,6 @@
           "flag": true
         },
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
-          "path": [
-            {
-              "owner": "except_clause",
-              "slot": "body"
-            }
-          ]
-        },
-        {
           "name": "type",
           "route": "nested",
           "via": [
@@ -3840,6 +3878,66 @@
             {
               "owner": "except_clause_exception",
               "slot": "content"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": "body",
+              "kind": "suite_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "except_clause",
+              "slot": "body"
+            },
+            {
+              "owner": "suite_block",
+              "slot": "block"
+            },
+            {
+              "owner": "block",
+              "slot": "statements"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "block_statement",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block_statement",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "except_clause",
+              "slot": "body"
+            },
+            {
+              "owner": "suite_inline",
+              "slot": "statements"
             }
           ]
         }
@@ -4051,13 +4149,62 @@
       ],
       "slots": [
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": "body",
+              "kind": "suite_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block",
+          "slot": "statements",
+          "multiple": false,
           "path": [
             {
               "owner": "finally_clause",
               "slot": "body"
+            },
+            {
+              "owner": "suite_block",
+              "slot": "block"
+            },
+            {
+              "owner": "block",
+              "slot": "statements"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "block_statement",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block_statement",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "finally_clause",
+              "slot": "body"
+            },
+            {
+              "owner": "suite_inline",
+              "slot": "statements"
             }
           ]
         }
@@ -7875,17 +8022,6 @@
       ],
       "slots": [
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
-          "path": [
-            {
-              "owner": "try_statement",
-              "slot": "body"
-            }
-          ]
-        },
-        {
           "name": "handlers",
           "route": "slot",
           "slot": "handlers",
@@ -7915,6 +8051,66 @@
             {
               "owner": "try_statement",
               "slot": "finalizer"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": "body",
+              "kind": "suite_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "try_statement",
+              "slot": "body"
+            },
+            {
+              "owner": "suite_block",
+              "slot": "block"
+            },
+            {
+              "owner": "block",
+              "slot": "statements"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "block_statement",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block_statement",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "try_statement",
+              "slot": "body"
+            },
+            {
+              "owner": "suite_inline",
+              "slot": "statements"
             }
           ]
         }
@@ -8812,13 +9008,62 @@
           ]
         },
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": "body",
+              "kind": "suite_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block",
+          "slot": "statements",
+          "multiple": false,
           "path": [
             {
               "owner": "with_statement",
               "slot": "body"
+            },
+            {
+              "owner": "suite_block",
+              "slot": "block"
+            },
+            {
+              "owner": "block",
+              "slot": "statements"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "block_statement",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block_statement",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "with_statement",
+              "slot": "body"
+            },
+            {
+              "owner": "suite_inline",
+              "slot": "statements"
             }
           ]
         }

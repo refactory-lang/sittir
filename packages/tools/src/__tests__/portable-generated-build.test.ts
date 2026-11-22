@@ -354,6 +354,43 @@ describe("a struct pattern, whose braces and parentheses are two paths", () => {
 	});
 });
 
+describe('try, catch, finally, with and a python case hold statements', () => {
+	it.each([
+		['python', 'try:\n    a\nfinally:\n    b\n', 'statement.try', 1, 'try:\n    a\nfinally:\n    b\n', true],
+		['python', 'try: a\nfinally: b\n', 'statement.try', 1, 'try:\n    a\nfinally:\n    b\n', true],
+		['python', 'try:\n    a\nexcept E as e: b\n', 'clause.catch', 1, 'except E as e:\n    b\n', false],
+		['python', 'try:\n    a\nfinally:\n    b\n', 'clause.finally', 1, 'finally:\n    b\n', true],
+		['python', 'with x as y:\n    a\n', 'statement.resource', 1, 'with x as y:\n    a\n', false],
+		['python', 'with x: a\n', 'statement.resource', 1, 'with x:\n    a\n', false],
+		['python', 'with x:\n', 'statement.resource', 0, 'with x:\n', false],
+		['python', 'match x:\n    case 1:\n        a\n', 'clause.case.match', 1, 'case 1:\n    a\n', true],
+		['python', 'match x:\n    case 1: a\n', 'clause.case.match', 1, 'case 1:\n    a\n', true],
+		['typescript', 'try { a(); b(); } finally {}\n', 'statement.try', 2, 'try {\n  a();\n  b();\n} finally {}', false],
+		['typescript', 'try {} catch {} finally {}\n', 'statement.try', 0, 'try {} catch {} finally {}', false],
+		['typescript', 'try { a(); } catch (e) { b(); }\n', 'clause.catch', 1, 'catch (e) {\n  b();\n}', false],
+		['typescript', 'try {} catch {}\n', 'clause.catch', 0, 'catch {}', false],
+		['typescript', 'try {} finally { c(); }\n', 'clause.finally', 1, 'finally {\n  c();\n}', true],
+		['typescript', 'try {} finally {}\n', 'clause.finally', 0, 'finally {}', true]
+	] as const)('%s: %j reads %s with its statements and builds them back', async (grammar, source, path, count, text, generates) => {
+		const structure = (await readAt(grammar, source, path)) as PortableStructure & { readonly statements: readonly unknown[] };
+		expect(structure).not.toHaveProperty('body');
+		expect(structure.statements).toHaveLength(count);
+		using engine = await createEngine(await languageByName(grammar), { api: 'strict' });
+		const runtime = await portableRuntime(engine);
+		expect(engine.render(runtime.build(structure) as never).toString()).toBe(text);
+		if (generates) {
+			const generated = scopeBuilders(engine, (await generatedBuild(grammar)) as object);
+			expect(engine.render((functionAt(generated, path) as PathFunction)(structure) as never).toString()).toBe(text);
+		}
+	});
+
+	it("rust: a match arm keeps its expression in body and holds no statements", async () => {
+		const arm = await readAt('rust', 'fn f() { match x { 1 => a, } }\n', 'clause.case.match');
+		expect(arm).toHaveProperty('body');
+		expect(arm).not.toHaveProperty('statements');
+	});
+});
+
 const bothBuilds = async (grammar: (typeof GRAMMARS)[number], structure: PortableStructure): Promise<readonly [interpreted: string, generated: string]> => {
 	using engine = await createEngine(await languageByName(grammar), { api: 'strict' });
 	const runtime = await portableRuntime(engine);
