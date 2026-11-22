@@ -135,11 +135,33 @@ type annotation.
 ### Shape 2 — an optional group splices onto the parent
 
 A group that occurs at most once in its seat has no name worth exposing. Its
-keys become keys of the parent's config, and the parent's factory carries
-two overloads per group, both keys or neither (per arm, when the group has
-arms). The overlay partitions the parent's keys, builds the group into the
-seat when its keys are present and leaves the seat empty otherwise. The
-co-optional binding is a type fact; nothing is checked at runtime.
+keys become keys of the parent's config, and the parent's argument row is a
+union per group, both keys or neither (per arm, when the group has arms). The
+overlay partitions the parent's keys, builds the group into the seat when its
+keys are present and leaves the seat empty otherwise. The co-optional binding
+is a type fact; nothing is checked at runtime.
+
+The seat and the keys exclude each other (the user, 2026-11-21). A config gives
+the group whole under its seat, or its keys, or neither, in the strict and the
+loose input alike, so `catchClause({ body, catchClauseGroup: g, parameter })`
+is a type error.
+
+An optional branch that binds several slots with no group is typed the same way
+(the user, 2026-11-21). Four float kinds spell their exponent so: typescript's
+`number_float_point` and `number_float_leading_point`, and python's `float_point`
+and `float_leading_point`, hold the marker, sign and digits of `1.5e+3` in one
+optional branch. The builder's argument row is a union of tuples derived from
+that branch, so a config and its options are checked together:
+
+```ts
+type BuildArgs =
+	| [config: Base & { exponent: E; exponentSign?: S }, options?: { marker?: 'e' | 'E' }]
+	| [config: Base & { exponent?: never; exponentSign?: never }];
+```
+
+`{ integer: 1, exponentSign: '+' }` and `{ integer: 1 }, { marker: 'E' }` are type
+errors. The row is a union of tuples and not a set of function overloads, because
+`ArgsOf` and `Parameters` read only an overload's last signature.
 
 A mandatory single group is the degenerate case with one overload. Today's
 forwarded parent already accepts the group's Config that way
