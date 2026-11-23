@@ -232,13 +232,45 @@ function collectGaps(
 	return { gaps, noExtrasLists };
 }
 
-function holdsNoExtrasList(rule: RenderRule, side: 'first' | 'last', config: RenderRulesConfig): boolean {
+function holdsNoExtrasList(rule: RenderRule, side: 'first' | 'last', lists: ReadonlySet<RuleId> | undefined): boolean {
 	const r = bag(rule);
-	if (isRepeated(rule)) return r.id !== undefined && config.noExtrasLists?.has(r.id) === true;
-	if (r.content !== undefined) return holdsNoExtrasList(r.content, side, config);
+	if (isRepeated(rule)) return r.id !== undefined && lists?.has(r.id) === true;
+	if (r.content !== undefined) return holdsNoExtrasList(r.content, side, lists);
 	if (r.members === undefined || r.members.length === 0) return false;
-	if (r.type === CHOICE) return r.members.some((member) => holdsNoExtrasList(member, side, config));
-	return r.type === SEQ && holdsNoExtrasList(r.members[side === 'first' ? 0 : r.members.length - 1]!, side, config);
+	if (r.type === CHOICE) return r.members.some((member) => holdsNoExtrasList(member, side, lists));
+	return r.type === SEQ && holdsNoExtrasList(r.members[side === 'first' ? 0 : r.members.length - 1]!, side, lists);
+}
+
+function edgeChoicesOf(rule: RenderRule, side: 'first' | 'last'): readonly RenderRule[] {
+	const r = bag(rule);
+	if (isRepeated(rule)) return [];
+	if (r.content !== undefined) return edgeChoicesOf(r.content, side);
+	if (r.members === undefined || r.members.length === 0) return [];
+	if (r.type === CHOICE) return [rule, ...r.members.flatMap((member) => edgeChoicesOf(member, side))];
+	return r.type === SEQ ? edgeChoicesOf(r.members[side === 'first' ? 0 : r.members.length - 1]!, side) : [];
+}
+
+export function mixedSeamChoices({ rules, noExtrasLists }: RenderRules): readonly { readonly kind: string; readonly side: SeparatorSide }[] {
+	const mixes = (rule: RenderRule, side: 'first' | 'last'): boolean =>
+		edgeChoicesOf(rule, side).some((choice) => {
+			const arms = bag(choice).members!.map((arm) => holdsNoExtrasList(arm, side, noExtrasLists));
+			return arms.includes(true) && arms.includes(false);
+		});
+	const found = new Map<string, { readonly kind: string; readonly side: SeparatorSide }>();
+	for (const [kind, rule] of Object.entries(rules)) {
+		walker.fold(rule, undefined, (_, r) => {
+			const { type, members } = bag(r);
+			if (type !== SEQ || members === undefined || flanksOf(r) !== undefined) return undefined;
+			for (let i = 1; i < members.length; i++) {
+				const [left, right] = [members[i - 1]!, members[i]!];
+				if (isAnyWhitespaceChoice(left) || isAnyWhitespaceChoice(right)) continue;
+				if (mixes(right, 'first')) found.set(`${kind} before`, { kind, side: 'before' });
+				if (mixes(left, 'last')) found.set(`${kind} after`, { kind, side: 'after' });
+			}
+			return undefined;
+		});
+	}
+	return [...found.values()];
 }
 
 function flankedSlots(gaps: ReadonlyMap<RuleId, Gap>): Map<string, Gap> {
@@ -739,7 +771,7 @@ export function hasArmEdgeSeams(rule: RenderRule, side: 'first' | 'last'): boole
 }
 
 function admitsNoSeam(left: RenderRule, right: RenderRule, config: RenderRulesConfig): boolean {
-	return isImmediateWhenPresent(right, config) || holdsNoExtrasList(left, 'last', config) || holdsNoExtrasList(right, 'first', config);
+	return isImmediateWhenPresent(right, config) || holdsNoExtrasList(left, 'last', config.noExtrasLists) || holdsNoExtrasList(right, 'first', config.noExtrasLists);
 }
 
 function withTokenSeams(rule: RenderRule, kind: string, config: RenderRulesConfig, resolver: DefaultResolver, seams: SeamArms): RenderRule {

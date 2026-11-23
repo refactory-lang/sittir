@@ -6291,6 +6291,14 @@ Whether a render rule has a seam at the first or last edge of its arms.
 
 The seam pass's one question about a boundary: the right member starts immediate, or either member is, or ends at that side in, a list that admits no extras. A boundary answering yes gets no seam and so no option addresses it, because a space there would be content or a parse error. A nested group counts by its edge member, a choice counts if any arm does.
 
+### `packages/codegen/src/compiler/model/render-rules.ts::edgeChoicesOf`
+
+The choices a seam on this side of a rule would sit beside: walking through wrappers and each group's edge member, every choice reached, including one nested in another's arm. A repeated rule ends the walk, since it is a list rather than a choice of arms.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::mixedSeamChoices`
+
+The kind and side of every seam boundary whose neighbour is a choice with some arms holding a list that admits no extras and some not. `admitsNoSeam` answers such a choice for all its arms, so the other arm would lose its seam and could fuse with its neighbour's tokens, and neither answer is right for both. No grammar has this shape, and a test over every grammar fails if one gains it. Normalized rules hold no blank arm, because an optional is a multiplicity on the member, so every arm of a choice counts.
+
 ### `packages/codegen/src/compiler/model/accessor-classes.ts::accessorValueClassOf`
 
 The value class a slot's low-level accessor belongs to: `boolean` for a boolean slot, `flags` for a bitflag slot, `list` for a multiple slot, `choice` for a kind enum or text enum, and `single` otherwise.

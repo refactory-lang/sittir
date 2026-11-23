@@ -6,7 +6,7 @@ import { allGrammars, grammarPackage } from '@sittir/codegen/grammars';
 import { compileGrammar } from '../../codegen/src/compiler/compile.ts';
 import { displayNameOf } from '../../codegen/src/compiler/model/display-name.ts';
 import { ParseOracle } from '../../codegen/src/compiler/model/join-seams/oracle.ts';
-import { spaceRenderRules } from '../../codegen/src/compiler/model/render-rules.ts';
+import { mixedSeamChoices, spaceRenderRules, type RenderRules } from '../../codegen/src/compiler/model/render-rules.ts';
 import { collectKindEntries } from '../../codegen/src/emitters/kind-discriminant.ts';
 import type { ParsedTree } from '../../codegen/src/engine-loader.ts';
 import { languageByName } from '../src/languages.ts';
@@ -78,9 +78,8 @@ const spaceIsTrivia = (oracle: ParseOracle, text: string, at: number, hadError: 
 	return !held;
 };
 
-const stampedLists = (compiled: Awaited<ReturnType<typeof compileGrammar>>): StampedList[] => {
-	const { nodeMap, generatedIdTables } = compiled;
-	const stamped = spaceRenderRules({ nodeMap, kindEntries: collectKindEntries(nodeMap, generatedIdTables) }).noExtrasLists ?? new Set();
+const stampedLists = ({ nodeMap }: Awaited<ReturnType<typeof compileGrammar>>, spaced: RenderRules): StampedList[] => {
+	const stamped = spaced.noExtrasLists ?? new Set();
 	return [...nodeMap.nodes].flatMap(([kind, node]) =>
 		('slots' in node ? node.slots : [])
 			.filter((slot) => slot.sourceRuleIds.some((id) => stamped.has(id)))
@@ -154,8 +153,10 @@ describe.each(allGrammars())('the lists %s stamps as admitting no extras', (gram
 			using tree = oracle.parse(text);
 			expect(spaceIsTrivia(oracle, text, marked.indexOf('§'), tree.root.hasError), `${grammar} control ${JSON.stringify(marked)}`).toBe(true);
 		}
+		const spaced = spaceRenderRules({ nodeMap: compiled.nodeMap, kindEntries: collectKindEntries(compiled.nodeMap, compiled.generatedIdTables) });
+		expect(mixedSeamChoices(spaced).map(({ kind, side }) => `${grammar} ${kind} ${side}: a seam side mixes a list that admits no extras with another arm`)).toEqual([]);
 		const sources = [...(SAMPLES[grammar] ?? []), ...loadCorpusEntries(grammar).map((entry) => entry.source)];
-		expect(failuresIn(grammar, stampedLists(compiled), sources, oracle)).toEqual([]);
+		expect(failuresIn(grammar, stampedLists(compiled, spaced), sources, oracle)).toEqual([]);
 	}, 300_000);
 });
 

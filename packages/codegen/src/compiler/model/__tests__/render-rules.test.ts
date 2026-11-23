@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { DEDENT_TEXT, INDENT_TEXT, spacingLabelOf } from '../../../dsl/primitives/spacing.ts';
 import type { NodeMap } from '../../types.ts';
 import type { RenderRule } from '../../../types/rule.ts';
-import { flanksOf, isSeamChoice, resolveRenderRules, seamChoiceDefault, seamPartOf, seamRenderRules, spaceRenderRules, spacedSeparatorOf, spacingSitesOf } from '../render-rules.ts';
+import { flanksOf, isSeamChoice, mixedSeamChoices, resolveRenderRules, seamChoiceDefault, seamPartOf, seamRenderRules, spaceRenderRules, spacedSeparatorOf, spacingSitesOf } from '../render-rules.ts';
 import { AssembledBranch, AssembledEnum, AssembledKeyword, AssembledSupertype, AssembledPunctuation } from '../node-map.ts';
 import { preference } from '../../../dsl/primitives/preference.ts';
 import { formatPreferencePath } from '../../../dsl/primitives/preference-path.ts';
@@ -671,6 +671,34 @@ describe('seamRenderRules', () => {
 
 		it('keeps the default space beside a list whose gaps may hold extras', () => {
 			expect(seamDefaults(quoted({}))).toEqual({ dquote_after: 'space', dquote_before: 'space' });
+		});
+
+		describe('a seam side that is a choice', () => {
+			const others = sym('other', { id: 'r9', multiplicity: 'array', fieldName: 'others', immediate: true });
+			const mixedIn = (arms: RenderRule): readonly object[] =>
+				mixedSeamChoices(spaceRenderRules({ nodeMap: nodeMapOf({ string: seq(str('"'), arms, str('"')) }, { r8: 'elements', r9: 'others' }), kindEntries }));
+
+			it('names the kind and side where a stamped list shares the choice with another arm', () => {
+				expect(mixedIn(choice(fragments({ immediate: true }), str('x')))).toEqual([
+					{ kind: 'string', side: 'before' },
+					{ kind: 'string', side: 'after' }
+				]);
+			});
+
+			it('names one reached through a nested group', () => {
+				expect(mixedIn(seq(choice(fragments({ immediate: true }), str('x')), str('y')))).toEqual([
+					{ kind: 'string', side: 'before' },
+					{ kind: 'string', side: 'after' }
+				]);
+			});
+
+			it('passes a choice whose arms are all stamped lists', () => {
+				expect(mixedIn(choice(fragments({ immediate: true }), others))).toEqual([]);
+			});
+
+			it('passes a choice holding no stamped list', () => {
+				expect(mixedIn(choice(fragments({}), str('x')))).toEqual([]);
+			});
 		});
 	});
 });
