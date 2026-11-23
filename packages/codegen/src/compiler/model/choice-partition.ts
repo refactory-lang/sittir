@@ -228,7 +228,7 @@ function slotChoiceTextFailure(kind: string, choice: Extract<RenderRule, { type:
 		.map((member) => member as RenderRule)
 		.filter((rule) => !isBlank(rule))
 		.map((rule) => {
-			const kinds = [...new Set(symbolNamesOf(rule).flatMap((name) => concreteKindsOf(name, { nodes: input.nodes as Map<string, AssembledNode> })))];
+			const kinds = rule.type === STRING ? [rule.value] : [...new Set(symbolNamesOf(rule).flatMap((name) => concreteKindsOf(name, { nodes: input.nodes as Map<string, AssembledNode> })))];
 			const written = rule.type === SEQ ? fixedTextsOf(rule) : [];
 			return { kinds, texts: kinds.length === 0 && written.length < 2 ? [] : written };
 		});

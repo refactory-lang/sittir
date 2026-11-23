@@ -36,8 +36,12 @@ describe('a choice its one slot claims', () => {
 		expect(refusals(seq(str('{'), repeat(choice(seq(field('items', sym('name')), str(';')), field('items', sym('number')))), str('}'))).map((failure) => failure.code)).toEqual(['slot-choice-text-lost']);
 	});
 
-	it('refuses an arm with text beside an arm that holds no kind', () => {
-		expect(refusals(seq(str('yield'), choice(seq(str('return'), sym('name')), str('break')))).map((failure) => failure.code)).toEqual(['slot-choice-text-lost']);
+	it('passes an arm with text beside a literal arm, whose value the slot holds', () => {
+		expect(refusals(seq(str('yield'), choice(seq(str('return'), sym('name')), str('break'))))).toEqual([]);
+	});
+
+	it('refuses an arm with text beside a literal spelled as a kind that arm admits', () => {
+		expect(refusals(seq(str('yield'), choice(seq(str('return'), sym('name')), str('name')))).map((failure) => failure.code)).toEqual(['slot-choice-text-lost']);
 	});
 
 	it('passes when each arm with text is identified by the kinds it admits', () => {

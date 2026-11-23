@@ -105,6 +105,19 @@ describe('emitRule — arms whose text before the slot differs, gated on the kin
 	});
 });
 
+describe('emitRule — an arm with text beside a literal the slot holds', () => {
+	const holding = { ...vSlot, values: [{ kind: 'expr', multiplicity: 'single' }, { kind: 'break', value: 'break', multiplicity: 'single' }] };
+	const yieldChoice = { ...(choice(seq(str('return'), v('expr')), str('break')) as object), id: 'v' } as unknown as RenderRule;
+
+	it('writes the text only for the kinds its arm admits (`yield return x`, `yield break`)', () => {
+		expect(shape(emitRule(yieldChoice, ctxWithKinds({ expr: branch('expr') }, { v: holding })))).toEqual([{ if: [['v', ['expr'], ['return']]] }, { slot: 'v' }]);
+	});
+
+	it('leaves a literal the slot does not hold to the other resolutions', () => {
+		expect(emitKindGatedLiterals(yieldChoice as Extract<RenderRule, { type: 'CHOICE' }>, undefined, ctxWithKinds({ expr: branch('expr') }))).toBeUndefined();
+	});
+});
+
 describe('emitRule — a choice between an optional slot and fixed text', () => {
 	it('writes the fixed text when the slot, whose arm is already gated on itself, is absent (`body` or `;`)', () => {
 		const optionalBody = { name: 'body', storageName: 'body', propertyName: 'body', paramName: 'body', values: [{ value: 'x', multiplicity: 'optional' }] };
