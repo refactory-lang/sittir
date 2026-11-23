@@ -323,10 +323,11 @@ impl OpenRun {
         self.numbered = true;
     }
 
-    /// The number `entry` is written under: itself where every entry is
-    /// written, else the written entries before it (`OpenRun::number`).
+    /// The number `entry` is written under: the written entries before it,
+    /// counted by `OpenRun::number`, which every caller runs first.
     fn written_number(&self, entry: usize) -> u32 {
-        if self.numbered { self.numbers[entry] } else { crate::types::narrow(entry) }
+        assert!(self.numbered, "a run's entries are numbered before one is named");
+        self.numbers[entry]
     }
 
     /// The run as the read writes it, compacted in place: the
@@ -850,7 +851,8 @@ impl<'a> Hydration<'a> {
     ///
     /// What reading or writing an item record's header refuses.
     fn set_apart(&mut self, draft: Draft, items: &[Option<Hydrated>]) -> Result<(), ArenaError> {
-        let Some(open) = self.open.iter().rfind(|open| open.at == draft.at) else { return Ok(()) };
+        let Some(open) = self.open.iter_mut().rfind(|open| open.at == draft.at) else { return Ok(()) };
+        open.number();
         let mut apart = Vec::new();
         let mut unsearched = 0;
         let mut before: Option<usize> = None;
