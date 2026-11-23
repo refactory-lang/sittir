@@ -1,6 +1,6 @@
 import { hasBlankArm } from '../compiler/model/site-preferences.ts';
 import { emitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
-import { continuationTriviaKinds, emptyForms, layoutTriviaKinds } from '../compiler/model/trivia.ts';
+import { continuationTriviaKinds, depthTriviaKinds, emptyForms, layoutTriviaKinds, triviaKinds, whitespaceTriviaKinds } from '../compiler/model/trivia.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { AbstractAssembledCompound, AssembledAlias, AssembledList, AssembledNonterminal, isNodeRef, spelledReadOf, storageKindOfRef, storesNodes } from '../compiler/model/node-map.ts';
@@ -805,7 +805,9 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const table = new Map([...rows].map(([member, { row }]) => [member, row]));
 		const views = new Map([...rows].flatMap(([member, { view }]) => (view === undefined ? [] : [[member, view] as const])));
 		const natives = new Map([...rows].flatMap(([member, { native }]) => (native === undefined ? [] : [[member, native] as const])));
-		for (const { kind } of storedTextKinds(this.#nodeMap, this.#kindEntries)) {
+		const unread = new Set([...whitespaceTriviaKinds(this.#nodeMap), ...depthTriviaKinds(this.#nodeMap)]);
+		const extras = [...triviaKinds(this.#nodeMap)].filter((kind) => !unread.has(kind));
+		for (const kind of [...storedTextKinds(this.#nodeMap, this.#kindEntries).map((stored) => stored.kind), ...extras]) {
 			const entry = findKindEntry(this.#kindEntries, kind);
 			if (entry === undefined) continue;
 			const memberName = entry.member;

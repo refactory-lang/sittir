@@ -597,16 +597,17 @@ impl BuiltChunks {
     }
 
     fn release_parsed(&mut self, at: Address, kind: KindId, stack: &mut Vec<Held>, sides: &mut dyn FnMut(Address) -> Vec<Address>) -> Result<(), ArenaError> {
-        let shape: RecordShape = (self.shape)(kind).ok_or(malformed("released record kind", u32::from(kind.0)))?;
         let (mut named, mut runs) = (Vec::new(), Vec::new());
-        parsed_cell_walk(self, at, shape, self.kind_bits, |walked| {
-            match walked {
-                ParsedCell::Run(run) => runs.push(run),
-                ParsedCell::Cell(_, _, Cell::Child { at, .. }) => named.push(at),
-                ParsedCell::Cell(..) => {}
-            }
-            Ok(())
-        })?;
+        if let Some(shape) = (self.shape)(kind) {
+            parsed_cell_walk(self, at, shape, self.kind_bits, |walked| {
+                match walked {
+                    ParsedCell::Run(run) => runs.push(run),
+                    ParsedCell::Cell(_, _, Cell::Child { at, .. }) => named.push(at),
+                    ParsedCell::Cell(..) => {}
+                }
+                Ok(())
+            })?;
+        }
         named.sort_unstable();
         let side = super::borrowed::side_of(self, at)?;
         let run = if side == Address::NONE { None } else { SideRecord::read_facts(self, side)?.1 };

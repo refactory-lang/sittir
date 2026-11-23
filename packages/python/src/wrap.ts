@@ -24093,6 +24093,7 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.LineContinuationNewline]: (d, t) => wrapInteriorLeaf(d, t),
 	[TSKindId.StringFragment]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.EscapeInterpolation]: (d, t) => wrapLeaf(d, t),
+	[TSKindId.LineContinuationNul]: (d, t) => wrapInteriorLeaf(d, t),
 	[TSKindId.Error]: (d, t) => wrapLeaf(d, t)
 };
 
