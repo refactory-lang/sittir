@@ -531,6 +531,24 @@ Run pre-codegen grammar diagnostics
 pnpm exec tsx packages/cli/src/cli.ts tool grammar-diagnostics [options]
 ```
 
+### `tool grammar-rule`
+
+Print one rule of a grammar.json compactly: seq, choice, opt, repeat, field, alias
+
+**Arguments**
+
+- `kind` (required) — Rule name in the grammar.json
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool grammar-rule <kind> [options]
+```
+
 ### `tool hoist-census`
 
 List every holder slot that reads through a wrapper, grouped by wrapper chain
@@ -860,6 +878,39 @@ Census separated-list shapes: flank-carrying (visible-kind hoist) vs flankless (
 pnpm exec tsx packages/cli/src/cli.ts tool separated-lists [options]
 ```
 
+### `tool test-durations`
+
+Per-file durations, the slowest tests and worker-seconds of a vitest JSON report
+
+**Options**
+
+- `--report <path>` — Vitest JSON report (default: .vitest-report.json in the cwd)
+- `--json` — Machine-readable JSON output
+- `--slowest <n>` — Slowest tests shown (default: `10`)
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool test-durations [options]
+```
+
+### `tool test-failures`
+
+Group the failures in a vitest JSON report by error message
+
+**Options**
+
+- `--report <path>` — Vitest JSON report (default: .vitest-report.json in the cwd)
+- `--json` — Machine-readable JSON output
+- `--examples <n>` — Examples shown per group (default: `3`)
+- `--against <path>` — Older vitest JSON report: list new, fixed and unchanged failures by test name
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool test-failures [options]
+```
+
 ### `tool test-history`
 
 Record or show `vitest run` result history (test-history.jsonl)
@@ -876,6 +927,37 @@ Record or show `vitest run` result history (test-history.jsonl)
 
 ```sh
 pnpm exec tsx packages/cli/src/cli.ts tool test-history [n] [options]
+```
+
+### `tool type-errors`
+
+Count the type errors in a type-check log per package, checked against the log's error records
+
+**Options**
+
+- `--log <path>` — Type-check log (tsrs or tsc output)
+- `--json` — Machine-readable JSON output
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool type-errors [options]
+```
+
+### `tool cargo-test-tally`
+
+Tally passed, failed and ignored tests in a cargo test log, per binary and in total, for one storage
+
+**Options**
+
+- `--log <path>` — Cargo test output (stdout and stderr together)
+- `--storage <label>` — The storage the run used, such as object or arena (labels the output only)
+- `--json` — Machine-readable JSON output
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool cargo-test-tally [options]
 ```
 
 ### `tool text-kind-overlap`
