@@ -420,11 +420,11 @@ The arena spec's "A render keeps no table of the nodes it visits" (the maintaine
 **Interfaces:**
 - Consumes Task 2's `RecordShape`, Task 5's edge walk and Task 7's stamps.
 - The render walk names a node by its `NodeId`, its holder and the slot that holds it.
-- `Spans::Met` and `row_sites` go, and `RunTable`, `Table` and `Met` leave the render path. A navigation outside a render keeps only what it uses, for that navigation alone.
+- `Spans::Met` and `row_sites` go. On the render path `RunTable`, `Table` and `Met` hold at most one `Nodes` answer and are emptied before the next, so they keep no entry across a render. A navigation outside a render keeps only what it uses, for that navigation alone.
 - No public item changes.
 
 - [ ] **Step 1: Write the failing tests.**
-  - `a_render_keeps_no_row_per_node`: at a fixed depth, a render's peak heap above its output does not grow with the number of nodes it visits.
+  - `a_render_keeps_no_row_per_node`: at a fixed depth, a plain render's peak heap above its output does not grow with the number of nodes it visits. A template render's growth is the prepare pass's overlay alone, which stays parked (arena plan, "Costed and parked"), and a ceiling that only falls pins it.
   - `a_wide_list_renders_in_linear_run_decodes`: rendering a parsed list of `n` items decodes each run entry at most once.
 - [ ] **Step 2: Run them.** Run `PARITY -- a_render_keeps a_wide_list`. Expected: FAIL while the render builds its table.
 - [ ] **Step 3: Implement.** The walk follows a record's cells and reads a parsed node by its record's address. `Records` holds no row per node for a render, and release builds neither a tree nor a table.
