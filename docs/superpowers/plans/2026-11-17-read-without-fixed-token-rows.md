@@ -360,7 +360,7 @@ The maintainer's rulings (2026-11-17, the spec's Decided list):
   - `depth_moves_agree_without_depth_member_rows`: every parsed node's `depth_move` is equal between the trees on `read_fixtures`.
   - `line_starts_agree_from_the_stamped_bit`: every parsed node's `line_starts_inside_tokens` is equal between the trees.
   - `a_crlf_leaf_followed_by_a_fixed_token_keeps_its_line_start`: typescript `` `a\r\n${b}` `` and python `f"""a\r\n{b}"""`, same assertion.
-- [ ] **Step 2: Run them.** Run `PARITY -- depth_moves line_starts`. Expected: `line_starts_agree_from_the_stamped_bit` FAILS. `depth_moves_agree_without_depth_member_rows` and the CRLF test are guards: a record's stored depth already counts its dropped rows, and the CRLF sources pass before the change.
+- [x] **Step 2: Run them.** Run `PARITY -- depth_moves line_starts`. Expected: `line_starts_agree_from_the_stamped_bit` FAILS. `depth_moves_agree_without_depth_member_rows` and the CRLF test are guards: a record's stored depth already counts its dropped rows, and the CRLF sources pass before the change.
 - [x] **Step 3: Implement both readers.**
   - A row's move is the sum of the `DEPTH` of the records inside it.
   - `line_starts_inside_tokens` pushes a leaf's end when its `abuts_next` is set. Over a run it scans only a row leaf, trivia and an `own_text` record, since a gap between a run's entries holds dropped fixed tokens.

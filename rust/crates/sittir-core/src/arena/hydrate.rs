@@ -1088,10 +1088,7 @@ fn abuts_next(text: &str, kid: &crate::nodes::Kid, node: &crate::tree_sitter::No
     }
     let mut at = *node;
     loop {
-        if let Some(mut next) = at.next_sibling() {
-            while let Some(first) = next.child(0) {
-                next = first;
-            }
+        if let Some(next) = at.next_sibling() {
             return crate::types::Span::of(&next).start == kid.end;
         }
         match at.parent() {
