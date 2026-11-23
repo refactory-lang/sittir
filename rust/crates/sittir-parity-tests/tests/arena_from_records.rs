@@ -225,6 +225,54 @@ fn the_records_answer_every_node_as_the_tree_does() {
     }
 }
 
+/// Over every fixture of `name`, each node's `next` and `previous` read from
+/// its records are its neighbours among its parent's children, and those
+/// children keep the order the tree holds them in: the sibling steps taken.
+fn siblings_follow_the_tree<G: RecordGrammar + Copy, N: HydrateNode + RecordCells>(name: &str, grammar: G, options: fn() -> ResolvedOptions) -> usize {
+    use sittir_core::nodes::Nodes as _;
+    let mut steps = 0;
+    for source in fixture_sources(name) {
+        let tree = parsed(grammar, options(), &source);
+        let mut engine = shaped_engine(grammar, options());
+        let Some(root) = engine.parse_records::<N>(&source).unwrap_or_else(|refusal| panic!("{name} {source:?}: {refusal}")).root else { continue };
+        let built = engine.written().built();
+        let records = sittir_core::engine::Records::over(&engine, &built, root).expect("a tree over the records");
+        let (mut ours, mut theirs) = (records.nodes(), tree.nodes());
+        let mut pending = vec![(NodeIndex::ROOT, NodeIndex::ROOT)];
+        while let Some((run, row)) = pending.pop() {
+            let kids = ours.kids(run);
+            for (at, kid) in kids.iter().enumerate() {
+                let before = at.checked_sub(1).map(|at| kids[at].index);
+                assert_eq!(ours.next(kid.index).map(|next| next.index), kids.get(at + 1).map(|next| next.index), "{name} {source:?}: the next of child {at} of {run}");
+                assert_eq!(ours.previous(kid.index).map(|previous| previous.index), before, "{name} {source:?}: the previous of child {at} of {run}");
+                steps += 1;
+            }
+            if ours.is_unit(run) {
+                continue;
+            }
+            let aligned = sittir_core::arena::aligned_kids(grammar, &mut ours, run, &mut theirs, row);
+            assert!(aligned.held.windows(2).all(|pair| pair[0].1.index < pair[1].1.index), "{name} {source:?}: the children of {run} leave the tree's order");
+            pending.extend(aligned.held.iter().map(|(one, same)| (one.index, same.index)));
+        }
+    }
+    steps
+}
+
+#[test]
+fn a_record_s_siblings_follow_the_tree() {
+    let steps = [
+        ("python", siblings_follow_the_tree::<_, sittir_python::render::AnyNode>("python", sittir_python::PythonGrammar, sittir_python::render::options::defaults)),
+        ("regex", siblings_follow_the_tree::<_, sittir_regex::render::AnyNode>("regex", sittir_regex::RegexGrammar, sittir_regex::render::options::defaults)),
+        ("rust", siblings_follow_the_tree::<_, sittir_rust::render::AnyNode>("rust", sittir_rust::RustGrammar, sittir_rust::render::options::defaults)),
+        ("scm", siblings_follow_the_tree::<_, sittir_scm::render::AnyNode>("scm", sittir_scm::ScmGrammar, sittir_scm::render::options::defaults)),
+        ("typescript", siblings_follow_the_tree::<_, sittir_typescript::render::AnyNode>("typescript", sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults)),
+    ];
+    for (name, steps) in steps {
+        eprintln!("{name}: {steps} sibling steps");
+        assert!(steps > 0, "{name}: its fixtures hold children");
+    }
+}
+
 /// A list's units keep their items around a hole, in the tree's navigation
 /// and in the records', which name each by its site.
 #[test]
