@@ -194,7 +194,7 @@ Every reader takes a fixed token's offsets through navigation's `Kid`, which `Ru
 - **Today.** The re-indent in `SpacingWriter` must not indent a line that starts inside a token. Two cases:
   - a line break inside a token's span: a variable-text leaf such as a template string or a block comment. Those spans are kept;
   - a token ending in a line break, with the next token starting at that offset, such as a string's content followed by its closing quote. Here the next token is often a fixed token.
-- **After.** The second case is a fact the hydration walk knows, since it meets both tokens. It is stamped as one bit on the variable-text leaf: "the next token starts where this one ends". Where the bit sits, on the leaf's row or on its cell, is left to the plan.
+- **After.** The second case is a fact the parse knows. For a leaf ending in a line break, the hydration walk asks the tree for the next token, because a record's side is written before the walk meets that token. The answer is stamped as one bit on the leaf's facts, `NodeFacts::abuts_next`: "the next token starts where this one ends".
   - Testing the source byte after the leaf is not used: it would re-derive with a character class what the parse knew (working standard 3).
   - The census did not count these leaves; the first step counts them.
 - **Proof.** A parity test compares the line starts of every parsed node on every fixture.
