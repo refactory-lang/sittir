@@ -37,6 +37,8 @@ pub struct ReadWriter<'a> {
     open: Option<usize>,
     sourced: u32,
     read_side: Option<Address>,
+    /// The records the walk wrote and no run names: what lay inside a unit.
+    unwritten: Vec<Address>,
 }
 
 /// Where a read's writer took the words of a record.
@@ -50,7 +52,7 @@ enum Taken {
 impl<'a> ReadWriter<'a> {
     /// A writer appending to the chunk `chunks` has open for reads.
     pub fn new(chunks: &'a mut BuiltChunks) -> Self {
-        Self { chunks, spans: Vec::new(), open: None, sourced: 0, read_side: None }
+        Self { chunks, spans: Vec::new(), open: None, sourced: 0, read_side: None, unwritten: Vec::new() }
     }
 
     /// The addresses the writer's records lie in, one range for each run of
@@ -89,8 +91,17 @@ impl<'a> ReadWriter<'a> {
             self.chunks.hold_more(read, self.sourced)?;
             self.chunks.release(super::count::Held::Side(read), false, &mut |_| Vec::new())?;
         }
+        for record in self.unwritten {
+            self.chunks.release(super::count::Held::Record(record), false, &mut |_| Vec::new())?;
+        }
         self.chunks.release(super::count::Held::Text(source), false, &mut |_| Vec::new())?;
         root.map_or(Ok(()), |root| self.chunks.hand_to_handle(root))
+    }
+
+    /// The record at `at` is named by no run, and is released once the
+    /// read's counts are in (`ReadWriter::finish`).
+    pub(crate) fn leaves_unwritten(&mut self, at: Address) {
+        self.unwritten.push(at);
     }
 
     /// The record of `words` words at `at` among the writer's spans, as

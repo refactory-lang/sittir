@@ -220,6 +220,9 @@ pub trait HydrateInto: RecordSpace {
     /// The side record at `at` is the read's own: its spans and entry
     /// starts, which its source names (`BuiltChunks::name_read_side`).
     fn keeps_read_side(&mut self, at: Address);
+
+    /// The record at `at`, which lay inside a unit, is named by no run.
+    fn leaves_unwritten(&mut self, at: Address);
 }
 
 impl HydrateInto for super::ReadWriter<'_> {
@@ -233,6 +236,10 @@ impl HydrateInto for super::ReadWriter<'_> {
 
     fn keeps_read_side(&mut self, at: Address) {
         super::ReadWriter::keeps_read_side(self, at);
+    }
+
+    fn leaves_unwritten(&mut self, at: Address) {
+        super::ReadWriter::leaves_unwritten(self, at);
     }
 }
 
@@ -294,7 +301,7 @@ impl OpenRun {
 
     /// Whether the entry at `entry` is written to the run.
     fn writes(&self, entry: usize) -> bool {
-        self.beside[entry].kept || matches!(self.entries[entry], RunEntry::Record { .. })
+        self.beside[entry].kept
     }
 
     /// Counts the written entries before each entry, once the entries it
@@ -1052,6 +1059,13 @@ impl<'a> Hydration<'a> {
                 if parent.is_none() {
                     let read = SideRecord { spans: self.tree.spans(), starts: self.starts.take().map(sorted), ..SideRecord::default() }.write_in(&mut *self.tree)?;
                     self.tree.keeps_read_side(read);
+                }
+                for at in 0..run.entries.len() {
+                    if let RunEntry::Record { at: record, .. } = run.entries[at] {
+                        if !run.writes(at) {
+                            self.tree.leaves_unwritten(record);
+                        }
+                    }
                 }
                 let entries = run.written_run();
                 let record = SideRecord { parent, content, held_by_error, node: run.facts, source: self.source.map(|source| source.0), depth: run.depth, run: entries, ..side.clone() };
