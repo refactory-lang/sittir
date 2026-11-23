@@ -643,7 +643,7 @@ impl<'a> Hydration<'a> {
     /// Tells the hydration the node `at` the walk about to draft a record
     /// stands on, `node`.
     pub fn node(&mut self, at: &crate::nodes::Kid, node: &crate::tree_sitter::Node<'_>) {
-        self.entering = Some((at.index, facts_of(at, node)));
+        self.entering = Some((at.index, facts_of(self.text, at, node)));
     }
 
     /// Writes the record of the extra `kid` the cursor stands on, read whole
@@ -873,7 +873,7 @@ impl<'a> Hydration<'a> {
         let node = cursor.node();
         let kid = crate::nodes::Kid::of(&node, crate::read::index_of(cursor), crate::read::field_id(cursor));
         self.leave_errors(kid.index.get())?;
-        let facts = facts_of(&kid, &node);
+        let facts = facts_of(self.text, &kid, &node);
         let depth = self.depth_of(kid.grammar);
         let stamped = |stamp: Stamp| crate::read::stamp(facts.kind, facts.display(), stamp.0, stamp.1);
         let aside = kid.entry();
@@ -1080,8 +1080,29 @@ fn sorted(mut starts: Vec<u32>) -> Vec<u32> {
 }
 
 /// What navigation reads of `node`, `kid` its facts.
-fn facts_of(kid: &crate::nodes::Kid, node: &crate::tree_sitter::Node<'_>) -> NodeFacts {
-    NodeFacts::of(kid, node.is_missing(), node.has_error() || node.is_missing() || kid.error())
+/// Whether the token `kid` ends in a line break with the next token of the
+/// tree starting at its end.
+fn abuts_next(text: &str, kid: &crate::nodes::Kid, node: &crate::tree_sitter::Node<'_>) -> bool {
+    if kid.count != 1 && !kid.entry() || kid.end == kid.start || text.as_bytes().get(kid.end as usize - 1) != Some(&b'\n') {
+        return false;
+    }
+    let mut at = *node;
+    loop {
+        if let Some(mut next) = at.next_sibling() {
+            while let Some(first) = next.child(0) {
+                next = first;
+            }
+            return crate::types::Span::of(&next).start == kid.end;
+        }
+        match at.parent() {
+            Some(parent) => at = parent,
+            None => return false,
+        }
+    }
+}
+
+fn facts_of(text: &str, kid: &crate::nodes::Kid, node: &crate::tree_sitter::Node<'_>) -> NodeFacts {
+    NodeFacts { abuts_next: abuts_next(text, kid, node), ..NodeFacts::of(kid, node.is_missing(), node.has_error() || node.is_missing() || kid.error()) }
 }
 
 /// The side record of a parsed record read at `row`: where it came from, a
@@ -1295,8 +1316,8 @@ pub fn hydrate_whole<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut Read
 /// # Errors
 ///
 /// What the hydration refuses; what it wrote before stays written.
-pub fn hydrate_error(cursor: &mut TreeCursor<'_>, source: Option<Address>, kinds: crate::trivia_table::SurfaceKinds, into: &mut dyn HydrateInto) -> Result<Option<Address>, HydrateError> {
-    let records = &mut Hydration { source, kinds: Some(kinds), places: true, ..Hydration::new(into) };
+pub fn hydrate_error(cursor: &mut TreeCursor<'_>, text: &str, source: Option<Address>, kinds: crate::trivia_table::SurfaceKinds, into: &mut dyn HydrateInto) -> Result<Option<Address>, HydrateError> {
+    let records = &mut Hydration { source, kinds: Some(kinds), places: true, text, ..Hydration::new(into) };
     crate::read::goto(cursor, NodeIndex::ROOT);
     records.meet_whole(cursor)?;
     let root = records.errors.first().map(|&(draft, ..)| draft.at);

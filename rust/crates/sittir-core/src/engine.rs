@@ -2245,6 +2245,10 @@ impl<G: EngineGrammar, B: Backing<G>> Lookups<'_, G, B> {
     /// (`line_starts_inside_tokens`); `None` past the tree's last node.
     fn line_starts(&mut self, index: NodeIndex) -> Option<Vec<u32>> {
         self.kid(index)?;
+        #[cfg(feature = "arena")]
+        if let Navigation::Runs(runs) = &mut self.nodes {
+            return runs.line_starts(index, self.tree.source()).ok();
+        }
         Some(line_starts_inside_tokens(&mut self.nodes, index, self.tree.source()))
     }
 
@@ -2702,7 +2706,7 @@ impl<G: EngineGrammar> Engine<G> {
         let entry = built.write_source(&crate::arena::source::Source { text: source, breaks_lf: !source.contains('\r') }).map_err(|refusal| refusal.to_string())?;
         let mut writer = crate::arena::ReadWriter::new(&mut built);
         let root = if root.is_error() {
-            let root = crate::arena::hydrate_error(&mut tree.walk(), Some(entry), grammar.surface_kinds(), &mut writer).map_err(|refusal| refusal.describe(&G::kind_name))?;
+            let root = crate::arena::hydrate_error(&mut tree.walk(), source, Some(entry), grammar.surface_kinds(), &mut writer).map_err(|refusal| refusal.describe(&G::kind_name))?;
             writer.finish(entry, root).map_err(|refusal| refusal.to_string())?;
             root
         } else {

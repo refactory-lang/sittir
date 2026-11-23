@@ -10,7 +10,9 @@ use sittir_core::engine::{Backing, Descendant, Engine, EngineGrammar, Records};
 use sittir_core::layout::SlotLayout;
 use sittir_core::options::ResolvedOptions;
 use sittir_core::nodes::Nodes as _;
-use sittir_core::types::{Delimiter, KindId, NodeIndex, Span};
+use sittir_core::render::SourceTable as _;
+use sittir_core::slot::NodeIdOrCoordinate;
+use sittir_core::types::{Delimiter, KindId, NodeId, NodeIndex, Span};
 use sittir_parity_tests::{edge_chains, edge_sources, fixture_sources, named_fixed_pairs, out_of_order_units, parsed, read_fixtures, read_kids, with_layout, MIXED_LISTS};
 
 type ShapeFn = fn(KindId) -> Option<RecordShape>;
@@ -328,6 +330,95 @@ fn a_named_fixed_token_leaves_query_results() {
                 assert_eq!(count(&held, pair.holder), count(&whole, pair.holder), "{name} {pair:?}: the holder is found as often");
             });
         }
+    }
+    each_grammar!(check);
+}
+
+/// Each node with a place in the source that both reads list, by its name
+/// in each.
+fn same_named_nodes<G: RecordGrammar + Copy>(all: &Records<'_, G>, records: &Records<'_, G>) -> Vec<(NodeId, NodeId)> {
+    let mut of_all = read_kids::<G, _>(all).into_iter();
+    read_kids::<G, _>(records)
+        .into_iter()
+        .filter_map(|kid| {
+            let same = of_all.by_ref().find(|other| (other.grammar, other.display, other.start, other.end) == (kid.grammar, kid.display, kid.start, kid.end)).expect("the whole read holds the node");
+            Some((all.node_names()?.name(same.index)?, records.node_names()?.name(kid.index)?))
+        })
+        .collect()
+}
+
+fn line_starts_agree<G: RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions, source: &str) -> usize {
+    let mut compared = 0;
+    over_both_reads::<G, N>(grammar, options, source, |all, records| {
+        let (whole, held) = (all.seating(), records.seating());
+        let mut nodes = all.nodes();
+        let mut of_whole = read_kids::<G, _>(all).into_iter();
+        for kid in read_kids::<G, _>(records) {
+            let same = of_whole.by_ref().find(|other| (other.grammar, other.display, other.start, other.end) == (kid.grammar, kid.display, kid.start, kid.end)).expect("the whole read holds the node");
+            let (Some(of_all), Some(of_records)) = (all.node_names().and_then(|names| names.name(same.index)), records.node_names().and_then(|names| names.name(kid.index))) else { continue };
+            let by_position = sittir_core::engine::line_starts_inside_tokens(&mut nodes, same.index, source);
+            assert_eq!(by_position, whole.line_starts_inside_tokens(NodeIdOrCoordinate::of(of_all)), "{name} {source:?}: the whole read at {kid:?}");
+            assert_eq!(by_position, held.line_starts_inside_tokens(NodeIdOrCoordinate::of(of_records)), "{name} {source:?}: the read without rows at {kid:?}");
+            compared += 1;
+        }
+    });
+    compared
+}
+
+#[test]
+fn depth_moves_agree_without_depth_member_rows() {
+    fn check<G: RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions) {
+        let (mut compared, mut moved) = (0, 0);
+        for source in read_fixtures(name) {
+            over_both_reads::<G, N>(grammar, options, &source, |all, records| {
+                let (whole, held) = (all.seating(), records.seating());
+                for (of_all, of_records) in same_named_nodes(all, records) {
+                    let depth = whole.depth_move(NodeIdOrCoordinate::of(of_all));
+                    assert_eq!(depth, held.depth_move(NodeIdOrCoordinate::of(of_records)), "{name} {source:?}");
+                    compared += 1;
+                    moved += usize::from(depth != 0);
+                }
+            });
+        }
+        eprintln!("{name}: {compared} depth moves equal, {moved} of them nonzero");
+    }
+    each_grammar!(check);
+}
+
+#[test]
+fn line_starts_agree_from_the_stamped_bit() {
+    fn check<G: RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions) {
+        let compared: usize = read_fixtures(name).iter().map(|source| line_starts_agree::<G, N>(name, grammar, options, source)).sum();
+        eprintln!("{name}: {compared} nodes' line starts equal");
+    }
+    each_grammar!(check);
+}
+
+#[test]
+fn a_crlf_leaf_followed_by_a_fixed_token_keeps_its_line_start() {
+    fn check<G: RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions) {
+        let source = match name {
+            "typescript" => "`a\r\n${b}`;\n",
+            "python" => "f\"\"\"a\r\n{b}\"\"\"\n",
+            _ => return,
+        };
+        assert!(line_starts_agree::<G, N>(name, grammar, options, source) > 0, "{name}: the source holds nodes");
+    }
+    each_grammar!(check);
+}
+
+#[test]
+fn a_token_read_by_its_interior_keeps_the_lines_inside_it() {
+    fn check<G: RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions) {
+        let source = match name {
+            "rust" => "fn f() { let c = '\n'; }\n",
+            _ => return,
+        };
+        assert!(line_starts_agree::<G, N>(name, grammar, options, source) > 0, "{name}: the source holds nodes");
+        over_both_reads::<G, N>(grammar, options, source, |all, _| {
+            let nodes = &mut all.nodes();
+            assert!(!sittir_core::engine::line_starts_inside_tokens(nodes, NodeIndex::ROOT, source).is_empty(), "{name}: a line starts inside the token");
+        });
     }
     each_grammar!(check);
 }

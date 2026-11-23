@@ -348,24 +348,26 @@ The maintainer's rulings (2026-11-17, the spec's Decided list):
 ### Task 7: Depth moves and line starts
 
 **Files:**
-- Modify `run_nodes.rs` (`Walk::depth_move`), `engine.rs` (`Lookups::depth_move`, `line_starts_inside_tokens`), `arena/side.rs` and `arena/hydrate.rs`.
+- Modify `run_nodes.rs` (`Walk::line_starts`), `engine.rs` (`Lookups::line_starts`), `arena/side.rs`, `arena/admit.rs`, `arena/hydrate.rs` and the derive.
 - Test: `stage_one_parity.rs`.
 
 **Interfaces:**
 - Produces `NodeFacts::abuts_next: bool`, packed at bit 25, with `FIELD_BITS` 9. The walk sets it on a variable-text leaf whose text ends in `\n` when the next token it meets starts at the leaf's end.
 - `depth_move` finds the node by index.
+- Produces `RecordShape::own_text`: a kind read as one token (`text` or `interior`). With its fixed tokens gone, only such a childless record's span is one token.
 
-- [ ] **Step 1: Write the failing tests.**
+- [x] **Step 1: Write the failing tests.**
   - `depth_moves_agree_without_depth_member_rows`: every parsed node's `depth_move` is equal between the trees on `read_fixtures`.
   - `line_starts_agree_from_the_stamped_bit`: every parsed node's `line_starts_inside_tokens` is equal between the trees.
   - `a_crlf_leaf_followed_by_a_fixed_token_keeps_its_line_start`: typescript `` `a\r\n${b}` `` and python `f"""a\r\n{b}"""`, same assertion.
-- [ ] **Step 2: Run them.** Run `PARITY -- depth_moves line_starts`. Expected: FAIL.
-- [ ] **Step 3: Implement both readers.**
+- [ ] **Step 2: Run them.** Run `PARITY -- depth_moves line_starts`. Expected: `line_starts_agree_from_the_stamped_bit` FAILS. `depth_moves_agree_without_depth_member_rows` and the CRLF test are guards: a record's stored depth already counts its dropped rows, and the CRLF sources pass before the change.
+- [x] **Step 3: Implement both readers.**
   - A row's move is the sum of the `DEPTH` of the records inside it.
-  - `line_starts_inside_tokens` pushes a leaf's end when its `abuts_next` is set.
+  - `line_starts_inside_tokens` pushes a leaf's end when its `abuts_next` is set. Over a run it scans only a row leaf, trivia and an `own_text` record, since a gap between a run's entries holds dropped fixed tokens.
+  - The position-based reader stays for object storage, and the test compares the run's answer with it on the whole read.
   - `record_nodes.rs::field_fits` stays green at 9 bits (max field id 92).
-- [ ] **Step 4: Run.** Run Step 2's command. Expected: PASS.
-- [ ] **Step 5: Commit:** `feat(core): depth moves and line starts read no fixed-token row`.
+- [x] **Step 4: Run.** Run Step 2's command. Expected: PASS.
+- [x] **Step 5: Commit:** `feat(core): depth moves and line starts read no fixed-token row`.
 
 ### Task 8: Placed sides
 

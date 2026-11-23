@@ -59,7 +59,7 @@ pub(crate) mod mask {
 }
 
 /// The bits of a node's packed facts that hold its field id.
-pub const FIELD_BITS: u32 = 10;
+pub const FIELD_BITS: u32 = 9;
 
 /// What a node's packed word holds: its grammar kind in its low 16 bits,
 /// its field id above it, then its flags; the kind it is shown as follows
@@ -69,6 +69,7 @@ mod packed {
     pub const KIND_MASK: u32 = 0xffff;
     pub const FIELD_SHIFT: u32 = 16;
     pub const FIELD_MASK: u32 = (1 << super::FIELD_BITS) - 1;
+    pub const ABUTS_NEXT: u32 = 1 << 25;
     pub const NAMED: u32 = 1 << 26;
     pub const EXTRA: u32 = 1 << 27;
     pub const MISSING: u32 = 1 << 28;
@@ -91,13 +92,16 @@ pub struct NodeFacts {
     pub extra: bool,
     pub missing: bool,
     pub holds_error: bool,
+    /// A token whose text ends in a line break, with the next token starting
+    /// at its end.
+    pub abuts_next: bool,
 }
 
 impl NodeFacts {
     /// The facts of `kid`, `missing` and `holds_error` as its tree answers.
     #[must_use]
     pub fn of(kid: &crate::nodes::Kid, missing: bool, holds_error: bool) -> Self {
-        Self { kind: kid.grammar, field: kid.field, alias: (kid.display != kid.grammar).then_some(kid.display), named: kid.named, extra: kid.extra, missing, holds_error }
+        Self { kind: kid.grammar, field: kid.field, alias: (kid.display != kid.grammar).then_some(kid.display), named: kid.named, extra: kid.extra, missing, holds_error, abuts_next: false }
     }
 
     /// The kind the parser shows the node as.
@@ -120,7 +124,7 @@ impl NodeFacts {
         if field > packed::FIELD_MASK {
             return Err(malformed("node field id", field));
         }
-        let flags = [(self.named, packed::NAMED), (self.extra, packed::EXTRA), (self.missing, packed::MISSING), (self.holds_error, packed::HOLDS_ERROR), (self.alias.is_some(), packed::ALIASED)];
+        let flags = [(self.named, packed::NAMED), (self.extra, packed::EXTRA), (self.missing, packed::MISSING), (self.holds_error, packed::HOLDS_ERROR), (self.abuts_next, packed::ABUTS_NEXT), (self.alias.is_some(), packed::ALIASED)];
         Ok(flags.into_iter().filter(|&(set, _)| set).fold(kind | field << packed::FIELD_SHIFT, |word, (_, bit)| word | bit))
     }
 
@@ -134,6 +138,7 @@ impl NodeFacts {
             extra: word & packed::EXTRA != 0,
             missing: word & packed::MISSING != 0,
             holds_error: word & packed::HOLDS_ERROR != 0,
+            abuts_next: word & packed::ABUTS_NEXT != 0,
         }
     }
 }
@@ -782,7 +787,7 @@ mod tests {
     use crate::arena::Arena;
 
     fn plain(kind: u16) -> NodeFacts {
-        NodeFacts { kind: KindId(kind), field: None, alias: None, named: false, extra: false, missing: false, holds_error: false }
+        NodeFacts { kind: KindId(kind), field: None, alias: None, named: false, extra: false, missing: false, holds_error: false, abuts_next: false }
     }
 
     fn full() -> SideRecord {
@@ -813,13 +818,13 @@ mod tests {
             parent: Some(Address(77)),
             content: true,
             held_by_error: true,
-            node: Some(NodeFacts { kind: KindId(39), field: Some(FieldId(9)), alias: Some(KindId(40)), named: true, extra: false, missing: false, holds_error: true }),
+            node: Some(NodeFacts { kind: KindId(39), field: Some(FieldId(9)), alias: Some(KindId(40)), named: true, extra: false, missing: false, holds_error: true, abuts_next: false }),
             source: Some(3),
             depth: -2,
             run: vec![
                 RunEntry::Row { facts: plain(5), span: Span { start: 3, end: 4 }, inner: 0 },
                 RunEntry::Record { at: Address(90), shared: false },
-                RunEntry::Row { facts: NodeFacts { kind: KindId(6), field: Some(FieldId(1)), alias: Some(KindId(8)), named: true, extra: true, missing: true, holds_error: true }, span: Span { start: 6, end: 6 }, inner: 1 },
+                RunEntry::Row { facts: NodeFacts { kind: KindId(6), field: Some(FieldId(1)), alias: Some(KindId(8)), named: true, extra: true, missing: true, holds_error: true, abuts_next: false }, span: Span { start: 6, end: 6 }, inner: 1 },
                 RunEntry::Row { facts: NodeFacts { named: true, ..plain(7) }, span: Span { start: 6, end: 6 }, inner: 0 },
                 RunEntry::Record { at: Address(96), shared: true },
             ],

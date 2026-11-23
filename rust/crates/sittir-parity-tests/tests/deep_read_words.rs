@@ -118,7 +118,7 @@ const SCM: &str = r#"; a comment
 #[test]
 fn the_rust_fixture_tree_reads_to_the_same_words() {
     let words = deep_read::<_, sittir_rust::render::AnyNode>(sittir_rust::RustGrammar, sittir_rust::render::options::defaults(), &probe_input("engine.rs"));
-    assert_eq!(words, ArenaWords { chunks: 4, words: 62191, hash: 17_616_307_521_008_553_951 });
+    assert_eq!(words, ArenaWords { chunks: 4, words: 62191, hash: 1_404_873_221_297_320_951 });
 }
 
 #[test]

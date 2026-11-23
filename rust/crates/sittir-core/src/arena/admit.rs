@@ -25,11 +25,14 @@ pub struct RecordShape {
     /// What the kind's render body writes at its `Side::Before` and
     /// `Side::After` edges, nearest the edge first.
     pub edges: [&'static [EdgePart]; 2],
+    /// Whether a node of this kind is one token, its own text: with no child
+    /// its span is that token, where another kind's span holds fixed tokens.
+    pub own_text: bool,
 }
 
 impl RecordShape {
     /// No cells and no render-body facts, for a struct update to fill.
-    pub const BARE: Self = Self { words: 0, built_words: 0, cells: &[], order: &[], edges: [&[], &[]] };
+    pub const BARE: Self = Self { words: 0, built_words: 0, cells: &[], order: &[], edges: [&[], &[]], own_text: false };
 }
 
 /// A slot a kind's render body writes: an index into `RecordShape::cells`,

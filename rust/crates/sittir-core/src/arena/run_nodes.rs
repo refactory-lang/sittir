@@ -253,6 +253,17 @@ impl<'t> RunNodes<'t> {
         self.answering(|walk| walk.depth_move(index, kinds))
     }
 
+    /// The offsets under the node at `index` where a line starts inside a
+    /// token: past a line break within a token's span, and at the end of a
+    /// token `NodeFacts::abuts_next` marks, when that end lies inside the node.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError` for a record or run that does not read.
+    pub fn line_starts(&mut self, index: NodeIndex, source: &str) -> Result<Vec<u32>, ArenaError> {
+        self.answering(|walk| walk.line_starts(index, source))
+    }
+
     /// The entry of the source the record at `at` was read from.
     ///
     /// # Errors
@@ -674,7 +685,7 @@ impl Walk<'_> {
                 Listed::Entry(_, _, RunEntry::Record { at, .. }) => self.record(at, Parent::Node(index))?,
                 Listed::Entry(holder, entry, RunEntry::Row { facts, span, inner }) => self.meet(NodeSite::Row { holder, entry }, facts, span, inner == 0, Parent::Node(index)),
                 Listed::Unit { site, kind, alias, field, listed } => {
-                    let facts = NodeFacts { kind, field, alias, named: listed || named(alias.unwrap_or(kind)), extra: false, missing: false, holds_error: false };
+                    let facts = NodeFacts { kind, field, alias, named: listed || named(alias.unwrap_or(kind)), extra: false, missing: false, holds_error: false, abuts_next: false };
                     self.meet(site, facts, Span { start: at, end: at }, true, Parent::Node(index))
                 }
             };
@@ -779,6 +790,50 @@ impl Walk<'_> {
         };
         self.table.met[index.0 as usize].parent = parent.map_or(Parent::Root, Parent::Node);
         Ok(parent)
+    }
+
+    fn line_starts(&mut self, index: NodeIndex, source: &str) -> Result<Vec<u32>, ArenaError> {
+        let (shape_of, bits, _) = self.shape;
+        let end = self.table.met[index.0 as usize].kid.end;
+        let mut starts = Vec::new();
+        let mut pending = vec![index];
+        while let Some(at) = pending.pop() {
+            let met = &self.table.met[at.0 as usize];
+            let (site, kid, facts) = (met.site, met.kid, met.facts);
+            let own_text = match site {
+                NodeSite::Record(record) => shape_of(self.arena.header_kind(record, bits)?).is_some_and(|shape| shape.own_text),
+                _ => false,
+            };
+            let token = match site {
+                NodeSite::Unit(_) | NodeSite::Flag { .. } => false,
+                _ if kid.entry() || own_text => true,
+                NodeSite::Row { .. } if kid.count == 1 => true,
+                _ => {
+                    if kid.count > 1 {
+                        pending.extend(self.kids(at).iter().map(|kid| kid.index));
+                    }
+                    false
+                }
+            };
+            if facts.abuts_next && kid.end < end {
+                starts.push(kid.end);
+            }
+            if !token {
+                continue;
+            }
+            let mut from = kid.start;
+            while let Some(found) = source.get(Span { start: from, end: kid.end }.range()).and_then(|text| text.find('\n')) {
+                let line = from + crate::types::narrow(found) + 1;
+                if line >= kid.end {
+                    break;
+                }
+                starts.push(line);
+                from = line;
+            }
+        }
+        starts.sort_unstable();
+        starts.dedup();
+        Ok(starts)
     }
 
     fn depth_move(&mut self, index: NodeIndex, kinds: crate::trivia_table::SurfaceKinds) -> Result<i32, ArenaError> {

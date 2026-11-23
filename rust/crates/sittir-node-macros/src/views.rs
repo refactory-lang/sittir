@@ -438,12 +438,13 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
         Some((before, after)) => (edge(before)?, edge(after)?),
         None => (Vec::new(), Vec::new()),
     };
+    let own_text = attrs.text.is_some() || attrs.interior.is_some();
     let shape = if let (true, Some(content)) = (attrs.content_list, &attrs.content) {
         let field = fields.iter().find(|field| field.ident == content).ok_or_else(|| syn::Error::new_spanned(content, "`content` names one of the envelope's fields"))?;
         let (node, _) = held(field.ty).ok_or_else(|| syn::Error::new_spanned(field.ty, "an envelope's content holds a `SlotValue<…>`"))?;
         quote!(#accepts.then(|| <#node as ::sittir_core::arena::RecordCells>::shape(kind)).flatten())
     } else {
-        quote!(#accepts.then_some(::sittir_core::arena::RecordShape { words: #words, built_words: #built_words, cells: &[#(#cells),*], order: &[#(#order),*], edges: [&[#(#before),*], &[#(#after),*]] }))
+        quote!(#accepts.then_some(::sittir_core::arena::RecordShape { words: #words, built_words: #built_words, cells: &[#(#cells),*], order: &[#(#order),*], edges: [&[#(#before),*], &[#(#after),*]], own_text: #own_text }))
     };
     let refusal = format!(
         "`{ident}`, of kind `{}`, has a record of {words} words, header included, past `sittir_core::types::NodeId::SITE_WORDS`, the most words a record takes in arena storage, where a node's name gives a cell's word `NodeId::WORD_BITS` bits: give the kind fewer cells, or widen `NodeId::WORD_BITS`",
