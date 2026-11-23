@@ -13,7 +13,7 @@ Where the work stands:
   - a parsed list's delimiter is its delimiter option, resolved by the generated read code by one logic for both storages (Task 4). This superseded the same day's "decided by kind" and "store nothing; the options decide";
   - named fixed tokens leave query results (Task 6).
 
-  Task 4 is written from the delimiter audit (2026-11-17). `probe/delimiter-by-kind` and `probe/delimiter-options-decide` are kept. In arena storage a node is named by its `NodeId`, so wherever this plan says a coordinate or a node's index, read that node's `NodeId`. A unit is named by its holder's `NodeId` and its slot, which is what `NodeSite::Unit` means below.
+  Task 4 is written from the delimiter audit (2026-11-17). `probe/delimiter-by-kind` and `probe/delimiter-options-decide` are kept. In arena storage a node is named by its `NodeId`, so wherever this plan says a coordinate or a node's index, read that node's `NodeId`. A unit is named by its holder's `NodeId` and its slot, which is what `NodeSite::Unit` means below. A flag's keyword has no cell, so it has no site, and no side is kept on it (the arena spec).
 - **The same-line comment branch** (`fix/same-line-comment-after-separator`): a comment last on its row after an item's separator is leading of the next item, as on master. The maintainer, 2026-11-17: "Preserve master's behavior - let's not solve this one right now". Replacing that item loses the comment; that is a known gap, filed as an issue. Giving the comment to the item before was built and withdrawn, and nothing of its tokens-between fact remains.
 
   The branch still carries:
@@ -74,7 +74,7 @@ How this line is kept:
 ## Review Focus
 
 1. **A list rebuilt from a parsed list whose last item was replaced.** The option its read resolved stays with it, so rust `f(a, b,)` with `b` replaced renders `a, a,`. Cleared, it takes the options' value. Task 4 pins it: `a_cleared_delimiter_takes_the_options`.
-2. **A comment between a unit and its neighbour**, such as `& /* c */ mut T` and `a /* c */ ?.[0]`. The side is keyed by the unit's site and renders where it did. Task 8 pins it: `a_comment_beside_a_unit_keeps_its_side_through_the_units_site`.
+2. **A comment beside a flag or a unit.** A flag has no site, so in `& /* c */ mut T` the comment leads `T`, as it does today. A side on a unit that a cell holds is keyed by the unit's site and renders where it did. Task 8 pins both: `a_comment_beside_a_flag_stays_on_its_neighbour` and `a_comment_beside_a_unit_keeps_its_side_through_the_units_site`.
 3. **A zero-width fixed token at a record's edge:** python's `newline` from a `tokenSeam`, `indent` and `dedent`, and typescript's automatic semicolon in a separator gap. Edge levels and depth moves answer as today. Task 5 pins it: `edge_levels_at_a_zero_width_fixed_token_agree`.
 4. **A MISSING fixed token inside a list**, for example rust `fn f( {` and typescript `if (a {`. The list's stamps and its edge levels match the old tree, and the holder keeps `HOLDS_ERROR`. Tasks 4 and 5 cover it through `with_errors`, which the parity fixtures include.
 5. **A variable-text leaf that ends in `\r\n`, followed at once by a fixed token.** The line-start bit is set on it, as the `\n` test today counts it. Task 7 pins it: `a_crlf_leaf_followed_by_a_fixed_token_keeps_its_line_start`.
@@ -149,29 +149,30 @@ Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), stil
 - Test: `packages/codegen/src/emitters/__tests__/render-body.test.ts` and `rust/crates/sittir-parity-tests/tests/stage_one_parity.rs`.
 
 **Interfaces:** Produces:
-- `RecordShape::order: &'static [u8]`: indexes into `cells`, in the order the render body writes their slots.
+- `RecordShape::order: &'static [BodySlot]`: every slot of the kind, in the order the render body writes them.
+- `pub enum BodySlot { Cell(u8), Flag { word: u32, bit: u8, kind: KindId } }`. `Cell` indexes `cells`. A flag is a bit in the presence words and has no cell; its `kind` is the keyword's stored kind, or its display kind for `presence = display(...)`.
 - `RecordShape::edges: [&'static [EdgePart]; 2]` for `Side::Before` and `Side::After`.
-- `pub enum EdgePart { Token(KindId), Cell(u8), Guarded { cell: u8, token: KindId } }`.
+- `pub enum EdgePart { Token(KindId), Slot(BodySlot), Guarded { slot: BodySlot, token: KindId } }`.
 
 - [ ] **Step 1: Write the failing codegen tests.**
   - `bodySlotOrder(rust reference_type)` equals `['lifetime', 'exclusive', 'type']`.
   - `bodySlotOrder(typescript subscript_expression)` equals `['object', 'optional_chain', 'index']`.
   - `bodyEdgeParts(rust let_declaration, 'before')` equals `[{ token: 'let' }]`.
-  - `bodyEdgeParts(typescript function_declaration, 'before')` equals `[{ cell: 'async' }, { token: 'function' }]`.
+  - `bodyEdgeParts(typescript function_declaration, 'before')` equals `[{ slot: 'async' }, { token: 'function' }]`.
   - `bodyEdgeParts(rust let_declaration, 'after')` equals `[{ token: ';' }]`.
   - A `text` part inside an `if` arm on slot `s` gives `{ guarded: 's', token }`.
   - A `seam` part gives nothing.
 - [ ] **Step 2: Run the codegen tests.** Run `pnpm exec vitest run packages/codegen/src/emitters/__tests__/render-body.test.ts`. Expected: FAIL, `bodySlotOrder` is not defined.
 - [ ] **Step 3: Implement the two functions.**
   - `bodySlotOrder(body: RenderPart[]): string[]` takes each slot at its first appearance across arms. Throw when two arms order two slots both ways: none does today, which the spec states.
-  - `bodyEdgeParts(body: RenderPart[], side: 'before' | 'after'): EdgePartSpec[]` reads parts from that edge and stops at the first unconditional `Token` or required `Cell`.
+  - `bodyEdgeParts(body: RenderPart[], side: 'before' | 'after'): EdgePartSpec[]` reads parts from that edge and stops at the first unconditional `Token` or required slot.
   - Token kinds resolve through the catalog's kind ids, never by text at run time.
   - `render-module.ts` stamps `#[node(order = [...], edges = ([...], [...]))]` on every struct with `words`.
   - It also fails generation when a kind whose body has an `indent` or `dedent` part has no `words`, with the diagnostic "`<kind>` writes a depth part but is read with no record".
 - [ ] **Step 4: Add the derive attributes.** `attrs.rs` parses `order` and `edges`; `expand.rs` emits them in `RecordCells::shape`.
 - [ ] **Step 5: Write the failing Rust test.** `record_shapes_order_cells_as_their_bodies_write_them` in `stage_one_parity.rs` asserts:
-  - rust `reference_type`'s `order` names `lifetime`, `exclusive`, `type` cells in that order;
-  - every record kind of the five grammars has `order.len() == cells.len()`.
+  - rust `reference_type`'s `order` is `lifetime`'s cell, `exclusive`'s flag, then `type`'s cell;
+  - every record kind of the five grammars has one `order` entry for each cell and each flag.
 - [ ] **Step 6: Regenerate and run.**
   - Regenerate each grammar: `pnpm exec tsx packages/cli/src/cli.ts gen --grammar <lang> --all --output packages/<lang>/src`.
   - Run `PARITY record_shapes`. Expected: PASS.
@@ -319,8 +320,8 @@ The maintainer's rulings (2026-11-17, the spec's Decided list):
 - [ ] **Step 2: Run them.** Run `PARITY edge_levels`. Expected: FAIL, the `SlotContent` tree stops at a slot child.
 - [ ] **Step 3: Implement the record-level walk.** At a record level the walk reads `shape.edges[side]` in order:
   - `Token(kind)` yields a level of that kind with field `None`, and the walk stops;
-  - `Cell(i)` that is present descends into it (a record, a row, or a unit, which yields its kind and stops); an absent one goes to the next part;
-  - `Guarded { cell, token }` yields `token` when `cell` is present.
+  - `Slot(Cell(i))` that is present descends into it (a record, a row, or a unit, which yields its kind and stops), `Slot(Flag { .. })` that is set yields its `kind` and stops, and an absent one goes to the next part;
+  - `Guarded { slot, token }` yields `token` when `slot` is present.
 
   At a row level the walk stays positional.
 - [ ] **Step 4: Run.** Run Step 2's command. Expected: PASS. `validate:history` is unchanged.
@@ -344,9 +345,9 @@ The maintainer's rulings (2026-11-17, the spec's Decided list):
 
   And `a_named_fixed_token_leaves_query_results`: for each pair of `named_fixed_pairs(name)`, on the `SlotContent` tree, `ParsedTree::descendants` from the root yields no item of the token's kind, and yields one item of the holder's kind for each that the `All` tree yields (the maintainer, 2026-11-17: "Yes, they leave queries too").
 - [ ] **Step 2: Run them.** Run `PARITY queries_list_units` and `PARITY a_named_fixed_token_leaves_query_results`. Expected: FAIL. The `SlotContent` tree lists no units, and the token's kind is yielded.
-- [ ] **Step 3: Implement the merge in `kids_of`.** For a record, walk its cells in `order`:
+- [ ] **Step 3: Implement the merge in `kids_of`.** For a record, walk its slots in `order`:
   - a cell naming a run entry emits the run's entries up to and including that one, in run order, so trivia keeps its place;
-  - a unit cell emits a unit kid with its kind and no span.
+  - a unit cell or a set flag emits a unit kid with its kind and no span.
 
   The rest of the run follows. `siblings_of` gives a unit sibling no span.
 - [ ] **Step 4: Run.** Run Step 2's commands. Expected: PASS, and the dropped list equals Task 1's count. A dropped token outside the pairs stops the plan.
@@ -384,7 +385,8 @@ The maintainer's rulings (2026-11-17, the spec's Decided list):
 
 - [ ] **Step 1: Write the failing tests.**
   - `placements_differ_only_beside_named_fixed_tokens`: on `read_fixtures`, each placed side is compared as (holder kind, span, side, extra kind, extra span). They are equal between the trees, except where the old tree's target is a named fixed token. Each exception is printed.
-  - `a_comment_beside_a_unit_keeps_its_side_through_the_units_site`: rust `fn f(x: & /* c */ mut T) {}` renders identically from both trees, and its side's key is `NodeSite::Unit`.
+  - `a_comment_beside_a_flag_stays_on_its_neighbour`: rust `fn f(x: & /* c */ mut T) {}` renders identically from both trees, the comment leads `T`, and no side is keyed to the flag.
+  - `a_comment_beside_a_unit_keeps_its_side_through_the_units_site`: a source whose comment the parse places on a named unit a cell holds renders identically from both trees, and its side's key is `NodeSite::Unit`. Rust `fn f(x: /* c */ u8) {}` is the first candidate (not checked: that the parse places this comment on `u8`).
 - [ ] **Step 2: Run them.** Run `PARITY -- placements comment_beside_a_unit`. Expected: PASS, or an exception that is not beside a named fixed token. Such an exception stops the plan, and the list goes to brainstorm.
 - [ ] **Step 3: Record and commit.**
   - Put the printed list in the ledger and send it to brainstorm: these are the spec's "expected cases".
