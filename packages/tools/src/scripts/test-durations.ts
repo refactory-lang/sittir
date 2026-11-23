@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 
 import type { VitestJsonReport } from './record-test-run.ts';
-import { readVitestReport, repoRelativeFile } from './vitest-report.ts';
+import { checkoutRelativeFile, readVitestReport } from './vitest-report.ts';
 
 export interface TestDurationsOptions {
 	report?: string;
@@ -32,11 +32,11 @@ function byText(a: string, b: string): number {
 
 function fileDuration(result: VitestJsonReport['testResults'][number]): number {
 	if (typeof result.startTime !== 'number' || typeof result.endTime !== 'number') {
-		throw new Error(`${repoRelativeFile(result.name)} has no start and end time in the report`);
+		throw new Error(`${checkoutRelativeFile(result.name)} has no start and end time in the report`);
 	}
 	const durationMs = result.endTime - result.startTime;
 	if (!(durationMs >= 0)) {
-		throw new Error(`${repoRelativeFile(result.name)} ends before it starts in the report`);
+		throw new Error(`${checkoutRelativeFile(result.name)} ends before it starts in the report`);
 	}
 	return durationMs;
 }
@@ -44,7 +44,7 @@ function fileDuration(result: VitestJsonReport['testResults'][number]): number {
 export function summarizeDurations(report: VitestJsonReport, slowest: number): DurationSummary {
 	const files = report.testResults
 		.map((result) => ({
-			file: repoRelativeFile(result.name),
+			file: checkoutRelativeFile(result.name),
 			durationMs: fileDuration(result),
 			tests: result.assertionResults.length
 		}))
@@ -59,7 +59,7 @@ export function summarizeDurations(report: VitestJsonReport, slowest: number): D
 			result.assertionResults
 				.filter((assertion) => typeof assertion.duration === 'number')
 				.map((assertion) => ({
-					name: `${repoRelativeFile(result.name)} > ${assertion.fullName}`,
+					name: `${checkoutRelativeFile(result.name)} > ${assertion.fullName}`,
 					durationMs: assertion.duration as number
 				}))
 		)

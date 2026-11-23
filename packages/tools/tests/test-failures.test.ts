@@ -1,10 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { fileURLToPath } from 'node:url';
 
 import type { VitestJsonReport, VitestJsonTestResult } from '../src/scripts/record-test-run.ts';
 import { formatFailureSummary, summarizeFailures } from '../src/scripts/test-failures.ts';
 
-const abs = (relativePath: string): string => fileURLToPath(new URL(`../../../${relativePath}`, import.meta.url));
+import { fixtureFile as abs } from './support/checkout-fixture.ts';
 
 function assertion(fullName: string, message: string | undefined) {
 	return {
@@ -141,8 +140,8 @@ describe('summarizeFailures', () => {
 		});
 	});
 
-	it('takes the package from a file in a sibling checkout', () => {
-		const sibling = fileURLToPath(new URL('../../../../wt/packages/cli/tests/x.test.ts', import.meta.url));
+	it('takes the package from a file in another checkout', () => {
+		const sibling = abs('packages/cli/tests/x.test.ts');
 		const summary = summarizeFailures(
 			report([{ name: sibling, status: 'failed', message: '', assertionResults: [assertion('x > one', 'boom')] }]),
 			3

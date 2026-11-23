@@ -484,15 +484,19 @@ The result of comparing two reports' failures by key: the failure counts of the 
 
 ### `packages/tools/src/scripts/test-failures.ts::compareFailures`
 
-Compares the failures of a current report with an older one. A failure's key is `<repo-relative file> | <full name>`, or, for a failed file with no assertion results, `<file> | (file) <first line of its message>`. Throws when a key occurs twice in one report, since a repeated key would make the comparison ambiguous. Throws when `new + unchanged` differs from the current report's failure count, or `fixed + unchanged` from the older report's, so a comparison that does not reconcile is never returned. A test absent from the older report counts as new, including one that was renamed.
+Compares the failures of a current report with an older one. A failure's key is `<checkout-relative file> | <full name>`, or, for a failed file with no assertion results, `<file> | (file) <first line of its message>`. Throws when a key occurs twice in one report, since a repeated key would make the comparison ambiguous. Throws when `new + unchanged` differs from the current report's failure count, or `fixed + unchanged` from the older report's, so a comparison that does not reconcile is never returned. A test absent from the older report counts as new, including one that was renamed.
 
 ### `packages/tools/src/scripts/vitest-report.ts::readVitestReport`
 
 Reads one vitest JSON report from a path and checks that it is one: `testResults`, `numTotalTests` and `numFailedTests` must be present. Throws, naming the path, when it is not, so a file that is not a report is never read as one.
 
-### `packages/tools/src/scripts/vitest-report.ts::repoRelativeFile`
+### `packages/tools/src/scripts/vitest-report.ts::checkoutRelativeFile`
 
-A test file's path in a vitest report, made relative to the repository root with `/` separators, so every report tool names a file the same way.
+A test file's path in a vitest report, made relative to the git checkout that holds it, with `/` separators. A report from another worktree therefore names its files the same way as this one, so two reports of the same failures compare equal whichever checkout ran them.
+
+### `packages/tools/src/scripts/vitest-report.ts::checkoutRootOf`
+
+The root of the git checkout that holds a file: the nearest ancestor directory with a `.git` entry (a directory in a clone, a file in a worktree). Throws when the file does not exist, or when no ancestor has one, so a file whose checkout cannot be found is refused rather than named after some other tree. The file must exist because a deleted worktree's files would otherwise resolve to the checkout that contains it.
 
 ### `packages/tools/src/scripts/test-durations.ts::TestDurationsOptions`
 
@@ -500,11 +504,11 @@ Options for `run`: the report path (default `.vitest-report.json` in the working
 
 ### `packages/tools/src/scripts/test-durations.ts::FileDuration`
 
-One test file's row: its repo-relative path, its duration in milliseconds (the report's end time minus its start time, which is the time the file held a worker), and the number of assertions it ran.
+One test file's row: its checkout-relative path, its duration in milliseconds (the report's end time minus its start time, which is the time the file held a worker), and the number of assertions it ran.
 
 ### `packages/tools/src/scripts/test-durations.ts::SlowTest`
 
-One test's duration: its repo-relative file, a ` > `, and its full name, with the duration the reporter recorded for it in milliseconds. Tests the reporter gave no duration (skipped ones) are not listed.
+One test's duration: its checkout-relative file, a ` > `, and its full name, with the duration the reporter recorded for it in milliseconds. Tests the reporter gave no duration (skipped ones) are not listed.
 
 ### `packages/tools/src/scripts/test-durations.ts::DurationSummary`
 

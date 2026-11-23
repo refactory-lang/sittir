@@ -1,10 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { fileURLToPath } from 'node:url';
 
 import type { VitestJsonReport, VitestJsonTestResult } from '../src/scripts/record-test-run.ts';
 import { summarizeDurations } from '../src/scripts/test-durations.ts';
 
-const abs = (relativePath: string): string => fileURLToPath(new URL(`../../../${relativePath}`, import.meta.url));
+import { fixtureFile as abs } from './support/checkout-fixture.ts';
 
 function file(
 	relativePath: string,

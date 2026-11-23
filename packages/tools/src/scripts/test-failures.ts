@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 
 import type { VitestJsonReport } from './record-test-run.ts';
-import { readVitestReport, repoRelativeFile } from './vitest-report.ts';
+import { checkoutRelativeFile, readVitestReport } from './vitest-report.ts';
 
 export interface TestFailuresOptions {
 	report?: string;
@@ -76,7 +76,7 @@ function packageOf(file: string): string {
 function collectFailures(report: VitestJsonReport): TestFailure[] {
 	const failures: TestFailure[] = [];
 	for (const result of report.testResults) {
-		const file = repoRelativeFile(result.name);
+		const file = checkoutRelativeFile(result.name);
 		for (const assertion of result.assertionResults) {
 			if (assertion.status !== 'failed') continue;
 			failures.push({ file, fullName: assertion.fullName, message: assertion.failureMessages[0] ?? '' });
