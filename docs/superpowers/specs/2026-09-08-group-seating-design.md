@@ -234,8 +234,14 @@ binary_expression: { 24: variant('in'), '*': variant('', { default: true }) },
 with no wrapper. `binary_expression` is a supertype of the two: `is.binaryExpression`
 holds for both, `is.binaryExpressionIn` tells them apart, and `build.binaryExpression(...)`
 and `build.binaryExpression.in(...)` build them. A `conflicts` entry naming the parent
-names the default kind instead. A blank name without `default: true` is refused, and so
-is one variant name on two keys.
+names the default kind instead. A blank name without `default: true` is refused.
+
+Arms of one choice that take one variant name are one kind, at the first arm's place, as
+the arms `'*'` names are: Java's `update_expression` names `x++` and `x--` `postfix`, and
+`++x` and `--x` `prefix`, so `{ 0: variant('postfix'), 1: variant('postfix'), 2: variant('prefix'), 3: variant('prefix') }`
+mints two kinds (brainstorm's call, 2026-11-23). `'*'` is that same gathering over every arm
+no other key names. A variant name is refused on keys that aren't arms of one choice, on
+`'*'` and another key together, and a blank name is never gathered from two keys.
 
 `binary_expression_in` becoming its own kind puts it directly in the 129 typescript slots
 that hold an expression. It reads as a raw arm there for the reason it already did, so the
