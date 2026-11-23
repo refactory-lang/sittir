@@ -768,7 +768,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.field.fieldDeclarationArm: routed, but its interface does not declare it"
+    "message": "declaration.function.body: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -776,7 +776,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.field.names: routed, but its interface does not declare it"
+    "message": "declaration.member.field.fieldDeclarationArm: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -784,7 +784,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.field.tag: routed, but its interface does not declare it"
+    "message": "declaration.member.field.names: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -792,7 +792,15 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface.type: routed, but its interface does not declare it"
+    "message": "declaration.member.field.tag: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.member.method.body: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -816,7 +824,23 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.type: routed, but its interface does not declare it"
+    "message": "declaration.type.interface.type: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.struct.type: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.type_alias.type: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -833,14 +857,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "declaration.typeParameters: routed, but its interface does not declare it"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "vocabulary-disagreement",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.type_alias.type: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1008,6 +1024,14 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
+    "message": "expression.collection.struct.body: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
     "message": "expression.collection.struct.type: routed, but its interface does not declare it"
   },
   {
@@ -1168,6 +1192,14 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
+    "message": "statement.if.consequence: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
     "message": "statement.if.initializer: routed, but its interface does not declare it"
   },
   {
@@ -1192,6 +1224,14 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
+    "message": "statement.loop.body: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
     "message": "statement.loop.content: routed, but its interface does not declare it"
   },
   {
@@ -1200,7 +1240,23 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
+    "message": "statement.loop.counted.body: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
     "message": "statement.loop.counted.content: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.for_each.body: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1273,14 +1329,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "literal.number.integer.octal: int_literal_arm4's pattern admits integer text the portable read does not parse, so a read of it can carry the node"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-integer-partial",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.number.float: float_literal_arm3's pattern admits integer text the portable read does not parse, so a read of it can carry the node"
   },
   {
     "scope": "grammar",
@@ -1401,16 +1449,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "value integer",
-    "message": "clause.case.switch: a value integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "value float",
-    "message": "clause.case.switch: a value float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "clause.case.switch: a value integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1419,16 +1458,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "content integer",
-    "message": "declaration.variable: a content integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "content float",
-    "message": "declaration.variable: a content float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "declaration.variable: a content integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1437,16 +1467,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "declaration.variable: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "declaration.variable: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "declaration.variable: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1455,16 +1476,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "declaration.variable: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "declaration.variable: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "declaration.variable: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1473,16 +1485,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "content integer",
-    "message": "declaration.variable.private: a content integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "content float",
-    "message": "declaration.variable.private: a content float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "declaration.variable.private: a content integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1491,16 +1494,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "content integer",
-    "message": "declaration.variable.public: a content integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "content float",
-    "message": "declaration.variable.public: a content float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "declaration.variable.public: a content integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1509,16 +1503,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "key integer",
-    "message": "element.pair: a key integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "key float",
-    "message": "element.pair: a key float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "element.pair: a key integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1527,16 +1512,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "value integer",
-    "message": "element.pair: a value integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "value float",
-    "message": "element.pair: a value float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "element.pair: a value integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1545,16 +1521,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "expression integer",
-    "message": "element.spread: a expression integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "expression float",
-    "message": "element.spread: a expression float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "element.spread: a expression integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1563,16 +1530,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.assignment: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.assignment: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.assignment: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1581,16 +1539,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.assignment: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.assignment: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.assignment: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1599,16 +1548,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.assignment.compound.add: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.assignment.compound.add: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.assignment.compound.add: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1617,16 +1557,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.assignment.compound.add: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.assignment.compound.add: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.assignment.compound.add: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1635,16 +1566,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.assignment.compound.bitwise_and: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.assignment.compound.bitwise_and: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.assignment.compound.bitwise_and: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1653,16 +1575,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.assignment.compound.bitwise_and: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.assignment.compound.bitwise_and: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.assignment.compound.bitwise_and: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1671,16 +1584,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.assignment.compound.bitwise_or: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.assignment.compound.bitwise_or: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.assignment.compound.bitwise_or: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1689,16 +1593,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.assignment.compound.bitwise_or: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.assignment.compound.bitwise_or: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.assignment.compound.bitwise_or: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1707,16 +1602,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.assignment.compound.bitwise_xor: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.assignment.compound.bitwise_xor: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.assignment.compound.bitwise_xor: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1725,16 +1611,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.assignment.compound.bitwise_xor: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.assignment.compound.bitwise_xor: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.assignment.compound.bitwise_xor: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1743,16 +1620,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.assignment.compound.divide: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.assignment.compound.divide: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.assignment.compound.divide: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1761,16 +1629,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.assignment.compound.divide: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.assignment.compound.divide: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.assignment.compound.divide: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1779,16 +1638,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.assignment.compound.modulo: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.assignment.compound.modulo: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.assignment.compound.modulo: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1797,16 +1647,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.assignment.compound.modulo: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.assignment.compound.modulo: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.assignment.compound.modulo: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1815,16 +1656,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.assignment.compound.multiply: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.assignment.compound.multiply: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.assignment.compound.multiply: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1833,16 +1665,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.assignment.compound.multiply: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.assignment.compound.multiply: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.assignment.compound.multiply: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1851,16 +1674,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.assignment.compound.shift_left: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.assignment.compound.shift_left: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.assignment.compound.shift_left: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1869,16 +1683,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.assignment.compound.shift_left: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.assignment.compound.shift_left: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.assignment.compound.shift_left: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1887,16 +1692,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.assignment.compound.shift_right: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.assignment.compound.shift_right: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.assignment.compound.shift_right: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1905,16 +1701,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.assignment.compound.shift_right: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.assignment.compound.shift_right: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.assignment.compound.shift_right: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1923,16 +1710,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.assignment.compound.subtract: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.assignment.compound.subtract: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.assignment.compound.subtract: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1941,16 +1719,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.assignment.compound.subtract: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.assignment.compound.subtract: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.assignment.compound.subtract: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1959,16 +1728,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.binary: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.binary: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1977,16 +1737,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.binary: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.binary: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -1995,16 +1746,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.binary.arithmetic.add: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.binary.arithmetic.add: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.arithmetic.add: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2013,16 +1755,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.binary.arithmetic.add: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.binary.arithmetic.add: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.arithmetic.add: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2031,16 +1764,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.binary.arithmetic.divide: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.binary.arithmetic.divide: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.arithmetic.divide: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2049,16 +1773,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.binary.arithmetic.divide: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.binary.arithmetic.divide: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.arithmetic.divide: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2067,16 +1782,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.binary.arithmetic.modulo: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.binary.arithmetic.modulo: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.arithmetic.modulo: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2085,16 +1791,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.binary.arithmetic.modulo: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.binary.arithmetic.modulo: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.arithmetic.modulo: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2103,16 +1800,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.binary.arithmetic.multiply: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.binary.arithmetic.multiply: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.arithmetic.multiply: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2121,16 +1809,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.binary.arithmetic.multiply: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.binary.arithmetic.multiply: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.arithmetic.multiply: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2139,16 +1818,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.binary.arithmetic.subtract: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.binary.arithmetic.subtract: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.arithmetic.subtract: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2157,16 +1827,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.binary.arithmetic.subtract: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.binary.arithmetic.subtract: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.arithmetic.subtract: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2175,16 +1836,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.binary.bitwise.and: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.binary.bitwise.and: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.bitwise.and: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2193,16 +1845,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.binary.bitwise.and: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.binary.bitwise.and: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.bitwise.and: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2211,16 +1854,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.binary.bitwise.or: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.binary.bitwise.or: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.bitwise.or: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2229,16 +1863,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.binary.bitwise.or: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.binary.bitwise.or: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.bitwise.or: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2247,16 +1872,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.binary.bitwise.xor: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.binary.bitwise.xor: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.bitwise.xor: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2265,16 +1881,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.binary.bitwise.xor: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.binary.bitwise.xor: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.bitwise.xor: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2283,16 +1890,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.binary.comparison.equal: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.binary.comparison.equal: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.comparison.equal: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2301,16 +1899,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.binary.comparison.equal: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.binary.comparison.equal: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.comparison.equal: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2319,16 +1908,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.binary.comparison.greater: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.binary.comparison.greater: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.comparison.greater: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2337,16 +1917,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.binary.comparison.greater: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.binary.comparison.greater: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.comparison.greater: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2355,16 +1926,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.binary.comparison.greater_equal: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.binary.comparison.greater_equal: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.comparison.greater_equal: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2373,16 +1935,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.binary.comparison.greater_equal: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.binary.comparison.greater_equal: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.comparison.greater_equal: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2391,16 +1944,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.binary.comparison.less: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.binary.comparison.less: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.comparison.less: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2409,16 +1953,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.binary.comparison.less: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.binary.comparison.less: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.comparison.less: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2427,16 +1962,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.binary.comparison.less_equal: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.binary.comparison.less_equal: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.comparison.less_equal: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2445,16 +1971,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.binary.comparison.less_equal: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.binary.comparison.less_equal: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.comparison.less_equal: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2463,16 +1980,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.binary.comparison.not_equal: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.binary.comparison.not_equal: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.comparison.not_equal: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2481,16 +1989,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.binary.comparison.not_equal: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.binary.comparison.not_equal: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.comparison.not_equal: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2499,16 +1998,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.binary.logical.and: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.binary.logical.and: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.logical.and: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2517,16 +2007,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.binary.logical.and: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.binary.logical.and: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.logical.and: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2535,16 +2016,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.binary.logical.or: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.binary.logical.or: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.logical.or: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2553,16 +2025,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.binary.logical.or: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.binary.logical.or: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.logical.or: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2571,16 +2034,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.binary.shift.left: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.binary.shift.left: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.shift.left: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2589,16 +2043,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.binary.shift.left: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.binary.shift.left: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.shift.left: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2607,16 +2052,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "left integer",
-    "message": "expression.binary.shift.right: a left integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "left float",
-    "message": "expression.binary.shift.right: a left float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.shift.right: a left integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2625,16 +2061,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "right integer",
-    "message": "expression.binary.shift.right: a right integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "right float",
-    "message": "expression.binary.shift.right: a right float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.binary.shift.right: a right integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2643,16 +2070,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "operand integer",
-    "message": "expression.cast: a operand integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "operand float",
-    "message": "expression.cast: a operand float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.cast: a operand integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2661,16 +2079,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "operand integer",
-    "message": "expression.cast.conversion: a operand integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "operand float",
-    "message": "expression.cast.conversion: a operand float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.cast.conversion: a operand integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2679,16 +2088,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "body integer",
-    "message": "expression.collection.list: a body integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "body float",
-    "message": "expression.collection.list: a body float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.collection.list: a body integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2697,16 +2097,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "body integer",
-    "message": "expression.collection.map: a body integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "body float",
-    "message": "expression.collection.map: a body float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.collection.map: a body integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2715,16 +2106,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "body integer",
-    "message": "expression.collection.struct: a body integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "body float",
-    "message": "expression.collection.struct: a body float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.collection.struct: a body integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2733,16 +2115,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "operand integer",
-    "message": "expression.member: a operand integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "operand float",
-    "message": "expression.member: a operand float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.member: a operand integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2751,16 +2124,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "expression integer",
-    "message": "expression.parenthesized: a expression integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "expression float",
-    "message": "expression.parenthesized: a expression float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.parenthesized: a expression integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2769,16 +2133,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "operand integer",
-    "message": "expression.reference: a operand integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "operand float",
-    "message": "expression.reference: a operand float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.reference: a operand integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2787,16 +2142,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "operand integer",
-    "message": "expression.slice: a operand integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "operand float",
-    "message": "expression.slice: a operand float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.slice: a operand integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2805,16 +2151,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "start integer",
-    "message": "expression.slice: a start integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "start float",
-    "message": "expression.slice: a start float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.slice: a start integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2823,16 +2160,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "end integer",
-    "message": "expression.slice: a end integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "end float",
-    "message": "expression.slice: a end float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.slice: a end integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2841,16 +2169,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "capacity integer",
-    "message": "expression.slice: a capacity integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "capacity float",
-    "message": "expression.slice: a capacity float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.slice: a capacity integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2859,16 +2178,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "operand integer",
-    "message": "expression.subscript: a operand integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "operand float",
-    "message": "expression.subscript: a operand float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.subscript: a operand integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2877,16 +2187,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "index integer",
-    "message": "expression.subscript: a index integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "index float",
-    "message": "expression.subscript: a index float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.subscript: a index integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2895,16 +2196,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "operand integer",
-    "message": "expression.unary: a operand integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "operand float",
-    "message": "expression.unary: a operand float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.unary: a operand integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2913,16 +2205,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "operand integer",
-    "message": "expression.unary.bitwise_not: a operand integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "operand float",
-    "message": "expression.unary.bitwise_not: a operand float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.unary.bitwise_not: a operand integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2931,16 +2214,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "operand integer",
-    "message": "expression.unary.deref: a operand integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "operand float",
-    "message": "expression.unary.deref: a operand float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.unary.deref: a operand integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2949,16 +2223,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "operand integer",
-    "message": "expression.unary.negation: a operand integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "operand float",
-    "message": "expression.unary.negation: a operand float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.unary.negation: a operand integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2967,16 +2232,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "operand integer",
-    "message": "expression.unary.not: a operand integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "operand float",
-    "message": "expression.unary.not: a operand float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.unary.not: a operand integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2985,16 +2241,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "operand integer",
-    "message": "expression.unary.plus: a operand integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "operand float",
-    "message": "expression.unary.plus: a operand float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.unary.plus: a operand integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -3003,16 +2250,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "expression integer",
-    "message": "expression.update.decrement: a expression integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "expression float",
-    "message": "expression.update.decrement: a expression float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.update.decrement: a expression integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -3021,16 +2259,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "expression integer",
-    "message": "expression.update.increment: a expression integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "expression float",
-    "message": "expression.update.increment: a expression float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "expression.update.increment: a expression integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -3039,16 +2268,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "initializer integer",
-    "message": "statement.if: a initializer integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "initializer float",
-    "message": "statement.if: a initializer float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "statement.if: a initializer integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -3057,16 +2277,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "condition integer",
-    "message": "statement.if: a condition integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "condition float",
-    "message": "statement.if: a condition float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "statement.if: a condition integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -3075,16 +2286,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "statement integer",
-    "message": "statement.labeled: a statement integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "statement float",
-    "message": "statement.labeled: a statement float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "statement.labeled: a statement integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -3093,16 +2295,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "content integer",
-    "message": "statement.loop: a content integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "content float",
-    "message": "statement.loop: a content float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "statement.loop: a content integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -3111,16 +2304,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "expressionList integer",
-    "message": "statement.return: a expressionList integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "expressionList float",
-    "message": "statement.return: a expressionList float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "statement.return: a expressionList integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -3129,16 +2313,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "initializer integer",
-    "message": "statement.switch: a initializer integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "initializer float",
-    "message": "statement.switch: a initializer float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "statement.switch: a initializer integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -3147,16 +2322,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "value integer",
-    "message": "statement.switch: a value integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "value float",
-    "message": "statement.switch: a value float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "statement.switch: a value integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -3165,16 +2331,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "initializer integer",
-    "message": "statement.switch: a initializer integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "initializer float",
-    "message": "statement.switch: a initializer float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "statement.switch: a initializer integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -3183,16 +2340,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "alias integer",
-    "message": "statement.switch: a alias integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "alias float",
-    "message": "statement.switch: a alias float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "statement.switch: a alias integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -3201,16 +2349,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "value integer",
-    "message": "statement.switch: a value integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "value float",
-    "message": "statement.switch: a value float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "statement.switch: a value integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -3219,16 +2358,7 @@
     "severity": "warning",
     "canProceed": true,
     "slotName": "length integer",
-    "message": "type.array: a length integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-value-undecided",
-    "severity": "warning",
-    "canProceed": true,
-    "slotName": "length float",
-    "message": "type.array: a length float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "message": "type.array: a length integer value builds as any of imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -3324,30 +2454,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.field: names has no exact set"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.field.private: names has no exact set"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.field.public: names has no exact set"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "declaration.function: returnType seats a text outside its list container"
   },
   {
@@ -3380,7 +2486,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface: type has no exact set"
+    "message": "declaration.member.field: names has no exact set"
   },
   {
     "scope": "grammar",
@@ -3388,7 +2494,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method: returnType seats a text outside its list container"
+    "message": "declaration.member.field.private: names has no exact set"
   },
   {
     "scope": "grammar",
@@ -3396,7 +2502,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.private: returnType seats a text outside its list container"
+    "message": "declaration.member.field.public: names has no exact set"
   },
   {
     "scope": "grammar",
@@ -3404,7 +2510,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.public: returnType seats a text outside its list container"
+    "message": "declaration.member.method: returnType seats a text outside its list container"
   },
   {
     "scope": "grammar",
@@ -3412,7 +2518,23 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature: returnType seats a text outside its list container"
+    "message": "declaration.member.method.private: returnType seats a text outside its list container"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.member.method.public: returnType seats a text outside its list container"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.member.method.signature: returnType seats a text outside its list container"
   },
   {
     "scope": "grammar",
@@ -3716,7 +2838,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct: type has no exact set"
+    "message": "declaration.type.interface: type has no exact set"
   },
   {
     "scope": "grammar",
@@ -3724,7 +2846,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.private: type has no exact set"
+    "message": "declaration.type.struct: type has no exact set"
   },
   {
     "scope": "grammar",
@@ -3732,7 +2854,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.struct.public: type has no exact set"
+    "message": "declaration.type.struct.private: type has no exact set"
   },
   {
     "scope": "grammar",
@@ -3740,7 +2862,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias: type has no exact set"
+    "message": "declaration.type.struct.public: type has no exact set"
   },
   {
     "scope": "grammar",
@@ -3748,7 +2870,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias.private: type has no exact set"
+    "message": "declaration.type.type_alias: type has no exact set"
   },
   {
     "scope": "grammar",
@@ -3756,7 +2878,15 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias.public: type has no exact set"
+    "message": "declaration.type.type_alias.private: type has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.type_alias.public: type has no exact set"
   },
   {
     "scope": "grammar",
@@ -4164,7 +3294,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.cast.conversion: typeConversionExpression takes options"
+    "message": "expression.cast.conversion: operand has no exact set"
   },
   {
     "scope": "grammar",
@@ -4349,6 +3479,14 @@
     "severity": "warning",
     "canProceed": true,
     "message": "literal.null: arm 69 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.float: literal.number.float's number arm 85 has no slots that spell its value"
   },
   {
     "scope": "grammar",

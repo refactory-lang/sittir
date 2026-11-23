@@ -44,7 +44,7 @@ A claim's `#…?` predicate: its operator, the capture it tests (`null` for a pr
 
 ### `packages/codegen/src/bindings/facts.ts::CaptureSite`
 
-Where a predicate's capture sits, relative to the node a claim captures: `up` enclosing named nodes of the pattern (0 is the claimed node itself; 1 its nearest enclosing node, the first kind in the claim's `within`), then the `down` selectors from that node to the capture, outermost first. A self-text test is `{ up: 0, down: [] }`; a hidden capture under the claimed node, such as python's `(string (string_start) @_p)`, steps down through the slot holding it; and python's `(decorated_definition (decorator (identifier) @_d) (function_definition) @declaration.method.static)` places `@_d` one node up, then `decorator`, then `identifier`. Groups are not nodes, so they count neither up nor down.
+Where a predicate's capture sits, relative to the node a claim captures: `up` enclosing named nodes of the pattern (0 is the claimed node itself; 1 its nearest enclosing node, the first kind in the claim's `within`), then the `down` selectors from that node to the capture, outermost first. A self-text test is `{ up: 0, down: [] }`; a hidden capture under the claimed node, such as python's `(string (string_start) @_p)`, steps down through the slot holding it; and python's `(decorated_definition (decorator (identifier) @_d) (function_definition) @declaration.member.method.static)` places `@_d` one node up, then `decorator`, then `identifier`. Groups are not nodes, so they count neither up nor down.
 
 ### `packages/codegen/src/bindings/facts.ts::KNOWN_PREDICATE_OPERATORS`
 
@@ -251,7 +251,9 @@ Where the vocabulary path list is written: `packages/common/src/portable/vocabul
 
 ### `packages/codegen/src/bindings/vocabulary-paths.ts::emitVocabularyPaths`
 
-The source of the vocabulary path list: every kind path of the vocabulary (`readVocabulary`'s `kinds`, which includes the kinds features declare), sorted by code point, one quoted path per line, in a frozen `vocabularyPaths` array declared `as const`, so its element type is the union of the paths and types the shared portable trees (`portable/tree.ts::PortableKindTree`). The text is already in the repository's format, so the committed file and this emitter's output compare byte for byte.
+The source of the vocabulary path list: every kind path of the vocabulary (`readVocabulary`'s `kinds`, which includes the kinds features declare), sorted by code point, one quoted path per line, in a frozen `vocabularyPaths` array declared `as const`, so its element type is the union of the paths and types the shared portable trees (`portable/tree.ts::PortableKindTree`). After it, the same way, `vocabularyNamespaces`: the vocabulary's namespaces (`Vocabulary::namespaces`), which `portableTrees` gives nodes with no `$path`. The text is already in the repository's format, so the committed file and this emitter's output compare byte for byte.
+
+After the namespaces come `vocabularyAliases`, each alias's path, target and owner (null for the base), and `vocabularyAliasPaths`, their paths, which `portableTrees` gives nodes.
 
 ### `packages/codegen/src/bindings/vocabulary-paths.ts::writeVocabularyPaths`
 
@@ -267,6 +269,10 @@ One interface as declared, plain JSON so it crosses the pinned child:
 - its own property members (`DeclaredSlot`).
 
 A declaration with a `$kind` is a kind (`DeclaredKind`, `isKind`). In a feature folder, a declaration without one adds members to the kind with the same qualified name.
+
+A type alias whose right side is a `V.`-qualified name is an alias (`DeclaredAlias`, `isAlias`): neither a kind nor members added to one.
+
+A type alias named `AnyWith…` is a shared union (`shared`): neither a kind nor an alias.
 
 ### `packages/codegen/src/bindings/vocabulary.ts::DeclaredSlot`
 
@@ -316,7 +322,7 @@ Every vocabulary source (`isVocabularySource`), as posix paths relative to the d
 
 ### `packages/codegen/src/bindings/vocabulary.ts::flagSegment`
 
-Reads a claim path whose last segment is a flag of the path before it as that parent path and the flag: `declaration.method.static` claims `declaration.method` with its flag `static`. The segment is matched in snake case against the camel-case member name. A path whose last segment is a kind, a member that is data, or nothing the parent declares is no flag. A path that names a vocabulary kind and is also a flag of its parent is refused: one name names one thing.
+Reads a claim path whose last segment is a flag of the path before it as that parent path and the flag: `declaration.member.method.static` claims `declaration.member.method` with its flag `static`. The segment is matched in snake case against the camel-case member name. A path whose last segment is a kind, a member that is data, or nothing the parent declares is no flag. A path that names a vocabulary kind and is also a flag of its parent is refused: one name names one thing.
 
 ### `packages/codegen/src/bindings/vocabulary.ts::resolveFlags`
 
@@ -448,11 +454,11 @@ What the derivation realized and left: the claim and member totals, the aliases,
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::GrammarBindingsInput`
 
-The derivation's inputs: the `bindings.scm` path its diagnostics name (`file`), its binding facts in base names, its grammar evaluated without its grammar bindings (`base`, canonical), the rules of that layer as it evaluates them, before canonicalization (`layerRules`: the coordinates the patches are written in), each vocabulary path's members, the ones its interface declares and the ones it inherits (a member an interface inherits is its member), the grammar's routes as `resolveRoutes` gives them over the model of the grammar compiled without its grammar bindings (`routes`: each claimed kind's member routes and each kind's vocabulary path, `vocabOf`), and that model (`model`), whose forms the claims refine through (`refineClaims`).
+The derivation's inputs: the `bindings.scm` path its diagnostics name (`file`), its binding facts in base names, its grammar evaluated without its grammar bindings (`base`, canonical), the rules of that layer as it evaluates them, before canonicalization (`layerRules`: the coordinates the patches are written in), each vocabulary path's members, the ones its interface declares and the ones it inherits (a member an interface inherits is its member), the namespaces the vocabulary shortens (`shortened`, which every bound name the derivation gives leaves out), the grammar's routes as `resolveRoutes` gives them over the model of the grammar compiled without its grammar bindings (`routes`: each claimed kind's member routes and each kind's vocabulary path, `vocabOf`), and that model (`model`), whose forms the claims refine through (`refineClaims`).
 
 ### `packages/codegen/src/bindings/names.ts::boundKindName`
 
-The bound name of a vocabulary path: its segments reversed, subkind first, keeping hiddenness (`declaration.function` is `function_declaration`; a hidden kind's is `_function_declaration`). The one place the naming lives. Callers pass the base rule name's hiddenness by tree-sitter's own convention (`rule-patterns.ts::isParserHiddenName`): a bound name keeps the rule's hiddenness, so the rename never flips it. Parse-tree visibility is a different fact: the catalog stamps every supertype hidden, visible rule name or not.
+The bound name of a vocabulary path: its segments reversed, subkind first, keeping hiddenness, with each segment whose path is one of the namespaces the vocabulary shortens left out (`Vocabulary::shortened`, `vocabularyShortened`). So `declaration.function` is `function_declaration`, a hidden kind's is `_function_declaration`, `declaration.member.method` is `method_declaration` since `declaration.member` is no kind and every name beneath it is unique within `declaration`, `expression.binary.shift.left` keeps `shift` since `left` is a slot of `expression.binary`, and `statement.loop.counted` keeps `loop`, a kind that `counted` refines. The last segment always stays. The one place the naming lives. Callers pass the base rule name's hiddenness by tree-sitter's own convention (`rule-patterns.ts::isParserHiddenName`): a bound name keeps the rule's hiddenness, so the rename never flips it. Parse-tree visibility is a different fact: the catalog stamps every supertype hidden, visible rule name or not.
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::slotFieldName`
 
@@ -495,7 +501,9 @@ says so under `claimed kinds not merged`, with the partition: the merged group
 (`a + b`), each kind kept apart, and the kinds that are no base rule.
 A later plain claim on the kind stays a mapping, as a refinement does. A placed
 claim splits its kind by placement, its containers named by the placement's
-bound name and the member that holds them. Renames apply at once, so a name is
+bound name and the member that holds them. A step of the placement may be a
+name the grammar shows a hidden rule as: it is read through that rule, as a
+claimed kind the grammar shows is, and the owner it ends at is a rule. Renames apply at once, so a name is
 free when its holder is renamed away; an alias target must be free too;
 clashing ones are dropped until stable, and a kind claiming its own parent's
 path is realized by the parent, its arms staying the parent's variants.
@@ -504,7 +512,11 @@ Members: a member the vocabulary kind the routes name its owner by
 (`GrammarRoutes.vocabOf`, the path its read entries name it by) does not
 declare stays a mapping. A flag reads structure the grammar already has and
 needs no field; every other member becomes a field. A member routed to a whole field
-renames that field; a member routed to an unfielded child, or to a token's
+renames that field, unless the member also reads through a form the field holds
+(a nested route of the same member entering that field, as typescript's loop
+`statements` read through a `statement_block` body and as the bare statement
+the body holds): the field holds forms of the member, not the member, and keeps
+its name. A member routed to an unfielded child, or to a token's
 presence, wraps the child or token in a field of the member's name. A child that shares a union slot with other kinds takes no field: its member reads the slot by kind (`isUnionSlotMember`), and a field on one arm would only mix a field-routed arm into the union. A child or
 token the bindings leave unfielded may already sit in a field of the enriched
 base. A vocabulary member with no route resolves implicitly when the owner, any
@@ -518,7 +530,7 @@ batch narrows until it agrees with itself.
 Everything not turned into a grammar change is residue, with its cause.
 ```
 
-Leads: `deriveLeads` derives them from the same facts against the same grammar, and its `lead-refused` records come back beside the bindings as `diagnostics`, which the writer gates on.
+Leads: `deriveLeads` derives them from the same facts against the same grammar, and its `lead-refused` records come back beside the bindings as `diagnostics`, which the writer gates on. So does a `bound-name-collision` for each kind of the vocabulary whose bound name another kind has too (`boundNameCollisions` over the paths of `vocabSlots` and the input's `shortened`), which names both kinds and stops generation.
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::sameShapeAs`
 
@@ -564,7 +576,7 @@ Where `bindings-inventory --write` writes a grammar's generated layer: `grammars
 
 ### `packages/codegen/src/bindings/module.ts::printBindingsModule`
 
-The generated `grammar.bindings.ts`, the layer above `grammar.sittir.ts`. It exports the hash of the sources it was derived from (`hash`, which `loadBindingsHash` reads) and the kind renames as data (`renames`, each kind to its vocabulary name, which no layer applies), and its default export is `grammar(enrich(sittir), wire({ generated: true, edits }))` over the layer it imports (`editEntries`). `generated` marks it as its generator's, so the generator checks it is enrich's fixpoint, not the compile (`dsl/layer.ts::completeLayer`). The splits are computed and reported by the inventory but not printed. It imports only the authoring helpers it calls, and is erasable syntax only, since tree-sitter's run of the grammar evaluates it too. Codegen reads the binding facts from `bindings.scm` through the pinned reader, never from this module.
+The generated `grammar.bindings.ts`, the layer above `grammar.sittir.ts`. It exports the hash of the sources it was derived from (`hash`, which `loadBindingsHash` reads) and the kind renames as data (`renames`, each kind to its vocabulary name, which no layer applies), and its default export is `grammar(enrich(sittir), wire({ generated: true, edits }))` over the layer it imports (`editEntries`). `generated` marks it as its generator's, so the generator checks it is enrich's fixpoint, not the compile (`dsl/layer.ts::completeLayer`). The splits are printed among the edits, one set per owner kind (`editEntries`). It imports only the authoring helpers it calls, and is erasable syntax only, since tree-sitter's run of the grammar evaluates it too. Codegen reads the binding facts from `bindings.scm` through the pinned reader, never from this module.
 
 ### `packages/codegen/src/bindings/module.ts::loadBindingsHash`
 
@@ -584,7 +596,7 @@ A lead as its edits entry, `{ ".": lead(item, field, …admits) }`: the set that
 
 ### `packages/codegen/src/bindings/module.ts::editEntries`
 
-The generated layer's `edits` object: each kind's patch sets (`patchSet`) and then one set per lead on it (`leadSet`), a single set bare and several as an array. Kinds follow the derived patches' order, and a kind with only leads follows them; `{}` when there is nothing to edit.
+The generated layer's `edits` object: each kind's patch sets (`patchSet`), then one set per lead on it (`leadSet`), then one set of the splits each owner kind holds, a single set bare and several as an array. A split set maps each site's path to its edit. A copy is named for its source and its owner, not for the route that reaches it, so two routes may pass through one copy with the same steps and edit after it. The edit inside that copy is printed once, on the first route, and a later route is printed only as far as the copy, with an edit that leaves it unchanged (`($, member) => member`). Walking that route still copies and repoints each holder on the way to the copy, and the copy already carries the edit, so no route applies the edit to a site an earlier route has already replaced. Kinds follow the derived patches' order, and a kind with only leads or splits follows them; `{}` when there is nothing to edit.
 
 ### `packages/codegen/src/bindings/module.ts::renamesData`
 
@@ -887,7 +899,7 @@ The `SlotFact` for a member capture on a visit. The capture belongs to its home:
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::claimedHome`
 
-The node a member capture belongs to: walking up from the capture's parent, the first node that carries a claim, or the pattern's top when no node below it does. A capture below a placed claim (`(impl_item_body (declaration_list (function_item … @scope) @declaration.method))`) is a member of the claimed `function_item`, not of the `impl_item_body` the pattern starts at.
+The node a member capture belongs to: walking up from the capture's parent, the first node that carries a claim, or the pattern's top when no node below it does. A capture below a placed claim (`(impl_item_body (declaration_list (function_item … @scope) @declaration.member.method))`) is a member of the claimed `function_item`, not of the `impl_item_body` the pattern starts at.
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::refuseAnchoredPlacement`
 
@@ -1079,7 +1091,7 @@ A literal a claim fixes in a slot: a field literal, or a token the claim names t
 
 ### `packages/codegen/src/bindings/routes.ts::SlotRoute`
 
-Where a member of a claimed kind reads from: a `slot` of the kind; the `presence` of a token in a slot reached through the `via` kinds; the presence of a `kind` in the slot another member of the kind names (a flag, its `path` that slot's); the claimed node itself (`self`, its `path` empty); or a `nested` slot of a `parent` reached through the `via` kinds, found by its selector. A slot one of whose arms a deep member routes through keeps its other arms: its `slot` lists only those, and `except` the arms the deep members take; a slot every arm of which they take is left out. `via` lists the kinds between the owner and the member nearest first, as the facts give them (the convention a claim's `within` follows). `path` is the build inverse: the slots, owner by owner, from the claimed kind to the member's slot. It is `undefined` when a step holds many nodes or a kind on the way has no slot for the next, since a single member cannot be built back through it, and for a flag the kind's own form spells. `flag` marks a member that is a vocabulary flag (`SlotFact.flag`, or for an uncaptured slot its name in `BindingFacts.flagsByPath` at a path the kind is read under), so a consumer tells a flag from data without the vocabulary. `spelled` marks a flag the kind's own form spells, so it holds on every node of the kind: a presence member whose token no slot of its owner holds, or a capture on a variant form whose selector no slot of that form holds (`spelledFlagRouteOf`). It is stamped where the route is made, never inferred from a missing `path`.
+Where a member of a claimed kind reads from: a `slot` of the kind; the `presence` of a token in a slot reached through the `via` kinds; the presence of a `kind` in the slot another member of the kind names (a flag, its `path` that slot's); the claimed node itself (`self`, its `path` empty); or a `nested` slot of a `parent` reached through the `via` kinds, found by its selector. A slot one of whose arms a deep member routes through keeps its other arms: its `slot` lists only those, and `except` the arms the deep members take; a slot every arm of which they take is left out. Where the arm a route of the same slot takes sits under a supertype, only the supertypes that hold it open: typescript's loop body keeps `declaration` and the statement supertype's other subtypes whole, and only `statement_block` leaves. `via` lists the kinds between the owner and the member nearest first, as the facts give them (the convention a claim's `within` follows). `path` is the build inverse: the slots, owner by owner, from the claimed kind to the member's slot. It is `undefined` when a step holds many nodes or a kind on the way has no slot for the next, since a single member cannot be built back through it, and for a flag the kind's own form spells; `slotsOf` refuses a `nested` route without one. `flag` marks a member that is a vocabulary flag (`SlotFact.flag`, or for an uncaptured slot its name in `BindingFacts.flagsByPath` at a path the kind is read under), so a consumer tells a flag from data without the vocabulary. `spelled` marks a flag the kind's own form spells, so it holds on every node of the kind: a presence member whose token no slot of its owner holds, or a capture on a variant form whose selector no slot of that form holds (`spelledFlagRouteOf`). It is stamped where the route is made, never inferred from a missing `path`. A `nested` route's `kinds` lists the kinds it captures where the captures of one slot at one path were joined (`oneRoutePerPath`); `capturedKinds` reads a nested route's kinds whether joined or not. `readOnly` marks a route the read takes and no build does: a form of a list slot that holds one node (`oneBuildPerSlot`). A `slot` route's `kinds` lists the kinds its captures name where it holds one node beside a form holding the list: it reads and seats only those, and builds the slot's only item when that item is one of them (`oneBuildPerSlot`).
 
 ### `packages/codegen/src/bindings/routes.ts::ContainerUnwrap`
 
@@ -1119,11 +1131,11 @@ A kind's container unwrap: a kind the bindings declare with `@element` unwraps t
 
 ### `packages/codegen/src/bindings/routes.ts::specificity`
 
-The order read entries are tried in: a claim both placed (made below enclosing kinds) and tested by a predicate, then a predicate claim, then a placed claim, then a claim that pins a literal or tests the nodes below it (a pin, a token the claimed node holds, or a child test), then the plain claim. `resolveRoutes` breaks a tie first by trying a form's own entry before one a supertype's claim gives it, then by more tests the claim states (`testCount`), then by position in `bindings.scm`. Python's `__init__` inside a class reads as `declaration.constructor` (a predicate claim) before `declaration.method` (a placed one).
+The order read entries are tried in: a claim both placed (made below enclosing kinds) and tested by a predicate, then a predicate claim, then a placed claim, then a claim that pins a literal or tests the nodes below it (a pin, a token the claimed node holds, or a child test), then the plain claim. `resolveRoutes` breaks a tie first by trying a form's own entry before one a supertype's claim gives it, then by more tests the claim states (`testCount`), then by position in `bindings.scm`. Python's `__init__` inside a class reads as `declaration.member.constructor` (a predicate claim) before `declaration.member.method` (a placed one).
 
 ### `packages/codegen/src/bindings/routes.ts::testCount`
 
-The tests a read entry's claim states: its field literals, held tokens, child facts, predicates and placement steps. Among entries of one `specificity`, more tests go first, so a read classifies to the deepest kind: a claim whose tests include another's (a refinement that adds a child test, as `declaration.property.getter.public` adds the accessibility modifier to `declaration.property.getter`) has strictly more of them, and the count never puts it after the claim it refines. The count is a total order, where including is only partial: a comparator that asked "includes?" and otherwise fell back to file order would not be transitive. Inclusion never crosses classes, since an including claim keeps the other's placement and predicates. The count reads the claim's own facts, not the entry's derived pins and child tests, because a derived test the model guarantees drops out and would break the strict count. Two claims no node matches together (a single comparison against a chain, a method in a class body against one under a decorator) may swap by the count; neither order changes a read.
+The tests a read entry's claim states: its field literals, held tokens, child facts, predicates and placement steps. Among entries of one `specificity`, more tests go first, so a read classifies to the deepest kind: a claim whose tests include another's (a refinement that adds a child test, as `declaration.member.property.getter.public` adds the accessibility modifier to `declaration.member.property.getter`) has strictly more of them, and the count never puts it after the claim it refines. The count is a total order, where including is only partial: a comparator that asked "includes?" and otherwise fell back to file order would not be transitive. Inclusion never crosses classes, since an including claim keeps the other's placement and predicates. The count reads the claim's own facts, not the entry's derived pins and child tests, because a derived test the model guarantees drops out and would break the strict count. Two claims no node matches together (a single comparison against a chain, a method in a class body against one under a decorator) may swap by the count; neither order changes a read.
 
 ### `packages/codegen/src/bindings/routes.ts::isLeafAlias`
 
@@ -1143,7 +1155,7 @@ A member fact reached through a child: a `presence` or a `nested` member.
 
 ### `packages/codegen/src/bindings/routes.ts::slotsOf`
 
-A read entry's member routes on its kind, as the entry's `Guaranteed` admits them: one `slot` route per slot of the model node, then its flags (`flagRouteOf`), then the member facts the bindings state for it (`kind`, `presence`, `nested`). A slot routes no member when only flag captures hold it, when it is a layout slot, when a claim drops it (`SlotNames` gives it `null`), when the read already tells its value (`toldByRead`, over the values the kind's read entries test on it: their pins, and their child tests on a node directly below: a text test's text, or the text of each fixed-text kind a kinds test names), or when it holds only text on a kind read as an identifier (`facts.ts::isIdentifierPath`, `holdsOnlyText`: an identifier's text is its own value, while a compound identifier's node slots stay members); a slot is also told when the kind's read entries test, one step below it, every kind the node in it can hold (`toldBelow`: rust's visibility levels test `(visibility_modifier (visibility_modifier_pub))` and `(visibility_modifier (crate))`, so the `visibility_modifier` slot is no member), unless a capture the entry inherits names the slot, since a kind leaves its node's content open (`pub(in path)` carries a path), and never over content no claim captures (`toldByRead`); the entry routes the `presence`, `nested` and `kind` members captured by member-only patterns and by the claims it inherits (`inheritedClaims`), never a sibling's or a descendant's; the kinds a deep route reaches through, on every entry (the kind's shape: any claim's `presence` or `nested` route, where the entry guarantees the path), are taken out of their slot, which keeps every other kind it holds and the read then tells as optional, and a slot left with no kind routes nothing; a slot holding several kinds whose member captures all name kinds keeps only the captured kinds (`keptKinds`), so its member reads only the arms of those kinds and answers absent on the others; and a slot a member counts through (a step to its only node) is routed only where the entry guarantees it holds more than one (`guaranteedBy`). A flag capture whose selector no form of its owner holds (a field the model does not have) is refused, naming the kind, the flag and the selector. A capture that names a slot routing no member for one of these reasons (layout, only text on an identifier, counted through, the path of a deeper member, told by the read) is refused, naming the capture, the kind, the slot and the reason: a capture reaches a member, a flag or `@dropped`, never nothing. A leaf alias envelope (`isLeafAlias`) takes no slot routes. A list's item slot is its container content (`containerOf`), a step a path may take but no member, unless the list is a form of a supertype, whose items route as its sibling forms name them (`listFormItems`).
+A read entry's member routes on its kind, as the entry's `Guaranteed` admits them: one `slot` route per slot of the model node, then its flags (`flagRouteOf`), then the member facts the bindings state for it (`kind`, `presence`, `nested`). A slot routes no member when only flag captures hold it, when it is a layout slot, when a claim drops it (`SlotNames` gives it `null`), when the read already tells its value (`toldByRead`, over the values the kind's read entries test on it: their pins, and their child tests on a node directly below: a text test's text, or the text of each fixed-text kind a kinds test names), or when it holds only text on a kind read as an identifier (`facts.ts::isIdentifierPath`, `holdsOnlyText`: an identifier's text is its own value, while a compound identifier's node slots stay members); a slot is also told when the kind's read entries test, one step below it, every kind the node in it can hold (`toldBelow`: rust's visibility levels test `(visibility_modifier (visibility_modifier_pub))` and `(visibility_modifier (crate))`, so the `visibility_modifier` slot is no member), unless a capture the entry inherits names the slot, since a kind leaves its node's content open (`pub(in path)` carries a path), and never over content no claim captures (`toldByRead`); the entry routes the `presence`, `nested` and `kind` members captured by member-only patterns and by the claims it inherits (`inheritedClaims`), never a sibling's or a descendant's; the kinds a deep route reaches through, on every entry (the kind's shape: any claim's `presence` or `nested` route, where the entry guarantees the path), are taken out of their slot, which keeps every other kind it holds and the read then tells as optional, and a slot left with no kind routes nothing; a route of the same slot through a concrete kind the slot holds by a supertype takes that kind out too, and the slot then lists the concrete kinds left, so the forms of one grammar slot read apart (typescript's `for (;;) x();` against `for (;;) { x(); }`), while a route of another slot through such a kind leaves it in (python's docstring, read inside a `def`'s block); a slot holding several kinds whose member captures all name kinds keeps only the captured kinds (`keptKinds`), so its member reads only the arms of those kinds and answers absent on the others; and a slot a member counts through (a step to its only node) is routed only where the entry guarantees it holds more than one (`guaranteedBy`). A flag capture whose selector no form of its owner holds (a field the model does not have) is refused, naming the kind, the flag and the selector. A capture that names a slot routing no member for one of these reasons (layout, only text on an identifier, counted through, the path of a deeper member, told by the read) is refused, naming the capture, the kind, the slot and the reason: a capture reaches a member, a flag or `@dropped`, never nothing. So is a `nested` capture the entry routes whose route has no `path` (it enters one of the many nodes a grammar slot holds with no anchor, or names a node no grammar slot on its way holds), naming the capture and the kind: neither build could place it, and the read would drop it while its slot gives up the kinds the route passes through. It is refused only where the model holds every kind the route names: the model the inventory reads is compiled without the bindings, so it lacks the copies they name (rust's `extension_declaration_body`), and the bound model judges those routes. A capture only a predicate tests is named with a leading `_`, which makes it no slot (`pinned-reader.ts::patternFacts`). A leaf alias envelope (`isLeafAlias`) takes no slot routes. A list's item slot is its container content (`containerOf`), a step a path may take but no member, unless the list is a form of a supertype, whose items route as its sibling forms name them (`listFormItems`). Nested routes of one slot that land on one path join into one route (`oneRoutePerPath`) before the check that a slot has one route through a grammar slot, and the routes of a slot through different forms of one grammar slot are then marked for the build (`oneBuildPerSlot`).
 
 ### `packages/codegen/src/bindings/routes.ts::spelledFlagRouteOf`
 
@@ -1852,7 +1864,9 @@ A table mapping each synonym to its canonical name.
 
 ### `packages/codegen/src/bindings/vocabulary.ts::Vocabulary`
 
-The vocabulary the bindings read claims against.
+The vocabulary the bindings read claims against. Its `namespaces` (`vocabularyNamespaces` of its kind paths) and the ones a bound name leaves out (`shortened`, `vocabularyShortened` of its kind paths and their members) are computed once when it is read and are the same in every composition's view, since a kind's bound name never depends on a language's composition.
+
+`aliases` lists the aliases of the view: all of them in the whole vocabulary, and in a composition's view the base's and those its features own.
 
 ### `packages/codegen/src/bindings/vocabulary.ts::Vocabulary::synonyms`
 
@@ -1885,6 +1899,30 @@ Whether a vocabulary path carries a text-valued `$value`: the path is a kind tha
 ### `packages/codegen/src/bindings/vocabulary.ts::declaredFlags`
 
 The flags a path declares in the vocabulary: its slots typed as a flag, or none when the vocabulary has no such kind. It is the one derivation of a path's declared flags: the flag paths, the portable emitter's input, the build table's `PortableBuildPath.flags` and the feature guard all read it. The build table carries it whether or not an arm builds the flag, so a refused key can say it is a flag of the path.
+
+### `packages/codegen/src/bindings/vocabulary.ts::textKind`
+
+Whether the vocabulary declares a path a text kind: its type is `Text<G, P>`, so it has no slots, no forms and no structure input, only its text. The grammar map gives such a path no slot overrides or forms, and the generated build gives it no structure case. `textValued` excludes it.
+
+### `packages/codegen/src/bindings/vocabulary.ts::composedFeatures`
+
+The features a composition holds, read from a vocabulary source: the features its heritage names, each composition it names in turn, and every feature those extend. `readVocabulary`'s `featuresOf` is this function over the source it read; the vocabulary-features tool calls it on the source it has already read. It throws on a composition `compositions.ts` does not declare, and on a name that is neither a feature nor a composition.
+
+### `packages/codegen/src/bindings/vocabulary.ts::BoundNameCollision`
+
+Two vocabulary kinds that bind to one name: the `name`, the `kind` the refusal is on, and the `other` kind that has the name too.
+
+### `packages/codegen/src/bindings/vocabulary.ts::boundNameCollisions`
+
+The kinds of the whole vocabulary whose bound name another kind has too, by the names `boundKindName` gives with the namespaces the vocabulary shortens (`vocabularyShortened`). A kind's name must never depend on a language's composition, so the check spans every kind, not one grammar's. A collision is on a kind whose name was shortened: a shortened name may not take one another kind already has, and the other kind keeps it. Where no kind sharing a name was shortened, each one after the first by code point is refused. `deriveGrammarBindings` turns each into a `bound-name-collision` diagnostic that stops generation.
+
+### `packages/codegen/src/bindings/vocabulary.ts::vocabularyNamespaces`
+
+The namespaces among a set of kind paths: every proper prefix of a kind path that is itself no kind, such as `declaration.member` where the vocabulary declares `declaration.member.method` and nothing at `declaration.member`. A level is a kind, so it is never one. `readVocabulary` stamps the set on the vocabulary once (`Vocabulary::namespaces`). `boundKindName` leaves out the segment of each one whose every name beneath it is unique within its parent (`vocabularyShortened`), `emitPortableSurface` gives a namespace's kinds node no `$path`, and `emitVocabularyPaths` writes the set into the generated path list, where `portableTrees` reads it rather than deriving it again. Give it every kind path of the vocabulary: a partial set makes a level or any other undeclared parent look like a namespace.
+
+### `packages/codegen/src/bindings/vocabulary.ts::vocabularyShortened`
+
+The namespaces a bound name leaves out: each of `vocabularyNamespaces` whose every name beneath it is unique within its parent namespace, among the parent's members and flags in snake case (`membersOf`) and the kinds directly beneath the parent. A namespace with one name beneath it that is not unique keeps its segment for all its children, so a family reads alike: `left` is a slot of `expression.binary`, so `expression.binary.shift` stays in `left_shift_binary_expression` and `right_unsigned_shift_binary_expression`, while `expression.binary.arithmetic.add` binds as `add_binary_expression`. A namespace at the root has no parent, so only a root kind can make a name beneath it not unique. `readVocabulary` stamps the set once (`Vocabulary::shortened`), passing each kind's members in any composition, inherited ones included, so a bound name never depends on a language's composition. Give it every kind path of the vocabulary, as `vocabularyNamespaces` needs; without `membersOf` only the kinds beneath the parent count.
 
 ### `packages/codegen/src/bindings/facts.ts::ModelNode::unit`
 
@@ -2149,3 +2187,55 @@ Whether the portable layer claims a wrapper kind: a read entry claims it, or, on
 ### `packages/codegen/src/bindings/routes.ts::slotNamedThroughContainer`
 
 The holder slot a nested capture names, when the capture reads that slot through a list container: a slot read through a list container takes the hoist's route, so a holder holds its body's contents directly under the capture's name, with the same seats, empty-list handling, requiredness and form typing the field's hoist gives it. The test reads the slot's stamped chain (`ModelSlot.chain`, the hoist's own), not the containers. A capture qualifies when it steps once, by the holder's field, into a slot whose chain starts at the captured container; every wrapper on the chain is unclaimed and the hoist reads the slot as a list (the stamp's `list`, from `chainReadsAsList`, so the two layers share one list test), so the hoist's route reads the items the capture names, through one wrapper or several; the capture takes the first wrapper's slot whole (a wildcard, with no kind, anchor, `after` or adjacency); and no other nested capture goes through the same holder slot. A slot the hoist does not hoist has no chain and no such route: a hidden holder, an optional holder whose chain can be empty, a wrapper of tokens. `resolveRoutes` enters the capture's name for the slot in `SlotNames`, through the check a rename takes (`namesEvery`), and drops the fact, so no second route reads the same items. The grammar's field keeps its name: only a capture on the field itself renames it. `(switch_statement body: (switch_body cases: (_) @cases))` names the holder's `body` slot `cases`.
+
+### `packages/codegen/src/bindings/routes.ts::NestedRoute`
+
+The `nested` form of a `SlotRoute`: a slot of a `parent` reached through the `via` kinds and found by its selector, with `kinds` where captures of one slot at one path were joined.
+
+### `packages/codegen/src/bindings/routes.ts::capturedKinds`
+
+The kinds a `nested` route captures: its `kinds` where captures of one slot at one path were joined (`oneRoutePerPath`), else its selector's kind, or `null` where the selector names no kind (a capture by field or position, which takes whatever its slot holds). The build table's `reads`, the exact read sets, the derived level facts, the flag tests and `landedKinds` all read a nested route's kinds through it, so a joined route reads every kind its captures name.
+
+### `packages/codegen/src/bindings/routes.ts::oneRoutePerPath`
+
+Joins the `nested` routes of one slot that land on one path with one arity, each capturing a named kind, into one route whose `kinds` lists them all. A capture of alternatives (`(holder body: (list item: [(short) (full)] @fields))`) gives one fact, and so one route, per alternative; as separate routes the build table refuses them, since a slot lands on one grammar slot by one route, and a read through each would lose the order of items of different kinds, while one route reads the items in order whatever their kinds. A route that captures by field or position, or any kind (`_`), is never joined.
+
+### `packages/codegen/src/bindings/routes.ts::oneBuildPerSlot`
+
+Marks the routes of a slot that the read takes and no build does. A slot's routes form a group when each comes from a capture of its own and they part at one grammar slot, each through kinds the others don't reach: the forms that grammar slot holds. A route holds a list when the vocabulary takes the slot as a list (`listed`, from the slot's declared arity) and its grammar slot holds many nodes, directly or through a chain to a list. Where one of them holds a list, every route that holds one node is `readOnly`: typescript's `for (;;) x();` reads `statements: [x()]` through the bare route, and every build makes the block that the other route reads through. A `slot` route that holds one node and whose captures name kinds (`named`, the kinds `slotsOf` finds those captures land on) splits instead: a route of those kinds stays built, stamped with them (`kinds`), and the slot's other kinds go to a route that is `readOnly`, so the slot reads every kind it read before. The built route builds the slot's only item when it is one of those kinds (`facts.ts::buildsOnlyItem`): rust's `else if c {}` and typescript's `(else_clause body: (if_statement) @statements)`, beside whose wildcard capture `else x();` still reads and builds braced. A slot the vocabulary takes as one value has no list form, so all its routes stay built: typescript's `exportClause` places the `export_clause` node whole, though that node holds the list of specifiers. Routes that each hold a list all stay built, and the build picks among them by what the items fit (rust's parameter list and its receiver form; python's indented and inline suites, where the grammar slot's default subtype breaks a tie). Several routes from one capture (a slot held through a split copy and the kind it shows as) are no group.
+
+### `packages/codegen/src/bindings/routes.ts::writesText`
+
+Whether some parse of a kind writes text that is not layout. A layout node writes none. Any other kind writes text when it has a text or a pattern of its own, enum members, a token it spells (`spells`) or a slot holding a terminal, or when a subtype or a kind one of its slots holds writes text. It is the least fixed point over the model, so kinds that only hold each other write none, and it is computed once per model. A kind the model doesn't hold counts as writing text, so an unknown never passes as empty. Python's `suite_empty` holds only `_newline`, a layout node, so it writes none; typescript's `debugger_statement` spells `debugger`, so it writes text. The portable table names a step's `empty` form only among the kinds that read no slot and write no text.
+
+### `packages/codegen/src/bindings/routes.ts::droppedForms`
+
+The concrete kinds a `@dropped` capture takes out of one grammar slot while the slot's other forms stay routed. It answers only for a capture that names a kind on a grammar field, as rust's `(closure_expression_expr body: (block) @dropped)` does. It returns nothing for a wildcard, a token or a position, and nothing when the named kind covers every form the slot holds, so those captures still drop the whole slot. `slotsOf` feeds the result into the slot route's `except`, opening any supertype that holds a named form.
+
+### `packages/codegen/src/bindings/vocabulary.ts::DeclaredAlias`
+
+An alias as the vocabulary reader finds it: a type alias in a namespace whose right side is a `V.`-qualified name, such as `type If<G> = V.Statement.If<G>`. `target` is that name as written, `.Any` included.
+
+### `packages/codegen/src/bindings/vocabulary.ts::VocabularyAlias`
+
+An alias resolved against the vocabulary: `name`, its qualified name; `path`; `targetName`, the target as written; `target`, the target's path; and `feature`, its owner, undefined for the base.
+
+### `packages/codegen/src/bindings/vocabulary.ts::isAlias`
+
+Whether a declaration is an alias, by its `target`. An alias is no kind: it has no `$path` and no slots.
+
+### `packages/codegen/src/bindings/vocabulary.ts::namePaths`
+
+Resolves a qualified vocabulary name to its path: a declared kind's own path, otherwise its parent's path and its last segment in snake case. The levels and the aliases read their paths through it.
+
+### `packages/codegen/src/bindings/vocabulary.ts::declaredAliases`
+
+Every alias of the vocabulary, the base's and each feature's, resolved and sorted by path. `readVocabulary` narrows the list to what a composition holds.
+
+### `packages/codegen/src/bindings/vocabulary.ts::aliasTargets`
+
+What the aliases at or beneath a path reach: their targets and, through those, the targets of the aliases beneath them, sorted. A portable row stamps it as `targets`, and the planner follows it to refuse a cycle.
+
+### `packages/codegen/src/bindings/vocabulary.ts::ANY_WITH`
+
+The prefix of a shared union's name (`V.Expression.AnyWithLet`). The vocabulary reader marks a type alias so named as `shared`, and the augmentation exports a feature's beside its namespace's `Any`.

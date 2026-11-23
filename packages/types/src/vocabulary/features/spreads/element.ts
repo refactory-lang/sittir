@@ -5,15 +5,6 @@ export namespace Element {
 	export interface Spread<G extends GrammarMap, K extends Under<'element.spread'> = 'element.spread'> extends SubKindOf<V.Element<G, K>> {
 		// claimed by pt
 		readonly $path: K;
-		readonly expression?: Slot<
-			G,
-			K,
-			'expression',
-			| V.Declaration.Module<G>
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Pattern.Any<G>
-		>;
+		readonly expression?: Slot<G, K, 'expression', V.Expression.Any<G>>;
 	}
 }

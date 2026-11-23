@@ -5,18 +5,13 @@ export namespace Declaration {
 	export interface Ambient<G extends GrammarMap, K extends Under<'declaration.ambient'> = 'declaration.ambient'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by t
 		readonly $path: K;
-		readonly body: Slot<
-			G,
-			K,
-			'body',
-			| V.Declaration.Any<G>
-			| V.Statement.Block<G>
-			| V.Statement.Any<G>
-		>;
+		readonly body: Slot<G, K, 'body', V.Declaration.Any<G> | V.Statement.Import.Alias<G> | V.Statement.Block<G> | V.Declaration.ModuleProperty<G>>;
 	}
-	export interface Field<G extends GrammarMap, K extends Under<'declaration.field'> = 'declaration.field'> {
-		readonly declare?: Flag;
-		// t only
+	export namespace Member {
+		export interface Field<G extends GrammarMap, K extends Under<'declaration.member.field'> = 'declaration.member.field'> {
+			readonly declare?: Flag;
+			// t only
+		}
 	}
 	export interface ModuleProperty<G extends GrammarMap, K extends Under<'declaration.module_property'> = 'declaration.module_property'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by t

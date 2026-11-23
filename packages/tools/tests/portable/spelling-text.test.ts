@@ -28,12 +28,12 @@ describe("a spelled fact's stamped text", () => {
 		const runtime = await portableRuntime(engine);
 		const readAt = (path: string, fact: string, text: string): unknown => {
 			const def = path.includes('getter') ? 'def x(self) -> int:' : 'def f(self):';
-			const read = runtime.read(engine.parse(`class A:\n    @${text}\n    ${def}\n        pass\n`)) as { readonly statements: readonly { readonly body: { readonly statements: readonly { readonly $at?: Readonly<Record<string, { readonly spelling?: string }>> }[] } }[] };
-			return read.statements[0]!.body.statements[0]!.$at?.[fact]?.spelling;
+			const read = runtime.read(engine.parse(`class A:\n    @${text}\n    ${def}\n        pass\n`)) as { readonly statements: readonly { readonly members: readonly { readonly $at?: Readonly<Record<string, { readonly spelling?: string }>> }[] }[] };
+			return read.statements[0]!.members[0]!.$at?.[fact]?.spelling;
 		};
 		const spelled = spellingsOf(pythonTable);
 		expect(spelled.filter(({ spelling }) => spelling.text.length !== 1 + Object.keys(spelling.holes ?? {}).length).map(({ path, fact }) => `${path} ${fact}`)).toEqual([]);
-		expect(spelled.filter(({ spelling }) => spelling.holes !== undefined).map(({ path, fact, spelling }) => [path, fact, spelling.text])).toEqual([['declaration.property.setter', 'setter', ['', '.setter']]]);
+		expect(spelled.filter(({ spelling }) => spelling.holes !== undefined).map(({ path, fact, spelling }) => [path, fact, spelling.text])).toEqual([['declaration.member.property.setter', 'setter', ['', '.setter']]]);
 		const texts = spelled.flatMap(({ path, fact, spelling }) => (spelling.holes === undefined ? [[path, fact, spelling.text[0]!] as const] : []));
 		expect(texts.map(([path, fact, text]) => [path, fact, text, readAt(path, fact, text)]).filter(([, , text, read]) => read !== text)).toEqual([]);
 		expect(texts.map(([, fact, text]) => `${fact} ${text}`)).toEqual([

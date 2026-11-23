@@ -80,7 +80,7 @@ can travel through it (see `descendThroughGroupLiftSymbol`).
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughGroupLiftSymbol`
 
-Travels through an enrich group-lift symbol by looking up its referenced rule body (`editGroupLift`). It applies the path to that body without consuming a segment, and records the patched body in the active wire context (`wireSetLiftBody`) when the edit matched. The symbol ref is returned unchanged. It throws `ApplyPathSkip` when the symbol has no name, or when its body is not found (no `wire()` context, or the name was pruned).
+Travels through an enrich group-lift symbol by looking up its referenced rule body (`editGroupLift`). It applies the path to that body without consuming a segment, and records the patched body in the active wire context (`wireSetLiftBody`) when the edit matched; the symbol ref is returned unchanged. Inside a copy it patches the context's copy of the lift instead and returns the reference to that copy, as `walkMatches` does. It throws `ApplyPathSkip` when the symbol has no name, or when its body is not found (no `wire()` context, or the name was pruned).
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughEnrichContentAlias`
 
@@ -183,7 +183,7 @@ The `ReachedRule` of a referenced name. A name that is no copy is its own kind, 
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::enteredCopy`
 
-Applies `edit` to the copy a request names (`wire/wire.ts::wireCopy`) and returns the reference to it. A reference that entered a rule becomes the new copy's (`primitives/copy.ts::copyReference`), shown as `shown` when the segment names one. A reference that entered a copy keeps its form (`primitives/copy.ts::reachedCopyReference`), so re-entering a copy never wraps its reference twice. When the copy is refused, the reference is left alone.
+Applies `edit` to the copy a request names (`wire/wire.ts::wireCopy`) and returns the reference to it. A reference that entered a rule becomes the new copy's (`primitives/copy.ts::copyReference`), shown as `shown` when the segment names one. A reference that entered a copy keeps its form (`primitives/copy.ts::reachedCopyReference`), so re-entering a copy never wraps its reference twice. A reference that was its choice's default arm stays the default: the copy's reference keeps `default`, so a context's copy of a variant-bearing choice keeps the default its source declared (python's class suite, a copy of `_suite`, defaults to its class block). Its `variant` label is the copy's own. When the copy is refused, the reference is left alone.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::enteredHiddenRule`
 
@@ -213,7 +213,7 @@ A walk's match test at one node: a result for a node it decides, or `undefined` 
 
 Walks a subtree to the nodes its leaf decides, and rebuilds only the parts that matched. Prec wrappers are seen through and stacked as enclosing wrappers. Containers and other wrappers are descended. A field marks its content as fielded, unless enrich synthesized it (`fieldSource: 'enriched'`): whether a path reaches a reference doesn't depend on how enrich wraps a list. Strings, patterns and blanks are leaves no walk descends.
 
-A group-lift symbol goes through `walkGroupLift`. Each lift is walked once per walk: the `lifts` map memoizes its result, and marks it in progress before the walk, so a cycle through a lift is not walked again. Its edited body is recorded only when the walk matched.
+A group-lift symbol goes through `walkGroupLift`, and so does an alias that shows a context's copy of a lift, which the walk reads as the lift it copies. Each lift is walked once per walk: the `lifts` map memoizes its result, the reference it leaves included, and marks it in progress before the walk, so a cycle through a lift is not walked again and a second reference to it takes the first's result. Its edit is kept only when the walk matched. Outside a copy the edit is the lift's own body. Inside a copy the walk edits the context's copy of the lift instead, named as every copy is and shown as the lift, and the reference becomes the copy's: the shared lift and its other holders stay as they were, and a later entry through the same lift edits that copy.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::isWalkableNode`
 
@@ -1765,7 +1765,7 @@ Records an alias edit that `wire/wire.ts::wireAliasTargetIssue` rejects as the l
 
 ### `packages/codegen/src/dsl/transform/transform.ts::appliedAtSite`
 
-Runs one entry's application as a unit (`wire/wire.ts::wireEntry`) and returns the rule it gives. After the application, every copy the entry showed must show that one display at every reference (`primitives/copy.ts::refuseSplitDisplays`). An `ApplyPathSkip` means the entry's path matches nothing, which is `edit-site-missing`. A `VerbRefusal` out of the application, such as a display conflict, is refused with its own code (`siteRefusalOf`). A refused entry's wire state is undone to what it was before the entry. The refusal is recorded through `wire/wire.ts::wireRefuse`: its details name the kind, the entry's key and anything the refusal itself names, and its message carries the reason. `undefined` then comes back, so the caller keeps the rule it had. Outside a layer pass, `wireRefuse` throws that message. Any other error propagates, after the undo.
+Runs one entry's application as a unit (`wire/wire.ts::wireEntry`) and returns the rule it gives. After the application, every copy the entry showed is shown under one name at most across its references, a bare reference showing none (`primitives/copy.ts::refuseSplitDisplays`). An `ApplyPathSkip` means the entry's path matches nothing, which is `edit-site-missing`. A `VerbRefusal` out of the application, such as a display conflict, is refused with its own code (`siteRefusalOf`). A refused entry's wire state is undone to what it was before the entry. The refusal is recorded through `wire/wire.ts::wireRefuse`: its details name the kind, the entry's key and anything the refusal itself names, and its message carries the reason. `undefined` then comes back, so the caller keeps the rule it had. Outside a layer pass, `wireRefuse` throws that message. Any other error propagates, after the undo.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::siteRefusalOf`
 

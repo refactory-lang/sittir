@@ -715,6 +715,14 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
+    "message": "clause.catch.body: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
     "message": "clause.catch.catchFormalParameter: routed, but its interface does not declare it"
   },
   {
@@ -771,38 +779,6 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.class.interfaces: routed, but its interface does not declare it"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "java",
-    "code": "vocabulary-disagreement",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.class.modifiers: routed, but its interface does not declare it"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "java",
-    "code": "vocabulary-disagreement",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.class.parameters: routed, but its interface does not declare it"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "java",
-    "code": "vocabulary-disagreement",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.class.permits: routed, but its interface does not declare it"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "java",
-    "code": "vocabulary-disagreement",
-    "severity": "warning",
-    "canProceed": true,
     "message": "declaration.constant.declarators: routed, but its interface does not declare it"
   },
   {
@@ -851,7 +827,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constructor.modifiers: routed, but its interface does not declare it"
+    "message": "declaration.member.constructor.body: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -859,7 +835,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constructor.name: routed, but its interface does not declare it"
+    "message": "declaration.member.constructor.modifiers: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -867,7 +843,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constructor.private.modifiers: routed, but its interface does not declare it"
+    "message": "declaration.member.constructor.name: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -875,7 +851,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constructor.private.name: routed, but its interface does not declare it"
+    "message": "declaration.member.constructor.private.body: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -883,7 +859,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constructor.private.throws: routed, but its interface does not declare it"
+    "message": "declaration.member.constructor.private.modifiers: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -891,7 +867,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constructor.protected.modifiers: routed, but its interface does not declare it"
+    "message": "declaration.member.constructor.private.name: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -899,7 +875,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constructor.protected.name: routed, but its interface does not declare it"
+    "message": "declaration.member.constructor.private.throws: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -907,7 +883,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constructor.protected.throws: routed, but its interface does not declare it"
+    "message": "declaration.member.constructor.protected.body: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -915,7 +891,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constructor.public.modifiers: routed, but its interface does not declare it"
+    "message": "declaration.member.constructor.protected.modifiers: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -923,7 +899,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constructor.public.name: routed, but its interface does not declare it"
+    "message": "declaration.member.constructor.protected.name: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -931,7 +907,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constructor.public.throws: routed, but its interface does not declare it"
+    "message": "declaration.member.constructor.protected.throws: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -939,7 +915,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constructor.throws: routed, but its interface does not declare it"
+    "message": "declaration.member.constructor.public.body: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -947,7 +923,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum.body: routed, but its interface does not declare it"
+    "message": "declaration.member.constructor.public.modifiers: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -955,7 +931,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum.interfaces: routed, but its interface does not declare it"
+    "message": "declaration.member.constructor.public.name: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -963,7 +939,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum.modifiers: routed, but its interface does not declare it"
+    "message": "declaration.member.constructor.public.throws: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -971,7 +947,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum.private.body: routed, but its interface does not declare it"
+    "message": "declaration.member.constructor.throws: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -979,7 +955,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum.private.interfaces: routed, but its interface does not declare it"
+    "message": "declaration.member.enum_member.arguments: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -987,7 +963,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum.private.modifiers: routed, but its interface does not declare it"
+    "message": "declaration.member.enum_member.body: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -995,7 +971,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum.public.body: routed, but its interface does not declare it"
+    "message": "declaration.member.enum_member.modifiers: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1003,7 +979,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum.public.interfaces: routed, but its interface does not declare it"
+    "message": "declaration.member.field.declarators: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1011,7 +987,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum.public.modifiers: routed, but its interface does not declare it"
+    "message": "declaration.member.field.private.declarators: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1019,7 +995,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.arguments: routed, but its interface does not declare it"
+    "message": "declaration.member.field.protected.declarators: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1027,7 +1003,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.modifiers: routed, but its interface does not declare it"
+    "message": "declaration.member.field.public.declarators: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1035,7 +1011,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.field.declarators: routed, but its interface does not declare it"
+    "message": "declaration.member.method.annotations: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1043,7 +1019,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.field.private.declarators: routed, but its interface does not declare it"
+    "message": "declaration.member.method.body: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1051,7 +1027,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.field.protected.declarators: routed, but its interface does not declare it"
+    "message": "declaration.member.method.dimensions: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1059,7 +1035,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.field.public.declarators: routed, but its interface does not declare it"
+    "message": "declaration.member.method.private.annotations: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1067,7 +1043,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface.body: routed, but its interface does not declare it"
+    "message": "declaration.member.method.private.body: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1075,7 +1051,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface.extendsInterfaces: routed, but its interface does not declare it"
+    "message": "declaration.member.method.private.dimensions: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1083,7 +1059,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface.modifiers: routed, but its interface does not declare it"
+    "message": "declaration.member.method.private.throws: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1091,7 +1067,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface.permits: routed, but its interface does not declare it"
+    "message": "declaration.member.method.protected.annotations: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1099,7 +1075,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.annotations: routed, but its interface does not declare it"
+    "message": "declaration.member.method.protected.body: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1107,7 +1083,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.dimensions: routed, but its interface does not declare it"
+    "message": "declaration.member.method.protected.dimensions: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1115,7 +1091,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.private.annotations: routed, but its interface does not declare it"
+    "message": "declaration.member.method.protected.throws: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1123,7 +1099,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.private.dimensions: routed, but its interface does not declare it"
+    "message": "declaration.member.method.public.annotations: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1131,7 +1107,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.private.throws: routed, but its interface does not declare it"
+    "message": "declaration.member.method.public.body: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1139,7 +1115,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.protected.annotations: routed, but its interface does not declare it"
+    "message": "declaration.member.method.public.dimensions: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1147,7 +1123,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.protected.dimensions: routed, but its interface does not declare it"
+    "message": "declaration.member.method.public.throws: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1155,7 +1131,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.protected.throws: routed, but its interface does not declare it"
+    "message": "declaration.member.method.signature.abstract.annotations: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1163,7 +1139,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.public.annotations: routed, but its interface does not declare it"
+    "message": "declaration.member.method.signature.abstract.dimensions: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1171,7 +1147,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.public.dimensions: routed, but its interface does not declare it"
+    "message": "declaration.member.method.signature.abstract.throws: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1179,7 +1155,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.public.throws: routed, but its interface does not declare it"
+    "message": "declaration.member.method.signature.annotations: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1187,7 +1163,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.abstract.annotations: routed, but its interface does not declare it"
+    "message": "declaration.member.method.signature.dimensions: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1195,7 +1171,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.abstract.dimensions: routed, but its interface does not declare it"
+    "message": "declaration.member.method.signature.throws: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1203,7 +1179,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.abstract.throws: routed, but its interface does not declare it"
+    "message": "declaration.member.method.throws: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1211,31 +1187,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.annotations: routed, but its interface does not declare it"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "java",
-    "code": "vocabulary-disagreement",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.method.signature.dimensions: routed, but its interface does not declare it"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "java",
-    "code": "vocabulary-disagreement",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.method.signature.throws: routed, but its interface does not declare it"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "java",
-    "code": "vocabulary-disagreement",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.method.throws: routed, but its interface does not declare it"
+    "message": "declaration.member.static_block.block: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1244,6 +1196,14 @@
     "severity": "warning",
     "canProceed": true,
     "message": "declaration.module.annotations: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.module.body: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1324,6 +1284,150 @@
     "severity": "warning",
     "canProceed": true,
     "message": "declaration.parameter.variadic.variableDeclarator: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.class.body: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.class.interfaces: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.class.modifiers: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.class.parameters: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.class.permits: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.enum.body: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.enum.interfaces: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.enum.modifiers: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.enum.private.body: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.enum.private.interfaces: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.enum.private.modifiers: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.enum.public.body: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.enum.public.interfaces: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.enum.public.modifiers: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.interface.body: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.interface.extendsInterfaces: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.interface.modifiers: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.interface.permits: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1627,38 +1731,6 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.integer.binary.content: routed, but its interface does not declare it"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "java",
-    "code": "vocabulary-disagreement",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.number.integer.binary.prefix: routed, but its interface does not declare it"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "java",
-    "code": "vocabulary-disagreement",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.number.integer.octal.content: routed, but its interface does not declare it"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "java",
-    "code": "vocabulary-disagreement",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.number.integer.octal.prefix: routed, but its interface does not declare it"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "java",
-    "code": "vocabulary-disagreement",
-    "severity": "warning",
-    "canProceed": true,
     "message": "modifier.elements: routed, but its interface does not declare it"
   },
   {
@@ -1707,7 +1779,7 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.block.static.block: routed, but its interface does not declare it"
+    "message": "statement.if.consequence: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1755,6 +1827,14 @@
     "code": "vocabulary-disagreement",
     "severity": "warning",
     "canProceed": true,
+    "message": "statement.loop.counted.body: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
     "message": "statement.loop.counted.content: routed, but its interface does not declare it"
   },
   {
@@ -1764,6 +1844,22 @@
     "severity": "warning",
     "canProceed": true,
     "message": "statement.loop.counted.updates: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.do_while.body: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.for_each.body: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -1804,6 +1900,22 @@
     "severity": "warning",
     "canProceed": true,
     "message": "statement.loop.for_each.value: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.while.body: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.resource.body: routed, but its interface does not declare it"
   },
   {
     "scope": "grammar",
@@ -2510,14 +2622,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.class: implements is a list with no list container seat"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "java",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "declaration.constant: modifiers has no exact set"
   },
   {
@@ -2542,7 +2646,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constructor: modifiers has no exact set"
+    "message": "declaration.member.constructor: modifiers has no exact set"
   },
   {
     "scope": "grammar",
@@ -2550,7 +2654,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constructor.private: modifiers has no exact set"
+    "message": "declaration.member.constructor.private: modifiers has no exact set"
   },
   {
     "scope": "grammar",
@@ -2558,7 +2662,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constructor.protected: modifiers has no exact set"
+    "message": "declaration.member.constructor.protected: modifiers has no exact set"
   },
   {
     "scope": "grammar",
@@ -2566,7 +2670,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.constructor.public: modifiers has no exact set"
+    "message": "declaration.member.constructor.public: modifiers has no exact set"
   },
   {
     "scope": "grammar",
@@ -2574,7 +2678,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum: modifiers has no exact set"
+    "message": "declaration.member.enum_member: modifiers has no exact set"
   },
   {
     "scope": "grammar",
@@ -2582,7 +2686,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum.private: modifiers has no exact set"
+    "message": "declaration.member.field: declarators has no exact set"
   },
   {
     "scope": "grammar",
@@ -2590,7 +2694,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum.public: modifiers has no exact set"
+    "message": "declaration.member.field.private: declarators has no exact set"
   },
   {
     "scope": "grammar",
@@ -2598,7 +2702,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member: modifiers has no exact set"
+    "message": "declaration.member.field.protected: declarators has no exact set"
   },
   {
     "scope": "grammar",
@@ -2606,7 +2710,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.field: declarators has no exact set"
+    "message": "declaration.member.field.public: declarators has no exact set"
   },
   {
     "scope": "grammar",
@@ -2614,7 +2718,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.field.private: declarators has no exact set"
+    "message": "declaration.member.method: annotations has no exact set"
   },
   {
     "scope": "grammar",
@@ -2622,7 +2726,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.field.protected: declarators has no exact set"
+    "message": "declaration.member.method.private: annotations has no exact set"
   },
   {
     "scope": "grammar",
@@ -2630,7 +2734,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.field.public: declarators has no exact set"
+    "message": "declaration.member.method.protected: annotations has no exact set"
   },
   {
     "scope": "grammar",
@@ -2638,7 +2742,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.interface: modifiers has no exact set"
+    "message": "declaration.member.method.public: annotations has no exact set"
   },
   {
     "scope": "grammar",
@@ -2646,7 +2750,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method: annotations has no exact set"
+    "message": "declaration.member.method.signature: annotations has no exact set"
   },
   {
     "scope": "grammar",
@@ -2654,7 +2758,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.private: annotations has no exact set"
+    "message": "declaration.member.method.signature.abstract: annotations has no exact set"
   },
   {
     "scope": "grammar",
@@ -2662,31 +2766,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.protected: annotations has no exact set"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "java",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.method.public: annotations has no exact set"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "java",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.method.signature: annotations has no exact set"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "java",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.method.signature.abstract: annotations has no exact set"
+    "message": "declaration.member.static_block: block has no exact set"
   },
   {
     "scope": "grammar",
@@ -2719,6 +2799,46 @@
     "severity": "warning",
     "canProceed": true,
     "message": "declaration.parameter.variadic: modifiers has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.class: implements is a list with no list container seat"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.enum: modifiers has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.enum.private: modifiers has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.enum.public: modifiers has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type.interface: modifiers has no exact set"
   },
   {
     "scope": "grammar",
@@ -2998,7 +3118,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.block.static: block has no exact set"
+    "message": "statement.if: consequence has no exact set"
   },
   {
     "scope": "grammar",
@@ -3030,7 +3150,23 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
+    "message": "statement.loop.do_while: body has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
     "message": "statement.loop.for_each: modifiers has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.while: body has no exact set"
   },
   {
     "scope": "grammar",

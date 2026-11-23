@@ -10,7 +10,7 @@ const forms = [
 	{
 		grammar: 'typescript',
 		owner: 'interface_declaration',
-		path: 'declaration.interface',
+		path: 'declaration.type.interface',
 		clause: 'clause.extends.type',
 		cases: [
 			['interface A {}', []],
@@ -21,7 +21,7 @@ const forms = [
 	{
 		grammar: 'rust',
 		owner: 'trait_item',
-		path: 'declaration.interface.trait',
+		path: 'declaration.type.interface.trait',
 		clause: 'clause.bounds',
 		cases: [
 			['trait A {}', []],

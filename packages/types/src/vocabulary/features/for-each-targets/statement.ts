@@ -4,18 +4,9 @@ import type * as V from '../../index.ts';
 export namespace Statement {
 	export namespace Loop {
 		export interface ForEach<G extends GrammarMap, K extends Under<'statement.loop.for_each'> = 'statement.loop.for_each'> {
-			readonly left?: Slot<G, K, 'left', unknown>;
+			readonly left?: Slot<G, K, 'left', V.Pattern.Any<G>>;
 			// pr only
-			readonly right?: Slot<
-				G,
-				K,
-				'right',
-				| V.Expression.Any<G>
-				| V.Identifier.Any<G>
-				| V.Literal.Any<G>
-				| V.Pattern.Any<G>
-				| V.Statement.Any<G>
-			>;
+			readonly right?: Slot<G, K, 'right', V.Expression.Any<G>>;
 			// pr only
 		}
 	}

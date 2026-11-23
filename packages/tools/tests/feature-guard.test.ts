@@ -23,7 +23,7 @@ describe('feature guard', () => {
 
 	it('holds a feature with no paths or slots of its own trivially', () => {
 		const contentless = [...p.features.keys()].filter(
-			(name) => ![...p.kinds.values()].some((kind) => kind.feature?.name === name) && ![...p.owned.values()].some((slots) => [...slots.values()].some((o) => o.feature.name === name))
+			(name) => ![...p.kinds.values()].some((kind) => kind.feature?.name === name) && !p.aliases.some((alias) => alias.feature === name) && ![...p.owned.values()].some((slots) => [...slots.values()].some((o) => o.feature.name === name))
 		);
 		const rows = guardRows(p, new Set(contentless), { paths: new Set(), slots: new Set() });
 		expect(contentless.length).toBeGreaterThan(0);

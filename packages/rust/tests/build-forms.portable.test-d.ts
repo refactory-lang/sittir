@@ -47,16 +47,15 @@ export const boundedConstant: In<'declaration.type_parameter.value'> = { $path: 
 export const flaggedConstant: In<'declaration.type_parameter.value'> = { $path: 'declaration.type_parameter.value', name, type, $flags: ['const'] };
 
 declare const flag: Flag;
-declare const body: At<'declaration.function'>['body'];
 declare const fnName: At<'declaration.function'>['name'];
-export const asyncFunction: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], body, $flags: ['async', 'unsafe'] };
-export const asyncPublic: In<'declaration.function.public'> = { $path: 'declaration.function.public', name: fnName, parameters: [], body, $flags: ['async'] };
+export const asyncFunction: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], statements: [], $flags: ['async', 'unsafe'] };
+export const asyncPublic: In<'declaration.function.public'> = { $path: 'declaration.function.public', name: fnName, parameters: [], statements: [], $flags: ['async'] };
 // @ts-expect-error a function declares no static; a method does
-export const staticFunction: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], body, $flags: ['static'] };
+export const staticFunction: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], statements: [], $flags: ['static'] };
 // @ts-expect-error generator functions are a feature rust lacks
-export const generatorFunction: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], body, $flags: ['generator'] };
+export const generatorFunction: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], statements: [], $flags: ['generator'] };
 // @ts-expect-error a flag is named in $flags, never written as a slot
-export const slotFlag: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], body, async: flag };
+export const slotFlag: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], statements: [], async: flag };
 
 export const readAsync: At<'declaration.function'>['$flags'] = ['async'];
 // @ts-expect-error a read function carries no static

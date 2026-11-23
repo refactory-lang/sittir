@@ -8,7 +8,7 @@ export namespace Pattern {
 		readonly pattern: Slot<G, K, 'pattern', unknown>;
 	}
 	export namespace Reference {
-		export interface Value<G extends GrammarMap, K extends Under<'pattern.reference.value'> = 'pattern.reference.value'> extends SubKindOf<V.Pattern.Reference<G, K>> {
+		export interface Value<G extends GrammarMap, K extends Under<'pattern.reference.value'> = 'pattern.reference.value'> extends SubKindOf<V.Pattern.Reference<G, K>, 'pattern'> {
 			// claimed by r
 			readonly $path: K;
 			readonly exclusive?: Flag;

@@ -1330,17 +1330,6 @@
               "slot": "body"
             }
           ]
-        },
-        {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
-          "path": [
-            {
-              "owner": "composite_literal",
-              "slot": "body"
-            }
-          ]
         }
       ]
     },
@@ -1753,10 +1742,10 @@
       "slots": []
     },
     "field_declaration": {
-      "vocab": "declaration.field",
+      "vocab": "declaration.member.field",
       "read": [
         {
-          "vocab": "declaration.field.public",
+          "vocab": "declaration.member.field.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -1797,7 +1786,7 @@
           ]
         },
         {
-          "vocab": "declaration.field.private",
+          "vocab": "declaration.member.field.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -1838,7 +1827,7 @@
           ]
         },
         {
-          "vocab": "declaration.field",
+          "vocab": "declaration.member.field",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3119,10 +3108,10 @@
       }
     },
     "method_declaration": {
-      "vocab": "declaration.method",
+      "vocab": "declaration.member.method",
       "read": [
         {
-          "vocab": "declaration.method.public",
+          "vocab": "declaration.member.method.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3150,7 +3139,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.private",
+          "vocab": "declaration.member.method.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3178,7 +3167,7 @@
           ]
         },
         {
-          "vocab": "declaration.method",
+          "vocab": "declaration.member.method",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3244,10 +3233,10 @@
       ]
     },
     "method_elem": {
-      "vocab": "declaration.method.signature",
+      "vocab": "declaration.member.method.signature",
       "read": [
         {
-          "vocab": "declaration.method.signature",
+          "vocab": "declaration.member.method.signature",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4060,10 +4049,10 @@
       "slots": []
     },
     "type_alias": {
-      "vocab": "declaration.type_alias",
+      "vocab": "declaration.type.type_alias",
       "read": [
         {
-          "vocab": "declaration.type_alias.public",
+          "vocab": "declaration.type.type_alias.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4091,7 +4080,7 @@
           ]
         },
         {
-          "vocab": "declaration.type_alias.private",
+          "vocab": "declaration.type.type_alias.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4119,7 +4108,7 @@
           ]
         },
         {
-          "vocab": "declaration.type_alias",
+          "vocab": "declaration.type.type_alias",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4747,7 +4736,7 @@
       "vocab": "declaration",
       "read": [
         {
-          "vocab": "declaration.struct.public",
+          "vocab": "declaration.type.struct.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4788,7 +4777,7 @@
           ]
         },
         {
-          "vocab": "declaration.struct.private",
+          "vocab": "declaration.type.struct.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4829,7 +4818,7 @@
           ]
         },
         {
-          "vocab": "declaration.struct",
+          "vocab": "declaration.type.struct",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4850,7 +4839,7 @@
           ]
         },
         {
-          "vocab": "declaration.interface",
+          "vocab": "declaration.type.interface",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5365,21 +5354,21 @@
       },
       {
         "depth": 2,
-        "paths": 56,
-        "kinds": 58,
-        "refinements": 12
+        "paths": 53,
+        "kinds": 54,
+        "refinements": 9
       },
       {
         "depth": 3,
-        "paths": 55,
-        "kinds": 42,
-        "refinements": 38
+        "paths": 51,
+        "kinds": 41,
+        "refinements": 29
       },
       {
         "depth": 4,
-        "paths": 39,
-        "kinds": 18,
-        "refinements": 4
+        "paths": 48,
+        "kinds": 23,
+        "refinements": 13
       }
     ]
   }

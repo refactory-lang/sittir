@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, posix, sep } from 'node:path';
 import { type BindingFacts, type ClaimFact, isNamedSlot, type SlotFact, type NamedSlotFact, type SlotModel, VOCABULARY_DIR } from './facts.ts';
 import { capturePaths, envelopeTargets, kindVocabs, slotTargets, readsByKind, refinedContainers } from './routes.ts';
-import { camel, snake } from './names.ts';
+import { boundKindName, camel, snake } from './names.ts';
 import { grammarDisplayName } from '../grammars.ts';
 import { runPinned } from './read.ts';
 
@@ -20,6 +20,7 @@ export const SLOT = 'Slot';
 export const REFINED_BY = 'RefinedBy';
 export const SUB_KIND_OF = 'SubKindOf';
 export const SYNONYMS = 'Synonyms';
+export const ANY_WITH = 'AnyWith';
 const NEVER = 'never';
 
 export interface DeclaredSlot {
@@ -43,13 +44,29 @@ export interface Declared {
 	readonly restated: readonly string[];
 	readonly slots: readonly DeclaredSlot[];
 	readonly text?: true;
+	readonly target?: string;
+	readonly shared?: true;
 }
 
 export interface DeclaredKind extends Declared {
 	readonly path: string;
 }
 
+export interface DeclaredAlias extends Declared {
+	readonly target: string;
+}
+
+export interface VocabularyAlias {
+	readonly name: string;
+	readonly path: string;
+	readonly targetName: string;
+	readonly target: string;
+	readonly feature: string | undefined;
+}
+
 export const isKind = (d: Declared): d is DeclaredKind => d.path !== undefined;
+
+export const isAlias = (d: Declared): d is DeclaredAlias => d.target !== undefined;
 
 export const byCodepoint = (a: string, b: string): number => (a < b ? -1 : a > b ? 1 : 0);
 
@@ -71,6 +88,7 @@ export interface Synonyms {
 
 export interface VocabularySource {
 	readonly kinds: readonly DeclaredKind[];
+	readonly aliases: readonly DeclaredAlias[];
 	readonly modules: ReadonlyMap<string, string>;
 	readonly synonyms: Synonyms;
 	readonly features: readonly Feature[];
@@ -117,6 +135,9 @@ export interface VocabularyKind {
 
 export interface Vocabulary {
 	readonly kinds: ReadonlyMap<string, VocabularyKind>;
+	readonly aliases: readonly VocabularyAlias[];
+	readonly namespaces: ReadonlySet<string>;
+	readonly shortened: ReadonlySet<string>;
 	readonly flags: ReadonlySet<string>;
 	readonly synonyms: Synonyms;
 	slots(path: string): ReadonlyMap<string, VocabularySlot>;
@@ -157,6 +178,7 @@ export async function readVocabularySource(dir: string): Promise<VocabularySourc
 	const sources = vocabularySources(dir);
 	const files = sources.filter((name) => !name.includes(posix.sep));
 	const kinds: DeclaredKind[] = [];
+	const aliases: DeclaredAlias[] = [];
 	const modules = new Map<string, string>();
 	const levels = new Map<string, SynonymTable>();
 	const flags: Declared[] = [];
@@ -170,6 +192,7 @@ export async function readVocabularySource(dir: string): Promise<VocabularySourc
 			kinds.push(d);
 			modules.set(d.qname.replace(/\..*$/, ''), file);
 		}
+		aliases.push(...all.filter(isAlias));
 		if (file === COMPOSITIONS) for (const d of all) compositions.set(d.qname, d.heritage);
 		for (const d of all) {
 			const level = levelOf.get(d.qname);
@@ -183,6 +206,7 @@ export async function readVocabularySource(dir: string): Promise<VocabularySourc
 	const root = join(dir, FEATURES);
 	return {
 		kinds,
+		aliases,
 		modules,
 		synonyms: { levels, flags: flags[0] === undefined ? new Map() : synonymTable(flags[0]) },
 		features: existsSync(root) ? await readFeatures(dir, sources) : [],
@@ -253,10 +277,118 @@ export function pathChildren(paths: Iterable<string>): ReadonlyMap<string, Reado
 	return children;
 }
 
-export const textValued = (vocabulary: Vocabulary, path: string): boolean => {
-	const kind = vocabulary.kinds.get(path);
-	return kind !== undefined && kind.text !== true && vocabulary.slots(path).get('$value')?.text === true;
-};
+export const textKind = (vocabulary: Vocabulary, path: string): boolean => vocabulary.kinds.get(path)?.text === true;
+
+export const textValued = (vocabulary: Vocabulary, path: string): boolean =>
+	vocabulary.kinds.has(path) && !textKind(vocabulary, path) && vocabulary.slots(path).get('$value')?.text === true;
+
+export function composedFeatures(source: VocabularySource): (composition: string) => ReadonlySet<string> {
+	const parentsOf = new Map(source.features.map((feature) => [feature.name, feature.parents]));
+	return (composition) => {
+		const heritage = source.compositions.get(composition);
+		if (heritage === undefined) throw new Error(`vocabulary: ${COMPOSITIONS} declares no composition ${composition}`);
+		const found = new Set<string>();
+		const add = (name: string): void => {
+			if (found.has(name)) return;
+			const composed = source.compositions.get(name);
+			if (composed !== undefined) return composed.forEach(add);
+			const parents = parentsOf.get(name);
+			if (parents === undefined) throw new Error(`vocabulary: ${composition} extends ${name}, which is neither a feature nor a composition`);
+			found.add(name);
+			parents.forEach(add);
+		};
+		heritage.forEach(add);
+		return found;
+	};
+}
+
+export function vocabularyNamespaces(kinds: Iterable<string>): ReadonlySet<string> {
+	const paths = new Set(kinds);
+	const namespaces = new Set<string>();
+	for (const path of paths) {
+		const segments = path.split('.');
+		for (let end = 1; end < segments.length; end++) {
+			const prefix = segments.slice(0, end).join('.');
+			if (!paths.has(prefix)) namespaces.add(prefix);
+		}
+	}
+	return namespaces;
+}
+
+export function namePaths(kinds: Iterable<{ readonly qname: string; readonly path: string }>): (name: string) => string {
+	const known = new Map([...kinds].map((kind) => [kind.qname, kind.path]));
+	const pathOf = (name: string): string => {
+		const declared = known.get(name);
+		if (declared !== undefined) return declared;
+		const cut = name.lastIndexOf('.');
+		const path = cut < 0 ? snake(name) : `${pathOf(name.slice(0, cut))}.${snake(name.slice(cut + 1))}`;
+		known.set(name, path);
+		return path;
+	};
+	return pathOf;
+}
+
+export function declaredAliases(source: VocabularySource): readonly VocabularyAlias[] {
+	const pathOf = namePaths([...source.kinds, ...source.features.flatMap((feature) => feature.stubs.filter(isKind))]);
+	const resolved = (d: DeclaredAlias, feature: string | undefined): VocabularyAlias => ({
+		name: d.qname,
+		path: pathOf(d.qname),
+		targetName: d.target,
+		target: pathOf(d.target.replace(/\.Any$/, '')),
+		feature
+	});
+	return [...source.aliases.map((d) => resolved(d, undefined)), ...source.features.flatMap((feature) => feature.stubs.filter(isAlias).map((d) => resolved(d, feature.name)))].sort((a, b) => byCodepoint(a.path, b.path));
+}
+
+export function aliasTargets(path: string, aliases: readonly Pick<VocabularyAlias, 'path' | 'target'>[]): readonly string[] {
+	const found = new Set<string>();
+	const visit = (at: string): void => {
+		for (const alias of aliases) {
+			if ((alias.path !== at && !alias.path.startsWith(`${at}.`)) || found.has(alias.target)) continue;
+			found.add(alias.target);
+			visit(alias.target);
+		}
+	};
+	visit(path);
+	return [...found].sort(byCodepoint);
+}
+
+export function vocabularyShortened(paths: Iterable<string>, membersOf: (path: string) => Iterable<string> = () => []): ReadonlySet<string> {
+	const kinds = new Set(paths);
+	const unique = (namespace: string): boolean => {
+		const cut = namespace.lastIndexOf('.');
+		const beneathParent = (name: string): string => (cut < 0 ? name : `${namespace.slice(0, cut)}.${name}`);
+		const members = new Set([...(cut < 0 ? [] : membersOf(namespace.slice(0, cut)))].map(snake));
+		return [...kinds]
+			.filter((path) => path.startsWith(`${namespace}.`))
+			.every((path) => {
+				const child = path.slice(namespace.length + 1).split('.')[0]!;
+				return !kinds.has(beneathParent(child)) && !members.has(child);
+			});
+	};
+	return new Set([...vocabularyNamespaces(kinds)].filter(unique));
+}
+
+export interface BoundNameCollision {
+	readonly name: string;
+	readonly kind: string;
+	readonly other: string;
+}
+
+export function boundNameCollisions(kinds: Iterable<string>, shortened: ReadonlySet<string>): readonly BoundNameCollision[] {
+	const shortens = (path: string): boolean => boundKindName(path, false, shortened) !== boundKindName(path, false, new Set());
+	const holders = new Map<string, string[]>();
+	for (const path of [...kinds].sort(byCodepoint)) {
+		const name = boundKindName(path, false, shortened);
+		(holders.get(name) ?? holders.set(name, []).get(name)!).push(path);
+	}
+	return [...holders].flatMap(([name, paths]) => {
+		if (paths.length < 2) return [];
+		const taken = paths.filter(shortens);
+		const named = taken.length > 0 ? taken : paths.slice(1);
+		return named.map((kind) => ({ name, kind, other: paths.find((path) => !named.includes(path)) ?? paths.find((path) => path !== kind)! }));
+	});
+}
 
 export async function readVocabulary(dir: string): Promise<Vocabulary> {
 	const source = await readVocabularySource(dir);
@@ -298,25 +430,15 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 		return all;
 	};
 	const flags = new Set([...kinds.values()].flatMap((kind) => [...kind.own].flatMap(([name, slot]) => (slot.flag ? [name] : []))));
-	const parentsOf = new Map(source.features.map((feature) => [feature.name, feature.parents]));
-	const featuresOf = (composition: string): ReadonlySet<string> => {
-		const heritage = source.compositions.get(composition);
-		if (heritage === undefined) throw new Error(`vocabulary: ${COMPOSITIONS} declares no composition ${composition}`);
-		const found = new Set<string>();
-		const add = (name: string): void => {
-			if (found.has(name)) return;
-			const composed = source.compositions.get(name);
-			if (composed !== undefined) return composed.forEach(add);
-			const parents = parentsOf.get(name);
-			if (parents === undefined) throw new Error(`vocabulary: ${composition} extends ${name}, which is neither a feature nor a composition`);
-			found.add(name);
-			parents.forEach(add);
-		};
-		heritage.forEach(add);
-		return found;
-	};
+	const namespaces = vocabularyNamespaces(kinds.keys());
+	const shortened = vocabularyShortened(kinds.keys(), (path) => (kinds.has(path) ? slotsWithin(undefined)(path).keys() : []));
+	const featuresOf = composedFeatures(source);
+	const aliases = declaredAliases(source);
 	const view = (composed: ReadonlySet<string> | undefined): Vocabulary => ({
 		kinds,
+		aliases: composed === undefined ? aliases : aliases.filter((alias) => alias.feature === undefined || composed.has(alias.feature)),
+		namespaces,
+		shortened,
 		flags,
 		synonyms: source.synonyms,
 		slots: slotsWithin(composed),
@@ -395,7 +517,7 @@ export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, mode
 		const vocab = canonical(claim.vocab);
 		return vocab === claim.vocab ? claim : { ...claim, vocab };
 	});
-	const reads = readsByKind(model, flagResolved(vocabulary, claims));
+	const reads = readsByKind(model, flagResolved(vocabulary, claims), vocabulary.shortened);
 	const vocabs = kindVocabs(model, reads, refinedContainers(model, reads, facts.containers));
 	const readable = capturePaths(model, reads);
 	const attached = slotTargets(model, reads);
@@ -437,7 +559,7 @@ export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, mode
 
 export function resolveFlags(facts: BindingFacts, vocabulary: Vocabulary, model: SlotModel): BindingFacts {
 	const claims = flagResolved(vocabulary, facts.claims);
-	const pathsOf = slotTargets(model, readsByKind(model, claims));
+	const pathsOf = slotTargets(model, readsByKind(model, claims, vocabulary.shortened));
 	return {
 		...facts,
 		claims,

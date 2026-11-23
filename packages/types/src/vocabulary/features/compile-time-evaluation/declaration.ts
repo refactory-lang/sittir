@@ -5,8 +5,10 @@ export namespace Declaration {
 		readonly const?: Flag;
 		// r only
 	}
-	export interface Method<G extends GrammarMap, K extends Under<'declaration.method'> = 'declaration.method'> {
-		readonly const?: Flag;
-		// rt only
+	export namespace Member {
+		export interface Method<G extends GrammarMap, K extends Under<'declaration.member.method'> = 'declaration.member.method'> {
+			readonly const?: Flag;
+			// rt only
+		}
 	}
 }

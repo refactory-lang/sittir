@@ -6,26 +6,26 @@
 (program) @file
 
 ; ── declaration ────────────────────────────────────────────────────────────────
-(class_declaration) @declaration.class
+(class_declaration) @declaration.type.class
 (class_declaration superclass: (_) @extends)
 (class_declaration interfaces: (_) @implements)
 (class_declaration type_parameters: (_) @typeParameters)
 (class_declaration (modifiers "abstract" @abstract))
-(record_declaration) @declaration.class
-(interface_declaration) @declaration.interface
+(record_declaration) @declaration.type.class
+(interface_declaration) @declaration.type.interface
 (interface_declaration type_parameters: (_) @typeParameters)
-(enum_declaration) @declaration.enum
-(enum_constant) @declaration.enum_member
-(method_declaration) @declaration.method
+(enum_declaration) @declaration.type.enum
+(enum_constant) @declaration.member.enum_member
+(method_declaration) @declaration.member.method
 (method_declaration type_parameters: (_) @typeParameters)
 (method_declaration type: (_) @returnType)
 (method_declaration (modifiers "static" @static))
-((method_declaration (modifiers "abstract") !body) @declaration.method.signature.abstract)
-(interface_body (method_declaration !body) @declaration.method.signature)
-(constructor_declaration) @declaration.constructor
+((method_declaration (modifiers "abstract") !body) @declaration.member.method.signature.abstract)
+(interface_body (method_declaration !body) @declaration.member.method.signature)
+(constructor_declaration) @declaration.member.constructor
 (constructor_declaration type_parameters: (_) @typeParameters)
-(compact_constructor_declaration) @declaration.constructor
-(field_declaration) @declaration.field
+(compact_constructor_declaration) @declaration.member.constructor
+(field_declaration) @declaration.member.field
 (field_declaration type: (_) @type)
 (field_declaration (modifiers "static" @static))
 (constant_declaration) @declaration.constant
@@ -39,17 +39,17 @@
 (type_parameter) @declaration.type_parameter
 (type_parameter type_bound: (_) @bounds)
 (module_declaration) @declaration.module
-((method_declaration (modifiers "public")) @declaration.method.public)
-((method_declaration (modifiers "private")) @declaration.method.private)
-((method_declaration (modifiers "protected")) @declaration.method.protected)
-((field_declaration (modifiers "public")) @declaration.field.public)
-((field_declaration (modifiers "private")) @declaration.field.private)
-((field_declaration (modifiers "protected")) @declaration.field.protected)
-((constructor_declaration (modifiers "public")) @declaration.constructor.public)
-((constructor_declaration (modifiers "private")) @declaration.constructor.private)
-((constructor_declaration (modifiers "protected")) @declaration.constructor.protected)
-((enum_declaration (modifiers "public")) @declaration.enum.public)
-((enum_declaration (modifiers "private")) @declaration.enum.private)
+((method_declaration (modifiers "public")) @declaration.member.method.public)
+((method_declaration (modifiers "private")) @declaration.member.method.private)
+((method_declaration (modifiers "protected")) @declaration.member.method.protected)
+((field_declaration (modifiers "public")) @declaration.member.field.public)
+((field_declaration (modifiers "private")) @declaration.member.field.private)
+((field_declaration (modifiers "protected")) @declaration.member.field.protected)
+((constructor_declaration (modifiers "public")) @declaration.member.constructor.public)
+((constructor_declaration (modifiers "private")) @declaration.member.constructor.private)
+((constructor_declaration (modifiers "protected")) @declaration.member.constructor.protected)
+((enum_declaration (modifiers "public")) @declaration.type.enum.public)
+((enum_declaration (modifiers "private")) @declaration.type.enum.private)
 ((constant_declaration (modifiers "public")) @declaration.constant.public)
 ((constant_declaration (modifiers "private")) @declaration.constant.private)
 
@@ -69,7 +69,7 @@
 (import_declaration) @statement.import
 (asterisk) @clause.import.wildcard
 (block) @statement.block
-(static_initializer) @statement.block.static
+(static_initializer) @declaration.member.static_block
 (if_statement) @statement.if
 (if_statement alternative: (_) @alternative)
 (while_statement) @statement.loop.while

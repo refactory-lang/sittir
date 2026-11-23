@@ -4,7 +4,7 @@ import { conditionHolds, holds, planSubjects, reachedBy, slotItems, type PlanIte
 import { storedSlotRead } from '../stored-slot.ts';
 import { treeOf } from '../tree-token.ts';
 import { sourceTextOf } from '../node-data.ts';
-import { entriesHolding, portablePathHasFacts, readableEntries, unplaced } from './facts.ts';
+import { entriesHolding, portablePathHasFacts, portableRowHasFacts, readableEntries, unplaced } from './facts.ts';
 
 type Node = { readonly $type: number };
 
@@ -82,7 +82,7 @@ export const readsAs = (rows: PortableRows, path: string, value: Node | number):
 	const admitted = portablePathOf(rows, path);
 	const kind = typeof value === 'number' ? value : value.$type;
 	if (admitted === undefined || !admitted.ids.includes(kind)) return false;
-	return admitted.exact || portablePathHasFacts(path, classifierOf(rows)(value));
+	return admitted.exact || portableRowHasFacts(path, admitted.targets, classifierOf(rows)(value));
 };
 
 /**

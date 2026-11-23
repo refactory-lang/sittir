@@ -24,6 +24,7 @@ import { groupLiftNames, isGroupLiftReference, isVisibleGroupAlias } from '../ds
 import { type BindingFacts, type LiteralText, type SlotFact, type ModelSlot, type RefinedClaim, type SlotModel, WILDCARD, isNamedSlot, literalClaimOf } from './facts.ts';
 import { type GrammarRoutes, type SlotRoute, formsOf, namesEvery, slotTargets, readsByKind } from './routes.ts';
 import { boundKindName } from './names.ts';
+import { boundNameCollisions } from './vocabulary.ts';
 import { deriveLeads } from './leads.ts';
 import { isParserHiddenName, symbolFactsOf, type SymbolSource } from '../dsl/rule-patterns.ts';
 import { predictedEntriesOf, renameAwareSymbolSource } from '../dsl/symbol-table.ts';
@@ -69,6 +70,7 @@ export interface GrammarBindingsInput {
 	readonly wordMatcher: RegExp | undefined;
 	readonly layerRules: EvaluatedGrammar['rules'];
 	readonly vocabSlots: ReadonlyMap<string, ReadonlySet<string>>;
+	readonly shortened: ReadonlySet<string>;
 	readonly routes: Pick<GrammarRoutes, 'slots' | 'vocabOf' | 'claims'>;
 	readonly model: SlotModel;
 }
@@ -171,15 +173,6 @@ function reachesThroughHidden(rules: Readonly<Record<string, unknown>>, rule: un
 	return reachesThroughHidden(rules, rules[rule.name], child, entered);
 }
 
-function aliasValuesOf(rule: unknown, out: Set<string> = new Set()): ReadonlySet<string> {
-	if (Array.isArray(rule)) for (const r of rule) aliasValuesOf(r, out);
-	else if (isRecord(rule)) {
-		if (rule.type === 'ALIAS' && rule.named === true && typeof rule.value === 'string') out.add(rule.value);
-		for (const v of Object.values(rule)) aliasValuesOf(v, out);
-	}
-	return out;
-}
-
 function aliasSourceOf(rule: unknown, display: string): string | undefined {
 	if (Array.isArray(rule)) {
 		for (const member of rule) {
@@ -222,12 +215,19 @@ function fieldOfReference(rules: Readonly<Record<string, unknown>>, owner: strin
 	return { name: field.name, whole: isRecord(content) && ((content.type === 'SYMBOL' && content.name === child) || (content.type === 'ALIAS' && content.value === child)) };
 }
 
-function placedStepsOf(rules: Readonly<Record<string, unknown>>, stop: ReadonlySet<string>, kind: string, within: readonly string[]): readonly PlacedStep[] | 'several' {
+function placedStepsOf(
+	rules: Readonly<Record<string, unknown>>,
+	stop: ReadonlySet<string>,
+	kind: string,
+	within: readonly string[],
+	shownRuleOf: (name: string) => string | undefined
+): readonly PlacedStep[] | 'several' {
 	const owner = within[within.length - 1]!;
 	const claimed = [...within.slice(0, -1).toReversed(), kind];
-	const between = claimed.flatMap((k, i) => [...(supertypesBetween(rules, stop, i === 0 ? owner : claimed[i - 1]!, k) ?? []), k]);
-	const kinds = between.filter((k, i) => i === between.length - 1 || !liftedIn(rules[i === 0 ? owner : between[i - 1]!], k));
-	const steps = kinds.map((k, i) => ({ kind: k, field: fieldOfReference(rules, i === 0 ? owner : kinds[i - 1]!, k) }));
+	const reading = (name: string): string => shownRuleOf(name) ?? name;
+	const between = claimed.flatMap((k, i) => [...(supertypesBetween(rules, stop, reading(i === 0 ? owner : claimed[i - 1]!), k) ?? []), k]);
+	const kinds = between.filter((k, i) => i === between.length - 1 || !liftedIn(rules[reading(i === 0 ? owner : between[i - 1]!)], k));
+	const steps = kinds.map((k, i) => ({ kind: k, field: fieldOfReference(rules, reading(i === 0 ? owner : kinds[i - 1]!), k) }));
 	return steps.some((step) => step.field === 'several') ? 'several' : (steps as PlacedStep[]);
 }
 
@@ -320,14 +320,15 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	report: GrammarBindingsReport;
 	diagnostics: readonly GrammarDiagnostic[];
 } {
-	const { facts, base, vocabSlots, routes, model } = input;
+	const { facts, base, vocabSlots, shortened, routes, model } = input;
 	const symbols = renameAwareSymbolSource({
 		...symbolFactsOf(base),
 		kindEntries: predictedEntriesOf(base.predictedKinds)
 	});
 	const rules = base.rules as Record<string, unknown>;
 	const ruleNames = new Set(Object.keys(rules));
-	const aliasedKinds = aliasValuesOf(rules);
+	const shownRuleOf = (name: string): string | undefined => (ruleNames.has(name) ? name : aliasSourceOf(rules, name));
+	const sited = (within: readonly string[]): boolean => within.every((w, i) => (i === within.length - 1 ? ruleNames.has(w) : shownRuleOf(w) !== undefined));
 	const checks = { ...base, rules } as unknown as GrammarRecord;
 	const stop = supertypesOf(checks);
 	const residue: GrammarBindingsResidue[] = [];
@@ -393,13 +394,13 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 		});
 	};
 	const literalSplitAt = (c: RefinedClaim, kind: string, within: readonly string[], literal: LiteralText, as: string): PlacedSplit | string => {
-		if (!ruleNames.has(kind) || !within.every((w) => ruleNames.has(w))) return 'placed claim';
+		if (!ruleNames.has(kind) || !sited(within)) return 'placed claim';
 		const absent = c.absent.flatMap((field) => {
 			const through = fieldThrough(rules, rules[kind], field, new Set([kind]), (symbol) => !isEnrichGroupLiftSymbol(symbol));
 			return through === undefined ? [] : [{ field, through }];
 		});
 		if (absent.length !== c.absent.length) return 'negated field is not a field of the split kind';
-		const steps = placedStepsOf(rules, stop, kind, within);
+		const steps = placedStepsOf(rules, stop, kind, within, shownRuleOf);
 		if (steps === 'several') return SEVERAL_FIELDS;
 		const family = relaxedFamilyOf(rules, kind, literal);
 		const relax = family.size === 0 || base.word === null ? [] : relaxSitesOf(input.layerRules as Readonly<Record<string, unknown>>, base.word, family, literal.texts);
@@ -423,7 +424,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 				left('literal split names no site', row);
 				continue;
 			}
-			const split = literalSplitAt(c, kind, c.within, literal, boundKindName(c.vocab, isParserHiddenName(kind)));
+			const split = literalSplitAt(c, kind, c.within, literal, boundKindName(c.vocab, isParserHiddenName(kind), shortened));
 			if (typeof split === 'string') {
 				left(split, row);
 				continue;
@@ -440,17 +441,17 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 			left(placed(c) ? 'wildcard placement' : 'wildcard claim', row);
 			continue;
 		}
-		if (!ruleNames.has(c.kind) && !(placed(c) && aliasedKinds.has(c.kind))) {
+		if (!ruleNames.has(c.kind) && !(placed(c) && shownRuleOf(c.kind) !== undefined)) {
 			left('not a base rule', row);
 			continue;
 		}
-		const to = boundKindName(c.vocab, isParserHiddenName(c.kind));
+		const to = boundKindName(c.vocab, isParserHiddenName(c.kind), shortened);
 		if (placed(c)) {
-			if (!c.within.every((w) => ruleNames.has(w))) {
+			if (!sited(c.within)) {
 				left('placed claim', row);
 				continue;
 			}
-			const steps = placedStepsOf(rules, stop, c.kind, c.within);
+			const steps = placedStepsOf(rules, stop, c.kind, c.within, shownRuleOf);
 			if (steps === 'several') {
 				left(SEVERAL_FIELDS, row);
 				continue;
@@ -488,7 +489,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	}
 	for (const { c, kind, literal, row } of mintedLiterals) {
 		const sites = placedSplits.filter((split) => split.literal === undefined && split.as === kind);
-		const at = sites.map((site) => literalSplitAt(c, site.kind, site.within, literal, boundKindName(c.vocab, isParserHiddenName(kind))));
+		const at = sites.map((site) => literalSplitAt(c, site.kind, site.within, literal, boundKindName(c.vocab, isParserHiddenName(kind), shortened)));
 		const refused = sites.length === 0 ? 'literal split names no site' : at.find((split): split is string => typeof split === 'string');
 		if (refused !== undefined) {
 			left(refused, row);
@@ -536,7 +537,8 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 			if (i === split.steps.length - 1 || stop.has(kind)) return null;
 			return i === 0 && first?.whole === true ? `${ownerName}_${first.name}` : `${kind}_${ownerName}`;
 		};
-		const copies = ruleNames.has(split.kind) ? undefined : aliasSourceOf(rules, split.kind);
+		const source = shownRuleOf(split.kind);
+		const copies = source === split.kind ? undefined : source;
 		return {
 			owner,
 			path: split.steps.map(({ kind, field }, i) => ({ field: field?.name ?? null, kind: Object.hasOwn(aliases, kind) ? aliases[kind]! : kind, as: cloneName(kind, i) })),
@@ -548,7 +550,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	const realizedSlots: string[] = [];
 	const candidates: { row: string; request: FieldRequest; group?: string }[] = [];
 	const named = facts.slots.filter(isNamedSlot);
-	const targets = slotTargets(model, readsByKind(model, facts.claims));
+	const targets = slotTargets(model, readsByKind(model, facts.claims, shortened));
 	for (const m of named) {
 		const row = `${m.owner}.${m.name}`;
 		const paths = targets(m);
@@ -578,6 +580,10 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 			continue;
 		}
 		if (m.route === 'rename' && m.field !== null) {
+			if (named.some((other) => other.route === 'nested' && other.owner === m.owner && other.name === m.name && other.via[0]?.field === m.field)) {
+				left('the slot reads through a form the field holds', row);
+				continue;
+			}
 			if (m.kind !== null || m.after !== null) {
 				left('field shared by several slots', row);
 				continue;
@@ -733,8 +739,20 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	});
 	const layerRules = Object.fromEntries(Object.keys(rules).map((name) => [name, input.layerRules[name]]));
 	const patches = grammarBindingsPatches({ ...checks, rules: layerRules }, fieldRenames, fieldWraps, aliases);
-	const { leads, diagnostics: leadDiagnostics } = deriveLeads({ file: input.file, base, facts });
-	const diagnostics = [...leadDiagnostics, ...literalDiagnostics];
+	const { leads, diagnostics: leadDiagnostics } = deriveLeads({ file: input.file, base, facts, shortened });
+	const collisionDiagnostics = boundNameCollisions(vocabSlots.keys(), shortened).map(
+		({ name, kind, other }): GrammarDiagnostic => ({
+			scope: 'grammar',
+			code: 'bound-name-collision',
+			severity: 'fail',
+			grammar: base.name,
+			ownerKind: kind,
+			message: `the vocabulary kind ${kind} binds as ${name}, which ${other} already binds as`,
+			canProceed: false,
+			details: { name, kind, other }
+		})
+	);
+	const diagnostics = [...collisionDiagnostics, ...leadDiagnostics, ...literalDiagnostics];
 	return {
 		bindings: { patches, renames, leads, splits: layerSplits },
 		diagnostics,

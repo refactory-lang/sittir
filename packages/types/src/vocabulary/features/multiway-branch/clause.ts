@@ -6,21 +6,13 @@ export namespace Clause {
 		export interface Default<G extends GrammarMap, K extends Under<'clause.case.default'> = 'clause.case.default'> extends SubKindOf<V.Clause.Case<G, K>> {
 			// claimed by t
 			readonly $path: K;
-			readonly statements?: Slot<G, K, 'statements', V.Declaration.Any<G> | V.Expression.Any<G> | V.Identifier.Any<G> | V.Literal.Any<G> | V.Statement.Any<G>>[];
+			readonly statements?: Slot<G, K, 'statements', V.Statement.Any<G>>[];
 		}
 		export interface Switch<G extends GrammarMap, K extends Under<'clause.case.switch'> = 'clause.case.switch'> extends SubKindOf<V.Clause.Case<G, K>> {
 			// claimed by t
 			readonly $path: K;
-			readonly statements?: Slot<G, K, 'statements', V.Declaration.Any<G> | V.Expression.Any<G> | V.Identifier.Any<G> | V.Literal.Any<G> | V.Statement.Any<G>>[];
-			readonly value: Slot<
-				G,
-				K,
-				'value',
-				| V.Declaration.Module<G>
-				| V.Expression.Any<G>
-				| V.Identifier.Any<G>
-				| V.Literal.Any<G>
-			>;
+			readonly statements?: Slot<G, K, 'statements', V.Statement.Any<G>>[];
+			readonly value: Slot<G, K, 'value', V.Expression.Any<G>>;
 		}
 	}
 }

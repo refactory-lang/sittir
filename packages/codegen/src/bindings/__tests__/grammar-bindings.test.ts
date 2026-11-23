@@ -1,13 +1,15 @@
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { evaluateSittirGrammar, writeSittirGrammarPackage } from '../../__tests__/helpers/sittir-grammar.ts';
+import { runTreeSitterCliCapturing } from '../../transpile/tree-sitter-cli.ts';
 import { evaluate } from '../../dsl/evaluate.ts';
 import type { RawGrammar } from '../../compiler/types.ts';
 import type { GrammarBindingsInput } from '../grammar-bindings.ts';
 import { refineClaims } from '../facts.ts';
 import { formsOf, mountHoldersOf } from '../routes.ts';
+import { vocabularyShortened } from '../vocabulary.ts';
 import { compileWordMatcher } from '../../util/word-matcher.ts';
 import { NO_FILE_TYPES } from '../../compiler/upstream-file-types.ts';
 import { lead, type Split } from '../../dsl/bind.ts';
@@ -103,11 +105,12 @@ let base: RawGrammar;
 
 // The fixture's layer is its own evaluated rules; a case that needs a different layer passes `layerRules` itself.
 const bind = (
-	input: Omit<GrammarBindingsInput, 'layerRules' | 'wordMatcher' | 'routes'> & { readonly routes: Omit<GrammarBindingsInput['routes'], 'claims'> } & Partial<Pick<GrammarBindingsInput, 'layerRules' | 'wordMatcher'>>
+	input: Omit<GrammarBindingsInput, 'layerRules' | 'wordMatcher' | 'routes' | 'shortened'> & { readonly routes: Omit<GrammarBindingsInput['routes'], 'claims'> } & Partial<Pick<GrammarBindingsInput, 'layerRules' | 'wordMatcher' | 'shortened'>>
 ) =>
 	deriveGrammarBindings({
 		layerRules: input.base.rules,
 		wordMatcher: compileWordMatcher(input.base.word, input.base.rules),
+		shortened: new Set<string>(),
 		...input,
 		routes: { ...input.routes, claims: refineClaims(input.facts.claims, (kind) => formsOf(input.model, kind), (kind) => mountHoldersOf(input.model, kind).map(({ holder }) => holder)) }
 	} as GrammarBindingsInput);
@@ -160,6 +163,19 @@ describe('deriveGrammarBindings', () => {
 		};
 		const { bindings } = bind({ layerRules, file: FILE, facts: FACTS, base, vocabSlots: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
 		expect(bindings.patches).toEqual(new Map([['let_item', [[{ path: '2', edit: { field: 'name' } }]]]]));
+	});
+
+	it('leaves a field its name when the slot also reads through a form the field holds', () => {
+		const facts: BindingFacts = {
+			...FACTS,
+			slots: [
+				...FACTS.slots,
+				{ route: 'nested', owner: 'let_item', name: 'name', parent: 'identifier', multiple: false, via: [{ field: 'left', kind: 'identifier', after: null, anchor: null }], field: null, kind: null, after: null, anchor: null }
+			]
+		};
+		const { bindings, report } = bind({ file: FILE, facts, base, vocabSlots: VOCABULARY, routes: ROUTES, model: NO_MODEL });
+		expect(bindings.patches).toEqual(new Map());
+		expect(report.residue.filter((r) => r.row === 'let_item.name').map((r) => r.cause)).toContain('the slot reads through a form the field holds');
 	});
 
 	it("patches a slot routed to a field of another name into a field of the slot's name", () => {
@@ -339,6 +355,25 @@ describe('deriveGrammarBindings', () => {
 			expect(derive(sharing([]), routed([], []), sameOptions).report.aliases).toEqual({ call: 'call_expression', let_item: 'call_expression' });
 		});
 
+		it('keeps a header kind that lacks the statement kind\'s terminator option under its own name, and names the partition', () => {
+			const slot = (propertyName: string, extra: Partial<ModelSlot> = {}): ModelSlot => ({ name: propertyName, propertyName, required: true, multiple: false, storage: 'verbatim', kinds: [], terminals: [], ...extra });
+			const statement = node('call', { slots: [slot('kind'), slot('declarators'), slot('terminator', { registered: true })] });
+			const header = node('let_item', { slots: [slot('kind'), slot('declarators')] });
+			const { bindings, report } = derive(sharing([]), routed([], []), new Map([['call', statement], ['let_item', header]]));
+			expect(report.aliases).toEqual({});
+			expect(bindings.renames).toEqual({ call: 'call_expression' });
+			expect(report.residue).toContainEqual({ cause: 'claimed kinds not merged', row: 'expression.call: call | let_item' });
+			expect(report.residue).toContainEqual({ cause: 'kind kept apart by its shape', row: 'let_item → expression.call' });
+		});
+
+		it('folds two kinds whose slots and options both agree onto the path\'s name', () => {
+			const slot = (propertyName: string, extra: Partial<ModelSlot> = {}): ModelSlot => ({ name: propertyName, propertyName, required: true, multiple: false, storage: 'verbatim', kinds: [], terminals: [], ...extra });
+			const shape = (): ModelSlot[] => [slot('kind'), slot('declarators'), slot('terminator', { registered: true })];
+			const { report } = derive(sharing([]), routed([], []), new Map([['call', node('call', { slots: shape() })], ['let_item', node('let_item', { slots: shape() })]]));
+			expect(report.aliases).toEqual({ call: 'call_expression', let_item: 'call_expression' });
+			expect(report.residue.filter((r) => r.cause === 'claimed kinds not merged')).toEqual([]);
+		});
+
 		it('keeps a terminal and a nonterminal apart even when both supply no portable slots', () => {
 			const facts = {
 				...FACTS,
@@ -395,6 +430,15 @@ describe('deriveGrammarBindings', () => {
 		const stamped = { ...base, predictedKinds: { ...predictedKinds, entries: predictedKinds.entries.map((e) => (e.kind === 'let_item' ? { ...e, hidden: true } : e)) } };
 		const { bindings } = bind({ file: FILE, facts: FACTS, base: stamped, vocabSlots: VOCABULARY, routes: ROUTES, model: NO_MODEL });
 		expect(bindings.renames).toMatchObject({ let_item: 'variable_declaration' });
+	});
+
+	it('refuses a kind whose shortened name another kind already has, naming both', () => {
+		const kinds = ['declaration', 'declaration.variable', 'declaration.type.method', 'declaration.member.method', 'expression', 'expression.call'];
+		const vocabSlots = new Map(kinds.map((path) => [path, VOCABULARY.get(path) ?? new Set<string>()]));
+		const { diagnostics } = bind({ file: FILE, facts: FACTS, base, vocabSlots, shortened: vocabularyShortened(kinds), routes: ROUTES, model: NO_MODEL });
+		expect(diagnostics).toContainEqual(
+			expect.objectContaining({ code: 'bound-name-collision', canProceed: false, ownerKind: 'declaration.member.method', details: { name: 'method_declaration', kind: 'declaration.member.method', other: 'declaration.type.method' } })
+		);
 	});
 
 	it('derives the leads and their refusals beside the other bindings', () => {
@@ -482,6 +526,32 @@ describe('deriveGrammarBindings', () => {
 		const facts: BindingFacts = { ...FACTS, claims: [claim('declaration.method', 'arg_z', { toplevel: false, within: ['call_z_elements', 'call_z'] })], slots: [] };
 		const { bindings } = bind({ file: FILE, facts, base: { ...base, rules }, vocabSlots: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
 		expect(bindings.splits).toEqual([{ owner: 'call_z', path: [{ field: null, kind: 'arg_z', as: null }], as: 'method_declaration', copies: '_arg_z' }]);
+	});
+
+	it('places a split through a step that shows a hidden rule, reading the step through the rule it shows', () => {
+		const symbol = (name: string) => ({ type: 'SYMBOL', name });
+		const rules = {
+			...base.rules,
+			class_w: { type: 'SEQ', members: [{ type: 'STRING', value: 'class' }, { type: 'FIELD', name: 'body', content: symbol('block_w') }] },
+			block_w: { type: 'FIELD', name: 'statements', metadata: { fieldSource: 'enriched' }, content: { type: 'REPEAT', content: symbol('_stmt_w') } },
+			_stmt_w: { type: 'CHOICE', members: [{ type: 'ALIAS', named: true, value: 'simple_w', content: symbol('_simple_w') }, symbol('identifier')] },
+			_simple_w: { type: 'SEQ', members: [{ type: 'FIELD', name: 'items', content: { type: 'REPEAT', content: symbol('assign_w') } }, { type: 'STRING', value: ';' }] },
+			assign_w: { type: 'SEQ', members: [symbol('identifier'), { type: 'STRING', value: '=' }, symbol('identifier')] }
+		};
+		const facts: BindingFacts = { ...FACTS, claims: [claim('declaration.field', 'assign_w', { toplevel: false, within: ['simple_w', 'block_w', 'class_w'] })], slots: [] };
+		const { bindings, report } = bind({ file: FILE, facts, base: { ...base, rules }, vocabSlots: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
+		expect(report.residue).toEqual([]);
+		expect(bindings.splits).toEqual([
+			{
+				owner: 'class_w',
+				path: [
+					{ field: 'body', kind: 'block_w', as: 'class_w_body' },
+					{ field: null, kind: 'simple_w', as: 'simple_w_class_w' },
+					{ field: 'items', kind: 'assign_w', as: null }
+				],
+				as: 'field_declaration'
+			}
+		]);
 	});
 
 	it('leaves a supertype a split path enters unnamed, so its clone stays hidden', () => {
@@ -763,6 +833,15 @@ export default grammar(
 		);
 	});
 
+	it('prints the edit inside a copy two routes reach once, and the later route only as far as the copy', () => {
+		const splits: Split[] = [
+			{ owner: 'outer', path: [{ field: 'body', kind: 'blk', as: 'outer_blk' }, { field: null, kind: 'stmt', as: 'outer_stmt' }, { field: null, kind: 'pair', as: null }], as: 'w' },
+			{ owner: 'outer', path: [{ field: 'body', kind: 'inl', as: 'outer_inl' }, { field: 'stmt', kind: 'stmt', as: 'outer_stmt' }, { field: null, kind: 'pair', as: null }], as: 'w' }
+		];
+		const text = printBindingsModule({ patches: new Map(), renames: {}, leads: [], splits }, 'h');
+		expect(text).toContain('outer: { "body:/(blk as outer_blk)/(stmt as outer_stmt)/(pair)": alias("w"), "body:/(inl as outer_inl)/stmt:/(stmt as outer_stmt)": ($, member) => member }');
+	});
+
 	it('prefers a split that relaxes its literal elsewhere, and adds the literal to the choice of keywords each site relaxes', () => {
 		const split: Split = {
 			owner: 'member_m',
@@ -858,6 +937,46 @@ describe('the printed layer', () => {
 		expect(enriched!.content).toMatchObject({ type: 'CHOICE', members: [{ type: 'ALIAS', value: 'method_declaration' }, { type: 'ALIAS', value: 'constructor_declaration' }] });
 		expect(shown).toMatchObject({ type: 'ALIAS', value: 'method_declaration', content: { type: 'SYMBOL', name: 'meth' } });
 		expect(raw.bindingEffects).toContainEqual({ kind: 'alias', from: 'meth', to: 'method_declaration', scope: 'cls' });
+	}, 60_000);
+
+	it('edits a copy two routes reach once, and points both routes at it in the grammar tree-sitter generates', () => {
+		const pkg = mkdtempSync(join(dir, 'pkg-'));
+		const routesBase = join(dir, 'routes.mjs');
+		writeFileSync(
+			routesBase,
+			`export default grammar({
+	name: 'bindtest',
+	rules: {
+		source_file: $ => repeat(choice($.outer, $.other)),
+		outer: $ => seq('impl', field('body', $._suite)),
+		other: $ => seq('def', field('body', $._suite)),
+		_suite: $ => choice($.blk, $.inl),
+		blk: $ => seq('{', repeat($.stmt), '}'),
+		inl: $ => seq(':', $.stmt),
+		stmt: $ => seq($.pair, ';'),
+		pair: $ => seq($.word, '=', $.word),
+		word: _ => /[a-z]+/
+	}
+});
+`
+		);
+		writeSittirGrammarPackage(pkg, routesBase, 'bindtest');
+		const splits: Split[] = [
+			{ owner: 'outer', path: [{ field: 'body', kind: 'blk', as: 'outer_blk' }, { field: null, kind: 'stmt', as: 'outer_stmt' }, { field: null, kind: 'pair', as: null }], as: 'w' },
+			{ owner: 'outer', path: [{ field: 'body', kind: 'inl', as: 'outer_inl' }, { field: null, kind: 'stmt', as: 'outer_stmt' }, { field: null, kind: 'pair', as: null }], as: 'w' }
+		];
+		const printed = printBindingsModule({ patches: new Map(), renames: {}, leads: [], splits }, 'h');
+		writeFileSync(
+			join(pkg, BINDINGS_MODULE),
+			printed.replace("'../codegen/src/dsl/dsl-authoring.ts'", JSON.stringify(join(__dirname, '../../dsl/dsl-authoring.ts'))).replace(/^\/\/\/ <reference.*\n/m, '')
+		);
+		writeFileSync(join(pkg, '.sittir', 'grammar.js'), `export { default } from '../${BINDINGS_MODULE}';\n`);
+		const run = runTreeSitterCliCapturing(['generate'], join(pkg, '.sittir'));
+		expect(run.status, run.stderr).toBe(0);
+		const rules = (JSON.parse(readFileSync(join(pkg, '.sittir', 'src', 'grammar.json'), 'utf8')) as { readonly rules: Readonly<Record<string, unknown>> }).rules;
+		expect([JSON.stringify(rules._blk_outer), JSON.stringify(rules._inl_outer)].map((rule) => rule?.includes('"name":"_stmt_outer"'))).toEqual([true, true]);
+		expect(JSON.stringify(rules._stmt_outer)).toContain('"value":"w"');
+		expect(JSON.stringify(rules).split('"value":"w"').length - 1).toBe(1);
 	}, 60_000);
 });
 

@@ -4,17 +4,17 @@ import type * as TS from '../../typescript/src/types.ts';
 import type { PythonMap } from '../src/portable/map.ts';
 
 type Expect<X extends true> = X;
-type Getter = V.BuildInput<PythonMap, 'declaration.property.getter'>;
+type Getter = V.BuildInput<PythonMap, 'declaration.member.property.getter'>;
 
 export type GetterFlagsAdmitAsync = Expect<'async' extends NonNullable<Getter['$flags']>[number] ? true : false>;
 export type GetterFlagsAdmitOverride = Expect<'override' extends NonNullable<Getter['$flags']>[number] ? true : false>;
 
-declare const block: T.Block.Bound;
+declare const statement: T.ImportStatement.Bound;
 declare const foreign: TS.StatementBlock.Bound;
 
-export const blockBody: Getter['body'] = block;
-// @ts-expect-error a typescript node is no python getter's body
-export const foreignBody: Getter['body'] = foreign;
+export const ownStatement: NonNullable<Getter['statements']>[number] = statement;
+// @ts-expect-error a typescript node is no python getter's statement
+export const foreignStatement: NonNullable<Getter['statements']>[number] = foreign;
 
 type Constant = V.BuildInput<PythonMap, 'declaration.constant'>;
 
@@ -62,7 +62,7 @@ export const fromImportNames: V.BuildInput<PythonMap, 'statement.import.from'>['
 export const fromImportContent: V.BuildInput<PythonMap, 'statement.import.from'>['content'] = [aliasRead];
 
 declare const memberRead: V.Read<PythonMap, 'expression.member'>;
-export const classDecorators: V.Read<PythonMap, 'declaration.class'>['decorators'] = ['cache', memberRead];
+export const classDecorators: V.Read<PythonMap, 'declaration.type.class'>['decorators'] = ['cache', memberRead];
 // @ts-expect-error a decorator reads as its expression, so no path names the decorator
 export const decoratorPath: V.Read<PythonMap, 'attribute.decorator'> = { $path: 'attribute.decorator' };
 

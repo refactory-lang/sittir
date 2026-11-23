@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { relative } from 'node:path';
+import { portableRowHasFacts } from '@sittir/common/engine';
 import { bindingIssues, compileQuery } from './bindings.ts';
 import {
 	type GrammarBindings,
@@ -7,15 +8,19 @@ import {
 	type GrammarInput,
 	type NodeModelRecord,
 	type GrammarBindingsReport,
+	aliasTargets,
 	bindingGrammars,
 	bindingsModulePath,
 	bindingsPath,
 	bindingsStaleness,
+	boundKindName,
+	byCodepoint,
 	derive,
 	deriveGrammarBindings,
 	grammarBindingsHash,
 	grammarInput,
 	loadBindingsHash,
+	modelNode,
 	printBindingsModule,
 	readVocabulary,
 	resolveRoutes,
@@ -98,6 +103,7 @@ export async function bindingsModule(grammar: GrammarName): Promise<BindingsModu
 		wordMatcher: unbound.nodeMap.wordMatcher,
 			layerRules: layer.rules,
 		vocabSlots: vocabularySlots(input.vocabulary),
+		shortened: input.vocabulary.shortened,
 		routes: resolveRoutes(input),
 		model: input.model
 	});
@@ -156,6 +162,40 @@ export function grammarBindingsSummary(grammar: string, { bindings, report }: Om
 export async function deriveVocabulary(grammars: readonly GrammarName[] = bindingGrammars()): Promise<Derivation> {
 	return derive(await loadInputs(grammars));
 }
+
+const KIND_SETS: readonly string[] = ['expression', 'type', 'pattern', 'statement', 'declaration.member'];
+
+export interface KindSetRow {
+	readonly grammar: string;
+	readonly namespace: string;
+	readonly rule: string;
+	readonly uncovered: readonly string[];
+	readonly unadmitted: readonly string[];
+}
+
+export function kindSetRows(input: GrammarInput): KindSetRow[] {
+	const { readEntries, containers } = resolveRoutes(input);
+	const { aliases, shortened } = input.vocabulary;
+	const readsOf = (kind: string, seen: Set<string>): string[] => {
+		if (seen.has(kind)) return [];
+		seen.add(kind);
+		const subtypes = modelNode(input.model, kind)?.subtypes ?? [];
+		if (subtypes.length > 0) return subtypes.flatMap((subtype) => readsOf(subtype, seen));
+		const read = readEntries.get(kind) ?? [];
+		return read.length > 0 ? read.map((entry) => entry.vocab) : (containers.get(kind)?.kinds ?? []).flatMap((inner) => readsOf(inner, seen));
+	};
+	return KIND_SETS.flatMap((namespace) => {
+		const rule = [boundKindName(namespace, true, shortened), namespace].find((name) => (modelNode(input.model, name)?.subtypes.length ?? 0) > 0);
+		if (rule === undefined) return [];
+		const read = [...new Set(readsOf(rule, new Set()))];
+		const targets = aliasTargets(namespace, aliases);
+		const unadmitted = aliases.filter((alias) => alias.path.startsWith(`${namespace}.`) && !read.some((at) => portableRowHasFacts(alias.path, aliasTargets(alias.path, aliases), at)));
+		return [{ grammar: input.grammar, namespace, rule, uncovered: read.filter((at) => !portableRowHasFacts(namespace, targets, at)).sort(byCodepoint), unadmitted: unadmitted.map((alias) => alias.path) }];
+	});
+}
+
+const kindSetLine = ({ grammar, namespace, rule, uncovered, unadmitted }: KindSetRow): string =>
+	`  ${grammar} ${namespace} (${rule}): ${uncovered.length} admitted with no alias [${uncovered.join(', ')}]; ${unadmitted.length} aliases the rule does not admit [${unadmitted.join(', ')}]`;
 
 export function summarize(d: Derivation): string {
 	const lines: string[] = [];
@@ -238,6 +278,7 @@ export async function run(opts: BindingsInventoryOptions): Promise<number> {
 		process.stdout.write(
 			`bindings and vocabulary: ${disagreements.length === 0 ? 'agree' : `${disagreements.length} disagreements\n  ${disagreements.join('\n  ')}`}\n`
 		);
+		process.stdout.write(`kind-set rules and aliases:\n${(await loadInputs(grammars)).flatMap(kindSetRows).map(kindSetLine).join('\n')}\n`);
 	}
 	if (d.cycles.length > 0 || d.untargeted.length > 0 || d.uncaptured.length > 0 || d.unknownPredicates.length > 0 || d.wildcardContainers.length > 0 || d.unenteredForms.length > 0)
 		code = 1;

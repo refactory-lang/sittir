@@ -156,7 +156,7 @@ describe('the portable read', () => {
 
 	it('reads a delegating yield at its holder, a negative pattern number in its seat and a statement tuple as their paths', () => {
 		const negative = { $path: 'literal.number.negative', value: { $path: 'literal.number.integer', $value: 1 } };
-		expect(firstOf('def f():\n    yield from x\n')).toMatchObject({ body: { statements: [{ $path: 'expression.yield.delegate', expression: 'x' }] } });
+		expect(firstOf('def f():\n    yield from x\n')).toMatchObject({ statements: [{ $path: 'expression.yield.delegate', expression: 'x' }] });
 		expect(firstOf('match x:\n    case -1:\n        pass\n')).toMatchObject({ arms: [{ pattern: negative }] });
 		expect(firstOf('match x:\n    case C(x=-1):\n        pass\n')).toMatchObject({ arms: [{ pattern: { fields: [{ $path: 'pattern.struct.field', pattern: negative }] } }] });
 		expect(firstOf('a, b,\n')).toEqual({ $path: 'expression.collection.tuple.bare', $flags: ['trailingComma'], elements: ['a', 'b'] });
@@ -176,8 +176,8 @@ describe('the portable read', () => {
 		expect(runtime.read(runtime.build(subscript as never) as never)).toEqual(subscript);
 	});
 
-	it('reads a one-line body as the block of all its statements, and builds it in the default block form', () => {
-		expect(firstOf('def f(): pass')).toMatchObject({ body: { $path: 'statement.block', statements: ['pass'] } });
+	it('reads a one-line body as all its statements, and builds it in the default block form', () => {
+		expect(firstOf('def f(): pass')).toMatchObject({ statements: ['pass'] });
 		for (const [source, block] of [
 			['def f(): return 1\n', 'def f():\n    return 1\n'],
 			['class A: x = 1\n', 'class A:\n    x = 1\n'],
@@ -195,7 +195,7 @@ describe('the portable read', () => {
 	it('reads the decorators of a decorated definition onto the definition, and builds them back around it', () => {
 		const decorators = ['d'];
 		expect(firstOf('@d\ndef f():\n    pass\n')).toMatchObject({ $path: 'declaration.function', name: 'f', decorators });
-		expect(firstOf('@d\nclass C:\n    pass\n')).toMatchObject({ $path: 'declaration.class', name: 'C', decorators });
+		expect(firstOf('@d\nclass C:\n    pass\n')).toMatchObject({ $path: 'declaration.type.class', name: 'C', decorators });
 		for (const source of ['@d\ndef f():\n    pass\n', '@d\nclass C:\n    pass\n', 'class C:\n    @staticmethod\n    def m():\n        pass\n']) expect(roundTrip(source)).toBe(source);
 	});
 
@@ -241,7 +241,7 @@ describe('the portable read', () => {
 	])('reads the mangled name %s as privateName with its stem as the name, and spells __ back', (name, stem) => {
 		const method = `class C:\n    def ${name}(self):\n        pass\n`;
 		const member = `self.${name}\n`;
-		expect((((firstOf(method) as Read).body as Read).statements as readonly Read[])[0]).toMatchObject({ $path: 'declaration.method', $flags: ['privateName'], name: stem });
+		expect(((firstOf(method) as Read).members as readonly Read[])[0]).toMatchObject({ $path: 'declaration.member.method', $flags: ['privateName'], name: stem });
 		expect(firstOf(member)).toEqual({ $path: 'expression.member', $flags: ['privateName'], object: 'self', property: stem });
 		for (const source of [method, member]) expect(roundTrip(source)).toBe(source);
 		expect(String(runtime.engine.render(runtime.build({ $path: 'expression.member', $flags: ['privateName'], object: 'self', property: stem }) as never))).toBe(`self.${name}`);

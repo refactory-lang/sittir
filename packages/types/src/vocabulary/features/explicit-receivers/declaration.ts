@@ -29,21 +29,8 @@ export namespace Declaration {
 			>;
 		}
 	}
-	export interface Method<G extends GrammarMap, K extends Under<'declaration.method'> = 'declaration.method'> {
-		readonly receiver?: Slot<
-			G,
-			K,
-			'receiver',
-			| V.Declaration.Parameter.Receiver<G>
-			| V.Declaration.Parameter<G>
-			| V.Declaration.Parameter.Private<G>
-			| V.Declaration.Parameter.Protected<G>
-			| V.Declaration.Parameter.Public<G>
-		>;
-		// rt only
-	}
-	export namespace Method {
-		export interface Signature<G extends GrammarMap, K extends Under<'declaration.method.signature'> = 'declaration.method.signature'> {
+	export namespace Member {
+		export interface Method<G extends GrammarMap, K extends Under<'declaration.member.method'> = 'declaration.member.method'> {
 			readonly receiver?: Slot<
 				G,
 				K,
@@ -54,17 +41,34 @@ export namespace Declaration {
 				| V.Declaration.Parameter.Protected<G>
 				| V.Declaration.Parameter.Public<G>
 			>;
+			// rt only
+		}
+		export namespace Method {
+			export interface Signature<G extends GrammarMap, K extends Under<'declaration.member.method.signature'> = 'declaration.member.method.signature'> {
+				readonly receiver?: Slot<
+					G,
+					K,
+					'receiver',
+					| V.Declaration.Parameter.Receiver<G>
+					| V.Declaration.Parameter<G>
+					| V.Declaration.Parameter.Private<G>
+					| V.Declaration.Parameter.Protected<G>
+					| V.Declaration.Parameter.Public<G>
+				>;
+			}
 		}
 	}
 	export namespace Parameter {
-		export interface Receiver<G extends GrammarMap, K extends Under<'declaration.parameter.receiver'> = 'declaration.parameter.receiver'> extends SubKindOf<V.Declaration.Parameter<G, K>> {
+		export interface Receiver<G extends GrammarMap, K extends Under<'declaration.parameter.receiver'> = 'declaration.parameter.receiver'> extends SubKindOf<V.Declaration.Parameter<G, K>, 'mutable' | 'name'> {
 			// claimed by rt
 			readonly $path: K;
 			readonly name?: never;
 		}
 	}
-	export namespace Signature {
-		export interface Call<G extends GrammarMap, K extends Under<'declaration.signature.call'> = 'declaration.signature.call'> {
+	export namespace Member {
+		export namespace Signature {
+			export interface Call<G extends GrammarMap, K extends Under<'declaration.member.signature.call'> = 'declaration.member.signature.call'> {
+			}
 		}
 	}
 }

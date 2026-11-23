@@ -5,9 +5,9 @@
 	"unroutedScope": [],
 	"stoppedAtClones": [
 		"python: constructor_declaration @declaration.function",
-		"typescript: constructor_declaration @declaration.method.private",
-		"typescript: constructor_declaration @declaration.method.protected",
-		"typescript: constructor_declaration @declaration.method.public",
-		"typescript: constructor_declaration @declaration.method"
+		"typescript: constructor_declaration @declaration.member.method.private",
+		"typescript: constructor_declaration @declaration.member.method.protected",
+		"typescript: constructor_declaration @declaration.member.method.public",
+		"typescript: constructor_declaration @declaration.member.method"
 	]
 }

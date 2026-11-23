@@ -3,6 +3,7 @@ export type * from './clause.ts';
 export type * from './declaration.ts';
 export type * from './element.ts';
 export type * from './identifier.ts';
+export type * from './statement.ts';
 
 /** Attributes: annotations on a declaration that are not evaluated. */
 export interface Attributes {

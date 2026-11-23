@@ -1,5 +1,5 @@
 import { posix } from 'node:path';
-import { type DeclaredKind, type Feature, type DeclaredSlot, type Synonyms, type VocabularySource, byCodepoint, camel, isKind, lineageOf, pathChildren, snake } from '@sittir/codegen/bindings';
+import { type DeclaredKind, type Feature, type DeclaredSlot, type Synonyms, type VocabularyAlias, type VocabularySource, aliasTargets, byCodepoint, camel, declaredAliases, isKind, lineageOf, namePaths, pathChildren } from '@sittir/codegen/bindings';
 
 export interface Kind {
 	readonly qname: string;
@@ -19,6 +19,8 @@ export interface Owned {
 export interface Plan {
 	readonly features: ReadonlyMap<string, Feature>;
 	readonly kinds: ReadonlyMap<string, Kind>;
+	readonly aliases: readonly VocabularyAlias[];
+	readonly shared: ReadonlyMap<string, Feature>;
 	readonly owned: ReadonlyMap<string, ReadonlyMap<string, Owned>>;
 	readonly flags: ReadonlyMap<string, ReadonlyMap<string, Feature | undefined>>;
 	readonly levels: ReadonlyMap<string, readonly string[]>;
@@ -86,7 +88,7 @@ export function plan(source: VocabularySource): Plan {
 		if (d.parent !== undefined && parent === undefined) issues.push(`${d.path} extends ${d.parent}, which is not a kind`);
 		if (d.refines !== undefined && !pathOf.has(d.refines)) issues.push(`${d.path} is refined by ${d.refines}, which is not a kind`);
 		if (parent !== undefined && (parent === d.path || !under(d.path, parent))) issues.push(`${d.path} extends ${parent}, which is not a level above it`);
-		const kind: Kind = { qname: d.qname, path: d.path, parent, refines: d.refines === undefined ? undefined : pathOf.get(d.refines)?.path, feature, text: d.text === true, restated: d.restated };
+		const kind: Kind = { qname: d.qname, path: d.path, parent, refines: d.refines === undefined ? undefined : pathOf.get(d.refines)?.path, feature, text: d.text === true, restated: [] };
 		kinds.set(d.path, kind);
 		byQname.set(d.qname, kind);
 		for (const slot of d.slots) declare(d.path, { gated: false, by: feature, slot });
@@ -101,7 +103,7 @@ export function plan(source: VocabularySource): Plan {
 	}
 	for (const feature of features.values()) {
 		for (const stub of feature.stubs) {
-			if (isKind(stub)) continue;
+			if (isKind(stub) || stub.target !== undefined || stub.shared === true) continue;
 			const kind = byQname.get(stub.qname);
 			if (kind === undefined) issues.push(`${feature.name}: ${stub.qname} adds slots to a kind the vocabulary does not declare`);
 			else for (const slot of stub.slots) declare(kind.path, { gated: true, by: feature, slot });
@@ -110,6 +112,7 @@ export function plan(source: VocabularySource): Plan {
 
 	const owned = ownership(declarations, features, issues);
 	const lines = new Map([...kinds.keys()].map((path) => [path, lineageOf(path, (at) => kinds.get(at))]));
+	for (const kind of kinds.values()) kinds.set(kind.path, { ...kind, restated: restatedAt(kind.path, lines, declarations) });
 	const flags = new Map([...kinds.keys()].map((path) => [path, flagsOf(path, lines, declarations, owned)] as const));
 	const flagsAt = flagsAtOf(kinds, flags);
 	issues.push(...flagSegments(kinds, flagsAt));
@@ -129,11 +132,6 @@ export function plan(source: VocabularySource): Plan {
 					issues.push(`${o.feature.name} owns ${name} at ${path}, and ${declarer} declares it at ${other}, which inherits it, without extending ${o.feature.name}`);
 				if (lines.get(path)?.includes(other) && !extending(o.feature, declaring))
 					issues.push(`${o.feature.name} owns ${name} at ${path}, and ${declarer} declares it at ${other}, which it inherits from, and ${o.feature.name} does not extend ${owner(declaring)}`);
-				const nearer = (lines.get(other) ?? []).some(
-					(at) => at !== other && at !== path && lines.get(at)?.includes(path) === true && declarations.get(at)?.has(name) === true
-				);
-				if (by !== undefined && lines.get(other)?.includes(path) === true && !nearer && extending(by, o.feature) && kinds.get(other)?.restated.includes(name) !== true)
-					issues.push(`${by.name} redeclares ${name} at ${other}, which inherits it from ${path}, where ${o.feature.name} owns it, and ${other} does not name ${name} among the keys it restates`);
 			}
 		}
 	}
@@ -146,12 +144,55 @@ export function plan(source: VocabularySource): Plan {
 		if (left.length > 0) notes.push(`${name} is gated at some kinds and stays in the base at ${left.length}: ${left.join(', ')}`);
 	}
 
-	const levelArms = levels([...kinds.values()]);
+	const aliases = declaredAliases(source);
+	issues.push(...aliasIssues(aliases, kinds));
+	const levelArms = levels([...kinds.values()], aliases);
+	const shared = new Map<string, Feature>();
+	for (const feature of features.values()) {
+		for (const stub of feature.stubs) {
+			if (stub.shared !== true) continue;
+			const prior = shared.get(stub.qname);
+			if (prior !== undefined) issues.push(`${stub.qname}: declared by ${prior.name} and ${feature.name}; a shared union has one owner`);
+			shared.set(stub.qname, feature);
+			if (!levelArms.has(stub.qname.slice(0, stub.qname.lastIndexOf('.')))) issues.push(`${stub.qname}: ${feature.name} declares it in a namespace that is no level`);
+		}
+	}
 
-	return { features, kinds, owned, flags, levels: levelArms, issues, notes };
+	return { features, kinds, aliases, shared, owned, flags, levels: levelArms, issues, notes };
 }
 
 const topSegment = (path: string): string => path.replace(/\..*$/, '');
+
+const lastPathSegment = (path: string): string => path.slice(path.lastIndexOf('.') + 1);
+
+function aliasIssues(aliases: readonly VocabularyAlias[], kinds: ReadonlyMap<string, Kind>): string[] {
+	const out: string[] = [];
+	const holds = (at: string): boolean => [...kinds.keys()].some((path) => path.startsWith(`${at}.`));
+	const ownerOf = (alias: VocabularyAlias): string => alias.feature ?? 'the base';
+	const seen = new Map<string, VocabularyAlias>();
+	for (const alias of aliases) {
+		const prior = seen.get(alias.path);
+		if (prior !== undefined) out.push(`${alias.path}: an alias declared by ${ownerOf(prior)} and ${ownerOf(alias)}; an alias has one owner`);
+		seen.set(alias.path, alias);
+		if (kinds.has(alias.path)) out.push(`${alias.path}: ${ownerOf(alias)} declares it as an alias, and it is a kind`);
+		else if (holds(alias.path)) out.push(`${alias.path}: ${ownerOf(alias)} declares it as an alias, and it is a namespace`);
+		if (!kinds.has(alias.target) && !holds(alias.target)) {
+			out.push(`${alias.path}: its target ${alias.target} is neither a kind nor a namespace`);
+			continue;
+		}
+		if (lastPathSegment(alias.path) !== lastPathSegment(alias.target)) out.push(`${alias.path}: an alias path is its namespace and its target's last segment, and its target is ${alias.target}`);
+		const named = alias.targetName.replace(/\.Any$/, '');
+		const expected = holds(alias.target) ? `${named}.Any` : named;
+		if (alias.targetName !== expected) out.push(`${alias.path}: its target is written V.${alias.targetName}; write V.${expected}, which covers what lies beneath ${alias.target}`);
+		if ([alias.target, ...aliasTargets(alias.target, aliases)].some((at) => under(alias.path, at))) out.push(`${alias.path}: the alias to ${alias.target} closes a cycle; inclusion is a DAG`);
+	}
+	return out;
+}
+
+function restatedAt(path: string, lines: ReadonlyMap<string, readonly string[]>, declarations: ReadonlyMap<string, ReadonlyMap<string, readonly Declaration[]>>): string[] {
+	const inherited = new Set((lines.get(path) ?? []).filter((at) => at !== path).flatMap((at) => [...(declarations.get(at)?.keys() ?? [])]));
+	return [...(declarations.get(path)?.keys() ?? [])].filter((name) => inherited.has(name)).sort(byCodepoint);
+}
 
 function checkedFeatures(source: VocabularySource, issues: string[]): Map<string, Feature> {
 	const features = new Map<string, Feature>();
@@ -325,24 +366,15 @@ function synonymCollisions(
 	return out;
 }
 
-function levels(kinds: readonly { readonly qname: string; readonly path: string }[]): Map<string, readonly string[]> {
-	const byQname = new Map(kinds.map((k) => [k.qname, k.path]));
-	const paths = new Map<string, string>();
-	const levelPath = (ns: string): string => {
-		const known = byQname.get(ns) ?? paths.get(ns);
-		if (known !== undefined) return known;
-		const dot = ns.lastIndexOf('.');
-		const path = dot < 0 ? snake(ns) : `${levelPath(ns.slice(0, dot))}.${snake(ns.slice(dot + 1))}`;
-		paths.set(ns, path);
-		return path;
-	};
+function levels(kinds: readonly { readonly qname: string; readonly path: string }[], aliases: readonly VocabularyAlias[]): Map<string, readonly string[]> {
+	const levelPath = namePaths(kinds);
 	const namespaces = new Set<string>();
 	for (const kind of kinds) {
 		const segments = kind.qname.split('.');
 		namespaces.add(topSegment(kind.qname));
 		for (let i = 1; i < segments.length; i++) namespaces.add(segments.slice(0, i).join('.'));
 	}
-	const sorted = [...kinds].sort((a, b) => byCodepoint(a.qname, b.qname));
+	const sorted = [...kinds, ...aliases.map(({ name, path }) => ({ qname: name, path }))].sort((a, b) => byCodepoint(a.qname, b.qname));
 	return new Map(
 		[...namespaces].sort(byCodepoint).map((ns) => {
 			const at = levelPath(ns);

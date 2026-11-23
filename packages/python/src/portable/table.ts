@@ -338,32 +338,6 @@ export const build: PortableBuildTable = {
 							}
 						},
 						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [161, 'body'],
-									kinds: [308, 310]
-								},
-								{
-									at: [309, 'block'],
-									kinds: [185],
-									within: [
-										{
-											builder: 'suiteBlock',
-											key: 'block'
-										}
-									]
-								}
-							]
-						},
-						{
 							name: 'guard',
 							steps: [
 								{
@@ -399,6 +373,247 @@ export const build: PortableBuildTable = {
 								float: 'literal.number.float',
 								bigint: 'literal.number.integer.big'
 							}
+						},
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteBlock',
+									kinds: [309],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'block',
+									stored: '_block',
+									builder: 'block',
+									kinds: [185]
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [185, 'statements'],
+									kinds: [134, 156, 159, 162, 163, 164, 167, 170, 179],
+									many: true
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [183, 'definition'],
+									kinds: [170, 179],
+									within: [
+										{
+											builder: 'decoratedDefinition',
+											key: 'definition',
+											slots: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators'
+														}
+													],
+													multiple: true,
+													nonEmpty: true,
+													list: true,
+													seats: [
+														{
+															at: [183, 'decorators'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [184, 'expression'],
+															kinds: [
+																1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206,
+																208, 210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243,
+																244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+															],
+															leaf: 'identifier',
+															texts: [1],
+															pattern: {
+																source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+																flags: 'u'
+															},
+															within: [
+																{
+																	builder: 'decorator',
+																	key: 'expression'
+																}
+															]
+														}
+													],
+													takers: {
+														integer: 'literal.number.integer',
+														float: 'literal.number.float',
+														bigint: 'literal.number.integer.big'
+													}
+												}
+											]
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						}
+					],
+					readOnly: [
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteInline',
+									kinds: [308],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'statements',
+									stored: '_statements'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: true,
+							seats: [
+								{
+									at: [308, 'statements'],
+									kinds: []
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
 						}
 					],
 					presets: [],
@@ -406,7 +621,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'pattern']
+							required: ['pattern']
 						}
 					]
 				}
@@ -419,32 +634,6 @@ export const build: PortableBuildTable = {
 					kind: 165,
 					builder: 'exceptClause',
 					slots: [
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [165, 'body'],
-									kinds: [308, 310]
-								},
-								{
-									at: [309, 'block'],
-									kinds: [185],
-									within: [
-										{
-											builder: 'suiteBlock',
-											key: 'block'
-										}
-									]
-								}
-							]
-						},
 						{
 							name: 'type',
 							steps: [
@@ -461,7 +650,8 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'content',
-									builder: 'exceptClauseExceptionAs'
+									builder: 'exceptClauseExceptionAs',
+									kinds: [282]
 								},
 								{
 									key: 'value'
@@ -506,7 +696,8 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'content',
-									builder: 'exceptClauseExceptionAs'
+									builder: 'exceptClauseExceptionAs',
+									kinds: [282]
 								},
 								{
 									key: 'alias',
@@ -599,11 +790,252 @@ export const build: PortableBuildTable = {
 								float: 'literal.number.float',
 								bigint: 'literal.number.integer.big'
 							}
+						},
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteBlock',
+									kinds: [309],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'block',
+									stored: '_block',
+									builder: 'block',
+									kinds: [185]
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [185, 'statements'],
+									kinds: [134, 156, 159, 162, 163, 164, 167, 170, 179],
+									many: true
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [183, 'definition'],
+									kinds: [170, 179],
+									within: [
+										{
+											builder: 'decoratedDefinition',
+											key: 'definition',
+											slots: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators'
+														}
+													],
+													multiple: true,
+													nonEmpty: true,
+													list: true,
+													seats: [
+														{
+															at: [183, 'decorators'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [184, 'expression'],
+															kinds: [
+																1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206,
+																208, 210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243,
+																244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+															],
+															leaf: 'identifier',
+															texts: [1],
+															pattern: {
+																source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+																flags: 'u'
+															},
+															within: [
+																{
+																	builder: 'decorator',
+																	key: 'expression'
+																}
+															]
+														}
+													],
+													takers: {
+														integer: 'literal.number.integer',
+														float: 'literal.number.float',
+														bigint: 'literal.number.integer.big'
+													}
+												}
+											]
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						}
+					],
+					readOnly: [
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteInline',
+									kinds: [308],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'statements',
+									stored: '_statements'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: true,
+							seats: [
+								{
+									at: [308, 'statements'],
+									kinds: []
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
 						}
 					],
 					owners: [
-						[0, 1, 2],
-						[0, 3]
+						[0, 1, 3],
+						[2, 3]
 					],
 					presets: [],
 					flags: {
@@ -622,12 +1054,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					},
-					when: [
-						{
-							absent: [],
-							required: ['body']
-						}
-					]
+					when: []
 				}
 			],
 			flags: ['group']
@@ -695,7 +1122,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['rights'],
 					presets: [],
 					flags: {
 						async: {
@@ -795,40 +1221,250 @@ export const build: PortableBuildTable = {
 					builder: 'elseClause',
 					slots: [
 						{
-							name: 'body',
+							name: 'statements',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									builder: 'suiteBlock',
+									kinds: [309],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'block',
+									stored: '_block',
+									builder: 'block',
+									kinds: [185]
+								},
+								{
+									key: 'statements',
+									optional: true
 								}
 							],
 							multiple: false,
-							list: false,
+							list: true,
 							seats: [
 								{
-									at: [158, 'body'],
-									kinds: [308, 310]
+									at: [185, 'statements'],
+									kinds: [134, 156, 159, 162, 163, 164, 167, 170, 179],
+									many: true
 								},
 								{
-									at: [309, 'block'],
-									kinds: [185],
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
 									within: [
 										{
-											builder: 'suiteBlock',
-											key: 'block'
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [183, 'definition'],
+									kinds: [170, 179],
+									within: [
+										{
+											builder: 'decoratedDefinition',
+											key: 'definition',
+											slots: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators'
+														}
+													],
+													multiple: true,
+													nonEmpty: true,
+													list: true,
+													seats: [
+														{
+															at: [183, 'decorators'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [184, 'expression'],
+															kinds: [
+																1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206,
+																208, 210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243,
+																244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+															],
+															leaf: 'identifier',
+															texts: [1],
+															pattern: {
+																source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+																flags: 'u'
+															},
+															within: [
+																{
+																	builder: 'decorator',
+																	key: 'expression'
+																}
+															]
+														}
+													],
+													takers: {
+														integer: 'literal.number.integer',
+														float: 'literal.number.float',
+														bigint: 'literal.number.integer.big'
+													}
+												}
+											]
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						}
+					],
+					readOnly: [
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteInline',
+									kinds: [308],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'statements',
+									stored: '_statements'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: true,
+							seats: [
+								{
+									at: [308, 'statements'],
+									kinds: []
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
 						}
 					],
 					presets: [],
 					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['body']
-						}
-					]
+					when: []
 				}
 			]
 		},
@@ -871,30 +1507,245 @@ export const build: PortableBuildTable = {
 							}
 						},
 						{
-							name: 'consequence',
+							name: 'statements',
 							steps: [
 								{
-									key: 'consequence'
+									key: 'consequence',
+									builder: 'suiteBlock',
+									kinds: [309],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'block',
+									stored: '_block',
+									builder: 'block',
+									kinds: [185]
+								},
+								{
+									key: 'statements',
+									optional: true
 								}
 							],
 							multiple: false,
-							list: false,
+							list: true,
 							seats: [
 								{
-									at: [157, 'consequence'],
-									kinds: [308, 310]
+									at: [185, 'statements'],
+									kinds: [134, 156, 159, 162, 163, 164, 167, 170, 179],
+									many: true
 								},
 								{
-									at: [309, 'block'],
-									kinds: [185],
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
 									within: [
 										{
-											builder: 'suiteBlock',
-											key: 'block'
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [183, 'definition'],
+									kinds: [170, 179],
+									within: [
+										{
+											builder: 'decoratedDefinition',
+											key: 'definition',
+											slots: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators'
+														}
+													],
+													multiple: true,
+													nonEmpty: true,
+													list: true,
+													seats: [
+														{
+															at: [183, 'decorators'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [184, 'expression'],
+															kinds: [
+																1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206,
+																208, 210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243,
+																244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+															],
+															leaf: 'identifier',
+															texts: [1],
+															pattern: {
+																source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+																flags: 'u'
+															},
+															within: [
+																{
+																	builder: 'decorator',
+																	key: 'expression'
+																}
+															]
+														}
+													],
+													takers: {
+														integer: 'literal.number.integer',
+														float: 'literal.number.float',
+														bigint: 'literal.number.integer.big'
+													}
+												}
+											]
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						}
+					],
+					readOnly: [
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'consequence',
+									builder: 'suiteInline',
+									kinds: [308],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'statements',
+									stored: '_statements'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: true,
+							seats: [
+								{
+									at: [308, 'statements'],
+									kinds: []
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
 						}
 					],
 					presets: [],
@@ -902,7 +1753,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['condition', 'consequence']
+							required: ['condition']
 						}
 					]
 				}
@@ -916,40 +1767,250 @@ export const build: PortableBuildTable = {
 					builder: 'finallyClause',
 					slots: [
 						{
-							name: 'body',
+							name: 'statements',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									builder: 'suiteBlock',
+									kinds: [309],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'block',
+									stored: '_block',
+									builder: 'block',
+									kinds: [185]
+								},
+								{
+									key: 'statements',
+									optional: true
 								}
 							],
 							multiple: false,
-							list: false,
+							list: true,
 							seats: [
 								{
-									at: [166, 'body'],
-									kinds: [308, 310]
+									at: [185, 'statements'],
+									kinds: [134, 156, 159, 162, 163, 164, 167, 170, 179],
+									many: true
 								},
 								{
-									at: [309, 'block'],
-									kinds: [185],
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
 									within: [
 										{
-											builder: 'suiteBlock',
-											key: 'block'
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [183, 'definition'],
+									kinds: [170, 179],
+									within: [
+										{
+											builder: 'decoratedDefinition',
+											key: 'definition',
+											slots: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators'
+														}
+													],
+													multiple: true,
+													nonEmpty: true,
+													list: true,
+													seats: [
+														{
+															at: [183, 'decorators'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [184, 'expression'],
+															kinds: [
+																1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206,
+																208, 210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243,
+																244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+															],
+															leaf: 'identifier',
+															texts: [1],
+															pattern: {
+																source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+																flags: 'u'
+															},
+															within: [
+																{
+																	builder: 'decorator',
+																	key: 'expression'
+																}
+															]
+														}
+													],
+													takers: {
+														integer: 'literal.number.integer',
+														float: 'literal.number.float',
+														bigint: 'literal.number.integer.big'
+													}
+												}
+											]
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						}
+					],
+					readOnly: [
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteInline',
+									kinds: [308],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'statements',
+									stored: '_statements'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: true,
+							seats: [
+								{
+									at: [308, 'statements'],
+									kinds: []
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
 						}
 					],
 					presets: [],
 					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['body']
-						}
-					]
+					when: []
 				}
 			]
 		},
@@ -1125,7 +2186,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['items'],
 					presets: [],
 					flags: {},
 					when: [
@@ -1174,7 +2234,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['items'],
 					presets: [],
 					flags: {},
 					when: [
@@ -1222,6 +2281,10 @@ export const build: PortableBuildTable = {
 									}
 								}
 							],
+							reads: [
+								1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 212, 213, 214,
+								215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 262
+							],
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
@@ -1233,7 +2296,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'value',
-									builder: 'asPattern'
+									builder: 'asPattern',
+									kinds: [208]
 								},
 								{
 									key: 'expression'
@@ -1269,7 +2333,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'value',
-									builder: 'asPattern'
+									builder: 'asPattern',
+									kinds: [208]
 								},
 								{
 									key: 'alias'
@@ -1355,212 +2420,6 @@ export const build: PortableBuildTable = {
 						{
 							absent: [],
 							required: ['$value']
-						}
-					]
-				}
-			]
-		},
-		'declaration.class': {
-			root: true,
-			arms: [
-				{
-					kind: 179,
-					builder: 'classDefinition',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [179, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [179, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [278, 'items'],
-									kinds: [275, 313, 314, 315],
-									within: [
-										{
-											builder: 'typeParams',
-											key: 'items'
-										},
-										{
-											builder: 'typeParamsItems',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'bases',
-							steps: [
-								{
-									key: 'bases',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [179, 'bases'],
-									kinds: []
-								},
-								{
-									at: [269, 'items'],
-									kinds: [
-										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 173, 174, 181,
-										206, 208, 210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 237, 238, 239, 240, 241, 243, 244,
-										245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-									],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'argumentList',
-											key: 'arguments',
-											optional: true
-										},
-										{
-											builder: 'argumentListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
-							}
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [179, 'body'],
-									kinds: [308, 310]
-								},
-								{
-									at: [319, 'blockClassDeclaration'],
-									kinds: [318],
-									within: [
-										{
-											builder: 'suiteBlockClassDeclaration',
-											key: 'blockClassDeclaration'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'doc',
-							steps: [
-								{
-									key: 'body',
-									builder: 'suiteBlockClassDeclaration'
-								},
-								{
-									key: 'blockClassDeclaration',
-									stored: '_block_class_declaration',
-									builder: 'blockClassDeclaration'
-								},
-								{
-									key: 'statements',
-									builder: 'simpleStatements',
-									optional: true,
-									many: true
-								},
-								{
-									key: 'statements',
-									builder: 'simpleStatementsElements'
-								},
-								{
-									key: 'items',
-									builder: 'expressionStatement',
-									many: true
-								},
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [147, 'content'],
-									kinds: [
-										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
-										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
-										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
-									],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							reads: [253],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
-							}
-						}
-					],
-					owners: [
-						[0, 1, 2, 3],
-						[0, 1, 2, 4]
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['name']
 						}
 					]
 				}
@@ -1852,450 +2711,6 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.constructor': {
-			root: true,
-			arms: [
-				{
-					kind: 316,
-					builder: 'constructorDeclaration',
-					slots: [
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [316, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [278, 'items'],
-									kinds: [275, 313, 314, 315],
-									within: [
-										{
-											builder: 'typeParams',
-											key: 'items'
-										},
-										{
-											builder: 'typeParamsItems',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									stored: '_parameters'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [316, 'parameters'],
-									kinds: []
-								},
-								{
-									at: [198, 'items'],
-									kinds: [1, 200, 202, 204, 205, 206, 207, 230, 263, 264],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'*': 264,
-										'/': 263
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'parameters',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'parametersElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'returnType',
-							steps: [
-								{
-									key: 'returnType',
-									stored: '_return_type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [316, 'returnType'],
-									kinds: []
-								},
-								{
-									at: [231, 'content'],
-									kinds: [
-										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
-										211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 232, 233, 234, 235, 236, 238, 239, 240, 241, 243,
-										244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-									],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'type',
-											key: 'content'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
-							}
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [316, 'body'],
-									kinds: [308, 310]
-								},
-								{
-									at: [309, 'block'],
-									kinds: [185],
-									within: [
-										{
-											builder: 'suiteBlock',
-											key: 'block'
-										}
-									]
-								}
-							]
-						}
-					],
-					empty: ['parameters'],
-					presets: [],
-					flags: {
-						async: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'async',
-											optional: true
-										}
-									],
-									kind: 67,
-									presence: true
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: ['doc', 'name'],
-							required: ['body', 'parameters']
-						}
-					]
-				},
-				{
-					kind: 361,
-					builder: 'methodDeclaration',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [361, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [361, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [278, 'items'],
-									kinds: [275, 313, 314, 315],
-									within: [
-										{
-											builder: 'typeParams',
-											key: 'items'
-										},
-										{
-											builder: 'typeParamsItems',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									stored: '_parameters'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [361, 'parameters'],
-									kinds: []
-								},
-								{
-									at: [198, 'items'],
-									kinds: [1, 200, 202, 204, 205, 206, 207, 230, 263, 264],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'*': 264,
-										'/': 263
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'parameters',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'parametersElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'returnType',
-							steps: [
-								{
-									key: 'returnType',
-									stored: '_return_type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [361, 'returnType'],
-									kinds: []
-								},
-								{
-									at: [231, 'content'],
-									kinds: [
-										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
-										211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 232, 233, 234, 235, 236, 238, 239, 240, 241, 243,
-										244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-									],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'type',
-											key: 'content'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
-							}
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [361, 'body'],
-									kinds: [308, 310]
-								},
-								{
-									at: [309, 'block'],
-									kinds: [185],
-									within: [
-										{
-											builder: 'suiteBlock',
-											key: 'block'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'doc',
-							steps: [
-								{
-									key: 'body',
-									builder: 'suiteBlock'
-								},
-								{
-									key: 'block',
-									stored: '_block',
-									builder: 'block'
-								},
-								{
-									key: 'statements',
-									builder: 'simpleStatements',
-									optional: true,
-									many: true
-								},
-								{
-									key: 'statements',
-									builder: 'simpleStatementsElements'
-								},
-								{
-									key: 'items',
-									builder: 'expressionStatement',
-									many: true
-								},
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [147, 'content'],
-									kinds: [
-										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
-										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
-										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
-									],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							reads: [253],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
-							}
-						}
-					],
-					empty: ['parameters'],
-					owners: [
-						[0, 1, 2, 3, 4],
-						[0, 1, 2, 3, 5]
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							text: '__init__',
-							builder: 'identifier'
-						}
-					],
-					flags: {
-						async: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'async',
-											optional: true
-										}
-									],
-									kind: 67,
-									presence: true
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name', 'parameters']
-						}
-					]
-				}
-			],
-			flags: ['async']
-		},
 		'declaration.function': {
 			root: true,
 			arms: [
@@ -2444,48 +2859,182 @@ export const build: PortableBuildTable = {
 							}
 						},
 						{
-							name: 'body',
+							name: 'statements',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									builder: 'suiteBlock',
+									kinds: [309],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'block',
+									stored: '_block',
+									builder: 'block',
+									kinds: [185]
+								},
+								{
+									key: 'statements',
+									optional: true
 								}
 							],
 							multiple: false,
-							list: false,
+							list: true,
 							seats: [
 								{
-									at: [170, 'body'],
-									kinds: [308, 310]
+									at: [185, 'statements'],
+									kinds: [134, 156, 159, 162, 163, 164, 167, 170, 179],
+									many: true
 								},
 								{
-									at: [309, 'block'],
-									kinds: [185],
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
 									within: [
 										{
-											builder: 'suiteBlock',
-											key: 'block'
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [183, 'definition'],
+									kinds: [170, 179],
+									within: [
+										{
+											builder: 'decoratedDefinition',
+											key: 'definition',
+											slots: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators'
+														}
+													],
+													multiple: true,
+													nonEmpty: true,
+													list: true,
+													seats: [
+														{
+															at: [183, 'decorators'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [184, 'expression'],
+															kinds: [
+																1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206,
+																208, 210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243,
+																244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+															],
+															leaf: 'identifier',
+															texts: [1],
+															pattern: {
+																source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+																flags: 'u'
+															},
+															within: [
+																{
+																	builder: 'decorator',
+																	key: 'expression'
+																}
+															]
+														}
+													],
+													takers: {
+														integer: 'literal.number.integer',
+														float: 'literal.number.float',
+														bigint: 'literal.number.integer.big'
+													}
+												}
+											]
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
 						},
 						{
 							name: 'doc',
 							steps: [
 								{
 									key: 'body',
-									builder: 'suiteBlock'
+									builder: 'suiteBlock',
+									kinds: [309],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'block',
 									stored: '_block',
-									builder: 'block'
+									builder: 'block',
+									kinds: [185]
 								},
 								{
 									key: 'statements',
 									builder: 'simpleStatements',
 									optional: true,
-									many: true
+									many: true,
+									kinds: [135]
 								},
 								{
 									key: 'statements',
@@ -2494,7 +3043,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'items',
 									builder: 'expressionStatement',
-									many: true
+									many: true,
+									kinds: [147]
 								},
 								{
 									key: 'content'
@@ -2526,7 +3076,91 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['parameters'],
+					readOnly: [
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteInline',
+									kinds: [308],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'statements',
+									stored: '_statements'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: true,
+							seats: [
+								{
+									at: [308, 'statements'],
+									kinds: []
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						}
+					],
 					owners: [
 						[0, 1, 2, 3, 4],
 						[0, 1, 2, 3, 5]
@@ -2558,7 +3192,884 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['async']
 		},
-		'declaration.method': {
+		'declaration.member.constructor': {
+			root: true,
+			arms: [
+				{
+					kind: 316,
+					builder: 'constructorDeclaration',
+					slots: [
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [316, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [278, 'items'],
+									kinds: [275, 313, 314, 315],
+									within: [
+										{
+											builder: 'typeParams',
+											key: 'items'
+										},
+										{
+											builder: 'typeParamsItems',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									stored: '_parameters'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [316, 'parameters'],
+									kinds: []
+								},
+								{
+									at: [198, 'items'],
+									kinds: [1, 200, 202, 204, 205, 206, 207, 230, 263, 264],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'*': 264,
+										'/': 263
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'parameters',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'parametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'returnType',
+							steps: [
+								{
+									key: 'returnType',
+									stored: '_return_type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [316, 'returnType'],
+									kinds: []
+								},
+								{
+									at: [231, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 232, 233, 234, 235, 236, 238, 239, 240, 241, 243,
+										244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'type',
+											key: 'content'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						},
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteBlock',
+									kinds: [309],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'block',
+									stored: '_block',
+									builder: 'block',
+									kinds: [185]
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [185, 'statements'],
+									kinds: [134, 156, 159, 162, 163, 164, 167, 170, 179],
+									many: true
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [183, 'definition'],
+									kinds: [170, 179],
+									within: [
+										{
+											builder: 'decoratedDefinition',
+											key: 'definition',
+											slots: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators'
+														}
+													],
+													multiple: true,
+													nonEmpty: true,
+													list: true,
+													seats: [
+														{
+															at: [183, 'decorators'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [184, 'expression'],
+															kinds: [
+																1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206,
+																208, 210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243,
+																244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+															],
+															leaf: 'identifier',
+															texts: [1],
+															pattern: {
+																source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+																flags: 'u'
+															},
+															within: [
+																{
+																	builder: 'decorator',
+																	key: 'expression'
+																}
+															]
+														}
+													],
+													takers: {
+														integer: 'literal.number.integer',
+														float: 'literal.number.float',
+														bigint: 'literal.number.integer.big'
+													}
+												}
+											]
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						}
+					],
+					readOnly: [
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteInline',
+									kinds: [308],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'statements',
+									stored: '_statements'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: true,
+							seats: [
+								{
+									at: [308, 'statements'],
+									kinds: []
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						}
+					],
+					presets: [],
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 67,
+									presence: true
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: ['doc', 'name'],
+							required: ['parameters']
+						}
+					]
+				},
+				{
+					kind: 361,
+					builder: 'methodDeclaration',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [361, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [361, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [278, 'items'],
+									kinds: [275, 313, 314, 315],
+									within: [
+										{
+											builder: 'typeParams',
+											key: 'items'
+										},
+										{
+											builder: 'typeParamsItems',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									stored: '_parameters'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [361, 'parameters'],
+									kinds: []
+								},
+								{
+									at: [198, 'items'],
+									kinds: [1, 200, 202, 204, 205, 206, 207, 230, 263, 264],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'*': 264,
+										'/': 263
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'parameters',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'parametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'returnType',
+							steps: [
+								{
+									key: 'returnType',
+									stored: '_return_type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [361, 'returnType'],
+									kinds: []
+								},
+								{
+									at: [231, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 232, 233, 234, 235, 236, 238, 239, 240, 241, 243,
+										244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'type',
+											key: 'content'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						},
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteBlock',
+									kinds: [309],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'block',
+									stored: '_block',
+									builder: 'block',
+									kinds: [185]
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [185, 'statements'],
+									kinds: [134, 156, 159, 162, 163, 164, 167, 170, 179],
+									many: true
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [183, 'definition'],
+									kinds: [170, 179],
+									within: [
+										{
+											builder: 'decoratedDefinition',
+											key: 'definition',
+											slots: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators'
+														}
+													],
+													multiple: true,
+													nonEmpty: true,
+													list: true,
+													seats: [
+														{
+															at: [183, 'decorators'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [184, 'expression'],
+															kinds: [
+																1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206,
+																208, 210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243,
+																244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+															],
+															leaf: 'identifier',
+															texts: [1],
+															pattern: {
+																source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+																flags: 'u'
+															},
+															within: [
+																{
+																	builder: 'decorator',
+																	key: 'expression'
+																}
+															]
+														}
+													],
+													takers: {
+														integer: 'literal.number.integer',
+														float: 'literal.number.float',
+														bigint: 'literal.number.integer.big'
+													}
+												}
+											]
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						},
+						{
+							name: 'doc',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteBlock',
+									kinds: [309],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'block',
+									stored: '_block',
+									builder: 'block',
+									kinds: [185]
+								},
+								{
+									key: 'statements',
+									builder: 'simpleStatements',
+									optional: true,
+									many: true,
+									kinds: [135]
+								},
+								{
+									key: 'statements',
+									builder: 'simpleStatementsElements'
+								},
+								{
+									key: 'items',
+									builder: 'expressionStatement',
+									many: true,
+									kinds: [147]
+								},
+								{
+									key: 'content'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							reads: [253],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						}
+					],
+					readOnly: [
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteInline',
+									kinds: [308],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'statements',
+									stored: '_statements'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: true,
+							seats: [
+								{
+									at: [308, 'statements'],
+									kinds: []
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						}
+					],
+					owners: [
+						[0, 1, 2, 3, 4],
+						[0, 1, 2, 3, 5]
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							text: '__init__',
+							builder: 'identifier'
+						}
+					],
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 67,
+									presence: true
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters']
+						}
+					]
+				}
+			],
+			flags: ['async']
+		},
+		'declaration.member.method': {
 			root: true,
 			arms: [
 				{
@@ -2706,48 +4217,182 @@ export const build: PortableBuildTable = {
 							}
 						},
 						{
-							name: 'body',
+							name: 'statements',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									builder: 'suiteBlock',
+									kinds: [309],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'block',
+									stored: '_block',
+									builder: 'block',
+									kinds: [185]
+								},
+								{
+									key: 'statements',
+									optional: true
 								}
 							],
 							multiple: false,
-							list: false,
+							list: true,
 							seats: [
 								{
-									at: [361, 'body'],
-									kinds: [308, 310]
+									at: [185, 'statements'],
+									kinds: [134, 156, 159, 162, 163, 164, 167, 170, 179],
+									many: true
 								},
 								{
-									at: [309, 'block'],
-									kinds: [185],
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
 									within: [
 										{
-											builder: 'suiteBlock',
-											key: 'block'
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [183, 'definition'],
+									kinds: [170, 179],
+									within: [
+										{
+											builder: 'decoratedDefinition',
+											key: 'definition',
+											slots: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators'
+														}
+													],
+													multiple: true,
+													nonEmpty: true,
+													list: true,
+													seats: [
+														{
+															at: [183, 'decorators'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [184, 'expression'],
+															kinds: [
+																1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206,
+																208, 210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243,
+																244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+															],
+															leaf: 'identifier',
+															texts: [1],
+															pattern: {
+																source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+																flags: 'u'
+															},
+															within: [
+																{
+																	builder: 'decorator',
+																	key: 'expression'
+																}
+															]
+														}
+													],
+													takers: {
+														integer: 'literal.number.integer',
+														float: 'literal.number.float',
+														bigint: 'literal.number.integer.big'
+													}
+												}
+											]
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
 						},
 						{
 							name: 'doc',
 							steps: [
 								{
 									key: 'body',
-									builder: 'suiteBlock'
+									builder: 'suiteBlock',
+									kinds: [309],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'block',
 									stored: '_block',
-									builder: 'block'
+									builder: 'block',
+									kinds: [185]
 								},
 								{
 									key: 'statements',
 									builder: 'simpleStatements',
 									optional: true,
-									many: true
+									many: true,
+									kinds: [135]
 								},
 								{
 									key: 'statements',
@@ -2756,7 +4401,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'items',
 									builder: 'expressionStatement',
-									many: true
+									many: true,
+									kinds: [147]
 								},
 								{
 									key: 'content'
@@ -2788,7 +4434,91 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['parameters'],
+					readOnly: [
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteInline',
+									kinds: [308],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'statements',
+									stored: '_statements'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: true,
+							seats: [
+								{
+									at: [308, 'statements'],
+									kinds: []
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						}
+					],
 					owners: [
 						[0, 1, 2, 3, 4],
 						[0, 1, 2, 3, 5]
@@ -2867,7 +4597,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['default', 'static', 'async', 'privateName', 'override']
 		},
-		'declaration.method.special': {
+		'declaration.member.method.special': {
 			root: true,
 			arms: [
 				{
@@ -3015,48 +4745,182 @@ export const build: PortableBuildTable = {
 							}
 						},
 						{
-							name: 'body',
+							name: 'statements',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									builder: 'suiteBlock',
+									kinds: [309],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'block',
+									stored: '_block',
+									builder: 'block',
+									kinds: [185]
+								},
+								{
+									key: 'statements',
+									optional: true
 								}
 							],
 							multiple: false,
-							list: false,
+							list: true,
 							seats: [
 								{
-									at: [361, 'body'],
-									kinds: [308, 310]
+									at: [185, 'statements'],
+									kinds: [134, 156, 159, 162, 163, 164, 167, 170, 179],
+									many: true
 								},
 								{
-									at: [309, 'block'],
-									kinds: [185],
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
 									within: [
 										{
-											builder: 'suiteBlock',
-											key: 'block'
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [183, 'definition'],
+									kinds: [170, 179],
+									within: [
+										{
+											builder: 'decoratedDefinition',
+											key: 'definition',
+											slots: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators'
+														}
+													],
+													multiple: true,
+													nonEmpty: true,
+													list: true,
+													seats: [
+														{
+															at: [183, 'decorators'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [184, 'expression'],
+															kinds: [
+																1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206,
+																208, 210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243,
+																244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+															],
+															leaf: 'identifier',
+															texts: [1],
+															pattern: {
+																source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+																flags: 'u'
+															},
+															within: [
+																{
+																	builder: 'decorator',
+																	key: 'expression'
+																}
+															]
+														}
+													],
+													takers: {
+														integer: 'literal.number.integer',
+														float: 'literal.number.float',
+														bigint: 'literal.number.integer.big'
+													}
+												}
+											]
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
 						},
 						{
 							name: 'doc',
 							steps: [
 								{
 									key: 'body',
-									builder: 'suiteBlock'
+									builder: 'suiteBlock',
+									kinds: [309],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'block',
 									stored: '_block',
-									builder: 'block'
+									builder: 'block',
+									kinds: [185]
 								},
 								{
 									key: 'statements',
 									builder: 'simpleStatements',
 									optional: true,
-									many: true
+									many: true,
+									kinds: [135]
 								},
 								{
 									key: 'statements',
@@ -3065,7 +4929,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'items',
 									builder: 'expressionStatement',
-									many: true
+									many: true,
+									kinds: [147]
 								},
 								{
 									key: 'content'
@@ -3097,7 +4962,91 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['parameters'],
+					readOnly: [
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteInline',
+									kinds: [308],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'statements',
+									stored: '_statements'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: true,
+							seats: [
+								{
+									at: [308, 'statements'],
+									kinds: []
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						}
+					],
 					owners: [
 						[0, 1, 2, 3, 4],
 						[0, 1, 2, 3, 5]
@@ -3172,6 +5121,1047 @@ export const build: PortableBuildTable = {
 				}
 			],
 			flags: ['default', 'static', 'async', 'privateName', 'override']
+		},
+		'declaration.member.property.getter': {
+			root: true,
+			arms: [
+				{
+					kind: 361,
+					builder: 'methodDeclaration',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [361, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [361, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [278, 'items'],
+									kinds: [275, 313, 314, 315],
+									within: [
+										{
+											builder: 'typeParams',
+											key: 'items'
+										},
+										{
+											builder: 'typeParamsItems',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									stored: '_parameters'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [361, 'parameters'],
+									kinds: []
+								},
+								{
+									at: [198, 'items'],
+									kinds: [1, 200, 202, 204, 205, 206, 207, 230, 263, 264],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'*': 264,
+										'/': 263
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'parameters',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'parametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'returnType',
+									stored: '_return_type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [361, 'returnType'],
+									kinds: []
+								},
+								{
+									at: [231, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 232, 233, 234, 235, 236, 238, 239, 240, 241, 243,
+										244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'type',
+											key: 'content'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						},
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteBlock',
+									kinds: [309],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'block',
+									stored: '_block',
+									builder: 'block',
+									kinds: [185]
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [185, 'statements'],
+									kinds: [134, 156, 159, 162, 163, 164, 167, 170, 179],
+									many: true
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [183, 'definition'],
+									kinds: [170, 179],
+									within: [
+										{
+											builder: 'decoratedDefinition',
+											key: 'definition',
+											slots: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators'
+														}
+													],
+													multiple: true,
+													nonEmpty: true,
+													list: true,
+													seats: [
+														{
+															at: [183, 'decorators'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [184, 'expression'],
+															kinds: [
+																1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206,
+																208, 210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243,
+																244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+															],
+															leaf: 'identifier',
+															texts: [1],
+															pattern: {
+																source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+																flags: 'u'
+															},
+															within: [
+																{
+																	builder: 'decorator',
+																	key: 'expression'
+																}
+															]
+														}
+													],
+													takers: {
+														integer: 'literal.number.integer',
+														float: 'literal.number.float',
+														bigint: 'literal.number.integer.big'
+													}
+												}
+											]
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						},
+						{
+							name: 'doc',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteBlock',
+									kinds: [309],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'block',
+									stored: '_block',
+									builder: 'block',
+									kinds: [185]
+								},
+								{
+									key: 'statements',
+									builder: 'simpleStatements',
+									optional: true,
+									many: true,
+									kinds: [135]
+								},
+								{
+									key: 'statements',
+									builder: 'simpleStatementsElements'
+								},
+								{
+									key: 'items',
+									builder: 'expressionStatement',
+									many: true,
+									kinds: [147]
+								},
+								{
+									key: 'content'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							reads: [253],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						}
+					],
+					readOnly: [
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteInline',
+									kinds: [308],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'statements',
+									stored: '_statements'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: true,
+							seats: [
+								{
+									at: [308, 'statements'],
+									kinds: []
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						}
+					],
+					owners: [
+						[0, 1, 2, 3, 4],
+						[0, 1, 2, 3, 5]
+					],
+					presets: [],
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 67,
+									presence: true
+								}
+							]
+						}
+					},
+					facts: [
+						{
+							name: 'getter',
+							slot: 'decorators',
+							spellings: [
+								{
+									item: {
+										$path: 'identifier',
+										$value: 'property'
+									},
+									text: ['property']
+								}
+							]
+						},
+						{
+							name: 'override',
+							flag: 'override',
+							slot: 'decorators',
+							spellings: [
+								{
+									item: {
+										$path: 'identifier',
+										$value: 'override'
+									},
+									text: ['override']
+								},
+								{
+									item: {
+										$path: 'expression.member',
+										object: 'typing',
+										property: 'override'
+									},
+									text: ['typing.override']
+								}
+							]
+						}
+					],
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters']
+						}
+					]
+				}
+			],
+			flags: ['override']
+		},
+		'declaration.member.property.setter': {
+			root: true,
+			arms: [
+				{
+					kind: 361,
+					builder: 'methodDeclaration',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [361, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [361, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [278, 'items'],
+									kinds: [275, 313, 314, 315],
+									within: [
+										{
+											builder: 'typeParams',
+											key: 'items'
+										},
+										{
+											builder: 'typeParamsItems',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters',
+									stored: '_parameters'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [361, 'parameters'],
+									kinds: []
+								},
+								{
+									at: [198, 'items'],
+									kinds: [1, 200, 202, 204, 205, 206, 207, 230, 263, 264],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'*': 264,
+										'/': 263
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'parameters',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'parametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'returnType',
+							steps: [
+								{
+									key: 'returnType',
+									stored: '_return_type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [361, 'returnType'],
+									kinds: []
+								},
+								{
+									at: [231, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 232, 233, 234, 235, 236, 238, 239, 240, 241, 243,
+										244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'type',
+											key: 'content'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						},
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteBlock',
+									kinds: [309],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'block',
+									stored: '_block',
+									builder: 'block',
+									kinds: [185]
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [185, 'statements'],
+									kinds: [134, 156, 159, 162, 163, 164, 167, 170, 179],
+									many: true
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [183, 'definition'],
+									kinds: [170, 179],
+									within: [
+										{
+											builder: 'decoratedDefinition',
+											key: 'definition',
+											slots: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators'
+														}
+													],
+													multiple: true,
+													nonEmpty: true,
+													list: true,
+													seats: [
+														{
+															at: [183, 'decorators'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [184, 'expression'],
+															kinds: [
+																1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206,
+																208, 210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243,
+																244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+															],
+															leaf: 'identifier',
+															texts: [1],
+															pattern: {
+																source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+																flags: 'u'
+															},
+															within: [
+																{
+																	builder: 'decorator',
+																	key: 'expression'
+																}
+															]
+														}
+													],
+													takers: {
+														integer: 'literal.number.integer',
+														float: 'literal.number.float',
+														bigint: 'literal.number.integer.big'
+													}
+												}
+											]
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						},
+						{
+							name: 'doc',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteBlock',
+									kinds: [309],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'block',
+									stored: '_block',
+									builder: 'block',
+									kinds: [185]
+								},
+								{
+									key: 'statements',
+									builder: 'simpleStatements',
+									optional: true,
+									many: true,
+									kinds: [135]
+								},
+								{
+									key: 'statements',
+									builder: 'simpleStatementsElements'
+								},
+								{
+									key: 'items',
+									builder: 'expressionStatement',
+									many: true,
+									kinds: [147]
+								},
+								{
+									key: 'content'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							reads: [253],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						}
+					],
+					readOnly: [
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteInline',
+									kinds: [308],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'statements',
+									stored: '_statements'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: true,
+							seats: [
+								{
+									at: [308, 'statements'],
+									kinds: []
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						}
+					],
+					owners: [
+						[0, 1, 2, 3, 4],
+						[0, 1, 2, 3, 5]
+					],
+					presets: [],
+					flags: {
+						async: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'async',
+											optional: true
+										}
+									],
+									kind: 67,
+									presence: true
+								}
+							]
+						}
+					},
+					facts: [
+						{
+							name: 'setter',
+							slot: 'decorators',
+							spellings: [
+								{
+									item: {
+										$path: 'expression.member',
+										property: 'setter'
+									},
+									holes: {
+										name: ['object']
+									},
+									text: ['', '.setter']
+								}
+							]
+						},
+						{
+							name: 'override',
+							flag: 'override',
+							slot: 'decorators',
+							spellings: [
+								{
+									item: {
+										$path: 'identifier',
+										$value: 'override'
+									},
+									text: ['override']
+								},
+								{
+									item: {
+										$path: 'expression.member',
+										object: 'typing',
+										property: 'override'
+									},
+									text: ['typing.override']
+								}
+							]
+						}
+					],
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters']
+						}
+					]
+				}
+			],
+			flags: ['override']
 		},
 		'declaration.parameter.defaulted': {
 			root: true,
@@ -3442,12 +6432,12 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.property.getter': {
+		'declaration.type.class': {
 			root: true,
 			arms: [
 				{
-					kind: 361,
-					builder: 'methodDeclaration',
+					kind: 179,
+					builder: 'classDefinition',
 					slots: [
 						{
 							name: 'name',
@@ -3460,7 +6450,7 @@ export const build: PortableBuildTable = {
 							list: false,
 							seats: [
 								{
-									at: [361, 'name'],
+									at: [179, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
 									texts: [1],
@@ -3481,10 +6471,9 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							list: true,
 							seats: [
 								{
-									at: [361, 'typeParameters'],
+									at: [179, 'typeParameters'],
 									kinds: []
 								},
 								{
@@ -3505,70 +6494,124 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'parameters',
+							name: 'bases',
 							steps: [
 								{
-									key: 'parameters',
-									stored: '_parameters'
+									key: 'bases',
+									optional: true
 								}
 							],
 							multiple: false,
 							list: true,
 							seats: [
 								{
-									at: [361, 'parameters'],
+									at: [179, 'bases'],
 									kinds: []
 								},
 								{
-									at: [198, 'items'],
-									kinds: [1, 200, 202, 204, 205, 206, 207, 230, 263, 264],
+									at: [269, 'items'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 173, 174, 181,
+										206, 208, 210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 237, 238, 239, 240, 241, 243, 244,
+										245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+									],
 									leaf: 'identifier',
 									texts: [1],
-									tokens: {
-										'*': 264,
-										'/': 263
-									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
 									},
 									within: [
 										{
-											builder: 'parameters',
-											key: 'elements',
+											builder: 'argumentList',
+											key: 'arguments',
 											optional: true
 										},
 										{
-											builder: 'parametersElements',
+											builder: 'argumentListElements',
 											key: 'items'
 										}
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
 						},
 						{
-							name: 'type',
+							name: 'members',
 							steps: [
 								{
-									key: 'returnType',
-									stored: '_return_type',
+									key: 'body',
+									builder: 'suiteBlockClassDeclaration',
+									kinds: [319],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'blockClassDeclaration',
+									stored: '_block_class_declaration',
+									builder: 'blockClassDeclaration'
+								},
+								{
+									key: 'statements',
 									optional: true
 								}
 							],
 							multiple: false,
-							list: false,
+							list: true,
 							seats: [
 								{
-									at: [361, 'returnType'],
-									kinds: []
+									at: [318, 'statements'],
+									kinds: [156, 159, 162, 163, 164, 167, 179, 316, 317, 361],
+									many: true
 								},
 								{
-									at: [231, 'content'],
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
 									kinds: [
 										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
-										211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 232, 233, 234, 235, 236, 238, 239, 240, 241, 243,
-										244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
 									],
 									leaf: 'identifier',
 									texts: [1],
@@ -3578,8 +6621,71 @@ export const build: PortableBuildTable = {
 									},
 									within: [
 										{
-											builder: 'type',
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
 											key: 'content'
+										}
+									]
+								},
+								{
+									at: [320, 'definition'],
+									kinds: [179, 316, 361],
+									within: [
+										{
+											builder: 'decoratedDefinitionClassDeclaration',
+											key: 'definition',
+											slots: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators'
+														}
+													],
+													multiple: true,
+													nonEmpty: true,
+													list: true,
+													seats: [
+														{
+															at: [320, 'decorators'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [184, 'expression'],
+															kinds: [
+																1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206,
+																208, 210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243,
+																244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+															],
+															leaf: 'identifier',
+															texts: [1],
+															pattern: {
+																source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+																flags: 'u'
+															},
+															within: [
+																{
+																	builder: 'decorator',
+																	key: 'expression'
+																}
+															]
+														}
+													],
+													takers: {
+														integer: 'literal.number.integer',
+														float: 'literal.number.float',
+														bigint: 'literal.number.integer.big'
+													}
+												}
+											]
 										}
 									]
 								}
@@ -3591,48 +6697,25 @@ export const build: PortableBuildTable = {
 							}
 						},
 						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [361, 'body'],
-									kinds: [308, 310]
-								},
-								{
-									at: [309, 'block'],
-									kinds: [185],
-									within: [
-										{
-											builder: 'suiteBlock',
-											key: 'block'
-										}
-									]
-								}
-							]
-						},
-						{
 							name: 'doc',
 							steps: [
 								{
 									key: 'body',
-									builder: 'suiteBlock'
+									builder: 'suiteBlockClassDeclaration',
+									kinds: [319],
+									empty: 'suiteEmpty'
 								},
 								{
-									key: 'block',
-									stored: '_block',
-									builder: 'block'
+									key: 'blockClassDeclaration',
+									stored: '_block_class_declaration',
+									builder: 'blockClassDeclaration'
 								},
 								{
 									key: 'statements',
 									builder: 'simpleStatements',
 									optional: true,
-									many: true
+									many: true,
+									kinds: [135]
 								},
 								{
 									key: 'statements',
@@ -3641,7 +6724,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'items',
 									builder: 'expressionStatement',
-									many: true
+									many: true,
+									kinds: [147]
 								},
 								{
 									key: 'content'
@@ -3673,283 +6757,59 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['parameters'],
-					owners: [
-						[0, 1, 2, 3, 4],
-						[0, 1, 2, 3, 5]
-					],
-					presets: [],
-					flags: {
-						async: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'async',
-											optional: true
-										}
-									],
-									kind: 67,
-									presence: true
-								}
-							]
-						}
-					},
-					facts: [
+					readOnly: [
 						{
-							name: 'getter',
-							slot: 'decorators',
-							spellings: [
-								{
-									item: {
-										$path: 'identifier',
-										$value: 'property'
-									},
-									text: ['property']
-								}
-							]
-						},
-						{
-							name: 'override',
-							flag: 'override',
-							slot: 'decorators',
-							spellings: [
-								{
-									item: {
-										$path: 'identifier',
-										$value: 'override'
-									},
-									text: ['override']
-								},
-								{
-									item: {
-										$path: 'expression.member',
-										object: 'typing',
-										property: 'override'
-									},
-									text: ['typing.override']
-								}
-							]
-						}
-					],
-					when: [
-						{
-							absent: [],
-							required: ['name', 'parameters']
-						}
-					]
-				}
-			],
-			flags: ['override']
-		},
-		'declaration.property.setter': {
-			root: true,
-			arms: [
-				{
-					kind: 361,
-					builder: 'methodDeclaration',
-					slots: [
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [361, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [361, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [278, 'items'],
-									kinds: [275, 313, 314, 315],
-									within: [
-										{
-											builder: 'typeParams',
-											key: 'items'
-										},
-										{
-											builder: 'typeParamsItems',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									stored: '_parameters'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [361, 'parameters'],
-									kinds: []
-								},
-								{
-									at: [198, 'items'],
-									kinds: [1, 200, 202, 204, 205, 206, 207, 230, 263, 264],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'*': 264,
-										'/': 263
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'parameters',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'parametersElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'returnType',
-							steps: [
-								{
-									key: 'returnType',
-									stored: '_return_type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [361, 'returnType'],
-									kinds: []
-								},
-								{
-									at: [231, 'content'],
-									kinds: [
-										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
-										211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 232, 233, 234, 235, 236, 238, 239, 240, 241, 243,
-										244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
-									],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'type',
-											key: 'content'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
-							}
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [361, 'body'],
-									kinds: [308, 310]
-								},
-								{
-									at: [309, 'block'],
-									kinds: [185],
-									within: [
-										{
-											builder: 'suiteBlock',
-											key: 'block'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'doc',
+							name: 'members',
 							steps: [
 								{
 									key: 'body',
-									builder: 'suiteBlock'
-								},
-								{
-									key: 'block',
-									stored: '_block',
-									builder: 'block'
+									builder: 'suiteInline',
+									kinds: [308],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'statements',
-									builder: 'simpleStatements',
-									optional: true,
-									many: true
-								},
-								{
-									key: 'statements',
-									builder: 'simpleStatementsElements'
-								},
-								{
-									key: 'items',
-									builder: 'expressionStatement',
-									many: true
-								},
-								{
-									key: 'content'
+									stored: '_statements'
 								}
 							],
 							multiple: false,
-							list: false,
+							nonEmpty: true,
+							list: true,
 							seats: [
+								{
+									at: [308, 'statements'],
+									kinds: []
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
 								{
 									at: [147, 'content'],
 									kinds: [
@@ -3962,10 +6822,19 @@ export const build: PortableBuildTable = {
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
-									}
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
 								}
 							],
-							reads: [253],
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
@@ -3973,79 +6842,22 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['parameters'],
 					owners: [
-						[0, 1, 2, 3, 4],
-						[0, 1, 2, 3, 5]
+						[0, 1, 2, 3],
+						[0, 1, 2, 4]
 					],
 					presets: [],
-					flags: {
-						async: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'async',
-											optional: true
-										}
-									],
-									kind: 67,
-									presence: true
-								}
-							]
-						}
-					},
-					facts: [
-						{
-							name: 'setter',
-							slot: 'decorators',
-							spellings: [
-								{
-									item: {
-										$path: 'expression.member',
-										property: 'setter'
-									},
-									holes: {
-										name: ['object']
-									},
-									text: ['', '.setter']
-								}
-							]
-						},
-						{
-							name: 'override',
-							flag: 'override',
-							slot: 'decorators',
-							spellings: [
-								{
-									item: {
-										$path: 'identifier',
-										$value: 'override'
-									},
-									text: ['override']
-								},
-								{
-									item: {
-										$path: 'expression.member',
-										object: 'typing',
-										property: 'override'
-									},
-									text: ['typing.override']
-								}
-							]
-						}
-					],
+					flags: {},
 					when: [
 						{
 							absent: [],
-							required: ['name', 'parameters']
+							required: ['name']
 						}
 					]
 				}
-			],
-			flags: ['override']
+			]
 		},
-		'declaration.type_alias': {
+		'declaration.type.type_alias': {
 			root: true,
 			arms: [
 				{
@@ -7596,7 +10408,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['comparators'],
 					presets: [],
 					flags: {},
 					when: [
@@ -9478,7 +12289,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['elements'],
 					presets: [],
 					flags: {},
 					when: [
@@ -9549,7 +12359,7 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'expression.collection.tuple.bare': {
-			root: false,
+			root: true,
 			arms: [
 				{
 					kind: 266,
@@ -9589,7 +12399,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['elements'],
 					presets: [],
 					flags: {
 						trailingComma: {
@@ -9660,7 +12469,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['elements'],
 					presets: [],
 					flags: {
 						trailingComma: {
@@ -9726,7 +12534,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['elements'],
 					presets: [],
 					flags: {
 						trailingComma: {
@@ -9747,18 +12554,6 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['elements']
 						}
-					],
-					holders: [
-						[150, 'expressions'],
-						[151, 'expressions'],
-						[152, 'expressions'],
-						[162, 'right'],
-						[222, 'right'],
-						[225, 'content'],
-						[255, 'expression'],
-						[302, 'value'],
-						[304, 'value'],
-						[360, 'expression']
 					]
 				},
 				{
@@ -9799,7 +12594,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['elements'],
 					presets: [],
 					flags: {
 						trailingComma: {
@@ -9898,7 +12692,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['clauses'],
 					presets: [],
 					flags: {},
 					when: [
@@ -9978,7 +12771,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['clauses'],
 					presets: [],
 					flags: {},
 					when: [
@@ -10043,7 +12835,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['clauses'],
 					presets: [],
 					flags: {},
 					when: [
@@ -10123,7 +12914,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['clauses'],
 					presets: [],
 					flags: {},
 					when: [
@@ -11352,7 +14142,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [312]
 								},
 								{
 									key: 'expression'
@@ -12672,7 +15463,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['strings'],
 					presets: [],
 					flags: {},
 					when: [
@@ -14954,7 +17744,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['elements'],
 					presets: [],
 					flags: {
 						trailingComma: {
@@ -15044,7 +17833,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['elements'],
 					presets: [],
 					flags: {
 						trailingComma: {
@@ -15123,7 +17911,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['expressions'],
 					presets: [],
 					flags: {},
 					when: [
@@ -15571,7 +18358,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['statements'],
 					presets: [],
 					flags: {},
 					when: [
@@ -15795,7 +18581,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['names'],
 					presets: [],
 					flags: {},
 					when: [
@@ -15846,32 +18631,6 @@ export const build: PortableBuildTable = {
 							}
 						},
 						{
-							name: 'consequence',
-							steps: [
-								{
-									key: 'consequence'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [156, 'consequence'],
-									kinds: [308, 310]
-								},
-								{
-									at: [309, 'block'],
-									kinds: [185],
-									within: [
-										{
-											builder: 'suiteBlock',
-											key: 'block'
-										}
-									]
-								}
-							]
-						},
-						{
 							name: 'alternatives',
 							steps: [
 								{
@@ -15888,6 +18647,247 @@ export const build: PortableBuildTable = {
 									many: true
 								}
 							]
+						},
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'consequence',
+									builder: 'suiteBlock',
+									kinds: [309],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'block',
+									stored: '_block',
+									builder: 'block',
+									kinds: [185]
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [185, 'statements'],
+									kinds: [134, 156, 159, 162, 163, 164, 167, 170, 179],
+									many: true
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [183, 'definition'],
+									kinds: [170, 179],
+									within: [
+										{
+											builder: 'decoratedDefinition',
+											key: 'definition',
+											slots: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators'
+														}
+													],
+													multiple: true,
+													nonEmpty: true,
+													list: true,
+													seats: [
+														{
+															at: [183, 'decorators'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [184, 'expression'],
+															kinds: [
+																1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206,
+																208, 210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243,
+																244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+															],
+															leaf: 'identifier',
+															texts: [1],
+															pattern: {
+																source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+																flags: 'u'
+															},
+															within: [
+																{
+																	builder: 'decorator',
+																	key: 'expression'
+																}
+															]
+														}
+													],
+													takers: {
+														integer: 'literal.number.integer',
+														float: 'literal.number.float',
+														bigint: 'literal.number.integer.big'
+													}
+												}
+											]
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						}
+					],
+					readOnly: [
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'consequence',
+									builder: 'suiteInline',
+									kinds: [308],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'statements',
+									stored: '_statements'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: true,
+							seats: [
+								{
+									at: [308, 'statements'],
+									kinds: []
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
 						}
 					],
 					presets: [],
@@ -15895,7 +18895,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['condition', 'consequence']
+							required: ['condition']
 						}
 					]
 				}
@@ -15938,7 +18938,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['names'],
 					presets: [],
 					flags: {},
 					when: [
@@ -16025,7 +19024,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['names'],
 					presets: [],
 					flags: {},
 					when: [
@@ -16092,7 +19090,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['names'],
 					presets: [],
 					flags: {},
 					when: [
@@ -16165,32 +19162,6 @@ export const build: PortableBuildTable = {
 							}
 						},
 						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [162, 'body'],
-									kinds: [308, 310]
-								},
-								{
-									at: [309, 'block'],
-									kinds: [185],
-									within: [
-										{
-											builder: 'suiteBlock',
-											key: 'block'
-										}
-									]
-								}
-							]
-						},
-						{
 							name: 'alternative',
 							steps: [
 								{
@@ -16207,6 +19178,247 @@ export const build: PortableBuildTable = {
 									kinds: [158]
 								}
 							]
+						},
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteBlock',
+									kinds: [309],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'block',
+									stored: '_block',
+									builder: 'block',
+									kinds: [185]
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [185, 'statements'],
+									kinds: [134, 156, 159, 162, 163, 164, 167, 170, 179],
+									many: true
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [183, 'definition'],
+									kinds: [170, 179],
+									within: [
+										{
+											builder: 'decoratedDefinition',
+											key: 'definition',
+											slots: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators'
+														}
+													],
+													multiple: true,
+													nonEmpty: true,
+													list: true,
+													seats: [
+														{
+															at: [183, 'decorators'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [184, 'expression'],
+															kinds: [
+																1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206,
+																208, 210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243,
+																244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+															],
+															leaf: 'identifier',
+															texts: [1],
+															pattern: {
+																source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+																flags: 'u'
+															},
+															within: [
+																{
+																	builder: 'decorator',
+																	key: 'expression'
+																}
+															]
+														}
+													],
+													takers: {
+														integer: 'literal.number.integer',
+														float: 'literal.number.float',
+														bigint: 'literal.number.integer.big'
+													}
+												}
+											]
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						}
+					],
+					readOnly: [
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteInline',
+									kinds: [308],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'statements',
+									stored: '_statements'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: true,
+							seats: [
+								{
+									at: [308, 'statements'],
+									kinds: []
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
 						}
 					],
 					presets: [],
@@ -16229,7 +19441,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'left', 'right']
+							required: ['left', 'right']
 						}
 					]
 				}
@@ -16275,32 +19487,6 @@ export const build: PortableBuildTable = {
 							}
 						},
 						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [163, 'body'],
-									kinds: [308, 310]
-								},
-								{
-									at: [309, 'block'],
-									kinds: [185],
-									within: [
-										{
-											builder: 'suiteBlock',
-											key: 'block'
-										}
-									]
-								}
-							]
-						},
-						{
 							name: 'alternative',
 							steps: [
 								{
@@ -16317,6 +19503,247 @@ export const build: PortableBuildTable = {
 									kinds: [158]
 								}
 							]
+						},
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteBlock',
+									kinds: [309],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'block',
+									stored: '_block',
+									builder: 'block',
+									kinds: [185]
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [185, 'statements'],
+									kinds: [134, 156, 159, 162, 163, 164, 167, 170, 179],
+									many: true
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [183, 'definition'],
+									kinds: [170, 179],
+									within: [
+										{
+											builder: 'decoratedDefinition',
+											key: 'definition',
+											slots: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators'
+														}
+													],
+													multiple: true,
+													nonEmpty: true,
+													list: true,
+													seats: [
+														{
+															at: [183, 'decorators'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [184, 'expression'],
+															kinds: [
+																1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206,
+																208, 210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243,
+																244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+															],
+															leaf: 'identifier',
+															texts: [1],
+															pattern: {
+																source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+																flags: 'u'
+															},
+															within: [
+																{
+																	builder: 'decorator',
+																	key: 'expression'
+																}
+															]
+														}
+													],
+													takers: {
+														integer: 'literal.number.integer',
+														float: 'literal.number.float',
+														bigint: 'literal.number.integer.big'
+													}
+												}
+											]
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						}
+					],
+					readOnly: [
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteInline',
+									kinds: [308],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'statements',
+									stored: '_statements'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: true,
+							seats: [
+								{
+									at: [308, 'statements'],
+									kinds: []
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
 						}
 					],
 					presets: [],
@@ -16324,7 +19751,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'condition']
+							required: ['condition']
 						}
 					]
 				}
@@ -16410,7 +19837,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['arms'],
 					presets: [],
 					flags: {},
 					when: [
@@ -16454,7 +19880,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['names'],
 					presets: [],
 					flags: {},
 					when: [
@@ -16518,7 +19943,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['arguments'],
 					presets: [],
 					flags: {
 						trailingComma: {
@@ -16672,30 +20096,245 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'statements',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									builder: 'suiteBlock',
+									kinds: [309],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'block',
+									stored: '_block',
+									builder: 'block',
+									kinds: [185]
+								},
+								{
+									key: 'statements',
+									optional: true
 								}
 							],
 							multiple: false,
-							list: false,
+							list: true,
 							seats: [
 								{
-									at: [167, 'body'],
-									kinds: [308, 310]
+									at: [185, 'statements'],
+									kinds: [134, 156, 159, 162, 163, 164, 167, 170, 179],
+									many: true
 								},
 								{
-									at: [309, 'block'],
-									kinds: [185],
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
 									within: [
 										{
-											builder: 'suiteBlock',
-											key: 'block'
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [183, 'definition'],
+									kinds: [170, 179],
+									within: [
+										{
+											builder: 'decoratedDefinition',
+											key: 'definition',
+											slots: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators'
+														}
+													],
+													multiple: true,
+													nonEmpty: true,
+													list: true,
+													seats: [
+														{
+															at: [183, 'decorators'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [184, 'expression'],
+															kinds: [
+																1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206,
+																208, 210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243,
+																244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+															],
+															leaf: 'identifier',
+															texts: [1],
+															pattern: {
+																source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+																flags: 'u'
+															},
+															within: [
+																{
+																	builder: 'decorator',
+																	key: 'expression'
+																}
+															]
+														}
+													],
+													takers: {
+														integer: 'literal.number.integer',
+														float: 'literal.number.float',
+														bigint: 'literal.number.integer.big'
+													}
+												}
+											]
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						}
+					],
+					readOnly: [
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteInline',
+									kinds: [308],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'statements',
+									stored: '_statements'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: true,
+							seats: [
+								{
+									at: [308, 'statements'],
+									kinds: []
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
 						}
 					],
 					presets: [],
@@ -16718,7 +20357,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'withClause']
+							required: ['withClause']
 						}
 					]
 				}
@@ -16857,32 +20496,6 @@ export const build: PortableBuildTable = {
 					builder: 'tryStatement',
 					slots: [
 						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [164, 'body'],
-									kinds: [308, 310]
-								},
-								{
-									at: [309, 'block'],
-									kinds: [185],
-									within: [
-										{
-											builder: 'suiteBlock',
-											key: 'block'
-										}
-									]
-								}
-							]
-						},
-						{
 							name: 'handlers',
 							steps: [
 								{
@@ -16935,16 +20548,252 @@ export const build: PortableBuildTable = {
 									kinds: [166]
 								}
 							]
+						},
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteBlock',
+									kinds: [309],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'block',
+									stored: '_block',
+									builder: 'block',
+									kinds: [185]
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [185, 'statements'],
+									kinds: [134, 156, 159, 162, 163, 164, 167, 170, 179],
+									many: true
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [183, 'definition'],
+									kinds: [170, 179],
+									within: [
+										{
+											builder: 'decoratedDefinition',
+											key: 'definition',
+											slots: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators'
+														}
+													],
+													multiple: true,
+													nonEmpty: true,
+													list: true,
+													seats: [
+														{
+															at: [183, 'decorators'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [184, 'expression'],
+															kinds: [
+																1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206,
+																208, 210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243,
+																244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+															],
+															leaf: 'identifier',
+															texts: [1],
+															pattern: {
+																source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+																flags: 'u'
+															},
+															within: [
+																{
+																	builder: 'decorator',
+																	key: 'expression'
+																}
+															]
+														}
+													],
+													takers: {
+														integer: 'literal.number.integer',
+														float: 'literal.number.float',
+														bigint: 'literal.number.integer.big'
+													}
+												}
+											]
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						}
+					],
+					readOnly: [
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteInline',
+									kinds: [308],
+									empty: 'suiteEmpty'
+								},
+								{
+									key: 'statements',
+									stored: '_statements'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: true,
+							seats: [
+								{
+									at: [308, 'statements'],
+									kinds: []
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
 						}
 					],
 					presets: [],
 					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['body']
-						}
-					]
+					when: []
 				}
 			]
 		},
@@ -17144,7 +20993,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['typeArguments'],
 					presets: [],
 					flags: {},
 					when: [
@@ -17568,6 +21416,7 @@ export const build: PortableBuildTable = {
 		'Encapsulation',
 		'Exceptions',
 		'ExecStatements',
+		'ExecutableClassBodies',
 		'ExplicitOverrides',
 		'ExponentiationAndMembership',
 		'ForEachTargets',
@@ -17593,6 +21442,7 @@ export const build: PortableBuildTable = {
 		'MultilineStrings',
 		'MultipleInheritance',
 		'NamedArguments',
+		'NestedTypes',
 		'NullableTypes',
 		'ObjectOriented',
 		'OperatorOverloading',

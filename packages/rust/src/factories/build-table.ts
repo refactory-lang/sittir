@@ -628,7 +628,7 @@ export interface Routes<Table extends AnyTable> {
 		readonly withComma: Routes<Table>['matchArmWithComma'];
 		readonly blockEnding: Routes<Table>['matchArmBlockEnding'];
 	};
-	readonly closureExpression: {
+	readonly closureExpression: Table['buildClosureExpressionExpr'] & {
 		readonly block: Table['buildClosureExpressionBlock'];
 		readonly expr: Table['buildClosureExpressionExpr'];
 	};
@@ -1649,10 +1649,12 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		withComma: matchArmWithComma,
 		blockEnding: matchArmBlockEnding
 	} as const);
-	const closureExpression: Routes<Table>['closureExpression'] = Object.freeze({
-		block: $at('buildClosureExpressionBlock'),
-		expr: $at('buildClosureExpressionExpr')
-	} as const);
+	const closureExpression: Routes<Table>['closureExpression'] = Object.freeze(
+		Object.assign(delegate($at('buildClosureExpressionExpr')), {
+			block: $at('buildClosureExpressionBlock'),
+			expr: $at('buildClosureExpressionExpr')
+		} as const)
+	);
 	const fieldPattern: Routes<Table>['fieldPattern'] = Object.freeze({
 		shorthand: $at('buildFieldPatternShorthand'),
 		named: $at('buildFieldPatternNamed')

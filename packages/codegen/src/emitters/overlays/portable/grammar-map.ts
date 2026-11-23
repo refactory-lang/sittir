@@ -1,4 +1,4 @@
-import { byCodepoint, compositionOf, lineageOf, textValued } from '../../../bindings/vocabulary.ts';
+import { byCodepoint, compositionOf, lineageOf, textKind, textValued } from '../../../bindings/vocabulary.ts';
 import { PORTABLE_MAP_FILE, PORTABLE_SURFACE_FILE, grammarDisplayName, moduleSpecifier, type GrammarName } from '../../../grammars.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
 import { builtFlags, containerSetFlags, textBuilt } from '@sittir/common/engine';
@@ -43,7 +43,7 @@ export function mapSlots(typedInput: PortableTypedInput, exact: ExactSlots): Rea
 		[...exact]
 			.sort(([a], [b]) => byCodepoint(a, b))
 			.flatMap(([path, sets]): [string, ReadonlyMap<string, ExactSet>][] => {
-				if (vocabulary.kinds.get(path)?.text === true) return [];
+				if (textKind(vocabulary, path)) return [];
 				const kept = [...sets].filter(([slot]) => slotted(path, slot)).sort(([a], [b]) => byCodepoint(a, b));
 				return kept.length === 0 ? [] : [[path, new Map(kept)]];
 			})
@@ -171,7 +171,7 @@ export function mapFormsOf(
 	};
 	const formsOf = (path: string): readonly string[] | undefined => {
 		const arms = (table.paths[path]?.arms ?? []).filter((arm) => !arm.when.some((test) => 'text' in test));
-		if (arms.length === 0 || vocabulary.kinds.get(path)?.text === true) return undefined;
+		if (arms.length === 0 || textKind(vocabulary, path)) return undefined;
 		const held = new Set([...vocabulary.slots(path)].flatMap(([slot, facts]) => (facts.optional || facts.flag ? [] : [slot])));
 		const forms = arms.map((arm) => formOf(path, arm, held));
 		if (forms.some((form) => form === undefined)) return undefined;

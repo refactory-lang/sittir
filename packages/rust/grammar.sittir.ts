@@ -364,7 +364,7 @@ export default grammar(enrich(base), wire({
 			'4/2': field('right')
 		},
 
-		closure_expression: { '4/0': variant('block'), '4/1': variant('expr') },
+		closure_expression: { '4/0': variant('block'), '4/1': variant('expr', { default: true }) },
 
 		// A braced, named-field body (`{ x: i32 }`) is what a bare array of
 		// field configs means; the parenthesized, ordered-tuple body stays

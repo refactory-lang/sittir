@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { type BindingFacts, type ClaimFact, bindFacts, refineClaims } from '../index.ts';
 import { boundNameAt } from '../../dsl/bind.ts';
 
+const NO_NAMESPACES: ReadonlySet<string> = new Set();
+
 const claim = (vocab: string, kind: string | null, extra: Partial<ClaimFact> = {}): ClaimFact => ({
 	vocab,
 	kind,
@@ -37,7 +39,7 @@ describe('bindFacts', () => {
 		templates: [{ vocabs: ['declaration.function'], target: 'function_item', template: '', holes: [], match: '^$' }],
 		unclaimed: [{ kind: 'line_comment', reason: null }]
 	};
-	const bound = bindFacts(facts, (kind) => `bound_${kind}`);
+	const bound = bindFacts(facts, (kind) => `bound_${kind}`, NO_NAMESPACES);
 
 	it('binds field selectors against their owning kinds through nested routes', () => {
 		const step = (field: string, kind: string) => ({ field, kind, after: null, anchor: null });
@@ -78,6 +80,7 @@ describe('bindFacts', () => {
 				]
 			},
 			(kind) => kind,
+			NO_NAMESPACES,
 			(owner: string, field: string) => fields[owner]?.[field] ?? field
 		);
 		expect(mapped.slots).toEqual([
@@ -116,6 +119,7 @@ describe('bindFacts', () => {
 				]
 			},
 			(kind) => kind,
+			NO_NAMESPACES,
 			(owner: string, field: string) => fields[owner]?.[field] ?? field
 		);
 		const bound = [step('items', 'pair_pattern'), step('name', 'object_pattern')];
@@ -144,7 +148,8 @@ describe('bindFacts', () => {
 					})
 				]
 			},
-			(kind) => `bound_${kind}`
+			(kind) => `bound_${kind}`,
+			NO_NAMESPACES
 		).claims;
 		const boundStep = { ...step, kind: 'bound_block' };
 		expect(claimed?.predicates).toEqual([{ operator: 'kind-eq', capture: 'r', arguments: [{ text: 'bound_self' }], subject: { up: 0, down: [boundStep] } }]);
@@ -165,7 +170,8 @@ describe('bindFacts', () => {
 					})
 				]
 			},
-			(kind) => `bound_${kind}`
+			(kind) => `bound_${kind}`,
+			NO_NAMESPACES
 		).claims;
 		const boundOp = { ...op, kind: 'bound_cmp_op' };
 		expect(claimed?.children).toEqual([
@@ -300,6 +306,7 @@ describe('bindFacts names a placed claim through the aliases at its sites', () =
 			unclaimed: []
 		},
 		same,
+		NO_NAMESPACES,
 		undefined,
 		boundNameAt(same, aliases)
 	);
@@ -317,15 +324,15 @@ describe('bindFacts names a placed claim through the aliases at its sites', () =
 		const shown = [{ kind: 'alias', from: 'attributed_argument', to: 'argument', scope: 'arguments' }] as const;
 		const placed = { claims: [claim('argument', 'attributed_argument', { toplevel: false, within: ['arguments_elements', 'arguments'] })], slots: [], containers: [], templates: [], unclaimed: [] };
 		const row = (facts: BindingFacts) => facts.claims.map((c) => [c.vocab, c.kind, c.within, c.toplevel]);
-		expect(row(bindFacts(placed, same, undefined, boundNameAt(same, shown, new Set(['arguments_elements']))))).toEqual([['argument', 'argument', [], true]]);
-		expect(row(bindFacts(placed, same, undefined, boundNameAt(same, shown)))).toEqual([['argument', 'attributed_argument', ['arguments_elements', 'arguments'], false]]);
+		expect(row(bindFacts(placed, same, NO_NAMESPACES, undefined, boundNameAt(same, shown, new Set(['arguments_elements']))))).toEqual([['argument', 'argument', [], true]]);
+		expect(row(bindFacts(placed, same, NO_NAMESPACES, undefined, boundNameAt(same, shown)))).toEqual([['argument', 'attributed_argument', ['arguments_elements', 'arguments'], false]]);
 	});
 
 	it('names a claim at a site that shows its kind under two names by the name its own path binds to, and refuses one whose path names neither', () => {
 		const beside = [...aliases.slice(0, 2), { kind: 'alias', from: 'function_item', to: 'constructor_declaration', scope: 'impl_body' }] as const;
 		const placed = (vocab: string) => claim(vocab, 'function_item', { toplevel: false, within: ['declaration_list', 'impl_item'] });
 		const bindAll = (vocabs: readonly string[]) =>
-			bindFacts({ claims: vocabs.map(placed), slots: [], containers: [], templates: [], unclaimed: [] }, same, undefined, boundNameAt(same, beside));
+			bindFacts({ claims: vocabs.map(placed), slots: [], containers: [], templates: [], unclaimed: [] }, same, NO_NAMESPACES, undefined, boundNameAt(same, beside));
 		expect(bindAll(['declaration.method', 'declaration.constructor']).claims.map((c) => [c.vocab, c.kind, c.within, c.toplevel])).toEqual([
 			['declaration.method', 'method_declaration', [], true],
 			['declaration.constructor', 'constructor_declaration', [], true]

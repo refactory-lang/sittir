@@ -119,88 +119,7 @@ export interface GoMap extends V.GrammarMap {
 			readonly type: never;
 			readonly $forms: V.Form<'names'>;
 		};
-		readonly 'declaration.field': {
-			readonly name: never;
-			readonly type:
-				| V.Read<GoMap, 'identifier'>
-				| V.Read<GoMap, 'identifier.qualified'>
-				| V.Read<GoMap, 'type.array'>
-				| V.Read<GoMap, 'type.function'>
-				| V.Read<GoMap, 'type.generic'>
-				| V.Read<GoMap, 'type.object'>
-				| V.Read<GoMap, 'type.parenthesized'>
-				| V.Read<GoMap, 'type.pointer'>
-				| V.Read<GoMap, 'type.primitive.boolean'>
-				| V.Read<GoMap, 'type.primitive.character'>
-				| V.Read<GoMap, 'type.primitive.floating.float32'>
-				| V.Read<GoMap, 'type.primitive.floating.float64'>
-				| V.Read<GoMap, 'type.primitive.integral.int16'>
-				| V.Read<GoMap, 'type.primitive.integral.int32'>
-				| V.Read<GoMap, 'type.primitive.integral.int64'>
-				| V.Read<GoMap, 'type.primitive.integral.int8'>
-				| V.Read<GoMap, 'type.primitive.integral.size'>
-				| V.Read<GoMap, 'type.primitive.string'>
-				| V.Read<GoMap, 'type.primitive.unchecked'>
-				| V.Unmapped<'go:interface_type_group'>
-				| V.Unmapped<'go:map_type'>
-				| T.ArrayType.Parsed;
-		};
-		readonly 'declaration.field.private': {
-			readonly name: never;
-			readonly type:
-				| V.Read<GoMap, 'identifier'>
-				| V.Read<GoMap, 'identifier.qualified'>
-				| V.Read<GoMap, 'type.array'>
-				| V.Read<GoMap, 'type.function'>
-				| V.Read<GoMap, 'type.generic'>
-				| V.Read<GoMap, 'type.object'>
-				| V.Read<GoMap, 'type.parenthesized'>
-				| V.Read<GoMap, 'type.pointer'>
-				| V.Read<GoMap, 'type.primitive.boolean'>
-				| V.Read<GoMap, 'type.primitive.character'>
-				| V.Read<GoMap, 'type.primitive.floating.float32'>
-				| V.Read<GoMap, 'type.primitive.floating.float64'>
-				| V.Read<GoMap, 'type.primitive.integral.int16'>
-				| V.Read<GoMap, 'type.primitive.integral.int32'>
-				| V.Read<GoMap, 'type.primitive.integral.int64'>
-				| V.Read<GoMap, 'type.primitive.integral.int8'>
-				| V.Read<GoMap, 'type.primitive.integral.size'>
-				| V.Read<GoMap, 'type.primitive.string'>
-				| V.Read<GoMap, 'type.primitive.unchecked'>
-				| V.Unmapped<'go:interface_type_group'>
-				| V.Unmapped<'go:map_type'>
-				| T.ArrayType.Parsed;
-			readonly $forms: V.Form<'names'>;
-		};
-		readonly 'declaration.field.public': {
-			readonly name: never;
-			readonly type:
-				| V.Read<GoMap, 'identifier'>
-				| V.Read<GoMap, 'identifier.qualified'>
-				| V.Read<GoMap, 'type.array'>
-				| V.Read<GoMap, 'type.function'>
-				| V.Read<GoMap, 'type.generic'>
-				| V.Read<GoMap, 'type.object'>
-				| V.Read<GoMap, 'type.parenthesized'>
-				| V.Read<GoMap, 'type.pointer'>
-				| V.Read<GoMap, 'type.primitive.boolean'>
-				| V.Read<GoMap, 'type.primitive.character'>
-				| V.Read<GoMap, 'type.primitive.floating.float32'>
-				| V.Read<GoMap, 'type.primitive.floating.float64'>
-				| V.Read<GoMap, 'type.primitive.integral.int16'>
-				| V.Read<GoMap, 'type.primitive.integral.int32'>
-				| V.Read<GoMap, 'type.primitive.integral.int64'>
-				| V.Read<GoMap, 'type.primitive.integral.int8'>
-				| V.Read<GoMap, 'type.primitive.integral.size'>
-				| V.Read<GoMap, 'type.primitive.string'>
-				| V.Read<GoMap, 'type.primitive.unchecked'>
-				| V.Unmapped<'go:interface_type_group'>
-				| V.Unmapped<'go:map_type'>
-				| T.ArrayType.Parsed;
-			readonly $forms: V.Form<'names'>;
-		};
 		readonly 'declaration.function': {
-			readonly body: V.Read<GoMap, 'statement.block'>;
 			readonly name: V.Read<GoMap, 'identifier'>;
 			readonly parameters: V.Read<GoMap, 'declaration.parameter'> | V.Read<GoMap, 'declaration.parameter.variadic'>;
 			readonly returnType:
@@ -232,7 +151,6 @@ export interface GoMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'name' | 'parameters'>;
 		};
 		readonly 'declaration.function.private': {
-			readonly body: V.Read<GoMap, 'statement.block'>;
 			readonly name: V.Read<GoMap, 'identifier'>;
 			readonly parameters: V.Read<GoMap, 'declaration.parameter'> | V.Read<GoMap, 'declaration.parameter.variadic'>;
 			readonly returnType:
@@ -264,7 +182,6 @@ export interface GoMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'parameters'>;
 		};
 		readonly 'declaration.function.public': {
-			readonly body: V.Read<GoMap, 'statement.block'>;
 			readonly name: V.Read<GoMap, 'identifier'>;
 			readonly parameters: V.Read<GoMap, 'declaration.parameter'> | V.Read<GoMap, 'declaration.parameter.variadic'>;
 			readonly returnType:
@@ -296,7 +213,6 @@ export interface GoMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'parameters'>;
 		};
 		readonly 'declaration.function.signature': {
-			readonly body: never;
 			readonly name: V.Read<GoMap, 'identifier'>;
 			readonly parameters: V.Read<GoMap, 'declaration.parameter'> | V.Read<GoMap, 'declaration.parameter.variadic'>;
 			readonly returnType:
@@ -327,9 +243,17 @@ export interface GoMap extends V.GrammarMap {
 			readonly typeParameters: V.Read<GoMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'name' | 'parameters'>;
 		};
-		readonly 'declaration.interface': {
-			readonly name:
+		readonly 'declaration.member.field': {
+			readonly name: never;
+			readonly type:
 				| V.Read<GoMap, 'identifier'>
+				| V.Read<GoMap, 'identifier.qualified'>
+				| V.Read<GoMap, 'type.array'>
+				| V.Read<GoMap, 'type.function'>
+				| V.Read<GoMap, 'type.generic'>
+				| V.Read<GoMap, 'type.object'>
+				| V.Read<GoMap, 'type.parenthesized'>
+				| V.Read<GoMap, 'type.pointer'>
 				| V.Read<GoMap, 'type.primitive.boolean'>
 				| V.Read<GoMap, 'type.primitive.character'>
 				| V.Read<GoMap, 'type.primitive.floating.float32'>
@@ -340,12 +264,66 @@ export interface GoMap extends V.GrammarMap {
 				| V.Read<GoMap, 'type.primitive.integral.int8'>
 				| V.Read<GoMap, 'type.primitive.integral.size'>
 				| V.Read<GoMap, 'type.primitive.string'>
-				| V.Read<GoMap, 'type.primitive.unchecked'>;
-			readonly typeParameters: V.Read<GoMap, 'declaration.type_parameter'>;
-			readonly $forms: V.Form<'name' | 'type'>;
+				| V.Read<GoMap, 'type.primitive.unchecked'>
+				| V.Unmapped<'go:interface_type_group'>
+				| V.Unmapped<'go:map_type'>
+				| T.ArrayType.Parsed;
 		};
-		readonly 'declaration.method': {
-			readonly body: V.Read<GoMap, 'statement.block'>;
+		readonly 'declaration.member.field.private': {
+			readonly name: never;
+			readonly type:
+				| V.Read<GoMap, 'identifier'>
+				| V.Read<GoMap, 'identifier.qualified'>
+				| V.Read<GoMap, 'type.array'>
+				| V.Read<GoMap, 'type.function'>
+				| V.Read<GoMap, 'type.generic'>
+				| V.Read<GoMap, 'type.object'>
+				| V.Read<GoMap, 'type.parenthesized'>
+				| V.Read<GoMap, 'type.pointer'>
+				| V.Read<GoMap, 'type.primitive.boolean'>
+				| V.Read<GoMap, 'type.primitive.character'>
+				| V.Read<GoMap, 'type.primitive.floating.float32'>
+				| V.Read<GoMap, 'type.primitive.floating.float64'>
+				| V.Read<GoMap, 'type.primitive.integral.int16'>
+				| V.Read<GoMap, 'type.primitive.integral.int32'>
+				| V.Read<GoMap, 'type.primitive.integral.int64'>
+				| V.Read<GoMap, 'type.primitive.integral.int8'>
+				| V.Read<GoMap, 'type.primitive.integral.size'>
+				| V.Read<GoMap, 'type.primitive.string'>
+				| V.Read<GoMap, 'type.primitive.unchecked'>
+				| V.Unmapped<'go:interface_type_group'>
+				| V.Unmapped<'go:map_type'>
+				| T.ArrayType.Parsed;
+			readonly $forms: V.Form<'names'>;
+		};
+		readonly 'declaration.member.field.public': {
+			readonly name: never;
+			readonly type:
+				| V.Read<GoMap, 'identifier'>
+				| V.Read<GoMap, 'identifier.qualified'>
+				| V.Read<GoMap, 'type.array'>
+				| V.Read<GoMap, 'type.function'>
+				| V.Read<GoMap, 'type.generic'>
+				| V.Read<GoMap, 'type.object'>
+				| V.Read<GoMap, 'type.parenthesized'>
+				| V.Read<GoMap, 'type.pointer'>
+				| V.Read<GoMap, 'type.primitive.boolean'>
+				| V.Read<GoMap, 'type.primitive.character'>
+				| V.Read<GoMap, 'type.primitive.floating.float32'>
+				| V.Read<GoMap, 'type.primitive.floating.float64'>
+				| V.Read<GoMap, 'type.primitive.integral.int16'>
+				| V.Read<GoMap, 'type.primitive.integral.int32'>
+				| V.Read<GoMap, 'type.primitive.integral.int64'>
+				| V.Read<GoMap, 'type.primitive.integral.int8'>
+				| V.Read<GoMap, 'type.primitive.integral.size'>
+				| V.Read<GoMap, 'type.primitive.string'>
+				| V.Read<GoMap, 'type.primitive.unchecked'>
+				| V.Unmapped<'go:interface_type_group'>
+				| V.Unmapped<'go:map_type'>
+				| T.ArrayType.Parsed;
+			readonly $forms: V.Form<'names'>;
+		};
+		readonly 'declaration.member.method': {
 			readonly name: V.Read<GoMap, 'identifier'>;
 			readonly parameters: V.Read<GoMap, 'declaration.parameter'> | V.Read<GoMap, 'declaration.parameter.variadic'>;
 			readonly receiver: V.Read<GoMap, 'declaration.parameter'> | V.Read<GoMap, 'declaration.parameter.variadic'>;
@@ -377,8 +355,7 @@ export interface GoMap extends V.GrammarMap {
 			readonly typeParameters: never;
 			readonly $forms: V.Form<'name' | 'parameters' | 'receiver'>;
 		};
-		readonly 'declaration.method.private': {
-			readonly body: V.Read<GoMap, 'statement.block'>;
+		readonly 'declaration.member.method.private': {
 			readonly name: V.Read<GoMap, 'identifier'>;
 			readonly parameters: V.Read<GoMap, 'declaration.parameter'> | V.Read<GoMap, 'declaration.parameter.variadic'>;
 			readonly receiver: V.Read<GoMap, 'declaration.parameter'> | V.Read<GoMap, 'declaration.parameter.variadic'>;
@@ -410,8 +387,7 @@ export interface GoMap extends V.GrammarMap {
 			readonly typeParameters: never;
 			readonly $forms: V.Form<'name' | 'parameters' | 'receiver'>;
 		};
-		readonly 'declaration.method.public': {
-			readonly body: V.Read<GoMap, 'statement.block'>;
+		readonly 'declaration.member.method.public': {
 			readonly name: V.Read<GoMap, 'identifier'>;
 			readonly parameters: V.Read<GoMap, 'declaration.parameter'> | V.Read<GoMap, 'declaration.parameter.variadic'>;
 			readonly receiver: V.Read<GoMap, 'declaration.parameter'> | V.Read<GoMap, 'declaration.parameter.variadic'>;
@@ -443,8 +419,7 @@ export interface GoMap extends V.GrammarMap {
 			readonly typeParameters: never;
 			readonly $forms: V.Form<'name' | 'parameters' | 'receiver'>;
 		};
-		readonly 'declaration.method.signature': {
-			readonly body: never;
+		readonly 'declaration.member.method.signature': {
 			readonly name: V.Read<GoMap, 'identifier'>;
 			readonly parameters: V.Read<GoMap, 'declaration.parameter'> | V.Read<GoMap, 'declaration.parameter.variadic'>;
 			readonly receiver: never;
@@ -530,7 +505,7 @@ export interface GoMap extends V.GrammarMap {
 				| T.ArrayType.Parsed;
 			readonly $forms: V.Form<'type'>;
 		};
-		readonly 'declaration.struct': {
+		readonly 'declaration.type.interface': {
 			readonly name:
 				| V.Read<GoMap, 'identifier'>
 				| V.Read<GoMap, 'type.primitive.boolean'>
@@ -547,7 +522,7 @@ export interface GoMap extends V.GrammarMap {
 			readonly typeParameters: V.Read<GoMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'name' | 'type'>;
 		};
-		readonly 'declaration.struct.private': {
+		readonly 'declaration.type.struct': {
 			readonly name:
 				| V.Read<GoMap, 'identifier'>
 				| V.Read<GoMap, 'type.primitive.boolean'>
@@ -564,7 +539,7 @@ export interface GoMap extends V.GrammarMap {
 			readonly typeParameters: V.Read<GoMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'name' | 'type'>;
 		};
-		readonly 'declaration.struct.public': {
+		readonly 'declaration.type.struct.private': {
 			readonly name:
 				| V.Read<GoMap, 'identifier'>
 				| V.Read<GoMap, 'type.primitive.boolean'>
@@ -581,7 +556,7 @@ export interface GoMap extends V.GrammarMap {
 			readonly typeParameters: V.Read<GoMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'name' | 'type'>;
 		};
-		readonly 'declaration.type_alias': {
+		readonly 'declaration.type.struct.public': {
 			readonly name:
 				| V.Read<GoMap, 'identifier'>
 				| V.Read<GoMap, 'type.primitive.boolean'>
@@ -598,7 +573,7 @@ export interface GoMap extends V.GrammarMap {
 			readonly typeParameters: V.Read<GoMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'name' | 'type'>;
 		};
-		readonly 'declaration.type_alias.private': {
+		readonly 'declaration.type.type_alias': {
 			readonly name:
 				| V.Read<GoMap, 'identifier'>
 				| V.Read<GoMap, 'type.primitive.boolean'>
@@ -615,7 +590,24 @@ export interface GoMap extends V.GrammarMap {
 			readonly typeParameters: V.Read<GoMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'name' | 'type'>;
 		};
-		readonly 'declaration.type_alias.public': {
+		readonly 'declaration.type.type_alias.private': {
+			readonly name:
+				| V.Read<GoMap, 'identifier'>
+				| V.Read<GoMap, 'type.primitive.boolean'>
+				| V.Read<GoMap, 'type.primitive.character'>
+				| V.Read<GoMap, 'type.primitive.floating.float32'>
+				| V.Read<GoMap, 'type.primitive.floating.float64'>
+				| V.Read<GoMap, 'type.primitive.integral.int16'>
+				| V.Read<GoMap, 'type.primitive.integral.int32'>
+				| V.Read<GoMap, 'type.primitive.integral.int64'>
+				| V.Read<GoMap, 'type.primitive.integral.int8'>
+				| V.Read<GoMap, 'type.primitive.integral.size'>
+				| V.Read<GoMap, 'type.primitive.string'>
+				| V.Read<GoMap, 'type.primitive.unchecked'>;
+			readonly typeParameters: V.Read<GoMap, 'declaration.type_parameter'>;
+			readonly $forms: V.Form<'name' | 'type'>;
+		};
+		readonly 'declaration.type.type_alias.public': {
 			readonly name:
 				| V.Read<GoMap, 'identifier'>
 				| V.Read<GoMap, 'type.primitive.boolean'>
@@ -5046,78 +5038,6 @@ export interface GoMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'type'>;
 		};
 		readonly 'expression.collection.struct': {
-			readonly body:
-				| V.Read<GoMap, 'element.pair'>
-				| V.Read<GoMap, 'expression.binary'>
-				| V.Read<GoMap, 'expression.binary.arithmetic.add'>
-				| V.Read<GoMap, 'expression.binary.arithmetic.divide'>
-				| V.Read<GoMap, 'expression.binary.arithmetic.modulo'>
-				| V.Read<GoMap, 'expression.binary.arithmetic.multiply'>
-				| V.Read<GoMap, 'expression.binary.arithmetic.subtract'>
-				| V.Read<GoMap, 'expression.binary.bitwise.and'>
-				| V.Read<GoMap, 'expression.binary.bitwise.or'>
-				| V.Read<GoMap, 'expression.binary.bitwise.xor'>
-				| V.Read<GoMap, 'expression.binary.comparison.equal'>
-				| V.Read<GoMap, 'expression.binary.comparison.greater'>
-				| V.Read<GoMap, 'expression.binary.comparison.greater_equal'>
-				| V.Read<GoMap, 'expression.binary.comparison.less'>
-				| V.Read<GoMap, 'expression.binary.comparison.less_equal'>
-				| V.Read<GoMap, 'expression.binary.comparison.not_equal'>
-				| V.Read<GoMap, 'expression.binary.logical.and'>
-				| V.Read<GoMap, 'expression.binary.logical.or'>
-				| V.Read<GoMap, 'expression.binary.shift.left'>
-				| V.Read<GoMap, 'expression.binary.shift.right'>
-				| V.Read<GoMap, 'expression.call'>
-				| V.Read<GoMap, 'expression.call.member'>
-				| V.Read<GoMap, 'expression.cast'>
-				| V.Read<GoMap, 'expression.cast.conversion'>
-				| V.Read<GoMap, 'expression.collection.list'>
-				| V.Read<GoMap, 'expression.collection.map'>
-				| V.Read<GoMap, 'expression.collection.struct'>
-				| V.Read<GoMap, 'expression.function'>
-				| V.Read<GoMap, 'expression.instantiation'>
-				| V.Read<GoMap, 'expression.member'>
-				| V.Read<GoMap, 'expression.parenthesized'>
-				| V.Read<GoMap, 'expression.reference'>
-				| V.Read<GoMap, 'expression.slice'>
-				| V.Read<GoMap, 'expression.subscript'>
-				| V.Read<GoMap, 'expression.unary'>
-				| V.Read<GoMap, 'expression.unary.bitwise_not'>
-				| V.Read<GoMap, 'expression.unary.deref'>
-				| V.Read<GoMap, 'expression.unary.negation'>
-				| V.Read<GoMap, 'expression.unary.not'>
-				| V.Read<GoMap, 'expression.unary.plus'>
-				| V.Read<GoMap, 'identifier'>
-				| V.Read<GoMap, 'literal.boolean.false'>
-				| V.Read<GoMap, 'literal.boolean.true'>
-				| V.Read<GoMap, 'literal.character'>
-				| V.Read<GoMap, 'literal.null'>
-				| V.Read<GoMap, 'literal.number.float'>
-				| V.Read<GoMap, 'literal.number.integer'>
-				| V.Read<GoMap, 'literal.number.integer.binary'>
-				| V.Read<GoMap, 'literal.number.integer.hex'>
-				| V.Read<GoMap, 'literal.number.integer.imaginary'>
-				| V.Read<GoMap, 'literal.number.integer.octal'>
-				| V.Read<GoMap, 'literal.string'>
-				| V.Read<GoMap, 'literal.string.raw'>
-				| 'iota'
-				| T.BinaryExpression.Parsed
-				| T.FloatLiteralArm1.Parsed
-				| T.FloatLiteralArm2.Parsed
-				| T.FloatLiteralArm3.Parsed
-				| T.ImaginaryLiteralArm5.Parsed
-				| T.ImaginaryLiteralArm7.Parsed
-				| T.ImaginaryLiteralArm8.Parsed
-				| T.ImaginaryLiteralArm9.Parsed
-				| T.IndexExpression.Parsed
-				| T.IntLiteralArm4.Parsed
-				| T.InterpretedStringLiteral.Parsed
-				| T.ParenthesizedExpression.Parsed
-				| T.SelectorExpression.Parsed
-				| T.SliceExpression.Parsed
-				| T.TypeAssertionExpression.Parsed
-				| T.TypeConversionExpression.Parsed
-				| T.UnaryExpression.Parsed;
 			readonly $forms: V.Form<'body' | 'type'>;
 		};
 		readonly 'expression.function': {
@@ -5545,7 +5465,6 @@ export interface GoMap extends V.GrammarMap {
 				| T.TypeAssertionExpression.Parsed
 				| T.TypeConversionExpression.Parsed
 				| T.UnaryExpression.Parsed;
-			readonly consequence: V.Read<GoMap, 'statement.block'>;
 			readonly $forms: V.Form<'condition' | 'consequence'>;
 		};
 		readonly 'statement.import': {
@@ -5556,15 +5475,12 @@ export interface GoMap extends V.GrammarMap {
 			readonly $forms: V.Form<'label' | 'statement'>;
 		};
 		readonly 'statement.loop': {
-			readonly body: V.Read<GoMap, 'statement.block'>;
 			readonly $forms: V.Form<'body'>;
 		};
 		readonly 'statement.loop.counted': {
-			readonly body: V.Read<GoMap, 'statement.block'>;
 			readonly $forms: V.Form<'body' | 'content'>;
 		};
 		readonly 'statement.loop.for_each': {
-			readonly body: V.Read<GoMap, 'statement.block'>;
 			readonly $forms: V.Form<'body' | 'content'>;
 		};
 		readonly 'statement.switch': {
@@ -5899,7 +5815,7 @@ export interface GoMap extends V.GrammarMap {
 	};
 	readonly inputs: {
 		readonly identifier: string;
-		readonly 'literal.number.float': string | number;
+		readonly 'literal.number.float': string;
 		readonly 'literal.number.integer': string;
 		readonly 'literal.number.integer.binary': string | number;
 		readonly 'literal.number.integer.hex': string | number;
@@ -5921,26 +5837,26 @@ export interface GoMap extends V.GrammarMap {
 			readonly 'declaration.constant': TSKindId.ConstSpec;
 			readonly 'declaration.constant.private': TSKindId.ConstSpec;
 			readonly 'declaration.constant.public': TSKindId.ConstSpec;
-			readonly 'declaration.field': TSKindId.FieldDeclaration;
-			readonly 'declaration.field.private': TSKindId.FieldDeclaration;
-			readonly 'declaration.field.public': TSKindId.FieldDeclaration;
 			readonly 'declaration.function': TSKindId.FunctionDeclaration;
 			readonly 'declaration.function.private': TSKindId.FunctionDeclaration;
 			readonly 'declaration.function.public': TSKindId.FunctionDeclaration;
 			readonly 'declaration.function.signature': TSKindId.FunctionDeclaration;
-			readonly 'declaration.interface': TSKindId.TypeSpec;
-			readonly 'declaration.method': TSKindId.MethodDeclaration;
-			readonly 'declaration.method.private': TSKindId.MethodDeclaration;
-			readonly 'declaration.method.public': TSKindId.MethodDeclaration;
-			readonly 'declaration.method.signature': TSKindId.MethodElem;
+			readonly 'declaration.member.field': TSKindId.FieldDeclaration;
+			readonly 'declaration.member.field.private': TSKindId.FieldDeclaration;
+			readonly 'declaration.member.field.public': TSKindId.FieldDeclaration;
+			readonly 'declaration.member.method': TSKindId.MethodDeclaration;
+			readonly 'declaration.member.method.private': TSKindId.MethodDeclaration;
+			readonly 'declaration.member.method.public': TSKindId.MethodDeclaration;
+			readonly 'declaration.member.method.signature': TSKindId.MethodElem;
 			readonly 'declaration.parameter': TSKindId.ParameterDeclaration;
 			readonly 'declaration.parameter.variadic': TSKindId.VariadicParameterDeclaration;
-			readonly 'declaration.struct': TSKindId.TypeSpec;
-			readonly 'declaration.struct.private': TSKindId.TypeSpec;
-			readonly 'declaration.struct.public': TSKindId.TypeSpec;
-			readonly 'declaration.type_alias': TSKindId.TypeAlias;
-			readonly 'declaration.type_alias.private': TSKindId.TypeAlias;
-			readonly 'declaration.type_alias.public': TSKindId.TypeAlias;
+			readonly 'declaration.type.interface': TSKindId.TypeSpec;
+			readonly 'declaration.type.struct': TSKindId.TypeSpec;
+			readonly 'declaration.type.struct.private': TSKindId.TypeSpec;
+			readonly 'declaration.type.struct.public': TSKindId.TypeSpec;
+			readonly 'declaration.type.type_alias': TSKindId.TypeAlias;
+			readonly 'declaration.type.type_alias.private': TSKindId.TypeAlias;
+			readonly 'declaration.type.type_alias.public': TSKindId.TypeAlias;
 			readonly 'declaration.type_parameter': TSKindId.TypeParameterDeclaration;
 			readonly 'declaration.variable': TSKindId.ShortVarDeclaration | TSKindId.VarSpec;
 			readonly 'declaration.variable.private': TSKindId.VarSpec;
@@ -6097,26 +6013,26 @@ export interface GoMap extends V.GrammarMap {
 		readonly 'declaration.constant': never;
 		readonly 'declaration.constant.private': never;
 		readonly 'declaration.constant.public': never;
-		readonly 'declaration.field': never;
-		readonly 'declaration.field.private': never;
-		readonly 'declaration.field.public': never;
 		readonly 'declaration.function': never;
 		readonly 'declaration.function.private': never;
 		readonly 'declaration.function.public': never;
 		readonly 'declaration.function.signature': never;
-		readonly 'declaration.interface': never;
-		readonly 'declaration.method': never;
-		readonly 'declaration.method.private': never;
-		readonly 'declaration.method.public': never;
-		readonly 'declaration.method.signature': never;
+		readonly 'declaration.member.field': never;
+		readonly 'declaration.member.field.private': never;
+		readonly 'declaration.member.field.public': never;
+		readonly 'declaration.member.method': never;
+		readonly 'declaration.member.method.private': never;
+		readonly 'declaration.member.method.public': never;
+		readonly 'declaration.member.method.signature': never;
 		readonly 'declaration.parameter': never;
 		readonly 'declaration.parameter.variadic': never;
-		readonly 'declaration.struct': never;
-		readonly 'declaration.struct.private': never;
-		readonly 'declaration.struct.public': never;
-		readonly 'declaration.type_alias': never;
-		readonly 'declaration.type_alias.private': never;
-		readonly 'declaration.type_alias.public': never;
+		readonly 'declaration.type.interface': never;
+		readonly 'declaration.type.struct': never;
+		readonly 'declaration.type.struct.private': never;
+		readonly 'declaration.type.struct.public': never;
+		readonly 'declaration.type.type_alias': never;
+		readonly 'declaration.type.type_alias.private': never;
+		readonly 'declaration.type.type_alias.public': never;
 		readonly 'declaration.type_parameter': never;
 		readonly 'declaration.variable': never;
 		readonly 'declaration.variable.private': never;
@@ -6227,37 +6143,21 @@ export interface GoMap extends V.GrammarMap {
 	};
 	readonly facts: {};
 	readonly decided: {
-		readonly 'declaration.function': {
-			readonly body: 'statement.block';
-			readonly typeParameters: 'declaration.type_parameter';
-		};
-		readonly 'declaration.function.private': {
-			readonly body: 'statement.block';
-			readonly typeParameters: 'declaration.type_parameter';
-		};
-		readonly 'declaration.function.public': {
-			readonly body: 'statement.block';
-			readonly typeParameters: 'declaration.type_parameter';
-		};
+		readonly 'declaration.function': { readonly typeParameters: 'declaration.type_parameter' };
+		readonly 'declaration.function.private': { readonly typeParameters: 'declaration.type_parameter' };
+		readonly 'declaration.function.public': { readonly typeParameters: 'declaration.type_parameter' };
 		readonly 'declaration.function.signature': { readonly typeParameters: 'declaration.type_parameter' };
-		readonly 'declaration.interface': { readonly typeParameters: 'declaration.type_parameter' };
-		readonly 'declaration.method': { readonly body: 'statement.block' };
-		readonly 'declaration.method.private': { readonly body: 'statement.block' };
-		readonly 'declaration.method.public': { readonly body: 'statement.block' };
-		readonly 'declaration.struct': { readonly typeParameters: 'declaration.type_parameter' };
-		readonly 'declaration.struct.private': { readonly typeParameters: 'declaration.type_parameter' };
-		readonly 'declaration.struct.public': { readonly typeParameters: 'declaration.type_parameter' };
-		readonly 'declaration.type_alias': { readonly typeParameters: 'declaration.type_parameter' };
-		readonly 'declaration.type_alias.private': { readonly typeParameters: 'declaration.type_parameter' };
-		readonly 'declaration.type_alias.public': { readonly typeParameters: 'declaration.type_parameter' };
+		readonly 'declaration.type.interface': { readonly typeParameters: 'declaration.type_parameter' };
+		readonly 'declaration.type.struct': { readonly typeParameters: 'declaration.type_parameter' };
+		readonly 'declaration.type.struct.private': { readonly typeParameters: 'declaration.type_parameter' };
+		readonly 'declaration.type.struct.public': { readonly typeParameters: 'declaration.type_parameter' };
+		readonly 'declaration.type.type_alias': { readonly typeParameters: 'declaration.type_parameter' };
+		readonly 'declaration.type.type_alias.private': { readonly typeParameters: 'declaration.type_parameter' };
+		readonly 'declaration.type.type_alias.public': { readonly typeParameters: 'declaration.type_parameter' };
 		readonly 'declaration.type_parameter': { readonly bounds: 'clause.bounds' };
 		readonly 'statement.break': { readonly label: 'identifier.label' };
 		readonly 'statement.continue': { readonly label: 'identifier.label' };
-		readonly 'statement.if': { readonly consequence: 'statement.block' };
 		readonly 'statement.labeled': { readonly label: 'identifier.label' };
-		readonly 'statement.loop': { readonly body: 'statement.block' };
-		readonly 'statement.loop.counted': { readonly body: 'statement.block' };
-		readonly 'statement.loop.for_each': { readonly body: 'statement.block' };
 	};
 }
 

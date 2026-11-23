@@ -12,7 +12,7 @@ declare const callRead: V.Read<TypeScriptMap, 'expression.call'>;
 // @ts-expect-error an import type's source reads only as a string literal
 export const callImportSource: V.BuildInput<TypeScriptMap, 'type.import'>['source'] = callRead;
 
-export const classDecorators: V.BuildInput<TypeScriptMap, 'declaration.class'>['decorators'] = ['x'];
+export const classDecorators: V.BuildInput<TypeScriptMap, 'declaration.type.class'>['decorators'] = ['x'];
 // @ts-expect-error a decorator reads as its expression, so no path names the decorator
 export const decoratorPath: V.Read<TypeScriptMap, 'attribute.decorator'> = { $path: 'attribute.decorator' };
 // @ts-expect-error an import clause holds its specifiers as its names, never as content
@@ -36,3 +36,17 @@ type Returned = V.BuildInput<TypeScriptMap, 'statement.return'>['expression'];
 export const integerReturned: Returned = 1;
 export const floatReturned: Returned = 1.5;
 export const bigintReturned: Returned = 10n;
+
+type CaseStatements = V.BuildInput<TypeScriptMap, 'clause.case.switch'>['statements'];
+type CaseStatementRead = NonNullable<V.Read<TypeScriptMap, 'clause.case.switch'>['statements']>[number];
+
+declare const variableRead: V.Read<TypeScriptMap, 'declaration.variable'>;
+declare const constantRead: V.Read<TypeScriptMap, 'declaration.variable.constant'>;
+export const variablePath: [Extract<V.Read<TypeScriptMap, 'declaration.variable'>, { readonly $path: 'declaration.variable' }>] extends [never] ? false : true = true;
+export const caseConstant: CaseStatements = [constantRead];
+// @ts-expect-error a lexical declaration always reads as a constant or a reassignable declaration, so no statement slot holds a bare variable declaration
+export const caseVariable: CaseStatements = [variableRead];
+export const caseReadsNoVariable: [Extract<CaseStatementRead, { readonly $path: 'declaration.variable' }>] extends [never] ? true : false = true;
+
+export const bodilessModule: V.Read<TypeScriptMap, 'declaration.module.external'> = { $path: 'declaration.module.external', name: 'm' };
+export const emptyModule: V.BuildInput<TypeScriptMap, 'declaration.module'> = { $path: 'declaration.module', name: 'M', statements: [] };

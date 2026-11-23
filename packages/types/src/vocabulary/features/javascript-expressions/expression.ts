@@ -3,28 +3,28 @@ import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Expression {
 	export namespace Collection {
-		export interface Object<G extends GrammarMap, K extends Under<'expression.collection.object'> = 'expression.collection.object'> extends SubKindOf<V.Expression.Collection<G, K>> {
+		export interface Object<G extends GrammarMap, K extends Under<'expression.collection.object'> = 'expression.collection.object'> extends SubKindOf<V.Expression<G, K>> {
 			// claimed by t
 			readonly $path: K;
 			readonly properties?: Slot<
 				G,
 				K,
 				'properties',
-				| V.Declaration.Method<G>
+				| V.Declaration.Member.Method<G>
 				| V.Element.Any<G>
 				| string
-				| V.Declaration.Property.Getter<G>
-				| V.Declaration.Property.Setter<G>
+				| V.Declaration.Member.Property.Getter<G>
+				| V.Declaration.Member.Property.Setter<G>
 				| V.Identifier.Any<G>
-				| V.Declaration.Method.Private<G>
-				| V.Declaration.Method.Protected<G>
-				| V.Declaration.Method.Public<G>
-				| V.Declaration.Property.Getter.Private<G>
-				| V.Declaration.Property.Getter.Protected<G>
-				| V.Declaration.Property.Getter.Public<G>
-				| V.Declaration.Property.Setter.Private<G>
-				| V.Declaration.Property.Setter.Protected<G>
-				| V.Declaration.Property.Setter.Public<G>
+				| V.Declaration.Member.Method.Private<G>
+				| V.Declaration.Member.Method.Protected<G>
+				| V.Declaration.Member.Method.Public<G>
+				| V.Declaration.Member.Property.Getter.Private<G>
+				| V.Declaration.Member.Property.Getter.Protected<G>
+				| V.Declaration.Member.Property.Getter.Public<G>
+				| V.Declaration.Member.Property.Setter.Private<G>
+				| V.Declaration.Member.Property.Setter.Protected<G>
+				| V.Declaration.Member.Property.Setter.Public<G>
 			>[];
 		}
 	}
@@ -42,19 +42,7 @@ export namespace Expression {
 			| V.Declaration.Parameter.Public<G>
 			| V.Declaration.Parameter.Receiver<G>
 		>[];
-		readonly statements: Slot<
-			G,
-			K,
-			'statements',
-			| V.Attribute.Any<G>
-			| V.Declaration.Any<G>
-			| V.Expression.Call.Macro<G>
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Pattern.Rest<G>
-			| V.Statement.Any<G>
-		>[];
+		readonly statements: Slot<G, K, 'statements', V.Statement.Any<G>>[];
 	}
 	export interface Meta<G extends GrammarMap, K extends Under<'expression.meta'> = 'expression.meta'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by t
@@ -67,14 +55,6 @@ export namespace Expression {
 	export interface Sequence<G extends GrammarMap, K extends Under<'expression.sequence'> = 'expression.sequence'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by t
 		readonly $path: K;
-		readonly expressions: Slot<
-			G,
-			K,
-			'expressions',
-			| V.Declaration.Module<G>
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-		>[];
+		readonly expressions: Slot<G, K, 'expressions', V.Expression.Any<G>>[];
 	}
 }

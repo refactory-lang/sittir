@@ -19,7 +19,7 @@ import type {
 } from '@sittir/types';
 import { decimalSpelling } from '../number.ts';
 import { hasKind } from './classify.ts';
-import { builtSlots, isNumberSlots, leafSeatOf, seatSets, spells, takesTextValue, tokenKind, tokenText } from './facts.ts';
+import { builtSlots, buildsOnlyItem, isNumberSlots, leafSeatOf, readsEmptyWhenAbsent, seatSets, spells, takesTextValue, tokenKind, tokenText } from './facts.ts';
 import { vocabularyPathFeatures } from './vocabulary-paths.ts';
 
 export interface PortableBuildContext {
@@ -333,8 +333,8 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			const placed = typeof value === 'string' ? (tokenKind(value, slot.seats) ?? textOf(value, slot.seats)) : value;
 			return hasKind(placed) ? placed.$type : typeof placed === 'number' ? placed : undefined;
 		};
-		const passes = (test: PortablePickTest, arm: PortableBuildArm, structure: PortableStructure): boolean => {
-			if ('absent' in test) return test.required.every((name) => structure[name] !== undefined) && test.absent.every((name) => structure[name] === undefined);
+		const passes = (test: PortablePickTest, arm: PortableBuildArm, structure: PortableStructure, arms: readonly PortableBuildArm[]): boolean => {
+			if ('absent' in test) return test.required.every((name) => structure[name] !== undefined || readsEmptyWhenAbsent(arms, name)) && test.absent.every((name) => structure[name] === undefined);
 			if ('empty' in test) return test.empty.every((name) => structure[name] === undefined || (Array.isArray(structure[name]) && structure[name].length === 0));
 			if ('flag' in test) return (structure.$flags ?? []).includes(test.flag) === test.set;
 			if ('text' in test) return structure.$value === test.text;
@@ -354,7 +354,8 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			if (memo.has(seats)) return memo.get(seats);
 			memo.set(seats, undefined);
 			const path = pathOf(structure);
-			const open = (path?.arms ?? []).flatMap((arm): Picked[] => {
+			const arms = path?.arms ?? [];
+			const open = arms.flatMap((arm): Picked[] => {
 				const seat = seats === undefined ? undefined : seatOf(arm, seats, structure);
 				return (seats === undefined ? arm.holders !== undefined : seat === undefined) ? [] : [{ arm, seat }];
 			});
@@ -365,7 +366,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 					? (scalars.find(({ arm }) => arm.scalar === (typeof scalar === 'bigint' ? 'bigint' : integral(scalar!) ? 'integer' : 'float')) ??
 						scalars.find(({ arm }) => arm.scalar === (integral(scalar!) ? 'integer' : 'float')) ??
 						scalars[0])
-					: open.find(({ arm, seat }) => arm.when.every((test) => passes(test, arm, withoutOwned(structure, seat))));
+					: open.find(({ arm, seat }) => arm.when.every((test) => passes(test, arm, withoutOwned(structure, seat), arms)));
 			memo.set(seats, picked);
 			return picked;
 		};
@@ -390,8 +391,8 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 					path.arms.flatMap((arm) => {
 						const presence = arm.when.find((test): test is Extract<PortablePickTest, { readonly absent: readonly string[] }> => 'absent' in test);
 						if (presence === undefined || (seats !== undefined && seatOf(arm, seats) === undefined)) return [];
-						const missing = presence.required.filter((name) => structure[name] === undefined);
-						const otherwise = presence.absent.every((name) => structure[name] === undefined) && arm.when.every((test) => test === presence || passes(test, arm, structure));
+						const missing = presence.required.filter((name) => structure[name] === undefined && !readsEmptyWhenAbsent(path.arms, name));
+						const otherwise = presence.absent.every((name) => structure[name] === undefined) && arm.when.every((test) => test === presence || passes(test, arm, structure, path.arms));
 						return missing.length > 0 && otherwise ? [missing.join(' and ')] : [];
 					})
 				)
@@ -584,7 +585,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			if (last >= 0 && finals.some((seat) => seat.final === true) && !seatsIn(finals, value[last]))
 				throw new Error(`portable build: ${path}'s ${slot.name} ends with ${described(value[last])}, which builds in none of the forms its last element takes`);
 			const items = value.map((item, i) => unmounted(element(item, slot, placed(extending(slot.seats, list), i), depth), slot, path));
-			return seated(items, within(list), items.length === 0, undefined, delimiter);
+			return seated(items, within(list), items.length === 0 && slot.emptyContainer !== true, undefined, delimiter);
 		};
 		const placeSlot = (frame: Frame, slot: PortableSlotRoute, given: unknown, path: string, delimiter?: number): boolean => {
 			const one = Array.isArray(given) && !takesMany(slot);
@@ -594,9 +595,14 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 				if (optional >= 0) descend(frame, slot.steps.slice(0, optional), true);
 				return false;
 			}
-			const stop = Array.isArray(value) && value.length === 0 ? slot.steps.findIndex((step) => step.optional === true) : -1;
+			const stop = Array.isArray(value) && value.length === 0 && slot.emptyContainer !== true ? slot.steps.findIndex((step) => step.optional === true || step.empty !== undefined) : -1;
 			if (stop >= 0) {
-				descend(frame, slot.steps.slice(0, stop), true);
+				const at = slot.steps[stop]!;
+				if (at.optional === true) descend(frame, slot.steps.slice(0, stop), true);
+				else {
+					const owner = ownerOf(frame, slot.steps.slice(0, stop), path);
+					owner.config[at.key] ??= new Frame(at.empty);
+				}
 				return false;
 			}
 			const owner = ownerOf(frame, slot.steps.slice(0, -1), path);
@@ -646,6 +652,11 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 		};
 		const fitsShape = (route: PortableSlotRoute, value: unknown): boolean =>
 			Array.isArray(value) ? (value.length > 0 || route.nonEmpty !== true) && listFits(route, value) : !route.multiple && seatsIn(route.seats.filter((seat) => seat.many !== true || route.list === false), value);
+		const onlyItemFits = (route: PortableSlotRoute, value: unknown): boolean => {
+			if (!Array.isArray(value) || value.length !== 1) return false;
+			const [item] = value;
+			return isStructure(item) ? pick(item, route.seats) !== undefined : hasKind(item) && route.seats.some((seat) => seat.kinds.includes(item.$type));
+		};
 		const ownerFor = (
 			arm: PortableBuildArm,
 			values: ReadonlyMap<string, unknown>,
@@ -657,13 +668,16 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			const fitting = arm.owners.map((owner) =>
 				owner.flatMap((i) => {
 					const route = arm.slots[i]!;
-					return values.has(route.name) && unmet(route).length === 0 && fitsShape(route, values.get(route.name)) ? [i] : [];
+					const value = values.get(route.name);
+					return values.has(route.name) && unmet(route).length === 0 && (buildsOnlyItem(arm, route) ? onlyItemFits(route, value) : fitsShape(route, value)) ? [i] : [];
 				})
 			);
 			const takesAll = (fit: readonly number[], taken: readonly string[]): boolean => taken.every((name) => fit.some((i) => arm.slots[i]!.name === name));
 			const held = names.filter((name) => !emptyList(values.get(name)));
 			const whole = fitting.filter((fit) => takesAll(fit, names));
-			const shapes = [...new Set((whole.length > 0 ? whole : fitting.filter((fit) => takesAll(fit, held))).map((fit) => fit.join(' ')))];
+			const found = whole.length > 0 ? whole : fitting.filter((fit) => takesAll(fit, held));
+			const onlyItem = (fit: readonly number[]): boolean => fit.some((i) => buildsOnlyItem(arm, arm.slots[i]!));
+			const shapes = [...new Set((found.some(onlyItem) ? found.filter(onlyItem) : found).map((fit) => fit.join(' ')))];
 			if (shapes.length === 0) {
 				const alone = names.filter((name) => !fitting.some((fit) => fit.some((i) => arm.slots[i]!.name === name)));
 				const waiting = alone.find((name) => arm.slots.some((route) => route.name === name && unmet(route).length > 0 && fitsShape(route, values.get(name))));
@@ -740,7 +754,8 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			const values = new Map<string, unknown>(
 				slotKeys(structure).flatMap((name) => (holes.has(name) || owned.has(name) || emptied.has(name) || structure[name] === undefined ? [] : [[name, structure[name]] as const]))
 			);
-			for (const name of arm.empty ?? []) if (!values.has(name) && !holes.has(name) && !owned.has(name)) values.set(name, []);
+			for (const name of new Set(arm.slots.map((route) => route.name)))
+				if (readsEmptyWhenAbsent(path.arms, name) && !values.has(name) && !holes.has(name) && !owned.has(name) && !emptied.has(name)) values.set(name, []);
 			if (arm.template !== undefined && structure[arm.template.slot] === undefined) values.set(arm.template.slot, spell(arm.template, structure));
 			for (const template of spelledFlags) values.set(template.slot, spell(template, structure));
 			const scalar = scalarOf(structure);
@@ -752,8 +767,12 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 					throw new Error(
 						`portable build: ${structure.$path} takes ${arm.scalar === 'float' ? 'a float (a number)' : 'an integer (a safe integer or a bigint)'} in ${language}, not ${spelledValue(scalar)}`
 					);
+				if (isNumberSlots(arm.numeric) && arm.numeric.length === 0) throw new Error(`portable build: ${structure.$path}: ${nameOf(arm.kind)} has no slots that spell a $value in ${language}`);
 				if (arm.numeric === undefined || (isNumberSlots(arm.numeric) && !takesConfig(arm.builder!))) frame.input = scalar;
-				else if (isNumberSlots(arm.numeric)) frame.config[arm.numeric.at(-1)!] = scalar;
+				else if (isNumberSlots(arm.numeric)) {
+					for (const affix of arm.numeric.slice(0, -1)) frame.config[affix] = arm.digits!.affix;
+					frame.config[arm.numeric.at(-1)!] = scalar;
+				}
 				else {
 					const spelled = decimalSpelling(scalar, arm.numeric, arm.scientific === true);
 					if (spelled === undefined) throw new Error(`portable build: ${structure.$path} builds a ${nameOf(arm.kind)} in ${language}, which cannot spell ${spelledValue(scalar)}`);

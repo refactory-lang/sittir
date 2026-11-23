@@ -442,7 +442,7 @@ interface SitedPlacement {
 	readonly aliased: boolean;
 }
 
-function sitedPlacement(claim: ClaimFact, nameAt: NameAt): SitedPlacement {
+function sitedPlacement(claim: ClaimFact, nameAt: NameAt, shortened: ReadonlySet<string>): SitedPlacement {
 	let scope: string | undefined;
 	const within = claim.within
 		.toReversed()
@@ -453,20 +453,20 @@ function sitedPlacement(claim: ClaimFact, nameAt: NameAt): SitedPlacement {
 		})
 		.toReversed();
 	if (claim.kind === null || claim.kind === WILDCARD) return { kind: claim.kind, within, aliased: false };
-	const at = nameAt(claim.kind, scope, ownName(claim));
+	const at = nameAt(claim.kind, scope, ownName(claim, shortened));
 	return { kind: at.name, within, aliased: at.scope !== claim.kind };
 }
 
-const ownName = (claim: ClaimFact): string => boundKindName(claim.vocab, isParserHiddenName(claim.kind!));
+const ownName = (claim: ClaimFact, shortened: ReadonlySet<string>): string => boundKindName(claim.vocab, isParserHiddenName(claim.kind!), shortened);
 
 const readsAbove = (claim: ClaimFact): boolean =>
 	claim.predicates.some((p) => p.subject !== null && p.subject.up > 0) || claim.children.some((child) => child.subject.up > 0);
 
-const namesItsAlias = (claim: ClaimFact, placed: SitedPlacement): boolean => placed.aliased && !readsAbove(claim) && placed.kind === ownName(claim);
+const namesItsAlias = (claim: ClaimFact, placed: SitedPlacement, shortened: ReadonlySet<string>): boolean => placed.aliased && !readsAbove(claim) && placed.kind === ownName(claim, shortened);
 
-function bindClaim(claim: ClaimFact, rename: (kind: string) => string, fieldNameOf: FieldNameOf, nameAt: NameAt): ClaimFact {
-	const placed = sitedPlacement(claim, nameAt);
-	const unplaced = namesItsAlias(claim, placed);
+function bindClaim(claim: ClaimFact, rename: (kind: string) => string, shortened: ReadonlySet<string>, fieldNameOf: FieldNameOf, nameAt: NameAt): ClaimFact {
+	const placed = sitedPlacement(claim, nameAt, shortened);
+	const unplaced = namesItsAlias(claim, placed, shortened);
 	return {
 		...claim,
 		...(claim.match === undefined ? {} : { match: bindMatch(claim.match, rename, fieldNameOf) }),
@@ -504,10 +504,11 @@ function bindClaim(claim: ClaimFact, rename: (kind: string) => string, fieldName
 export function bindFacts(
 	facts: BindingFacts,
 	rename: (kind: string) => string,
+	shortened: ReadonlySet<string>,
 	fieldNameOf: FieldNameOf = unchangedField,
 	nameAt: NameAt = unsited(rename)
 ): BindingFacts {
-	const claims = facts.claims.map((claim) => bindClaim(claim, rename, fieldNameOf, nameAt));
+	const claims = facts.claims.map((claim) => bindClaim(claim, rename, shortened, fieldNameOf, nameAt));
 	const ownersOf = (m: SlotFact, owner: string): ReadonlyMap<string, readonly number[]> => {
 		const owners = new Map<string, number[]>();
 		for (const i of m.claims ?? []) {

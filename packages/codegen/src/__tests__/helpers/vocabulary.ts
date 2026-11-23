@@ -2,6 +2,8 @@ import type { Vocabulary } from '../../bindings/vocabulary.ts';
 
 export const EMPTY_VOCABULARY: Vocabulary = {
 	kinds: new Map(),
+	namespaces: new Set(), aliases: [],
+	shortened: new Set(),
 	flags: new Set(),
 	synonyms: { levels: new Map(), flags: new Map() },
 	slots: () => new Map(),

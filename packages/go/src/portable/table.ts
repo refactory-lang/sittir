@@ -3338,7 +3338,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'statementList',
@@ -10072,9476 +10075,6 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.field': {
-			root: true,
-			arms: [
-				{
-					kind: 167,
-					builder: 'fieldDeclaration',
-					slots: [
-						{
-							name: 'names',
-							steps: [
-								{
-									key: 'names',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [167, 'names'],
-									kinds: [295],
-									leaf: 'identifier',
-									texts: [1, 295],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									many: true
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [167, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fieldDeclarationArm',
-							steps: [
-								{
-									key: 'fieldDeclarationArm',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [167, 'fieldDeclarationArm'],
-									kinds: [260]
-								}
-							]
-						},
-						{
-							name: 'tag',
-							steps: [
-								{
-									key: 'tag',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [167, 'tag'],
-									kinds: [227, 228]
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: []
-				}
-			],
-			flags: [
-				'computed',
-				'privateName',
-				'abstract',
-				'override',
-				'static',
-				'readonly',
-				'declare',
-				'definite',
-				'optional'
-			]
-		},
-		'declaration.field.private': {
-			root: true,
-			arms: [
-				{
-					kind: 167,
-					builder: 'fieldDeclaration',
-					slots: [
-						{
-							name: 'names',
-							steps: [
-								{
-									key: 'names'
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [167, 'names'],
-									kinds: [295],
-									leaf: 'identifier',
-									texts: [1, 295],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									many: true
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [167, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fieldDeclarationArm',
-							steps: [
-								{
-									key: 'fieldDeclarationArm',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [167, 'fieldDeclarationArm'],
-									kinds: [260]
-								}
-							]
-						},
-						{
-							name: 'tag',
-							steps: [
-								{
-									key: 'tag',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [167, 'tag'],
-									kinds: [227, 228]
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['names']
-						}
-					]
-				}
-			],
-			flags: [
-				'computed',
-				'privateName',
-				'abstract',
-				'override',
-				'static',
-				'readonly',
-				'declare',
-				'definite',
-				'optional'
-			]
-		},
-		'declaration.field.public': {
-			root: true,
-			arms: [
-				{
-					kind: 167,
-					builder: 'fieldDeclaration',
-					slots: [
-						{
-							name: 'names',
-							steps: [
-								{
-									key: 'names'
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [167, 'names'],
-									kinds: [295],
-									leaf: 'identifier',
-									texts: [1, 295],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									many: true
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [167, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [165, 'type'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [268, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [267, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								},
-								{
-									at: [266, 'value'],
-									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										}
-									]
-								},
-								{
-									at: [168, 'interfaceTypeGroup'],
-									kinds: [261],
-									within: [
-										{
-											builder: 'negatedType',
-											key: 'type'
-										},
-										{
-											builder: 'channelTypeReceiveOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeSendOnly',
-											key: 'value'
-										},
-										{
-											builder: 'channelTypeBidirectional',
-											key: 'value'
-										},
-										{
-											builder: 'interfaceType',
-											key: 'interfaceTypeGroup',
-											optional: true
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fieldDeclarationArm',
-							steps: [
-								{
-									key: 'fieldDeclarationArm',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [167, 'fieldDeclarationArm'],
-									kinds: [260]
-								}
-							]
-						},
-						{
-							name: 'tag',
-							steps: [
-								{
-									key: 'tag',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [167, 'tag'],
-									kinds: [227, 228]
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['names']
-						}
-					]
-				}
-			],
-			flags: [
-				'computed',
-				'privateName',
-				'abstract',
-				'override',
-				'static',
-				'readonly',
-				'declare',
-				'definite',
-				'optional'
-			]
-		},
 		'declaration.function': {
 			root: true,
 			arms: [
@@ -22734,7 +13267,6 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							list: false,
 							seats: [
 								{
 									at: [145, 'body'],
@@ -22743,7 +13275,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['parameters'],
 					presets: [],
 					flags: {},
 					when: [
@@ -25949,7 +16480,6 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							list: false,
 							seats: [
 								{
 									at: [145, 'body'],
@@ -25958,7 +16488,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['parameters'],
 					presets: [],
 					flags: {},
 					when: [
@@ -29164,7 +19693,6 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							list: false,
 							seats: [
 								{
 									at: [145, 'body'],
@@ -29173,7 +19701,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['parameters'],
 					presets: [],
 					flags: {},
 					when: [
@@ -32372,7 +22899,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['parameters'],
 					presets: [],
 					flags: {},
 					when: [
@@ -32385,64 +22911,32 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['async', 'const', 'generator', 'default', 'unsafe']
 		},
-		'declaration.interface': {
+		'declaration.member.field': {
 			root: true,
 			arms: [
 				{
-					kind: 154,
-					builder: 'typeSpec',
+					kind: 167,
+					builder: 'fieldDeclaration',
 					slots: [
 						{
-							name: 'name',
+							name: 'names',
 							steps: [
 								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [154, 'name'],
-									kinds: [299],
-									leaf: 'identifier',
-									texts: [1, 299],
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
+									key: 'names',
 									optional: true
 								}
 							],
-							multiple: false,
-							list: true,
+							multiple: true,
 							seats: [
 								{
-									at: [154, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [240, 'items'],
-									kinds: [148],
-									within: [
-										{
-											builder: 'typeParameterList',
-											key: 'typeParameterDeclarations'
-										},
-										{
-											builder: 'typeParameterDeclarations',
-											key: 'items'
-										}
-									],
+									at: [167, 'names'],
+									kinds: [295],
+									leaf: 'identifier',
+									texts: [1, 295],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									many: true
 								}
 							]
@@ -32451,14 +22945,22 @@ export const build: PortableBuildTable = {
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
 							multiple: false,
+							list: false,
 							seats: [
 								{
-									at: [154, 'type'],
-									kinds: [157]
+									at: [167, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								},
 								{
 									at: [168, 'interfaceTypeGroup'],
@@ -32470,31 +22972,9416 @@ export const build: PortableBuildTable = {
 											optional: true
 										}
 									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'fieldDeclarationArm',
+							steps: [
+								{
+									key: 'fieldDeclarationArm',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [167, 'fieldDeclarationArm'],
+									kinds: [260]
+								}
+							]
+						},
+						{
+							name: 'tag',
+							steps: [
+								{
+									key: 'tag',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [167, 'tag'],
+									kinds: [227, 228]
 								}
 							]
 						}
 					],
-					presets: [
+					presets: [],
+					flags: {},
+					when: []
+				}
+			],
+			flags: [
+				'computed',
+				'privateName',
+				'abstract',
+				'override',
+				'static',
+				'readonly',
+				'declare',
+				'definite',
+				'optional'
+			]
+		},
+		'declaration.member.field.private': {
+			root: true,
+			arms: [
+				{
+					kind: 167,
+					builder: 'fieldDeclaration',
+					slots: [
 						{
+							name: 'names',
 							steps: [
 								{
-									key: 'type'
+									key: 'names'
 								}
 							],
-							builder: 'interfaceType'
+							multiple: true,
+							seats: [
+								{
+									at: [167, 'names'],
+									kinds: [295],
+									leaf: 'identifier',
+									texts: [1, 295],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									many: true
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [167, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'fieldDeclarationArm',
+							steps: [
+								{
+									key: 'fieldDeclarationArm',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [167, 'fieldDeclarationArm'],
+									kinds: [260]
+								}
+							]
+						},
+						{
+							name: 'tag',
+							steps: [
+								{
+									key: 'tag',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [167, 'tag'],
+									kinds: [227, 228]
+								}
+							]
 						}
 					],
+					presets: [],
 					flags: {},
 					when: [
 						{
 							absent: [],
-							required: ['name', 'type']
+							required: ['names']
 						}
 					]
 				}
+			],
+			flags: [
+				'computed',
+				'privateName',
+				'abstract',
+				'override',
+				'static',
+				'readonly',
+				'declare',
+				'definite',
+				'optional'
 			]
 		},
-		'declaration.method': {
+		'declaration.member.field.public': {
+			root: true,
+			arms: [
+				{
+					kind: 167,
+					builder: 'fieldDeclaration',
+					slots: [
+						{
+							name: 'names',
+							steps: [
+								{
+									key: 'names'
+								}
+							],
+							multiple: true,
+							seats: [
+								{
+									at: [167, 'names'],
+									kinds: [295],
+									leaf: 'identifier',
+									texts: [1, 295],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									many: true
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [167, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [165, 'type'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [268, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [267, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								},
+								{
+									at: [266, 'value'],
+									kinds: [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										}
+									]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'negatedType',
+											key: 'type'
+										},
+										{
+											builder: 'channelTypeReceiveOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeSendOnly',
+											key: 'value'
+										},
+										{
+											builder: 'channelTypeBidirectional',
+											key: 'value'
+										},
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'fieldDeclarationArm',
+							steps: [
+								{
+									key: 'fieldDeclarationArm',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [167, 'fieldDeclarationArm'],
+									kinds: [260]
+								}
+							]
+						},
+						{
+							name: 'tag',
+							steps: [
+								{
+									key: 'tag',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [167, 'tag'],
+									kinds: [227, 228]
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['names']
+						}
+					]
+				}
+			],
+			flags: [
+				'computed',
+				'privateName',
+				'abstract',
+				'override',
+				'static',
+				'readonly',
+				'declare',
+				'definite',
+				'optional'
+			]
+		},
+		'declaration.member.method': {
 			root: true,
 			arms: [
 				{
@@ -35688,7 +35575,6 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							list: false,
 							seats: [
 								{
 									at: [146, 'body'],
@@ -35697,7 +35583,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['parameters'],
 					presets: [],
 					flags: {},
 					when: [
@@ -35722,7 +35607,7 @@ export const build: PortableBuildTable = {
 				'unsafe'
 			]
 		},
-		'declaration.method.private': {
+		'declaration.member.method.private': {
 			root: true,
 			arms: [
 				{
@@ -38916,7 +38801,6 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							list: false,
 							seats: [
 								{
 									at: [146, 'body'],
@@ -38925,7 +38809,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['parameters'],
 					presets: [],
 					flags: {},
 					when: [
@@ -38950,7 +38833,7 @@ export const build: PortableBuildTable = {
 				'unsafe'
 			]
 		},
-		'declaration.method.public': {
+		'declaration.member.method.public': {
 			root: true,
 			arms: [
 				{
@@ -42144,7 +42027,6 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							list: false,
 							seats: [
 								{
 									at: [146, 'body'],
@@ -42153,7 +42035,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['parameters'],
 					presets: [],
 					flags: {},
 					when: [
@@ -42178,7 +42059,7 @@ export const build: PortableBuildTable = {
 				'unsafe'
 			]
 		},
-		'declaration.method.signature': {
+		'declaration.member.method.signature': {
 			root: true,
 			arms: [
 				{
@@ -45331,7 +45212,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['parameters'],
 					presets: [],
 					flags: {},
 					when: [
@@ -51588,7 +51468,116 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['mutable', 'override', 'readonly', 'optional']
 		},
-		'declaration.struct': {
+		'declaration.type.interface': {
+			root: true,
+			arms: [
+				{
+					kind: 154,
+					builder: 'typeSpec',
+					slots: [
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [154, 'name'],
+									kinds: [299],
+									leaf: 'identifier',
+									texts: [1, 299],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [154, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [240, 'items'],
+									kinds: [148],
+									within: [
+										{
+											builder: 'typeParameterList',
+											key: 'typeParameterDeclarations'
+										},
+										{
+											builder: 'typeParameterDeclarations',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [154, 'type'],
+									kinds: [157]
+								},
+								{
+									at: [168, 'interfaceTypeGroup'],
+									kinds: [261],
+									within: [
+										{
+											builder: 'interfaceType',
+											key: 'interfaceTypeGroup',
+											optional: true
+										}
+									]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							builder: 'interfaceType'
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'type']
+						}
+					]
+				}
+			]
+		},
+		'declaration.type.struct': {
 			root: true,
 			arms: [
 				{
@@ -51686,7 +51675,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.struct.private': {
+		'declaration.type.struct.private': {
 			root: true,
 			arms: [
 				{
@@ -54841,7 +54830,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.struct.public': {
+		'declaration.type.struct.public': {
 			root: true,
 			arms: [
 				{
@@ -57996,7 +57985,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.type_alias': {
+		'declaration.type.type_alias': {
 			root: true,
 			arms: [
 				{
@@ -61142,7 +61131,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.type_alias.private': {
+		'declaration.type.type_alias.private': {
 			root: true,
 			arms: [
 				{
@@ -64288,7 +64277,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.type_alias.public': {
+		'declaration.type.type_alias.public': {
 			root: true,
 			arms: [
 				{
@@ -67481,7 +67470,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['bounds'],
 					presets: [],
 					flags: {},
 					when: [
@@ -67562,7 +67550,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [],
@@ -67621,7 +67612,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -67662,7 +67656,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [],
@@ -67755,7 +67752,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [],
@@ -67838,7 +67838,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [],
@@ -67918,7 +67921,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'value',
@@ -67978,7 +67984,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [],
@@ -68027,7 +68036,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [],
@@ -68088,7 +68100,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'operator',
@@ -68159,7 +68174,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [],
@@ -68220,7 +68238,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -68262,7 +68283,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -68332,7 +68356,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -68374,7 +68401,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -68444,7 +68474,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -68486,7 +68519,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -68556,7 +68592,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -68598,7 +68637,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -68668,7 +68710,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -68710,7 +68755,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -68780,7 +68828,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -68822,7 +68873,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -68892,7 +68946,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -68934,7 +68991,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -69004,7 +69064,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -69046,7 +69109,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -69116,7 +69182,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -69158,7 +69227,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -69228,7 +69300,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -69270,7 +69345,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -69327,7 +69405,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'operator',
@@ -69393,7 +69474,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [],
@@ -69441,7 +69525,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -69470,7 +69557,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -69527,7 +69617,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -69556,7 +69649,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -69613,7 +69709,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -69642,7 +69741,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -69699,7 +69801,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -69728,7 +69833,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -69785,7 +69893,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -69814,7 +69925,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -69871,7 +69985,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -69900,7 +70017,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -69957,7 +70077,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -69986,7 +70109,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -70043,7 +70169,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -70072,7 +70201,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -70129,7 +70261,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -70158,7 +70293,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -70215,7 +70353,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -70244,7 +70385,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -70301,7 +70445,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -70330,7 +70477,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -70387,7 +70537,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -70416,7 +70569,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -70473,7 +70629,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -70502,7 +70661,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -70559,7 +70721,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -70588,7 +70753,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -70645,7 +70813,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -70674,7 +70845,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -70731,7 +70905,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -70760,7 +70937,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -70816,7 +70996,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -70844,7 +71027,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -70900,7 +71086,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'right',
@@ -70928,7 +71117,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -71025,7 +71217,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'type',
@@ -77217,7 +77412,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'trailingComma',
@@ -77335,7 +77533,10 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -77442,7 +77643,10 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [],
@@ -77493,7 +77697,6 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							list: true,
 							seats: [
 								{
 									at: [219, 'body'],
@@ -77547,10 +77750,12 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
-					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -80718,7 +80923,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['parameters'],
 					presets: [],
 					flags: {},
 					when: [
@@ -87456,7 +87660,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'field',
@@ -87526,7 +87733,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [],
@@ -87573,7 +87783,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -87630,7 +87843,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'start',
@@ -87660,7 +87876,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'end',
@@ -87689,7 +87908,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'capacity',
@@ -87718,7 +87940,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [],
@@ -87765,7 +87990,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'index',
@@ -87794,7 +88022,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [],
@@ -87866,7 +88097,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [],
@@ -87913,7 +88147,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -87969,7 +88206,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -88025,7 +88265,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -88081,7 +88324,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -88137,7 +88383,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [
@@ -88193,7 +88442,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [],
@@ -88241,7 +88493,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [],
@@ -88324,7 +88579,7 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 299,
-					builder: 'simpleType.identifier',
+					seated: 'direct',
 					slots: [],
 					presets: [],
 					flags: {},
@@ -88803,6 +89058,7 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
+					carriesNode: true,
 					when: [
 						{
 							variant: 'rune_literal',
@@ -88836,7 +89092,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 85,
 					builder: 'floatLiteralArm1',
-					numeric: ['content'],
+					numeric: [],
 					slots: [],
 					presets: [],
 					flags: {},
@@ -88855,11 +89111,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 87,
 					builder: 'floatLiteralArm3',
-					numeric: ['content'],
-					digits: {
-						base: 10,
-						affix: ''
-					},
+					numeric: [],
 					slots: [],
 					presets: [],
 					flags: {},
@@ -88926,6 +89178,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 86,
 					builder: 'floatLiteral.arm2',
+					numeric: [],
 					slots: [],
 					presets: [],
 					flags: {},
@@ -88942,11 +89195,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			builds: {
-				integer: 87,
-				float: 85
-			}
+			]
 		},
 		'literal.number.integer': {
 			root: true,
@@ -89949,7 +90198,10 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'condition',
@@ -89978,7 +90230,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'consequence',
@@ -89989,7 +90244,6 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							list: false,
 							seats: [
 								{
 									at: [195, 'consequence'],
@@ -90286,7 +90540,10 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [],
@@ -90334,7 +90591,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'body',
@@ -90345,7 +90605,6 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							list: false,
 							seats: [
 								{
 									at: [196, 'body'],
@@ -90396,7 +90655,6 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							list: false,
 							seats: [
 								{
 									at: [196, 'body'],
@@ -90447,7 +90705,6 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							list: false,
 							seats: [
 								{
 									at: [196, 'body'],
@@ -90514,7 +90771,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						}
 					],
 					presets: [],
@@ -90567,7 +90827,10 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'value',
@@ -90597,7 +90860,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'elements',
@@ -90667,7 +90933,10 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'alias',
@@ -90708,7 +90977,10 @@ export const build: PortableBuildTable = {
 									],
 									many: true
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'value',
@@ -90737,7 +91009,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'elements',
@@ -97010,7 +97285,10 @@ export const build: PortableBuildTable = {
 										flags: 'u'
 									}
 								}
-							]
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
 						},
 						{
 							name: 'element',
@@ -103227,7 +103505,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['parameters'],
 					presets: [],
 					flags: {},
 					when: [
@@ -108687,7 +108964,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['typeArguments'],
 					presets: [],
 					flags: {},
 					when: [
@@ -115210,16 +115486,6 @@ export const build: PortableBuildTable = {
 					when: []
 				}
 			]
-		}
-	},
-	values: {
-		literal: {
-			integer: 'literal.number.float',
-			float: 'literal.number.float'
-		},
-		'literal.number': {
-			integer: 'literal.number.float',
-			float: 'literal.number.float'
 		}
 	},
 	tokens: {

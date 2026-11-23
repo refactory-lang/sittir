@@ -47,16 +47,16 @@ export function fn(name: Identifier.Any<Core>): Declaration.Function<Core> {
 }
 
 // A method without an accessor is a plain method, and every method has a name and parameters.
-export function method(name: Identifier.Any<Core>): Declaration.Method<Core> {
-	return { $path: 'declaration.method', name, parameters: [] };
+export function method(name: Identifier.Any<Core>): Declaration.Member.Method<Core> {
+	return { $path: 'declaration.member.method', name, parameters: [] };
 }
-export function nameless(): Declaration.Method<Core> {
+export function nameless(): Declaration.Member.Method<Core> {
 	// @ts-expect-error a method supplies its name
-	return { $path: 'declaration.method', parameters: [] };
+	return { $path: 'declaration.member.method', parameters: [] };
 }
-export function parameterless(name: Identifier.Any<Core>): Declaration.Method<Core> {
+export function parameterless(name: Identifier.Any<Core>): Declaration.Member.Method<Core> {
 	// @ts-expect-error a method supplies its parameters
-	return { $path: 'declaration.method', name };
+	return { $path: 'declaration.member.method', name };
 }
 
 // A contract composing the features whose slots the checks below set, and one composing none.
@@ -65,10 +65,10 @@ type Bare = Contract<{}>;
 type Targets = Contract<ForEachTargets>;
 
 // A getter is a property's accessor kind, which `accessors` owns: no slot holds `get`.
-export function getter(name: Declaration.Property.Getter<Composed>['name']): Declaration.Property.Getter<Composed> {
-	return { $path: 'declaration.property.getter', name, parameters: [], body: { $path: 'statement.block' } };
+export function getter(name: Declaration.Member.Property.Getter<Composed>['name']): Declaration.Member.Property.Getter<Composed> {
+	return { $path: 'declaration.member.property.getter', name, parameters: [], statements: [] };
 }
-export function getterWithAccessor(name: Declaration.Property.Getter<Composed>['name']): Declaration.Property.Getter<Composed> {
+export function getterWithAccessor(name: Declaration.Member.Property.Getter<Composed>['name']): Declaration.Member.Property.Getter<Composed> {
 	return {
 		...getter(name),
 		// @ts-expect-error no slot holds the accessor kind
@@ -78,17 +78,17 @@ export function getterWithAccessor(name: Declaration.Property.Getter<Composed>['
 
 // An auto-accessor holds a field's optionality marker (`accessor x!: T`), under the feature that owns it on a field.
 export function accessorOptionality(
-	p: Declaration.Property<Core>
-): Declaration.Field<Core>['optionality'] | undefined {
+	p: Declaration.Member.Property<Core>
+): Declaration.Member.Field<Core>['optionality'] | undefined {
 	return p.optionality;
 }
 type Optional = Contract<Accessors & OptionalMembers>;
-export function markedAccessor(name: Declaration.Property<Optional>['name']): Declaration.Property<Optional> {
-	return { $path: 'declaration.property', name, optionality: '!' };
+export function markedAccessor(name: Declaration.Member.Property<Optional>['name']): Declaration.Member.Property<Optional> {
+	return { $path: 'declaration.member.property', name, optionality: '!' };
 }
-export function bareMarked(name: Declaration.Property<Bare>['name']): Declaration.Property<Bare> {
+export function bareMarked(name: Declaration.Member.Property<Bare>['name']): Declaration.Member.Property<Bare> {
 	return {
-		$path: 'declaration.property',
+		$path: 'declaration.member.property',
 		name,
 		// @ts-expect-error a context without optional slots has no optionality
 		optionality: '!'
@@ -187,11 +187,11 @@ export function restatedNegative(): Literal.Number.Negative<Core> {
 }
 
 // A trait is an interface with more: a refinement carries its own kind and the slots its parent lacks.
-export function trait(name: Declaration.Interface.Trait<Composed>['name'], whereClause: Clause.Where<Composed>): Declaration.Interface.Trait<Composed> {
-	return { $path: 'declaration.interface.trait', name, members: [], whereClause };
+export function trait(name: Declaration.Type.Interface.Trait<Composed>['name'], whereClause: Clause.Where<Composed>): Declaration.Type.Interface.Trait<Composed> {
+	return { $path: 'declaration.type.interface.trait', name, members: [], whereClause };
 }
 // A flag is no slot: a structure states its flags in `$flags`.
-export function unsafeTrait(name: Declaration.Interface.Trait<Composed>['name'], whereClause: Clause.Where<Composed>): Declaration.Interface.Trait<Composed> {
+export function unsafeTrait(name: Declaration.Type.Interface.Trait<Composed>['name'], whereClause: Clause.Where<Composed>): Declaration.Type.Interface.Trait<Composed> {
 	return {
 		...trait(name, whereClause),
 		// @ts-expect-error a flag is no slot
@@ -214,8 +214,12 @@ export function declaredModuleAsFile(m: Declaration.Module<Core>): File<Core> {
 	return m;
 }
 
-// A loop family: the shared for-each is a refinement of loop, and needs its subject and body.
-export function forEach(right: Identifier.Any<Targets>, body: Statement.Block<Targets>): Statement.Loop.ForEach<Targets> {
+// A loop family: the shared for-each is a refinement of loop, needs its subject, and holds its statements.
+export function forEach(right: Identifier.Any<Targets>, statements: Statement.Loop.ForEach<Targets>['statements']): Statement.Loop.ForEach<Targets> {
+	return { $path: 'statement.loop.for_each', right, statements };
+}
+export function forEachBody(right: Identifier.Any<Targets>, body: Statement.Block<Targets>): Statement.Loop.ForEach<Targets> {
+	// @ts-expect-error a loop holds its statements, not a block
 	return { $path: 'statement.loop.for_each', right, body };
 }
 
@@ -228,9 +232,9 @@ export function matchInSwitch(c: Clause.Case.Match<Core>): Statement.Switch<Core
 	return [c];
 }
 
-// A handler is one kind in every language: it names what it binds and the type it catches, and holds its body.
-export function handler(name: Identifier.Any<Core>, type: Type.Any<Core>, body: Clause.Catch<Core>['body']): Clause.Catch<Core> {
-	return { $path: 'clause.catch', name, type, body };
+// A handler is one kind in every language: it names what it binds and the type it catches, and holds its statements.
+export function handler(name: Identifier.Any<Core>, type: Type.Any<Core>, statements: NonNullable<Clause.Catch<Core>['statements']>): Clause.Catch<Core> {
+	return { $path: 'clause.catch', name, type, statements };
 }
 export function handlerException(c: Clause.Catch<Core>): unknown {
 	// @ts-expect-error what a handler catches is its `type`, in every language

@@ -4,15 +4,15 @@ import { portableRuntime } from '@sittir/common/engine';
 import python from '../src/index.ts';
 
 const runtime = await portableRuntime(await createEngine(python, { api: 'strict' }));
-const bodyOf = (statements?: readonly unknown[]) => runtime.build({ $path: 'declaration.function', name: 'f', parameters: [], body: { $path: 'statement.block', ...(statements === undefined ? {} : { statements }) } } as never) as unknown as {
+const bodyOf = (statements?: readonly unknown[]) => runtime.build({ $path: 'declaration.function', name: 'f', parameters: [], ...(statements === undefined ? {} : { statements }) } as never) as unknown as {
 	$render(): string;
 	body(): { $type: number };
 };
 
-describe('an empty suite reads as a block with no statements, and builds back', () => {
-	it('reads an empty function body as a block with no statements', () => {
+describe('an empty suite reads as no statements, and builds back', () => {
+	it('reads an empty function body as no statements', () => {
 		expect(JSON.stringify(runtime.read(runtime.engine.parse('def f():\n')))).toBe(
-			'{"$path":"file","statements":[{"$path":"declaration.function","name":"f","parameters":[],"body":{"$path":"statement.block","statements":[]}}]}'
+			'{"$path":"file","statements":[{"$path":"declaration.function","name":"f","parameters":[],"statements":[]}]}'
 		);
 	});
 
@@ -23,7 +23,7 @@ describe('an empty suite reads as a block with no statements, and builds back', 
 		expect(runtime.read(runtime.engine.parse(rendered))).toEqual(read);
 	});
 
-	it('builds a block with a statement as the indented block, and one with no statements or none stated as the empty suite', () => {
+	it('builds a statement as the indented block, and no statements or none stated as the empty suite', () => {
 		const passing = bodyOf(['pass']);
 		expect(passing.body().$type).toBe(python.kinds.SuiteBlock);
 		expect(passing.$render()).toBe('def f():\n    pass\n');

@@ -1,4 +1,5 @@
 export type * from './expression.ts';
+export type * from './statement.ts';
 
 /** Error propagation: an expression that returns an error to its caller, and a block that stops it there. */
 export interface ErrorPropagation {

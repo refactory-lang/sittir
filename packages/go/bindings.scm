@@ -13,12 +13,12 @@
 ((function_declaration !body) @declaration.function.signature)
 ((function_declaration name: (identifier) @_n) @declaration.function.public (#match? @_n "^[A-Z]"))
 ((function_declaration name: (identifier) @_n) @declaration.function.private (#match? @_n "^[a-z_]"))
-(method_declaration) @declaration.method
+(method_declaration) @declaration.member.method
 (method_declaration receiver: (_) @receiver)
 (method_declaration result: (_) @returnType)
-((method_declaration name: (field_identifier) @_n) @declaration.method.public (#match? @_n "^[A-Z]"))
-((method_declaration name: (field_identifier) @_n) @declaration.method.private (#match? @_n "^[a-z_]"))
-(method_elem) @declaration.method.signature
+((method_declaration name: (field_identifier) @_n) @declaration.member.method.public (#match? @_n "^[A-Z]"))
+((method_declaration name: (field_identifier) @_n) @declaration.member.method.private (#match? @_n "^[a-z_]"))
+(method_elem) @declaration.member.method.signature
 (method_elem result: (_) @returnType)
 (parameter_declaration) @declaration.parameter
 (parameter_declaration type: (_) @type)
@@ -33,20 +33,20 @@
 ((const_spec name: (identifier) @_n) @declaration.constant.public (#match? @_n "^[A-Z]"))
 ((const_spec name: (identifier) @_n) @declaration.constant.private (#match? @_n "^[a-z_]"))
 (type_spec) @declaration
-(type_spec type: (struct_type)) @declaration.struct
-((type_spec name: (type_identifier) @_n type: (struct_type)) @declaration.struct.public (#match? @_n "^[A-Z]"))
-((type_spec name: (type_identifier) @_n type: (struct_type)) @declaration.struct.private (#match? @_n "^[a-z_]"))
+(type_spec type: (struct_type)) @declaration.type.struct
+((type_spec name: (type_identifier) @_n type: (struct_type)) @declaration.type.struct.public (#match? @_n "^[A-Z]"))
+((type_spec name: (type_identifier) @_n type: (struct_type)) @declaration.type.struct.private (#match? @_n "^[a-z_]"))
 (type_spec type_parameters: (_) @typeParameters type: (struct_type))
-(type_spec type: (interface_type)) @declaration.interface
+(type_spec type: (interface_type)) @declaration.type.interface
 (type_spec type_parameters: (_) @typeParameters type: (interface_type))
-(type_alias) @declaration.type_alias
+(type_alias) @declaration.type.type_alias
 (type_alias type_parameters: (_) @typeParameters)
-((type_alias name: (type_identifier) @_n) @declaration.type_alias.public (#match? @_n "^[A-Z]"))
-((type_alias name: (type_identifier) @_n) @declaration.type_alias.private (#match? @_n "^[a-z_]"))
-(field_declaration) @declaration.field
+((type_alias name: (type_identifier) @_n) @declaration.type.type_alias.public (#match? @_n "^[A-Z]"))
+((type_alias name: (type_identifier) @_n) @declaration.type.type_alias.private (#match? @_n "^[a-z_]"))
+(field_declaration) @declaration.member.field
 (field_declaration type: (_) @type)
-((field_declaration name: (field_identifier) @_n) @declaration.field.public (#match? @_n "^[A-Z]"))
-((field_declaration name: (field_identifier) @_n) @declaration.field.private (#match? @_n "^[a-z_]"))
+((field_declaration name: (field_identifier) @_n) @declaration.member.field.public (#match? @_n "^[A-Z]"))
+((field_declaration name: (field_identifier) @_n) @declaration.member.field.private (#match? @_n "^[a-z_]"))
 
 ; ── clause ─────────────────────────────────────────────────────────────────────
 (import_spec) @clause.import

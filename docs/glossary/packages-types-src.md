@@ -674,7 +674,7 @@ The synonym that stands for the canonical `subscript` in this vocabulary: 'index
 
 The async-await declaration of the vocabulary.
 
-### `packages/types/src/vocabulary/features/async-await/declaration.ts::Declaration::Constructor`
+### `packages/types/src/vocabulary/features/async-await/declaration.ts::Declaration::Member::Constructor`
 
 The constructor of the async-await declaration.
 
@@ -682,11 +682,11 @@ The constructor of the async-await declaration.
 
 The decorators declaration of the vocabulary.
 
-### `packages/types/src/vocabulary/features/decorators/declaration.ts::Declaration::Constructor`
+### `packages/types/src/vocabulary/features/decorators/declaration.ts::Declaration::Member::Constructor`
 
 The constructor of the decorators declaration.
 
-### `packages/types/src/vocabulary/features/parametric-polymorphism/declaration.ts::Declaration::Constructor`
+### `packages/types/src/vocabulary/features/parametric-polymorphism/declaration.ts::Declaration::Member::Constructor`
 
 The constructor of the parametric-polymorphism declaration.
 
@@ -694,7 +694,7 @@ The constructor of the parametric-polymorphism declaration.
 
 The type-annotations declaration of the vocabulary.
 
-### `packages/types/src/vocabulary/features/type-annotations/declaration.ts::Declaration::Constructor`
+### `packages/types/src/vocabulary/features/type-annotations/declaration.ts::Declaration::Member::Constructor`
 
 The constructor of the type-annotations declaration.
 
@@ -974,6 +974,12 @@ A root that saves itself. `$save(path)` returns the pending write of the root th
 
 The flag query for a portable row.
 
+### `packages/types/src/portable.ts::PortableNamespace`
+
+The value the shared kind tree holds at a vocabulary namespace, a prefix of kind paths that is no kind itself (`vocabularyNamespaces`): `{ $namespace: path }`, frozen and the same object in every language, beside a kind's `PortableKind`. It has no `$path`, since no node reads as a namespace itself; a namespace names the kinds beneath it. `ofType` takes it as it takes a portable kind and selects what the namespace's guard holds for (`ofTypeSteps`), and each grammar's generated `PortableKindsAt` stamps it on the namespace's entry (`emitPortableSurface`).
+
+An alias path has the same node: it is no kind, and it names what its target holds in a language that holds the alias.
+
 ### `packages/types/src/portable-build.ts::PortableCallShape`
 
 The shape of a builder's call: config, spread, text, constant, nullary, direct, elements, forwarded or placed. A `constant` entry is a value (a leaf's kind id); a `nullary` entry is a call that takes no arguments (a compound with no slots).
@@ -1052,7 +1058,7 @@ The key the container is stored under.
 
 ### `packages/types/src/portable-build.ts::PortableContainer::optional`
 
-Whether the container is optional.
+Whether the container's element slot, the one at `key`, may be left out; it says nothing of the container itself, whose presence is decided by the link that holds it. On a container with another inside it, the element slot holds that inner container, so the inner container may be absent. On the innermost container, the element slot holds the value itself, so for a list it means the list may be empty.
 
 ### `packages/types/src/portable-build.ts::PortableContainer::mounted`
 
@@ -1236,7 +1242,7 @@ The scalar type of a number arm.
 
 ### `packages/types/src/portable-build.ts::PortableBuildArm::numeric`
 
-The numeric text or decimal parts of a number arm.
+The numeric text or decimal parts of a number arm. With a base prefix in its own slot, the list is the prefix slot and then the digits. An empty list means no slot spells the number: the arm takes no `$value`, and a read keeps its node.
 
 ### `packages/types/src/portable-build.ts::PortableBuildArm::when`
 
@@ -1268,7 +1274,7 @@ A path of build arms, with whether it is the root.
 
 ### `packages/types/src/portable-build.ts::PortableBuildPath::root`
 
-Whether the path is the root.
+Whether the path builds at the root, with no holder: true when one of its arms is no holder slot's own, the arm a root build takes. A path whose every arm is built only at its holders' slots (python's suites, `*x`) has no path function, and a root build of it is refused naming the holder slots it builds in.
 
 ### `packages/types/src/portable-build.ts::PortableBuildPath::arms`
 
@@ -1398,10 +1404,6 @@ The container's member steps, each naming a member and the slot steps it takes.
 
 The content slot's name. A `content` arm builds a lexed identifier from the text of this slot and passes that text to its builder.
 
-### `packages/types/src/portable-build.ts::PortableBuildArm::empty`
-
-The slots that must be empty for the arm to build.
-
 ### `packages/types/src/portable-build.ts::PortableBuildArm::sole`
 
 The member a `sole` arm builds its list from, and the delimiter that makes one item a list.
@@ -1465,6 +1467,26 @@ The text of each content index of a seat that is read as text, keyed by its inde
 ### `packages/types/src/portable-build.ts::PortablePreset::presence`
 
 Set on a keyword preset whose slot is a presence slot: the keyword alone in that slot, which the slot's builder takes as `true`, not as the keyword's kind id.
+
+### `packages/types/src/portable-build.ts::PortableSlotRoute::emptyContainer`
+
+Set where the route reaches its list through a container that may be left out and the list may be empty there, or through a grammar slot with another form that holds no route of this list, so a missing container and an empty one are different values: typescript's `namespace M {}` and `declare module "m";`, `new Foo()` beside `new Foo`, and a lambda's `() => {}` beside `x => x + 1`. The read leaves the slot absent when the container is absent and reads `[]` when it is present and empty, instead of reading every absent list as `[]`; both builds make the empty container for `[]` and leave it out for an absent slot. Where the arm cannot leave the container out, both refuse an absent slot: typescript's `expression.call.construct` needs its `arguments`, and `new Foo` is the bare path. A list the grammar requires non-empty is never stamped, since a present container then always holds an element: it reads `[]` when absent and leaves the container out for `[]`, as every unstamped list does. Codegen stamps it in the walk that stamps `nonEmpty` (`build.ts::emitPortableBuild`).
+
+### `packages/types/src/portable-build.ts::PortableBuildArm::readOnly`
+
+The member steps the read takes beside `slots` and no build takes: a form of a list slot that holds one node, such as a loop's bare statement beside the block it builds; and a form that holds a list but loses every tie to its grammar slot's default subtype, which takes every list it takes, such as python's inline suite beside the indented block.
+
+### `packages/types/src/portable-build.ts::PortableSlotStep::kinds`
+
+The kind ids of the form a step enters, where its grammar slot holds other kinds too. A read takes only a node of these kinds at the step and refuses the route for any other, and where the step holds a list it keeps only the items of these kinds. So the read takes the route of the form that is present by the form's kind, a stamped fact, not by which keys the present node happens to have: python's `with (a):` holds a parenthesized expression where the value's route through `as_pattern` steps, and the parenthesized expression's own `expression` is not read as the item's value. A step whose grammar slot holds only the kind it enters has no `kinds`.
+
+### `packages/types/src/portable-build.ts::PortableSlotStep::empty`
+
+The builder of the form of a step's grammar slot that holds nothing (it reads no slot, and the model's `writesText` says it writes no text), beside the form the step enters. It is stamped only where the step has `kinds` and exactly one such form exists. A list routed through the step that is empty, or absent where absence reads as empty, builds that form at the step and nothing past it; an optional step before it, or the step itself being optional, leaves the list out instead, and a route whose empty list builds its empty container keeps doing so. The interpreter and the generated build both take it: python's `def f():`, `if x:` and every other holder of `_suite` build `suite_empty` for no statements, and `suite_block` only around at least one. A form that writes a keyword or a terminator, such as typescript's `debugger;`, holds something, so `statement_block` steps carry no `empty`.
+
+### `packages/types/src/portable-build.ts::PortableBuildArm::carriesNode`
+
+Stamped on an arm whose slot admits a value an earlier arm of the path also takes, spelled with different fixed text. A read of that arm keeps the parsed node, because a read may normalize a value's spelling but never the value.
 
 ### `packages/types/src/vocabulary/features/range-expressions/expression.ts::Legacy`
 
@@ -1530,6 +1552,10 @@ The string member of the unicode literal.
 
 The attribute node: an annotation on a declaration, read through its `content` slot.
 
+### `packages/types/src/vocabulary/attribute.ts::Attribute::AnyWithExpression`
+
+A union slots share: `Attribute.Any` and `Expression.Any`. It is ungated, as a level is, and the decorator slots, which typescript reads as attribute kinds and python as expressions, name it.
+
 ### `packages/types/src/vocabulary/comment.ts::Comment`
 
 The comment node: a comment in the source, read through its `content` slot.
@@ -1569,6 +1595,14 @@ Go's features: every feature (`ProbeAllFeatures`), as for C.
 ### `packages/types/src/vocabulary/compositions.ts::JavaFeatures`
 
 Java's features: every feature (`ProbeAllFeatures`), as for C.
+
+### `packages/types/src/vocabulary/expression.ts::Expression::Identifier`
+
+The alias `expression.identifier`, of `identifier`: an identifier lies beneath `expression` in every language.
+
+### `packages/types/src/vocabulary/expression.ts::Expression::Literal`
+
+The alias `expression.literal`, of `literal`: a literal lies beneath `expression` in every language.
 
 ### `packages/types/src/vocabulary/features/annotated-lambdas/index.ts::AnnotatedLambdas`
 
@@ -1658,9 +1692,9 @@ The constrained-type-parameters feature marker: an interface extending `BoundedQ
 
 The `type.constrained` node: a type whose `constraint` slot holds the single type its parameter is restricted to. The slot takes any `Type.Any`.
 
-### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Enum`
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Type::Enum`
 
-The `declaration.enum` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
+The `declaration.type.enum` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Extension`
 
@@ -1670,21 +1704,21 @@ The `declaration.extension` arm under bounded quantification. It declares no slo
 
 The `declaration.function` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
 
-### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Method`
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Member::Method`
 
-The `declaration.method` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
+The `declaration.member.method` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
 
-### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::TypeAlias`
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Type::TypeAlias`
 
-The `declaration.type_alias` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
+The `declaration.type.type_alias` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::TypeParameter`
 
 The `declaration.type_parameter` node under bounded quantification. Its `bounds` slot lists the constraints on the parameter: a macro call, an identifier, a higher-ranked bound, a removed bound, or a type. Its `Parameters`, `Value` and `Variadic` arms set `bounds` to never.
 
-### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Union`
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration::Type::Union`
 
-The `declaration.union` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
+The `declaration.type.union` arm under bounded quantification. It declares no slots of its own; its bounds come from the base declaration family.
 
 ### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/declaration.ts::Declaration`
 
@@ -1714,7 +1748,7 @@ The `type.constrained` arm under bounded quantification. It declares no slots of
 
 The `clause.where` node: a where clause. Its `wherePredicates` slot lists the `Where.Predicate` nodes written after the signature. Each predicate has a `left` slot naming the constrained type and a `bounds` slot listing its constraints.
 
-### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Enum`
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Type::Enum`
 
 An enum declaration that carries a `whereClause` slot holding a `Clause.Where`.
 
@@ -1726,15 +1760,15 @@ An extension declaration that carries a `whereClause` slot holding a `Clause.Whe
 
 A function declaration that carries a `whereClause` slot holding a `Clause.Where`.
 
-### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Method`
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Member::Method`
 
 A method declaration that carries a `whereClause` slot holding a `Clause.Where`.
 
-### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::TypeAlias`
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Type::TypeAlias`
 
 A type alias declaration that carries a `whereClause` slot and a `trailingWhereClause` slot, each holding a `Clause.Where`. The trailing slot takes a where clause written after the aliased type.
 
-### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Union`
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/where-clauses/declaration.ts::Declaration::Type::Union`
 
 A union type declaration that carries a `whereClause` slot holding a `Clause.Where`.
 
@@ -1748,7 +1782,15 @@ Where clauses: an interface extending `BoundedQuantification` with `'where-claus
 
 ### `packages/types/src/vocabulary/features/python-statements/clause.ts::Clause::ElseIf`
 
-The `clause.else_if` node, Python's `elif` clause, claimed by the `p` claim tag. Its `condition` slot holds an expression, identifier, literal or pattern. Its `consequence` slot holds the body: a type alias or a statement.
+The `clause.else_if` node, Python's `elif` clause, claimed by the `p` claim tag. Its `condition` slot holds an expression, identifier, literal or pattern. Its optional `statements` list holds the statements of its suite, indented or inline, as an `else` does.
+
+### `packages/types/src/vocabulary/features/python-statements/clause.ts::Clause::Case::Match`
+
+The match case's slot under Python's statements: an optional `statements` list, the statements of `case p:`'s suite, indented or inline, read and built as an `else` holds its suite. Rust's arm has no `statements`; it keeps its expression in `body`, gated by `rust-expressions`. Python only.
+
+### `packages/types/src/vocabulary/features/python-statements/clause.ts::Clause::Case`
+
+The cases Python's statements add slots to: `Clause.Case.Match`, whose suite holds statements.
 
 ### `packages/types/src/vocabulary/features/python-statements/statement.ts::Statement::Delete`
 
@@ -1766,9 +1808,9 @@ Python statements: an interface marked `'python-statements': true`. It covers Py
 
 The `clause.implements` node, claimed by the `t` claim tag. Its `types` slot lists the interfaces or types a class implements, each an identifier or a type.
 
-### `packages/types/src/vocabulary/features/interface-conformance/declaration.ts::Declaration::Class`
+### `packages/types/src/vocabulary/features/interface-conformance/declaration.ts::Declaration::Type::Class`
 
-The `declaration.class` node with an `implements` slot listing the interfaces or types the class conforms to, each an identifier or a type. The `t` claim tag claims the node.
+The `declaration.type.class` node with an `implements` slot listing the interfaces or types the class conforms to, each an identifier or a type. The `t` claim tag claims the node.
 
 ### `packages/types/src/vocabulary/features/interface-conformance/expression.ts::Expression::Class`
 
@@ -1793,6 +1835,22 @@ The `Statement` namespace of assertions. It groups the `Assert` arm. The namespa
 ### `packages/types/src/vocabulary/features/assertions/statement.ts::Statement::Assert`
 
 The `statement.assert` node, claimed by the `p` claim tag. Its `expressions` slot lists the conditions asserted, each an expression, identifier, literal or pattern.
+
+### `packages/types/src/vocabulary/features/async-await/async-blocks/statement.ts::Statement`
+
+The async-blocks statement of the vocabulary.
+
+### `packages/types/src/vocabulary/features/async-await/async-blocks/statement.ts::Statement::Block`
+
+The block async-blocks adds beneath `statement.block`.
+
+### `packages/types/src/vocabulary/features/attributes/statement.ts::Statement`
+
+The attributes statement of the vocabulary.
+
+### `packages/types/src/vocabulary/features/attributes/statement.ts::Statement::Attribute`
+
+The alias `statement.attribute`, of `attribute`: rust's inner attribute stands as a statement.
 
 ### `packages/types/src/vocabulary/features/block-comments/comment.ts::Comment`
 
@@ -1846,6 +1904,22 @@ The `!=` arm of coercive equality: a binary expression whose `operator` slot is 
 
 Coercive equality: an interface marked `'coercive-equality': true`. `==` and `!=` convert their operands' types before comparing.
 
+### `packages/types/src/vocabulary/features/compile-time-evaluation/pattern.ts::Pattern`
+
+The compile-time-evaluation pattern of the vocabulary.
+
+### `packages/types/src/vocabulary/features/compile-time-evaluation/pattern.ts::Pattern::Const`
+
+The alias `pattern.const`, of `statement.block.const`: rust's const block is a pattern.
+
+### `packages/types/src/vocabulary/features/compile-time-evaluation/statement.ts::Statement`
+
+The compile-time-evaluation statement of the vocabulary.
+
+### `packages/types/src/vocabulary/features/compile-time-evaluation/statement.ts::Statement::Block`
+
+The block compile-time-evaluation adds beneath `statement.block`.
+
 ### `packages/types/src/vocabulary/features/conditional-expressions/expression.ts::Expression`
 
 The `Expression` namespace of conditional expressions. It groups the `Conditional` arm. The namespace declares no slots of its own.
@@ -1866,9 +1940,21 @@ The `Declaration` namespace of constants. It groups the `Constant` arm. The name
 
 The `declaration.constant` node, claimed by the `pr` claim tag. Its `name` slot holds an identifier, and its optional `value` slot holds an expression, an identifier, a literal or a statement. The `name` and `value` slots are claimed by the `r` claim tag only.
 
+### `packages/types/src/vocabulary/features/constants/declaration.ts::Declaration::Member`
+
+The alias constants adds beneath `declaration.member`: a constant declared in a type body.
+
 ### `packages/types/src/vocabulary/features/constants/index.ts::Constants`
 
 Constants: an interface marked `constants: true`. A binding declared as constant.
+
+### `packages/types/src/vocabulary/features/coroutines/generator-blocks/statement.ts::Statement`
+
+The generator-blocks statement of the vocabulary.
+
+### `packages/types/src/vocabulary/features/coroutines/generator-blocks/statement.ts::Statement::Block`
+
+The block generator-blocks adds beneath `statement.block`.
 
 ### `packages/types/src/vocabulary/features/counted-loops/index.ts::CountedLoops`
 
@@ -1880,7 +1966,151 @@ The `Statement` namespace of counted loops. It groups the `Loop` namespace. The 
 
 ### `packages/types/src/vocabulary/features/counted-loops/statement.ts::Statement::Loop`
 
-The `Loop` namespace of counted loops. It groups the `Counted` arm, a loop with `initializer`, `condition`, optional `increment` and `body` slots, claimed by the `t` claim tag. The namespace declares no slots of its own.
+The `Loop` namespace of counted loops. It groups the `Counted` arm, a loop with `initializer`, `condition`, optional `increment` and optional `statements` slots, claimed by the `t` claim tag. The namespace declares no slots of its own.
+
+### `packages/types/src/vocabulary/features/destructuring/python-destructuring/expression.ts::Expression`
+
+The python-destructuring expression of the vocabulary.
+
+### `packages/types/src/vocabulary/features/destructuring/python-destructuring/expression.ts::Expression::Rest`
+
+The alias `expression.rest`, of `pattern.rest`: python's `*x` stands where an expression does.
+
+### `packages/types/src/vocabulary/features/error-propagation/statement.ts::Statement`
+
+The error-propagation statement of the vocabulary.
+
+### `packages/types/src/vocabulary/features/error-propagation/statement.ts::Statement::Block`
+
+The block error-propagation adds beneath `statement.block`.
+
+### `packages/types/src/vocabulary/features/executable-class-bodies/declaration.ts::Declaration`
+
+The executable-class-bodies declaration of the vocabulary.
+
+### `packages/types/src/vocabulary/features/executable-class-bodies/declaration.ts::Declaration::Member`
+
+The shared union executable-class-bodies adds beneath `declaration.member`: a member or a statement, what python's class body holds.
+
+### `packages/types/src/vocabulary/features/executable-class-bodies/index.ts::ExecutableClassBodies`
+
+The marker of class bodies that run statements among their members, as python's does.
+
+### `packages/types/src/vocabulary/features/match-expressions/let-patterns/expression.ts::Expression`
+
+The let-patterns expression of the vocabulary.
+
+### `packages/types/src/vocabulary/features/match-expressions/let-patterns/expression.ts::Expression::AnyWithLet`
+
+A union slots share: `Expression.Any` and `Clause.Let.Any`. It is ungated, as a level is, and rust's conditions and guards name it.
+
+### `packages/types/src/vocabulary/features/nested-types/declaration.ts::Declaration`
+
+The nested-types declaration of the vocabulary.
+
+### `packages/types/src/vocabulary/features/nested-types/declaration.ts::Declaration::Member`
+
+The alias nested-types adds beneath `declaration.member`: a type declared in a type body.
+
+### `packages/types/src/vocabulary/features/nested-types/index.ts::NestedTypes`
+
+The marker of nested types: a type declared in a type body, which `declaration.member.type` places beneath the member kind-set.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/bound-clauses/type.ts::Type`
+
+The bound-clauses type of the vocabulary.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/bound-clauses/type.ts::Type::AnyWithBounds`
+
+A union slots share: `Type.Any` and `Clause.Bounds.Any`. It is ungated, as a level is, and rust's bound positions name it.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/generic-items/type.ts::Type::AnyWithTypeArgument`
+
+A union slots share: `Type.Any`, a type argument, a type binding, and rust's const arguments, a literal or a block. It is ungated, as a level is, and the type argument lists name it.
+
+### `packages/types/src/vocabulary/features/rust-expressions/expression.ts::Expression::Block`
+
+The alias `expression.block`, of `statement.block`: rust's blocks, its modifier blocks included, are expressions.
+
+### `packages/types/src/vocabulary/features/rust-expressions/expression.ts::Expression::Break`
+
+The alias `expression.break`, of `statement.break`: rust's `break` is an expression.
+
+### `packages/types/src/vocabulary/features/rust-expressions/expression.ts::Expression::Continue`
+
+The alias `expression.continue`, of `statement.continue`: rust's `continue` is an expression.
+
+### `packages/types/src/vocabulary/features/rust-expressions/expression.ts::Expression::If`
+
+The alias `expression.if`, of `statement.if`: rust's `if` is an expression.
+
+### `packages/types/src/vocabulary/features/rust-expressions/expression.ts::Expression::Loop`
+
+The alias `expression.loop`, of `statement.loop`: rust's loops are expressions.
+
+### `packages/types/src/vocabulary/features/rust-expressions/expression.ts::Expression::Match`
+
+The alias `expression.match`, of `statement.match`: rust's `match` is an expression.
+
+### `packages/types/src/vocabulary/features/rust-expressions/expression.ts::Expression::Return`
+
+The alias `expression.return`, of `statement.return`: rust's `return` is an expression.
+
+### `packages/types/src/vocabulary/features/spreads/expression.ts::Expression`
+
+The spreads expression of the vocabulary.
+
+### `packages/types/src/vocabulary/features/spreads/expression.ts::Expression::AnyWithArgument`
+
+A union slots share: `Expression.Any`, `Argument.Any` and `Element.Spread.Any`. It is ungated, as a level is, and the argument lists of calls, constructions and attribute calls, and a class's bases, name it.
+
+### `packages/types/src/vocabulary/features/spreads/expression.ts::Expression::AnyWithSpread`
+
+A union slots share: `Expression.Any`, `Element.Spread.Any` and `Element.Attributed`. It is ungated, as a level is, and the elements of a list, a set and a tuple name it.
+
+### `packages/types/src/vocabulary/features/syntactic-metaprogramming/declaration.ts::Declaration::Member`
+
+The alias syntactic-metaprogramming adds beneath `declaration.member`: a macro call in a type body.
+
+### `packages/types/src/vocabulary/features/syntactic-metaprogramming/pattern.ts::Pattern`
+
+The syntactic-metaprogramming pattern of the vocabulary.
+
+### `packages/types/src/vocabulary/features/syntactic-metaprogramming/pattern.ts::Pattern::Macro`
+
+The alias `pattern.macro`, of `expression.call.macro`: a macro call stands as a pattern.
+
+### `packages/types/src/vocabulary/features/syntactic-metaprogramming/type.ts::Type`
+
+The syntactic-metaprogramming type of the vocabulary.
+
+### `packages/types/src/vocabulary/features/syntactic-metaprogramming/type.ts::Type::Macro`
+
+The alias `type.macro`, of `expression.call.macro`: a macro call stands as a type.
+
+### `packages/types/src/vocabulary/features/type-aliases/associated-types/declaration.ts::Declaration::Member`
+
+The alias associated-types adds beneath `declaration.member`: an associated type in a trait or impl body.
+
+### `packages/types/src/vocabulary/features/type-annotations/nullable-types/non-null-assertions/pattern.ts::Pattern`
+
+The non-null-assertions pattern of the vocabulary.
+
+### `packages/types/src/vocabulary/features/type-annotations/nullable-types/non-null-assertions/pattern.ts::Pattern::NonNull`
+
+The alias `pattern.non_null`, of `expression.cast.non_null`: typescript's `a! = 1` assigns through one.
+
+### `packages/types/src/vocabulary/features/type-annotations/python-type-forms/type.ts::Type::Expression`
+
+The alias `type.expression`, of `expression`: a python annotation is an expression.
+
+### `packages/types/src/vocabulary/features/unsafe-code/statement.ts::Statement`
+
+The unsafe-code statement of the vocabulary.
+
+### `packages/types/src/vocabulary/features/unsafe-code/statement.ts::Statement::Block`
+
+The block unsafe-code adds beneath `statement.block`.
 
 ### `packages/types/src/vocabulary/input.ts::BuildInput`
 
@@ -1958,15 +2188,15 @@ The namespace of module-visibility declarations. For each declaration kind it gi
 
 Constant declarations under module visibility. `Private` and `Public` refine the constant kind, and `Public` nests `Internal`, `Parent` and `Restricted`.
 
-### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Enum`
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Type::Enum`
 
 Enum declarations under module visibility. `Private` and `Public` refine the enum kind, and `Public` nests `Internal`, `Parent` and `Restricted`.
 
-### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::EnumMember`
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Member::EnumMember`
 
 Enum members under module visibility. The bare member takes `Private` or `Public` (with its `Internal`, `Parent` and `Restricted` refinements). The `Struct` and `Tuple` member shapes each repeat that set.
 
-### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Field`
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Member::Field`
 
 Field declarations under module visibility. Only `Public` is offered, and it nests `Internal`, `Parent` and `Restricted`; there is no `Private` field variant.
 
@@ -1974,11 +2204,11 @@ Field declarations under module visibility. Only `Public` is offered, and it nes
 
 Function declarations under module visibility. `Private` and `Public` refine the function kind, with `Public` nesting `Internal`, `Parent` and `Restricted`. The `Signature` shape (a function without a body) repeats that set.
 
-### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Interface`
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Type::Interface`
 
 Interface declarations under module visibility. Only the `Trait` shape carries visibility: it takes `Private` or `Public`, with `Public` nesting `Internal`, `Parent` and `Restricted`.
 
-### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Method`
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Member::Method`
 
 Method declarations under module visibility. Only `Public` is offered, nesting `Internal`, `Parent` and `Restricted`; there is no `Private` method variant. The `Signature` shape repeats the `Public` set.
 
@@ -1986,15 +2216,15 @@ Method declarations under module visibility. Only `Public` is offered, nesting `
 
 Module declarations under module visibility. `Private` and `Public` refine the module kind, and `Public` nests `Internal`, `Parent` and `Restricted`.
 
-### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Struct`
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Type::Struct`
 
 Struct declarations under module visibility. The bare struct takes `Private` or `Public` (with `Internal`, `Parent` and `Restricted`). The `Tuple` and `Unit` struct shapes each repeat that set.
 
-### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::TypeAlias`
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Type::TypeAlias`
 
 Type alias declarations under module visibility. `Private` and `Public` refine the alias kind, and `Public` nests `Internal`, `Parent` and `Restricted`.
 
-### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Union`
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Type::Union`
 
 Union declarations under module visibility. `Private` and `Public` refine the union kind, and `Public` nests `Internal`, `Parent` and `Restricted`.
 
@@ -2009,3 +2239,91 @@ A native slot read: called on the node, returns the slot as the tree stores it.
 ### `packages/types/src/query.ts::NativeSlots`
 
 A tree's native slot reads, by kind id and accessor name.
+
+### `packages/types/src/vocabulary/features/valued-blocks/statement.ts::Statement::Loop`
+
+The loop's slot under valued blocks: an optional `trailingExpression`, the expression a loop's statements end with that is no statement of its own, read through the loop's block where the loop holds one (rust's `loop`, `while` and `for` bodies). The loop's other contents are its `statements`. Rust only.
+
+### `packages/types/src/vocabulary/features/valued-blocks/statement.ts::Statement::If`
+
+The `if`'s slot under valued blocks: an optional `trailingExpression`, the expression its statements end with that is no statement of its own, read through the `if`'s block (rust's `if c { g(); 1 }`). The `if`'s other contents are its `statements`. Rust only.
+
+### `packages/types/src/vocabulary/features/valued-blocks/clause.ts::Clause::Else`
+
+The `else`'s slot under valued blocks: an optional `trailingExpression`, the expression its statements end with that is no statement of its own, read through the `else`'s block (rust's `else { h(); 2 }`). An `else` whose body is a bare `if` holds that `if` as its one statement and no `trailingExpression`. Rust only.
+
+### `packages/types/src/vocabulary/features/valued-blocks/clause.ts::Clause`
+
+The clauses valued blocks add slots to: `Clause.Else`, whose block may end with a value.
+
+### `packages/types/src/vocabulary/features/valued-blocks/declaration.ts::Declaration::Function`
+
+The function's slot under valued blocks: an optional `trailingExpression`, the expression its statements end with that is no statement of its own, read through the function's block (rust's `fn f() { g(); 1 }`). The function's other contents are its `statements`. Rust only.
+
+### `packages/types/src/vocabulary/features/valued-blocks/declaration.ts::Declaration::Member::Method`
+
+The method's slot under valued blocks: an optional `trailingExpression`, the expression its statements end with that is no statement of its own, read through the method's block (rust's `fn m(&self) { g(); 1 }`). The method's other contents are its `statements`. Rust only.
+
+### `packages/types/src/vocabulary/features/valued-blocks/declaration.ts::Declaration`
+
+The declarations valued blocks add slots to: `Declaration.Function` and `Declaration.Member.Method`, whose block may end with a value.
+
+### `packages/types/src/vocabulary/pattern.ts::Pattern::Identifier`
+
+The alias `pattern.identifier`, of `identifier`: a binding or assignment target may be a name.
+
+### `packages/types/src/vocabulary/pattern.ts::Pattern::Literal`
+
+The alias `pattern.literal`, of `literal`: rust's patterns and python's case patterns hold a literal, and a target slot narrows it.
+
+### `packages/types/src/vocabulary/pattern.ts::Pattern::Member`
+
+The alias `pattern.member`, of `expression.member`: typescript's and python's assignment targets hold one, and rust's map narrows it.
+
+### `packages/types/src/vocabulary/pattern.ts::Pattern::Subscript`
+
+The alias `pattern.subscript`, of `expression.subscript`: typescript's and python's assignment targets hold one, and rust's map narrows it.
+
+### `packages/types/src/vocabulary/pattern.ts::Pattern::AnyWithExpression`
+
+A union slots share: `Pattern.Any` and `Expression.Any`. It is ungated, as a level is, and the assignment targets and the catch name, since rust's assignment target and python's catch name are expressions, name it.
+
+### `packages/types/src/vocabulary/statement.ts::Statement::Declaration`
+
+The alias `statement.declaration`, of `declaration`: a statement position admits a declaration.
+
+### `packages/types/src/vocabulary/statement.ts::Statement::Expression`
+
+The alias `statement.expression`, of `expression`: an expression statement reads as its expression.
+
+### `packages/types/src/vocabulary/type.ts::Type::Identifier`
+
+The alias `type.identifier`, of `identifier`: a type position may be a name.
+
+### `packages/types/src/vocabulary/utils.ts::Missing`
+
+What a gated member or alias is where the language lacks the feature that owns it: an interface no value has, whose `$missing` names the feature. Its `$path` is a brand, `$missing:${string}`, so reading `$path` on a kind-set stays a `string` with no `undefined`, narrowing on a path leaves the arm out, and `Extract` by a kind's path does not select it.
+
+### `packages/types/src/vocabulary/features/valued-blocks/expression.ts::Expression::Lambda`
+
+The lambda's slot under valued blocks: an optional `trailingExpression`, the expression its statements end with that is no statement of its own, read through the lambda's block (rust's `|| { g(); 1 }`). The lambda's other block contents are its `statements`, and an expression body stays `body`. Rust only.
+
+### `packages/types/src/vocabulary/features/valued-blocks/expression.ts::Expression`
+
+The expressions valued blocks add slots to: `Expression.Lambda`, whose block may end with a value.
+
+### `packages/types/src/vocabulary/features/struct-patterns/structs/tuple-structs/pattern.ts::Pattern::Struct::Tuple`
+
+The parenthesized form of a struct pattern, gated by tuple structs: rust's `S(a)`, read apart from the braced `S { a }` that stays `pattern.struct`. It holds the `type` and `fields` of `Pattern.Struct`, and `is.pattern.struct` holds for it. Keeping the two forms on two paths is what lets `S {}` and `S()`, and `S { .. }` and `S(..)`, which mean different things, each rebuild as themselves. Python's `class_pattern` stays `pattern.struct`, since its positional and keyword fields share one form. Rust only.
+
+### `packages/types/src/vocabulary/features/rust-expressions/clause.ts::Clause::Case::Match`
+
+The match case's slot under rust's expressions: `body`, the value of `p => expr`, which stays one slot as a lambda's expression body does. It is optional here so that a language without this feature is not asked for it, and rust's map requires it. Python's case has no `body`; it holds `statements`, gated by `python-statements`. Rust only.
+
+### `packages/types/src/vocabulary/features/rust-expressions/clause.ts::Clause::Case`
+
+The cases rust's expressions add slots to: `Clause.Case.Match`, whose arm holds an expression.
+
+### `packages/types/src/vocabulary/features/rust-expressions/clause.ts::Clause`
+
+The clauses rust's expressions add slots to: `Clause.Case`.

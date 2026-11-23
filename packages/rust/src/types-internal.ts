@@ -167,6 +167,7 @@ export interface SubBuilderRowKind {
 	'charLiteralEscaped.simple': TSKindId.CharLiteralEscapedSimple;
 	'charLiteralEscaped.unicodeBraced': TSKindId.CharLiteralEscapedUnicodeBraced;
 	'charLiteralEscaped.unicodeFixed': TSKindId.CharLiteralEscapedUnicodeFixed;
+	closureExpression: TSKindId.ClosureExpressionExpr;
 	'closureExpression.block': TSKindId.ClosureExpressionBlock;
 	'closureExpression.expr': TSKindId.ClosureExpressionExpr;
 	comment: TSKindId.LineComment;

@@ -1241,28 +1241,6 @@
       ],
       "slots": [
         {
-          "name": "prefix",
-          "route": "slot",
-          "slot": "prefix",
-          "path": [
-            {
-              "owner": "binary_integer_literal",
-              "slot": "prefix"
-            }
-          ]
-        },
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "binary_integer_literal",
-              "slot": "content"
-            }
-          ]
-        },
-        {
           "name": "suffix",
           "route": "slot",
           "slot": "suffix",
@@ -1565,10 +1543,10 @@
       }
     },
     "class_declaration": {
-      "vocab": "declaration.class",
+      "vocab": "declaration.type.class",
       "read": [
         {
-          "vocab": "declaration.class",
+          "vocab": "declaration.type.class",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -1679,10 +1657,10 @@
       }
     },
     "compact_constructor_declaration": {
-      "vocab": "declaration.constructor",
+      "vocab": "declaration.member.constructor",
       "read": [
         {
-          "vocab": "declaration.constructor",
+          "vocab": "declaration.member.constructor",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -1849,17 +1827,17 @@
       ]
     },
     "constructor_declaration": {
-      "vocab": "declaration.constructor",
+      "vocab": "declaration.member.constructor",
       "read": [
         {
-          "vocab": "declaration.constructor",
+          "vocab": "declaration.member.constructor",
           "toplevel": true,
           "within": [],
           "pins": [],
           "test": []
         },
         {
-          "vocab": "declaration.constructor.public",
+          "vocab": "declaration.member.constructor.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -1897,7 +1875,7 @@
           ]
         },
         {
-          "vocab": "declaration.constructor.private",
+          "vocab": "declaration.member.constructor.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -1935,7 +1913,7 @@
           ]
         },
         {
-          "vocab": "declaration.constructor.protected",
+          "vocab": "declaration.member.constructor.protected",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2337,10 +2315,10 @@
       }
     },
     "enum_constant": {
-      "vocab": "declaration.enum_member",
+      "vocab": "declaration.member.enum_member",
       "read": [
         {
-          "vocab": "declaration.enum_member",
+          "vocab": "declaration.member.enum_member",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2405,17 +2383,17 @@
       }
     },
     "enum_declaration": {
-      "vocab": "declaration.enum",
+      "vocab": "declaration.type.enum",
       "read": [
         {
-          "vocab": "declaration.enum",
+          "vocab": "declaration.type.enum",
           "toplevel": true,
           "within": [],
           "pins": [],
           "test": []
         },
         {
-          "vocab": "declaration.enum.public",
+          "vocab": "declaration.type.enum.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2453,7 +2431,7 @@
           ]
         },
         {
-          "vocab": "declaration.enum.private",
+          "vocab": "declaration.type.enum.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2707,17 +2685,17 @@
       ]
     },
     "field_declaration": {
-      "vocab": "declaration.field",
+      "vocab": "declaration.member.field",
       "read": [
         {
-          "vocab": "declaration.field",
+          "vocab": "declaration.member.field",
           "toplevel": true,
           "within": [],
           "pins": [],
           "test": []
         },
         {
-          "vocab": "declaration.field.public",
+          "vocab": "declaration.member.field.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2755,7 +2733,7 @@
           ]
         },
         {
-          "vocab": "declaration.field.private",
+          "vocab": "declaration.member.field.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2793,7 +2771,7 @@
           ]
         },
         {
-          "vocab": "declaration.field.protected",
+          "vocab": "declaration.member.field.protected",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3372,10 +3350,10 @@
       }
     },
     "interface_declaration": {
-      "vocab": "declaration.interface",
+      "vocab": "declaration.type.interface",
       "read": [
         {
-          "vocab": "declaration.interface",
+          "vocab": "declaration.type.interface",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3667,17 +3645,17 @@
       ]
     },
     "method_declaration": {
-      "vocab": "declaration.method",
+      "vocab": "declaration.member.method",
       "read": [
         {
-          "vocab": "declaration.method",
+          "vocab": "declaration.member.method",
           "toplevel": true,
           "within": [],
           "pins": [],
           "test": []
         },
         {
-          "vocab": "declaration.method.signature",
+          "vocab": "declaration.member.method.signature",
           "toplevel": false,
           "within": [
             "interface_body"
@@ -3700,7 +3678,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature.abstract",
+          "vocab": "declaration.member.method.signature.abstract",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3751,7 +3729,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.public",
+          "vocab": "declaration.member.method.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3789,7 +3767,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.private",
+          "vocab": "declaration.member.method.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3827,7 +3805,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.protected",
+          "vocab": "declaration.member.method.protected",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4277,28 +4255,6 @@
       ],
       "slots": [
         {
-          "name": "prefix",
-          "route": "slot",
-          "slot": "prefix",
-          "path": [
-            {
-              "owner": "octal_integer_literal",
-              "slot": "prefix"
-            }
-          ]
-        },
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "octal_integer_literal",
-              "slot": "content"
-            }
-          ]
-        },
-        {
           "name": "suffix",
           "route": "slot",
           "slot": "suffix",
@@ -4470,10 +4426,10 @@
       ]
     },
     "record_declaration": {
-      "vocab": "declaration.class",
+      "vocab": "declaration.type.class",
       "read": [
         {
-          "vocab": "declaration.class",
+          "vocab": "declaration.type.class",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4903,10 +4859,10 @@
       ]
     },
     "static_initializer": {
-      "vocab": "statement.block.static",
+      "vocab": "declaration.member.static_block",
       "read": [
         {
-          "vocab": "statement.block.static",
+          "vocab": "declaration.member.static_block",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5431,19 +5387,7 @@
           "test": []
         }
       ],
-      "slots": [
-        {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
-          "path": [
-            {
-              "owner": "try_statement_catches",
-              "slot": "body"
-            }
-          ]
-        }
-      ]
+      "slots": []
     },
     "try_statement_finally": {
       "vocab": "statement.try",
@@ -5456,19 +5400,7 @@
           "test": []
         }
       ],
-      "slots": [
-        {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
-          "path": [
-            {
-              "owner": "try_statement_finally",
-              "slot": "body"
-            }
-          ]
-        }
-      ]
+      "slots": []
     },
     "try_with_resources_statement": {
       "vocab": "statement.resource",
@@ -6082,21 +6014,27 @@
       },
       {
         "depth": 2,
-        "paths": 61,
-        "kinds": 60,
+        "paths": 56,
+        "kinds": 51,
         "refinements": 5
       },
       {
         "depth": 3,
-        "paths": 58,
-        "kinds": 52,
-        "refinements": 41
+        "paths": 53,
+        "kinds": 57,
+        "refinements": 28
       },
       {
         "depth": 4,
-        "paths": 41,
-        "kinds": 13,
-        "refinements": 10
+        "paths": 52,
+        "kinds": 16,
+        "refinements": 21
+      },
+      {
+        "depth": 5,
+        "paths": 1,
+        "kinds": 1,
+        "refinements": 1
       }
     ]
   }

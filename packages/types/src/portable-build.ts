@@ -38,7 +38,10 @@ export type PortableMount =
  * step's kind has no builder: its holder takes the next step's key in its own input, in place of this one. A `seated` step's kind has no
  * builder either: its holder takes, at the key, the arguments that kind's call shape gives its input. A `stored` step's next kind is a wrapper the
  * holder's accessor reads through: the node's own slot, under that storage key, holds the wrapper, and a read goes there. A `many` step's slot holds a list, so
- * the kind built for the next step is the one element of it.
+ * the kind built for the next step is the one element of it. A step with `kinds` enters one form of the kinds its grammar slot holds: a read takes
+ * only a node of those kinds there, and refuses the route for a node of another kind. A step with `empty` names the builder of the form of its
+ * grammar slot that holds nothing, beside the form the step enters: an empty list, or an absent one that reads as empty, builds that form at the
+ * step and nothing past it, as python's `def f():` holds `suite_empty`.
  */
 export interface PortableSlotStep {
 	readonly key: string;
@@ -49,6 +52,8 @@ export interface PortableSlotStep {
 	readonly seated?: PortableCallShape;
 	readonly many?: true;
 	readonly mounted?: PortableMount;
+	readonly kinds?: readonly number[];
+	readonly empty?: string;
 }
 
 /**
@@ -105,7 +110,9 @@ export interface PortableSeat {
  * names the slots any one of which fills one grammar slot, so the route is taken only when every group has a slot present. `reads` lists
  * the kinds the route reads from its grammar slot where its binding captures only some of what that slot holds; a read keeps only values of those
  * kinds. A `nonEmpty` route's grammar slot holds at least one element, so an empty list neither builds through it nor fills a slot it `requires`;
- * where every route an arm with no `owners` gives a slot is `nonEmpty`, a build refuses an empty list for it.
+ * where every route an arm with no `owners` gives a slot is `nonEmpty`, a build refuses an empty list for it. An `emptyContainer` route reaches
+ * its list through a container that may be left out, and the list may be empty there: the read leaves the slot absent when the container is
+ * absent and reads `[]` when it is present and empty, and a build makes the empty container for `[]` and leaves it out for an absent slot.
  * `takers` names, for each scalar type, the path a bare number of that type builds through here: of the paths whose `builds` arm for that
  * type sits in one of the slot's seats, the one inside none of the others. A safe integer is an `integer`, any other number a `float`. In a
  * slot with takers a number is always a number, never a kind id.
@@ -115,6 +122,7 @@ export interface PortableSlotRoute {
 	readonly steps: readonly PortableSlotStep[];
 	readonly multiple: boolean;
 	readonly nonEmpty?: true;
+	readonly emptyContainer?: true;
 	readonly list?: boolean;
 	readonly seats: readonly PortableSeat[];
 	readonly requires?: readonly (readonly string[])[];
@@ -208,15 +216,14 @@ export interface PortableDecimalParts {
  * a bigint, read and built as one); its path's `builds` names the arm that builds a `$value` of each type. `numeric` names the grammar slots the number is
  * written from: the slots of its kind whose texts, in order, hold its digits, or the slot of each part of its decimal spelling. An option, such as
  * a radix prefix or an exponent marker, is never one of them: the builder writes it from its preference default;
- * `scientific` marks a kind whose decimal spelling always has an exponent. An arm with no `numeric` spells it in its kind's whole text. An arm builds the number
+ * `scientific` marks a kind whose decimal spelling always has an exponent. An arm with no `numeric` spells it in its kind's whole text, and an empty `numeric` means no slot spells it: the arm takes no `$value` and a read keeps its node. An arm builds the number
  * as its builder's input, or, where its builder takes a config, through its last `numeric` slot or its decimal parts. An integer arm reads its number
  * in the `digits` base after the `digits` affix. Its other slots read and build beside the `$value`. A `template`
  * spells its slot from the named holes. A `mounted` arm's builder is a mount that builds its holder, the kind
  * `mounted.holder`, with the arm's kind seated at `mounted.key`. A text its claim fixes is a preset; its claim's other tests (a pattern its text matches, a kind it
  * holds) are the path's read tests, which a built node must pass. Where the arm's routes run through different forms of one slot, `owners`
  * lists each set of routes (by index into `slots`) that build together; a structure builds through the one owner whose routes take every
- * slot it states, by the slot's kinds and whether it is a list. `empty` names the list slots a structure that leaves them out builds
- * as `[]`: each route of such a slot reaches its grammar slot through steps the arm always holds. A `literal` arm's kind is a token whose meaning is a value: it reads as its
+ * slot it states, by the slot's kinds and whether it is a list. A `literal` arm's kind is a token whose meaning is a value: it reads as its
  * path, with the `$value` its claim declares, never as its text. A `sole` arm builds a list its claim reads by its own separator: where the
  * `slot` holds one item, the list is built with `delimiter`, the separator that makes one item that list. A `content` arm builds a lexed
  * identifier: it reads as its path with the text of its `content` slot as the `$value`, and builds by passing that text to its builder, which
@@ -231,13 +238,15 @@ export interface PortableBuildArm {
 	readonly seated?: PortableCallShape;
 	readonly scalar?: 'integer' | 'float' | 'bigint';
 	readonly numeric?: readonly string[] | PortableDecimalParts;
+	/** No value this arm reads can be told from an earlier arm's by its slot, so a read keeps the parsed node instead of a value that would rebuild as the other arm. */
+	readonly carriesNode?: true;
 	readonly scientific?: true;
 	readonly digits?: { readonly base: 2 | 8 | 10 | 16; readonly affix: string };
 	readonly literal?: { readonly value?: boolean };
 	readonly when: readonly PortablePickTest[];
 	readonly holders?: readonly (readonly [holder: number, key: string])[];
 	readonly slots: readonly PortableSlotRoute[];
-	readonly empty?: readonly string[];
+	readonly readOnly?: readonly PortableSlotRoute[];
 	readonly owners?: readonly (readonly number[])[];
 	readonly presets: readonly PortablePreset[];
 	readonly flags: Readonly<Record<string, PortableFlagStep>>;

@@ -10,8 +10,8 @@ const runtime = await portableRuntime(await sharedEngine(() => createEngine(rust
 const render = (node: unknown): string => String(runtime.engine.render(node as never));
 const expressionOf = (source: string): Read => {
 	const file = runtime.read(runtime.engine.parse(`fn m() { ${source}; }`)) as Read;
-	const body = (file.statements as readonly Read[])[0]!.body as Read;
-	return (body.statements as readonly Read[])[0]!;
+	const fn = (file.statements as readonly Read[])[0]!;
+	return (fn.statements as readonly Read[])[0]!;
 };
 const roundTrip = (source: string): string => render(runtime.build(runtime.read(runtime.engine.parse(source)) as never));
 const argument = (name: string) => ({ $path: 'element.type_argument', argument: name, bounds: [] });

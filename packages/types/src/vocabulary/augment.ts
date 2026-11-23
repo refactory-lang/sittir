@@ -57,6 +57,7 @@ import type * as enumerations from './features/enumerations/index.ts';
 import type * as errorPropagation from './features/error-propagation/index.ts';
 import type * as exceptions from './features/exceptions/index.ts';
 import type * as execStatements from './features/exec-statements/index.ts';
+import type * as executableClassBodies from './features/executable-class-bodies/index.ts';
 import type * as explicitOverrides from './features/methods/classes/explicit-overrides/index.ts';
 import type * as explicitReceivers from './features/explicit-receivers/index.ts';
 import type * as exponentiationAndMembership from './features/exponentiation-and-membership/index.ts';
@@ -259,6 +260,12 @@ declare module './clause.ts' {
 				K extends gate.Under<'clause.case.match'> = 'clause.case.match'
 			> extends matchExpressions.Clause.Case.Match<G, K> {
 				readonly attributes?: gate.In<G, features.Attributes, attributes.Clause.Case.Match<G, K>['attributes']>;
+				readonly body?: gate.In<G, features.RustExpressions, rustExpressions.Clause.Case.Match<G, K>['body']>;
+				readonly statements?: gate.In<
+					G,
+					features.PythonStatements,
+					pythonStatements.Clause.Case.Match<G, K>['statements']
+				>;
 			}
 			interface Switch<
 				G extends GrammarMap,
@@ -296,6 +303,13 @@ declare module './clause.ts' {
 			G extends GrammarMap,
 			K extends gate.Under<'clause.default'> = 'clause.default'
 		> extends genericExpressions.Clause.Default<G, K> {}
+		interface Else<G extends GrammarMap, K extends gate.Under<'clause.else'> = 'clause.else'> {
+			readonly trailingExpression?: gate.In<
+				G,
+				features.ValuedBlocks,
+				valuedBlocks.Clause.Else<G, K>['trailingExpression']
+			>;
+		}
 		interface ElseIf<
 			G extends GrammarMap,
 			K extends gate.Under<'clause.else_if'> = 'clause.else_if'
@@ -583,25 +597,6 @@ declare module './declaration.ts' {
 			G extends GrammarMap,
 			K extends gate.Under<'declaration.ambient'> = 'declaration.ambient'
 		> extends ambientDeclarations.Declaration.Ambient<G, K> {}
-		interface Class<
-			G extends GrammarMap,
-			K extends gate.Under<'declaration.class'> = 'declaration.class'
-		> extends classes.Declaration.Class<G, K> {
-			readonly abstract?: gate.In<G, features.AbstractClasses, abstractClasses.Declaration.Class<G, K>['abstract']>;
-			readonly bases?: gate.In<G, features.MultipleInheritance, multipleInheritance.Declaration.Class<G, K>['bases']>;
-			readonly decorators?: gate.In<G, features.Decorators, decorators.Declaration.Class<G, K>['decorators']>;
-			readonly extends?: gate.In<G, features.SingleInheritance, singleInheritance.Declaration.Class<G, K>['extends']>;
-			readonly implements?: gate.In<
-				G,
-				features.InterfaceConformance,
-				interfaceConformance.Declaration.Class<G, K>['implements']
-			>;
-			readonly typeParameters?: gate.In<
-				G,
-				features.GenericClasses,
-				genericClasses.Declaration.Class<G, K>['typeParameters']
-			>;
-		}
 		interface Constant<
 			G extends GrammarMap,
 			K extends gate.Under<'declaration.constant'> = 'declaration.constant'
@@ -644,230 +639,6 @@ declare module './declaration.ts' {
 				| V.Declaration.Constant.Public.Parent<G>
 				| V.Declaration.Constant.Public.Restricted<G>;
 		}
-		interface Constructor<
-			G extends GrammarMap,
-			K extends gate.Under<'declaration.constructor'> = 'declaration.constructor'
-		> extends classes.Declaration.Constructor<G, K> {
-			readonly async?: gate.In<G, features.AsyncContexts, asyncContexts.Declaration.Constructor<G, K>['async']>;
-			readonly decorators?: gate.In<G, features.Decorators, decorators.Declaration.Constructor<G, K>['decorators']>;
-			readonly returnType?: gate.In<
-				G,
-				features.PythonTypeForms,
-				pythonTypeForms.Declaration.Constructor<G, K>['returnType']
-			>;
-			readonly typeParameters?: gate.In<
-				G,
-				features.GenericConstructors,
-				genericConstructors.Declaration.Constructor<G, K>['typeParameters']
-			>;
-		}
-		namespace Constructor {
-			interface Private<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.constructor.private'> = 'declaration.constructor.private'
-			> extends classVisibility.Declaration.Constructor.Private<G, K> {}
-			interface Protected<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.constructor.protected'> = 'declaration.constructor.protected'
-			> extends classVisibility.Declaration.Constructor.Protected<G, K> {}
-			interface Public<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.constructor.public'> = 'declaration.constructor.public'
-			> extends classVisibility.Declaration.Constructor.Public<G, K> {}
-			type Any<G extends GrammarMap> =
-				| V.Declaration.Constructor<G>
-				| V.Declaration.Constructor.Private<G>
-				| V.Declaration.Constructor.Protected<G>
-				| V.Declaration.Constructor.Public<G>;
-		}
-		interface Enum<
-			G extends GrammarMap,
-			K extends gate.Under<'declaration.enum'> = 'declaration.enum'
-		> extends enumerations.Declaration.Enum<G, K> {
-			readonly typeParameters?: gate.In<
-				G,
-				features.GenericItems,
-				genericItems.Declaration.Enum<G, K>['typeParameters']
-			>;
-			readonly whereClause?: gate.In<G, features.WhereClauses, whereClauses.Declaration.Enum<G, K>['whereClause']>;
-		}
-		namespace Enum {
-			interface Private<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.enum.private'> = 'declaration.enum.private'
-			> extends moduleVisibility.Declaration.Enum.Private<G, K> {}
-			interface Public<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.enum.public'> = 'declaration.enum.public'
-			> extends moduleVisibility.Declaration.Enum.Public<G, K> {}
-			namespace Public {
-				interface Internal<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.enum.public.internal'> = 'declaration.enum.public.internal'
-				> extends moduleVisibility.Declaration.Enum.Public.Internal<G, K> {}
-				interface Parent<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.enum.public.parent'> = 'declaration.enum.public.parent'
-				> extends moduleVisibility.Declaration.Enum.Public.Parent<G, K> {}
-				interface Restricted<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.enum.public.restricted'> = 'declaration.enum.public.restricted'
-				> extends moduleVisibility.Declaration.Enum.Public.Restricted<G, K> {}
-				type Any<G extends GrammarMap> =
-					| V.Declaration.Enum.Public<G>
-					| V.Declaration.Enum.Public.Internal<G>
-					| V.Declaration.Enum.Public.Parent<G>
-					| V.Declaration.Enum.Public.Restricted<G>;
-			}
-			type Any<G extends GrammarMap> =
-				| V.Declaration.Enum<G>
-				| V.Declaration.Enum.Private<G>
-				| V.Declaration.Enum.Public<G>
-				| V.Declaration.Enum.Public.Internal<G>
-				| V.Declaration.Enum.Public.Parent<G>
-				| V.Declaration.Enum.Public.Restricted<G>;
-		}
-		interface EnumMember<
-			G extends GrammarMap,
-			K extends gate.Under<'declaration.enum_member'> = 'declaration.enum_member'
-		> extends enumerations.Declaration.EnumMember<G, K> {
-			readonly attributes?: gate.In<G, features.Attributes, attributes.Declaration.EnumMember<G, K>['attributes']>;
-		}
-		namespace EnumMember {
-			interface Private<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.enum_member.private'> = 'declaration.enum_member.private'
-			> extends moduleVisibility.Declaration.EnumMember.Private<G, K> {}
-			interface Public<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.enum_member.public'> = 'declaration.enum_member.public'
-			> extends moduleVisibility.Declaration.EnumMember.Public<G, K> {}
-			namespace Public {
-				interface Internal<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.enum_member.public.internal'> = 'declaration.enum_member.public.internal'
-				> extends moduleVisibility.Declaration.EnumMember.Public.Internal<G, K> {}
-				interface Parent<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.enum_member.public.parent'> = 'declaration.enum_member.public.parent'
-				> extends moduleVisibility.Declaration.EnumMember.Public.Parent<G, K> {}
-				interface Restricted<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.enum_member.public.restricted'> =
-						'declaration.enum_member.public.restricted'
-				> extends moduleVisibility.Declaration.EnumMember.Public.Restricted<G, K> {}
-				type Any<G extends GrammarMap> =
-					| V.Declaration.EnumMember.Public<G>
-					| V.Declaration.EnumMember.Public.Internal<G>
-					| V.Declaration.EnumMember.Public.Parent<G>
-					| V.Declaration.EnumMember.Public.Restricted<G>;
-			}
-			interface Struct<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.enum_member.struct'> = 'declaration.enum_member.struct'
-			> extends algebraicDataTypes.Declaration.EnumMember.Struct<G, K> {}
-			namespace Struct {
-				interface Private<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.enum_member.struct.private'> = 'declaration.enum_member.struct.private'
-				> extends moduleVisibility.Declaration.EnumMember.Struct.Private<G, K> {}
-				interface Public<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.enum_member.struct.public'> = 'declaration.enum_member.struct.public'
-				> extends moduleVisibility.Declaration.EnumMember.Struct.Public<G, K> {}
-				namespace Public {
-					interface Internal<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.enum_member.struct.public.internal'> =
-							'declaration.enum_member.struct.public.internal'
-					> extends moduleVisibility.Declaration.EnumMember.Struct.Public.Internal<G, K> {}
-					interface Parent<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.enum_member.struct.public.parent'> =
-							'declaration.enum_member.struct.public.parent'
-					> extends moduleVisibility.Declaration.EnumMember.Struct.Public.Parent<G, K> {}
-					interface Restricted<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.enum_member.struct.public.restricted'> =
-							'declaration.enum_member.struct.public.restricted'
-					> extends moduleVisibility.Declaration.EnumMember.Struct.Public.Restricted<G, K> {}
-					type Any<G extends GrammarMap> =
-						| V.Declaration.EnumMember.Struct.Public<G>
-						| V.Declaration.EnumMember.Struct.Public.Internal<G>
-						| V.Declaration.EnumMember.Struct.Public.Parent<G>
-						| V.Declaration.EnumMember.Struct.Public.Restricted<G>;
-				}
-				type Any<G extends GrammarMap> =
-					| V.Declaration.EnumMember.Struct<G>
-					| V.Declaration.EnumMember.Struct.Private<G>
-					| V.Declaration.EnumMember.Struct.Public<G>
-					| V.Declaration.EnumMember.Struct.Public.Internal<G>
-					| V.Declaration.EnumMember.Struct.Public.Parent<G>
-					| V.Declaration.EnumMember.Struct.Public.Restricted<G>;
-			}
-			interface Tuple<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.enum_member.tuple'> = 'declaration.enum_member.tuple'
-			> extends algebraicDataTypes.Declaration.EnumMember.Tuple<G, K> {}
-			namespace Tuple {
-				interface Private<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.enum_member.tuple.private'> = 'declaration.enum_member.tuple.private'
-				> extends moduleVisibility.Declaration.EnumMember.Tuple.Private<G, K> {}
-				interface Public<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.enum_member.tuple.public'> = 'declaration.enum_member.tuple.public'
-				> extends moduleVisibility.Declaration.EnumMember.Tuple.Public<G, K> {}
-				namespace Public {
-					interface Internal<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.enum_member.tuple.public.internal'> =
-							'declaration.enum_member.tuple.public.internal'
-					> extends moduleVisibility.Declaration.EnumMember.Tuple.Public.Internal<G, K> {}
-					interface Parent<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.enum_member.tuple.public.parent'> =
-							'declaration.enum_member.tuple.public.parent'
-					> extends moduleVisibility.Declaration.EnumMember.Tuple.Public.Parent<G, K> {}
-					interface Restricted<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.enum_member.tuple.public.restricted'> =
-							'declaration.enum_member.tuple.public.restricted'
-					> extends moduleVisibility.Declaration.EnumMember.Tuple.Public.Restricted<G, K> {}
-					type Any<G extends GrammarMap> =
-						| V.Declaration.EnumMember.Tuple.Public<G>
-						| V.Declaration.EnumMember.Tuple.Public.Internal<G>
-						| V.Declaration.EnumMember.Tuple.Public.Parent<G>
-						| V.Declaration.EnumMember.Tuple.Public.Restricted<G>;
-				}
-				type Any<G extends GrammarMap> =
-					| V.Declaration.EnumMember.Tuple<G>
-					| V.Declaration.EnumMember.Tuple.Private<G>
-					| V.Declaration.EnumMember.Tuple.Public<G>
-					| V.Declaration.EnumMember.Tuple.Public.Internal<G>
-					| V.Declaration.EnumMember.Tuple.Public.Parent<G>
-					| V.Declaration.EnumMember.Tuple.Public.Restricted<G>;
-			}
-			type Any<G extends GrammarMap> =
-				| V.Declaration.EnumMember<G>
-				| V.Declaration.EnumMember.Private<G>
-				| V.Declaration.EnumMember.Public<G>
-				| V.Declaration.EnumMember.Public.Internal<G>
-				| V.Declaration.EnumMember.Public.Parent<G>
-				| V.Declaration.EnumMember.Public.Restricted<G>
-				| V.Declaration.EnumMember.Struct<G>
-				| V.Declaration.EnumMember.Struct.Private<G>
-				| V.Declaration.EnumMember.Struct.Public<G>
-				| V.Declaration.EnumMember.Struct.Public.Internal<G>
-				| V.Declaration.EnumMember.Struct.Public.Parent<G>
-				| V.Declaration.EnumMember.Struct.Public.Restricted<G>
-				| V.Declaration.EnumMember.Tuple<G>
-				| V.Declaration.EnumMember.Tuple.Private<G>
-				| V.Declaration.EnumMember.Tuple.Public<G>
-				| V.Declaration.EnumMember.Tuple.Public.Internal<G>
-				| V.Declaration.EnumMember.Tuple.Public.Parent<G>
-				| V.Declaration.EnumMember.Tuple.Public.Restricted<G>;
-		}
 		interface Extension<
 			G extends GrammarMap,
 			K extends gate.Under<'declaration.extension'> = 'declaration.extension'
@@ -898,131 +669,6 @@ declare module './declaration.ts' {
 				>;
 			}
 			type Any<G extends GrammarMap> = V.Declaration.Extension<G> | V.Declaration.Extension.Conformance<G>;
-		}
-		interface Field<
-			G extends GrammarMap,
-			K extends gate.Under<'declaration.field'> = 'declaration.field'
-		> extends fieldsAndModifiers.Declaration.Field<G, K> {
-			readonly abstract?: gate.In<G, features.AbstractClasses, abstractClasses.Declaration.Field<G, K>['abstract']>;
-			readonly attributes?: gate.In<G, features.Attributes, attributes.Declaration.Field<G, K>['attributes']>;
-			readonly computed?: gate.In<G, features.ComputedKeys, computedKeys.Declaration.Field<G, K>['computed']>;
-			readonly declare?: gate.In<
-				G,
-				features.AmbientDeclarations,
-				ambientDeclarations.Declaration.Field<G, K>['declare']
-			>;
-			readonly decorators?: gate.In<
-				G,
-				features.MemberDecorators,
-				memberDecorators.Declaration.Field<G, K>['decorators']
-			>;
-			readonly definite?: gate.In<G, features.NonNullAssertions, nonNullAssertions.Declaration.Field<G, K>['definite']>;
-			readonly optional?: gate.In<G, features.OptionalMembers, optionalMembers.Declaration.Field<G, K>['optional']>;
-			readonly optionality?: gate.In<
-				G,
-				features.OptionalMembers,
-				optionalMembers.Declaration.Field<G, K>['optionality']
-			>;
-			readonly override?: gate.In<G, features.MemberOverrides, memberOverrides.Declaration.Field<G, K>['override']>;
-			readonly privateName?: gate.In<
-				G,
-				features.FieldEncapsulation,
-				fieldEncapsulation.Declaration.Field<G, K>['privateName']
-			>;
-			readonly readonly?: gate.In<G, features.ReadonlyMembers, readonlyMembers.Declaration.Field<G, K>['readonly']>;
-			readonly static?: gate.In<G, features.JavaScriptClasses, javascriptClasses.Declaration.Field<G, K>['static']>;
-			readonly type?: gate.In<G, features.StaticTypes, staticTypes.Declaration.Field<G, K>['type']>;
-			readonly value?: gate.In<G, features.JavaScriptBindings, javascriptBindings.Declaration.Field<G, K>['value']>;
-		}
-		namespace Field {
-			interface Private<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.field.private'> = 'declaration.field.private'
-			> extends visibility.Declaration.Field.Private<G, K> {}
-			interface Protected<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.field.protected'> = 'declaration.field.protected'
-			> extends classVisibility.Declaration.Field.Protected<G, K> {}
-			interface Public<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.field.public'> = 'declaration.field.public'
-			> extends visibility.Declaration.Field.Public<G, K> {}
-			namespace Public {
-				interface Internal<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.field.public.internal'> = 'declaration.field.public.internal'
-				> extends moduleVisibility.Declaration.Field.Public.Internal<G, K> {}
-				interface Parent<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.field.public.parent'> = 'declaration.field.public.parent'
-				> extends moduleVisibility.Declaration.Field.Public.Parent<G, K> {}
-				interface Restricted<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.field.public.restricted'> = 'declaration.field.public.restricted'
-				> extends moduleVisibility.Declaration.Field.Public.Restricted<G, K> {}
-				type Any<G extends GrammarMap> =
-					| V.Declaration.Field.Public<G>
-					| V.Declaration.Field.Public.Internal<G>
-					| V.Declaration.Field.Public.Parent<G>
-					| V.Declaration.Field.Public.Restricted<G>;
-			}
-			interface Signature<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.field.signature'> = 'declaration.field.signature'
-			> extends fieldSignatures.Declaration.Field.Signature<G, K> {
-				readonly optional?: gate.In<
-					G,
-					features.OptionalMembers,
-					optionalMembers.Declaration.Field.Signature<G, K>['optional']
-				>;
-				readonly override?: gate.In<
-					G,
-					features.MemberOverrides,
-					memberOverrides.Declaration.Field.Signature<G, K>['override']
-				>;
-				readonly readonly?: gate.In<
-					G,
-					features.ReadonlyMembers,
-					readonlyMembers.Declaration.Field.Signature<G, K>['readonly']
-				>;
-				readonly static?: gate.In<
-					G,
-					features.JavaScriptClasses,
-					javascriptClasses.Declaration.Field.Signature<G, K>['static']
-				>;
-				readonly type?: gate.In<G, features.TypeAlgebra, typeAlgebra.Declaration.Field.Signature<G, K>['type']>;
-			}
-			namespace Signature {
-				interface Private<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.field.signature.private'> = 'declaration.field.signature.private'
-				> extends classVisibility.Declaration.Field.Signature.Private<G, K> {}
-				interface Protected<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.field.signature.protected'> = 'declaration.field.signature.protected'
-				> extends classVisibility.Declaration.Field.Signature.Protected<G, K> {}
-				interface Public<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.field.signature.public'> = 'declaration.field.signature.public'
-				> extends classVisibility.Declaration.Field.Signature.Public<G, K> {}
-				type Any<G extends GrammarMap> =
-					| V.Declaration.Field.Signature<G>
-					| V.Declaration.Field.Signature.Private<G>
-					| V.Declaration.Field.Signature.Protected<G>
-					| V.Declaration.Field.Signature.Public<G>;
-			}
-			type Any<G extends GrammarMap> =
-				| V.Declaration.Field<G>
-				| V.Declaration.Field.Private<G>
-				| V.Declaration.Field.Protected<G>
-				| V.Declaration.Field.Public<G>
-				| V.Declaration.Field.Public.Internal<G>
-				| V.Declaration.Field.Public.Parent<G>
-				| V.Declaration.Field.Public.Restricted<G>
-				| V.Declaration.Field.Signature<G>
-				| V.Declaration.Field.Signature.Private<G>
-				| V.Declaration.Field.Signature.Protected<G>
-				| V.Declaration.Field.Signature.Public<G>;
 		}
 		interface Function<G extends GrammarMap, K extends gate.Under<'declaration.function'> = 'declaration.function'> {
 			readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Declaration.Function<G, K>['async']>;
@@ -1057,6 +703,11 @@ declare module './declaration.ts' {
 				G,
 				features.TypeAnnotations,
 				typeAnnotations.Declaration.Function<G, K>['returnType']
+			>;
+			readonly trailingExpression?: gate.In<
+				G,
+				features.ValuedBlocks,
+				valuedBlocks.Declaration.Function<G, K>['trailingExpression']
 			>;
 			readonly typeParameters?: gate.In<
 				G,
@@ -1177,81 +828,6 @@ declare module './declaration.ts' {
 				| V.Declaration.Function.Signature.Public.Parent<G>
 				| V.Declaration.Function.Signature.Public.Restricted<G>;
 		}
-		interface Interface<
-			G extends GrammarMap,
-			K extends gate.Under<'declaration.interface'> = 'declaration.interface'
-		> extends interfaces.Declaration.Interface<G, K> {
-			readonly typeParameters?: gate.In<
-				G,
-				features.GenericSignatures,
-				genericSignatures.Declaration.Interface<G, K>['typeParameters']
-			>;
-		}
-		namespace Interface {
-			interface Trait<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.interface.trait'> = 'declaration.interface.trait'
-			> extends traits.Declaration.Interface.Trait<G, K> {
-				readonly typeParameters?: gate.In<
-					G,
-					features.GenericItems,
-					genericItems.Declaration.Interface.Trait<G, K>['typeParameters']
-				>;
-				readonly unsafe?: gate.In<G, features.UnsafeCode, unsafeCode.Declaration.Interface.Trait<G, K>['unsafe']>;
-				readonly whereClause?: gate.In<
-					G,
-					features.WhereClauses,
-					whereClauses.Declaration.Interface.Trait<G, K>['whereClause']
-				>;
-			}
-			namespace Trait {
-				interface Private<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.interface.trait.private'> = 'declaration.interface.trait.private'
-				> extends moduleVisibility.Declaration.Interface.Trait.Private<G, K> {}
-				interface Public<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.interface.trait.public'> = 'declaration.interface.trait.public'
-				> extends moduleVisibility.Declaration.Interface.Trait.Public<G, K> {}
-				namespace Public {
-					interface Internal<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.interface.trait.public.internal'> =
-							'declaration.interface.trait.public.internal'
-					> extends moduleVisibility.Declaration.Interface.Trait.Public.Internal<G, K> {}
-					interface Parent<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.interface.trait.public.parent'> =
-							'declaration.interface.trait.public.parent'
-					> extends moduleVisibility.Declaration.Interface.Trait.Public.Parent<G, K> {}
-					interface Restricted<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.interface.trait.public.restricted'> =
-							'declaration.interface.trait.public.restricted'
-					> extends moduleVisibility.Declaration.Interface.Trait.Public.Restricted<G, K> {}
-					type Any<G extends GrammarMap> =
-						| V.Declaration.Interface.Trait.Public<G>
-						| V.Declaration.Interface.Trait.Public.Internal<G>
-						| V.Declaration.Interface.Trait.Public.Parent<G>
-						| V.Declaration.Interface.Trait.Public.Restricted<G>;
-				}
-				type Any<G extends GrammarMap> =
-					| V.Declaration.Interface.Trait<G>
-					| V.Declaration.Interface.Trait.Private<G>
-					| V.Declaration.Interface.Trait.Public<G>
-					| V.Declaration.Interface.Trait.Public.Internal<G>
-					| V.Declaration.Interface.Trait.Public.Parent<G>
-					| V.Declaration.Interface.Trait.Public.Restricted<G>;
-			}
-			type Any<G extends GrammarMap> =
-				| V.Declaration.Interface<G>
-				| V.Declaration.Interface.Trait<G>
-				| V.Declaration.Interface.Trait.Private<G>
-				| V.Declaration.Interface.Trait.Public<G>
-				| V.Declaration.Interface.Trait.Public.Internal<G>
-				| V.Declaration.Interface.Trait.Public.Parent<G>
-				| V.Declaration.Interface.Trait.Public.Restricted<G>;
-		}
 		interface Macro<
 			G extends GrammarMap,
 			K extends gate.Under<'declaration.macro'> = 'declaration.macro'
@@ -1275,246 +851,1088 @@ declare module './declaration.ts' {
 				| V.Declaration.Macro.Bracket<G>
 				| V.Declaration.Macro.Paren<G>;
 		}
-		interface Method<
-			G extends GrammarMap,
-			K extends gate.Under<'declaration.method'> = 'declaration.method'
-		> extends methods.Declaration.Method<G, K> {
-			readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Declaration.Method<G, K>['async']>;
-			readonly computed?: gate.In<G, features.ComputedKeys, computedKeys.Declaration.Method<G, K>['computed']>;
-			readonly const?: gate.In<
-				G,
-				features.CompileTimeEvaluation,
-				compileTimeEvaluation.Declaration.Method<G, K>['const']
-			>;
-			readonly decorators?: gate.In<G, features.Decorators, decorators.Declaration.Method<G, K>['decorators']>;
-			readonly extern?: gate.In<
-				G,
-				features.ForeignFunctionInterface,
-				foreignFunctionInterface.Declaration.Method<G, K>['extern']
-			>;
-			readonly generator?: gate.In<
-				G,
-				features.GeneratorFunctions,
-				generatorFunctions.Declaration.Method<G, K>['generator']
-			>;
-			readonly optional?: gate.In<G, features.OptionalMembers, optionalMembers.Declaration.Method<G, K>['optional']>;
-			readonly override?: gate.In<
-				G,
-				features.ExplicitOverrides,
-				explicitOverrides.Declaration.Method<G, K>['override']
-			>;
-			readonly privateName?: gate.In<G, features.Encapsulation, encapsulation.Declaration.Method<G, K>['privateName']>;
-			readonly readonly?: gate.In<G, features.ReadonlyMembers, readonlyMembers.Declaration.Method<G, K>['readonly']>;
-			readonly receiver?: gate.In<
-				G,
-				features.ExplicitReceivers,
-				explicitReceivers.Declaration.Method<G, K>['receiver']
-			>;
-			readonly returnType?: gate.In<
-				G,
-				features.TypeAnnotations,
-				typeAnnotations.Declaration.Method<G, K>['returnType']
-			>;
-			readonly typeParameters?: gate.In<
-				G,
-				features.ParametricPolymorphism,
-				parametricPolymorphism.Declaration.Method<G, K>['typeParameters']
-			>;
-			readonly unsafe?: gate.In<G, features.UnsafeCode, unsafeCode.Declaration.Method<G, K>['unsafe']>;
-			readonly whereClause?: gate.In<G, features.WhereClauses, whereClauses.Declaration.Method<G, K>['whereClause']>;
-		}
-		namespace Method {
-			interface Private<
+		namespace Member {
+			type AnyWithStatement<G extends GrammarMap> = executableClassBodies.Declaration.Member.AnyWithStatement<G>;
+			type Attribute<G extends GrammarMap> = gate.In<G, features.Attributes, V.Attribute.Any<G>>;
+			type Constant<G extends GrammarMap> = gate.In<G, features.Constants, V.Declaration.Constant.Any<G>>;
+			interface Constructor<
 				G extends GrammarMap,
-				K extends gate.Under<'declaration.method.private'> = 'declaration.method.private'
-			> extends visibility.Declaration.Method.Private<G, K> {}
-			interface Protected<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.method.protected'> = 'declaration.method.protected'
-			> extends classVisibility.Declaration.Method.Protected<G, K> {}
-			interface Public<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.method.public'> = 'declaration.method.public'
-			> extends visibility.Declaration.Method.Public<G, K> {}
-			namespace Public {
-				interface Internal<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.method.public.internal'> = 'declaration.method.public.internal'
-				> extends moduleVisibility.Declaration.Method.Public.Internal<G, K> {}
-				interface Parent<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.method.public.parent'> = 'declaration.method.public.parent'
-				> extends moduleVisibility.Declaration.Method.Public.Parent<G, K> {}
-				interface Restricted<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.method.public.restricted'> = 'declaration.method.public.restricted'
-				> extends moduleVisibility.Declaration.Method.Public.Restricted<G, K> {}
-				type Any<G extends GrammarMap> =
-					| V.Declaration.Method.Public<G>
-					| V.Declaration.Method.Public.Internal<G>
-					| V.Declaration.Method.Public.Parent<G>
-					| V.Declaration.Method.Public.Restricted<G>;
+				K extends gate.Under<'declaration.member.constructor'> = 'declaration.member.constructor'
+			> extends classes.Declaration.Member.Constructor<G, K> {
+				readonly async?: gate.In<
+					G,
+					features.AsyncContexts,
+					asyncContexts.Declaration.Member.Constructor<G, K>['async']
+				>;
+				readonly decorators?: gate.In<
+					G,
+					features.Decorators,
+					decorators.Declaration.Member.Constructor<G, K>['decorators']
+				>;
+				readonly returnType?: gate.In<
+					G,
+					features.PythonTypeForms,
+					pythonTypeForms.Declaration.Member.Constructor<G, K>['returnType']
+				>;
+				readonly typeParameters?: gate.In<
+					G,
+					features.GenericConstructors,
+					genericConstructors.Declaration.Member.Constructor<G, K>['typeParameters']
+				>;
 			}
-			interface Signature<
+			namespace Constructor {
+				interface Private<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.member.constructor.private'> = 'declaration.member.constructor.private'
+				> extends classVisibility.Declaration.Member.Constructor.Private<G, K> {}
+				interface Protected<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.member.constructor.protected'> = 'declaration.member.constructor.protected'
+				> extends classVisibility.Declaration.Member.Constructor.Protected<G, K> {}
+				interface Public<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.member.constructor.public'> = 'declaration.member.constructor.public'
+				> extends classVisibility.Declaration.Member.Constructor.Public<G, K> {}
+				type Any<G extends GrammarMap> =
+					| V.Declaration.Member.Constructor<G>
+					| V.Declaration.Member.Constructor.Private<G>
+					| V.Declaration.Member.Constructor.Protected<G>
+					| V.Declaration.Member.Constructor.Public<G>;
+			}
+			interface EnumMember<
 				G extends GrammarMap,
-				K extends gate.Under<'declaration.method.signature'> = 'declaration.method.signature'
-			> extends methodSignatures.Declaration.Method.Signature<G, K> {
-				readonly async?: gate.In<G, features.AsyncLambdas, asyncLambdas.Declaration.Method.Signature<G, K>['async']>;
+				K extends gate.Under<'declaration.member.enum_member'> = 'declaration.member.enum_member'
+			> extends enumerations.Declaration.Member.EnumMember<G, K> {
+				readonly attributes?: gate.In<
+					G,
+					features.Attributes,
+					attributes.Declaration.Member.EnumMember<G, K>['attributes']
+				>;
+			}
+			namespace EnumMember {
+				interface Private<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.member.enum_member.private'> = 'declaration.member.enum_member.private'
+				> extends moduleVisibility.Declaration.Member.EnumMember.Private<G, K> {}
+				interface Public<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.member.enum_member.public'> = 'declaration.member.enum_member.public'
+				> extends moduleVisibility.Declaration.Member.EnumMember.Public<G, K> {}
+				namespace Public {
+					interface Internal<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.enum_member.public.internal'> =
+							'declaration.member.enum_member.public.internal'
+					> extends moduleVisibility.Declaration.Member.EnumMember.Public.Internal<G, K> {}
+					interface Parent<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.enum_member.public.parent'> =
+							'declaration.member.enum_member.public.parent'
+					> extends moduleVisibility.Declaration.Member.EnumMember.Public.Parent<G, K> {}
+					interface Restricted<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.enum_member.public.restricted'> =
+							'declaration.member.enum_member.public.restricted'
+					> extends moduleVisibility.Declaration.Member.EnumMember.Public.Restricted<G, K> {}
+					type Any<G extends GrammarMap> =
+						| V.Declaration.Member.EnumMember.Public<G>
+						| V.Declaration.Member.EnumMember.Public.Internal<G>
+						| V.Declaration.Member.EnumMember.Public.Parent<G>
+						| V.Declaration.Member.EnumMember.Public.Restricted<G>;
+				}
+				interface Struct<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.member.enum_member.struct'> = 'declaration.member.enum_member.struct'
+				> extends algebraicDataTypes.Declaration.Member.EnumMember.Struct<G, K> {}
+				namespace Struct {
+					interface Private<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.enum_member.struct.private'> =
+							'declaration.member.enum_member.struct.private'
+					> extends moduleVisibility.Declaration.Member.EnumMember.Struct.Private<G, K> {}
+					interface Public<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.enum_member.struct.public'> =
+							'declaration.member.enum_member.struct.public'
+					> extends moduleVisibility.Declaration.Member.EnumMember.Struct.Public<G, K> {}
+					namespace Public {
+						interface Internal<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.member.enum_member.struct.public.internal'> =
+								'declaration.member.enum_member.struct.public.internal'
+						> extends moduleVisibility.Declaration.Member.EnumMember.Struct.Public.Internal<G, K> {}
+						interface Parent<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.member.enum_member.struct.public.parent'> =
+								'declaration.member.enum_member.struct.public.parent'
+						> extends moduleVisibility.Declaration.Member.EnumMember.Struct.Public.Parent<G, K> {}
+						interface Restricted<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.member.enum_member.struct.public.restricted'> =
+								'declaration.member.enum_member.struct.public.restricted'
+						> extends moduleVisibility.Declaration.Member.EnumMember.Struct.Public.Restricted<G, K> {}
+						type Any<G extends GrammarMap> =
+							| V.Declaration.Member.EnumMember.Struct.Public<G>
+							| V.Declaration.Member.EnumMember.Struct.Public.Internal<G>
+							| V.Declaration.Member.EnumMember.Struct.Public.Parent<G>
+							| V.Declaration.Member.EnumMember.Struct.Public.Restricted<G>;
+					}
+					type Any<G extends GrammarMap> =
+						| V.Declaration.Member.EnumMember.Struct<G>
+						| V.Declaration.Member.EnumMember.Struct.Private<G>
+						| V.Declaration.Member.EnumMember.Struct.Public<G>
+						| V.Declaration.Member.EnumMember.Struct.Public.Internal<G>
+						| V.Declaration.Member.EnumMember.Struct.Public.Parent<G>
+						| V.Declaration.Member.EnumMember.Struct.Public.Restricted<G>;
+				}
+				interface Tuple<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.member.enum_member.tuple'> = 'declaration.member.enum_member.tuple'
+				> extends algebraicDataTypes.Declaration.Member.EnumMember.Tuple<G, K> {}
+				namespace Tuple {
+					interface Private<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.enum_member.tuple.private'> =
+							'declaration.member.enum_member.tuple.private'
+					> extends moduleVisibility.Declaration.Member.EnumMember.Tuple.Private<G, K> {}
+					interface Public<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.enum_member.tuple.public'> =
+							'declaration.member.enum_member.tuple.public'
+					> extends moduleVisibility.Declaration.Member.EnumMember.Tuple.Public<G, K> {}
+					namespace Public {
+						interface Internal<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.member.enum_member.tuple.public.internal'> =
+								'declaration.member.enum_member.tuple.public.internal'
+						> extends moduleVisibility.Declaration.Member.EnumMember.Tuple.Public.Internal<G, K> {}
+						interface Parent<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.member.enum_member.tuple.public.parent'> =
+								'declaration.member.enum_member.tuple.public.parent'
+						> extends moduleVisibility.Declaration.Member.EnumMember.Tuple.Public.Parent<G, K> {}
+						interface Restricted<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.member.enum_member.tuple.public.restricted'> =
+								'declaration.member.enum_member.tuple.public.restricted'
+						> extends moduleVisibility.Declaration.Member.EnumMember.Tuple.Public.Restricted<G, K> {}
+						type Any<G extends GrammarMap> =
+							| V.Declaration.Member.EnumMember.Tuple.Public<G>
+							| V.Declaration.Member.EnumMember.Tuple.Public.Internal<G>
+							| V.Declaration.Member.EnumMember.Tuple.Public.Parent<G>
+							| V.Declaration.Member.EnumMember.Tuple.Public.Restricted<G>;
+					}
+					type Any<G extends GrammarMap> =
+						| V.Declaration.Member.EnumMember.Tuple<G>
+						| V.Declaration.Member.EnumMember.Tuple.Private<G>
+						| V.Declaration.Member.EnumMember.Tuple.Public<G>
+						| V.Declaration.Member.EnumMember.Tuple.Public.Internal<G>
+						| V.Declaration.Member.EnumMember.Tuple.Public.Parent<G>
+						| V.Declaration.Member.EnumMember.Tuple.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarMap> =
+					| V.Declaration.Member.EnumMember<G>
+					| V.Declaration.Member.EnumMember.Private<G>
+					| V.Declaration.Member.EnumMember.Public<G>
+					| V.Declaration.Member.EnumMember.Public.Internal<G>
+					| V.Declaration.Member.EnumMember.Public.Parent<G>
+					| V.Declaration.Member.EnumMember.Public.Restricted<G>
+					| V.Declaration.Member.EnumMember.Struct<G>
+					| V.Declaration.Member.EnumMember.Struct.Private<G>
+					| V.Declaration.Member.EnumMember.Struct.Public<G>
+					| V.Declaration.Member.EnumMember.Struct.Public.Internal<G>
+					| V.Declaration.Member.EnumMember.Struct.Public.Parent<G>
+					| V.Declaration.Member.EnumMember.Struct.Public.Restricted<G>
+					| V.Declaration.Member.EnumMember.Tuple<G>
+					| V.Declaration.Member.EnumMember.Tuple.Private<G>
+					| V.Declaration.Member.EnumMember.Tuple.Public<G>
+					| V.Declaration.Member.EnumMember.Tuple.Public.Internal<G>
+					| V.Declaration.Member.EnumMember.Tuple.Public.Parent<G>
+					| V.Declaration.Member.EnumMember.Tuple.Public.Restricted<G>;
+			}
+			interface Field<
+				G extends GrammarMap,
+				K extends gate.Under<'declaration.member.field'> = 'declaration.member.field'
+			> extends fieldsAndModifiers.Declaration.Member.Field<G, K> {
+				readonly abstract?: gate.In<
+					G,
+					features.AbstractClasses,
+					abstractClasses.Declaration.Member.Field<G, K>['abstract']
+				>;
+				readonly attributes?: gate.In<G, features.Attributes, attributes.Declaration.Member.Field<G, K>['attributes']>;
+				readonly computed?: gate.In<G, features.ComputedKeys, computedKeys.Declaration.Member.Field<G, K>['computed']>;
+				readonly declare?: gate.In<
+					G,
+					features.AmbientDeclarations,
+					ambientDeclarations.Declaration.Member.Field<G, K>['declare']
+				>;
+				readonly decorators?: gate.In<
+					G,
+					features.MemberDecorators,
+					memberDecorators.Declaration.Member.Field<G, K>['decorators']
+				>;
+				readonly definite?: gate.In<
+					G,
+					features.NonNullAssertions,
+					nonNullAssertions.Declaration.Member.Field<G, K>['definite']
+				>;
 				readonly optional?: gate.In<
 					G,
 					features.OptionalMembers,
-					optionalMembers.Declaration.Method.Signature<G, K>['optional']
+					optionalMembers.Declaration.Member.Field<G, K>['optional']
+				>;
+				readonly optionality?: gate.In<
+					G,
+					features.OptionalMembers,
+					optionalMembers.Declaration.Member.Field<G, K>['optionality']
 				>;
 				readonly override?: gate.In<
 					G,
 					features.MemberOverrides,
-					memberOverrides.Declaration.Method.Signature<G, K>['override']
+					memberOverrides.Declaration.Member.Field<G, K>['override']
+				>;
+				readonly privateName?: gate.In<
+					G,
+					features.FieldEncapsulation,
+					fieldEncapsulation.Declaration.Member.Field<G, K>['privateName']
 				>;
 				readonly readonly?: gate.In<
 					G,
 					features.ReadonlyMembers,
-					readonlyMembers.Declaration.Method.Signature<G, K>['readonly']
+					readonlyMembers.Declaration.Member.Field<G, K>['readonly']
 				>;
-				readonly receiver?: gate.In<
+				readonly static?: gate.In<
 					G,
-					features.ExplicitReceivers,
-					explicitReceivers.Declaration.Method.Signature<G, K>['receiver']
+					features.JavaScriptClasses,
+					javascriptClasses.Declaration.Member.Field<G, K>['static']
 				>;
-				readonly returnType?: gate.In<
+				readonly type?: gate.In<G, features.StaticTypes, staticTypes.Declaration.Member.Field<G, K>['type']>;
+				readonly value?: gate.In<
 					G,
-					features.StaticTypes,
-					staticTypes.Declaration.Method.Signature<G, K>['returnType']
-				>;
-				readonly typeParameters?: gate.In<
-					G,
-					features.GenericSignatures,
-					genericSignatures.Declaration.Method.Signature<G, K>['typeParameters']
-				>;
-				readonly whereClause?: gate.In<
-					G,
-					features.WhereClauses,
-					whereClauses.Declaration.Method.Signature<G, K>['whereClause']
+					features.JavaScriptBindings,
+					javascriptBindings.Declaration.Member.Field<G, K>['value']
 				>;
 			}
-			namespace Signature {
-				interface Abstract<
+			namespace Field {
+				interface Private<
 					G extends GrammarMap,
-					K extends gate.Under<'declaration.method.signature.abstract'> = 'declaration.method.signature.abstract'
-				> extends abstractClasses.Declaration.Method.Signature.Abstract<G, K> {
+					K extends gate.Under<'declaration.member.field.private'> = 'declaration.member.field.private'
+				> extends visibility.Declaration.Member.Field.Private<G, K> {}
+				interface Protected<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.member.field.protected'> = 'declaration.member.field.protected'
+				> extends classVisibility.Declaration.Member.Field.Protected<G, K> {}
+				interface Public<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.member.field.public'> = 'declaration.member.field.public'
+				> extends visibility.Declaration.Member.Field.Public<G, K> {}
+				namespace Public {
+					interface Internal<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.field.public.internal'> =
+							'declaration.member.field.public.internal'
+					> extends moduleVisibility.Declaration.Member.Field.Public.Internal<G, K> {}
+					interface Parent<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.field.public.parent'> = 'declaration.member.field.public.parent'
+					> extends moduleVisibility.Declaration.Member.Field.Public.Parent<G, K> {}
+					interface Restricted<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.field.public.restricted'> =
+							'declaration.member.field.public.restricted'
+					> extends moduleVisibility.Declaration.Member.Field.Public.Restricted<G, K> {}
+					type Any<G extends GrammarMap> =
+						| V.Declaration.Member.Field.Public<G>
+						| V.Declaration.Member.Field.Public.Internal<G>
+						| V.Declaration.Member.Field.Public.Parent<G>
+						| V.Declaration.Member.Field.Public.Restricted<G>;
+				}
+				interface Signature<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.member.field.signature'> = 'declaration.member.field.signature'
+				> extends fieldSignatures.Declaration.Member.Field.Signature<G, K> {
 					readonly optional?: gate.In<
 						G,
 						features.OptionalMembers,
-						optionalMembers.Declaration.Method.Signature.Abstract<G, K>['optional']
+						optionalMembers.Declaration.Member.Field.Signature<G, K>['optional']
 					>;
 					readonly override?: gate.In<
 						G,
 						features.MemberOverrides,
-						memberOverrides.Declaration.Method.Signature.Abstract<G, K>['override']
+						memberOverrides.Declaration.Member.Field.Signature<G, K>['override']
+					>;
+					readonly readonly?: gate.In<
+						G,
+						features.ReadonlyMembers,
+						readonlyMembers.Declaration.Member.Field.Signature<G, K>['readonly']
+					>;
+					readonly static?: gate.In<
+						G,
+						features.JavaScriptClasses,
+						javascriptClasses.Declaration.Member.Field.Signature<G, K>['static']
+					>;
+					readonly type?: gate.In<
+						G,
+						features.TypeAlgebra,
+						typeAlgebra.Declaration.Member.Field.Signature<G, K>['type']
+					>;
+				}
+				namespace Signature {
+					interface Private<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.field.signature.private'> =
+							'declaration.member.field.signature.private'
+					> extends classVisibility.Declaration.Member.Field.Signature.Private<G, K> {}
+					interface Protected<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.field.signature.protected'> =
+							'declaration.member.field.signature.protected'
+					> extends classVisibility.Declaration.Member.Field.Signature.Protected<G, K> {}
+					interface Public<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.field.signature.public'> =
+							'declaration.member.field.signature.public'
+					> extends classVisibility.Declaration.Member.Field.Signature.Public<G, K> {}
+					type Any<G extends GrammarMap> =
+						| V.Declaration.Member.Field.Signature<G>
+						| V.Declaration.Member.Field.Signature.Private<G>
+						| V.Declaration.Member.Field.Signature.Protected<G>
+						| V.Declaration.Member.Field.Signature.Public<G>;
+				}
+				type Any<G extends GrammarMap> =
+					| V.Declaration.Member.Field<G>
+					| V.Declaration.Member.Field.Private<G>
+					| V.Declaration.Member.Field.Protected<G>
+					| V.Declaration.Member.Field.Public<G>
+					| V.Declaration.Member.Field.Public.Internal<G>
+					| V.Declaration.Member.Field.Public.Parent<G>
+					| V.Declaration.Member.Field.Public.Restricted<G>
+					| V.Declaration.Member.Field.Signature<G>
+					| V.Declaration.Member.Field.Signature.Private<G>
+					| V.Declaration.Member.Field.Signature.Protected<G>
+					| V.Declaration.Member.Field.Signature.Public<G>;
+			}
+			type Macro<G extends GrammarMap> = gate.In<G, features.SyntacticMetaprogramming, V.Expression.Call.Macro<G>>;
+			interface Method<
+				G extends GrammarMap,
+				K extends gate.Under<'declaration.member.method'> = 'declaration.member.method'
+			> extends methods.Declaration.Member.Method<G, K> {
+				readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Declaration.Member.Method<G, K>['async']>;
+				readonly computed?: gate.In<G, features.ComputedKeys, computedKeys.Declaration.Member.Method<G, K>['computed']>;
+				readonly const?: gate.In<
+					G,
+					features.CompileTimeEvaluation,
+					compileTimeEvaluation.Declaration.Member.Method<G, K>['const']
+				>;
+				readonly decorators?: gate.In<G, features.Decorators, decorators.Declaration.Member.Method<G, K>['decorators']>;
+				readonly extern?: gate.In<
+					G,
+					features.ForeignFunctionInterface,
+					foreignFunctionInterface.Declaration.Member.Method<G, K>['extern']
+				>;
+				readonly generator?: gate.In<
+					G,
+					features.GeneratorFunctions,
+					generatorFunctions.Declaration.Member.Method<G, K>['generator']
+				>;
+				readonly optional?: gate.In<
+					G,
+					features.OptionalMembers,
+					optionalMembers.Declaration.Member.Method<G, K>['optional']
+				>;
+				readonly override?: gate.In<
+					G,
+					features.ExplicitOverrides,
+					explicitOverrides.Declaration.Member.Method<G, K>['override']
+				>;
+				readonly privateName?: gate.In<
+					G,
+					features.Encapsulation,
+					encapsulation.Declaration.Member.Method<G, K>['privateName']
+				>;
+				readonly readonly?: gate.In<
+					G,
+					features.ReadonlyMembers,
+					readonlyMembers.Declaration.Member.Method<G, K>['readonly']
+				>;
+				readonly receiver?: gate.In<
+					G,
+					features.ExplicitReceivers,
+					explicitReceivers.Declaration.Member.Method<G, K>['receiver']
+				>;
+				readonly returnType?: gate.In<
+					G,
+					features.TypeAnnotations,
+					typeAnnotations.Declaration.Member.Method<G, K>['returnType']
+				>;
+				readonly trailingExpression?: gate.In<
+					G,
+					features.ValuedBlocks,
+					valuedBlocks.Declaration.Member.Method<G, K>['trailingExpression']
+				>;
+				readonly typeParameters?: gate.In<
+					G,
+					features.ParametricPolymorphism,
+					parametricPolymorphism.Declaration.Member.Method<G, K>['typeParameters']
+				>;
+				readonly unsafe?: gate.In<G, features.UnsafeCode, unsafeCode.Declaration.Member.Method<G, K>['unsafe']>;
+				readonly whereClause?: gate.In<
+					G,
+					features.WhereClauses,
+					whereClauses.Declaration.Member.Method<G, K>['whereClause']
+				>;
+			}
+			namespace Method {
+				interface Private<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.member.method.private'> = 'declaration.member.method.private'
+				> extends visibility.Declaration.Member.Method.Private<G, K> {}
+				interface Protected<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.member.method.protected'> = 'declaration.member.method.protected'
+				> extends classVisibility.Declaration.Member.Method.Protected<G, K> {}
+				interface Public<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.member.method.public'> = 'declaration.member.method.public'
+				> extends visibility.Declaration.Member.Method.Public<G, K> {}
+				namespace Public {
+					interface Internal<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.method.public.internal'> =
+							'declaration.member.method.public.internal'
+					> extends moduleVisibility.Declaration.Member.Method.Public.Internal<G, K> {}
+					interface Parent<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.method.public.parent'> = 'declaration.member.method.public.parent'
+					> extends moduleVisibility.Declaration.Member.Method.Public.Parent<G, K> {}
+					interface Restricted<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.method.public.restricted'> =
+							'declaration.member.method.public.restricted'
+					> extends moduleVisibility.Declaration.Member.Method.Public.Restricted<G, K> {}
+					type Any<G extends GrammarMap> =
+						| V.Declaration.Member.Method.Public<G>
+						| V.Declaration.Member.Method.Public.Internal<G>
+						| V.Declaration.Member.Method.Public.Parent<G>
+						| V.Declaration.Member.Method.Public.Restricted<G>;
+				}
+				interface Signature<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.member.method.signature'> = 'declaration.member.method.signature'
+				> extends methodSignatures.Declaration.Member.Method.Signature<G, K> {
+					readonly async?: gate.In<
+						G,
+						features.AsyncLambdas,
+						asyncLambdas.Declaration.Member.Method.Signature<G, K>['async']
+					>;
+					readonly optional?: gate.In<
+						G,
+						features.OptionalMembers,
+						optionalMembers.Declaration.Member.Method.Signature<G, K>['optional']
+					>;
+					readonly override?: gate.In<
+						G,
+						features.MemberOverrides,
+						memberOverrides.Declaration.Member.Method.Signature<G, K>['override']
+					>;
+					readonly readonly?: gate.In<
+						G,
+						features.ReadonlyMembers,
+						readonlyMembers.Declaration.Member.Method.Signature<G, K>['readonly']
+					>;
+					readonly receiver?: gate.In<
+						G,
+						features.ExplicitReceivers,
+						explicitReceivers.Declaration.Member.Method.Signature<G, K>['receiver']
 					>;
 					readonly returnType?: gate.In<
 						G,
-						features.TypeAlgebra,
-						typeAlgebra.Declaration.Method.Signature.Abstract<G, K>['returnType']
+						features.StaticTypes,
+						staticTypes.Declaration.Member.Method.Signature<G, K>['returnType']
+					>;
+					readonly typeParameters?: gate.In<
+						G,
+						features.GenericSignatures,
+						genericSignatures.Declaration.Member.Method.Signature<G, K>['typeParameters']
+					>;
+					readonly whereClause?: gate.In<
+						G,
+						features.WhereClauses,
+						whereClauses.Declaration.Member.Method.Signature<G, K>['whereClause']
+					>;
+				}
+				namespace Signature {
+					interface Abstract<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.method.signature.abstract'> =
+							'declaration.member.method.signature.abstract'
+					> extends abstractClasses.Declaration.Member.Method.Signature.Abstract<G, K> {
+						readonly optional?: gate.In<
+							G,
+							features.OptionalMembers,
+							optionalMembers.Declaration.Member.Method.Signature.Abstract<G, K>['optional']
+						>;
+						readonly override?: gate.In<
+							G,
+							features.MemberOverrides,
+							memberOverrides.Declaration.Member.Method.Signature.Abstract<G, K>['override']
+						>;
+						readonly returnType?: gate.In<
+							G,
+							features.TypeAlgebra,
+							typeAlgebra.Declaration.Member.Method.Signature.Abstract<G, K>['returnType']
+						>;
+						readonly typeParameters?: gate.In<
+							G,
+							features.GenericExpressions,
+							genericExpressions.Declaration.Member.Method.Signature.Abstract<G, K>['typeParameters']
+						>;
+					}
+					namespace Abstract {
+						interface Private<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.member.method.signature.abstract.private'> =
+								'declaration.member.method.signature.abstract.private'
+						> extends classVisibility.Declaration.Member.Method.Signature.Abstract.Private<G, K> {}
+						interface Protected<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.member.method.signature.abstract.protected'> =
+								'declaration.member.method.signature.abstract.protected'
+						> extends classVisibility.Declaration.Member.Method.Signature.Abstract.Protected<G, K> {}
+						interface Public<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.member.method.signature.abstract.public'> =
+								'declaration.member.method.signature.abstract.public'
+						> extends classVisibility.Declaration.Member.Method.Signature.Abstract.Public<G, K> {}
+						type Any<G extends GrammarMap> =
+							| V.Declaration.Member.Method.Signature.Abstract<G>
+							| V.Declaration.Member.Method.Signature.Abstract.Private<G>
+							| V.Declaration.Member.Method.Signature.Abstract.Protected<G>
+							| V.Declaration.Member.Method.Signature.Abstract.Public<G>;
+					}
+					interface Private<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.method.signature.private'> =
+							'declaration.member.method.signature.private'
+					> extends visibility.Declaration.Member.Method.Signature.Private<G, K> {}
+					interface Protected<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.method.signature.protected'> =
+							'declaration.member.method.signature.protected'
+					> extends classVisibility.Declaration.Member.Method.Signature.Protected<G, K> {}
+					interface Public<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.method.signature.public'> =
+							'declaration.member.method.signature.public'
+					> extends visibility.Declaration.Member.Method.Signature.Public<G, K> {}
+					namespace Public {
+						interface Internal<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.member.method.signature.public.internal'> =
+								'declaration.member.method.signature.public.internal'
+						> extends moduleVisibility.Declaration.Member.Method.Signature.Public.Internal<G, K> {}
+						interface Parent<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.member.method.signature.public.parent'> =
+								'declaration.member.method.signature.public.parent'
+						> extends moduleVisibility.Declaration.Member.Method.Signature.Public.Parent<G, K> {}
+						interface Restricted<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.member.method.signature.public.restricted'> =
+								'declaration.member.method.signature.public.restricted'
+						> extends moduleVisibility.Declaration.Member.Method.Signature.Public.Restricted<G, K> {}
+						type Any<G extends GrammarMap> =
+							| V.Declaration.Member.Method.Signature.Public<G>
+							| V.Declaration.Member.Method.Signature.Public.Internal<G>
+							| V.Declaration.Member.Method.Signature.Public.Parent<G>
+							| V.Declaration.Member.Method.Signature.Public.Restricted<G>;
+					}
+					type Any<G extends GrammarMap> =
+						| V.Declaration.Member.Method.Signature<G>
+						| V.Declaration.Member.Method.Signature.Abstract<G>
+						| V.Declaration.Member.Method.Signature.Abstract.Private<G>
+						| V.Declaration.Member.Method.Signature.Abstract.Protected<G>
+						| V.Declaration.Member.Method.Signature.Abstract.Public<G>
+						| V.Declaration.Member.Method.Signature.Private<G>
+						| V.Declaration.Member.Method.Signature.Protected<G>
+						| V.Declaration.Member.Method.Signature.Public<G>
+						| V.Declaration.Member.Method.Signature.Public.Internal<G>
+						| V.Declaration.Member.Method.Signature.Public.Parent<G>
+						| V.Declaration.Member.Method.Signature.Public.Restricted<G>;
+				}
+				interface Special<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.member.method.special'> = 'declaration.member.method.special'
+				> extends specialMethods.Declaration.Member.Method.Special<G, K> {}
+				type Any<G extends GrammarMap> =
+					| V.Declaration.Member.Method<G>
+					| V.Declaration.Member.Method.Private<G>
+					| V.Declaration.Member.Method.Protected<G>
+					| V.Declaration.Member.Method.Public<G>
+					| V.Declaration.Member.Method.Public.Internal<G>
+					| V.Declaration.Member.Method.Public.Parent<G>
+					| V.Declaration.Member.Method.Public.Restricted<G>
+					| V.Declaration.Member.Method.Signature<G>
+					| V.Declaration.Member.Method.Signature.Abstract<G>
+					| V.Declaration.Member.Method.Signature.Abstract.Private<G>
+					| V.Declaration.Member.Method.Signature.Abstract.Protected<G>
+					| V.Declaration.Member.Method.Signature.Abstract.Public<G>
+					| V.Declaration.Member.Method.Signature.Private<G>
+					| V.Declaration.Member.Method.Signature.Protected<G>
+					| V.Declaration.Member.Method.Signature.Public<G>
+					| V.Declaration.Member.Method.Signature.Public.Internal<G>
+					| V.Declaration.Member.Method.Signature.Public.Parent<G>
+					| V.Declaration.Member.Method.Signature.Public.Restricted<G>
+					| V.Declaration.Member.Method.Special<G>;
+			}
+			interface Property<
+				G extends GrammarMap,
+				K extends gate.Under<'declaration.member.property'> = 'declaration.member.property'
+			> extends accessors.Declaration.Member.Property<G, K> {
+				readonly computed?: gate.In<
+					G,
+					features.ComputedKeys,
+					computedKeys.Declaration.Member.Property<G, K>['computed']
+				>;
+				readonly decorators?: gate.In<
+					G,
+					features.Decorators,
+					decorators.Declaration.Member.Property<G, K>['decorators']
+				>;
+				readonly definite?: gate.In<
+					G,
+					features.NonNullAssertions,
+					nonNullAssertions.Declaration.Member.Property<G, K>['definite']
+				>;
+				readonly optionality?: gate.In<
+					G,
+					features.OptionalMembers,
+					optionalMembers.Declaration.Member.Property<G, K>['optionality']
+				>;
+				readonly override?: gate.In<
+					G,
+					features.ExplicitOverrides,
+					explicitOverrides.Declaration.Member.Property<G, K>['override']
+				>;
+				readonly privateName?: gate.In<
+					G,
+					features.FieldEncapsulation,
+					fieldEncapsulation.Declaration.Member.Property<G, K>['privateName']
+				>;
+				readonly static?: gate.In<
+					G,
+					features.JavaScriptClasses,
+					javascriptClasses.Declaration.Member.Property<G, K>['static']
+				>;
+				readonly type?: gate.In<
+					G,
+					features.AccessorAnnotations,
+					accessorAnnotations.Declaration.Member.Property<G, K>['type']
+				>;
+			}
+			namespace Property {
+				interface Getter<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.member.property.getter'> = 'declaration.member.property.getter'
+				> extends accessors.Declaration.Member.Property.Getter<G, K> {}
+				namespace Getter {
+					interface Private<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.property.getter.private'> =
+							'declaration.member.property.getter.private'
+					> extends classVisibility.Declaration.Member.Property.Getter.Private<G, K> {}
+					interface Protected<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.property.getter.protected'> =
+							'declaration.member.property.getter.protected'
+					> extends classVisibility.Declaration.Member.Property.Getter.Protected<G, K> {}
+					interface Public<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.property.getter.public'> =
+							'declaration.member.property.getter.public'
+					> extends classVisibility.Declaration.Member.Property.Getter.Public<G, K> {}
+					type Any<G extends GrammarMap> =
+						| V.Declaration.Member.Property.Getter<G>
+						| V.Declaration.Member.Property.Getter.Private<G>
+						| V.Declaration.Member.Property.Getter.Protected<G>
+						| V.Declaration.Member.Property.Getter.Public<G>;
+				}
+				interface Private<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.member.property.private'> = 'declaration.member.property.private'
+				> extends classVisibility.Declaration.Member.Property.Private<G, K> {}
+				interface Protected<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.member.property.protected'> = 'declaration.member.property.protected'
+				> extends classVisibility.Declaration.Member.Property.Protected<G, K> {}
+				interface Public<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.member.property.public'> = 'declaration.member.property.public'
+				> extends classVisibility.Declaration.Member.Property.Public<G, K> {}
+				interface Setter<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.member.property.setter'> = 'declaration.member.property.setter'
+				> extends accessors.Declaration.Member.Property.Setter<G, K> {}
+				namespace Setter {
+					interface Private<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.property.setter.private'> =
+							'declaration.member.property.setter.private'
+					> extends classVisibility.Declaration.Member.Property.Setter.Private<G, K> {}
+					interface Protected<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.property.setter.protected'> =
+							'declaration.member.property.setter.protected'
+					> extends classVisibility.Declaration.Member.Property.Setter.Protected<G, K> {}
+					interface Public<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.property.setter.public'> =
+							'declaration.member.property.setter.public'
+					> extends classVisibility.Declaration.Member.Property.Setter.Public<G, K> {}
+					type Any<G extends GrammarMap> =
+						| V.Declaration.Member.Property.Setter<G>
+						| V.Declaration.Member.Property.Setter.Private<G>
+						| V.Declaration.Member.Property.Setter.Protected<G>
+						| V.Declaration.Member.Property.Setter.Public<G>;
+				}
+				interface Signature<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.member.property.signature'> = 'declaration.member.property.signature'
+				> extends accessorSignatures.Declaration.Member.Property.Signature<G, K> {}
+				namespace Signature {
+					interface Abstract<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.property.signature.abstract'> =
+							'declaration.member.property.signature.abstract'
+					> extends accessorSignatures.Declaration.Member.Property.Signature.Abstract<G, K> {}
+					namespace Abstract {
+						interface Getter<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.member.property.signature.abstract.getter'> =
+								'declaration.member.property.signature.abstract.getter'
+						> extends accessorSignatures.Declaration.Member.Property.Signature.Abstract.Getter<G, K> {}
+						namespace Getter {
+							interface Private<
+								G extends GrammarMap,
+								K extends gate.Under<'declaration.member.property.signature.abstract.getter.private'> =
+									'declaration.member.property.signature.abstract.getter.private'
+							> extends classVisibility.Declaration.Member.Property.Signature.Abstract.Getter.Private<G, K> {}
+							interface Protected<
+								G extends GrammarMap,
+								K extends gate.Under<'declaration.member.property.signature.abstract.getter.protected'> =
+									'declaration.member.property.signature.abstract.getter.protected'
+							> extends classVisibility.Declaration.Member.Property.Signature.Abstract.Getter.Protected<G, K> {}
+							interface Public<
+								G extends GrammarMap,
+								K extends gate.Under<'declaration.member.property.signature.abstract.getter.public'> =
+									'declaration.member.property.signature.abstract.getter.public'
+							> extends classVisibility.Declaration.Member.Property.Signature.Abstract.Getter.Public<G, K> {}
+							type Any<G extends GrammarMap> =
+								| V.Declaration.Member.Property.Signature.Abstract.Getter<G>
+								| V.Declaration.Member.Property.Signature.Abstract.Getter.Private<G>
+								| V.Declaration.Member.Property.Signature.Abstract.Getter.Protected<G>
+								| V.Declaration.Member.Property.Signature.Abstract.Getter.Public<G>;
+						}
+						interface Setter<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.member.property.signature.abstract.setter'> =
+								'declaration.member.property.signature.abstract.setter'
+						> extends accessorSignatures.Declaration.Member.Property.Signature.Abstract.Setter<G, K> {}
+						namespace Setter {
+							interface Private<
+								G extends GrammarMap,
+								K extends gate.Under<'declaration.member.property.signature.abstract.setter.private'> =
+									'declaration.member.property.signature.abstract.setter.private'
+							> extends classVisibility.Declaration.Member.Property.Signature.Abstract.Setter.Private<G, K> {}
+							interface Protected<
+								G extends GrammarMap,
+								K extends gate.Under<'declaration.member.property.signature.abstract.setter.protected'> =
+									'declaration.member.property.signature.abstract.setter.protected'
+							> extends classVisibility.Declaration.Member.Property.Signature.Abstract.Setter.Protected<G, K> {}
+							interface Public<
+								G extends GrammarMap,
+								K extends gate.Under<'declaration.member.property.signature.abstract.setter.public'> =
+									'declaration.member.property.signature.abstract.setter.public'
+							> extends classVisibility.Declaration.Member.Property.Signature.Abstract.Setter.Public<G, K> {}
+							type Any<G extends GrammarMap> =
+								| V.Declaration.Member.Property.Signature.Abstract.Setter<G>
+								| V.Declaration.Member.Property.Signature.Abstract.Setter.Private<G>
+								| V.Declaration.Member.Property.Signature.Abstract.Setter.Protected<G>
+								| V.Declaration.Member.Property.Signature.Abstract.Setter.Public<G>;
+						}
+						type Any<G extends GrammarMap> =
+							| V.Declaration.Member.Property.Signature.Abstract<G>
+							| V.Declaration.Member.Property.Signature.Abstract.Getter<G>
+							| V.Declaration.Member.Property.Signature.Abstract.Getter.Private<G>
+							| V.Declaration.Member.Property.Signature.Abstract.Getter.Protected<G>
+							| V.Declaration.Member.Property.Signature.Abstract.Getter.Public<G>
+							| V.Declaration.Member.Property.Signature.Abstract.Setter<G>
+							| V.Declaration.Member.Property.Signature.Abstract.Setter.Private<G>
+							| V.Declaration.Member.Property.Signature.Abstract.Setter.Protected<G>
+							| V.Declaration.Member.Property.Signature.Abstract.Setter.Public<G>;
+					}
+					interface Getter<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.property.signature.getter'> =
+							'declaration.member.property.signature.getter'
+					> extends accessorSignatures.Declaration.Member.Property.Signature.Getter<G, K> {}
+					namespace Getter {
+						interface Private<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.member.property.signature.getter.private'> =
+								'declaration.member.property.signature.getter.private'
+						> extends classVisibility.Declaration.Member.Property.Signature.Getter.Private<G, K> {}
+						interface Protected<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.member.property.signature.getter.protected'> =
+								'declaration.member.property.signature.getter.protected'
+						> extends classVisibility.Declaration.Member.Property.Signature.Getter.Protected<G, K> {}
+						interface Public<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.member.property.signature.getter.public'> =
+								'declaration.member.property.signature.getter.public'
+						> extends classVisibility.Declaration.Member.Property.Signature.Getter.Public<G, K> {}
+						type Any<G extends GrammarMap> =
+							| V.Declaration.Member.Property.Signature.Getter<G>
+							| V.Declaration.Member.Property.Signature.Getter.Private<G>
+							| V.Declaration.Member.Property.Signature.Getter.Protected<G>
+							| V.Declaration.Member.Property.Signature.Getter.Public<G>;
+					}
+					interface Setter<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.member.property.signature.setter'> =
+							'declaration.member.property.signature.setter'
+					> extends accessorSignatures.Declaration.Member.Property.Signature.Setter<G, K> {}
+					namespace Setter {
+						interface Private<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.member.property.signature.setter.private'> =
+								'declaration.member.property.signature.setter.private'
+						> extends classVisibility.Declaration.Member.Property.Signature.Setter.Private<G, K> {}
+						interface Protected<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.member.property.signature.setter.protected'> =
+								'declaration.member.property.signature.setter.protected'
+						> extends classVisibility.Declaration.Member.Property.Signature.Setter.Protected<G, K> {}
+						interface Public<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.member.property.signature.setter.public'> =
+								'declaration.member.property.signature.setter.public'
+						> extends classVisibility.Declaration.Member.Property.Signature.Setter.Public<G, K> {}
+						type Any<G extends GrammarMap> =
+							| V.Declaration.Member.Property.Signature.Setter<G>
+							| V.Declaration.Member.Property.Signature.Setter.Private<G>
+							| V.Declaration.Member.Property.Signature.Setter.Protected<G>
+							| V.Declaration.Member.Property.Signature.Setter.Public<G>;
+					}
+					type Any<G extends GrammarMap> =
+						| V.Declaration.Member.Property.Signature<G>
+						| V.Declaration.Member.Property.Signature.Abstract<G>
+						| V.Declaration.Member.Property.Signature.Abstract.Getter<G>
+						| V.Declaration.Member.Property.Signature.Abstract.Getter.Private<G>
+						| V.Declaration.Member.Property.Signature.Abstract.Getter.Protected<G>
+						| V.Declaration.Member.Property.Signature.Abstract.Getter.Public<G>
+						| V.Declaration.Member.Property.Signature.Abstract.Setter<G>
+						| V.Declaration.Member.Property.Signature.Abstract.Setter.Private<G>
+						| V.Declaration.Member.Property.Signature.Abstract.Setter.Protected<G>
+						| V.Declaration.Member.Property.Signature.Abstract.Setter.Public<G>
+						| V.Declaration.Member.Property.Signature.Getter<G>
+						| V.Declaration.Member.Property.Signature.Getter.Private<G>
+						| V.Declaration.Member.Property.Signature.Getter.Protected<G>
+						| V.Declaration.Member.Property.Signature.Getter.Public<G>
+						| V.Declaration.Member.Property.Signature.Setter<G>
+						| V.Declaration.Member.Property.Signature.Setter.Private<G>
+						| V.Declaration.Member.Property.Signature.Setter.Protected<G>
+						| V.Declaration.Member.Property.Signature.Setter.Public<G>;
+				}
+				type Any<G extends GrammarMap> =
+					| V.Declaration.Member.Property<G>
+					| V.Declaration.Member.Property.Getter<G>
+					| V.Declaration.Member.Property.Getter.Private<G>
+					| V.Declaration.Member.Property.Getter.Protected<G>
+					| V.Declaration.Member.Property.Getter.Public<G>
+					| V.Declaration.Member.Property.Private<G>
+					| V.Declaration.Member.Property.Protected<G>
+					| V.Declaration.Member.Property.Public<G>
+					| V.Declaration.Member.Property.Setter<G>
+					| V.Declaration.Member.Property.Setter.Private<G>
+					| V.Declaration.Member.Property.Setter.Protected<G>
+					| V.Declaration.Member.Property.Setter.Public<G>
+					| V.Declaration.Member.Property.Signature<G>
+					| V.Declaration.Member.Property.Signature.Abstract<G>
+					| V.Declaration.Member.Property.Signature.Abstract.Getter<G>
+					| V.Declaration.Member.Property.Signature.Abstract.Getter.Private<G>
+					| V.Declaration.Member.Property.Signature.Abstract.Getter.Protected<G>
+					| V.Declaration.Member.Property.Signature.Abstract.Getter.Public<G>
+					| V.Declaration.Member.Property.Signature.Abstract.Setter<G>
+					| V.Declaration.Member.Property.Signature.Abstract.Setter.Private<G>
+					| V.Declaration.Member.Property.Signature.Abstract.Setter.Protected<G>
+					| V.Declaration.Member.Property.Signature.Abstract.Setter.Public<G>
+					| V.Declaration.Member.Property.Signature.Getter<G>
+					| V.Declaration.Member.Property.Signature.Getter.Private<G>
+					| V.Declaration.Member.Property.Signature.Getter.Protected<G>
+					| V.Declaration.Member.Property.Signature.Getter.Public<G>
+					| V.Declaration.Member.Property.Signature.Setter<G>
+					| V.Declaration.Member.Property.Signature.Setter.Private<G>
+					| V.Declaration.Member.Property.Signature.Setter.Protected<G>
+					| V.Declaration.Member.Property.Signature.Setter.Public<G>;
+			}
+			interface Signature<
+				G extends GrammarMap,
+				K extends gate.Under<'declaration.member.signature'> = 'declaration.member.signature'
+			> extends structuralConformance.Declaration.Member.Signature<G, K> {}
+			namespace Signature {
+				interface Call<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.member.signature.call'> = 'declaration.member.signature.call'
+				> extends structuralConformance.Declaration.Member.Signature.Call<G, K> {
+					readonly receiver?: gate.In<
+						G,
+						features.TypedReceivers,
+						typedReceivers.Declaration.Member.Signature.Call<G, K>['receiver']
 					>;
 					readonly typeParameters?: gate.In<
 						G,
 						features.GenericExpressions,
-						genericExpressions.Declaration.Method.Signature.Abstract<G, K>['typeParameters']
+						genericExpressions.Declaration.Member.Signature.Call<G, K>['typeParameters']
 					>;
 				}
-				namespace Abstract {
-					interface Private<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.method.signature.abstract.private'> =
-							'declaration.method.signature.abstract.private'
-					> extends classVisibility.Declaration.Method.Signature.Abstract.Private<G, K> {}
-					interface Protected<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.method.signature.abstract.protected'> =
-							'declaration.method.signature.abstract.protected'
-					> extends classVisibility.Declaration.Method.Signature.Abstract.Protected<G, K> {}
-					interface Public<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.method.signature.abstract.public'> =
-							'declaration.method.signature.abstract.public'
-					> extends classVisibility.Declaration.Method.Signature.Abstract.Public<G, K> {}
-					type Any<G extends GrammarMap> =
-						| V.Declaration.Method.Signature.Abstract<G>
-						| V.Declaration.Method.Signature.Abstract.Private<G>
-						| V.Declaration.Method.Signature.Abstract.Protected<G>
-						| V.Declaration.Method.Signature.Abstract.Public<G>;
+				interface Construct<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.member.signature.construct'> = 'declaration.member.signature.construct'
+				> extends structuralConformance.Declaration.Member.Signature.Construct<G, K> {
+					readonly abstract?: gate.In<
+						G,
+						features.AbstractClasses,
+						abstractClasses.Declaration.Member.Signature.Construct<G, K>['abstract']
+					>;
+					readonly typeParameters?: gate.In<
+						G,
+						features.GenericExpressions,
+						genericExpressions.Declaration.Member.Signature.Construct<G, K>['typeParameters']
+					>;
 				}
-				interface Private<
+				interface Index<
 					G extends GrammarMap,
-					K extends gate.Under<'declaration.method.signature.private'> = 'declaration.method.signature.private'
-				> extends visibility.Declaration.Method.Signature.Private<G, K> {}
-				interface Protected<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.method.signature.protected'> = 'declaration.method.signature.protected'
-				> extends classVisibility.Declaration.Method.Signature.Protected<G, K> {}
-				interface Public<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.method.signature.public'> = 'declaration.method.signature.public'
-				> extends visibility.Declaration.Method.Signature.Public<G, K> {}
-				namespace Public {
-					interface Internal<
+					K extends gate.Under<'declaration.member.signature.index'> = 'declaration.member.signature.index'
+				> extends structuralConformance.Declaration.Member.Signature.Index<G, K> {}
+				namespace Index {
+					interface Mapped<
 						G extends GrammarMap,
-						K extends gate.Under<'declaration.method.signature.public.internal'> =
-							'declaration.method.signature.public.internal'
-					> extends moduleVisibility.Declaration.Method.Signature.Public.Internal<G, K> {}
-					interface Parent<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.method.signature.public.parent'> =
-							'declaration.method.signature.public.parent'
-					> extends moduleVisibility.Declaration.Method.Signature.Public.Parent<G, K> {}
-					interface Restricted<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.method.signature.public.restricted'> =
-							'declaration.method.signature.public.restricted'
-					> extends moduleVisibility.Declaration.Method.Signature.Public.Restricted<G, K> {}
+						K extends gate.Under<'declaration.member.signature.index.mapped'> =
+							'declaration.member.signature.index.mapped'
+					> extends structuralConformance.Declaration.Member.Signature.Index.Mapped<G, K> {}
 					type Any<G extends GrammarMap> =
-						| V.Declaration.Method.Signature.Public<G>
-						| V.Declaration.Method.Signature.Public.Internal<G>
-						| V.Declaration.Method.Signature.Public.Parent<G>
-						| V.Declaration.Method.Signature.Public.Restricted<G>;
+						| V.Declaration.Member.Signature.Index<G>
+						| V.Declaration.Member.Signature.Index.Mapped<G>;
 				}
 				type Any<G extends GrammarMap> =
-					| V.Declaration.Method.Signature<G>
-					| V.Declaration.Method.Signature.Abstract<G>
-					| V.Declaration.Method.Signature.Abstract.Private<G>
-					| V.Declaration.Method.Signature.Abstract.Protected<G>
-					| V.Declaration.Method.Signature.Abstract.Public<G>
-					| V.Declaration.Method.Signature.Private<G>
-					| V.Declaration.Method.Signature.Protected<G>
-					| V.Declaration.Method.Signature.Public<G>
-					| V.Declaration.Method.Signature.Public.Internal<G>
-					| V.Declaration.Method.Signature.Public.Parent<G>
-					| V.Declaration.Method.Signature.Public.Restricted<G>;
+					| V.Declaration.Member.Signature<G>
+					| V.Declaration.Member.Signature.Call<G>
+					| V.Declaration.Member.Signature.Construct<G>
+					| V.Declaration.Member.Signature.Index<G>
+					| V.Declaration.Member.Signature.Index.Mapped<G>;
 			}
-			interface Special<
+			interface StaticBlock<
 				G extends GrammarMap,
-				K extends gate.Under<'declaration.method.special'> = 'declaration.method.special'
-			> extends specialMethods.Declaration.Method.Special<G, K> {}
+				K extends gate.Under<'declaration.member.static_block'> = 'declaration.member.static_block'
+			> extends javascriptClasses.Declaration.Member.StaticBlock<G, K> {}
+			type Type<G extends GrammarMap> = gate.In<G, features.NestedTypes, V.Declaration.Type.Any<G>>;
+			type TypeAlias<G extends GrammarMap> = gate.In<G, features.AssociatedTypes, V.Declaration.Type.TypeAlias.Any<G>>;
 			type Any<G extends GrammarMap> =
-				| V.Declaration.Method<G>
-				| V.Declaration.Method.Private<G>
-				| V.Declaration.Method.Protected<G>
-				| V.Declaration.Method.Public<G>
-				| V.Declaration.Method.Public.Internal<G>
-				| V.Declaration.Method.Public.Parent<G>
-				| V.Declaration.Method.Public.Restricted<G>
-				| V.Declaration.Method.Signature<G>
-				| V.Declaration.Method.Signature.Abstract<G>
-				| V.Declaration.Method.Signature.Abstract.Private<G>
-				| V.Declaration.Method.Signature.Abstract.Protected<G>
-				| V.Declaration.Method.Signature.Abstract.Public<G>
-				| V.Declaration.Method.Signature.Private<G>
-				| V.Declaration.Method.Signature.Protected<G>
-				| V.Declaration.Method.Signature.Public<G>
-				| V.Declaration.Method.Signature.Public.Internal<G>
-				| V.Declaration.Method.Signature.Public.Parent<G>
-				| V.Declaration.Method.Signature.Public.Restricted<G>
-				| V.Declaration.Method.Special<G>;
+				| V.Declaration.Member.Attribute<G>
+				| V.Declaration.Member.Constant<G>
+				| V.Declaration.Member.Constructor<G>
+				| V.Declaration.Member.Constructor.Private<G>
+				| V.Declaration.Member.Constructor.Protected<G>
+				| V.Declaration.Member.Constructor.Public<G>
+				| V.Declaration.Member.EnumMember<G>
+				| V.Declaration.Member.EnumMember.Private<G>
+				| V.Declaration.Member.EnumMember.Public<G>
+				| V.Declaration.Member.EnumMember.Public.Internal<G>
+				| V.Declaration.Member.EnumMember.Public.Parent<G>
+				| V.Declaration.Member.EnumMember.Public.Restricted<G>
+				| V.Declaration.Member.EnumMember.Struct<G>
+				| V.Declaration.Member.EnumMember.Struct.Private<G>
+				| V.Declaration.Member.EnumMember.Struct.Public<G>
+				| V.Declaration.Member.EnumMember.Struct.Public.Internal<G>
+				| V.Declaration.Member.EnumMember.Struct.Public.Parent<G>
+				| V.Declaration.Member.EnumMember.Struct.Public.Restricted<G>
+				| V.Declaration.Member.EnumMember.Tuple<G>
+				| V.Declaration.Member.EnumMember.Tuple.Private<G>
+				| V.Declaration.Member.EnumMember.Tuple.Public<G>
+				| V.Declaration.Member.EnumMember.Tuple.Public.Internal<G>
+				| V.Declaration.Member.EnumMember.Tuple.Public.Parent<G>
+				| V.Declaration.Member.EnumMember.Tuple.Public.Restricted<G>
+				| V.Declaration.Member.Field<G>
+				| V.Declaration.Member.Field.Private<G>
+				| V.Declaration.Member.Field.Protected<G>
+				| V.Declaration.Member.Field.Public<G>
+				| V.Declaration.Member.Field.Public.Internal<G>
+				| V.Declaration.Member.Field.Public.Parent<G>
+				| V.Declaration.Member.Field.Public.Restricted<G>
+				| V.Declaration.Member.Field.Signature<G>
+				| V.Declaration.Member.Field.Signature.Private<G>
+				| V.Declaration.Member.Field.Signature.Protected<G>
+				| V.Declaration.Member.Field.Signature.Public<G>
+				| V.Declaration.Member.Macro<G>
+				| V.Declaration.Member.Method<G>
+				| V.Declaration.Member.Method.Private<G>
+				| V.Declaration.Member.Method.Protected<G>
+				| V.Declaration.Member.Method.Public<G>
+				| V.Declaration.Member.Method.Public.Internal<G>
+				| V.Declaration.Member.Method.Public.Parent<G>
+				| V.Declaration.Member.Method.Public.Restricted<G>
+				| V.Declaration.Member.Method.Signature<G>
+				| V.Declaration.Member.Method.Signature.Abstract<G>
+				| V.Declaration.Member.Method.Signature.Abstract.Private<G>
+				| V.Declaration.Member.Method.Signature.Abstract.Protected<G>
+				| V.Declaration.Member.Method.Signature.Abstract.Public<G>
+				| V.Declaration.Member.Method.Signature.Private<G>
+				| V.Declaration.Member.Method.Signature.Protected<G>
+				| V.Declaration.Member.Method.Signature.Public<G>
+				| V.Declaration.Member.Method.Signature.Public.Internal<G>
+				| V.Declaration.Member.Method.Signature.Public.Parent<G>
+				| V.Declaration.Member.Method.Signature.Public.Restricted<G>
+				| V.Declaration.Member.Method.Special<G>
+				| V.Declaration.Member.Property<G>
+				| V.Declaration.Member.Property.Getter<G>
+				| V.Declaration.Member.Property.Getter.Private<G>
+				| V.Declaration.Member.Property.Getter.Protected<G>
+				| V.Declaration.Member.Property.Getter.Public<G>
+				| V.Declaration.Member.Property.Private<G>
+				| V.Declaration.Member.Property.Protected<G>
+				| V.Declaration.Member.Property.Public<G>
+				| V.Declaration.Member.Property.Setter<G>
+				| V.Declaration.Member.Property.Setter.Private<G>
+				| V.Declaration.Member.Property.Setter.Protected<G>
+				| V.Declaration.Member.Property.Setter.Public<G>
+				| V.Declaration.Member.Property.Signature<G>
+				| V.Declaration.Member.Property.Signature.Abstract<G>
+				| V.Declaration.Member.Property.Signature.Abstract.Getter<G>
+				| V.Declaration.Member.Property.Signature.Abstract.Getter.Private<G>
+				| V.Declaration.Member.Property.Signature.Abstract.Getter.Protected<G>
+				| V.Declaration.Member.Property.Signature.Abstract.Getter.Public<G>
+				| V.Declaration.Member.Property.Signature.Abstract.Setter<G>
+				| V.Declaration.Member.Property.Signature.Abstract.Setter.Private<G>
+				| V.Declaration.Member.Property.Signature.Abstract.Setter.Protected<G>
+				| V.Declaration.Member.Property.Signature.Abstract.Setter.Public<G>
+				| V.Declaration.Member.Property.Signature.Getter<G>
+				| V.Declaration.Member.Property.Signature.Getter.Private<G>
+				| V.Declaration.Member.Property.Signature.Getter.Protected<G>
+				| V.Declaration.Member.Property.Signature.Getter.Public<G>
+				| V.Declaration.Member.Property.Signature.Setter<G>
+				| V.Declaration.Member.Property.Signature.Setter.Private<G>
+				| V.Declaration.Member.Property.Signature.Setter.Protected<G>
+				| V.Declaration.Member.Property.Signature.Setter.Public<G>
+				| V.Declaration.Member.Signature<G>
+				| V.Declaration.Member.Signature.Call<G>
+				| V.Declaration.Member.Signature.Construct<G>
+				| V.Declaration.Member.Signature.Index<G>
+				| V.Declaration.Member.Signature.Index.Mapped<G>
+				| V.Declaration.Member.StaticBlock<G>
+				| V.Declaration.Member.Type<G>
+				| V.Declaration.Member.TypeAlias<G>;
 		}
 		interface Module<
 			G extends GrammarMap,
@@ -1597,6 +2015,7 @@ declare module './declaration.ts' {
 					defaultParameterForms.Declaration.Parameter.Defaulted<G, K>['default']
 				>;
 			}
+			type Identifier<G extends GrammarMap> = gate.In<G, features.PythonDeclarations, V.Identifier.Any<G>>;
 			interface Private<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.parameter.private'> = 'declaration.parameter.private'
@@ -1625,6 +2044,8 @@ declare module './declaration.ts' {
 					references.Declaration.Parameter.Receiver<G, K>['reference']
 				>;
 			}
+			type Rest<G extends GrammarMap> = gate.In<G, features.PythonDeclarations, V.Pattern.Rest.Any<G>>;
+			type Tuple<G extends GrammarMap> = gate.In<G, features.PythonDeclarations, V.Pattern.Tuple.Any<G>>;
 			interface Typed<
 				G extends GrammarMap,
 				K extends gate.Under<'declaration.parameter.typed'> = 'declaration.parameter.typed'
@@ -1659,536 +2080,492 @@ declare module './declaration.ts' {
 			type Any<G extends GrammarMap> =
 				| V.Declaration.Parameter<G>
 				| V.Declaration.Parameter.Defaulted<G>
+				| V.Declaration.Parameter.Identifier<G>
 				| V.Declaration.Parameter.Private<G>
 				| V.Declaration.Parameter.Protected<G>
 				| V.Declaration.Parameter.Public<G>
 				| V.Declaration.Parameter.Receiver<G>
+				| V.Declaration.Parameter.Rest<G>
+				| V.Declaration.Parameter.Tuple<G>
 				| V.Declaration.Parameter.Typed<G>
 				| V.Declaration.Parameter.TypedDefault<G>
 				| V.Declaration.Parameter.Variadic<G>;
 		}
-		interface Property<
-			G extends GrammarMap,
-			K extends gate.Under<'declaration.property'> = 'declaration.property'
-		> extends accessors.Declaration.Property<G, K> {
-			readonly computed?: gate.In<G, features.ComputedKeys, computedKeys.Declaration.Property<G, K>['computed']>;
-			readonly decorators?: gate.In<G, features.Decorators, decorators.Declaration.Property<G, K>['decorators']>;
-			readonly definite?: gate.In<
-				G,
-				features.NonNullAssertions,
-				nonNullAssertions.Declaration.Property<G, K>['definite']
-			>;
-			readonly optionality?: gate.In<
-				G,
-				features.OptionalMembers,
-				optionalMembers.Declaration.Property<G, K>['optionality']
-			>;
-			readonly override?: gate.In<
-				G,
-				features.ExplicitOverrides,
-				explicitOverrides.Declaration.Property<G, K>['override']
-			>;
-			readonly privateName?: gate.In<
-				G,
-				features.FieldEncapsulation,
-				fieldEncapsulation.Declaration.Property<G, K>['privateName']
-			>;
-			readonly static?: gate.In<G, features.JavaScriptClasses, javascriptClasses.Declaration.Property<G, K>['static']>;
-			readonly type?: gate.In<G, features.AccessorAnnotations, accessorAnnotations.Declaration.Property<G, K>['type']>;
-		}
-		namespace Property {
-			interface Getter<
+		namespace Type {
+			interface Class<
 				G extends GrammarMap,
-				K extends gate.Under<'declaration.property.getter'> = 'declaration.property.getter'
-			> extends accessors.Declaration.Property.Getter<G, K> {}
-			namespace Getter {
-				interface Private<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.property.getter.private'> = 'declaration.property.getter.private'
-				> extends classVisibility.Declaration.Property.Getter.Private<G, K> {}
-				interface Protected<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.property.getter.protected'> = 'declaration.property.getter.protected'
-				> extends classVisibility.Declaration.Property.Getter.Protected<G, K> {}
-				interface Public<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.property.getter.public'> = 'declaration.property.getter.public'
-				> extends classVisibility.Declaration.Property.Getter.Public<G, K> {}
-				type Any<G extends GrammarMap> =
-					| V.Declaration.Property.Getter<G>
-					| V.Declaration.Property.Getter.Private<G>
-					| V.Declaration.Property.Getter.Protected<G>
-					| V.Declaration.Property.Getter.Public<G>;
-			}
-			interface Private<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.property.private'> = 'declaration.property.private'
-			> extends classVisibility.Declaration.Property.Private<G, K> {}
-			interface Protected<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.property.protected'> = 'declaration.property.protected'
-			> extends classVisibility.Declaration.Property.Protected<G, K> {}
-			interface Public<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.property.public'> = 'declaration.property.public'
-			> extends classVisibility.Declaration.Property.Public<G, K> {}
-			interface Setter<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.property.setter'> = 'declaration.property.setter'
-			> extends accessors.Declaration.Property.Setter<G, K> {}
-			namespace Setter {
-				interface Private<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.property.setter.private'> = 'declaration.property.setter.private'
-				> extends classVisibility.Declaration.Property.Setter.Private<G, K> {}
-				interface Protected<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.property.setter.protected'> = 'declaration.property.setter.protected'
-				> extends classVisibility.Declaration.Property.Setter.Protected<G, K> {}
-				interface Public<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.property.setter.public'> = 'declaration.property.setter.public'
-				> extends classVisibility.Declaration.Property.Setter.Public<G, K> {}
-				type Any<G extends GrammarMap> =
-					| V.Declaration.Property.Setter<G>
-					| V.Declaration.Property.Setter.Private<G>
-					| V.Declaration.Property.Setter.Protected<G>
-					| V.Declaration.Property.Setter.Public<G>;
-			}
-			interface Signature<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.property.signature'> = 'declaration.property.signature'
-			> extends accessorSignatures.Declaration.Property.Signature<G, K> {}
-			namespace Signature {
-				interface Abstract<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.property.signature.abstract'> = 'declaration.property.signature.abstract'
-				> extends accessorSignatures.Declaration.Property.Signature.Abstract<G, K> {}
-				namespace Abstract {
-					interface Getter<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.property.signature.abstract.getter'> =
-							'declaration.property.signature.abstract.getter'
-					> extends accessorSignatures.Declaration.Property.Signature.Abstract.Getter<G, K> {}
-					namespace Getter {
-						interface Private<
-							G extends GrammarMap,
-							K extends gate.Under<'declaration.property.signature.abstract.getter.private'> =
-								'declaration.property.signature.abstract.getter.private'
-						> extends classVisibility.Declaration.Property.Signature.Abstract.Getter.Private<G, K> {}
-						interface Protected<
-							G extends GrammarMap,
-							K extends gate.Under<'declaration.property.signature.abstract.getter.protected'> =
-								'declaration.property.signature.abstract.getter.protected'
-						> extends classVisibility.Declaration.Property.Signature.Abstract.Getter.Protected<G, K> {}
-						interface Public<
-							G extends GrammarMap,
-							K extends gate.Under<'declaration.property.signature.abstract.getter.public'> =
-								'declaration.property.signature.abstract.getter.public'
-						> extends classVisibility.Declaration.Property.Signature.Abstract.Getter.Public<G, K> {}
-						type Any<G extends GrammarMap> =
-							| V.Declaration.Property.Signature.Abstract.Getter<G>
-							| V.Declaration.Property.Signature.Abstract.Getter.Private<G>
-							| V.Declaration.Property.Signature.Abstract.Getter.Protected<G>
-							| V.Declaration.Property.Signature.Abstract.Getter.Public<G>;
-					}
-					interface Setter<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.property.signature.abstract.setter'> =
-							'declaration.property.signature.abstract.setter'
-					> extends accessorSignatures.Declaration.Property.Signature.Abstract.Setter<G, K> {}
-					namespace Setter {
-						interface Private<
-							G extends GrammarMap,
-							K extends gate.Under<'declaration.property.signature.abstract.setter.private'> =
-								'declaration.property.signature.abstract.setter.private'
-						> extends classVisibility.Declaration.Property.Signature.Abstract.Setter.Private<G, K> {}
-						interface Protected<
-							G extends GrammarMap,
-							K extends gate.Under<'declaration.property.signature.abstract.setter.protected'> =
-								'declaration.property.signature.abstract.setter.protected'
-						> extends classVisibility.Declaration.Property.Signature.Abstract.Setter.Protected<G, K> {}
-						interface Public<
-							G extends GrammarMap,
-							K extends gate.Under<'declaration.property.signature.abstract.setter.public'> =
-								'declaration.property.signature.abstract.setter.public'
-						> extends classVisibility.Declaration.Property.Signature.Abstract.Setter.Public<G, K> {}
-						type Any<G extends GrammarMap> =
-							| V.Declaration.Property.Signature.Abstract.Setter<G>
-							| V.Declaration.Property.Signature.Abstract.Setter.Private<G>
-							| V.Declaration.Property.Signature.Abstract.Setter.Protected<G>
-							| V.Declaration.Property.Signature.Abstract.Setter.Public<G>;
-					}
-					type Any<G extends GrammarMap> =
-						| V.Declaration.Property.Signature.Abstract<G>
-						| V.Declaration.Property.Signature.Abstract.Getter<G>
-						| V.Declaration.Property.Signature.Abstract.Getter.Private<G>
-						| V.Declaration.Property.Signature.Abstract.Getter.Protected<G>
-						| V.Declaration.Property.Signature.Abstract.Getter.Public<G>
-						| V.Declaration.Property.Signature.Abstract.Setter<G>
-						| V.Declaration.Property.Signature.Abstract.Setter.Private<G>
-						| V.Declaration.Property.Signature.Abstract.Setter.Protected<G>
-						| V.Declaration.Property.Signature.Abstract.Setter.Public<G>;
-				}
-				interface Getter<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.property.signature.getter'> = 'declaration.property.signature.getter'
-				> extends accessorSignatures.Declaration.Property.Signature.Getter<G, K> {}
-				namespace Getter {
-					interface Private<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.property.signature.getter.private'> =
-							'declaration.property.signature.getter.private'
-					> extends classVisibility.Declaration.Property.Signature.Getter.Private<G, K> {}
-					interface Protected<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.property.signature.getter.protected'> =
-							'declaration.property.signature.getter.protected'
-					> extends classVisibility.Declaration.Property.Signature.Getter.Protected<G, K> {}
-					interface Public<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.property.signature.getter.public'> =
-							'declaration.property.signature.getter.public'
-					> extends classVisibility.Declaration.Property.Signature.Getter.Public<G, K> {}
-					type Any<G extends GrammarMap> =
-						| V.Declaration.Property.Signature.Getter<G>
-						| V.Declaration.Property.Signature.Getter.Private<G>
-						| V.Declaration.Property.Signature.Getter.Protected<G>
-						| V.Declaration.Property.Signature.Getter.Public<G>;
-				}
-				interface Setter<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.property.signature.setter'> = 'declaration.property.signature.setter'
-				> extends accessorSignatures.Declaration.Property.Signature.Setter<G, K> {}
-				namespace Setter {
-					interface Private<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.property.signature.setter.private'> =
-							'declaration.property.signature.setter.private'
-					> extends classVisibility.Declaration.Property.Signature.Setter.Private<G, K> {}
-					interface Protected<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.property.signature.setter.protected'> =
-							'declaration.property.signature.setter.protected'
-					> extends classVisibility.Declaration.Property.Signature.Setter.Protected<G, K> {}
-					interface Public<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.property.signature.setter.public'> =
-							'declaration.property.signature.setter.public'
-					> extends classVisibility.Declaration.Property.Signature.Setter.Public<G, K> {}
-					type Any<G extends GrammarMap> =
-						| V.Declaration.Property.Signature.Setter<G>
-						| V.Declaration.Property.Signature.Setter.Private<G>
-						| V.Declaration.Property.Signature.Setter.Protected<G>
-						| V.Declaration.Property.Signature.Setter.Public<G>;
-				}
-				type Any<G extends GrammarMap> =
-					| V.Declaration.Property.Signature<G>
-					| V.Declaration.Property.Signature.Abstract<G>
-					| V.Declaration.Property.Signature.Abstract.Getter<G>
-					| V.Declaration.Property.Signature.Abstract.Getter.Private<G>
-					| V.Declaration.Property.Signature.Abstract.Getter.Protected<G>
-					| V.Declaration.Property.Signature.Abstract.Getter.Public<G>
-					| V.Declaration.Property.Signature.Abstract.Setter<G>
-					| V.Declaration.Property.Signature.Abstract.Setter.Private<G>
-					| V.Declaration.Property.Signature.Abstract.Setter.Protected<G>
-					| V.Declaration.Property.Signature.Abstract.Setter.Public<G>
-					| V.Declaration.Property.Signature.Getter<G>
-					| V.Declaration.Property.Signature.Getter.Private<G>
-					| V.Declaration.Property.Signature.Getter.Protected<G>
-					| V.Declaration.Property.Signature.Getter.Public<G>
-					| V.Declaration.Property.Signature.Setter<G>
-					| V.Declaration.Property.Signature.Setter.Private<G>
-					| V.Declaration.Property.Signature.Setter.Protected<G>
-					| V.Declaration.Property.Signature.Setter.Public<G>;
-			}
-			type Any<G extends GrammarMap> =
-				| V.Declaration.Property<G>
-				| V.Declaration.Property.Getter<G>
-				| V.Declaration.Property.Getter.Private<G>
-				| V.Declaration.Property.Getter.Protected<G>
-				| V.Declaration.Property.Getter.Public<G>
-				| V.Declaration.Property.Private<G>
-				| V.Declaration.Property.Protected<G>
-				| V.Declaration.Property.Public<G>
-				| V.Declaration.Property.Setter<G>
-				| V.Declaration.Property.Setter.Private<G>
-				| V.Declaration.Property.Setter.Protected<G>
-				| V.Declaration.Property.Setter.Public<G>
-				| V.Declaration.Property.Signature<G>
-				| V.Declaration.Property.Signature.Abstract<G>
-				| V.Declaration.Property.Signature.Abstract.Getter<G>
-				| V.Declaration.Property.Signature.Abstract.Getter.Private<G>
-				| V.Declaration.Property.Signature.Abstract.Getter.Protected<G>
-				| V.Declaration.Property.Signature.Abstract.Getter.Public<G>
-				| V.Declaration.Property.Signature.Abstract.Setter<G>
-				| V.Declaration.Property.Signature.Abstract.Setter.Private<G>
-				| V.Declaration.Property.Signature.Abstract.Setter.Protected<G>
-				| V.Declaration.Property.Signature.Abstract.Setter.Public<G>
-				| V.Declaration.Property.Signature.Getter<G>
-				| V.Declaration.Property.Signature.Getter.Private<G>
-				| V.Declaration.Property.Signature.Getter.Protected<G>
-				| V.Declaration.Property.Signature.Getter.Public<G>
-				| V.Declaration.Property.Signature.Setter<G>
-				| V.Declaration.Property.Signature.Setter.Private<G>
-				| V.Declaration.Property.Signature.Setter.Protected<G>
-				| V.Declaration.Property.Signature.Setter.Public<G>;
-		}
-		interface Signature<
-			G extends GrammarMap,
-			K extends gate.Under<'declaration.signature'> = 'declaration.signature'
-		> extends structuralConformance.Declaration.Signature<G, K> {}
-		namespace Signature {
-			interface Call<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.signature.call'> = 'declaration.signature.call'
-			> extends structuralConformance.Declaration.Signature.Call<G, K> {
-				readonly receiver?: gate.In<
-					G,
-					features.TypedReceivers,
-					typedReceivers.Declaration.Signature.Call<G, K>['receiver']
-				>;
-				readonly typeParameters?: gate.In<
-					G,
-					features.GenericExpressions,
-					genericExpressions.Declaration.Signature.Call<G, K>['typeParameters']
-				>;
-			}
-			interface Construct<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.signature.construct'> = 'declaration.signature.construct'
-			> extends structuralConformance.Declaration.Signature.Construct<G, K> {
+				K extends gate.Under<'declaration.type.class'> = 'declaration.type.class'
+			> extends classes.Declaration.Type.Class<G, K> {
 				readonly abstract?: gate.In<
 					G,
 					features.AbstractClasses,
-					abstractClasses.Declaration.Signature.Construct<G, K>['abstract']
+					abstractClasses.Declaration.Type.Class<G, K>['abstract']
+				>;
+				readonly bases?: gate.In<
+					G,
+					features.MultipleInheritance,
+					multipleInheritance.Declaration.Type.Class<G, K>['bases']
+				>;
+				readonly decorators?: gate.In<G, features.Decorators, decorators.Declaration.Type.Class<G, K>['decorators']>;
+				readonly extends?: gate.In<
+					G,
+					features.SingleInheritance,
+					singleInheritance.Declaration.Type.Class<G, K>['extends']
+				>;
+				readonly implements?: gate.In<
+					G,
+					features.InterfaceConformance,
+					interfaceConformance.Declaration.Type.Class<G, K>['implements']
 				>;
 				readonly typeParameters?: gate.In<
 					G,
-					features.GenericExpressions,
-					genericExpressions.Declaration.Signature.Construct<G, K>['typeParameters']
+					features.GenericClasses,
+					genericClasses.Declaration.Type.Class<G, K>['typeParameters']
 				>;
 			}
-			interface Index<
+			interface Enum<
 				G extends GrammarMap,
-				K extends gate.Under<'declaration.signature.index'> = 'declaration.signature.index'
-			> extends structuralConformance.Declaration.Signature.Index<G, K> {}
-			namespace Index {
-				interface Mapped<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.signature.index.mapped'> = 'declaration.signature.index.mapped'
-				> extends structuralConformance.Declaration.Signature.Index.Mapped<G, K> {}
-				type Any<G extends GrammarMap> = V.Declaration.Signature.Index<G> | V.Declaration.Signature.Index.Mapped<G>;
-			}
-			type Any<G extends GrammarMap> =
-				| V.Declaration.Signature<G>
-				| V.Declaration.Signature.Call<G>
-				| V.Declaration.Signature.Construct<G>
-				| V.Declaration.Signature.Index<G>
-				| V.Declaration.Signature.Index.Mapped<G>;
-		}
-		interface Struct<
-			G extends GrammarMap,
-			K extends gate.Under<'declaration.struct'> = 'declaration.struct'
-		> extends structs.Declaration.Struct<G, K> {}
-		namespace Struct {
-			interface Private<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.struct.private'> = 'declaration.struct.private'
-			> extends moduleVisibility.Declaration.Struct.Private<G, K> {}
-			interface Public<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.struct.public'> = 'declaration.struct.public'
-			> extends moduleVisibility.Declaration.Struct.Public<G, K> {}
-			namespace Public {
-				interface Internal<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.struct.public.internal'> = 'declaration.struct.public.internal'
-				> extends moduleVisibility.Declaration.Struct.Public.Internal<G, K> {}
-				interface Parent<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.struct.public.parent'> = 'declaration.struct.public.parent'
-				> extends moduleVisibility.Declaration.Struct.Public.Parent<G, K> {}
-				interface Restricted<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.struct.public.restricted'> = 'declaration.struct.public.restricted'
-				> extends moduleVisibility.Declaration.Struct.Public.Restricted<G, K> {}
-				type Any<G extends GrammarMap> =
-					| V.Declaration.Struct.Public<G>
-					| V.Declaration.Struct.Public.Internal<G>
-					| V.Declaration.Struct.Public.Parent<G>
-					| V.Declaration.Struct.Public.Restricted<G>;
-			}
-			interface Tuple<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.struct.tuple'> = 'declaration.struct.tuple'
-			> extends tupleStructs.Declaration.Struct.Tuple<G, K> {}
-			namespace Tuple {
-				interface Private<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.struct.tuple.private'> = 'declaration.struct.tuple.private'
-				> extends moduleVisibility.Declaration.Struct.Tuple.Private<G, K> {}
-				interface Public<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.struct.tuple.public'> = 'declaration.struct.tuple.public'
-				> extends moduleVisibility.Declaration.Struct.Tuple.Public<G, K> {}
-				namespace Public {
-					interface Internal<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.struct.tuple.public.internal'> =
-							'declaration.struct.tuple.public.internal'
-					> extends moduleVisibility.Declaration.Struct.Tuple.Public.Internal<G, K> {}
-					interface Parent<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.struct.tuple.public.parent'> = 'declaration.struct.tuple.public.parent'
-					> extends moduleVisibility.Declaration.Struct.Tuple.Public.Parent<G, K> {}
-					interface Restricted<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.struct.tuple.public.restricted'> =
-							'declaration.struct.tuple.public.restricted'
-					> extends moduleVisibility.Declaration.Struct.Tuple.Public.Restricted<G, K> {}
-					type Any<G extends GrammarMap> =
-						| V.Declaration.Struct.Tuple.Public<G>
-						| V.Declaration.Struct.Tuple.Public.Internal<G>
-						| V.Declaration.Struct.Tuple.Public.Parent<G>
-						| V.Declaration.Struct.Tuple.Public.Restricted<G>;
-				}
-				type Any<G extends GrammarMap> =
-					| V.Declaration.Struct.Tuple<G>
-					| V.Declaration.Struct.Tuple.Private<G>
-					| V.Declaration.Struct.Tuple.Public<G>
-					| V.Declaration.Struct.Tuple.Public.Internal<G>
-					| V.Declaration.Struct.Tuple.Public.Parent<G>
-					| V.Declaration.Struct.Tuple.Public.Restricted<G>;
-			}
-			interface Unit<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.struct.unit'> = 'declaration.struct.unit'
-			> extends tupleStructs.Declaration.Struct.Unit<G, K> {}
-			namespace Unit {
-				interface Private<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.struct.unit.private'> = 'declaration.struct.unit.private'
-				> extends moduleVisibility.Declaration.Struct.Unit.Private<G, K> {}
-				interface Public<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.struct.unit.public'> = 'declaration.struct.unit.public'
-				> extends moduleVisibility.Declaration.Struct.Unit.Public<G, K> {}
-				namespace Public {
-					interface Internal<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.struct.unit.public.internal'> = 'declaration.struct.unit.public.internal'
-					> extends moduleVisibility.Declaration.Struct.Unit.Public.Internal<G, K> {}
-					interface Parent<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.struct.unit.public.parent'> = 'declaration.struct.unit.public.parent'
-					> extends moduleVisibility.Declaration.Struct.Unit.Public.Parent<G, K> {}
-					interface Restricted<
-						G extends GrammarMap,
-						K extends gate.Under<'declaration.struct.unit.public.restricted'> =
-							'declaration.struct.unit.public.restricted'
-					> extends moduleVisibility.Declaration.Struct.Unit.Public.Restricted<G, K> {}
-					type Any<G extends GrammarMap> =
-						| V.Declaration.Struct.Unit.Public<G>
-						| V.Declaration.Struct.Unit.Public.Internal<G>
-						| V.Declaration.Struct.Unit.Public.Parent<G>
-						| V.Declaration.Struct.Unit.Public.Restricted<G>;
-				}
-				type Any<G extends GrammarMap> =
-					| V.Declaration.Struct.Unit<G>
-					| V.Declaration.Struct.Unit.Private<G>
-					| V.Declaration.Struct.Unit.Public<G>
-					| V.Declaration.Struct.Unit.Public.Internal<G>
-					| V.Declaration.Struct.Unit.Public.Parent<G>
-					| V.Declaration.Struct.Unit.Public.Restricted<G>;
-			}
-			type Any<G extends GrammarMap> =
-				| V.Declaration.Struct<G>
-				| V.Declaration.Struct.Private<G>
-				| V.Declaration.Struct.Public<G>
-				| V.Declaration.Struct.Public.Internal<G>
-				| V.Declaration.Struct.Public.Parent<G>
-				| V.Declaration.Struct.Public.Restricted<G>
-				| V.Declaration.Struct.Tuple<G>
-				| V.Declaration.Struct.Tuple.Private<G>
-				| V.Declaration.Struct.Tuple.Public<G>
-				| V.Declaration.Struct.Tuple.Public.Internal<G>
-				| V.Declaration.Struct.Tuple.Public.Parent<G>
-				| V.Declaration.Struct.Tuple.Public.Restricted<G>
-				| V.Declaration.Struct.Unit<G>
-				| V.Declaration.Struct.Unit.Private<G>
-				| V.Declaration.Struct.Unit.Public<G>
-				| V.Declaration.Struct.Unit.Public.Internal<G>
-				| V.Declaration.Struct.Unit.Public.Parent<G>
-				| V.Declaration.Struct.Unit.Public.Restricted<G>;
-		}
-		interface TypeAlias<
-			G extends GrammarMap,
-			K extends gate.Under<'declaration.type_alias'> = 'declaration.type_alias'
-		> extends typeAliases.Declaration.TypeAlias<G, K> {
-			readonly trailingWhereClause?: gate.In<
-				G,
-				features.WhereClauses,
-				whereClauses.Declaration.TypeAlias<G, K>['trailingWhereClause']
-			>;
-			readonly typeParameters?: gate.In<
-				G,
-				features.ParametricPolymorphism,
-				parametricPolymorphism.Declaration.TypeAlias<G, K>['typeParameters']
-			>;
-			readonly whereClause?: gate.In<G, features.WhereClauses, whereClauses.Declaration.TypeAlias<G, K>['whereClause']>;
-		}
-		namespace TypeAlias {
-			interface Associated<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.type_alias.associated'> = 'declaration.type_alias.associated'
-			> extends associatedTypes.Declaration.TypeAlias.Associated<G, K> {
+				K extends gate.Under<'declaration.type.enum'> = 'declaration.type.enum'
+			> extends enumerations.Declaration.Type.Enum<G, K> {
 				readonly typeParameters?: gate.In<
 					G,
 					features.GenericItems,
-					genericItems.Declaration.TypeAlias.Associated<G, K>['typeParameters']
+					genericItems.Declaration.Type.Enum<G, K>['typeParameters']
 				>;
 				readonly whereClause?: gate.In<
 					G,
 					features.WhereClauses,
-					whereClauses.Declaration.TypeAlias.Associated<G, K>['whereClause']
+					whereClauses.Declaration.Type.Enum<G, K>['whereClause']
 				>;
 			}
-			interface Private<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.type_alias.private'> = 'declaration.type_alias.private'
-			> extends moduleVisibility.Declaration.TypeAlias.Private<G, K> {}
-			interface Public<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.type_alias.public'> = 'declaration.type_alias.public'
-			> extends moduleVisibility.Declaration.TypeAlias.Public<G, K> {}
-			namespace Public {
-				interface Internal<
+			namespace Enum {
+				interface Private<
 					G extends GrammarMap,
-					K extends gate.Under<'declaration.type_alias.public.internal'> = 'declaration.type_alias.public.internal'
-				> extends moduleVisibility.Declaration.TypeAlias.Public.Internal<G, K> {}
-				interface Parent<
+					K extends gate.Under<'declaration.type.enum.private'> = 'declaration.type.enum.private'
+				> extends moduleVisibility.Declaration.Type.Enum.Private<G, K> {}
+				interface Public<
 					G extends GrammarMap,
-					K extends gate.Under<'declaration.type_alias.public.parent'> = 'declaration.type_alias.public.parent'
-				> extends moduleVisibility.Declaration.TypeAlias.Public.Parent<G, K> {}
-				interface Restricted<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.type_alias.public.restricted'> = 'declaration.type_alias.public.restricted'
-				> extends moduleVisibility.Declaration.TypeAlias.Public.Restricted<G, K> {}
+					K extends gate.Under<'declaration.type.enum.public'> = 'declaration.type.enum.public'
+				> extends moduleVisibility.Declaration.Type.Enum.Public<G, K> {}
+				namespace Public {
+					interface Internal<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.type.enum.public.internal'> = 'declaration.type.enum.public.internal'
+					> extends moduleVisibility.Declaration.Type.Enum.Public.Internal<G, K> {}
+					interface Parent<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.type.enum.public.parent'> = 'declaration.type.enum.public.parent'
+					> extends moduleVisibility.Declaration.Type.Enum.Public.Parent<G, K> {}
+					interface Restricted<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.type.enum.public.restricted'> = 'declaration.type.enum.public.restricted'
+					> extends moduleVisibility.Declaration.Type.Enum.Public.Restricted<G, K> {}
+					type Any<G extends GrammarMap> =
+						| V.Declaration.Type.Enum.Public<G>
+						| V.Declaration.Type.Enum.Public.Internal<G>
+						| V.Declaration.Type.Enum.Public.Parent<G>
+						| V.Declaration.Type.Enum.Public.Restricted<G>;
+				}
 				type Any<G extends GrammarMap> =
-					| V.Declaration.TypeAlias.Public<G>
-					| V.Declaration.TypeAlias.Public.Internal<G>
-					| V.Declaration.TypeAlias.Public.Parent<G>
-					| V.Declaration.TypeAlias.Public.Restricted<G>;
+					| V.Declaration.Type.Enum<G>
+					| V.Declaration.Type.Enum.Private<G>
+					| V.Declaration.Type.Enum.Public<G>
+					| V.Declaration.Type.Enum.Public.Internal<G>
+					| V.Declaration.Type.Enum.Public.Parent<G>
+					| V.Declaration.Type.Enum.Public.Restricted<G>;
+			}
+			interface Interface<
+				G extends GrammarMap,
+				K extends gate.Under<'declaration.type.interface'> = 'declaration.type.interface'
+			> extends interfaces.Declaration.Type.Interface<G, K> {
+				readonly typeParameters?: gate.In<
+					G,
+					features.GenericSignatures,
+					genericSignatures.Declaration.Type.Interface<G, K>['typeParameters']
+				>;
+			}
+			namespace Interface {
+				interface Trait<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.type.interface.trait'> = 'declaration.type.interface.trait'
+				> extends traits.Declaration.Type.Interface.Trait<G, K> {
+					readonly typeParameters?: gate.In<
+						G,
+						features.GenericItems,
+						genericItems.Declaration.Type.Interface.Trait<G, K>['typeParameters']
+					>;
+					readonly unsafe?: gate.In<
+						G,
+						features.UnsafeCode,
+						unsafeCode.Declaration.Type.Interface.Trait<G, K>['unsafe']
+					>;
+					readonly whereClause?: gate.In<
+						G,
+						features.WhereClauses,
+						whereClauses.Declaration.Type.Interface.Trait<G, K>['whereClause']
+					>;
+				}
+				namespace Trait {
+					interface Private<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.type.interface.trait.private'> =
+							'declaration.type.interface.trait.private'
+					> extends moduleVisibility.Declaration.Type.Interface.Trait.Private<G, K> {}
+					interface Public<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.type.interface.trait.public'> = 'declaration.type.interface.trait.public'
+					> extends moduleVisibility.Declaration.Type.Interface.Trait.Public<G, K> {}
+					namespace Public {
+						interface Internal<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.type.interface.trait.public.internal'> =
+								'declaration.type.interface.trait.public.internal'
+						> extends moduleVisibility.Declaration.Type.Interface.Trait.Public.Internal<G, K> {}
+						interface Parent<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.type.interface.trait.public.parent'> =
+								'declaration.type.interface.trait.public.parent'
+						> extends moduleVisibility.Declaration.Type.Interface.Trait.Public.Parent<G, K> {}
+						interface Restricted<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.type.interface.trait.public.restricted'> =
+								'declaration.type.interface.trait.public.restricted'
+						> extends moduleVisibility.Declaration.Type.Interface.Trait.Public.Restricted<G, K> {}
+						type Any<G extends GrammarMap> =
+							| V.Declaration.Type.Interface.Trait.Public<G>
+							| V.Declaration.Type.Interface.Trait.Public.Internal<G>
+							| V.Declaration.Type.Interface.Trait.Public.Parent<G>
+							| V.Declaration.Type.Interface.Trait.Public.Restricted<G>;
+					}
+					type Any<G extends GrammarMap> =
+						| V.Declaration.Type.Interface.Trait<G>
+						| V.Declaration.Type.Interface.Trait.Private<G>
+						| V.Declaration.Type.Interface.Trait.Public<G>
+						| V.Declaration.Type.Interface.Trait.Public.Internal<G>
+						| V.Declaration.Type.Interface.Trait.Public.Parent<G>
+						| V.Declaration.Type.Interface.Trait.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarMap> =
+					| V.Declaration.Type.Interface<G>
+					| V.Declaration.Type.Interface.Trait<G>
+					| V.Declaration.Type.Interface.Trait.Private<G>
+					| V.Declaration.Type.Interface.Trait.Public<G>
+					| V.Declaration.Type.Interface.Trait.Public.Internal<G>
+					| V.Declaration.Type.Interface.Trait.Public.Parent<G>
+					| V.Declaration.Type.Interface.Trait.Public.Restricted<G>;
+			}
+			interface Struct<
+				G extends GrammarMap,
+				K extends gate.Under<'declaration.type.struct'> = 'declaration.type.struct'
+			> extends structs.Declaration.Type.Struct<G, K> {}
+			namespace Struct {
+				interface Private<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.type.struct.private'> = 'declaration.type.struct.private'
+				> extends moduleVisibility.Declaration.Type.Struct.Private<G, K> {}
+				interface Public<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.type.struct.public'> = 'declaration.type.struct.public'
+				> extends moduleVisibility.Declaration.Type.Struct.Public<G, K> {}
+				namespace Public {
+					interface Internal<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.type.struct.public.internal'> = 'declaration.type.struct.public.internal'
+					> extends moduleVisibility.Declaration.Type.Struct.Public.Internal<G, K> {}
+					interface Parent<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.type.struct.public.parent'> = 'declaration.type.struct.public.parent'
+					> extends moduleVisibility.Declaration.Type.Struct.Public.Parent<G, K> {}
+					interface Restricted<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.type.struct.public.restricted'> =
+							'declaration.type.struct.public.restricted'
+					> extends moduleVisibility.Declaration.Type.Struct.Public.Restricted<G, K> {}
+					type Any<G extends GrammarMap> =
+						| V.Declaration.Type.Struct.Public<G>
+						| V.Declaration.Type.Struct.Public.Internal<G>
+						| V.Declaration.Type.Struct.Public.Parent<G>
+						| V.Declaration.Type.Struct.Public.Restricted<G>;
+				}
+				interface Tuple<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.type.struct.tuple'> = 'declaration.type.struct.tuple'
+				> extends tupleStructs.Declaration.Type.Struct.Tuple<G, K> {}
+				namespace Tuple {
+					interface Private<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.type.struct.tuple.private'> = 'declaration.type.struct.tuple.private'
+					> extends moduleVisibility.Declaration.Type.Struct.Tuple.Private<G, K> {}
+					interface Public<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.type.struct.tuple.public'> = 'declaration.type.struct.tuple.public'
+					> extends moduleVisibility.Declaration.Type.Struct.Tuple.Public<G, K> {}
+					namespace Public {
+						interface Internal<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.type.struct.tuple.public.internal'> =
+								'declaration.type.struct.tuple.public.internal'
+						> extends moduleVisibility.Declaration.Type.Struct.Tuple.Public.Internal<G, K> {}
+						interface Parent<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.type.struct.tuple.public.parent'> =
+								'declaration.type.struct.tuple.public.parent'
+						> extends moduleVisibility.Declaration.Type.Struct.Tuple.Public.Parent<G, K> {}
+						interface Restricted<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.type.struct.tuple.public.restricted'> =
+								'declaration.type.struct.tuple.public.restricted'
+						> extends moduleVisibility.Declaration.Type.Struct.Tuple.Public.Restricted<G, K> {}
+						type Any<G extends GrammarMap> =
+							| V.Declaration.Type.Struct.Tuple.Public<G>
+							| V.Declaration.Type.Struct.Tuple.Public.Internal<G>
+							| V.Declaration.Type.Struct.Tuple.Public.Parent<G>
+							| V.Declaration.Type.Struct.Tuple.Public.Restricted<G>;
+					}
+					type Any<G extends GrammarMap> =
+						| V.Declaration.Type.Struct.Tuple<G>
+						| V.Declaration.Type.Struct.Tuple.Private<G>
+						| V.Declaration.Type.Struct.Tuple.Public<G>
+						| V.Declaration.Type.Struct.Tuple.Public.Internal<G>
+						| V.Declaration.Type.Struct.Tuple.Public.Parent<G>
+						| V.Declaration.Type.Struct.Tuple.Public.Restricted<G>;
+				}
+				interface Unit<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.type.struct.unit'> = 'declaration.type.struct.unit'
+				> extends tupleStructs.Declaration.Type.Struct.Unit<G, K> {}
+				namespace Unit {
+					interface Private<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.type.struct.unit.private'> = 'declaration.type.struct.unit.private'
+					> extends moduleVisibility.Declaration.Type.Struct.Unit.Private<G, K> {}
+					interface Public<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.type.struct.unit.public'> = 'declaration.type.struct.unit.public'
+					> extends moduleVisibility.Declaration.Type.Struct.Unit.Public<G, K> {}
+					namespace Public {
+						interface Internal<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.type.struct.unit.public.internal'> =
+								'declaration.type.struct.unit.public.internal'
+						> extends moduleVisibility.Declaration.Type.Struct.Unit.Public.Internal<G, K> {}
+						interface Parent<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.type.struct.unit.public.parent'> =
+								'declaration.type.struct.unit.public.parent'
+						> extends moduleVisibility.Declaration.Type.Struct.Unit.Public.Parent<G, K> {}
+						interface Restricted<
+							G extends GrammarMap,
+							K extends gate.Under<'declaration.type.struct.unit.public.restricted'> =
+								'declaration.type.struct.unit.public.restricted'
+						> extends moduleVisibility.Declaration.Type.Struct.Unit.Public.Restricted<G, K> {}
+						type Any<G extends GrammarMap> =
+							| V.Declaration.Type.Struct.Unit.Public<G>
+							| V.Declaration.Type.Struct.Unit.Public.Internal<G>
+							| V.Declaration.Type.Struct.Unit.Public.Parent<G>
+							| V.Declaration.Type.Struct.Unit.Public.Restricted<G>;
+					}
+					type Any<G extends GrammarMap> =
+						| V.Declaration.Type.Struct.Unit<G>
+						| V.Declaration.Type.Struct.Unit.Private<G>
+						| V.Declaration.Type.Struct.Unit.Public<G>
+						| V.Declaration.Type.Struct.Unit.Public.Internal<G>
+						| V.Declaration.Type.Struct.Unit.Public.Parent<G>
+						| V.Declaration.Type.Struct.Unit.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarMap> =
+					| V.Declaration.Type.Struct<G>
+					| V.Declaration.Type.Struct.Private<G>
+					| V.Declaration.Type.Struct.Public<G>
+					| V.Declaration.Type.Struct.Public.Internal<G>
+					| V.Declaration.Type.Struct.Public.Parent<G>
+					| V.Declaration.Type.Struct.Public.Restricted<G>
+					| V.Declaration.Type.Struct.Tuple<G>
+					| V.Declaration.Type.Struct.Tuple.Private<G>
+					| V.Declaration.Type.Struct.Tuple.Public<G>
+					| V.Declaration.Type.Struct.Tuple.Public.Internal<G>
+					| V.Declaration.Type.Struct.Tuple.Public.Parent<G>
+					| V.Declaration.Type.Struct.Tuple.Public.Restricted<G>
+					| V.Declaration.Type.Struct.Unit<G>
+					| V.Declaration.Type.Struct.Unit.Private<G>
+					| V.Declaration.Type.Struct.Unit.Public<G>
+					| V.Declaration.Type.Struct.Unit.Public.Internal<G>
+					| V.Declaration.Type.Struct.Unit.Public.Parent<G>
+					| V.Declaration.Type.Struct.Unit.Public.Restricted<G>;
+			}
+			interface TypeAlias<
+				G extends GrammarMap,
+				K extends gate.Under<'declaration.type.type_alias'> = 'declaration.type.type_alias'
+			> extends typeAliases.Declaration.Type.TypeAlias<G, K> {
+				readonly trailingWhereClause?: gate.In<
+					G,
+					features.WhereClauses,
+					whereClauses.Declaration.Type.TypeAlias<G, K>['trailingWhereClause']
+				>;
+				readonly typeParameters?: gate.In<
+					G,
+					features.ParametricPolymorphism,
+					parametricPolymorphism.Declaration.Type.TypeAlias<G, K>['typeParameters']
+				>;
+				readonly whereClause?: gate.In<
+					G,
+					features.WhereClauses,
+					whereClauses.Declaration.Type.TypeAlias<G, K>['whereClause']
+				>;
+			}
+			namespace TypeAlias {
+				interface Associated<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.type.type_alias.associated'> = 'declaration.type.type_alias.associated'
+				> extends associatedTypes.Declaration.Type.TypeAlias.Associated<G, K> {
+					readonly typeParameters?: gate.In<
+						G,
+						features.GenericItems,
+						genericItems.Declaration.Type.TypeAlias.Associated<G, K>['typeParameters']
+					>;
+					readonly whereClause?: gate.In<
+						G,
+						features.WhereClauses,
+						whereClauses.Declaration.Type.TypeAlias.Associated<G, K>['whereClause']
+					>;
+				}
+				interface Private<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.type.type_alias.private'> = 'declaration.type.type_alias.private'
+				> extends moduleVisibility.Declaration.Type.TypeAlias.Private<G, K> {}
+				interface Public<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.type.type_alias.public'> = 'declaration.type.type_alias.public'
+				> extends moduleVisibility.Declaration.Type.TypeAlias.Public<G, K> {}
+				namespace Public {
+					interface Internal<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.type.type_alias.public.internal'> =
+							'declaration.type.type_alias.public.internal'
+					> extends moduleVisibility.Declaration.Type.TypeAlias.Public.Internal<G, K> {}
+					interface Parent<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.type.type_alias.public.parent'> =
+							'declaration.type.type_alias.public.parent'
+					> extends moduleVisibility.Declaration.Type.TypeAlias.Public.Parent<G, K> {}
+					interface Restricted<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.type.type_alias.public.restricted'> =
+							'declaration.type.type_alias.public.restricted'
+					> extends moduleVisibility.Declaration.Type.TypeAlias.Public.Restricted<G, K> {}
+					type Any<G extends GrammarMap> =
+						| V.Declaration.Type.TypeAlias.Public<G>
+						| V.Declaration.Type.TypeAlias.Public.Internal<G>
+						| V.Declaration.Type.TypeAlias.Public.Parent<G>
+						| V.Declaration.Type.TypeAlias.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarMap> =
+					| V.Declaration.Type.TypeAlias<G>
+					| V.Declaration.Type.TypeAlias.Associated<G>
+					| V.Declaration.Type.TypeAlias.Private<G>
+					| V.Declaration.Type.TypeAlias.Public<G>
+					| V.Declaration.Type.TypeAlias.Public.Internal<G>
+					| V.Declaration.Type.TypeAlias.Public.Parent<G>
+					| V.Declaration.Type.TypeAlias.Public.Restricted<G>;
+			}
+			interface Union<
+				G extends GrammarMap,
+				K extends gate.Under<'declaration.type.union'> = 'declaration.type.union'
+			> extends untaggedUnions.Declaration.Type.Union<G, K> {
+				readonly typeParameters?: gate.In<
+					G,
+					features.GenericItems,
+					genericItems.Declaration.Type.Union<G, K>['typeParameters']
+				>;
+				readonly whereClause?: gate.In<
+					G,
+					features.WhereClauses,
+					whereClauses.Declaration.Type.Union<G, K>['whereClause']
+				>;
+			}
+			namespace Union {
+				interface Private<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.type.union.private'> = 'declaration.type.union.private'
+				> extends moduleVisibility.Declaration.Type.Union.Private<G, K> {}
+				interface Public<
+					G extends GrammarMap,
+					K extends gate.Under<'declaration.type.union.public'> = 'declaration.type.union.public'
+				> extends moduleVisibility.Declaration.Type.Union.Public<G, K> {}
+				namespace Public {
+					interface Internal<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.type.union.public.internal'> = 'declaration.type.union.public.internal'
+					> extends moduleVisibility.Declaration.Type.Union.Public.Internal<G, K> {}
+					interface Parent<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.type.union.public.parent'> = 'declaration.type.union.public.parent'
+					> extends moduleVisibility.Declaration.Type.Union.Public.Parent<G, K> {}
+					interface Restricted<
+						G extends GrammarMap,
+						K extends gate.Under<'declaration.type.union.public.restricted'> =
+							'declaration.type.union.public.restricted'
+					> extends moduleVisibility.Declaration.Type.Union.Public.Restricted<G, K> {}
+					type Any<G extends GrammarMap> =
+						| V.Declaration.Type.Union.Public<G>
+						| V.Declaration.Type.Union.Public.Internal<G>
+						| V.Declaration.Type.Union.Public.Parent<G>
+						| V.Declaration.Type.Union.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarMap> =
+					| V.Declaration.Type.Union<G>
+					| V.Declaration.Type.Union.Private<G>
+					| V.Declaration.Type.Union.Public<G>
+					| V.Declaration.Type.Union.Public.Internal<G>
+					| V.Declaration.Type.Union.Public.Parent<G>
+					| V.Declaration.Type.Union.Public.Restricted<G>;
 			}
 			type Any<G extends GrammarMap> =
-				| V.Declaration.TypeAlias<G>
-				| V.Declaration.TypeAlias.Associated<G>
-				| V.Declaration.TypeAlias.Private<G>
-				| V.Declaration.TypeAlias.Public<G>
-				| V.Declaration.TypeAlias.Public.Internal<G>
-				| V.Declaration.TypeAlias.Public.Parent<G>
-				| V.Declaration.TypeAlias.Public.Restricted<G>;
+				| V.Declaration.Type.Class<G>
+				| V.Declaration.Type.Enum<G>
+				| V.Declaration.Type.Enum.Private<G>
+				| V.Declaration.Type.Enum.Public<G>
+				| V.Declaration.Type.Enum.Public.Internal<G>
+				| V.Declaration.Type.Enum.Public.Parent<G>
+				| V.Declaration.Type.Enum.Public.Restricted<G>
+				| V.Declaration.Type.Interface<G>
+				| V.Declaration.Type.Interface.Trait<G>
+				| V.Declaration.Type.Interface.Trait.Private<G>
+				| V.Declaration.Type.Interface.Trait.Public<G>
+				| V.Declaration.Type.Interface.Trait.Public.Internal<G>
+				| V.Declaration.Type.Interface.Trait.Public.Parent<G>
+				| V.Declaration.Type.Interface.Trait.Public.Restricted<G>
+				| V.Declaration.Type.Struct<G>
+				| V.Declaration.Type.Struct.Private<G>
+				| V.Declaration.Type.Struct.Public<G>
+				| V.Declaration.Type.Struct.Public.Internal<G>
+				| V.Declaration.Type.Struct.Public.Parent<G>
+				| V.Declaration.Type.Struct.Public.Restricted<G>
+				| V.Declaration.Type.Struct.Tuple<G>
+				| V.Declaration.Type.Struct.Tuple.Private<G>
+				| V.Declaration.Type.Struct.Tuple.Public<G>
+				| V.Declaration.Type.Struct.Tuple.Public.Internal<G>
+				| V.Declaration.Type.Struct.Tuple.Public.Parent<G>
+				| V.Declaration.Type.Struct.Tuple.Public.Restricted<G>
+				| V.Declaration.Type.Struct.Unit<G>
+				| V.Declaration.Type.Struct.Unit.Private<G>
+				| V.Declaration.Type.Struct.Unit.Public<G>
+				| V.Declaration.Type.Struct.Unit.Public.Internal<G>
+				| V.Declaration.Type.Struct.Unit.Public.Parent<G>
+				| V.Declaration.Type.Struct.Unit.Public.Restricted<G>
+				| V.Declaration.Type.TypeAlias<G>
+				| V.Declaration.Type.TypeAlias.Associated<G>
+				| V.Declaration.Type.TypeAlias.Private<G>
+				| V.Declaration.Type.TypeAlias.Public<G>
+				| V.Declaration.Type.TypeAlias.Public.Internal<G>
+				| V.Declaration.Type.TypeAlias.Public.Parent<G>
+				| V.Declaration.Type.TypeAlias.Public.Restricted<G>
+				| V.Declaration.Type.Union<G>
+				| V.Declaration.Type.Union.Private<G>
+				| V.Declaration.Type.Union.Public<G>
+				| V.Declaration.Type.Union.Public.Internal<G>
+				| V.Declaration.Type.Union.Public.Parent<G>
+				| V.Declaration.Type.Union.Public.Restricted<G>;
 		}
 		interface TypeParameter<
 			G extends GrammarMap,
@@ -2253,53 +2630,6 @@ declare module './declaration.ts' {
 				| V.Declaration.TypeParameter.Parameters<G>
 				| V.Declaration.TypeParameter.Value<G>
 				| V.Declaration.TypeParameter.Variadic<G>;
-		}
-		interface Union<
-			G extends GrammarMap,
-			K extends gate.Under<'declaration.union'> = 'declaration.union'
-		> extends untaggedUnions.Declaration.Union<G, K> {
-			readonly typeParameters?: gate.In<
-				G,
-				features.GenericItems,
-				genericItems.Declaration.Union<G, K>['typeParameters']
-			>;
-			readonly whereClause?: gate.In<G, features.WhereClauses, whereClauses.Declaration.Union<G, K>['whereClause']>;
-		}
-		namespace Union {
-			interface Private<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.union.private'> = 'declaration.union.private'
-			> extends moduleVisibility.Declaration.Union.Private<G, K> {}
-			interface Public<
-				G extends GrammarMap,
-				K extends gate.Under<'declaration.union.public'> = 'declaration.union.public'
-			> extends moduleVisibility.Declaration.Union.Public<G, K> {}
-			namespace Public {
-				interface Internal<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.union.public.internal'> = 'declaration.union.public.internal'
-				> extends moduleVisibility.Declaration.Union.Public.Internal<G, K> {}
-				interface Parent<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.union.public.parent'> = 'declaration.union.public.parent'
-				> extends moduleVisibility.Declaration.Union.Public.Parent<G, K> {}
-				interface Restricted<
-					G extends GrammarMap,
-					K extends gate.Under<'declaration.union.public.restricted'> = 'declaration.union.public.restricted'
-				> extends moduleVisibility.Declaration.Union.Public.Restricted<G, K> {}
-				type Any<G extends GrammarMap> =
-					| V.Declaration.Union.Public<G>
-					| V.Declaration.Union.Public.Internal<G>
-					| V.Declaration.Union.Public.Parent<G>
-					| V.Declaration.Union.Public.Restricted<G>;
-			}
-			type Any<G extends GrammarMap> =
-				| V.Declaration.Union<G>
-				| V.Declaration.Union.Private<G>
-				| V.Declaration.Union.Public<G>
-				| V.Declaration.Union.Public.Internal<G>
-				| V.Declaration.Union.Public.Parent<G>
-				| V.Declaration.Union.Public.Restricted<G>;
 		}
 		interface Variable<G extends GrammarMap, K extends gate.Under<'declaration.variable'> = 'declaration.variable'> {
 			readonly alternative?: gate.In<
@@ -2389,54 +2719,14 @@ declare module './declaration.ts' {
 		type Any<G extends GrammarMap> =
 			| V.Declaration<G>
 			| V.Declaration.Ambient<G>
-			| V.Declaration.Class<G>
 			| V.Declaration.Constant<G>
 			| V.Declaration.Constant.Private<G>
 			| V.Declaration.Constant.Public<G>
 			| V.Declaration.Constant.Public.Internal<G>
 			| V.Declaration.Constant.Public.Parent<G>
 			| V.Declaration.Constant.Public.Restricted<G>
-			| V.Declaration.Constructor<G>
-			| V.Declaration.Constructor.Private<G>
-			| V.Declaration.Constructor.Protected<G>
-			| V.Declaration.Constructor.Public<G>
-			| V.Declaration.Enum<G>
-			| V.Declaration.Enum.Private<G>
-			| V.Declaration.Enum.Public<G>
-			| V.Declaration.Enum.Public.Internal<G>
-			| V.Declaration.Enum.Public.Parent<G>
-			| V.Declaration.Enum.Public.Restricted<G>
-			| V.Declaration.EnumMember<G>
-			| V.Declaration.EnumMember.Private<G>
-			| V.Declaration.EnumMember.Public<G>
-			| V.Declaration.EnumMember.Public.Internal<G>
-			| V.Declaration.EnumMember.Public.Parent<G>
-			| V.Declaration.EnumMember.Public.Restricted<G>
-			| V.Declaration.EnumMember.Struct<G>
-			| V.Declaration.EnumMember.Struct.Private<G>
-			| V.Declaration.EnumMember.Struct.Public<G>
-			| V.Declaration.EnumMember.Struct.Public.Internal<G>
-			| V.Declaration.EnumMember.Struct.Public.Parent<G>
-			| V.Declaration.EnumMember.Struct.Public.Restricted<G>
-			| V.Declaration.EnumMember.Tuple<G>
-			| V.Declaration.EnumMember.Tuple.Private<G>
-			| V.Declaration.EnumMember.Tuple.Public<G>
-			| V.Declaration.EnumMember.Tuple.Public.Internal<G>
-			| V.Declaration.EnumMember.Tuple.Public.Parent<G>
-			| V.Declaration.EnumMember.Tuple.Public.Restricted<G>
 			| V.Declaration.Extension<G>
 			| V.Declaration.Extension.Conformance<G>
-			| V.Declaration.Field<G>
-			| V.Declaration.Field.Private<G>
-			| V.Declaration.Field.Protected<G>
-			| V.Declaration.Field.Public<G>
-			| V.Declaration.Field.Public.Internal<G>
-			| V.Declaration.Field.Public.Parent<G>
-			| V.Declaration.Field.Public.Restricted<G>
-			| V.Declaration.Field.Signature<G>
-			| V.Declaration.Field.Signature.Private<G>
-			| V.Declaration.Field.Signature.Protected<G>
-			| V.Declaration.Field.Signature.Public<G>
 			| V.Declaration.Function<G>
 			| V.Declaration.Function.Private<G>
 			| V.Declaration.Function.Public<G>
@@ -2449,36 +2739,103 @@ declare module './declaration.ts' {
 			| V.Declaration.Function.Signature.Public.Internal<G>
 			| V.Declaration.Function.Signature.Public.Parent<G>
 			| V.Declaration.Function.Signature.Public.Restricted<G>
-			| V.Declaration.Interface<G>
-			| V.Declaration.Interface.Trait<G>
-			| V.Declaration.Interface.Trait.Private<G>
-			| V.Declaration.Interface.Trait.Public<G>
-			| V.Declaration.Interface.Trait.Public.Internal<G>
-			| V.Declaration.Interface.Trait.Public.Parent<G>
-			| V.Declaration.Interface.Trait.Public.Restricted<G>
 			| V.Declaration.Macro<G>
 			| V.Declaration.Macro.Brace<G>
 			| V.Declaration.Macro.Bracket<G>
 			| V.Declaration.Macro.Paren<G>
-			| V.Declaration.Method<G>
-			| V.Declaration.Method.Private<G>
-			| V.Declaration.Method.Protected<G>
-			| V.Declaration.Method.Public<G>
-			| V.Declaration.Method.Public.Internal<G>
-			| V.Declaration.Method.Public.Parent<G>
-			| V.Declaration.Method.Public.Restricted<G>
-			| V.Declaration.Method.Signature<G>
-			| V.Declaration.Method.Signature.Abstract<G>
-			| V.Declaration.Method.Signature.Abstract.Private<G>
-			| V.Declaration.Method.Signature.Abstract.Protected<G>
-			| V.Declaration.Method.Signature.Abstract.Public<G>
-			| V.Declaration.Method.Signature.Private<G>
-			| V.Declaration.Method.Signature.Protected<G>
-			| V.Declaration.Method.Signature.Public<G>
-			| V.Declaration.Method.Signature.Public.Internal<G>
-			| V.Declaration.Method.Signature.Public.Parent<G>
-			| V.Declaration.Method.Signature.Public.Restricted<G>
-			| V.Declaration.Method.Special<G>
+			| V.Declaration.Member.Attribute<G>
+			| V.Declaration.Member.Constant<G>
+			| V.Declaration.Member.Constructor<G>
+			| V.Declaration.Member.Constructor.Private<G>
+			| V.Declaration.Member.Constructor.Protected<G>
+			| V.Declaration.Member.Constructor.Public<G>
+			| V.Declaration.Member.EnumMember<G>
+			| V.Declaration.Member.EnumMember.Private<G>
+			| V.Declaration.Member.EnumMember.Public<G>
+			| V.Declaration.Member.EnumMember.Public.Internal<G>
+			| V.Declaration.Member.EnumMember.Public.Parent<G>
+			| V.Declaration.Member.EnumMember.Public.Restricted<G>
+			| V.Declaration.Member.EnumMember.Struct<G>
+			| V.Declaration.Member.EnumMember.Struct.Private<G>
+			| V.Declaration.Member.EnumMember.Struct.Public<G>
+			| V.Declaration.Member.EnumMember.Struct.Public.Internal<G>
+			| V.Declaration.Member.EnumMember.Struct.Public.Parent<G>
+			| V.Declaration.Member.EnumMember.Struct.Public.Restricted<G>
+			| V.Declaration.Member.EnumMember.Tuple<G>
+			| V.Declaration.Member.EnumMember.Tuple.Private<G>
+			| V.Declaration.Member.EnumMember.Tuple.Public<G>
+			| V.Declaration.Member.EnumMember.Tuple.Public.Internal<G>
+			| V.Declaration.Member.EnumMember.Tuple.Public.Parent<G>
+			| V.Declaration.Member.EnumMember.Tuple.Public.Restricted<G>
+			| V.Declaration.Member.Field<G>
+			| V.Declaration.Member.Field.Private<G>
+			| V.Declaration.Member.Field.Protected<G>
+			| V.Declaration.Member.Field.Public<G>
+			| V.Declaration.Member.Field.Public.Internal<G>
+			| V.Declaration.Member.Field.Public.Parent<G>
+			| V.Declaration.Member.Field.Public.Restricted<G>
+			| V.Declaration.Member.Field.Signature<G>
+			| V.Declaration.Member.Field.Signature.Private<G>
+			| V.Declaration.Member.Field.Signature.Protected<G>
+			| V.Declaration.Member.Field.Signature.Public<G>
+			| V.Declaration.Member.Macro<G>
+			| V.Declaration.Member.Method<G>
+			| V.Declaration.Member.Method.Private<G>
+			| V.Declaration.Member.Method.Protected<G>
+			| V.Declaration.Member.Method.Public<G>
+			| V.Declaration.Member.Method.Public.Internal<G>
+			| V.Declaration.Member.Method.Public.Parent<G>
+			| V.Declaration.Member.Method.Public.Restricted<G>
+			| V.Declaration.Member.Method.Signature<G>
+			| V.Declaration.Member.Method.Signature.Abstract<G>
+			| V.Declaration.Member.Method.Signature.Abstract.Private<G>
+			| V.Declaration.Member.Method.Signature.Abstract.Protected<G>
+			| V.Declaration.Member.Method.Signature.Abstract.Public<G>
+			| V.Declaration.Member.Method.Signature.Private<G>
+			| V.Declaration.Member.Method.Signature.Protected<G>
+			| V.Declaration.Member.Method.Signature.Public<G>
+			| V.Declaration.Member.Method.Signature.Public.Internal<G>
+			| V.Declaration.Member.Method.Signature.Public.Parent<G>
+			| V.Declaration.Member.Method.Signature.Public.Restricted<G>
+			| V.Declaration.Member.Method.Special<G>
+			| V.Declaration.Member.Property<G>
+			| V.Declaration.Member.Property.Getter<G>
+			| V.Declaration.Member.Property.Getter.Private<G>
+			| V.Declaration.Member.Property.Getter.Protected<G>
+			| V.Declaration.Member.Property.Getter.Public<G>
+			| V.Declaration.Member.Property.Private<G>
+			| V.Declaration.Member.Property.Protected<G>
+			| V.Declaration.Member.Property.Public<G>
+			| V.Declaration.Member.Property.Setter<G>
+			| V.Declaration.Member.Property.Setter.Private<G>
+			| V.Declaration.Member.Property.Setter.Protected<G>
+			| V.Declaration.Member.Property.Setter.Public<G>
+			| V.Declaration.Member.Property.Signature<G>
+			| V.Declaration.Member.Property.Signature.Abstract<G>
+			| V.Declaration.Member.Property.Signature.Abstract.Getter<G>
+			| V.Declaration.Member.Property.Signature.Abstract.Getter.Private<G>
+			| V.Declaration.Member.Property.Signature.Abstract.Getter.Protected<G>
+			| V.Declaration.Member.Property.Signature.Abstract.Getter.Public<G>
+			| V.Declaration.Member.Property.Signature.Abstract.Setter<G>
+			| V.Declaration.Member.Property.Signature.Abstract.Setter.Private<G>
+			| V.Declaration.Member.Property.Signature.Abstract.Setter.Protected<G>
+			| V.Declaration.Member.Property.Signature.Abstract.Setter.Public<G>
+			| V.Declaration.Member.Property.Signature.Getter<G>
+			| V.Declaration.Member.Property.Signature.Getter.Private<G>
+			| V.Declaration.Member.Property.Signature.Getter.Protected<G>
+			| V.Declaration.Member.Property.Signature.Getter.Public<G>
+			| V.Declaration.Member.Property.Signature.Setter<G>
+			| V.Declaration.Member.Property.Signature.Setter.Private<G>
+			| V.Declaration.Member.Property.Signature.Setter.Protected<G>
+			| V.Declaration.Member.Property.Signature.Setter.Public<G>
+			| V.Declaration.Member.Signature<G>
+			| V.Declaration.Member.Signature.Call<G>
+			| V.Declaration.Member.Signature.Construct<G>
+			| V.Declaration.Member.Signature.Index<G>
+			| V.Declaration.Member.Signature.Index.Mapped<G>
+			| V.Declaration.Member.StaticBlock<G>
+			| V.Declaration.Member.Type<G>
+			| V.Declaration.Member.TypeAlias<G>
 			| V.Declaration.Module<G>
 			| V.Declaration.Module.External<G>
 			| V.Declaration.Module.Foreign<G>
@@ -2490,84 +2847,66 @@ declare module './declaration.ts' {
 			| V.Declaration.ModuleProperty<G>
 			| V.Declaration.Parameter<G>
 			| V.Declaration.Parameter.Defaulted<G>
+			| V.Declaration.Parameter.Identifier<G>
 			| V.Declaration.Parameter.Private<G>
 			| V.Declaration.Parameter.Protected<G>
 			| V.Declaration.Parameter.Public<G>
 			| V.Declaration.Parameter.Receiver<G>
+			| V.Declaration.Parameter.Rest<G>
+			| V.Declaration.Parameter.Tuple<G>
 			| V.Declaration.Parameter.Typed<G>
 			| V.Declaration.Parameter.TypedDefault<G>
 			| V.Declaration.Parameter.Variadic<G>
-			| V.Declaration.Property<G>
-			| V.Declaration.Property.Getter<G>
-			| V.Declaration.Property.Getter.Private<G>
-			| V.Declaration.Property.Getter.Protected<G>
-			| V.Declaration.Property.Getter.Public<G>
-			| V.Declaration.Property.Private<G>
-			| V.Declaration.Property.Protected<G>
-			| V.Declaration.Property.Public<G>
-			| V.Declaration.Property.Setter<G>
-			| V.Declaration.Property.Setter.Private<G>
-			| V.Declaration.Property.Setter.Protected<G>
-			| V.Declaration.Property.Setter.Public<G>
-			| V.Declaration.Property.Signature<G>
-			| V.Declaration.Property.Signature.Abstract<G>
-			| V.Declaration.Property.Signature.Abstract.Getter<G>
-			| V.Declaration.Property.Signature.Abstract.Getter.Private<G>
-			| V.Declaration.Property.Signature.Abstract.Getter.Protected<G>
-			| V.Declaration.Property.Signature.Abstract.Getter.Public<G>
-			| V.Declaration.Property.Signature.Abstract.Setter<G>
-			| V.Declaration.Property.Signature.Abstract.Setter.Private<G>
-			| V.Declaration.Property.Signature.Abstract.Setter.Protected<G>
-			| V.Declaration.Property.Signature.Abstract.Setter.Public<G>
-			| V.Declaration.Property.Signature.Getter<G>
-			| V.Declaration.Property.Signature.Getter.Private<G>
-			| V.Declaration.Property.Signature.Getter.Protected<G>
-			| V.Declaration.Property.Signature.Getter.Public<G>
-			| V.Declaration.Property.Signature.Setter<G>
-			| V.Declaration.Property.Signature.Setter.Private<G>
-			| V.Declaration.Property.Signature.Setter.Protected<G>
-			| V.Declaration.Property.Signature.Setter.Public<G>
-			| V.Declaration.Signature<G>
-			| V.Declaration.Signature.Call<G>
-			| V.Declaration.Signature.Construct<G>
-			| V.Declaration.Signature.Index<G>
-			| V.Declaration.Signature.Index.Mapped<G>
-			| V.Declaration.Struct<G>
-			| V.Declaration.Struct.Private<G>
-			| V.Declaration.Struct.Public<G>
-			| V.Declaration.Struct.Public.Internal<G>
-			| V.Declaration.Struct.Public.Parent<G>
-			| V.Declaration.Struct.Public.Restricted<G>
-			| V.Declaration.Struct.Tuple<G>
-			| V.Declaration.Struct.Tuple.Private<G>
-			| V.Declaration.Struct.Tuple.Public<G>
-			| V.Declaration.Struct.Tuple.Public.Internal<G>
-			| V.Declaration.Struct.Tuple.Public.Parent<G>
-			| V.Declaration.Struct.Tuple.Public.Restricted<G>
-			| V.Declaration.Struct.Unit<G>
-			| V.Declaration.Struct.Unit.Private<G>
-			| V.Declaration.Struct.Unit.Public<G>
-			| V.Declaration.Struct.Unit.Public.Internal<G>
-			| V.Declaration.Struct.Unit.Public.Parent<G>
-			| V.Declaration.Struct.Unit.Public.Restricted<G>
-			| V.Declaration.TypeAlias<G>
-			| V.Declaration.TypeAlias.Associated<G>
-			| V.Declaration.TypeAlias.Private<G>
-			| V.Declaration.TypeAlias.Public<G>
-			| V.Declaration.TypeAlias.Public.Internal<G>
-			| V.Declaration.TypeAlias.Public.Parent<G>
-			| V.Declaration.TypeAlias.Public.Restricted<G>
+			| V.Declaration.Type.Class<G>
+			| V.Declaration.Type.Enum<G>
+			| V.Declaration.Type.Enum.Private<G>
+			| V.Declaration.Type.Enum.Public<G>
+			| V.Declaration.Type.Enum.Public.Internal<G>
+			| V.Declaration.Type.Enum.Public.Parent<G>
+			| V.Declaration.Type.Enum.Public.Restricted<G>
+			| V.Declaration.Type.Interface<G>
+			| V.Declaration.Type.Interface.Trait<G>
+			| V.Declaration.Type.Interface.Trait.Private<G>
+			| V.Declaration.Type.Interface.Trait.Public<G>
+			| V.Declaration.Type.Interface.Trait.Public.Internal<G>
+			| V.Declaration.Type.Interface.Trait.Public.Parent<G>
+			| V.Declaration.Type.Interface.Trait.Public.Restricted<G>
+			| V.Declaration.Type.Struct<G>
+			| V.Declaration.Type.Struct.Private<G>
+			| V.Declaration.Type.Struct.Public<G>
+			| V.Declaration.Type.Struct.Public.Internal<G>
+			| V.Declaration.Type.Struct.Public.Parent<G>
+			| V.Declaration.Type.Struct.Public.Restricted<G>
+			| V.Declaration.Type.Struct.Tuple<G>
+			| V.Declaration.Type.Struct.Tuple.Private<G>
+			| V.Declaration.Type.Struct.Tuple.Public<G>
+			| V.Declaration.Type.Struct.Tuple.Public.Internal<G>
+			| V.Declaration.Type.Struct.Tuple.Public.Parent<G>
+			| V.Declaration.Type.Struct.Tuple.Public.Restricted<G>
+			| V.Declaration.Type.Struct.Unit<G>
+			| V.Declaration.Type.Struct.Unit.Private<G>
+			| V.Declaration.Type.Struct.Unit.Public<G>
+			| V.Declaration.Type.Struct.Unit.Public.Internal<G>
+			| V.Declaration.Type.Struct.Unit.Public.Parent<G>
+			| V.Declaration.Type.Struct.Unit.Public.Restricted<G>
+			| V.Declaration.Type.TypeAlias<G>
+			| V.Declaration.Type.TypeAlias.Associated<G>
+			| V.Declaration.Type.TypeAlias.Private<G>
+			| V.Declaration.Type.TypeAlias.Public<G>
+			| V.Declaration.Type.TypeAlias.Public.Internal<G>
+			| V.Declaration.Type.TypeAlias.Public.Parent<G>
+			| V.Declaration.Type.TypeAlias.Public.Restricted<G>
+			| V.Declaration.Type.Union<G>
+			| V.Declaration.Type.Union.Private<G>
+			| V.Declaration.Type.Union.Public<G>
+			| V.Declaration.Type.Union.Public.Internal<G>
+			| V.Declaration.Type.Union.Public.Parent<G>
+			| V.Declaration.Type.Union.Public.Restricted<G>
 			| V.Declaration.TypeParameter<G>
 			| V.Declaration.TypeParameter.Lifetime<G>
 			| V.Declaration.TypeParameter.Parameters<G>
 			| V.Declaration.TypeParameter.Value<G>
 			| V.Declaration.TypeParameter.Variadic<G>
-			| V.Declaration.Union<G>
-			| V.Declaration.Union.Private<G>
-			| V.Declaration.Union.Public<G>
-			| V.Declaration.Union.Public.Internal<G>
-			| V.Declaration.Union.Public.Parent<G>
-			| V.Declaration.Union.Public.Restricted<G>
 			| V.Declaration.Variable<G>
 			| V.Declaration.Variable.Constant<G>
 			| V.Declaration.Variable.Pattern<G>
@@ -2592,10 +2931,6 @@ declare module './element.ts' {
 			K extends gate.Under<'element.comparator'> = 'element.comparator'
 		> extends pythonOperators.Element.Comparator<G, K> {}
 		namespace Comparator {
-			interface Comparison<
-				G extends GrammarMap,
-				K extends gate.Under<'element.comparator.comparison'> = 'element.comparator.comparison'
-			> extends pythonOperators.Element.Comparator.Comparison<G, K> {}
 			namespace Comparison {
 				interface Equal<
 					G extends GrammarMap,
@@ -2633,7 +2968,6 @@ declare module './element.ts' {
 						| V.Element.Comparator.Comparison.NotEqual.Legacy<G>;
 				}
 				type Any<G extends GrammarMap> =
-					| V.Element.Comparator.Comparison<G>
 					| V.Element.Comparator.Comparison.Equal<G>
 					| V.Element.Comparator.Comparison.Greater<G>
 					| V.Element.Comparator.Comparison.GreaterEqual<G>
@@ -2642,10 +2976,6 @@ declare module './element.ts' {
 					| V.Element.Comparator.Comparison.NotEqual<G>
 					| V.Element.Comparator.Comparison.NotEqual.Legacy<G>;
 			}
-			interface Identity<
-				G extends GrammarMap,
-				K extends gate.Under<'element.comparator.identity'> = 'element.comparator.identity'
-			> extends pythonOperators.Element.Comparator.Identity<G, K> {}
 			namespace Identity {
 				interface Is<
 					G extends GrammarMap,
@@ -2655,15 +2985,8 @@ declare module './element.ts' {
 					G extends GrammarMap,
 					K extends gate.Under<'element.comparator.identity.is_not'> = 'element.comparator.identity.is_not'
 				> extends pythonOperators.Element.Comparator.Identity.IsNot<G, K> {}
-				type Any<G extends GrammarMap> =
-					| V.Element.Comparator.Identity<G>
-					| V.Element.Comparator.Identity.Is<G>
-					| V.Element.Comparator.Identity.IsNot<G>;
+				type Any<G extends GrammarMap> = V.Element.Comparator.Identity.Is<G> | V.Element.Comparator.Identity.IsNot<G>;
 			}
-			interface Membership<
-				G extends GrammarMap,
-				K extends gate.Under<'element.comparator.membership'> = 'element.comparator.membership'
-			> extends pythonOperators.Element.Comparator.Membership<G, K> {}
 			namespace Membership {
 				interface In<
 					G extends GrammarMap,
@@ -2674,13 +2997,11 @@ declare module './element.ts' {
 					K extends gate.Under<'element.comparator.membership.not_in'> = 'element.comparator.membership.not_in'
 				> extends pythonOperators.Element.Comparator.Membership.NotIn<G, K> {}
 				type Any<G extends GrammarMap> =
-					| V.Element.Comparator.Membership<G>
 					| V.Element.Comparator.Membership.In<G>
 					| V.Element.Comparator.Membership.NotIn<G>;
 			}
 			type Any<G extends GrammarMap> =
 				| V.Element.Comparator<G>
-				| V.Element.Comparator.Comparison<G>
 				| V.Element.Comparator.Comparison.Equal<G>
 				| V.Element.Comparator.Comparison.Greater<G>
 				| V.Element.Comparator.Comparison.GreaterEqual<G>
@@ -2688,10 +3009,8 @@ declare module './element.ts' {
 				| V.Element.Comparator.Comparison.LessEqual<G>
 				| V.Element.Comparator.Comparison.NotEqual<G>
 				| V.Element.Comparator.Comparison.NotEqual.Legacy<G>
-				| V.Element.Comparator.Identity<G>
 				| V.Element.Comparator.Identity.Is<G>
 				| V.Element.Comparator.Identity.IsNot<G>
-				| V.Element.Comparator.Membership<G>
 				| V.Element.Comparator.Membership.In<G>
 				| V.Element.Comparator.Membership.NotIn<G>;
 		}
@@ -2899,7 +3218,6 @@ declare module './element.ts' {
 			| V.Element<G>
 			| V.Element.Attributed<G>
 			| V.Element.Comparator<G>
-			| V.Element.Comparator.Comparison<G>
 			| V.Element.Comparator.Comparison.Equal<G>
 			| V.Element.Comparator.Comparison.Greater<G>
 			| V.Element.Comparator.Comparison.GreaterEqual<G>
@@ -2907,10 +3225,8 @@ declare module './element.ts' {
 			| V.Element.Comparator.Comparison.LessEqual<G>
 			| V.Element.Comparator.Comparison.NotEqual<G>
 			| V.Element.Comparator.Comparison.NotEqual.Legacy<G>
-			| V.Element.Comparator.Identity<G>
 			| V.Element.Comparator.Identity.Is<G>
 			| V.Element.Comparator.Identity.IsNot<G>
-			| V.Element.Comparator.Membership<G>
 			| V.Element.Comparator.Membership.In<G>
 			| V.Element.Comparator.Membership.NotIn<G>
 			| V.Element.Macro<G>
@@ -2949,6 +3265,9 @@ declare module './element.ts' {
 
 declare module './expression.ts' {
 	namespace Expression {
+		type AnyWithArgument<G extends GrammarMap> = spreads.Expression.AnyWithArgument<G>;
+		type AnyWithLet<G extends GrammarMap> = letPatterns.Expression.AnyWithLet<G>;
+		type AnyWithSpread<G extends GrammarMap> = spreads.Expression.AnyWithSpread<G>;
 		namespace Assignment {
 			namespace Compound {
 				interface And<
@@ -3039,7 +3358,6 @@ declare module './expression.ts' {
 						'expression.binary.arithmetic.floor_divide'
 				> extends pythonOperators.Expression.Binary.Arithmetic.FloorDivide<G, K> {}
 				type Any<G extends GrammarMap> =
-					| V.Expression.Binary.Arithmetic<G>
 					| V.Expression.Binary.Arithmetic.Add<G>
 					| V.Expression.Binary.Arithmetic.Divide<G>
 					| V.Expression.Binary.Arithmetic.Exponent<G>
@@ -3050,7 +3368,6 @@ declare module './expression.ts' {
 			}
 			namespace Bitwise {
 				type Any<G extends GrammarMap> =
-					| V.Expression.Binary.Bitwise<G>
 					| V.Expression.Binary.Bitwise.And<G>
 					| V.Expression.Binary.Bitwise.Or<G>
 					| V.Expression.Binary.Bitwise.Xor<G>;
@@ -3084,7 +3401,6 @@ declare module './expression.ts' {
 						| V.Expression.Binary.Comparison.NotEqual.Legacy<G>;
 				}
 				type Any<G extends GrammarMap> =
-					| V.Expression.Binary.Comparison<G>
 					| V.Expression.Binary.Comparison.Chain<G>
 					| V.Expression.Binary.Comparison.Equal<G>
 					| V.Expression.Binary.Comparison.Greater<G>
@@ -3153,14 +3469,12 @@ declare module './expression.ts' {
 					K extends gate.Under<'expression.binary.shift.right_unsigned'> = 'expression.binary.shift.right_unsigned'
 				> extends javascriptOperators.Expression.Binary.Shift.RightUnsigned<G, K> {}
 				type Any<G extends GrammarMap> =
-					| V.Expression.Binary.Shift<G>
 					| V.Expression.Binary.Shift.Left<G>
 					| V.Expression.Binary.Shift.Right<G>
 					| V.Expression.Binary.Shift.RightUnsigned<G>;
 			}
 			type Any<G extends GrammarMap> =
 				| V.Expression.Binary<G>
-				| V.Expression.Binary.Arithmetic<G>
 				| V.Expression.Binary.Arithmetic.Add<G>
 				| V.Expression.Binary.Arithmetic.Divide<G>
 				| V.Expression.Binary.Arithmetic.Exponent<G>
@@ -3168,12 +3482,10 @@ declare module './expression.ts' {
 				| V.Expression.Binary.Arithmetic.Modulo<G>
 				| V.Expression.Binary.Arithmetic.Multiply<G>
 				| V.Expression.Binary.Arithmetic.Subtract<G>
-				| V.Expression.Binary.Bitwise<G>
 				| V.Expression.Binary.Bitwise.And<G>
 				| V.Expression.Binary.Bitwise.Or<G>
 				| V.Expression.Binary.Bitwise.Xor<G>
 				| V.Expression.Binary.Coalesce<G>
-				| V.Expression.Binary.Comparison<G>
 				| V.Expression.Binary.Comparison.Chain<G>
 				| V.Expression.Binary.Comparison.Equal<G>
 				| V.Expression.Binary.Comparison.Greater<G>
@@ -3195,44 +3507,12 @@ declare module './expression.ts' {
 				| V.Expression.Binary.Membership.In<G>
 				| V.Expression.Binary.Membership.Instanceof<G>
 				| V.Expression.Binary.Membership.NotIn<G>
-				| V.Expression.Binary.Shift<G>
 				| V.Expression.Binary.Shift.Left<G>
 				| V.Expression.Binary.Shift.Right<G>
 				| V.Expression.Binary.Shift.RightUnsigned<G>;
 		}
-		interface Block<
-			G extends GrammarMap,
-			K extends gate.Under<'expression.block'> = 'expression.block'
-		> extends rustExpressions.Expression.Block<G, K> {}
-		namespace Block {
-			interface Async<
-				G extends GrammarMap,
-				K extends gate.Under<'expression.block.async'> = 'expression.block.async'
-			> extends asyncBlocks.Expression.Block.Async<G, K> {}
-			interface Const<
-				G extends GrammarMap,
-				K extends gate.Under<'expression.block.const'> = 'expression.block.const'
-			> extends compileTimeEvaluation.Expression.Block.Const<G, K> {}
-			interface Generator<
-				G extends GrammarMap,
-				K extends gate.Under<'expression.block.generator'> = 'expression.block.generator'
-			> extends generatorBlocks.Expression.Block.Generator<G, K> {}
-			interface Try<
-				G extends GrammarMap,
-				K extends gate.Under<'expression.block.try'> = 'expression.block.try'
-			> extends errorPropagation.Expression.Block.Try<G, K> {}
-			interface Unsafe<
-				G extends GrammarMap,
-				K extends gate.Under<'expression.block.unsafe'> = 'expression.block.unsafe'
-			> extends unsafeCode.Expression.Block.Unsafe<G, K> {}
-			type Any<G extends GrammarMap> =
-				| V.Expression.Block<G>
-				| V.Expression.Block.Async<G>
-				| V.Expression.Block.Const<G>
-				| V.Expression.Block.Generator<G>
-				| V.Expression.Block.Try<G>
-				| V.Expression.Block.Unsafe<G>;
-		}
+		type Block<G extends GrammarMap> = gate.In<G, features.RustExpressions, V.Statement.Block.Any<G>>;
+		type Break<G extends GrammarMap> = gate.In<G, features.RustExpressions, V.Statement.Break<G>>;
 		interface Call<G extends GrammarMap, K extends gate.Under<'expression.call'> = 'expression.call'> {
 			readonly optionalChain?: gate.In<
 				G,
@@ -3383,7 +3663,6 @@ declare module './expression.ts' {
 				type Any<G extends GrammarMap> = V.Expression.Collection.Tuple<G> | V.Expression.Collection.Tuple.Bare<G>;
 			}
 			type Any<G extends GrammarMap> =
-				| V.Expression.Collection<G>
 				| V.Expression.Collection.List<G>
 				| V.Expression.Collection.List.Repeat<G>
 				| V.Expression.Collection.Map<G>
@@ -3425,6 +3704,7 @@ declare module './expression.ts' {
 			G extends GrammarMap,
 			K extends gate.Under<'expression.conditional'> = 'expression.conditional'
 		> extends conditionalExpressions.Expression.Conditional<G, K> {}
+		type Continue<G extends GrammarMap> = gate.In<G, features.RustExpressions, V.Statement.Continue<G>>;
 		interface Function<
 			G extends GrammarMap,
 			K extends gate.Under<'expression.function'> = 'expression.function'
@@ -3447,6 +3727,7 @@ declare module './expression.ts' {
 				genericExpressions.Expression.Function<G, K>['typeParameters']
 			>;
 		}
+		type If<G extends GrammarMap> = gate.In<G, features.RustExpressions, V.Statement.If<G>>;
 		interface Instantiation<
 			G extends GrammarMap,
 			K extends gate.Under<'expression.instantiation'> = 'expression.instantiation'
@@ -3478,12 +3759,19 @@ declare module './expression.ts' {
 				annotatedLambdas.Expression.Lambda<G, K>['returnType']
 			>;
 			readonly static?: gate.In<G, features.GeneratorBlocks, generatorBlocks.Expression.Lambda<G, K>['static']>;
+			readonly trailingExpression?: gate.In<
+				G,
+				features.ValuedBlocks,
+				valuedBlocks.Expression.Lambda<G, K>['trailingExpression']
+			>;
 			readonly typeParameters?: gate.In<
 				G,
 				features.GenericLambdas,
 				genericLambdas.Expression.Lambda<G, K>['typeParameters']
 			>;
 		}
+		type Loop<G extends GrammarMap> = gate.In<G, features.RustExpressions, V.Statement.Loop.Any<G>>;
+		type Match<G extends GrammarMap> = gate.In<G, features.RustExpressions, V.Statement.Match<G>>;
 		interface Member<G extends GrammarMap, K extends gate.Under<'expression.member'> = 'expression.member'> {
 			readonly optionalChain?: gate.In<
 				G,
@@ -3540,6 +3828,8 @@ declare module './expression.ts' {
 			G extends GrammarMap,
 			K extends gate.Under<'expression.reference'> = 'expression.reference'
 		> extends references.Expression.Reference<G, K> {}
+		type Rest<G extends GrammarMap> = gate.In<G, features.PythonDestructuring, V.Pattern.Rest.Any<G>>;
+		type Return<G extends GrammarMap> = gate.In<G, features.RustExpressions, V.Statement.Return<G>>;
 		interface Sequence<
 			G extends GrammarMap,
 			K extends gate.Under<'expression.sequence'> = 'expression.sequence'
@@ -3644,7 +3934,6 @@ declare module './expression.ts' {
 			| V.Expression.Assignment.Compound.Subtract<G>
 			| V.Expression.Await<G>
 			| V.Expression.Binary<G>
-			| V.Expression.Binary.Arithmetic<G>
 			| V.Expression.Binary.Arithmetic.Add<G>
 			| V.Expression.Binary.Arithmetic.Divide<G>
 			| V.Expression.Binary.Arithmetic.Exponent<G>
@@ -3652,12 +3941,10 @@ declare module './expression.ts' {
 			| V.Expression.Binary.Arithmetic.Modulo<G>
 			| V.Expression.Binary.Arithmetic.Multiply<G>
 			| V.Expression.Binary.Arithmetic.Subtract<G>
-			| V.Expression.Binary.Bitwise<G>
 			| V.Expression.Binary.Bitwise.And<G>
 			| V.Expression.Binary.Bitwise.Or<G>
 			| V.Expression.Binary.Bitwise.Xor<G>
 			| V.Expression.Binary.Coalesce<G>
-			| V.Expression.Binary.Comparison<G>
 			| V.Expression.Binary.Comparison.Chain<G>
 			| V.Expression.Binary.Comparison.Equal<G>
 			| V.Expression.Binary.Comparison.Greater<G>
@@ -3679,16 +3966,11 @@ declare module './expression.ts' {
 			| V.Expression.Binary.Membership.In<G>
 			| V.Expression.Binary.Membership.Instanceof<G>
 			| V.Expression.Binary.Membership.NotIn<G>
-			| V.Expression.Binary.Shift<G>
 			| V.Expression.Binary.Shift.Left<G>
 			| V.Expression.Binary.Shift.Right<G>
 			| V.Expression.Binary.Shift.RightUnsigned<G>
 			| V.Expression.Block<G>
-			| V.Expression.Block.Async<G>
-			| V.Expression.Block.Const<G>
-			| V.Expression.Block.Generator<G>
-			| V.Expression.Block.Try<G>
-			| V.Expression.Block.Unsafe<G>
+			| V.Expression.Break<G>
 			| V.Expression.Call<G>
 			| V.Expression.Call.Construct<G>
 			| V.Expression.Call.Construct.Bare<G>
@@ -3704,7 +3986,6 @@ declare module './expression.ts' {
 			| V.Expression.Cast.NonNull<G>
 			| V.Expression.Cast.Satisfies<G>
 			| V.Expression.Class<G>
-			| V.Expression.Collection<G>
 			| V.Expression.Collection.List<G>
 			| V.Expression.Collection.List.Repeat<G>
 			| V.Expression.Collection.Map<G>
@@ -3719,12 +4000,18 @@ declare module './expression.ts' {
 			| V.Expression.Comprehension.Map<G>
 			| V.Expression.Comprehension.Set<G>
 			| V.Expression.Conditional<G>
+			| V.Expression.Continue<G>
 			| V.Expression.Function<G>
+			| V.Expression.Identifier<G>
+			| V.Expression.If<G>
 			| V.Expression.Instantiation<G>
 			| V.Expression.Interpolation<G>
 			| V.Expression.Interpolation.Conversion<G>
 			| V.Expression.Interpolation.Format<G>
 			| V.Expression.Lambda<G>
+			| V.Expression.Literal<G>
+			| V.Expression.Loop<G>
+			| V.Expression.Match<G>
 			| V.Expression.Member<G>
 			| V.Expression.Meta<G>
 			| V.Expression.Parenthesized<G>
@@ -3734,6 +4021,8 @@ declare module './expression.ts' {
 			| V.Expression.Range.Inclusive<G>
 			| V.Expression.Range.Inclusive.Legacy<G>
 			| V.Expression.Reference<G>
+			| V.Expression.Rest<G>
+			| V.Expression.Return<G>
 			| V.Expression.Sequence<G>
 			| V.Expression.Slice<G>
 			| V.Expression.Subscript<G>
@@ -4257,18 +4546,21 @@ declare module './pattern.ts' {
 			> extends complexNumbers.Pattern.Complex.Subtract<G, K> {}
 			type Any<G extends GrammarMap> = V.Pattern.Complex<G> | V.Pattern.Complex.Add<G> | V.Pattern.Complex.Subtract<G>;
 		}
+		type Const<G extends GrammarMap> = gate.In<G, features.CompileTimeEvaluation, V.Statement.Block.Const<G>>;
 		interface Generic<
 			G extends GrammarMap,
 			K extends gate.Under<'pattern.generic'> = 'pattern.generic'
 		> extends genericItems.Pattern.Generic<G, K> {}
 		interface List<G extends GrammarMap, K extends gate.Under<'pattern.list'> = 'pattern.list'> extends destructuring
 			.Pattern.List<G, K> {}
+		type Macro<G extends GrammarMap> = gate.In<G, features.SyntacticMetaprogramming, V.Expression.Call.Macro<G>>;
 		interface Map<G extends GrammarMap, K extends gate.Under<'pattern.map'> = 'pattern.map'> extends mappingPatterns
 			.Pattern.Map<G, K> {}
 		interface Mutable<
 			G extends GrammarMap,
 			K extends gate.Under<'pattern.mutable'> = 'pattern.mutable'
 		> extends rustDeclarations.Pattern.Mutable<G, K> {}
+		type NonNull<G extends GrammarMap> = gate.In<G, features.NonNullAssertions, V.Expression.Cast.NonNull<G>>;
 		interface Object<
 			G extends GrammarMap,
 			K extends gate.Under<'pattern.object'> = 'pattern.object'
@@ -4344,7 +4636,15 @@ declare module './pattern.ts' {
 				K extends gate.Under<'pattern.struct.field'> = 'pattern.struct.field'
 			> extends structPatterns.Pattern.Struct.Field<G, K> {}
 			type Rest<G extends GrammarMap> = tupleStructs.Pattern.Struct.Rest<G>;
-			type Any<G extends GrammarMap> = V.Pattern.Struct<G> | V.Pattern.Struct.Field<G> | V.Pattern.Struct.Rest<G>;
+			interface Tuple<
+				G extends GrammarMap,
+				K extends gate.Under<'pattern.struct.tuple'> = 'pattern.struct.tuple'
+			> extends tupleStructs.Pattern.Struct.Tuple<G, K> {}
+			type Any<G extends GrammarMap> =
+				| V.Pattern.Struct<G>
+				| V.Pattern.Struct.Field<G>
+				| V.Pattern.Struct.Rest<G>
+				| V.Pattern.Struct.Tuple<G>;
 		}
 		interface Tuple<G extends GrammarMap, K extends gate.Under<'pattern.tuple'> = 'pattern.tuple'> extends tuplePatterns
 			.Pattern.Tuple<G, K> {}
@@ -4363,10 +4663,16 @@ declare module './pattern.ts' {
 			| V.Pattern.Complex<G>
 			| V.Pattern.Complex.Add<G>
 			| V.Pattern.Complex.Subtract<G>
+			| V.Pattern.Const<G>
 			| V.Pattern.Generic<G>
+			| V.Pattern.Identifier<G>
 			| V.Pattern.List<G>
+			| V.Pattern.Literal<G>
+			| V.Pattern.Macro<G>
 			| V.Pattern.Map<G>
+			| V.Pattern.Member<G>
 			| V.Pattern.Mutable<G>
+			| V.Pattern.NonNull<G>
 			| V.Pattern.Object<G>
 			| V.Pattern.Object.Assignment<G>
 			| V.Pattern.Object.Pair<G>
@@ -4382,6 +4688,8 @@ declare module './pattern.ts' {
 			| V.Pattern.Struct<G>
 			| V.Pattern.Struct.Field<G>
 			| V.Pattern.Struct.Rest<G>
+			| V.Pattern.Struct.Tuple<G>
+			| V.Pattern.Subscript<G>
 			| V.Pattern.Tuple<G>
 			| V.Pattern.Tuple.Bare<G>
 			| V.Pattern.Wildcard<G>;
@@ -4394,6 +4702,7 @@ declare module './statement.ts' {
 			G extends GrammarMap,
 			K extends gate.Under<'statement.assert'> = 'statement.assert'
 		> extends assertions.Statement.Assert<G, K> {}
+		type Attribute<G extends GrammarMap> = gate.In<G, features.Attributes, V.Attribute.Any<G>>;
 		interface Block<G extends GrammarMap, K extends gate.Under<'statement.block'> = 'statement.block'> {
 			readonly label?: gate.In<G, features.LoopLabels, loopLabels.Statement.Block<G, K>['label']>;
 			readonly trailingExpression?: gate.In<
@@ -4403,11 +4712,33 @@ declare module './statement.ts' {
 			>;
 		}
 		namespace Block {
-			interface Static<
+			interface Async<
 				G extends GrammarMap,
-				K extends gate.Under<'statement.block.static'> = 'statement.block.static'
-			> extends javascriptClasses.Statement.Block.Static<G, K> {}
-			type Any<G extends GrammarMap> = V.Statement.Block<G> | V.Statement.Block.Static<G>;
+				K extends gate.Under<'statement.block.async'> = 'statement.block.async'
+			> extends asyncBlocks.Statement.Block.Async<G, K> {}
+			interface Const<
+				G extends GrammarMap,
+				K extends gate.Under<'statement.block.const'> = 'statement.block.const'
+			> extends compileTimeEvaluation.Statement.Block.Const<G, K> {}
+			interface Generator<
+				G extends GrammarMap,
+				K extends gate.Under<'statement.block.generator'> = 'statement.block.generator'
+			> extends generatorBlocks.Statement.Block.Generator<G, K> {}
+			interface Try<
+				G extends GrammarMap,
+				K extends gate.Under<'statement.block.try'> = 'statement.block.try'
+			> extends errorPropagation.Statement.Block.Try<G, K> {}
+			interface Unsafe<
+				G extends GrammarMap,
+				K extends gate.Under<'statement.block.unsafe'> = 'statement.block.unsafe'
+			> extends unsafeCode.Statement.Block.Unsafe<G, K> {}
+			type Any<G extends GrammarMap> =
+				| V.Statement.Block<G>
+				| V.Statement.Block.Async<G>
+				| V.Statement.Block.Const<G>
+				| V.Statement.Block.Generator<G>
+				| V.Statement.Block.Try<G>
+				| V.Statement.Block.Unsafe<G>;
 		}
 		interface Break<G extends GrammarMap, K extends gate.Under<'statement.break'> = 'statement.break'> {
 			readonly expression?: gate.In<G, features.ValuedBlocks, valuedBlocks.Statement.Break<G, K>['expression']>;
@@ -4458,6 +4789,11 @@ declare module './statement.ts' {
 				G,
 				features.PythonStatements,
 				pythonStatements.Statement.If<G, K>['alternatives']
+			>;
+			readonly trailingExpression?: gate.In<
+				G,
+				features.ValuedBlocks,
+				valuedBlocks.Statement.If<G, K>['trailingExpression']
 			>;
 		}
 		interface Import<
@@ -4576,6 +4912,11 @@ declare module './statement.ts' {
 		> extends labeledStatements.Statement.Labeled<G, K> {}
 		interface Loop<G extends GrammarMap, K extends gate.Under<'statement.loop'> = 'statement.loop'> {
 			readonly label?: gate.In<G, features.LoopLabels, loopLabels.Statement.Loop<G, K>['label']>;
+			readonly trailingExpression?: gate.In<
+				G,
+				features.ValuedBlocks,
+				valuedBlocks.Statement.Loop<G, K>['trailingExpression']
+			>;
 		}
 		namespace Loop {
 			interface Counted<
@@ -4651,17 +4992,24 @@ declare module './statement.ts' {
 		type Any<G extends GrammarMap> =
 			| V.Statement<G>
 			| V.Statement.Assert<G>
+			| V.Statement.Attribute<G>
 			| V.Statement.Block<G>
-			| V.Statement.Block.Static<G>
+			| V.Statement.Block.Async<G>
+			| V.Statement.Block.Const<G>
+			| V.Statement.Block.Generator<G>
+			| V.Statement.Block.Try<G>
+			| V.Statement.Block.Unsafe<G>
 			| V.Statement.Break<G>
 			| V.Statement.Continue<G>
 			| V.Statement.Debugger<G>
+			| V.Statement.Declaration<G>
 			| V.Statement.Delete<G>
 			| V.Statement.Empty<G>
 			| V.Statement.Exec<G>
 			| V.Statement.Export<G>
 			| V.Statement.Export.All<G>
 			| V.Statement.Export.Default<G>
+			| V.Statement.Expression<G>
 			| V.Statement.Global<G>
 			| V.Statement.If<G>
 			| V.Statement.Import<G>
@@ -4708,6 +5056,8 @@ declare module './type.ts' {
 		> extends systemsTypes.Type.Abstract<G, K> {
 			readonly typeParameters?: gate.In<G, features.GenericItems, genericItems.Type.Abstract<G, K>['typeParameters']>;
 		}
+		type AnyWithBounds<G extends GrammarMap> = boundClauses.Type.AnyWithBounds<G>;
+		type AnyWithTypeArgument<G extends GrammarMap> = genericItems.Type.AnyWithTypeArgument<G>;
 		interface Array<G extends GrammarMap, K extends gate.Under<'type.array'> = 'type.array'> extends staticTypes.Type
 			.Array<G, K> {}
 		interface Bounded<G extends GrammarMap, K extends gate.Under<'type.bounded'> = 'type.bounded'> extends systemsTypes
@@ -4733,6 +5083,7 @@ declare module './type.ts' {
 		interface Dynamic<G extends GrammarMap, K extends gate.Under<'type.dynamic'> = 'type.dynamic'> extends systemsTypes
 			.Type.Dynamic<G, K> {}
 		type Existential<G extends GrammarMap> = typeAlgebra.Type.Existential<G>;
+		type Expression<G extends GrammarMap> = gate.In<G, features.PythonTypeForms, V.Expression.Any<G>>;
 		interface Function<
 			G extends GrammarMap,
 			K extends gate.Under<'type.function'> = 'type.function'
@@ -4793,6 +5144,7 @@ declare module './type.ts' {
 			.Type.Literal<G, K> {}
 		interface Lookup<G extends GrammarMap, K extends gate.Under<'type.lookup'> = 'type.lookup'> extends typeAlgebra.Type
 			.Lookup<G, K> {}
+		type Macro<G extends GrammarMap> = gate.In<G, features.SyntacticMetaprogramming, V.Expression.Call.Macro<G>>;
 		interface Nullable<
 			G extends GrammarMap,
 			K extends gate.Under<'type.nullable'> = 'type.nullable'
@@ -4922,16 +5274,19 @@ declare module './type.ts' {
 			| V.Type.Constrained<G>
 			| V.Type.Dynamic<G>
 			| V.Type.Existential<G>
+			| V.Type.Expression<G>
 			| V.Type.Function<G>
 			| V.Type.Function.Constructor<G>
 			| V.Type.Generic<G>
 			| V.Type.Generic.Turbofish<G>
+			| V.Type.Identifier<G>
 			| V.Type.Import<G>
 			| V.Type.IndexQuery<G>
 			| V.Type.Infer<G>
 			| V.Type.Intersection<G>
 			| V.Type.Literal<G>
 			| V.Type.Lookup<G>
+			| V.Type.Macro<G>
 			| V.Type.Nullable<G>
 			| V.Type.Object<G>
 			| V.Type.Optional<G>
@@ -5049,7 +5404,6 @@ declare module './map.ts' {
 		readonly 'comment.text': gate.In<G, features.InnerDocComments, V.Comment.Text<G>>;
 		readonly declaration: V.Declaration<G>;
 		readonly 'declaration.ambient': gate.In<G, features.AmbientDeclarations, V.Declaration.Ambient<G>>;
-		readonly 'declaration.class': gate.In<G, features.Classes, V.Declaration.Class<G>>;
 		readonly 'declaration.constant': gate.In<G, features.Constants, V.Declaration.Constant<G>>;
 		readonly 'declaration.constant.private': gate.In<G, features.ModuleVisibility, V.Declaration.Constant.Private<G>>;
 		readonly 'declaration.constant.public': gate.In<G, features.ModuleVisibility, V.Declaration.Constant.Public<G>>;
@@ -5068,166 +5422,11 @@ declare module './map.ts' {
 			features.ModuleVisibility,
 			V.Declaration.Constant.Public.Restricted<G>
 		>;
-		readonly 'declaration.constructor': gate.In<G, features.Classes, V.Declaration.Constructor<G>>;
-		readonly 'declaration.constructor.private': gate.In<
-			G,
-			features.ClassVisibility,
-			V.Declaration.Constructor.Private<G>
-		>;
-		readonly 'declaration.constructor.protected': gate.In<
-			G,
-			features.ClassVisibility,
-			V.Declaration.Constructor.Protected<G>
-		>;
-		readonly 'declaration.constructor.public': gate.In<
-			G,
-			features.ClassVisibility,
-			V.Declaration.Constructor.Public<G>
-		>;
-		readonly 'declaration.enum': gate.In<G, features.Enumerations, V.Declaration.Enum<G>>;
-		readonly 'declaration.enum.private': gate.In<G, features.ModuleVisibility, V.Declaration.Enum.Private<G>>;
-		readonly 'declaration.enum.public': gate.In<G, features.ModuleVisibility, V.Declaration.Enum.Public<G>>;
-		readonly 'declaration.enum.public.internal': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.Enum.Public.Internal<G>
-		>;
-		readonly 'declaration.enum.public.parent': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.Enum.Public.Parent<G>
-		>;
-		readonly 'declaration.enum.public.restricted': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.Enum.Public.Restricted<G>
-		>;
-		readonly 'declaration.enum_member': gate.In<G, features.Enumerations, V.Declaration.EnumMember<G>>;
-		readonly 'declaration.enum_member.private': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.EnumMember.Private<G>
-		>;
-		readonly 'declaration.enum_member.public': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.EnumMember.Public<G>
-		>;
-		readonly 'declaration.enum_member.public.internal': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.EnumMember.Public.Internal<G>
-		>;
-		readonly 'declaration.enum_member.public.parent': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.EnumMember.Public.Parent<G>
-		>;
-		readonly 'declaration.enum_member.public.restricted': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.EnumMember.Public.Restricted<G>
-		>;
-		readonly 'declaration.enum_member.struct': gate.In<
-			G,
-			features.AlgebraicDataTypes,
-			V.Declaration.EnumMember.Struct<G>
-		>;
-		readonly 'declaration.enum_member.struct.private': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.EnumMember.Struct.Private<G>
-		>;
-		readonly 'declaration.enum_member.struct.public': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.EnumMember.Struct.Public<G>
-		>;
-		readonly 'declaration.enum_member.struct.public.internal': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.EnumMember.Struct.Public.Internal<G>
-		>;
-		readonly 'declaration.enum_member.struct.public.parent': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.EnumMember.Struct.Public.Parent<G>
-		>;
-		readonly 'declaration.enum_member.struct.public.restricted': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.EnumMember.Struct.Public.Restricted<G>
-		>;
-		readonly 'declaration.enum_member.tuple': gate.In<
-			G,
-			features.AlgebraicDataTypes,
-			V.Declaration.EnumMember.Tuple<G>
-		>;
-		readonly 'declaration.enum_member.tuple.private': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.EnumMember.Tuple.Private<G>
-		>;
-		readonly 'declaration.enum_member.tuple.public': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.EnumMember.Tuple.Public<G>
-		>;
-		readonly 'declaration.enum_member.tuple.public.internal': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.EnumMember.Tuple.Public.Internal<G>
-		>;
-		readonly 'declaration.enum_member.tuple.public.parent': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.EnumMember.Tuple.Public.Parent<G>
-		>;
-		readonly 'declaration.enum_member.tuple.public.restricted': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.EnumMember.Tuple.Public.Restricted<G>
-		>;
 		readonly 'declaration.extension': gate.In<G, features.OpenTypeExtension, V.Declaration.Extension<G>>;
 		readonly 'declaration.extension.conformance': gate.In<
 			G,
 			features.Typeclasses,
 			V.Declaration.Extension.Conformance<G>
-		>;
-		readonly 'declaration.field': gate.In<G, features.FieldsAndModifiers, V.Declaration.Field<G>>;
-		readonly 'declaration.field.private': gate.In<G, features.Visibility, V.Declaration.Field.Private<G>>;
-		readonly 'declaration.field.protected': gate.In<G, features.ClassVisibility, V.Declaration.Field.Protected<G>>;
-		readonly 'declaration.field.public': gate.In<G, features.Visibility, V.Declaration.Field.Public<G>>;
-		readonly 'declaration.field.public.internal': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.Field.Public.Internal<G>
-		>;
-		readonly 'declaration.field.public.parent': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.Field.Public.Parent<G>
-		>;
-		readonly 'declaration.field.public.restricted': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.Field.Public.Restricted<G>
-		>;
-		readonly 'declaration.field.signature': gate.In<G, features.FieldSignatures, V.Declaration.Field.Signature<G>>;
-		readonly 'declaration.field.signature.private': gate.In<
-			G,
-			features.ClassVisibility,
-			V.Declaration.Field.Signature.Private<G>
-		>;
-		readonly 'declaration.field.signature.protected': gate.In<
-			G,
-			features.ClassVisibility,
-			V.Declaration.Field.Signature.Protected<G>
-		>;
-		readonly 'declaration.field.signature.public': gate.In<
-			G,
-			features.ClassVisibility,
-			V.Declaration.Field.Signature.Public<G>
 		>;
 		readonly 'declaration.function': V.Declaration.Function<G>;
 		readonly 'declaration.function.private': gate.In<G, features.ModuleVisibility, V.Declaration.Function.Private<G>>;
@@ -5277,108 +5476,418 @@ declare module './map.ts' {
 			features.ModuleVisibility,
 			V.Declaration.Function.Signature.Public.Restricted<G>
 		>;
-		readonly 'declaration.interface': gate.In<G, features.Interfaces, V.Declaration.Interface<G>>;
-		readonly 'declaration.interface.trait': gate.In<G, features.Traits, V.Declaration.Interface.Trait<G>>;
-		readonly 'declaration.interface.trait.private': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.Interface.Trait.Private<G>
-		>;
-		readonly 'declaration.interface.trait.public': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.Interface.Trait.Public<G>
-		>;
-		readonly 'declaration.interface.trait.public.internal': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.Interface.Trait.Public.Internal<G>
-		>;
-		readonly 'declaration.interface.trait.public.parent': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.Interface.Trait.Public.Parent<G>
-		>;
-		readonly 'declaration.interface.trait.public.restricted': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.Interface.Trait.Public.Restricted<G>
-		>;
 		readonly 'declaration.macro': gate.In<G, features.SyntacticMetaprogramming, V.Declaration.Macro<G>>;
 		readonly 'declaration.macro.brace': gate.In<G, features.SyntacticMetaprogramming, V.Declaration.Macro.Brace<G>>;
 		readonly 'declaration.macro.bracket': gate.In<G, features.SyntacticMetaprogramming, V.Declaration.Macro.Bracket<G>>;
 		readonly 'declaration.macro.paren': gate.In<G, features.SyntacticMetaprogramming, V.Declaration.Macro.Paren<G>>;
-		readonly 'declaration.method': gate.In<G, features.Methods, V.Declaration.Method<G>>;
-		readonly 'declaration.method.private': gate.In<G, features.Visibility, V.Declaration.Method.Private<G>>;
-		readonly 'declaration.method.protected': gate.In<G, features.ClassVisibility, V.Declaration.Method.Protected<G>>;
-		readonly 'declaration.method.public': gate.In<G, features.Visibility, V.Declaration.Method.Public<G>>;
-		readonly 'declaration.method.public.internal': gate.In<
+		readonly 'declaration.member.constructor': gate.In<G, features.Classes, V.Declaration.Member.Constructor<G>>;
+		readonly 'declaration.member.constructor.private': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Constructor.Private<G>
+		>;
+		readonly 'declaration.member.constructor.protected': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Constructor.Protected<G>
+		>;
+		readonly 'declaration.member.constructor.public': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Constructor.Public<G>
+		>;
+		readonly 'declaration.member.enum_member': gate.In<G, features.Enumerations, V.Declaration.Member.EnumMember<G>>;
+		readonly 'declaration.member.enum_member.private': gate.In<
 			G,
 			features.ModuleVisibility,
-			V.Declaration.Method.Public.Internal<G>
+			V.Declaration.Member.EnumMember.Private<G>
 		>;
-		readonly 'declaration.method.public.parent': gate.In<
+		readonly 'declaration.member.enum_member.public': gate.In<
 			G,
 			features.ModuleVisibility,
-			V.Declaration.Method.Public.Parent<G>
+			V.Declaration.Member.EnumMember.Public<G>
 		>;
-		readonly 'declaration.method.public.restricted': gate.In<
+		readonly 'declaration.member.enum_member.public.internal': gate.In<
 			G,
 			features.ModuleVisibility,
-			V.Declaration.Method.Public.Restricted<G>
+			V.Declaration.Member.EnumMember.Public.Internal<G>
 		>;
-		readonly 'declaration.method.signature': gate.In<G, features.MethodSignatures, V.Declaration.Method.Signature<G>>;
-		readonly 'declaration.method.signature.abstract': gate.In<
+		readonly 'declaration.member.enum_member.public.parent': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Member.EnumMember.Public.Parent<G>
+		>;
+		readonly 'declaration.member.enum_member.public.restricted': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Member.EnumMember.Public.Restricted<G>
+		>;
+		readonly 'declaration.member.enum_member.struct': gate.In<
+			G,
+			features.AlgebraicDataTypes,
+			V.Declaration.Member.EnumMember.Struct<G>
+		>;
+		readonly 'declaration.member.enum_member.struct.private': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Member.EnumMember.Struct.Private<G>
+		>;
+		readonly 'declaration.member.enum_member.struct.public': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Member.EnumMember.Struct.Public<G>
+		>;
+		readonly 'declaration.member.enum_member.struct.public.internal': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Member.EnumMember.Struct.Public.Internal<G>
+		>;
+		readonly 'declaration.member.enum_member.struct.public.parent': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Member.EnumMember.Struct.Public.Parent<G>
+		>;
+		readonly 'declaration.member.enum_member.struct.public.restricted': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Member.EnumMember.Struct.Public.Restricted<G>
+		>;
+		readonly 'declaration.member.enum_member.tuple': gate.In<
+			G,
+			features.AlgebraicDataTypes,
+			V.Declaration.Member.EnumMember.Tuple<G>
+		>;
+		readonly 'declaration.member.enum_member.tuple.private': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Member.EnumMember.Tuple.Private<G>
+		>;
+		readonly 'declaration.member.enum_member.tuple.public': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Member.EnumMember.Tuple.Public<G>
+		>;
+		readonly 'declaration.member.enum_member.tuple.public.internal': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Member.EnumMember.Tuple.Public.Internal<G>
+		>;
+		readonly 'declaration.member.enum_member.tuple.public.parent': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Member.EnumMember.Tuple.Public.Parent<G>
+		>;
+		readonly 'declaration.member.enum_member.tuple.public.restricted': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Member.EnumMember.Tuple.Public.Restricted<G>
+		>;
+		readonly 'declaration.member.field': gate.In<G, features.FieldsAndModifiers, V.Declaration.Member.Field<G>>;
+		readonly 'declaration.member.field.private': gate.In<G, features.Visibility, V.Declaration.Member.Field.Private<G>>;
+		readonly 'declaration.member.field.protected': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Field.Protected<G>
+		>;
+		readonly 'declaration.member.field.public': gate.In<G, features.Visibility, V.Declaration.Member.Field.Public<G>>;
+		readonly 'declaration.member.field.public.internal': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Member.Field.Public.Internal<G>
+		>;
+		readonly 'declaration.member.field.public.parent': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Member.Field.Public.Parent<G>
+		>;
+		readonly 'declaration.member.field.public.restricted': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Member.Field.Public.Restricted<G>
+		>;
+		readonly 'declaration.member.field.signature': gate.In<
+			G,
+			features.FieldSignatures,
+			V.Declaration.Member.Field.Signature<G>
+		>;
+		readonly 'declaration.member.field.signature.private': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Field.Signature.Private<G>
+		>;
+		readonly 'declaration.member.field.signature.protected': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Field.Signature.Protected<G>
+		>;
+		readonly 'declaration.member.field.signature.public': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Field.Signature.Public<G>
+		>;
+		readonly 'declaration.member.method': gate.In<G, features.Methods, V.Declaration.Member.Method<G>>;
+		readonly 'declaration.member.method.private': gate.In<
+			G,
+			features.Visibility,
+			V.Declaration.Member.Method.Private<G>
+		>;
+		readonly 'declaration.member.method.protected': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Method.Protected<G>
+		>;
+		readonly 'declaration.member.method.public': gate.In<G, features.Visibility, V.Declaration.Member.Method.Public<G>>;
+		readonly 'declaration.member.method.public.internal': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Member.Method.Public.Internal<G>
+		>;
+		readonly 'declaration.member.method.public.parent': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Member.Method.Public.Parent<G>
+		>;
+		readonly 'declaration.member.method.public.restricted': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Member.Method.Public.Restricted<G>
+		>;
+		readonly 'declaration.member.method.signature': gate.In<
+			G,
+			features.MethodSignatures,
+			V.Declaration.Member.Method.Signature<G>
+		>;
+		readonly 'declaration.member.method.signature.abstract': gate.In<
 			G,
 			features.AbstractClasses,
-			V.Declaration.Method.Signature.Abstract<G>
+			V.Declaration.Member.Method.Signature.Abstract<G>
 		>;
-		readonly 'declaration.method.signature.abstract.private': gate.In<
+		readonly 'declaration.member.method.signature.abstract.private': gate.In<
 			G,
 			features.ClassVisibility,
-			V.Declaration.Method.Signature.Abstract.Private<G>
+			V.Declaration.Member.Method.Signature.Abstract.Private<G>
 		>;
-		readonly 'declaration.method.signature.abstract.protected': gate.In<
+		readonly 'declaration.member.method.signature.abstract.protected': gate.In<
 			G,
 			features.ClassVisibility,
-			V.Declaration.Method.Signature.Abstract.Protected<G>
+			V.Declaration.Member.Method.Signature.Abstract.Protected<G>
 		>;
-		readonly 'declaration.method.signature.abstract.public': gate.In<
+		readonly 'declaration.member.method.signature.abstract.public': gate.In<
 			G,
 			features.ClassVisibility,
-			V.Declaration.Method.Signature.Abstract.Public<G>
+			V.Declaration.Member.Method.Signature.Abstract.Public<G>
 		>;
-		readonly 'declaration.method.signature.private': gate.In<
+		readonly 'declaration.member.method.signature.private': gate.In<
 			G,
 			features.Visibility,
-			V.Declaration.Method.Signature.Private<G>
+			V.Declaration.Member.Method.Signature.Private<G>
 		>;
-		readonly 'declaration.method.signature.protected': gate.In<
+		readonly 'declaration.member.method.signature.protected': gate.In<
 			G,
 			features.ClassVisibility,
-			V.Declaration.Method.Signature.Protected<G>
+			V.Declaration.Member.Method.Signature.Protected<G>
 		>;
-		readonly 'declaration.method.signature.public': gate.In<
+		readonly 'declaration.member.method.signature.public': gate.In<
 			G,
 			features.Visibility,
-			V.Declaration.Method.Signature.Public<G>
+			V.Declaration.Member.Method.Signature.Public<G>
 		>;
-		readonly 'declaration.method.signature.public.internal': gate.In<
+		readonly 'declaration.member.method.signature.public.internal': gate.In<
 			G,
 			features.ModuleVisibility,
-			V.Declaration.Method.Signature.Public.Internal<G>
+			V.Declaration.Member.Method.Signature.Public.Internal<G>
 		>;
-		readonly 'declaration.method.signature.public.parent': gate.In<
+		readonly 'declaration.member.method.signature.public.parent': gate.In<
 			G,
 			features.ModuleVisibility,
-			V.Declaration.Method.Signature.Public.Parent<G>
+			V.Declaration.Member.Method.Signature.Public.Parent<G>
 		>;
-		readonly 'declaration.method.signature.public.restricted': gate.In<
+		readonly 'declaration.member.method.signature.public.restricted': gate.In<
 			G,
 			features.ModuleVisibility,
-			V.Declaration.Method.Signature.Public.Restricted<G>
+			V.Declaration.Member.Method.Signature.Public.Restricted<G>
 		>;
-		readonly 'declaration.method.special': gate.In<G, features.SpecialMethods, V.Declaration.Method.Special<G>>;
+		readonly 'declaration.member.method.special': gate.In<
+			G,
+			features.SpecialMethods,
+			V.Declaration.Member.Method.Special<G>
+		>;
+		readonly 'declaration.member.property': gate.In<G, features.Accessors, V.Declaration.Member.Property<G>>;
+		readonly 'declaration.member.property.getter': gate.In<
+			G,
+			features.Accessors,
+			V.Declaration.Member.Property.Getter<G>
+		>;
+		readonly 'declaration.member.property.getter.private': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Property.Getter.Private<G>
+		>;
+		readonly 'declaration.member.property.getter.protected': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Property.Getter.Protected<G>
+		>;
+		readonly 'declaration.member.property.getter.public': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Property.Getter.Public<G>
+		>;
+		readonly 'declaration.member.property.private': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Property.Private<G>
+		>;
+		readonly 'declaration.member.property.protected': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Property.Protected<G>
+		>;
+		readonly 'declaration.member.property.public': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Property.Public<G>
+		>;
+		readonly 'declaration.member.property.setter': gate.In<
+			G,
+			features.Accessors,
+			V.Declaration.Member.Property.Setter<G>
+		>;
+		readonly 'declaration.member.property.setter.private': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Property.Setter.Private<G>
+		>;
+		readonly 'declaration.member.property.setter.protected': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Property.Setter.Protected<G>
+		>;
+		readonly 'declaration.member.property.setter.public': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Property.Setter.Public<G>
+		>;
+		readonly 'declaration.member.property.signature': gate.In<
+			G,
+			features.AccessorSignatures,
+			V.Declaration.Member.Property.Signature<G>
+		>;
+		readonly 'declaration.member.property.signature.abstract': gate.In<
+			G,
+			features.AccessorSignatures,
+			V.Declaration.Member.Property.Signature.Abstract<G>
+		>;
+		readonly 'declaration.member.property.signature.abstract.getter': gate.In<
+			G,
+			features.AccessorSignatures,
+			V.Declaration.Member.Property.Signature.Abstract.Getter<G>
+		>;
+		readonly 'declaration.member.property.signature.abstract.getter.private': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Property.Signature.Abstract.Getter.Private<G>
+		>;
+		readonly 'declaration.member.property.signature.abstract.getter.protected': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Property.Signature.Abstract.Getter.Protected<G>
+		>;
+		readonly 'declaration.member.property.signature.abstract.getter.public': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Property.Signature.Abstract.Getter.Public<G>
+		>;
+		readonly 'declaration.member.property.signature.abstract.setter': gate.In<
+			G,
+			features.AccessorSignatures,
+			V.Declaration.Member.Property.Signature.Abstract.Setter<G>
+		>;
+		readonly 'declaration.member.property.signature.abstract.setter.private': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Property.Signature.Abstract.Setter.Private<G>
+		>;
+		readonly 'declaration.member.property.signature.abstract.setter.protected': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Property.Signature.Abstract.Setter.Protected<G>
+		>;
+		readonly 'declaration.member.property.signature.abstract.setter.public': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Property.Signature.Abstract.Setter.Public<G>
+		>;
+		readonly 'declaration.member.property.signature.getter': gate.In<
+			G,
+			features.AccessorSignatures,
+			V.Declaration.Member.Property.Signature.Getter<G>
+		>;
+		readonly 'declaration.member.property.signature.getter.private': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Property.Signature.Getter.Private<G>
+		>;
+		readonly 'declaration.member.property.signature.getter.protected': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Property.Signature.Getter.Protected<G>
+		>;
+		readonly 'declaration.member.property.signature.getter.public': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Property.Signature.Getter.Public<G>
+		>;
+		readonly 'declaration.member.property.signature.setter': gate.In<
+			G,
+			features.AccessorSignatures,
+			V.Declaration.Member.Property.Signature.Setter<G>
+		>;
+		readonly 'declaration.member.property.signature.setter.private': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Property.Signature.Setter.Private<G>
+		>;
+		readonly 'declaration.member.property.signature.setter.protected': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Property.Signature.Setter.Protected<G>
+		>;
+		readonly 'declaration.member.property.signature.setter.public': gate.In<
+			G,
+			features.ClassVisibility,
+			V.Declaration.Member.Property.Signature.Setter.Public<G>
+		>;
+		readonly 'declaration.member.signature': gate.In<
+			G,
+			features.StructuralConformance,
+			V.Declaration.Member.Signature<G>
+		>;
+		readonly 'declaration.member.signature.call': gate.In<
+			G,
+			features.StructuralConformance,
+			V.Declaration.Member.Signature.Call<G>
+		>;
+		readonly 'declaration.member.signature.construct': gate.In<
+			G,
+			features.StructuralConformance,
+			V.Declaration.Member.Signature.Construct<G>
+		>;
+		readonly 'declaration.member.signature.index': gate.In<
+			G,
+			features.StructuralConformance,
+			V.Declaration.Member.Signature.Index<G>
+		>;
+		readonly 'declaration.member.signature.index.mapped': gate.In<
+			G,
+			features.StructuralConformance,
+			V.Declaration.Member.Signature.Index.Mapped<G>
+		>;
+		readonly 'declaration.member.static_block': gate.In<
+			G,
+			features.JavaScriptClasses,
+			V.Declaration.Member.StaticBlock<G>
+		>;
 		readonly 'declaration.module': gate.In<G, features.ModuleDeclarations, V.Declaration.Module<G>>;
 		readonly 'declaration.module.external': gate.In<G, features.ExternalModules, V.Declaration.Module.External<G>>;
 		readonly 'declaration.module.foreign': gate.In<
@@ -5433,249 +5942,182 @@ declare module './map.ts' {
 			features.ForeignFunctionInterface,
 			V.Declaration.Parameter.Variadic<G>
 		>;
-		readonly 'declaration.property': gate.In<G, features.Accessors, V.Declaration.Property<G>>;
-		readonly 'declaration.property.getter': gate.In<G, features.Accessors, V.Declaration.Property.Getter<G>>;
-		readonly 'declaration.property.getter.private': gate.In<
-			G,
-			features.ClassVisibility,
-			V.Declaration.Property.Getter.Private<G>
-		>;
-		readonly 'declaration.property.getter.protected': gate.In<
-			G,
-			features.ClassVisibility,
-			V.Declaration.Property.Getter.Protected<G>
-		>;
-		readonly 'declaration.property.getter.public': gate.In<
-			G,
-			features.ClassVisibility,
-			V.Declaration.Property.Getter.Public<G>
-		>;
-		readonly 'declaration.property.private': gate.In<G, features.ClassVisibility, V.Declaration.Property.Private<G>>;
-		readonly 'declaration.property.protected': gate.In<
-			G,
-			features.ClassVisibility,
-			V.Declaration.Property.Protected<G>
-		>;
-		readonly 'declaration.property.public': gate.In<G, features.ClassVisibility, V.Declaration.Property.Public<G>>;
-		readonly 'declaration.property.setter': gate.In<G, features.Accessors, V.Declaration.Property.Setter<G>>;
-		readonly 'declaration.property.setter.private': gate.In<
-			G,
-			features.ClassVisibility,
-			V.Declaration.Property.Setter.Private<G>
-		>;
-		readonly 'declaration.property.setter.protected': gate.In<
-			G,
-			features.ClassVisibility,
-			V.Declaration.Property.Setter.Protected<G>
-		>;
-		readonly 'declaration.property.setter.public': gate.In<
-			G,
-			features.ClassVisibility,
-			V.Declaration.Property.Setter.Public<G>
-		>;
-		readonly 'declaration.property.signature': gate.In<
-			G,
-			features.AccessorSignatures,
-			V.Declaration.Property.Signature<G>
-		>;
-		readonly 'declaration.property.signature.abstract': gate.In<
-			G,
-			features.AccessorSignatures,
-			V.Declaration.Property.Signature.Abstract<G>
-		>;
-		readonly 'declaration.property.signature.abstract.getter': gate.In<
-			G,
-			features.AccessorSignatures,
-			V.Declaration.Property.Signature.Abstract.Getter<G>
-		>;
-		readonly 'declaration.property.signature.abstract.getter.private': gate.In<
-			G,
-			features.ClassVisibility,
-			V.Declaration.Property.Signature.Abstract.Getter.Private<G>
-		>;
-		readonly 'declaration.property.signature.abstract.getter.protected': gate.In<
-			G,
-			features.ClassVisibility,
-			V.Declaration.Property.Signature.Abstract.Getter.Protected<G>
-		>;
-		readonly 'declaration.property.signature.abstract.getter.public': gate.In<
-			G,
-			features.ClassVisibility,
-			V.Declaration.Property.Signature.Abstract.Getter.Public<G>
-		>;
-		readonly 'declaration.property.signature.abstract.setter': gate.In<
-			G,
-			features.AccessorSignatures,
-			V.Declaration.Property.Signature.Abstract.Setter<G>
-		>;
-		readonly 'declaration.property.signature.abstract.setter.private': gate.In<
-			G,
-			features.ClassVisibility,
-			V.Declaration.Property.Signature.Abstract.Setter.Private<G>
-		>;
-		readonly 'declaration.property.signature.abstract.setter.protected': gate.In<
-			G,
-			features.ClassVisibility,
-			V.Declaration.Property.Signature.Abstract.Setter.Protected<G>
-		>;
-		readonly 'declaration.property.signature.abstract.setter.public': gate.In<
-			G,
-			features.ClassVisibility,
-			V.Declaration.Property.Signature.Abstract.Setter.Public<G>
-		>;
-		readonly 'declaration.property.signature.getter': gate.In<
-			G,
-			features.AccessorSignatures,
-			V.Declaration.Property.Signature.Getter<G>
-		>;
-		readonly 'declaration.property.signature.getter.private': gate.In<
-			G,
-			features.ClassVisibility,
-			V.Declaration.Property.Signature.Getter.Private<G>
-		>;
-		readonly 'declaration.property.signature.getter.protected': gate.In<
-			G,
-			features.ClassVisibility,
-			V.Declaration.Property.Signature.Getter.Protected<G>
-		>;
-		readonly 'declaration.property.signature.getter.public': gate.In<
-			G,
-			features.ClassVisibility,
-			V.Declaration.Property.Signature.Getter.Public<G>
-		>;
-		readonly 'declaration.property.signature.setter': gate.In<
-			G,
-			features.AccessorSignatures,
-			V.Declaration.Property.Signature.Setter<G>
-		>;
-		readonly 'declaration.property.signature.setter.private': gate.In<
-			G,
-			features.ClassVisibility,
-			V.Declaration.Property.Signature.Setter.Private<G>
-		>;
-		readonly 'declaration.property.signature.setter.protected': gate.In<
-			G,
-			features.ClassVisibility,
-			V.Declaration.Property.Signature.Setter.Protected<G>
-		>;
-		readonly 'declaration.property.signature.setter.public': gate.In<
-			G,
-			features.ClassVisibility,
-			V.Declaration.Property.Signature.Setter.Public<G>
-		>;
-		readonly 'declaration.signature': gate.In<G, features.StructuralConformance, V.Declaration.Signature<G>>;
-		readonly 'declaration.signature.call': gate.In<G, features.StructuralConformance, V.Declaration.Signature.Call<G>>;
-		readonly 'declaration.signature.construct': gate.In<
-			G,
-			features.StructuralConformance,
-			V.Declaration.Signature.Construct<G>
-		>;
-		readonly 'declaration.signature.index': gate.In<
-			G,
-			features.StructuralConformance,
-			V.Declaration.Signature.Index<G>
-		>;
-		readonly 'declaration.signature.index.mapped': gate.In<
-			G,
-			features.StructuralConformance,
-			V.Declaration.Signature.Index.Mapped<G>
-		>;
-		readonly 'declaration.struct': gate.In<G, features.Structs, V.Declaration.Struct<G>>;
-		readonly 'declaration.struct.private': gate.In<G, features.ModuleVisibility, V.Declaration.Struct.Private<G>>;
-		readonly 'declaration.struct.public': gate.In<G, features.ModuleVisibility, V.Declaration.Struct.Public<G>>;
-		readonly 'declaration.struct.public.internal': gate.In<
+		readonly 'declaration.type.class': gate.In<G, features.Classes, V.Declaration.Type.Class<G>>;
+		readonly 'declaration.type.enum': gate.In<G, features.Enumerations, V.Declaration.Type.Enum<G>>;
+		readonly 'declaration.type.enum.private': gate.In<G, features.ModuleVisibility, V.Declaration.Type.Enum.Private<G>>;
+		readonly 'declaration.type.enum.public': gate.In<G, features.ModuleVisibility, V.Declaration.Type.Enum.Public<G>>;
+		readonly 'declaration.type.enum.public.internal': gate.In<
 			G,
 			features.ModuleVisibility,
-			V.Declaration.Struct.Public.Internal<G>
+			V.Declaration.Type.Enum.Public.Internal<G>
 		>;
-		readonly 'declaration.struct.public.parent': gate.In<
+		readonly 'declaration.type.enum.public.parent': gate.In<
 			G,
 			features.ModuleVisibility,
-			V.Declaration.Struct.Public.Parent<G>
+			V.Declaration.Type.Enum.Public.Parent<G>
 		>;
-		readonly 'declaration.struct.public.restricted': gate.In<
+		readonly 'declaration.type.enum.public.restricted': gate.In<
 			G,
 			features.ModuleVisibility,
-			V.Declaration.Struct.Public.Restricted<G>
+			V.Declaration.Type.Enum.Public.Restricted<G>
 		>;
-		readonly 'declaration.struct.tuple': gate.In<G, features.TupleStructs, V.Declaration.Struct.Tuple<G>>;
-		readonly 'declaration.struct.tuple.private': gate.In<
+		readonly 'declaration.type.interface': gate.In<G, features.Interfaces, V.Declaration.Type.Interface<G>>;
+		readonly 'declaration.type.interface.trait': gate.In<G, features.Traits, V.Declaration.Type.Interface.Trait<G>>;
+		readonly 'declaration.type.interface.trait.private': gate.In<
 			G,
 			features.ModuleVisibility,
-			V.Declaration.Struct.Tuple.Private<G>
+			V.Declaration.Type.Interface.Trait.Private<G>
 		>;
-		readonly 'declaration.struct.tuple.public': gate.In<
+		readonly 'declaration.type.interface.trait.public': gate.In<
 			G,
 			features.ModuleVisibility,
-			V.Declaration.Struct.Tuple.Public<G>
+			V.Declaration.Type.Interface.Trait.Public<G>
 		>;
-		readonly 'declaration.struct.tuple.public.internal': gate.In<
+		readonly 'declaration.type.interface.trait.public.internal': gate.In<
 			G,
 			features.ModuleVisibility,
-			V.Declaration.Struct.Tuple.Public.Internal<G>
+			V.Declaration.Type.Interface.Trait.Public.Internal<G>
 		>;
-		readonly 'declaration.struct.tuple.public.parent': gate.In<
+		readonly 'declaration.type.interface.trait.public.parent': gate.In<
 			G,
 			features.ModuleVisibility,
-			V.Declaration.Struct.Tuple.Public.Parent<G>
+			V.Declaration.Type.Interface.Trait.Public.Parent<G>
 		>;
-		readonly 'declaration.struct.tuple.public.restricted': gate.In<
+		readonly 'declaration.type.interface.trait.public.restricted': gate.In<
 			G,
 			features.ModuleVisibility,
-			V.Declaration.Struct.Tuple.Public.Restricted<G>
+			V.Declaration.Type.Interface.Trait.Public.Restricted<G>
 		>;
-		readonly 'declaration.struct.unit': gate.In<G, features.TupleStructs, V.Declaration.Struct.Unit<G>>;
-		readonly 'declaration.struct.unit.private': gate.In<
+		readonly 'declaration.type.struct': gate.In<G, features.Structs, V.Declaration.Type.Struct<G>>;
+		readonly 'declaration.type.struct.private': gate.In<
 			G,
 			features.ModuleVisibility,
-			V.Declaration.Struct.Unit.Private<G>
+			V.Declaration.Type.Struct.Private<G>
 		>;
-		readonly 'declaration.struct.unit.public': gate.In<
+		readonly 'declaration.type.struct.public': gate.In<
 			G,
 			features.ModuleVisibility,
-			V.Declaration.Struct.Unit.Public<G>
+			V.Declaration.Type.Struct.Public<G>
 		>;
-		readonly 'declaration.struct.unit.public.internal': gate.In<
+		readonly 'declaration.type.struct.public.internal': gate.In<
 			G,
 			features.ModuleVisibility,
-			V.Declaration.Struct.Unit.Public.Internal<G>
+			V.Declaration.Type.Struct.Public.Internal<G>
 		>;
-		readonly 'declaration.struct.unit.public.parent': gate.In<
+		readonly 'declaration.type.struct.public.parent': gate.In<
 			G,
 			features.ModuleVisibility,
-			V.Declaration.Struct.Unit.Public.Parent<G>
+			V.Declaration.Type.Struct.Public.Parent<G>
 		>;
-		readonly 'declaration.struct.unit.public.restricted': gate.In<
+		readonly 'declaration.type.struct.public.restricted': gate.In<
 			G,
 			features.ModuleVisibility,
-			V.Declaration.Struct.Unit.Public.Restricted<G>
+			V.Declaration.Type.Struct.Public.Restricted<G>
 		>;
-		readonly 'declaration.type_alias': gate.In<G, features.TypeAliases, V.Declaration.TypeAlias<G>>;
-		readonly 'declaration.type_alias.associated': gate.In<
+		readonly 'declaration.type.struct.tuple': gate.In<G, features.TupleStructs, V.Declaration.Type.Struct.Tuple<G>>;
+		readonly 'declaration.type.struct.tuple.private': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Type.Struct.Tuple.Private<G>
+		>;
+		readonly 'declaration.type.struct.tuple.public': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Type.Struct.Tuple.Public<G>
+		>;
+		readonly 'declaration.type.struct.tuple.public.internal': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Type.Struct.Tuple.Public.Internal<G>
+		>;
+		readonly 'declaration.type.struct.tuple.public.parent': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Type.Struct.Tuple.Public.Parent<G>
+		>;
+		readonly 'declaration.type.struct.tuple.public.restricted': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Type.Struct.Tuple.Public.Restricted<G>
+		>;
+		readonly 'declaration.type.struct.unit': gate.In<G, features.TupleStructs, V.Declaration.Type.Struct.Unit<G>>;
+		readonly 'declaration.type.struct.unit.private': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Type.Struct.Unit.Private<G>
+		>;
+		readonly 'declaration.type.struct.unit.public': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Type.Struct.Unit.Public<G>
+		>;
+		readonly 'declaration.type.struct.unit.public.internal': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Type.Struct.Unit.Public.Internal<G>
+		>;
+		readonly 'declaration.type.struct.unit.public.parent': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Type.Struct.Unit.Public.Parent<G>
+		>;
+		readonly 'declaration.type.struct.unit.public.restricted': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Type.Struct.Unit.Public.Restricted<G>
+		>;
+		readonly 'declaration.type.type_alias': gate.In<G, features.TypeAliases, V.Declaration.Type.TypeAlias<G>>;
+		readonly 'declaration.type.type_alias.associated': gate.In<
 			G,
 			features.AssociatedTypes,
-			V.Declaration.TypeAlias.Associated<G>
+			V.Declaration.Type.TypeAlias.Associated<G>
 		>;
-		readonly 'declaration.type_alias.private': gate.In<
+		readonly 'declaration.type.type_alias.private': gate.In<
 			G,
 			features.ModuleVisibility,
-			V.Declaration.TypeAlias.Private<G>
+			V.Declaration.Type.TypeAlias.Private<G>
 		>;
-		readonly 'declaration.type_alias.public': gate.In<G, features.ModuleVisibility, V.Declaration.TypeAlias.Public<G>>;
-		readonly 'declaration.type_alias.public.internal': gate.In<
+		readonly 'declaration.type.type_alias.public': gate.In<
 			G,
 			features.ModuleVisibility,
-			V.Declaration.TypeAlias.Public.Internal<G>
+			V.Declaration.Type.TypeAlias.Public<G>
 		>;
-		readonly 'declaration.type_alias.public.parent': gate.In<
+		readonly 'declaration.type.type_alias.public.internal': gate.In<
 			G,
 			features.ModuleVisibility,
-			V.Declaration.TypeAlias.Public.Parent<G>
+			V.Declaration.Type.TypeAlias.Public.Internal<G>
 		>;
-		readonly 'declaration.type_alias.public.restricted': gate.In<
+		readonly 'declaration.type.type_alias.public.parent': gate.In<
 			G,
 			features.ModuleVisibility,
-			V.Declaration.TypeAlias.Public.Restricted<G>
+			V.Declaration.Type.TypeAlias.Public.Parent<G>
+		>;
+		readonly 'declaration.type.type_alias.public.restricted': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Type.TypeAlias.Public.Restricted<G>
+		>;
+		readonly 'declaration.type.union': gate.In<G, features.UntaggedUnions, V.Declaration.Type.Union<G>>;
+		readonly 'declaration.type.union.private': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Type.Union.Private<G>
+		>;
+		readonly 'declaration.type.union.public': gate.In<G, features.ModuleVisibility, V.Declaration.Type.Union.Public<G>>;
+		readonly 'declaration.type.union.public.internal': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Type.Union.Public.Internal<G>
+		>;
+		readonly 'declaration.type.union.public.parent': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Type.Union.Public.Parent<G>
+		>;
+		readonly 'declaration.type.union.public.restricted': gate.In<
+			G,
+			features.ModuleVisibility,
+			V.Declaration.Type.Union.Public.Restricted<G>
 		>;
 		readonly 'declaration.type_parameter': gate.In<G, features.ParametricPolymorphism, V.Declaration.TypeParameter<G>>;
 		readonly 'declaration.type_parameter.lifetime': gate.In<
@@ -5697,24 +6139,6 @@ declare module './map.ts' {
 			G,
 			features.VariadicTypeParameters,
 			V.Declaration.TypeParameter.Variadic<G>
-		>;
-		readonly 'declaration.union': gate.In<G, features.UntaggedUnions, V.Declaration.Union<G>>;
-		readonly 'declaration.union.private': gate.In<G, features.ModuleVisibility, V.Declaration.Union.Private<G>>;
-		readonly 'declaration.union.public': gate.In<G, features.ModuleVisibility, V.Declaration.Union.Public<G>>;
-		readonly 'declaration.union.public.internal': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.Union.Public.Internal<G>
-		>;
-		readonly 'declaration.union.public.parent': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.Union.Public.Parent<G>
-		>;
-		readonly 'declaration.union.public.restricted': gate.In<
-			G,
-			features.ModuleVisibility,
-			V.Declaration.Union.Public.Restricted<G>
 		>;
 		readonly 'declaration.variable': V.Declaration.Variable<G>;
 		readonly 'declaration.variable.constant': gate.In<
@@ -5753,7 +6177,6 @@ declare module './map.ts' {
 		readonly element: V.Element<G>;
 		readonly 'element.attributed': gate.In<G, features.Attributes, V.Element.Attributed<G>>;
 		readonly 'element.comparator': gate.In<G, features.PythonOperators, V.Element.Comparator<G>>;
-		readonly 'element.comparator.comparison': gate.In<G, features.PythonOperators, V.Element.Comparator.Comparison<G>>;
 		readonly 'element.comparator.comparison.equal': gate.In<
 			G,
 			features.PythonOperators,
@@ -5789,7 +6212,6 @@ declare module './map.ts' {
 			features.PythonOperators,
 			V.Element.Comparator.Comparison.NotEqual.Legacy<G>
 		>;
-		readonly 'element.comparator.identity': gate.In<G, features.PythonOperators, V.Element.Comparator.Identity<G>>;
 		readonly 'element.comparator.identity.is': gate.In<
 			G,
 			features.PythonOperators,
@@ -5800,7 +6222,6 @@ declare module './map.ts' {
 			features.PythonOperators,
 			V.Element.Comparator.Identity.IsNot<G>
 		>;
-		readonly 'element.comparator.membership': gate.In<G, features.PythonOperators, V.Element.Comparator.Membership<G>>;
 		readonly 'element.comparator.membership.in': gate.In<
 			G,
 			features.PythonOperators,
@@ -5948,7 +6369,6 @@ declare module './map.ts' {
 		readonly 'expression.assignment.compound.subtract': V.Expression.Assignment.Compound.Subtract<G>;
 		readonly 'expression.await': gate.In<G, features.AsyncAwait, V.Expression.Await<G>>;
 		readonly 'expression.binary': V.Expression.Binary<G>;
-		readonly 'expression.binary.arithmetic': V.Expression.Binary.Arithmetic<G>;
 		readonly 'expression.binary.arithmetic.add': V.Expression.Binary.Arithmetic.Add<G>;
 		readonly 'expression.binary.arithmetic.divide': V.Expression.Binary.Arithmetic.Divide<G>;
 		readonly 'expression.binary.arithmetic.exponent': gate.In<
@@ -5964,12 +6384,10 @@ declare module './map.ts' {
 		readonly 'expression.binary.arithmetic.modulo': V.Expression.Binary.Arithmetic.Modulo<G>;
 		readonly 'expression.binary.arithmetic.multiply': V.Expression.Binary.Arithmetic.Multiply<G>;
 		readonly 'expression.binary.arithmetic.subtract': V.Expression.Binary.Arithmetic.Subtract<G>;
-		readonly 'expression.binary.bitwise': V.Expression.Binary.Bitwise<G>;
 		readonly 'expression.binary.bitwise.and': V.Expression.Binary.Bitwise.And<G>;
 		readonly 'expression.binary.bitwise.or': V.Expression.Binary.Bitwise.Or<G>;
 		readonly 'expression.binary.bitwise.xor': V.Expression.Binary.Bitwise.Xor<G>;
 		readonly 'expression.binary.coalesce': gate.In<G, features.JavaScriptOperators, V.Expression.Binary.Coalesce<G>>;
-		readonly 'expression.binary.comparison': V.Expression.Binary.Comparison<G>;
 		readonly 'expression.binary.comparison.chain': gate.In<
 			G,
 			features.PythonOperators,
@@ -6035,7 +6453,6 @@ declare module './map.ts' {
 			features.PythonOperators,
 			V.Expression.Binary.Membership.NotIn<G>
 		>;
-		readonly 'expression.binary.shift': V.Expression.Binary.Shift<G>;
 		readonly 'expression.binary.shift.left': V.Expression.Binary.Shift.Left<G>;
 		readonly 'expression.binary.shift.right': V.Expression.Binary.Shift.Right<G>;
 		readonly 'expression.binary.shift.right_unsigned': gate.In<
@@ -6043,12 +6460,6 @@ declare module './map.ts' {
 			features.JavaScriptOperators,
 			V.Expression.Binary.Shift.RightUnsigned<G>
 		>;
-		readonly 'expression.block': gate.In<G, features.RustExpressions, V.Expression.Block<G>>;
-		readonly 'expression.block.async': gate.In<G, features.AsyncBlocks, V.Expression.Block.Async<G>>;
-		readonly 'expression.block.const': gate.In<G, features.CompileTimeEvaluation, V.Expression.Block.Const<G>>;
-		readonly 'expression.block.generator': gate.In<G, features.GeneratorBlocks, V.Expression.Block.Generator<G>>;
-		readonly 'expression.block.try': gate.In<G, features.ErrorPropagation, V.Expression.Block.Try<G>>;
-		readonly 'expression.block.unsafe': gate.In<G, features.UnsafeCode, V.Expression.Block.Unsafe<G>>;
 		readonly 'expression.call': V.Expression.Call<G>;
 		readonly 'expression.call.construct': gate.In<G, features.JavaScriptClasses, V.Expression.Call.Construct<G>>;
 		readonly 'expression.call.construct.bare': gate.In<
@@ -6072,7 +6483,6 @@ declare module './map.ts' {
 		readonly 'expression.cast.non_null': gate.In<G, features.NonNullAssertions, V.Expression.Cast.NonNull<G>>;
 		readonly 'expression.cast.satisfies': gate.In<G, features.TypeAlgebra, V.Expression.Cast.Satisfies<G>>;
 		readonly 'expression.class': gate.In<G, features.JavaScriptClasses, V.Expression.Class<G>>;
-		readonly 'expression.collection': V.Expression.Collection<G>;
 		readonly 'expression.collection.list': V.Expression.Collection.List<G>;
 		readonly 'expression.collection.list.repeat': gate.In<
 			G,
@@ -6321,13 +6731,18 @@ declare module './map.ts' {
 		readonly 'pattern.struct': gate.In<G, features.StructPatterns, V.Pattern.Struct<G>>;
 		readonly 'pattern.struct.field': gate.In<G, features.StructPatterns, V.Pattern.Struct.Field<G>>;
 		readonly 'pattern.struct.rest': gate.In<G, features.TupleStructs, V.Pattern.Struct.Rest<G>>;
+		readonly 'pattern.struct.tuple': gate.In<G, features.TupleStructs, V.Pattern.Struct.Tuple<G>>;
 		readonly 'pattern.tuple': gate.In<G, features.TuplePatterns, V.Pattern.Tuple<G>>;
 		readonly 'pattern.tuple.bare': gate.In<G, features.PythonDestructuring, V.Pattern.Tuple.Bare<G>>;
 		readonly 'pattern.wildcard': gate.In<G, features.WildcardPatterns, V.Pattern.Wildcard<G>>;
 		readonly statement: V.Statement<G>;
 		readonly 'statement.assert': gate.In<G, features.Assertions, V.Statement.Assert<G>>;
 		readonly 'statement.block': V.Statement.Block<G>;
-		readonly 'statement.block.static': gate.In<G, features.JavaScriptClasses, V.Statement.Block.Static<G>>;
+		readonly 'statement.block.async': gate.In<G, features.AsyncBlocks, V.Statement.Block.Async<G>>;
+		readonly 'statement.block.const': gate.In<G, features.CompileTimeEvaluation, V.Statement.Block.Const<G>>;
+		readonly 'statement.block.generator': gate.In<G, features.GeneratorBlocks, V.Statement.Block.Generator<G>>;
+		readonly 'statement.block.try': gate.In<G, features.ErrorPropagation, V.Statement.Block.Try<G>>;
+		readonly 'statement.block.unsafe': gate.In<G, features.UnsafeCode, V.Statement.Block.Unsafe<G>>;
 		readonly 'statement.break': V.Statement.Break<G>;
 		readonly 'statement.continue': V.Statement.Continue<G>;
 		readonly 'statement.debugger': gate.In<G, features.DebuggerStatements, V.Statement.Debugger<G>>;
@@ -6473,140 +6888,8 @@ declare module './utils.ts' {
 		readonly 'clause.export.specifier.typeof': { readonly typeOnly: features.TypeOnlyImports };
 		readonly 'clause.import.specifier': { readonly typeOnly: features.TypeOnlyImports };
 		readonly 'clause.import.specifier.typeof': { readonly typeOnly: features.TypeOnlyImports };
-		readonly 'declaration.class': { readonly abstract: features.AbstractClasses };
-		readonly 'declaration.constructor': { readonly async: features.AsyncContexts };
-		readonly 'declaration.constructor.private': { readonly async: features.AsyncContexts };
-		readonly 'declaration.constructor.protected': { readonly async: features.AsyncContexts };
-		readonly 'declaration.constructor.public': { readonly async: features.AsyncContexts };
-		readonly 'declaration.enum': { readonly const: object };
-		readonly 'declaration.enum.private': { readonly const: object };
-		readonly 'declaration.enum.public': { readonly const: object };
-		readonly 'declaration.enum.public.internal': { readonly const: object };
-		readonly 'declaration.enum.public.parent': { readonly const: object };
-		readonly 'declaration.enum.public.restricted': { readonly const: object };
 		readonly 'declaration.extension': { readonly unsafe: features.UnsafeCode };
 		readonly 'declaration.extension.conformance': { readonly unsafe: features.UnsafeCode };
-		readonly 'declaration.field': {
-			readonly abstract: features.AbstractClasses;
-			readonly computed: features.ComputedKeys;
-			readonly declare: features.AmbientDeclarations;
-			readonly definite: features.NonNullAssertions;
-			readonly optional: features.OptionalMembers;
-			readonly override: features.MemberOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly readonly: features.ReadonlyMembers;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.field.private': {
-			readonly abstract: features.AbstractClasses;
-			readonly computed: features.ComputedKeys;
-			readonly declare: features.AmbientDeclarations;
-			readonly definite: features.NonNullAssertions;
-			readonly optional: features.OptionalMembers;
-			readonly override: features.MemberOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly readonly: features.ReadonlyMembers;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.field.protected': {
-			readonly abstract: features.AbstractClasses;
-			readonly computed: features.ComputedKeys;
-			readonly declare: features.AmbientDeclarations;
-			readonly definite: features.NonNullAssertions;
-			readonly optional: features.OptionalMembers;
-			readonly override: features.MemberOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly readonly: features.ReadonlyMembers;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.field.public': {
-			readonly abstract: features.AbstractClasses;
-			readonly computed: features.ComputedKeys;
-			readonly declare: features.AmbientDeclarations;
-			readonly definite: features.NonNullAssertions;
-			readonly optional: features.OptionalMembers;
-			readonly override: features.MemberOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly readonly: features.ReadonlyMembers;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.field.public.internal': {
-			readonly abstract: features.AbstractClasses;
-			readonly computed: features.ComputedKeys;
-			readonly declare: features.AmbientDeclarations;
-			readonly definite: features.NonNullAssertions;
-			readonly optional: features.OptionalMembers;
-			readonly override: features.MemberOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly readonly: features.ReadonlyMembers;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.field.public.parent': {
-			readonly abstract: features.AbstractClasses;
-			readonly computed: features.ComputedKeys;
-			readonly declare: features.AmbientDeclarations;
-			readonly definite: features.NonNullAssertions;
-			readonly optional: features.OptionalMembers;
-			readonly override: features.MemberOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly readonly: features.ReadonlyMembers;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.field.public.restricted': {
-			readonly abstract: features.AbstractClasses;
-			readonly computed: features.ComputedKeys;
-			readonly declare: features.AmbientDeclarations;
-			readonly definite: features.NonNullAssertions;
-			readonly optional: features.OptionalMembers;
-			readonly override: features.MemberOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly readonly: features.ReadonlyMembers;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.field.signature': {
-			readonly abstract: features.AbstractClasses;
-			readonly computed: features.ComputedKeys;
-			readonly declare: features.AmbientDeclarations;
-			readonly definite: features.NonNullAssertions;
-			readonly optional: features.OptionalMembers;
-			readonly override: features.MemberOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly readonly: features.ReadonlyMembers;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.field.signature.private': {
-			readonly abstract: features.AbstractClasses;
-			readonly computed: features.ComputedKeys;
-			readonly declare: features.AmbientDeclarations;
-			readonly definite: features.NonNullAssertions;
-			readonly optional: features.OptionalMembers;
-			readonly override: features.MemberOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly readonly: features.ReadonlyMembers;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.field.signature.protected': {
-			readonly abstract: features.AbstractClasses;
-			readonly computed: features.ComputedKeys;
-			readonly declare: features.AmbientDeclarations;
-			readonly definite: features.NonNullAssertions;
-			readonly optional: features.OptionalMembers;
-			readonly override: features.MemberOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly readonly: features.ReadonlyMembers;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.field.signature.public': {
-			readonly abstract: features.AbstractClasses;
-			readonly computed: features.ComputedKeys;
-			readonly declare: features.AmbientDeclarations;
-			readonly definite: features.NonNullAssertions;
-			readonly optional: features.OptionalMembers;
-			readonly override: features.MemberOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly readonly: features.ReadonlyMembers;
-			readonly static: features.JavaScriptClasses;
-		};
 		readonly 'declaration.function': {
 			readonly async: features.AsyncAwait;
 			readonly const: features.CompileTimeEvaluation;
@@ -6691,13 +6974,132 @@ declare module './utils.ts' {
 			readonly generator: features.GeneratorFunctions;
 			readonly unsafe: features.UnsafeCode;
 		};
-		readonly 'declaration.interface.trait': { readonly unsafe: features.UnsafeCode };
-		readonly 'declaration.interface.trait.private': { readonly unsafe: features.UnsafeCode };
-		readonly 'declaration.interface.trait.public': { readonly unsafe: features.UnsafeCode };
-		readonly 'declaration.interface.trait.public.internal': { readonly unsafe: features.UnsafeCode };
-		readonly 'declaration.interface.trait.public.parent': { readonly unsafe: features.UnsafeCode };
-		readonly 'declaration.interface.trait.public.restricted': { readonly unsafe: features.UnsafeCode };
-		readonly 'declaration.method': {
+		readonly 'declaration.member.constructor': { readonly async: features.AsyncContexts };
+		readonly 'declaration.member.constructor.private': { readonly async: features.AsyncContexts };
+		readonly 'declaration.member.constructor.protected': { readonly async: features.AsyncContexts };
+		readonly 'declaration.member.constructor.public': { readonly async: features.AsyncContexts };
+		readonly 'declaration.member.field': {
+			readonly abstract: features.AbstractClasses;
+			readonly computed: features.ComputedKeys;
+			readonly declare: features.AmbientDeclarations;
+			readonly definite: features.NonNullAssertions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.field.private': {
+			readonly abstract: features.AbstractClasses;
+			readonly computed: features.ComputedKeys;
+			readonly declare: features.AmbientDeclarations;
+			readonly definite: features.NonNullAssertions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.field.protected': {
+			readonly abstract: features.AbstractClasses;
+			readonly computed: features.ComputedKeys;
+			readonly declare: features.AmbientDeclarations;
+			readonly definite: features.NonNullAssertions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.field.public': {
+			readonly abstract: features.AbstractClasses;
+			readonly computed: features.ComputedKeys;
+			readonly declare: features.AmbientDeclarations;
+			readonly definite: features.NonNullAssertions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.field.public.internal': {
+			readonly abstract: features.AbstractClasses;
+			readonly computed: features.ComputedKeys;
+			readonly declare: features.AmbientDeclarations;
+			readonly definite: features.NonNullAssertions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.field.public.parent': {
+			readonly abstract: features.AbstractClasses;
+			readonly computed: features.ComputedKeys;
+			readonly declare: features.AmbientDeclarations;
+			readonly definite: features.NonNullAssertions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.field.public.restricted': {
+			readonly abstract: features.AbstractClasses;
+			readonly computed: features.ComputedKeys;
+			readonly declare: features.AmbientDeclarations;
+			readonly definite: features.NonNullAssertions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.field.signature': {
+			readonly abstract: features.AbstractClasses;
+			readonly computed: features.ComputedKeys;
+			readonly declare: features.AmbientDeclarations;
+			readonly definite: features.NonNullAssertions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.field.signature.private': {
+			readonly abstract: features.AbstractClasses;
+			readonly computed: features.ComputedKeys;
+			readonly declare: features.AmbientDeclarations;
+			readonly definite: features.NonNullAssertions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.field.signature.protected': {
+			readonly abstract: features.AbstractClasses;
+			readonly computed: features.ComputedKeys;
+			readonly declare: features.AmbientDeclarations;
+			readonly definite: features.NonNullAssertions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.field.signature.public': {
+			readonly abstract: features.AbstractClasses;
+			readonly computed: features.ComputedKeys;
+			readonly declare: features.AmbientDeclarations;
+			readonly definite: features.NonNullAssertions;
+			readonly optional: features.OptionalMembers;
+			readonly override: features.MemberOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly readonly: features.ReadonlyMembers;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.method': {
 			readonly async: features.AsyncAwait;
 			readonly computed: features.ComputedKeys;
 			readonly const: features.CompileTimeEvaluation;
@@ -6710,7 +7112,7 @@ declare module './utils.ts' {
 			readonly static: object;
 			readonly unsafe: features.UnsafeCode;
 		};
-		readonly 'declaration.method.private': {
+		readonly 'declaration.member.method.private': {
 			readonly async: features.AsyncAwait;
 			readonly computed: features.ComputedKeys;
 			readonly const: features.CompileTimeEvaluation;
@@ -6723,7 +7125,7 @@ declare module './utils.ts' {
 			readonly static: object;
 			readonly unsafe: features.UnsafeCode;
 		};
-		readonly 'declaration.method.protected': {
+		readonly 'declaration.member.method.protected': {
 			readonly async: features.AsyncAwait;
 			readonly computed: features.ComputedKeys;
 			readonly const: features.CompileTimeEvaluation;
@@ -6736,7 +7138,7 @@ declare module './utils.ts' {
 			readonly static: object;
 			readonly unsafe: features.UnsafeCode;
 		};
-		readonly 'declaration.method.public': {
+		readonly 'declaration.member.method.public': {
 			readonly async: features.AsyncAwait;
 			readonly computed: features.ComputedKeys;
 			readonly const: features.CompileTimeEvaluation;
@@ -6749,7 +7151,7 @@ declare module './utils.ts' {
 			readonly static: object;
 			readonly unsafe: features.UnsafeCode;
 		};
-		readonly 'declaration.method.public.internal': {
+		readonly 'declaration.member.method.public.internal': {
 			readonly async: features.AsyncAwait;
 			readonly computed: features.ComputedKeys;
 			readonly const: features.CompileTimeEvaluation;
@@ -6762,7 +7164,7 @@ declare module './utils.ts' {
 			readonly static: object;
 			readonly unsafe: features.UnsafeCode;
 		};
-		readonly 'declaration.method.public.parent': {
+		readonly 'declaration.member.method.public.parent': {
 			readonly async: features.AsyncAwait;
 			readonly computed: features.ComputedKeys;
 			readonly const: features.CompileTimeEvaluation;
@@ -6775,7 +7177,7 @@ declare module './utils.ts' {
 			readonly static: object;
 			readonly unsafe: features.UnsafeCode;
 		};
-		readonly 'declaration.method.public.restricted': {
+		readonly 'declaration.member.method.public.restricted': {
 			readonly async: features.AsyncAwait;
 			readonly computed: features.ComputedKeys;
 			readonly const: features.CompileTimeEvaluation;
@@ -6788,7 +7190,7 @@ declare module './utils.ts' {
 			readonly static: object;
 			readonly unsafe: features.UnsafeCode;
 		};
-		readonly 'declaration.method.signature': {
+		readonly 'declaration.member.method.signature': {
 			readonly async: features.AsyncLambdas;
 			readonly computed: features.ComputedKeys;
 			readonly const: features.CompileTimeEvaluation;
@@ -6801,7 +7203,7 @@ declare module './utils.ts' {
 			readonly static: object;
 			readonly unsafe: features.UnsafeCode;
 		};
-		readonly 'declaration.method.signature.abstract': {
+		readonly 'declaration.member.method.signature.abstract': {
 			readonly async: features.AsyncLambdas;
 			readonly computed: features.ComputedKeys;
 			readonly const: features.CompileTimeEvaluation;
@@ -6814,7 +7216,7 @@ declare module './utils.ts' {
 			readonly static: object;
 			readonly unsafe: features.UnsafeCode;
 		};
-		readonly 'declaration.method.signature.abstract.private': {
+		readonly 'declaration.member.method.signature.abstract.private': {
 			readonly async: features.AsyncLambdas;
 			readonly computed: features.ComputedKeys;
 			readonly const: features.CompileTimeEvaluation;
@@ -6827,7 +7229,7 @@ declare module './utils.ts' {
 			readonly static: object;
 			readonly unsafe: features.UnsafeCode;
 		};
-		readonly 'declaration.method.signature.abstract.protected': {
+		readonly 'declaration.member.method.signature.abstract.protected': {
 			readonly async: features.AsyncLambdas;
 			readonly computed: features.ComputedKeys;
 			readonly const: features.CompileTimeEvaluation;
@@ -6840,7 +7242,7 @@ declare module './utils.ts' {
 			readonly static: object;
 			readonly unsafe: features.UnsafeCode;
 		};
-		readonly 'declaration.method.signature.abstract.public': {
+		readonly 'declaration.member.method.signature.abstract.public': {
 			readonly async: features.AsyncLambdas;
 			readonly computed: features.ComputedKeys;
 			readonly const: features.CompileTimeEvaluation;
@@ -6853,7 +7255,7 @@ declare module './utils.ts' {
 			readonly static: object;
 			readonly unsafe: features.UnsafeCode;
 		};
-		readonly 'declaration.method.signature.private': {
+		readonly 'declaration.member.method.signature.private': {
 			readonly async: features.AsyncLambdas;
 			readonly computed: features.ComputedKeys;
 			readonly const: features.CompileTimeEvaluation;
@@ -6866,7 +7268,7 @@ declare module './utils.ts' {
 			readonly static: object;
 			readonly unsafe: features.UnsafeCode;
 		};
-		readonly 'declaration.method.signature.protected': {
+		readonly 'declaration.member.method.signature.protected': {
 			readonly async: features.AsyncLambdas;
 			readonly computed: features.ComputedKeys;
 			readonly const: features.CompileTimeEvaluation;
@@ -6879,7 +7281,7 @@ declare module './utils.ts' {
 			readonly static: object;
 			readonly unsafe: features.UnsafeCode;
 		};
-		readonly 'declaration.method.signature.public': {
+		readonly 'declaration.member.method.signature.public': {
 			readonly async: features.AsyncLambdas;
 			readonly computed: features.ComputedKeys;
 			readonly const: features.CompileTimeEvaluation;
@@ -6892,7 +7294,7 @@ declare module './utils.ts' {
 			readonly static: object;
 			readonly unsafe: features.UnsafeCode;
 		};
-		readonly 'declaration.method.signature.public.internal': {
+		readonly 'declaration.member.method.signature.public.internal': {
 			readonly async: features.AsyncLambdas;
 			readonly computed: features.ComputedKeys;
 			readonly const: features.CompileTimeEvaluation;
@@ -6905,7 +7307,7 @@ declare module './utils.ts' {
 			readonly static: object;
 			readonly unsafe: features.UnsafeCode;
 		};
-		readonly 'declaration.method.signature.public.parent': {
+		readonly 'declaration.member.method.signature.public.parent': {
 			readonly async: features.AsyncLambdas;
 			readonly computed: features.ComputedKeys;
 			readonly const: features.CompileTimeEvaluation;
@@ -6918,7 +7320,7 @@ declare module './utils.ts' {
 			readonly static: object;
 			readonly unsafe: features.UnsafeCode;
 		};
-		readonly 'declaration.method.signature.public.restricted': {
+		readonly 'declaration.member.method.signature.public.restricted': {
 			readonly async: features.AsyncLambdas;
 			readonly computed: features.ComputedKeys;
 			readonly const: features.CompileTimeEvaluation;
@@ -6931,7 +7333,7 @@ declare module './utils.ts' {
 			readonly static: object;
 			readonly unsafe: features.UnsafeCode;
 		};
-		readonly 'declaration.method.special': {
+		readonly 'declaration.member.method.special': {
 			readonly async: features.AsyncAwait;
 			readonly computed: features.ComputedKeys;
 			readonly const: features.CompileTimeEvaluation;
@@ -6944,6 +7346,219 @@ declare module './utils.ts' {
 			readonly static: object;
 			readonly unsafe: features.UnsafeCode;
 		};
+		readonly 'declaration.member.property': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.getter': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.getter.private': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.getter.protected': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.getter.public': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.private': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.protected': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.public': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.setter': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.setter.private': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.setter.protected': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.setter.public': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.signature': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.signature.abstract': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.signature.abstract.getter': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.signature.abstract.getter.private': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.signature.abstract.getter.protected': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.signature.abstract.getter.public': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.signature.abstract.setter': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.signature.abstract.setter.private': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.signature.abstract.setter.protected': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.signature.abstract.setter.public': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.signature.getter': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.signature.getter.private': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.signature.getter.protected': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.signature.getter.public': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.signature.setter': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.signature.setter.private': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.signature.setter.protected': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.property.signature.setter.public': {
+			readonly computed: features.ComputedKeys;
+			readonly definite: features.NonNullAssertions;
+			readonly override: features.ExplicitOverrides;
+			readonly privateName: features.FieldEncapsulation;
+			readonly static: features.JavaScriptClasses;
+		};
+		readonly 'declaration.member.signature.construct': { readonly abstract: features.AbstractClasses };
+		readonly 'declaration.member.signature.index': { readonly readonly: object };
+		readonly 'declaration.member.signature.index.mapped': { readonly readonly: object };
 		readonly 'declaration.module.foreign': { readonly unsafe: features.UnsafeCode };
 		readonly 'declaration.parameter': {
 			readonly mutable: features.RustDeclarations;
@@ -7000,219 +7615,19 @@ declare module './utils.ts' {
 			readonly override: features.MemberOverrides;
 			readonly readonly: features.ReadonlyMembers;
 		};
-		readonly 'declaration.property': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.getter': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.getter.private': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.getter.protected': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.getter.public': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.private': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.protected': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.public': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.setter': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.setter.private': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.setter.protected': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.setter.public': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.signature': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.signature.abstract': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.signature.abstract.getter': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.signature.abstract.getter.private': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.signature.abstract.getter.protected': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.signature.abstract.getter.public': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.signature.abstract.setter': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.signature.abstract.setter.private': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.signature.abstract.setter.protected': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.signature.abstract.setter.public': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.signature.getter': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.signature.getter.private': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.signature.getter.protected': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.signature.getter.public': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.signature.setter': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.signature.setter.private': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.signature.setter.protected': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.property.signature.setter.public': {
-			readonly computed: features.ComputedKeys;
-			readonly definite: features.NonNullAssertions;
-			readonly override: features.ExplicitOverrides;
-			readonly privateName: features.FieldEncapsulation;
-			readonly static: features.JavaScriptClasses;
-		};
-		readonly 'declaration.signature.construct': { readonly abstract: features.AbstractClasses };
-		readonly 'declaration.signature.index': { readonly readonly: object };
-		readonly 'declaration.signature.index.mapped': { readonly readonly: object };
+		readonly 'declaration.type.class': { readonly abstract: features.AbstractClasses };
+		readonly 'declaration.type.enum': { readonly const: object };
+		readonly 'declaration.type.enum.private': { readonly const: object };
+		readonly 'declaration.type.enum.public': { readonly const: object };
+		readonly 'declaration.type.enum.public.internal': { readonly const: object };
+		readonly 'declaration.type.enum.public.parent': { readonly const: object };
+		readonly 'declaration.type.enum.public.restricted': { readonly const: object };
+		readonly 'declaration.type.interface.trait': { readonly unsafe: features.UnsafeCode };
+		readonly 'declaration.type.interface.trait.private': { readonly unsafe: features.UnsafeCode };
+		readonly 'declaration.type.interface.trait.public': { readonly unsafe: features.UnsafeCode };
+		readonly 'declaration.type.interface.trait.public.internal': { readonly unsafe: features.UnsafeCode };
+		readonly 'declaration.type.interface.trait.public.parent': { readonly unsafe: features.UnsafeCode };
+		readonly 'declaration.type.interface.trait.public.restricted': { readonly unsafe: features.UnsafeCode };
 		readonly 'declaration.type_parameter': { readonly const: object };
 		readonly 'declaration.variable': {
 			readonly byReference: features.References;
@@ -7275,8 +7690,6 @@ declare module './utils.ts' {
 			readonly static: features.StaticStorage;
 		};
 		readonly 'element.pair': { readonly computed: features.ComputedKeys };
-		readonly 'expression.block.async': { readonly move: object };
-		readonly 'expression.block.generator': { readonly move: object };
 		readonly 'expression.call': { readonly optionalChain: features.OptionalChaining };
 		readonly 'expression.call.construct': { readonly optionalChain: features.OptionalChaining };
 		readonly 'expression.call.construct.bare': { readonly optionalChain: features.OptionalChaining };
@@ -7318,6 +7731,8 @@ declare module './utils.ts' {
 		readonly 'pattern.reference.value': { readonly exclusive: object };
 		readonly 'pattern.struct.field': { readonly byReference: object; readonly mutable: object };
 		readonly 'pattern.tuple.bare': { readonly trailingComma: object };
+		readonly 'statement.block.async': { readonly move: object };
+		readonly 'statement.block.generator': { readonly move: object };
 		readonly 'statement.export': { readonly typeOnly: features.TypeOnlyImports };
 		readonly 'statement.export.all': { readonly typeOnly: features.TypeOnlyImports };
 		readonly 'statement.export.default': { readonly typeOnly: features.TypeOnlyImports };

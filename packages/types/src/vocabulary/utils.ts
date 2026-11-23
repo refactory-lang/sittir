@@ -32,6 +32,7 @@ export type In<G extends GrammarMap, F, T> = Composing<G['features'], F, T>;
 export interface Missing<F> {
 	readonly $missing: F;
 	readonly $absent: never;
+	readonly $path: `$missing:${string}`;
 }
 
 declare const flag: unique symbol;

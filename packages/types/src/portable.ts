@@ -5,6 +5,9 @@ export type * from './portable-build.ts';
 /** A portable kind: one vocabulary path, the same object for every language. */
 export type PortableKind<Path extends string = string> = { readonly $path: Path };
 
+/** A portable namespace: a prefix of vocabulary paths that is no path itself, the same object for every language; it names the kinds beneath it, with no `$path` of its own. */
+export type PortableNamespace<Path extends string = string> = { readonly $namespace: Path };
+
 /** One step of a condition: a slot by its numbers, narrowed to its first or last node when `anchor` is set, or reaching its node only when it holds exactly one (`only`). */
 export interface PortableStep extends SlotSubject {
 	readonly anchor?: StepAnchor;
@@ -24,10 +27,14 @@ export interface PortableReadEntry {
 	readonly test: readonly PortableCondition[];
 }
 
-/** A vocabulary path's kind ids, and whether they decide it: every way those kinds read lands at or under the path, one of them unconditionally. */
+/**
+ * A vocabulary path's kind ids, and whether they decide it: every way those kinds read lands at or under the path or one of its `targets`, one of
+ * them unconditionally. `targets` lists what the aliases the language holds at or beneath the path reach, where there are any.
+ */
 export interface PortablePath {
 	readonly ids: readonly number[];
 	readonly exact: boolean;
+	readonly targets?: readonly string[];
 }
 
 /**

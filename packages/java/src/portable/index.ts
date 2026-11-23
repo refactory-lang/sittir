@@ -37,6 +37,7 @@ export interface PortableIds {
 	'comment.block.doc': TSKindId.BlockComment;
 	'comment.line': TSKindId.LineComment;
 	declaration:
+		| TSKindId.Annotation
 		| TSKindId.ClassDeclaration
 		| TSKindId.CompactConstructorDeclaration
 		| TSKindId.ConstantDeclaration
@@ -45,41 +46,83 @@ export interface PortableIds {
 		| TSKindId.EnumDeclaration
 		| TSKindId.FieldDeclaration
 		| TSKindId.FormalParameter
+		| TSKindId.Identifier
 		| TSKindId.InterfaceDeclaration
 		| TSKindId.LocalVariableDeclaration
+		| TSKindId.MarkerAnnotation
 		| TSKindId.MethodDeclaration
 		| TSKindId.ModuleDeclaration
 		| TSKindId.ReceiverParameter
 		| TSKindId.RecordDeclaration
+		| TSKindId.ScopedIdentifier
+		| TSKindId.ScopedTypeIdentifier
 		| TSKindId.SpreadParameter
+		| TSKindId.StaticInitializer
+		| TSKindId.Super
+		| TSKindId.This
+		| TSKindId.TypeIdentifier
 		| TSKindId.TypeParameter;
-	'declaration.class': TSKindId.ClassDeclaration | TSKindId.RecordDeclaration;
 	'declaration.constant': TSKindId.ConstantDeclaration;
 	'declaration.constant.private': TSKindId.ConstantDeclaration;
 	'declaration.constant.public': TSKindId.ConstantDeclaration;
-	'declaration.constructor': TSKindId.CompactConstructorDeclaration | TSKindId.ConstructorDeclaration;
-	'declaration.constructor.private': TSKindId.ConstructorDeclaration;
-	'declaration.constructor.protected': TSKindId.ConstructorDeclaration;
-	'declaration.constructor.public': TSKindId.ConstructorDeclaration;
-	'declaration.enum': TSKindId.EnumDeclaration;
-	'declaration.enum.private': TSKindId.EnumDeclaration;
-	'declaration.enum.public': TSKindId.EnumDeclaration;
-	'declaration.enum_member': TSKindId.EnumConstant;
-	'declaration.field': TSKindId.FieldDeclaration;
-	'declaration.field.private': TSKindId.FieldDeclaration;
-	'declaration.field.protected': TSKindId.FieldDeclaration;
-	'declaration.field.public': TSKindId.FieldDeclaration;
-	'declaration.interface': TSKindId.InterfaceDeclaration;
-	'declaration.method': TSKindId.MethodDeclaration;
-	'declaration.method.private': TSKindId.MethodDeclaration;
-	'declaration.method.protected': TSKindId.MethodDeclaration;
-	'declaration.method.public': TSKindId.MethodDeclaration;
-	'declaration.method.signature': TSKindId.MethodDeclaration;
-	'declaration.method.signature.abstract': TSKindId.MethodDeclaration;
+	'declaration.member':
+		| TSKindId.Annotation
+		| TSKindId.CompactConstructorDeclaration
+		| TSKindId.ConstantDeclaration
+		| TSKindId.ConstructorDeclaration
+		| TSKindId.EnumConstant
+		| TSKindId.FieldDeclaration
+		| TSKindId.MarkerAnnotation
+		| TSKindId.MethodDeclaration
+		| TSKindId.StaticInitializer;
+	'declaration.member.attribute': TSKindId.Annotation | TSKindId.MarkerAnnotation;
+	'declaration.member.constant': TSKindId.ConstantDeclaration;
+	'declaration.member.constructor': TSKindId.CompactConstructorDeclaration | TSKindId.ConstructorDeclaration;
+	'declaration.member.constructor.private': TSKindId.ConstructorDeclaration;
+	'declaration.member.constructor.protected': TSKindId.ConstructorDeclaration;
+	'declaration.member.constructor.public': TSKindId.ConstructorDeclaration;
+	'declaration.member.enum_member': TSKindId.EnumConstant;
+	'declaration.member.field': TSKindId.FieldDeclaration;
+	'declaration.member.field.private': TSKindId.FieldDeclaration;
+	'declaration.member.field.protected': TSKindId.FieldDeclaration;
+	'declaration.member.field.public': TSKindId.FieldDeclaration;
+	'declaration.member.method': TSKindId.MethodDeclaration;
+	'declaration.member.method.private': TSKindId.MethodDeclaration;
+	'declaration.member.method.protected': TSKindId.MethodDeclaration;
+	'declaration.member.method.public': TSKindId.MethodDeclaration;
+	'declaration.member.method.signature': TSKindId.MethodDeclaration;
+	'declaration.member.method.signature.abstract': TSKindId.MethodDeclaration;
+	'declaration.member.static_block': TSKindId.StaticInitializer;
 	'declaration.module': TSKindId.ModuleDeclaration;
-	'declaration.parameter': TSKindId.FormalParameter | TSKindId.ReceiverParameter | TSKindId.SpreadParameter;
+	'declaration.parameter':
+		| TSKindId.FormalParameter
+		| TSKindId.Identifier
+		| TSKindId.ReceiverParameter
+		| TSKindId.ScopedIdentifier
+		| TSKindId.ScopedTypeIdentifier
+		| TSKindId.SpreadParameter
+		| TSKindId.Super
+		| TSKindId.This
+		| TSKindId.TypeIdentifier;
+	'declaration.parameter.identifier':
+		| TSKindId.Identifier
+		| TSKindId.ScopedIdentifier
+		| TSKindId.ScopedTypeIdentifier
+		| TSKindId.Super
+		| TSKindId.This
+		| TSKindId.TypeIdentifier;
 	'declaration.parameter.receiver': TSKindId.ReceiverParameter;
 	'declaration.parameter.variadic': TSKindId.SpreadParameter;
+	'declaration.type':
+		| TSKindId.ClassDeclaration
+		| TSKindId.EnumDeclaration
+		| TSKindId.InterfaceDeclaration
+		| TSKindId.RecordDeclaration;
+	'declaration.type.class': TSKindId.ClassDeclaration | TSKindId.RecordDeclaration;
+	'declaration.type.enum': TSKindId.EnumDeclaration;
+	'declaration.type.enum.private': TSKindId.EnumDeclaration;
+	'declaration.type.enum.public': TSKindId.EnumDeclaration;
+	'declaration.type.interface': TSKindId.InterfaceDeclaration;
 	'declaration.type_parameter': TSKindId.TypeParameter;
 	'declaration.variable': TSKindId.LocalVariableDeclaration;
 	'declaration.variable.constant': TSKindId.LocalVariableDeclaration;
@@ -90,19 +133,54 @@ export interface PortableIds {
 		| TSKindId.ArrayInitializer
 		| TSKindId.AssignmentExpression
 		| TSKindId.BinaryExpression
+		| TSKindId.BinaryIntegerLiteral
+		| TSKindId.Block
+		| TSKindId.BreakStatement
 		| TSKindId.CastExpression
+		| TSKindId.CharacterLiteral
+		| TSKindId.ContinueStatement
+		| TSKindId.DecimalFloatingPointLiteral
+		| TSKindId.DecimalIntegerLiteralArm1
+		| TSKindId.DecimalIntegerLiteralArm2
+		| TSKindId.DoStatement
+		| TSKindId.EnhancedForStatement
+		| TSKindId.EscapeSequenceArm1
+		| TSKindId.EscapeSequenceArm2
+		| TSKindId.EscapeSequenceArm3
+		| TSKindId.EscapeSequenceArm4
+		| TSKindId.EscapeSequenceArm5
+		| TSKindId.False
 		| TSKindId.FieldAccess
+		| TSKindId.ForStatement
+		| TSKindId.HexFloatingPointLiteral
+		| TSKindId.HexIntegerLiteral
+		| TSKindId.Identifier
+		| TSKindId.IfStatement
 		| TSKindId.InstanceofExpression
 		| TSKindId.LambdaExpression
 		| TSKindId.MethodInvocation
+		| TSKindId.MultilineStringFragment
+		| TSKindId.NullLiteral
 		| TSKindId.ObjectCreationExpression
+		| TSKindId.OctalIntegerLiteral
 		| TSKindId.ParenthesizedExpression
+		| TSKindId.ReturnStatement
+		| TSKindId.ScopedIdentifier
+		| TSKindId.ScopedTypeIdentifier
+		| TSKindId.StringFragment
 		| TSKindId.StringInterpolation
+		| TSKindId.StringLiteralLine
+		| TSKindId.StringLiteralTextBlock
+		| TSKindId.Super
 		| TSKindId.TemplateExpression
 		| TSKindId.TernaryExpression
+		| TSKindId.This
+		| TSKindId.True
+		| TSKindId.TypeIdentifier
 		| TSKindId.UnaryExpression
 		| TSKindId.UpdateExpressionPostfix
-		| TSKindId.UpdateExpressionPrefix;
+		| TSKindId.UpdateExpressionPrefix
+		| TSKindId.WhileStatement;
 	'expression.assignment': TSKindId.AssignmentExpression;
 	'expression.assignment.compound': TSKindId.AssignmentExpression;
 	'expression.assignment.compound.add': TSKindId.AssignmentExpression;
@@ -143,6 +221,8 @@ export interface PortableIds {
 	'expression.binary.shift.left': TSKindId.BinaryExpression;
 	'expression.binary.shift.right': TSKindId.BinaryExpression;
 	'expression.binary.shift.right_unsigned': TSKindId.BinaryExpression;
+	'expression.block': TSKindId.Block;
+	'expression.break': TSKindId.BreakStatement;
 	'expression.call':
 		| TSKindId.UnqualifiedObjectCreationExpression
 		| TSKindId.MethodInvocation
@@ -155,10 +235,46 @@ export interface PortableIds {
 	'expression.collection': TSKindId.ArrayCreationExpression | TSKindId.ArrayInitializer;
 	'expression.collection.list': TSKindId.ArrayCreationExpression | TSKindId.ArrayInitializer;
 	'expression.conditional': TSKindId.TernaryExpression;
+	'expression.continue': TSKindId.ContinueStatement;
+	'expression.identifier':
+		| TSKindId.Identifier
+		| TSKindId.ScopedIdentifier
+		| TSKindId.ScopedTypeIdentifier
+		| TSKindId.Super
+		| TSKindId.This
+		| TSKindId.TypeIdentifier;
+	'expression.if': TSKindId.IfStatement;
 	'expression.interpolation': TSKindId.StringInterpolation;
 	'expression.lambda': TSKindId.LambdaExpression;
+	'expression.literal':
+		| TSKindId.BinaryIntegerLiteral
+		| TSKindId.CharacterLiteral
+		| TSKindId.DecimalFloatingPointLiteral
+		| TSKindId.DecimalIntegerLiteralArm1
+		| TSKindId.DecimalIntegerLiteralArm2
+		| TSKindId.EscapeSequenceArm1
+		| TSKindId.EscapeSequenceArm2
+		| TSKindId.EscapeSequenceArm3
+		| TSKindId.EscapeSequenceArm4
+		| TSKindId.EscapeSequenceArm5
+		| TSKindId.False
+		| TSKindId.HexFloatingPointLiteral
+		| TSKindId.HexIntegerLiteral
+		| TSKindId.MultilineStringFragment
+		| TSKindId.NullLiteral
+		| TSKindId.OctalIntegerLiteral
+		| TSKindId.StringFragment
+		| TSKindId.StringLiteralLine
+		| TSKindId.StringLiteralTextBlock
+		| TSKindId.True;
+	'expression.loop':
+		| TSKindId.DoStatement
+		| TSKindId.EnhancedForStatement
+		| TSKindId.ForStatement
+		| TSKindId.WhileStatement;
 	'expression.member': TSKindId.FieldAccess;
 	'expression.parenthesized': TSKindId.ParenthesizedExpression;
+	'expression.return': TSKindId.ReturnStatement;
 	'expression.subscript': TSKindId.ArrayAccess;
 	'expression.unary': TSKindId.UnaryExpression;
 	'expression.unary.bitwise_not': TSKindId.UnaryExpression;
@@ -242,34 +358,240 @@ export interface PortableIds {
 	'literal.string.multiline': TSKindId.StringLiteralTextBlock;
 	'literal.string.text': TSKindId.MultilineStringFragment | TSKindId.StringFragment;
 	modifier: TSKindId.Modifiers;
-	pattern: TSKindId.Pattern | TSKindId.RecordPattern | TSKindId.RecordPatternComponent | TSKindId.UnderscorePattern;
+	pattern:
+		| TSKindId.ArrayAccess
+		| TSKindId.BinaryIntegerLiteral
+		| TSKindId.CharacterLiteral
+		| TSKindId.DecimalFloatingPointLiteral
+		| TSKindId.DecimalIntegerLiteralArm1
+		| TSKindId.DecimalIntegerLiteralArm2
+		| TSKindId.EscapeSequenceArm1
+		| TSKindId.EscapeSequenceArm2
+		| TSKindId.EscapeSequenceArm3
+		| TSKindId.EscapeSequenceArm4
+		| TSKindId.EscapeSequenceArm5
+		| TSKindId.False
+		| TSKindId.FieldAccess
+		| TSKindId.HexFloatingPointLiteral
+		| TSKindId.HexIntegerLiteral
+		| TSKindId.Identifier
+		| TSKindId.MultilineStringFragment
+		| TSKindId.NullLiteral
+		| TSKindId.OctalIntegerLiteral
+		| TSKindId.Pattern
+		| TSKindId.RecordPattern
+		| TSKindId.RecordPatternComponent
+		| TSKindId.ScopedIdentifier
+		| TSKindId.ScopedTypeIdentifier
+		| TSKindId.StringFragment
+		| TSKindId.StringLiteralLine
+		| TSKindId.StringLiteralTextBlock
+		| TSKindId.Super
+		| TSKindId.This
+		| TSKindId.True
+		| TSKindId.TypeIdentifier
+		| TSKindId.UnderscorePattern;
+	'pattern.identifier':
+		| TSKindId.Identifier
+		| TSKindId.ScopedIdentifier
+		| TSKindId.ScopedTypeIdentifier
+		| TSKindId.Super
+		| TSKindId.This
+		| TSKindId.TypeIdentifier;
+	'pattern.literal':
+		| TSKindId.BinaryIntegerLiteral
+		| TSKindId.CharacterLiteral
+		| TSKindId.DecimalFloatingPointLiteral
+		| TSKindId.DecimalIntegerLiteralArm1
+		| TSKindId.DecimalIntegerLiteralArm2
+		| TSKindId.EscapeSequenceArm1
+		| TSKindId.EscapeSequenceArm2
+		| TSKindId.EscapeSequenceArm3
+		| TSKindId.EscapeSequenceArm4
+		| TSKindId.EscapeSequenceArm5
+		| TSKindId.False
+		| TSKindId.HexFloatingPointLiteral
+		| TSKindId.HexIntegerLiteral
+		| TSKindId.MultilineStringFragment
+		| TSKindId.NullLiteral
+		| TSKindId.OctalIntegerLiteral
+		| TSKindId.StringFragment
+		| TSKindId.StringLiteralLine
+		| TSKindId.StringLiteralTextBlock
+		| TSKindId.True;
+	'pattern.member': TSKindId.FieldAccess;
 	'pattern.struct': TSKindId.RecordPattern | TSKindId.RecordPatternComponent;
 	'pattern.struct.field': TSKindId.RecordPatternComponent;
+	'pattern.subscript': TSKindId.ArrayAccess;
 	'pattern.wildcard': TSKindId.UnderscorePattern;
 	statement:
+		| TSKindId.UnqualifiedObjectCreationExpression
+		| TSKindId.Annotation
+		| TSKindId.ArrayAccess
+		| TSKindId.ArrayCreationExpression
+		| TSKindId.ArrayInitializer
 		| TSKindId.AssertStatement
+		| TSKindId.AssignmentExpression
+		| TSKindId.BinaryExpression
+		| TSKindId.BinaryIntegerLiteral
 		| TSKindId.Block
 		| TSKindId.BreakStatement
+		| TSKindId.CastExpression
+		| TSKindId.CharacterLiteral
+		| TSKindId.ClassDeclaration
+		| TSKindId.CompactConstructorDeclaration
+		| TSKindId.ConstantDeclaration
+		| TSKindId.ConstructorDeclaration
 		| TSKindId.ContinueStatement
+		| TSKindId.DecimalFloatingPointLiteral
+		| TSKindId.DecimalIntegerLiteralArm1
+		| TSKindId.DecimalIntegerLiteralArm2
 		| TSKindId.DoStatement
 		| TSKindId.EnhancedForStatement
+		| TSKindId.EnumConstant
+		| TSKindId.EnumDeclaration
+		| TSKindId.EscapeSequenceArm1
+		| TSKindId.EscapeSequenceArm2
+		| TSKindId.EscapeSequenceArm3
+		| TSKindId.EscapeSequenceArm4
+		| TSKindId.EscapeSequenceArm5
+		| TSKindId.False
+		| TSKindId.FieldAccess
+		| TSKindId.FieldDeclaration
 		| TSKindId.ForStatement
+		| TSKindId.FormalParameter
+		| TSKindId.HexFloatingPointLiteral
+		| TSKindId.HexIntegerLiteral
+		| TSKindId.Identifier
 		| TSKindId.IfStatement
 		| TSKindId.ImportDeclaration
+		| TSKindId.InstanceofExpression
+		| TSKindId.InterfaceDeclaration
 		| TSKindId.LabeledStatement
+		| TSKindId.LambdaExpression
+		| TSKindId.LocalVariableDeclaration
+		| TSKindId.MarkerAnnotation
+		| TSKindId.MethodDeclaration
+		| TSKindId.MethodInvocation
+		| TSKindId.ModuleDeclaration
+		| TSKindId.MultilineStringFragment
+		| TSKindId.NullLiteral
+		| TSKindId.ObjectCreationExpression
+		| TSKindId.OctalIntegerLiteral
+		| TSKindId.ParenthesizedExpression
+		| TSKindId.ReceiverParameter
+		| TSKindId.RecordDeclaration
 		| TSKindId.ReturnStatement
+		| TSKindId.ScopedIdentifier
+		| TSKindId.ScopedTypeIdentifier
+		| TSKindId.SpreadParameter
 		| TSKindId.StaticInitializer
+		| TSKindId.StringFragment
+		| TSKindId.StringInterpolation
+		| TSKindId.StringLiteralLine
+		| TSKindId.StringLiteralTextBlock
+		| TSKindId.Super
 		| TSKindId.SwitchExpression
+		| TSKindId.TemplateExpression
+		| TSKindId.TernaryExpression
+		| TSKindId.This
 		| TSKindId.ThrowStatement
+		| TSKindId.True
 		| TSKindId.TryStatementCatches
 		| TSKindId.TryStatementFinally
 		| TSKindId.TryWithResourcesStatement
+		| TSKindId.TypeIdentifier
+		| TSKindId.TypeParameter
+		| TSKindId.UnaryExpression
+		| TSKindId.UpdateExpressionPostfix
+		| TSKindId.UpdateExpressionPrefix
 		| TSKindId.WhileStatement;
 	'statement.assert': TSKindId.AssertStatement;
-	'statement.block': TSKindId.Block | TSKindId.StaticInitializer;
-	'statement.block.static': TSKindId.StaticInitializer;
+	'statement.attribute': TSKindId.Annotation | TSKindId.MarkerAnnotation;
+	'statement.block': TSKindId.Block;
 	'statement.break': TSKindId.BreakStatement;
 	'statement.continue': TSKindId.ContinueStatement;
+	'statement.declaration':
+		| TSKindId.Annotation
+		| TSKindId.ClassDeclaration
+		| TSKindId.CompactConstructorDeclaration
+		| TSKindId.ConstantDeclaration
+		| TSKindId.ConstructorDeclaration
+		| TSKindId.EnumConstant
+		| TSKindId.EnumDeclaration
+		| TSKindId.FieldDeclaration
+		| TSKindId.FormalParameter
+		| TSKindId.Identifier
+		| TSKindId.InterfaceDeclaration
+		| TSKindId.LocalVariableDeclaration
+		| TSKindId.MarkerAnnotation
+		| TSKindId.MethodDeclaration
+		| TSKindId.ModuleDeclaration
+		| TSKindId.ReceiverParameter
+		| TSKindId.RecordDeclaration
+		| TSKindId.ScopedIdentifier
+		| TSKindId.ScopedTypeIdentifier
+		| TSKindId.SpreadParameter
+		| TSKindId.StaticInitializer
+		| TSKindId.Super
+		| TSKindId.This
+		| TSKindId.TypeIdentifier
+		| TSKindId.TypeParameter;
+	'statement.expression':
+		| TSKindId.UnqualifiedObjectCreationExpression
+		| TSKindId.ArrayAccess
+		| TSKindId.ArrayCreationExpression
+		| TSKindId.ArrayInitializer
+		| TSKindId.AssignmentExpression
+		| TSKindId.BinaryExpression
+		| TSKindId.BinaryIntegerLiteral
+		| TSKindId.Block
+		| TSKindId.BreakStatement
+		| TSKindId.CastExpression
+		| TSKindId.CharacterLiteral
+		| TSKindId.ContinueStatement
+		| TSKindId.DecimalFloatingPointLiteral
+		| TSKindId.DecimalIntegerLiteralArm1
+		| TSKindId.DecimalIntegerLiteralArm2
+		| TSKindId.DoStatement
+		| TSKindId.EnhancedForStatement
+		| TSKindId.EscapeSequenceArm1
+		| TSKindId.EscapeSequenceArm2
+		| TSKindId.EscapeSequenceArm3
+		| TSKindId.EscapeSequenceArm4
+		| TSKindId.EscapeSequenceArm5
+		| TSKindId.False
+		| TSKindId.FieldAccess
+		| TSKindId.ForStatement
+		| TSKindId.HexFloatingPointLiteral
+		| TSKindId.HexIntegerLiteral
+		| TSKindId.Identifier
+		| TSKindId.IfStatement
+		| TSKindId.InstanceofExpression
+		| TSKindId.LambdaExpression
+		| TSKindId.MethodInvocation
+		| TSKindId.MultilineStringFragment
+		| TSKindId.NullLiteral
+		| TSKindId.ObjectCreationExpression
+		| TSKindId.OctalIntegerLiteral
+		| TSKindId.ParenthesizedExpression
+		| TSKindId.ReturnStatement
+		| TSKindId.ScopedIdentifier
+		| TSKindId.ScopedTypeIdentifier
+		| TSKindId.StringFragment
+		| TSKindId.StringInterpolation
+		| TSKindId.StringLiteralLine
+		| TSKindId.StringLiteralTextBlock
+		| TSKindId.Super
+		| TSKindId.TemplateExpression
+		| TSKindId.TernaryExpression
+		| TSKindId.This
+		| TSKindId.True
+		| TSKindId.TypeIdentifier
+		| TSKindId.UnaryExpression
+		| TSKindId.UpdateExpressionPostfix
+		| TSKindId.UpdateExpressionPrefix
+		| TSKindId.WhileStatement;
 	'statement.if': TSKindId.IfStatement;
 	'statement.import': TSKindId.ImportDeclaration;
 	'statement.labeled': TSKindId.LabeledStatement;
@@ -288,19 +610,135 @@ export interface PortableIds {
 	'statement.throw': TSKindId.ThrowStatement;
 	'statement.try': TSKindId.TryStatementCatches | TSKindId.TryStatementFinally;
 	type:
+		| TSKindId.UnqualifiedObjectCreationExpression
+		| TSKindId.ArrayAccess
+		| TSKindId.ArrayCreationExpression
+		| TSKindId.ArrayInitializer
 		| TSKindId.ArrayType
+		| TSKindId.AssignmentExpression
+		| TSKindId.BinaryExpression
+		| TSKindId.BinaryIntegerLiteral
+		| TSKindId.Block
 		| TSKindId.BooleanType
+		| TSKindId.BreakStatement
 		| TSKindId.ByteKeyword
+		| TSKindId.CastExpression
 		| TSKindId.CharKeyword
+		| TSKindId.CharacterLiteral
+		| TSKindId.ContinueStatement
+		| TSKindId.DecimalFloatingPointLiteral
+		| TSKindId.DecimalIntegerLiteralArm1
+		| TSKindId.DecimalIntegerLiteralArm2
+		| TSKindId.DoStatement
 		| TSKindId.DoubleKeyword
+		| TSKindId.EnhancedForStatement
+		| TSKindId.EscapeSequenceArm1
+		| TSKindId.EscapeSequenceArm2
+		| TSKindId.EscapeSequenceArm3
+		| TSKindId.EscapeSequenceArm4
+		| TSKindId.EscapeSequenceArm5
+		| TSKindId.False
+		| TSKindId.FieldAccess
 		| TSKindId.FloatKeyword
+		| TSKindId.ForStatement
 		| TSKindId.GenericType
+		| TSKindId.HexFloatingPointLiteral
+		| TSKindId.HexIntegerLiteral
+		| TSKindId.Identifier
+		| TSKindId.IfStatement
+		| TSKindId.InstanceofExpression
 		| TSKindId.IntKeyword
+		| TSKindId.LambdaExpression
 		| TSKindId.LongKeyword
+		| TSKindId.MethodInvocation
+		| TSKindId.MultilineStringFragment
+		| TSKindId.NullLiteral
+		| TSKindId.ObjectCreationExpression
+		| TSKindId.OctalIntegerLiteral
+		| TSKindId.ParenthesizedExpression
+		| TSKindId.ReturnStatement
+		| TSKindId.ScopedIdentifier
+		| TSKindId.ScopedTypeIdentifier
 		| TSKindId.ShortKeyword
-		| TSKindId.VoidType;
+		| TSKindId.StringFragment
+		| TSKindId.StringInterpolation
+		| TSKindId.StringLiteralLine
+		| TSKindId.StringLiteralTextBlock
+		| TSKindId.Super
+		| TSKindId.TemplateExpression
+		| TSKindId.TernaryExpression
+		| TSKindId.This
+		| TSKindId.True
+		| TSKindId.TypeIdentifier
+		| TSKindId.UnaryExpression
+		| TSKindId.UpdateExpressionPostfix
+		| TSKindId.UpdateExpressionPrefix
+		| TSKindId.VoidType
+		| TSKindId.WhileStatement;
 	'type.array': TSKindId.ArrayType;
+	'type.expression':
+		| TSKindId.UnqualifiedObjectCreationExpression
+		| TSKindId.ArrayAccess
+		| TSKindId.ArrayCreationExpression
+		| TSKindId.ArrayInitializer
+		| TSKindId.AssignmentExpression
+		| TSKindId.BinaryExpression
+		| TSKindId.BinaryIntegerLiteral
+		| TSKindId.Block
+		| TSKindId.BreakStatement
+		| TSKindId.CastExpression
+		| TSKindId.CharacterLiteral
+		| TSKindId.ContinueStatement
+		| TSKindId.DecimalFloatingPointLiteral
+		| TSKindId.DecimalIntegerLiteralArm1
+		| TSKindId.DecimalIntegerLiteralArm2
+		| TSKindId.DoStatement
+		| TSKindId.EnhancedForStatement
+		| TSKindId.EscapeSequenceArm1
+		| TSKindId.EscapeSequenceArm2
+		| TSKindId.EscapeSequenceArm3
+		| TSKindId.EscapeSequenceArm4
+		| TSKindId.EscapeSequenceArm5
+		| TSKindId.False
+		| TSKindId.FieldAccess
+		| TSKindId.ForStatement
+		| TSKindId.HexFloatingPointLiteral
+		| TSKindId.HexIntegerLiteral
+		| TSKindId.Identifier
+		| TSKindId.IfStatement
+		| TSKindId.InstanceofExpression
+		| TSKindId.LambdaExpression
+		| TSKindId.MethodInvocation
+		| TSKindId.MultilineStringFragment
+		| TSKindId.NullLiteral
+		| TSKindId.ObjectCreationExpression
+		| TSKindId.OctalIntegerLiteral
+		| TSKindId.ParenthesizedExpression
+		| TSKindId.ReturnStatement
+		| TSKindId.ScopedIdentifier
+		| TSKindId.ScopedTypeIdentifier
+		| TSKindId.StringFragment
+		| TSKindId.StringInterpolation
+		| TSKindId.StringLiteralLine
+		| TSKindId.StringLiteralTextBlock
+		| TSKindId.Super
+		| TSKindId.TemplateExpression
+		| TSKindId.TernaryExpression
+		| TSKindId.This
+		| TSKindId.True
+		| TSKindId.TypeIdentifier
+		| TSKindId.UnaryExpression
+		| TSKindId.UpdateExpressionPostfix
+		| TSKindId.UpdateExpressionPrefix
+		| TSKindId.WhileStatement;
 	'type.generic': TSKindId.GenericType;
+	'type.identifier':
+		| TSKindId.Identifier
+		| TSKindId.ScopedIdentifier
+		| TSKindId.ScopedTypeIdentifier
+		| TSKindId.Super
+		| TSKindId.This
+		| TSKindId.TypeIdentifier;
 	'type.primitive':
 		| TSKindId.BooleanType
 		| TSKindId.ByteKeyword
@@ -349,38 +787,44 @@ export interface PortableTexts {
 	'comment.block': never;
 	'comment.block.doc': never;
 	'comment.line': never;
-	declaration: never;
-	'declaration.class': never;
+	declaration: 'super' | 'this';
 	'declaration.constant': never;
 	'declaration.constant.private': never;
 	'declaration.constant.public': never;
-	'declaration.constructor': never;
-	'declaration.constructor.private': never;
-	'declaration.constructor.protected': never;
-	'declaration.constructor.public': never;
-	'declaration.enum': never;
-	'declaration.enum.private': never;
-	'declaration.enum.public': never;
-	'declaration.enum_member': never;
-	'declaration.field': never;
-	'declaration.field.private': never;
-	'declaration.field.protected': never;
-	'declaration.field.public': never;
-	'declaration.interface': never;
-	'declaration.method': never;
-	'declaration.method.private': never;
-	'declaration.method.protected': never;
-	'declaration.method.public': never;
-	'declaration.method.signature': never;
-	'declaration.method.signature.abstract': never;
+	'declaration.member': never;
+	'declaration.member.attribute': never;
+	'declaration.member.constant': never;
+	'declaration.member.constructor': never;
+	'declaration.member.constructor.private': never;
+	'declaration.member.constructor.protected': never;
+	'declaration.member.constructor.public': never;
+	'declaration.member.enum_member': never;
+	'declaration.member.field': never;
+	'declaration.member.field.private': never;
+	'declaration.member.field.protected': never;
+	'declaration.member.field.public': never;
+	'declaration.member.method': never;
+	'declaration.member.method.private': never;
+	'declaration.member.method.protected': never;
+	'declaration.member.method.public': never;
+	'declaration.member.method.signature': never;
+	'declaration.member.method.signature.abstract': never;
+	'declaration.member.static_block': never;
 	'declaration.module': never;
-	'declaration.parameter': never;
+	'declaration.parameter': 'super' | 'this';
+	'declaration.parameter.identifier': 'super' | 'this';
 	'declaration.parameter.receiver': never;
 	'declaration.parameter.variadic': never;
+	'declaration.type': never;
+	'declaration.type.class': never;
+	'declaration.type.enum': never;
+	'declaration.type.enum.private': never;
+	'declaration.type.enum.public': never;
+	'declaration.type.interface': never;
 	'declaration.type_parameter': never;
 	'declaration.variable': never;
 	'declaration.variable.constant': never;
-	expression: never;
+	expression: 'super' | 'this';
 	'expression.assignment': never;
 	'expression.assignment.compound': never;
 	'expression.assignment.compound.add': never;
@@ -421,6 +865,8 @@ export interface PortableTexts {
 	'expression.binary.shift.left': never;
 	'expression.binary.shift.right': never;
 	'expression.binary.shift.right_unsigned': never;
+	'expression.block': never;
+	'expression.break': never;
 	'expression.call': never;
 	'expression.call.construct': never;
 	'expression.call.member': never;
@@ -429,10 +875,16 @@ export interface PortableTexts {
 	'expression.collection': never;
 	'expression.collection.list': never;
 	'expression.conditional': never;
+	'expression.continue': never;
+	'expression.identifier': 'super' | 'this';
+	'expression.if': never;
 	'expression.interpolation': never;
 	'expression.lambda': never;
+	'expression.literal': never;
+	'expression.loop': never;
 	'expression.member': never;
 	'expression.parenthesized': never;
+	'expression.return': never;
 	'expression.subscript': never;
 	'expression.unary': never;
 	'expression.unary.bitwise_not': never;
@@ -464,16 +916,22 @@ export interface PortableTexts {
 	'literal.string.multiline': never;
 	'literal.string.text': never;
 	modifier: never;
-	pattern: '_';
+	pattern: '_' | 'super' | 'this';
+	'pattern.identifier': 'super' | 'this';
+	'pattern.literal': never;
+	'pattern.member': never;
 	'pattern.struct': never;
 	'pattern.struct.field': never;
+	'pattern.subscript': never;
 	'pattern.wildcard': '_';
-	statement: never;
+	statement: 'super' | 'this';
 	'statement.assert': never;
+	'statement.attribute': never;
 	'statement.block': never;
-	'statement.block.static': never;
 	'statement.break': never;
 	'statement.continue': never;
+	'statement.declaration': 'super' | 'this';
+	'statement.expression': 'super' | 'this';
 	'statement.if': never;
 	'statement.import': never;
 	'statement.labeled': never;
@@ -487,9 +945,11 @@ export interface PortableTexts {
 	'statement.switch': never;
 	'statement.throw': never;
 	'statement.try': never;
-	type: 'boolean' | 'byte' | 'char' | 'double' | 'float' | 'int' | 'long' | 'short' | 'void';
+	type: 'boolean' | 'byte' | 'char' | 'double' | 'float' | 'int' | 'long' | 'short' | 'super' | 'this' | 'void';
 	'type.array': never;
+	'type.expression': 'super' | 'this';
 	'type.generic': never;
+	'type.identifier': 'super' | 'this';
 	'type.primitive': 'boolean' | 'byte' | 'char' | 'double' | 'float' | 'int' | 'long' | 'short' | 'void';
 	'type.primitive.boolean': 'boolean';
 	'type.primitive.character': 'char';
@@ -544,20 +1004,14 @@ export interface PortableKindsAt {
 	'comment.line': { readonly $path: 'comment.line' };
 	declaration: {
 		readonly $path: 'declaration';
-		readonly class: PortableKindsAt['declaration.class'];
 		readonly constant: PortableKindsAt['declaration.constant'];
-		readonly constructor: PortableKindsAt['declaration.constructor'];
-		readonly enum: PortableKindsAt['declaration.enum'];
-		readonly enum_member: PortableKindsAt['declaration.enum_member'];
-		readonly field: PortableKindsAt['declaration.field'];
-		readonly interface: PortableKindsAt['declaration.interface'];
-		readonly method: PortableKindsAt['declaration.method'];
+		readonly member: PortableKindsAt['declaration.member'];
 		readonly module: PortableKindsAt['declaration.module'];
 		readonly parameter: PortableKindsAt['declaration.parameter'];
+		readonly type: PortableKindsAt['declaration.type'];
 		readonly type_parameter: PortableKindsAt['declaration.type_parameter'];
 		readonly variable: PortableKindsAt['declaration.variable'];
 	};
-	'declaration.class': { readonly $path: 'declaration.class' };
 	'declaration.constant': {
 		readonly $path: 'declaration.constant';
 		readonly private: PortableKindsAt['declaration.constant.private'];
@@ -565,56 +1019,78 @@ export interface PortableKindsAt {
 	};
 	'declaration.constant.private': { readonly $path: 'declaration.constant.private' };
 	'declaration.constant.public': { readonly $path: 'declaration.constant.public' };
-	'declaration.constructor': {
-		readonly $path: 'declaration.constructor';
-		readonly private: PortableKindsAt['declaration.constructor.private'];
-		readonly protected: PortableKindsAt['declaration.constructor.protected'];
-		readonly public: PortableKindsAt['declaration.constructor.public'];
+	'declaration.member': {
+		readonly $namespace: 'declaration.member';
+		readonly attribute: PortableKindsAt['declaration.member.attribute'];
+		readonly constant: PortableKindsAt['declaration.member.constant'];
+		readonly constructor: PortableKindsAt['declaration.member.constructor'];
+		readonly enum_member: PortableKindsAt['declaration.member.enum_member'];
+		readonly field: PortableKindsAt['declaration.member.field'];
+		readonly method: PortableKindsAt['declaration.member.method'];
+		readonly static_block: PortableKindsAt['declaration.member.static_block'];
 	};
-	'declaration.constructor.private': { readonly $path: 'declaration.constructor.private' };
-	'declaration.constructor.protected': { readonly $path: 'declaration.constructor.protected' };
-	'declaration.constructor.public': { readonly $path: 'declaration.constructor.public' };
-	'declaration.enum': {
-		readonly $path: 'declaration.enum';
-		readonly private: PortableKindsAt['declaration.enum.private'];
-		readonly public: PortableKindsAt['declaration.enum.public'];
+	'declaration.member.attribute': { readonly $namespace: 'declaration.member.attribute' };
+	'declaration.member.constant': { readonly $namespace: 'declaration.member.constant' };
+	'declaration.member.constructor': {
+		readonly $path: 'declaration.member.constructor';
+		readonly private: PortableKindsAt['declaration.member.constructor.private'];
+		readonly protected: PortableKindsAt['declaration.member.constructor.protected'];
+		readonly public: PortableKindsAt['declaration.member.constructor.public'];
 	};
-	'declaration.enum.private': { readonly $path: 'declaration.enum.private' };
-	'declaration.enum.public': { readonly $path: 'declaration.enum.public' };
-	'declaration.enum_member': { readonly $path: 'declaration.enum_member' };
-	'declaration.field': {
-		readonly $path: 'declaration.field';
-		readonly private: PortableKindsAt['declaration.field.private'];
-		readonly protected: PortableKindsAt['declaration.field.protected'];
-		readonly public: PortableKindsAt['declaration.field.public'];
+	'declaration.member.constructor.private': { readonly $path: 'declaration.member.constructor.private' };
+	'declaration.member.constructor.protected': { readonly $path: 'declaration.member.constructor.protected' };
+	'declaration.member.constructor.public': { readonly $path: 'declaration.member.constructor.public' };
+	'declaration.member.enum_member': { readonly $path: 'declaration.member.enum_member' };
+	'declaration.member.field': {
+		readonly $path: 'declaration.member.field';
+		readonly private: PortableKindsAt['declaration.member.field.private'];
+		readonly protected: PortableKindsAt['declaration.member.field.protected'];
+		readonly public: PortableKindsAt['declaration.member.field.public'];
 	};
-	'declaration.field.private': { readonly $path: 'declaration.field.private' };
-	'declaration.field.protected': { readonly $path: 'declaration.field.protected' };
-	'declaration.field.public': { readonly $path: 'declaration.field.public' };
-	'declaration.interface': { readonly $path: 'declaration.interface' };
-	'declaration.method': {
-		readonly $path: 'declaration.method';
-		readonly private: PortableKindsAt['declaration.method.private'];
-		readonly protected: PortableKindsAt['declaration.method.protected'];
-		readonly public: PortableKindsAt['declaration.method.public'];
-		readonly signature: PortableKindsAt['declaration.method.signature'];
+	'declaration.member.field.private': { readonly $path: 'declaration.member.field.private' };
+	'declaration.member.field.protected': { readonly $path: 'declaration.member.field.protected' };
+	'declaration.member.field.public': { readonly $path: 'declaration.member.field.public' };
+	'declaration.member.method': {
+		readonly $path: 'declaration.member.method';
+		readonly private: PortableKindsAt['declaration.member.method.private'];
+		readonly protected: PortableKindsAt['declaration.member.method.protected'];
+		readonly public: PortableKindsAt['declaration.member.method.public'];
+		readonly signature: PortableKindsAt['declaration.member.method.signature'];
 	};
-	'declaration.method.private': { readonly $path: 'declaration.method.private' };
-	'declaration.method.protected': { readonly $path: 'declaration.method.protected' };
-	'declaration.method.public': { readonly $path: 'declaration.method.public' };
-	'declaration.method.signature': {
-		readonly $path: 'declaration.method.signature';
-		readonly abstract: PortableKindsAt['declaration.method.signature.abstract'];
+	'declaration.member.method.private': { readonly $path: 'declaration.member.method.private' };
+	'declaration.member.method.protected': { readonly $path: 'declaration.member.method.protected' };
+	'declaration.member.method.public': { readonly $path: 'declaration.member.method.public' };
+	'declaration.member.method.signature': {
+		readonly $path: 'declaration.member.method.signature';
+		readonly abstract: PortableKindsAt['declaration.member.method.signature.abstract'];
 	};
-	'declaration.method.signature.abstract': { readonly $path: 'declaration.method.signature.abstract' };
+	'declaration.member.method.signature.abstract': { readonly $path: 'declaration.member.method.signature.abstract' };
+	'declaration.member.static_block': { readonly $path: 'declaration.member.static_block' };
 	'declaration.module': { readonly $path: 'declaration.module' };
 	'declaration.parameter': {
 		readonly $path: 'declaration.parameter';
+		readonly identifier: PortableKindsAt['declaration.parameter.identifier'];
 		readonly receiver: PortableKindsAt['declaration.parameter.receiver'];
 		readonly variadic: PortableKindsAt['declaration.parameter.variadic'];
 	};
+	'declaration.parameter.identifier': { readonly $namespace: 'declaration.parameter.identifier' };
 	'declaration.parameter.receiver': { readonly $path: 'declaration.parameter.receiver' };
 	'declaration.parameter.variadic': { readonly $path: 'declaration.parameter.variadic' };
+	'declaration.type': {
+		readonly $namespace: 'declaration.type';
+		readonly class: PortableKindsAt['declaration.type.class'];
+		readonly enum: PortableKindsAt['declaration.type.enum'];
+		readonly interface: PortableKindsAt['declaration.type.interface'];
+	};
+	'declaration.type.class': { readonly $path: 'declaration.type.class' };
+	'declaration.type.enum': {
+		readonly $path: 'declaration.type.enum';
+		readonly private: PortableKindsAt['declaration.type.enum.private'];
+		readonly public: PortableKindsAt['declaration.type.enum.public'];
+	};
+	'declaration.type.enum.private': { readonly $path: 'declaration.type.enum.private' };
+	'declaration.type.enum.public': { readonly $path: 'declaration.type.enum.public' };
+	'declaration.type.interface': { readonly $path: 'declaration.type.interface' };
 	'declaration.type_parameter': { readonly $path: 'declaration.type_parameter' };
 	'declaration.variable': {
 		readonly $path: 'declaration.variable';
@@ -625,14 +1101,22 @@ export interface PortableKindsAt {
 		readonly $path: 'expression';
 		readonly assignment: PortableKindsAt['expression.assignment'];
 		readonly binary: PortableKindsAt['expression.binary'];
+		readonly block: PortableKindsAt['expression.block'];
+		readonly break: PortableKindsAt['expression.break'];
 		readonly call: PortableKindsAt['expression.call'];
 		readonly cast: PortableKindsAt['expression.cast'];
 		readonly collection: PortableKindsAt['expression.collection'];
 		readonly conditional: PortableKindsAt['expression.conditional'];
+		readonly continue: PortableKindsAt['expression.continue'];
+		readonly identifier: PortableKindsAt['expression.identifier'];
+		readonly if: PortableKindsAt['expression.if'];
 		readonly interpolation: PortableKindsAt['expression.interpolation'];
 		readonly lambda: PortableKindsAt['expression.lambda'];
+		readonly literal: PortableKindsAt['expression.literal'];
+		readonly loop: PortableKindsAt['expression.loop'];
 		readonly member: PortableKindsAt['expression.member'];
 		readonly parenthesized: PortableKindsAt['expression.parenthesized'];
+		readonly return: PortableKindsAt['expression.return'];
 		readonly subscript: PortableKindsAt['expression.subscript'];
 		readonly unary: PortableKindsAt['expression.unary'];
 		readonly update: PortableKindsAt['expression.update'];
@@ -678,7 +1162,7 @@ export interface PortableKindsAt {
 		readonly shift: PortableKindsAt['expression.binary.shift'];
 	};
 	'expression.binary.arithmetic': {
-		readonly $path: 'expression.binary.arithmetic';
+		readonly $namespace: 'expression.binary.arithmetic';
 		readonly add: PortableKindsAt['expression.binary.arithmetic.add'];
 		readonly divide: PortableKindsAt['expression.binary.arithmetic.divide'];
 		readonly modulo: PortableKindsAt['expression.binary.arithmetic.modulo'];
@@ -691,7 +1175,7 @@ export interface PortableKindsAt {
 	'expression.binary.arithmetic.multiply': { readonly $path: 'expression.binary.arithmetic.multiply' };
 	'expression.binary.arithmetic.subtract': { readonly $path: 'expression.binary.arithmetic.subtract' };
 	'expression.binary.bitwise': {
-		readonly $path: 'expression.binary.bitwise';
+		readonly $namespace: 'expression.binary.bitwise';
 		readonly and: PortableKindsAt['expression.binary.bitwise.and'];
 		readonly or: PortableKindsAt['expression.binary.bitwise.or'];
 		readonly xor: PortableKindsAt['expression.binary.bitwise.xor'];
@@ -700,7 +1184,7 @@ export interface PortableKindsAt {
 	'expression.binary.bitwise.or': { readonly $path: 'expression.binary.bitwise.or' };
 	'expression.binary.bitwise.xor': { readonly $path: 'expression.binary.bitwise.xor' };
 	'expression.binary.comparison': {
-		readonly $path: 'expression.binary.comparison';
+		readonly $namespace: 'expression.binary.comparison';
 		readonly equal: PortableKindsAt['expression.binary.comparison.equal'];
 		readonly greater: PortableKindsAt['expression.binary.comparison.greater'];
 		readonly greater_equal: PortableKindsAt['expression.binary.comparison.greater_equal'];
@@ -727,7 +1211,7 @@ export interface PortableKindsAt {
 	};
 	'expression.binary.membership.instanceof': { readonly $path: 'expression.binary.membership.instanceof' };
 	'expression.binary.shift': {
-		readonly $path: 'expression.binary.shift';
+		readonly $namespace: 'expression.binary.shift';
 		readonly left: PortableKindsAt['expression.binary.shift.left'];
 		readonly right: PortableKindsAt['expression.binary.shift.right'];
 		readonly right_unsigned: PortableKindsAt['expression.binary.shift.right_unsigned'];
@@ -735,6 +1219,8 @@ export interface PortableKindsAt {
 	'expression.binary.shift.left': { readonly $path: 'expression.binary.shift.left' };
 	'expression.binary.shift.right': { readonly $path: 'expression.binary.shift.right' };
 	'expression.binary.shift.right_unsigned': { readonly $path: 'expression.binary.shift.right_unsigned' };
+	'expression.block': { readonly $namespace: 'expression.block' };
+	'expression.break': { readonly $namespace: 'expression.break' };
 	'expression.call': {
 		readonly $path: 'expression.call';
 		readonly construct: PortableKindsAt['expression.call.construct'];
@@ -746,15 +1232,21 @@ export interface PortableKindsAt {
 	'expression.call.template': { readonly $path: 'expression.call.template' };
 	'expression.cast': { readonly $path: 'expression.cast' };
 	'expression.collection': {
-		readonly $path: 'expression.collection';
+		readonly $namespace: 'expression.collection';
 		readonly list: PortableKindsAt['expression.collection.list'];
 	};
 	'expression.collection.list': { readonly $path: 'expression.collection.list' };
 	'expression.conditional': { readonly $path: 'expression.conditional' };
+	'expression.continue': { readonly $namespace: 'expression.continue' };
+	'expression.identifier': { readonly $namespace: 'expression.identifier' };
+	'expression.if': { readonly $namespace: 'expression.if' };
 	'expression.interpolation': { readonly $path: 'expression.interpolation' };
 	'expression.lambda': { readonly $path: 'expression.lambda' };
+	'expression.literal': { readonly $namespace: 'expression.literal' };
+	'expression.loop': { readonly $namespace: 'expression.loop' };
 	'expression.member': { readonly $path: 'expression.member' };
 	'expression.parenthesized': { readonly $path: 'expression.parenthesized' };
+	'expression.return': { readonly $namespace: 'expression.return' };
 	'expression.subscript': { readonly $path: 'expression.subscript' };
 	'expression.unary': {
 		readonly $path: 'expression.unary';
@@ -828,18 +1320,29 @@ export interface PortableKindsAt {
 	modifier: { readonly $path: 'modifier' };
 	pattern: {
 		readonly $path: 'pattern';
+		readonly identifier: PortableKindsAt['pattern.identifier'];
+		readonly literal: PortableKindsAt['pattern.literal'];
+		readonly member: PortableKindsAt['pattern.member'];
 		readonly struct: PortableKindsAt['pattern.struct'];
+		readonly subscript: PortableKindsAt['pattern.subscript'];
 		readonly wildcard: PortableKindsAt['pattern.wildcard'];
 	};
+	'pattern.identifier': { readonly $namespace: 'pattern.identifier' };
+	'pattern.literal': { readonly $namespace: 'pattern.literal' };
+	'pattern.member': { readonly $namespace: 'pattern.member' };
 	'pattern.struct': { readonly $path: 'pattern.struct'; readonly field: PortableKindsAt['pattern.struct.field'] };
 	'pattern.struct.field': { readonly $path: 'pattern.struct.field' };
+	'pattern.subscript': { readonly $namespace: 'pattern.subscript' };
 	'pattern.wildcard': { readonly $path: 'pattern.wildcard' };
 	statement: {
 		readonly $path: 'statement';
 		readonly assert: PortableKindsAt['statement.assert'];
+		readonly attribute: PortableKindsAt['statement.attribute'];
 		readonly block: PortableKindsAt['statement.block'];
 		readonly break: PortableKindsAt['statement.break'];
 		readonly continue: PortableKindsAt['statement.continue'];
+		readonly declaration: PortableKindsAt['statement.declaration'];
+		readonly expression: PortableKindsAt['statement.expression'];
 		readonly if: PortableKindsAt['statement.if'];
 		readonly import: PortableKindsAt['statement.import'];
 		readonly labeled: PortableKindsAt['statement.labeled'];
@@ -851,10 +1354,12 @@ export interface PortableKindsAt {
 		readonly try: PortableKindsAt['statement.try'];
 	};
 	'statement.assert': { readonly $path: 'statement.assert' };
-	'statement.block': { readonly $path: 'statement.block'; readonly static: PortableKindsAt['statement.block.static'] };
-	'statement.block.static': { readonly $path: 'statement.block.static' };
+	'statement.attribute': { readonly $namespace: 'statement.attribute' };
+	'statement.block': { readonly $path: 'statement.block' };
 	'statement.break': { readonly $path: 'statement.break' };
 	'statement.continue': { readonly $path: 'statement.continue' };
+	'statement.declaration': { readonly $namespace: 'statement.declaration' };
+	'statement.expression': { readonly $namespace: 'statement.expression' };
 	'statement.if': { readonly $path: 'statement.if' };
 	'statement.import': { readonly $path: 'statement.import' };
 	'statement.labeled': { readonly $path: 'statement.labeled' };
@@ -877,11 +1382,15 @@ export interface PortableKindsAt {
 	type: {
 		readonly $path: 'type';
 		readonly array: PortableKindsAt['type.array'];
+		readonly expression: PortableKindsAt['type.expression'];
 		readonly generic: PortableKindsAt['type.generic'];
+		readonly identifier: PortableKindsAt['type.identifier'];
 		readonly primitive: PortableKindsAt['type.primitive'];
 	};
 	'type.array': { readonly $path: 'type.array' };
+	'type.expression': { readonly $namespace: 'type.expression' };
 	'type.generic': { readonly $path: 'type.generic' };
+	'type.identifier': { readonly $namespace: 'type.identifier' };
 	'type.primitive': {
 		readonly $path: 'type.primitive';
 		readonly boolean: PortableKindsAt['type.primitive.boolean'];
@@ -1003,25 +1512,14 @@ export interface PortableIsAt {
 	> & {};
 	'comment.line': PortableGuard<PortableIds['comment.line'], JavaNode, TSKindId, PortableTexts['comment.line']> & {};
 	declaration: PortableGuard<PortableIds['declaration'], JavaNode, TSKindId, PortableTexts['declaration']> & {
-		readonly class: PortableIsAt['declaration.class'];
 		readonly constant: PortableIsAt['declaration.constant'];
-		readonly constructor: PortableIsAt['declaration.constructor'];
-		readonly enum: PortableIsAt['declaration.enum'];
-		readonly enum_member: PortableIsAt['declaration.enum_member'];
-		readonly field: PortableIsAt['declaration.field'];
-		readonly interface: PortableIsAt['declaration.interface'];
-		readonly method: PortableIsAt['declaration.method'];
+		readonly member: PortableIsAt['declaration.member'];
 		readonly module: PortableIsAt['declaration.module'];
 		readonly parameter: PortableIsAt['declaration.parameter'];
+		readonly type: PortableIsAt['declaration.type'];
 		readonly type_parameter: PortableIsAt['declaration.type_parameter'];
 		readonly variable: PortableIsAt['declaration.variable'];
 	};
-	'declaration.class': PortableGuard<
-		PortableIds['declaration.class'],
-		JavaNode,
-		TSKindId,
-		PortableTexts['declaration.class']
-	> & {};
 	'declaration.constant': PortableGuard<
 		PortableIds['declaration.constant'],
 		JavaNode,
@@ -1043,135 +1541,140 @@ export interface PortableIsAt {
 		TSKindId,
 		PortableTexts['declaration.constant.public']
 	> & {};
-	'declaration.constructor': PortableGuard<
-		PortableIds['declaration.constructor'],
+	'declaration.member': PortableGuard<
+		PortableIds['declaration.member'],
 		JavaNode,
 		TSKindId,
-		PortableTexts['declaration.constructor']
+		PortableTexts['declaration.member']
 	> & {
-		readonly private: PortableIsAt['declaration.constructor.private'];
-		readonly protected: PortableIsAt['declaration.constructor.protected'];
-		readonly public: PortableIsAt['declaration.constructor.public'];
+		readonly attribute: PortableIsAt['declaration.member.attribute'];
+		readonly constant: PortableIsAt['declaration.member.constant'];
+		readonly constructor: PortableIsAt['declaration.member.constructor'];
+		readonly enum_member: PortableIsAt['declaration.member.enum_member'];
+		readonly field: PortableIsAt['declaration.member.field'];
+		readonly method: PortableIsAt['declaration.member.method'];
+		readonly static_block: PortableIsAt['declaration.member.static_block'];
 	};
-	'declaration.constructor.private': PortableGuard<
-		PortableIds['declaration.constructor.private'],
+	'declaration.member.attribute': PortableGuard<
+		PortableIds['declaration.member.attribute'],
 		JavaNode,
 		TSKindId,
-		PortableTexts['declaration.constructor.private']
+		PortableTexts['declaration.member.attribute']
 	> & {};
-	'declaration.constructor.protected': PortableGuard<
-		PortableIds['declaration.constructor.protected'],
+	'declaration.member.constant': PortableGuard<
+		PortableIds['declaration.member.constant'],
 		JavaNode,
 		TSKindId,
-		PortableTexts['declaration.constructor.protected']
+		PortableTexts['declaration.member.constant']
 	> & {};
-	'declaration.constructor.public': PortableGuard<
-		PortableIds['declaration.constructor.public'],
+	'declaration.member.constructor': PortableGuard<
+		PortableIds['declaration.member.constructor'],
 		JavaNode,
 		TSKindId,
-		PortableTexts['declaration.constructor.public']
-	> & {};
-	'declaration.enum': PortableGuard<
-		PortableIds['declaration.enum'],
-		JavaNode,
-		TSKindId,
-		PortableTexts['declaration.enum']
+		PortableTexts['declaration.member.constructor']
 	> & {
-		readonly private: PortableIsAt['declaration.enum.private'];
-		readonly public: PortableIsAt['declaration.enum.public'];
+		readonly private: PortableIsAt['declaration.member.constructor.private'];
+		readonly protected: PortableIsAt['declaration.member.constructor.protected'];
+		readonly public: PortableIsAt['declaration.member.constructor.public'];
 	};
-	'declaration.enum.private': PortableGuard<
-		PortableIds['declaration.enum.private'],
+	'declaration.member.constructor.private': PortableGuard<
+		PortableIds['declaration.member.constructor.private'],
 		JavaNode,
 		TSKindId,
-		PortableTexts['declaration.enum.private']
+		PortableTexts['declaration.member.constructor.private']
 	> & {};
-	'declaration.enum.public': PortableGuard<
-		PortableIds['declaration.enum.public'],
+	'declaration.member.constructor.protected': PortableGuard<
+		PortableIds['declaration.member.constructor.protected'],
 		JavaNode,
 		TSKindId,
-		PortableTexts['declaration.enum.public']
+		PortableTexts['declaration.member.constructor.protected']
 	> & {};
-	'declaration.enum_member': PortableGuard<
-		PortableIds['declaration.enum_member'],
+	'declaration.member.constructor.public': PortableGuard<
+		PortableIds['declaration.member.constructor.public'],
 		JavaNode,
 		TSKindId,
-		PortableTexts['declaration.enum_member']
+		PortableTexts['declaration.member.constructor.public']
 	> & {};
-	'declaration.field': PortableGuard<
-		PortableIds['declaration.field'],
+	'declaration.member.enum_member': PortableGuard<
+		PortableIds['declaration.member.enum_member'],
 		JavaNode,
 		TSKindId,
-		PortableTexts['declaration.field']
+		PortableTexts['declaration.member.enum_member']
+	> & {};
+	'declaration.member.field': PortableGuard<
+		PortableIds['declaration.member.field'],
+		JavaNode,
+		TSKindId,
+		PortableTexts['declaration.member.field']
 	> & {
-		readonly private: PortableIsAt['declaration.field.private'];
-		readonly protected: PortableIsAt['declaration.field.protected'];
-		readonly public: PortableIsAt['declaration.field.public'];
+		readonly private: PortableIsAt['declaration.member.field.private'];
+		readonly protected: PortableIsAt['declaration.member.field.protected'];
+		readonly public: PortableIsAt['declaration.member.field.public'];
 	};
-	'declaration.field.private': PortableGuard<
-		PortableIds['declaration.field.private'],
+	'declaration.member.field.private': PortableGuard<
+		PortableIds['declaration.member.field.private'],
 		JavaNode,
 		TSKindId,
-		PortableTexts['declaration.field.private']
+		PortableTexts['declaration.member.field.private']
 	> & {};
-	'declaration.field.protected': PortableGuard<
-		PortableIds['declaration.field.protected'],
+	'declaration.member.field.protected': PortableGuard<
+		PortableIds['declaration.member.field.protected'],
 		JavaNode,
 		TSKindId,
-		PortableTexts['declaration.field.protected']
+		PortableTexts['declaration.member.field.protected']
 	> & {};
-	'declaration.field.public': PortableGuard<
-		PortableIds['declaration.field.public'],
+	'declaration.member.field.public': PortableGuard<
+		PortableIds['declaration.member.field.public'],
 		JavaNode,
 		TSKindId,
-		PortableTexts['declaration.field.public']
+		PortableTexts['declaration.member.field.public']
 	> & {};
-	'declaration.interface': PortableGuard<
-		PortableIds['declaration.interface'],
+	'declaration.member.method': PortableGuard<
+		PortableIds['declaration.member.method'],
 		JavaNode,
 		TSKindId,
-		PortableTexts['declaration.interface']
-	> & {};
-	'declaration.method': PortableGuard<
-		PortableIds['declaration.method'],
-		JavaNode,
-		TSKindId,
-		PortableTexts['declaration.method']
+		PortableTexts['declaration.member.method']
 	> & {
-		readonly private: PortableIsAt['declaration.method.private'];
-		readonly protected: PortableIsAt['declaration.method.protected'];
-		readonly public: PortableIsAt['declaration.method.public'];
-		readonly signature: PortableIsAt['declaration.method.signature'];
+		readonly private: PortableIsAt['declaration.member.method.private'];
+		readonly protected: PortableIsAt['declaration.member.method.protected'];
+		readonly public: PortableIsAt['declaration.member.method.public'];
+		readonly signature: PortableIsAt['declaration.member.method.signature'];
 	};
-	'declaration.method.private': PortableGuard<
-		PortableIds['declaration.method.private'],
+	'declaration.member.method.private': PortableGuard<
+		PortableIds['declaration.member.method.private'],
 		JavaNode,
 		TSKindId,
-		PortableTexts['declaration.method.private']
+		PortableTexts['declaration.member.method.private']
 	> & {};
-	'declaration.method.protected': PortableGuard<
-		PortableIds['declaration.method.protected'],
+	'declaration.member.method.protected': PortableGuard<
+		PortableIds['declaration.member.method.protected'],
 		JavaNode,
 		TSKindId,
-		PortableTexts['declaration.method.protected']
+		PortableTexts['declaration.member.method.protected']
 	> & {};
-	'declaration.method.public': PortableGuard<
-		PortableIds['declaration.method.public'],
+	'declaration.member.method.public': PortableGuard<
+		PortableIds['declaration.member.method.public'],
 		JavaNode,
 		TSKindId,
-		PortableTexts['declaration.method.public']
+		PortableTexts['declaration.member.method.public']
 	> & {};
-	'declaration.method.signature': PortableGuard<
-		PortableIds['declaration.method.signature'],
+	'declaration.member.method.signature': PortableGuard<
+		PortableIds['declaration.member.method.signature'],
 		JavaNode,
 		TSKindId,
-		PortableTexts['declaration.method.signature']
-	> & { readonly abstract: PortableIsAt['declaration.method.signature.abstract'] };
-	'declaration.method.signature.abstract': PortableGuard<
-		PortableIds['declaration.method.signature.abstract'],
+		PortableTexts['declaration.member.method.signature']
+	> & { readonly abstract: PortableIsAt['declaration.member.method.signature.abstract'] };
+	'declaration.member.method.signature.abstract': PortableGuard<
+		PortableIds['declaration.member.method.signature.abstract'],
 		JavaNode,
 		TSKindId,
-		PortableTexts['declaration.method.signature.abstract']
+		PortableTexts['declaration.member.method.signature.abstract']
+	> & {};
+	'declaration.member.static_block': PortableGuard<
+		PortableIds['declaration.member.static_block'],
+		JavaNode,
+		TSKindId,
+		PortableTexts['declaration.member.static_block']
 	> & {};
 	'declaration.module': PortableGuard<
 		PortableIds['declaration.module'],
@@ -1185,9 +1688,16 @@ export interface PortableIsAt {
 		TSKindId,
 		PortableTexts['declaration.parameter']
 	> & {
+		readonly identifier: PortableIsAt['declaration.parameter.identifier'];
 		readonly receiver: PortableIsAt['declaration.parameter.receiver'];
 		readonly variadic: PortableIsAt['declaration.parameter.variadic'];
 	};
+	'declaration.parameter.identifier': PortableGuard<
+		PortableIds['declaration.parameter.identifier'],
+		JavaNode,
+		TSKindId,
+		PortableTexts['declaration.parameter.identifier']
+	> & {};
 	'declaration.parameter.receiver': PortableGuard<
 		PortableIds['declaration.parameter.receiver'],
 		JavaNode,
@@ -1199,6 +1709,49 @@ export interface PortableIsAt {
 		JavaNode,
 		TSKindId,
 		PortableTexts['declaration.parameter.variadic']
+	> & {};
+	'declaration.type': PortableGuard<
+		PortableIds['declaration.type'],
+		JavaNode,
+		TSKindId,
+		PortableTexts['declaration.type']
+	> & {
+		readonly class: PortableIsAt['declaration.type.class'];
+		readonly enum: PortableIsAt['declaration.type.enum'];
+		readonly interface: PortableIsAt['declaration.type.interface'];
+	};
+	'declaration.type.class': PortableGuard<
+		PortableIds['declaration.type.class'],
+		JavaNode,
+		TSKindId,
+		PortableTexts['declaration.type.class']
+	> & {};
+	'declaration.type.enum': PortableGuard<
+		PortableIds['declaration.type.enum'],
+		JavaNode,
+		TSKindId,
+		PortableTexts['declaration.type.enum']
+	> & {
+		readonly private: PortableIsAt['declaration.type.enum.private'];
+		readonly public: PortableIsAt['declaration.type.enum.public'];
+	};
+	'declaration.type.enum.private': PortableGuard<
+		PortableIds['declaration.type.enum.private'],
+		JavaNode,
+		TSKindId,
+		PortableTexts['declaration.type.enum.private']
+	> & {};
+	'declaration.type.enum.public': PortableGuard<
+		PortableIds['declaration.type.enum.public'],
+		JavaNode,
+		TSKindId,
+		PortableTexts['declaration.type.enum.public']
+	> & {};
+	'declaration.type.interface': PortableGuard<
+		PortableIds['declaration.type.interface'],
+		JavaNode,
+		TSKindId,
+		PortableTexts['declaration.type.interface']
 	> & {};
 	'declaration.type_parameter': PortableGuard<
 		PortableIds['declaration.type_parameter'],
@@ -1221,14 +1774,22 @@ export interface PortableIsAt {
 	expression: PortableGuard<PortableIds['expression'], JavaNode, TSKindId, PortableTexts['expression']> & {
 		readonly assignment: PortableIsAt['expression.assignment'];
 		readonly binary: PortableIsAt['expression.binary'];
+		readonly block: PortableIsAt['expression.block'];
+		readonly break: PortableIsAt['expression.break'];
 		readonly call: PortableIsAt['expression.call'];
 		readonly cast: PortableIsAt['expression.cast'];
 		readonly collection: PortableIsAt['expression.collection'];
 		readonly conditional: PortableIsAt['expression.conditional'];
+		readonly continue: PortableIsAt['expression.continue'];
+		readonly identifier: PortableIsAt['expression.identifier'];
+		readonly if: PortableIsAt['expression.if'];
 		readonly interpolation: PortableIsAt['expression.interpolation'];
 		readonly lambda: PortableIsAt['expression.lambda'];
+		readonly literal: PortableIsAt['expression.literal'];
+		readonly loop: PortableIsAt['expression.loop'];
 		readonly member: PortableIsAt['expression.member'];
 		readonly parenthesized: PortableIsAt['expression.parenthesized'];
+		readonly return: PortableIsAt['expression.return'];
 		readonly subscript: PortableIsAt['expression.subscript'];
 		readonly unary: PortableIsAt['expression.unary'];
 		readonly update: PortableIsAt['expression.update'];
@@ -1516,6 +2077,18 @@ export interface PortableIsAt {
 		TSKindId,
 		PortableTexts['expression.binary.shift.right_unsigned']
 	> & {};
+	'expression.block': PortableGuard<
+		PortableIds['expression.block'],
+		JavaNode,
+		TSKindId,
+		PortableTexts['expression.block']
+	> & {};
+	'expression.break': PortableGuard<
+		PortableIds['expression.break'],
+		JavaNode,
+		TSKindId,
+		PortableTexts['expression.break']
+	> & {};
 	'expression.call': PortableGuard<
 		PortableIds['expression.call'],
 		JavaNode,
@@ -1568,6 +2141,19 @@ export interface PortableIsAt {
 		TSKindId,
 		PortableTexts['expression.conditional']
 	> & {};
+	'expression.continue': PortableGuard<
+		PortableIds['expression.continue'],
+		JavaNode,
+		TSKindId,
+		PortableTexts['expression.continue']
+	> & {};
+	'expression.identifier': PortableGuard<
+		PortableIds['expression.identifier'],
+		JavaNode,
+		TSKindId,
+		PortableTexts['expression.identifier']
+	> & {};
+	'expression.if': PortableGuard<PortableIds['expression.if'], JavaNode, TSKindId, PortableTexts['expression.if']> & {};
 	'expression.interpolation': PortableGuard<
 		PortableIds['expression.interpolation'],
 		JavaNode,
@@ -1580,6 +2166,18 @@ export interface PortableIsAt {
 		TSKindId,
 		PortableTexts['expression.lambda']
 	> & {};
+	'expression.literal': PortableGuard<
+		PortableIds['expression.literal'],
+		JavaNode,
+		TSKindId,
+		PortableTexts['expression.literal']
+	> & {};
+	'expression.loop': PortableGuard<
+		PortableIds['expression.loop'],
+		JavaNode,
+		TSKindId,
+		PortableTexts['expression.loop']
+	> & {};
 	'expression.member': PortableGuard<
 		PortableIds['expression.member'],
 		JavaNode,
@@ -1591,6 +2189,12 @@ export interface PortableIsAt {
 		JavaNode,
 		TSKindId,
 		PortableTexts['expression.parenthesized']
+	> & {};
+	'expression.return': PortableGuard<
+		PortableIds['expression.return'],
+		JavaNode,
+		TSKindId,
+		PortableTexts['expression.return']
 	> & {};
 	'expression.subscript': PortableGuard<
 		PortableIds['expression.subscript'],
@@ -1783,9 +2387,31 @@ export interface PortableIsAt {
 	> & {};
 	modifier: PortableGuard<PortableIds['modifier'], JavaNode, TSKindId, PortableTexts['modifier']> & {};
 	pattern: PortableGuard<PortableIds['pattern'], JavaNode, TSKindId, PortableTexts['pattern']> & {
+		readonly identifier: PortableIsAt['pattern.identifier'];
+		readonly literal: PortableIsAt['pattern.literal'];
+		readonly member: PortableIsAt['pattern.member'];
 		readonly struct: PortableIsAt['pattern.struct'];
+		readonly subscript: PortableIsAt['pattern.subscript'];
 		readonly wildcard: PortableIsAt['pattern.wildcard'];
 	};
+	'pattern.identifier': PortableGuard<
+		PortableIds['pattern.identifier'],
+		JavaNode,
+		TSKindId,
+		PortableTexts['pattern.identifier']
+	> & {};
+	'pattern.literal': PortableGuard<
+		PortableIds['pattern.literal'],
+		JavaNode,
+		TSKindId,
+		PortableTexts['pattern.literal']
+	> & {};
+	'pattern.member': PortableGuard<
+		PortableIds['pattern.member'],
+		JavaNode,
+		TSKindId,
+		PortableTexts['pattern.member']
+	> & {};
 	'pattern.struct': PortableGuard<
 		PortableIds['pattern.struct'],
 		JavaNode,
@@ -1798,6 +2424,12 @@ export interface PortableIsAt {
 		TSKindId,
 		PortableTexts['pattern.struct.field']
 	> & {};
+	'pattern.subscript': PortableGuard<
+		PortableIds['pattern.subscript'],
+		JavaNode,
+		TSKindId,
+		PortableTexts['pattern.subscript']
+	> & {};
 	'pattern.wildcard': PortableGuard<
 		PortableIds['pattern.wildcard'],
 		JavaNode,
@@ -1806,9 +2438,12 @@ export interface PortableIsAt {
 	> & {};
 	statement: PortableGuard<PortableIds['statement'], JavaNode, TSKindId, PortableTexts['statement']> & {
 		readonly assert: PortableIsAt['statement.assert'];
+		readonly attribute: PortableIsAt['statement.attribute'];
 		readonly block: PortableIsAt['statement.block'];
 		readonly break: PortableIsAt['statement.break'];
 		readonly continue: PortableIsAt['statement.continue'];
+		readonly declaration: PortableIsAt['statement.declaration'];
+		readonly expression: PortableIsAt['statement.expression'];
 		readonly if: PortableIsAt['statement.if'];
 		readonly import: PortableIsAt['statement.import'];
 		readonly labeled: PortableIsAt['statement.labeled'];
@@ -1825,17 +2460,17 @@ export interface PortableIsAt {
 		TSKindId,
 		PortableTexts['statement.assert']
 	> & {};
+	'statement.attribute': PortableGuard<
+		PortableIds['statement.attribute'],
+		JavaNode,
+		TSKindId,
+		PortableTexts['statement.attribute']
+	> & {};
 	'statement.block': PortableGuard<
 		PortableIds['statement.block'],
 		JavaNode,
 		TSKindId,
 		PortableTexts['statement.block']
-	> & { readonly static: PortableIsAt['statement.block.static'] };
-	'statement.block.static': PortableGuard<
-		PortableIds['statement.block.static'],
-		JavaNode,
-		TSKindId,
-		PortableTexts['statement.block.static']
 	> & {};
 	'statement.break': PortableGuard<
 		PortableIds['statement.break'],
@@ -1848,6 +2483,18 @@ export interface PortableIsAt {
 		JavaNode,
 		TSKindId,
 		PortableTexts['statement.continue']
+	> & {};
+	'statement.declaration': PortableGuard<
+		PortableIds['statement.declaration'],
+		JavaNode,
+		TSKindId,
+		PortableTexts['statement.declaration']
+	> & {};
+	'statement.expression': PortableGuard<
+		PortableIds['statement.expression'],
+		JavaNode,
+		TSKindId,
+		PortableTexts['statement.expression']
 	> & {};
 	'statement.if': PortableGuard<PortableIds['statement.if'], JavaNode, TSKindId, PortableTexts['statement.if']> & {};
 	'statement.import': PortableGuard<
@@ -1924,11 +2571,25 @@ export interface PortableIsAt {
 	'statement.try': PortableGuard<PortableIds['statement.try'], JavaNode, TSKindId, PortableTexts['statement.try']> & {};
 	type: PortableGuard<PortableIds['type'], JavaNode, TSKindId, PortableTexts['type']> & {
 		readonly array: PortableIsAt['type.array'];
+		readonly expression: PortableIsAt['type.expression'];
 		readonly generic: PortableIsAt['type.generic'];
+		readonly identifier: PortableIsAt['type.identifier'];
 		readonly primitive: PortableIsAt['type.primitive'];
 	};
 	'type.array': PortableGuard<PortableIds['type.array'], JavaNode, TSKindId, PortableTexts['type.array']> & {};
+	'type.expression': PortableGuard<
+		PortableIds['type.expression'],
+		JavaNode,
+		TSKindId,
+		PortableTexts['type.expression']
+	> & {};
 	'type.generic': PortableGuard<PortableIds['type.generic'], JavaNode, TSKindId, PortableTexts['type.generic']> & {};
+	'type.identifier': PortableGuard<
+		PortableIds['type.identifier'],
+		JavaNode,
+		TSKindId,
+		PortableTexts['type.identifier']
+	> & {};
 	'type.primitive': PortableGuard<
 		PortableIds['type.primitive'],
 		JavaNode,
@@ -2085,6 +2746,7 @@ const table: PortableTable = {
 		'comment.line': { ids: [TSKindId.LineComment], exact: true },
 		declaration: {
 			ids: [
+				TSKindId.Annotation,
 				TSKindId.ClassDeclaration,
 				TSKindId.CompactConstructorDeclaration,
 				TSKindId.ConstantDeclaration,
@@ -2093,50 +2755,117 @@ const table: PortableTable = {
 				TSKindId.EnumDeclaration,
 				TSKindId.FieldDeclaration,
 				TSKindId.FormalParameter,
+				TSKindId.Identifier,
 				TSKindId.InterfaceDeclaration,
 				TSKindId.LocalVariableDeclaration,
+				TSKindId.MarkerAnnotation,
 				TSKindId.MethodDeclaration,
 				TSKindId.ModuleDeclaration,
 				TSKindId.ReceiverParameter,
 				TSKindId.RecordDeclaration,
+				TSKindId.ScopedIdentifier,
+				TSKindId.ScopedTypeIdentifier,
 				TSKindId.SpreadParameter,
+				TSKindId.StaticInitializer,
+				TSKindId.Super,
+				TSKindId.This,
+				TSKindId.TypeIdentifier,
 				TSKindId.TypeParameter
 			],
-			exact: true
+			exact: true,
+			targets: ['attribute', 'declaration.constant', 'identifier']
 		},
-		'declaration.class': { ids: [TSKindId.ClassDeclaration, TSKindId.RecordDeclaration], exact: true },
 		'declaration.constant': { ids: [TSKindId.ConstantDeclaration], exact: true },
 		'declaration.constant.private': { ids: [TSKindId.ConstantDeclaration], exact: false },
 		'declaration.constant.public': { ids: [TSKindId.ConstantDeclaration], exact: false },
-		'declaration.constructor': {
+		'declaration.member': {
+			ids: [
+				TSKindId.Annotation,
+				TSKindId.CompactConstructorDeclaration,
+				TSKindId.ConstantDeclaration,
+				TSKindId.ConstructorDeclaration,
+				TSKindId.EnumConstant,
+				TSKindId.FieldDeclaration,
+				TSKindId.MarkerAnnotation,
+				TSKindId.MethodDeclaration,
+				TSKindId.StaticInitializer
+			],
+			exact: true,
+			targets: ['attribute', 'declaration.constant']
+		},
+		'declaration.member.attribute': {
+			ids: [TSKindId.Annotation, TSKindId.MarkerAnnotation],
+			exact: true,
+			targets: ['attribute']
+		},
+		'declaration.member.constant': {
+			ids: [TSKindId.ConstantDeclaration],
+			exact: true,
+			targets: ['declaration.constant']
+		},
+		'declaration.member.constructor': {
 			ids: [TSKindId.CompactConstructorDeclaration, TSKindId.ConstructorDeclaration],
 			exact: true
 		},
-		'declaration.constructor.private': { ids: [TSKindId.ConstructorDeclaration], exact: false },
-		'declaration.constructor.protected': { ids: [TSKindId.ConstructorDeclaration], exact: false },
-		'declaration.constructor.public': { ids: [TSKindId.ConstructorDeclaration], exact: false },
-		'declaration.enum': { ids: [TSKindId.EnumDeclaration], exact: true },
-		'declaration.enum.private': { ids: [TSKindId.EnumDeclaration], exact: false },
-		'declaration.enum.public': { ids: [TSKindId.EnumDeclaration], exact: false },
-		'declaration.enum_member': { ids: [TSKindId.EnumConstant], exact: true },
-		'declaration.field': { ids: [TSKindId.FieldDeclaration], exact: true },
-		'declaration.field.private': { ids: [TSKindId.FieldDeclaration], exact: false },
-		'declaration.field.protected': { ids: [TSKindId.FieldDeclaration], exact: false },
-		'declaration.field.public': { ids: [TSKindId.FieldDeclaration], exact: false },
-		'declaration.interface': { ids: [TSKindId.InterfaceDeclaration], exact: true },
-		'declaration.method': { ids: [TSKindId.MethodDeclaration], exact: true },
-		'declaration.method.private': { ids: [TSKindId.MethodDeclaration], exact: false },
-		'declaration.method.protected': { ids: [TSKindId.MethodDeclaration], exact: false },
-		'declaration.method.public': { ids: [TSKindId.MethodDeclaration], exact: false },
-		'declaration.method.signature': { ids: [TSKindId.MethodDeclaration], exact: false },
-		'declaration.method.signature.abstract': { ids: [TSKindId.MethodDeclaration], exact: false },
+		'declaration.member.constructor.private': { ids: [TSKindId.ConstructorDeclaration], exact: false },
+		'declaration.member.constructor.protected': { ids: [TSKindId.ConstructorDeclaration], exact: false },
+		'declaration.member.constructor.public': { ids: [TSKindId.ConstructorDeclaration], exact: false },
+		'declaration.member.enum_member': { ids: [TSKindId.EnumConstant], exact: true },
+		'declaration.member.field': { ids: [TSKindId.FieldDeclaration], exact: true },
+		'declaration.member.field.private': { ids: [TSKindId.FieldDeclaration], exact: false },
+		'declaration.member.field.protected': { ids: [TSKindId.FieldDeclaration], exact: false },
+		'declaration.member.field.public': { ids: [TSKindId.FieldDeclaration], exact: false },
+		'declaration.member.method': { ids: [TSKindId.MethodDeclaration], exact: true },
+		'declaration.member.method.private': { ids: [TSKindId.MethodDeclaration], exact: false },
+		'declaration.member.method.protected': { ids: [TSKindId.MethodDeclaration], exact: false },
+		'declaration.member.method.public': { ids: [TSKindId.MethodDeclaration], exact: false },
+		'declaration.member.method.signature': { ids: [TSKindId.MethodDeclaration], exact: false },
+		'declaration.member.method.signature.abstract': { ids: [TSKindId.MethodDeclaration], exact: false },
+		'declaration.member.static_block': { ids: [TSKindId.StaticInitializer], exact: true },
 		'declaration.module': { ids: [TSKindId.ModuleDeclaration], exact: true },
 		'declaration.parameter': {
-			ids: [TSKindId.FormalParameter, TSKindId.ReceiverParameter, TSKindId.SpreadParameter],
-			exact: true
+			ids: [
+				TSKindId.FormalParameter,
+				TSKindId.Identifier,
+				TSKindId.ReceiverParameter,
+				TSKindId.ScopedIdentifier,
+				TSKindId.ScopedTypeIdentifier,
+				TSKindId.SpreadParameter,
+				TSKindId.Super,
+				TSKindId.This,
+				TSKindId.TypeIdentifier
+			],
+			exact: true,
+			targets: ['identifier']
+		},
+		'declaration.parameter.identifier': {
+			ids: [
+				TSKindId.Identifier,
+				TSKindId.ScopedIdentifier,
+				TSKindId.ScopedTypeIdentifier,
+				TSKindId.Super,
+				TSKindId.This,
+				TSKindId.TypeIdentifier
+			],
+			exact: true,
+			targets: ['identifier']
 		},
 		'declaration.parameter.receiver': { ids: [TSKindId.ReceiverParameter], exact: true },
 		'declaration.parameter.variadic': { ids: [TSKindId.SpreadParameter], exact: true },
+		'declaration.type': {
+			ids: [
+				TSKindId.ClassDeclaration,
+				TSKindId.EnumDeclaration,
+				TSKindId.InterfaceDeclaration,
+				TSKindId.RecordDeclaration
+			],
+			exact: true
+		},
+		'declaration.type.class': { ids: [TSKindId.ClassDeclaration, TSKindId.RecordDeclaration], exact: true },
+		'declaration.type.enum': { ids: [TSKindId.EnumDeclaration], exact: true },
+		'declaration.type.enum.private': { ids: [TSKindId.EnumDeclaration], exact: false },
+		'declaration.type.enum.public': { ids: [TSKindId.EnumDeclaration], exact: false },
+		'declaration.type.interface': { ids: [TSKindId.InterfaceDeclaration], exact: true },
 		'declaration.type_parameter': { ids: [TSKindId.TypeParameter], exact: true },
 		'declaration.variable': { ids: [TSKindId.LocalVariableDeclaration], exact: true },
 		'declaration.variable.constant': { ids: [TSKindId.LocalVariableDeclaration], exact: false },
@@ -2148,21 +2877,66 @@ const table: PortableTable = {
 				TSKindId.ArrayInitializer,
 				TSKindId.AssignmentExpression,
 				TSKindId.BinaryExpression,
+				TSKindId.BinaryIntegerLiteral,
+				TSKindId.Block,
+				TSKindId.BreakStatement,
 				TSKindId.CastExpression,
+				TSKindId.CharacterLiteral,
+				TSKindId.ContinueStatement,
+				TSKindId.DecimalFloatingPointLiteral,
+				TSKindId.DecimalIntegerLiteralArm1,
+				TSKindId.DecimalIntegerLiteralArm2,
+				TSKindId.DoStatement,
+				TSKindId.EnhancedForStatement,
+				TSKindId.EscapeSequenceArm1,
+				TSKindId.EscapeSequenceArm2,
+				TSKindId.EscapeSequenceArm3,
+				TSKindId.EscapeSequenceArm4,
+				TSKindId.EscapeSequenceArm5,
+				TSKindId.False,
 				TSKindId.FieldAccess,
+				TSKindId.ForStatement,
+				TSKindId.HexFloatingPointLiteral,
+				TSKindId.HexIntegerLiteral,
+				TSKindId.Identifier,
+				TSKindId.IfStatement,
 				TSKindId.InstanceofExpression,
 				TSKindId.LambdaExpression,
 				TSKindId.MethodInvocation,
+				TSKindId.MultilineStringFragment,
+				TSKindId.NullLiteral,
 				TSKindId.ObjectCreationExpression,
+				TSKindId.OctalIntegerLiteral,
 				TSKindId.ParenthesizedExpression,
+				TSKindId.ReturnStatement,
+				TSKindId.ScopedIdentifier,
+				TSKindId.ScopedTypeIdentifier,
+				TSKindId.StringFragment,
 				TSKindId.StringInterpolation,
+				TSKindId.StringLiteralLine,
+				TSKindId.StringLiteralTextBlock,
+				TSKindId.Super,
 				TSKindId.TemplateExpression,
 				TSKindId.TernaryExpression,
+				TSKindId.This,
+				TSKindId.True,
+				TSKindId.TypeIdentifier,
 				TSKindId.UnaryExpression,
 				TSKindId.UpdateExpressionPostfix,
-				TSKindId.UpdateExpressionPrefix
+				TSKindId.UpdateExpressionPrefix,
+				TSKindId.WhileStatement
 			],
-			exact: true
+			exact: true,
+			targets: [
+				'identifier',
+				'literal',
+				'statement.block',
+				'statement.break',
+				'statement.continue',
+				'statement.if',
+				'statement.loop',
+				'statement.return'
+			]
 		},
 		'expression.assignment': { ids: [TSKindId.AssignmentExpression], exact: true },
 		'expression.assignment.compound': { ids: [TSKindId.AssignmentExpression], exact: false },
@@ -2204,6 +2978,8 @@ const table: PortableTable = {
 		'expression.binary.shift.left': { ids: [TSKindId.BinaryExpression], exact: false },
 		'expression.binary.shift.right': { ids: [TSKindId.BinaryExpression], exact: false },
 		'expression.binary.shift.right_unsigned': { ids: [TSKindId.BinaryExpression], exact: false },
+		'expression.block': { ids: [TSKindId.Block], exact: true, targets: ['statement.block'] },
+		'expression.break': { ids: [TSKindId.BreakStatement], exact: true, targets: ['statement.break'] },
 		'expression.call': {
 			ids: [
 				TSKindId.UnqualifiedObjectCreationExpression,
@@ -2223,10 +2999,56 @@ const table: PortableTable = {
 		'expression.collection': { ids: [TSKindId.ArrayCreationExpression, TSKindId.ArrayInitializer], exact: true },
 		'expression.collection.list': { ids: [TSKindId.ArrayCreationExpression, TSKindId.ArrayInitializer], exact: true },
 		'expression.conditional': { ids: [TSKindId.TernaryExpression], exact: true },
+		'expression.continue': { ids: [TSKindId.ContinueStatement], exact: true, targets: ['statement.continue'] },
+		'expression.identifier': {
+			ids: [
+				TSKindId.Identifier,
+				TSKindId.ScopedIdentifier,
+				TSKindId.ScopedTypeIdentifier,
+				TSKindId.Super,
+				TSKindId.This,
+				TSKindId.TypeIdentifier
+			],
+			exact: true,
+			targets: ['identifier']
+		},
+		'expression.if': { ids: [TSKindId.IfStatement], exact: true, targets: ['statement.if'] },
 		'expression.interpolation': { ids: [TSKindId.StringInterpolation], exact: true },
 		'expression.lambda': { ids: [TSKindId.LambdaExpression], exact: true },
+		'expression.literal': {
+			ids: [
+				TSKindId.BinaryIntegerLiteral,
+				TSKindId.CharacterLiteral,
+				TSKindId.DecimalFloatingPointLiteral,
+				TSKindId.DecimalIntegerLiteralArm1,
+				TSKindId.DecimalIntegerLiteralArm2,
+				TSKindId.EscapeSequenceArm1,
+				TSKindId.EscapeSequenceArm2,
+				TSKindId.EscapeSequenceArm3,
+				TSKindId.EscapeSequenceArm4,
+				TSKindId.EscapeSequenceArm5,
+				TSKindId.False,
+				TSKindId.HexFloatingPointLiteral,
+				TSKindId.HexIntegerLiteral,
+				TSKindId.MultilineStringFragment,
+				TSKindId.NullLiteral,
+				TSKindId.OctalIntegerLiteral,
+				TSKindId.StringFragment,
+				TSKindId.StringLiteralLine,
+				TSKindId.StringLiteralTextBlock,
+				TSKindId.True
+			],
+			exact: true,
+			targets: ['literal']
+		},
+		'expression.loop': {
+			ids: [TSKindId.DoStatement, TSKindId.EnhancedForStatement, TSKindId.ForStatement, TSKindId.WhileStatement],
+			exact: true,
+			targets: ['statement.loop']
+		},
 		'expression.member': { ids: [TSKindId.FieldAccess], exact: true },
 		'expression.parenthesized': { ids: [TSKindId.ParenthesizedExpression], exact: true },
+		'expression.return': { ids: [TSKindId.ReturnStatement], exact: true, targets: ['statement.return'] },
 		'expression.subscript': { ids: [TSKindId.ArrayAccess], exact: true },
 		'expression.unary': { ids: [TSKindId.UnaryExpression], exact: true },
 		'expression.unary.bitwise_not': { ids: [TSKindId.UnaryExpression], exact: false },
@@ -2344,40 +3166,296 @@ const table: PortableTable = {
 		'literal.string.text': { ids: [TSKindId.MultilineStringFragment, TSKindId.StringFragment], exact: true },
 		modifier: { ids: [TSKindId.Modifiers], exact: true },
 		pattern: {
-			ids: [TSKindId.Pattern, TSKindId.RecordPattern, TSKindId.RecordPatternComponent, TSKindId.UnderscorePattern],
-			exact: true
+			ids: [
+				TSKindId.ArrayAccess,
+				TSKindId.BinaryIntegerLiteral,
+				TSKindId.CharacterLiteral,
+				TSKindId.DecimalFloatingPointLiteral,
+				TSKindId.DecimalIntegerLiteralArm1,
+				TSKindId.DecimalIntegerLiteralArm2,
+				TSKindId.EscapeSequenceArm1,
+				TSKindId.EscapeSequenceArm2,
+				TSKindId.EscapeSequenceArm3,
+				TSKindId.EscapeSequenceArm4,
+				TSKindId.EscapeSequenceArm5,
+				TSKindId.False,
+				TSKindId.FieldAccess,
+				TSKindId.HexFloatingPointLiteral,
+				TSKindId.HexIntegerLiteral,
+				TSKindId.Identifier,
+				TSKindId.MultilineStringFragment,
+				TSKindId.NullLiteral,
+				TSKindId.OctalIntegerLiteral,
+				TSKindId.Pattern,
+				TSKindId.RecordPattern,
+				TSKindId.RecordPatternComponent,
+				TSKindId.ScopedIdentifier,
+				TSKindId.ScopedTypeIdentifier,
+				TSKindId.StringFragment,
+				TSKindId.StringLiteralLine,
+				TSKindId.StringLiteralTextBlock,
+				TSKindId.Super,
+				TSKindId.This,
+				TSKindId.True,
+				TSKindId.TypeIdentifier,
+				TSKindId.UnderscorePattern
+			],
+			exact: true,
+			targets: ['expression.member', 'expression.subscript', 'identifier', 'literal']
 		},
+		'pattern.identifier': {
+			ids: [
+				TSKindId.Identifier,
+				TSKindId.ScopedIdentifier,
+				TSKindId.ScopedTypeIdentifier,
+				TSKindId.Super,
+				TSKindId.This,
+				TSKindId.TypeIdentifier
+			],
+			exact: true,
+			targets: ['identifier']
+		},
+		'pattern.literal': {
+			ids: [
+				TSKindId.BinaryIntegerLiteral,
+				TSKindId.CharacterLiteral,
+				TSKindId.DecimalFloatingPointLiteral,
+				TSKindId.DecimalIntegerLiteralArm1,
+				TSKindId.DecimalIntegerLiteralArm2,
+				TSKindId.EscapeSequenceArm1,
+				TSKindId.EscapeSequenceArm2,
+				TSKindId.EscapeSequenceArm3,
+				TSKindId.EscapeSequenceArm4,
+				TSKindId.EscapeSequenceArm5,
+				TSKindId.False,
+				TSKindId.HexFloatingPointLiteral,
+				TSKindId.HexIntegerLiteral,
+				TSKindId.MultilineStringFragment,
+				TSKindId.NullLiteral,
+				TSKindId.OctalIntegerLiteral,
+				TSKindId.StringFragment,
+				TSKindId.StringLiteralLine,
+				TSKindId.StringLiteralTextBlock,
+				TSKindId.True
+			],
+			exact: true,
+			targets: ['literal']
+		},
+		'pattern.member': { ids: [TSKindId.FieldAccess], exact: true, targets: ['expression.member'] },
 		'pattern.struct': { ids: [TSKindId.RecordPattern, TSKindId.RecordPatternComponent], exact: true },
 		'pattern.struct.field': { ids: [TSKindId.RecordPatternComponent], exact: true },
+		'pattern.subscript': { ids: [TSKindId.ArrayAccess], exact: true, targets: ['expression.subscript'] },
 		'pattern.wildcard': { ids: [TSKindId.UnderscorePattern], exact: true },
 		statement: {
 			ids: [
+				TSKindId.UnqualifiedObjectCreationExpression,
+				TSKindId.Annotation,
+				TSKindId.ArrayAccess,
+				TSKindId.ArrayCreationExpression,
+				TSKindId.ArrayInitializer,
 				TSKindId.AssertStatement,
+				TSKindId.AssignmentExpression,
+				TSKindId.BinaryExpression,
+				TSKindId.BinaryIntegerLiteral,
 				TSKindId.Block,
 				TSKindId.BreakStatement,
+				TSKindId.CastExpression,
+				TSKindId.CharacterLiteral,
+				TSKindId.ClassDeclaration,
+				TSKindId.CompactConstructorDeclaration,
+				TSKindId.ConstantDeclaration,
+				TSKindId.ConstructorDeclaration,
 				TSKindId.ContinueStatement,
+				TSKindId.DecimalFloatingPointLiteral,
+				TSKindId.DecimalIntegerLiteralArm1,
+				TSKindId.DecimalIntegerLiteralArm2,
 				TSKindId.DoStatement,
 				TSKindId.EnhancedForStatement,
+				TSKindId.EnumConstant,
+				TSKindId.EnumDeclaration,
+				TSKindId.EscapeSequenceArm1,
+				TSKindId.EscapeSequenceArm2,
+				TSKindId.EscapeSequenceArm3,
+				TSKindId.EscapeSequenceArm4,
+				TSKindId.EscapeSequenceArm5,
+				TSKindId.False,
+				TSKindId.FieldAccess,
+				TSKindId.FieldDeclaration,
 				TSKindId.ForStatement,
+				TSKindId.FormalParameter,
+				TSKindId.HexFloatingPointLiteral,
+				TSKindId.HexIntegerLiteral,
+				TSKindId.Identifier,
 				TSKindId.IfStatement,
 				TSKindId.ImportDeclaration,
+				TSKindId.InstanceofExpression,
+				TSKindId.InterfaceDeclaration,
 				TSKindId.LabeledStatement,
+				TSKindId.LambdaExpression,
+				TSKindId.LocalVariableDeclaration,
+				TSKindId.MarkerAnnotation,
+				TSKindId.MethodDeclaration,
+				TSKindId.MethodInvocation,
+				TSKindId.ModuleDeclaration,
+				TSKindId.MultilineStringFragment,
+				TSKindId.NullLiteral,
+				TSKindId.ObjectCreationExpression,
+				TSKindId.OctalIntegerLiteral,
+				TSKindId.ParenthesizedExpression,
+				TSKindId.ReceiverParameter,
+				TSKindId.RecordDeclaration,
 				TSKindId.ReturnStatement,
+				TSKindId.ScopedIdentifier,
+				TSKindId.ScopedTypeIdentifier,
+				TSKindId.SpreadParameter,
 				TSKindId.StaticInitializer,
+				TSKindId.StringFragment,
+				TSKindId.StringInterpolation,
+				TSKindId.StringLiteralLine,
+				TSKindId.StringLiteralTextBlock,
+				TSKindId.Super,
 				TSKindId.SwitchExpression,
+				TSKindId.TemplateExpression,
+				TSKindId.TernaryExpression,
+				TSKindId.This,
 				TSKindId.ThrowStatement,
+				TSKindId.True,
 				TSKindId.TryStatementCatches,
 				TSKindId.TryStatementFinally,
 				TSKindId.TryWithResourcesStatement,
+				TSKindId.TypeIdentifier,
+				TSKindId.TypeParameter,
+				TSKindId.UnaryExpression,
+				TSKindId.UpdateExpressionPostfix,
+				TSKindId.UpdateExpressionPrefix,
 				TSKindId.WhileStatement
 			],
-			exact: true
+			exact: true,
+			targets: [
+				'attribute',
+				'declaration',
+				'declaration.constant',
+				'expression',
+				'identifier',
+				'literal',
+				'statement.block',
+				'statement.break',
+				'statement.continue',
+				'statement.if',
+				'statement.loop',
+				'statement.return'
+			]
 		},
 		'statement.assert': { ids: [TSKindId.AssertStatement], exact: true },
-		'statement.block': { ids: [TSKindId.Block, TSKindId.StaticInitializer], exact: true },
-		'statement.block.static': { ids: [TSKindId.StaticInitializer], exact: true },
+		'statement.attribute': {
+			ids: [TSKindId.Annotation, TSKindId.MarkerAnnotation],
+			exact: true,
+			targets: ['attribute']
+		},
+		'statement.block': { ids: [TSKindId.Block], exact: true },
 		'statement.break': { ids: [TSKindId.BreakStatement], exact: true },
 		'statement.continue': { ids: [TSKindId.ContinueStatement], exact: true },
+		'statement.declaration': {
+			ids: [
+				TSKindId.Annotation,
+				TSKindId.ClassDeclaration,
+				TSKindId.CompactConstructorDeclaration,
+				TSKindId.ConstantDeclaration,
+				TSKindId.ConstructorDeclaration,
+				TSKindId.EnumConstant,
+				TSKindId.EnumDeclaration,
+				TSKindId.FieldDeclaration,
+				TSKindId.FormalParameter,
+				TSKindId.Identifier,
+				TSKindId.InterfaceDeclaration,
+				TSKindId.LocalVariableDeclaration,
+				TSKindId.MarkerAnnotation,
+				TSKindId.MethodDeclaration,
+				TSKindId.ModuleDeclaration,
+				TSKindId.ReceiverParameter,
+				TSKindId.RecordDeclaration,
+				TSKindId.ScopedIdentifier,
+				TSKindId.ScopedTypeIdentifier,
+				TSKindId.SpreadParameter,
+				TSKindId.StaticInitializer,
+				TSKindId.Super,
+				TSKindId.This,
+				TSKindId.TypeIdentifier,
+				TSKindId.TypeParameter
+			],
+			exact: true,
+			targets: ['attribute', 'declaration', 'declaration.constant', 'identifier']
+		},
+		'statement.expression': {
+			ids: [
+				TSKindId.UnqualifiedObjectCreationExpression,
+				TSKindId.ArrayAccess,
+				TSKindId.ArrayCreationExpression,
+				TSKindId.ArrayInitializer,
+				TSKindId.AssignmentExpression,
+				TSKindId.BinaryExpression,
+				TSKindId.BinaryIntegerLiteral,
+				TSKindId.Block,
+				TSKindId.BreakStatement,
+				TSKindId.CastExpression,
+				TSKindId.CharacterLiteral,
+				TSKindId.ContinueStatement,
+				TSKindId.DecimalFloatingPointLiteral,
+				TSKindId.DecimalIntegerLiteralArm1,
+				TSKindId.DecimalIntegerLiteralArm2,
+				TSKindId.DoStatement,
+				TSKindId.EnhancedForStatement,
+				TSKindId.EscapeSequenceArm1,
+				TSKindId.EscapeSequenceArm2,
+				TSKindId.EscapeSequenceArm3,
+				TSKindId.EscapeSequenceArm4,
+				TSKindId.EscapeSequenceArm5,
+				TSKindId.False,
+				TSKindId.FieldAccess,
+				TSKindId.ForStatement,
+				TSKindId.HexFloatingPointLiteral,
+				TSKindId.HexIntegerLiteral,
+				TSKindId.Identifier,
+				TSKindId.IfStatement,
+				TSKindId.InstanceofExpression,
+				TSKindId.LambdaExpression,
+				TSKindId.MethodInvocation,
+				TSKindId.MultilineStringFragment,
+				TSKindId.NullLiteral,
+				TSKindId.ObjectCreationExpression,
+				TSKindId.OctalIntegerLiteral,
+				TSKindId.ParenthesizedExpression,
+				TSKindId.ReturnStatement,
+				TSKindId.ScopedIdentifier,
+				TSKindId.ScopedTypeIdentifier,
+				TSKindId.StringFragment,
+				TSKindId.StringInterpolation,
+				TSKindId.StringLiteralLine,
+				TSKindId.StringLiteralTextBlock,
+				TSKindId.Super,
+				TSKindId.TemplateExpression,
+				TSKindId.TernaryExpression,
+				TSKindId.This,
+				TSKindId.True,
+				TSKindId.TypeIdentifier,
+				TSKindId.UnaryExpression,
+				TSKindId.UpdateExpressionPostfix,
+				TSKindId.UpdateExpressionPrefix,
+				TSKindId.WhileStatement
+			],
+			exact: true,
+			targets: [
+				'expression',
+				'identifier',
+				'literal',
+				'statement.block',
+				'statement.break',
+				'statement.continue',
+				'statement.if',
+				'statement.loop',
+				'statement.return'
+			]
+		},
 		'statement.if': { ids: [TSKindId.IfStatement], exact: true },
 		'statement.import': { ids: [TSKindId.ImportDeclaration], exact: true },
 		'statement.labeled': { ids: [TSKindId.LabeledStatement], exact: true },
@@ -2396,22 +3474,169 @@ const table: PortableTable = {
 		'statement.try': { ids: [TSKindId.TryStatementCatches, TSKindId.TryStatementFinally], exact: true },
 		type: {
 			ids: [
+				TSKindId.UnqualifiedObjectCreationExpression,
+				TSKindId.ArrayAccess,
+				TSKindId.ArrayCreationExpression,
+				TSKindId.ArrayInitializer,
 				TSKindId.ArrayType,
+				TSKindId.AssignmentExpression,
+				TSKindId.BinaryExpression,
+				TSKindId.BinaryIntegerLiteral,
+				TSKindId.Block,
 				TSKindId.BooleanType,
+				TSKindId.BreakStatement,
 				TSKindId.ByteKeyword,
+				TSKindId.CastExpression,
 				TSKindId.CharKeyword,
+				TSKindId.CharacterLiteral,
+				TSKindId.ContinueStatement,
+				TSKindId.DecimalFloatingPointLiteral,
+				TSKindId.DecimalIntegerLiteralArm1,
+				TSKindId.DecimalIntegerLiteralArm2,
+				TSKindId.DoStatement,
 				TSKindId.DoubleKeyword,
+				TSKindId.EnhancedForStatement,
+				TSKindId.EscapeSequenceArm1,
+				TSKindId.EscapeSequenceArm2,
+				TSKindId.EscapeSequenceArm3,
+				TSKindId.EscapeSequenceArm4,
+				TSKindId.EscapeSequenceArm5,
+				TSKindId.False,
+				TSKindId.FieldAccess,
 				TSKindId.FloatKeyword,
+				TSKindId.ForStatement,
 				TSKindId.GenericType,
+				TSKindId.HexFloatingPointLiteral,
+				TSKindId.HexIntegerLiteral,
+				TSKindId.Identifier,
+				TSKindId.IfStatement,
+				TSKindId.InstanceofExpression,
 				TSKindId.IntKeyword,
+				TSKindId.LambdaExpression,
 				TSKindId.LongKeyword,
+				TSKindId.MethodInvocation,
+				TSKindId.MultilineStringFragment,
+				TSKindId.NullLiteral,
+				TSKindId.ObjectCreationExpression,
+				TSKindId.OctalIntegerLiteral,
+				TSKindId.ParenthesizedExpression,
+				TSKindId.ReturnStatement,
+				TSKindId.ScopedIdentifier,
+				TSKindId.ScopedTypeIdentifier,
 				TSKindId.ShortKeyword,
-				TSKindId.VoidType
+				TSKindId.StringFragment,
+				TSKindId.StringInterpolation,
+				TSKindId.StringLiteralLine,
+				TSKindId.StringLiteralTextBlock,
+				TSKindId.Super,
+				TSKindId.TemplateExpression,
+				TSKindId.TernaryExpression,
+				TSKindId.This,
+				TSKindId.True,
+				TSKindId.TypeIdentifier,
+				TSKindId.UnaryExpression,
+				TSKindId.UpdateExpressionPostfix,
+				TSKindId.UpdateExpressionPrefix,
+				TSKindId.VoidType,
+				TSKindId.WhileStatement
 			],
-			exact: true
+			exact: true,
+			targets: [
+				'expression',
+				'identifier',
+				'literal',
+				'statement.block',
+				'statement.break',
+				'statement.continue',
+				'statement.if',
+				'statement.loop',
+				'statement.return'
+			]
 		},
 		'type.array': { ids: [TSKindId.ArrayType], exact: true },
+		'type.expression': {
+			ids: [
+				TSKindId.UnqualifiedObjectCreationExpression,
+				TSKindId.ArrayAccess,
+				TSKindId.ArrayCreationExpression,
+				TSKindId.ArrayInitializer,
+				TSKindId.AssignmentExpression,
+				TSKindId.BinaryExpression,
+				TSKindId.BinaryIntegerLiteral,
+				TSKindId.Block,
+				TSKindId.BreakStatement,
+				TSKindId.CastExpression,
+				TSKindId.CharacterLiteral,
+				TSKindId.ContinueStatement,
+				TSKindId.DecimalFloatingPointLiteral,
+				TSKindId.DecimalIntegerLiteralArm1,
+				TSKindId.DecimalIntegerLiteralArm2,
+				TSKindId.DoStatement,
+				TSKindId.EnhancedForStatement,
+				TSKindId.EscapeSequenceArm1,
+				TSKindId.EscapeSequenceArm2,
+				TSKindId.EscapeSequenceArm3,
+				TSKindId.EscapeSequenceArm4,
+				TSKindId.EscapeSequenceArm5,
+				TSKindId.False,
+				TSKindId.FieldAccess,
+				TSKindId.ForStatement,
+				TSKindId.HexFloatingPointLiteral,
+				TSKindId.HexIntegerLiteral,
+				TSKindId.Identifier,
+				TSKindId.IfStatement,
+				TSKindId.InstanceofExpression,
+				TSKindId.LambdaExpression,
+				TSKindId.MethodInvocation,
+				TSKindId.MultilineStringFragment,
+				TSKindId.NullLiteral,
+				TSKindId.ObjectCreationExpression,
+				TSKindId.OctalIntegerLiteral,
+				TSKindId.ParenthesizedExpression,
+				TSKindId.ReturnStatement,
+				TSKindId.ScopedIdentifier,
+				TSKindId.ScopedTypeIdentifier,
+				TSKindId.StringFragment,
+				TSKindId.StringInterpolation,
+				TSKindId.StringLiteralLine,
+				TSKindId.StringLiteralTextBlock,
+				TSKindId.Super,
+				TSKindId.TemplateExpression,
+				TSKindId.TernaryExpression,
+				TSKindId.This,
+				TSKindId.True,
+				TSKindId.TypeIdentifier,
+				TSKindId.UnaryExpression,
+				TSKindId.UpdateExpressionPostfix,
+				TSKindId.UpdateExpressionPrefix,
+				TSKindId.WhileStatement
+			],
+			exact: true,
+			targets: [
+				'expression',
+				'identifier',
+				'literal',
+				'statement.block',
+				'statement.break',
+				'statement.continue',
+				'statement.if',
+				'statement.loop',
+				'statement.return'
+			]
+		},
 		'type.generic': { ids: [TSKindId.GenericType], exact: true },
+		'type.identifier': {
+			ids: [
+				TSKindId.Identifier,
+				TSKindId.ScopedIdentifier,
+				TSKindId.ScopedTypeIdentifier,
+				TSKindId.Super,
+				TSKindId.This,
+				TSKindId.TypeIdentifier
+			],
+			exact: true,
+			targets: ['identifier']
+		},
 		'type.primitive': {
 			ids: [
 				TSKindId.BooleanType,
@@ -2635,8 +3860,8 @@ const table: PortableTable = {
 			{ path: 'type.primitive.integral', within: [], test: [] }
 		],
 		[TSKindId.CharacterLiteral]: [{ path: 'literal.character', within: [], test: [] }],
-		[TSKindId.ClassDeclaration]: [{ path: 'declaration.class', within: [], test: [] }],
-		[TSKindId.CompactConstructorDeclaration]: [{ path: 'declaration.constructor', within: [], test: [] }],
+		[TSKindId.ClassDeclaration]: [{ path: 'declaration.type.class', within: [], test: [] }],
+		[TSKindId.CompactConstructorDeclaration]: [{ path: 'declaration.member.constructor', within: [], test: [] }],
 		[TSKindId.ConstantDeclaration]: [
 			{ path: 'declaration.constant', within: [], test: [] },
 			{
@@ -2657,9 +3882,9 @@ const table: PortableTable = {
 			}
 		],
 		[TSKindId.ConstructorDeclaration]: [
-			{ path: 'declaration.constructor', within: [], test: [] },
+			{ path: 'declaration.member.constructor', within: [], test: [] },
 			{
-				path: 'declaration.constructor.public',
+				path: 'declaration.member.constructor.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [257], slots: { '267': 0 } } },
@@ -2667,7 +3892,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.constructor.private',
+				path: 'declaration.member.constructor.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [257], slots: { '267': 0 } } },
@@ -2675,7 +3900,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.constructor.protected',
+				path: 'declaration.member.constructor.protected',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [257], slots: { '267': 0 } } },
@@ -2693,11 +3918,11 @@ const table: PortableTable = {
 			{ path: 'type.primitive.floating', within: [], test: [] }
 		],
 		[TSKindId.EnhancedForStatement]: [{ path: 'statement.loop.for_each', within: [], test: [] }],
-		[TSKindId.EnumConstant]: [{ path: 'declaration.enum_member', within: [], test: [] }],
+		[TSKindId.EnumConstant]: [{ path: 'declaration.member.enum_member', within: [], test: [] }],
 		[TSKindId.EnumDeclaration]: [
-			{ path: 'declaration.enum', within: [], test: [] },
+			{ path: 'declaration.type.enum', within: [], test: [] },
 			{
-				path: 'declaration.enum.public',
+				path: 'declaration.type.enum.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [257], slots: { '252': 0 } } },
@@ -2705,7 +3930,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.enum.private',
+				path: 'declaration.type.enum.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [257], slots: { '252': 0 } } },
@@ -2722,9 +3947,9 @@ const table: PortableTable = {
 		[TSKindId.False]: [{ path: 'literal.boolean.false', within: [], test: [] }],
 		[TSKindId.FieldAccess]: [{ path: 'expression.member', within: [], test: [] }],
 		[TSKindId.FieldDeclaration]: [
-			{ path: 'declaration.field', within: [], test: [] },
+			{ path: 'declaration.member.field', within: [], test: [] },
 			{
-				path: 'declaration.field.public',
+				path: 'declaration.member.field.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [257], slots: { '272': 0 } } },
@@ -2732,7 +3957,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.field.private',
+				path: 'declaration.member.field.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [257], slots: { '272': 0 } } },
@@ -2740,7 +3965,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.field.protected',
+				path: 'declaration.member.field.protected',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [257], slots: { '272': 0 } } },
@@ -2766,7 +3991,7 @@ const table: PortableTable = {
 			{ path: 'type.primitive.integral.int32', within: [], test: [] },
 			{ path: 'type.primitive.integral', within: [], test: [] }
 		],
-		[TSKindId.InterfaceDeclaration]: [{ path: 'declaration.interface', within: [], test: [] }],
+		[TSKindId.InterfaceDeclaration]: [{ path: 'declaration.type.interface', within: [], test: [] }],
 		[TSKindId.LabeledStatement]: [{ path: 'statement.labeled', within: [], test: [] }],
 		[TSKindId.LambdaExpression]: [{ path: 'expression.lambda', within: [], test: [] }],
 		[TSKindId.LineComment]: [{ path: 'comment.line', within: [], test: [] }],
@@ -2787,14 +4012,14 @@ const table: PortableTable = {
 		],
 		[TSKindId.MarkerAnnotation]: [{ path: 'attribute', within: [], test: [] }],
 		[TSKindId.MethodDeclaration]: [
-			{ path: 'declaration.method', within: [], test: [] },
+			{ path: 'declaration.member.method', within: [], test: [] },
 			{
-				path: 'declaration.method.signature',
+				path: 'declaration.member.method.signature',
 				within: [TSKindId.InterfaceBody],
 				test: [{ up: 0, via: [], plan: { op: 'not', of: { op: 'present', slots: { '302': 8 } } } }]
 			},
 			{
-				path: 'declaration.method.signature.abstract',
+				path: 'declaration.member.method.signature.abstract',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'not', of: { op: 'present', slots: { '302': 8 } } } },
@@ -2803,7 +4028,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.public',
+				path: 'declaration.member.method.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [257], slots: { '302': 0 } } },
@@ -2811,7 +4036,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.private',
+				path: 'declaration.member.method.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [257], slots: { '302': 0 } } },
@@ -2819,7 +4044,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.protected',
+				path: 'declaration.member.method.protected',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [257], slots: { '302': 0 } } },
@@ -2845,7 +4070,7 @@ const table: PortableTable = {
 		[TSKindId.Pattern]: [{ path: 'pattern', within: [], test: [] }],
 		[TSKindId.Program]: [{ path: 'file', within: [], test: [] }],
 		[TSKindId.ReceiverParameter]: [{ path: 'declaration.parameter.receiver', within: [], test: [] }],
-		[TSKindId.RecordDeclaration]: [{ path: 'declaration.class', within: [], test: [] }],
+		[TSKindId.RecordDeclaration]: [{ path: 'declaration.type.class', within: [], test: [] }],
 		[TSKindId.RecordPattern]: [{ path: 'pattern.struct', within: [], test: [] }],
 		[TSKindId.RecordPatternComponent]: [{ path: 'pattern.struct.field', within: [], test: [] }],
 		[TSKindId.Resource]: [{ path: 'clause.resource.item', within: [], test: [] }],
@@ -2858,7 +4083,7 @@ const table: PortableTable = {
 			{ path: 'type.primitive.integral', within: [], test: [] }
 		],
 		[TSKindId.SpreadParameter]: [{ path: 'declaration.parameter.variadic', within: [], test: [] }],
-		[TSKindId.StaticInitializer]: [{ path: 'statement.block.static', within: [], test: [] }],
+		[TSKindId.StaticInitializer]: [{ path: 'declaration.member.static_block', within: [], test: [] }],
 		[TSKindId.StringFragment]: [{ path: 'literal.string.text', within: [], test: [] }],
 		[TSKindId.StringInterpolation]: [{ path: 'expression.interpolation', within: [], test: [] }],
 		[TSKindId.StringLiteralLine]: [{ path: 'literal.string', within: [], test: [] }],

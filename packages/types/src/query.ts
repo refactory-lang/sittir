@@ -1,6 +1,6 @@
 import type { IsBooleanKeyword } from './keyword-presence.ts';
 import type { FlagsHintOf, NarrowTo, SlotFlagsHintOf, SlotHint, SlotHintsOf } from './node-surface.ts';
-import type { PortableKind } from './portable.ts';
+import type { PortableKind, PortableNamespace } from './portable.ts';
 
 /**
  * A slot by its number in each kind that has it, keyed by stamped kind id: the slot's position among the kind's node
@@ -199,6 +199,13 @@ export interface View<T, Ids = {}, Members = {}> extends Iterable<T> {
 	 * selects the keyword ids its nodes read as. An element of another language is not of the kind, as for the guards.
 	 */
 	ofType<K extends KindOf<T> | (keyof Members & number)>(kind: K): View<NarrowTo<T, MembersOf<K, Members>>, Ids, Members>;
+	/**
+	 * The elements that read as a path under the namespace `kind` names, as the namespace's portable guard reads them, narrowed to
+	 * the kinds the language reads there: `ofType(kinds.declaration.member)` selects the nodes `is.declaration.member` holds for.
+	 *
+	 * @param kind - A portable namespace (`portable.kinds.…` at a namespace).
+	 */
+	ofType<N extends PortableNamespace<keyof Ids & string>>(kind: N): View<NarrowTo<T, Extract<Ids[N['$namespace']], number>>, Ids, Members>;
 	/**
 	 * The elements that read as the vocabulary path `kind` names or a path under it, as the portable guards read them, narrowed
 	 * to the kinds the language reads there. A path the language does not read yields nothing.

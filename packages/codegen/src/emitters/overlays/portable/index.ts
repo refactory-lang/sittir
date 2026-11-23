@@ -1,5 +1,5 @@
 import { resolveRoutes, valueTokensOf, type GrammarInput, type ReadEntry } from '../../../bindings/routes.ts';
-import { byCodepoint, compositionOf, declaredFlags } from '../../../bindings/vocabulary.ts';
+import { byCodepoint, compositionOf, declaredFlags, textKind } from '../../../bindings/vocabulary.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { findKindEntry, fixedTextKinds, kindDiscriminantExpr, type KindEnumEntry } from '../../kind-discriminant.ts';
 import type { QueryPlan } from '@sittir/types';
@@ -77,7 +77,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 		return isSlotBearingCompound(node) && readable.length > 0 ? [[node.typeName, readable] as const] : [];
 	});
 	const build = emitPortableBuild({ routes, model: input.model, nodeMap, kindEntries, flagPlans: plansByKind, features: [...input.vocabulary.featuresOf(compositionOf(input.grammar))].sort(byCodepoint), factOf, readTest, flagsOf: (path) => declaredFlags(input.vocabulary, path), valueScalarOf: (path) => (input.vocabulary.kinds.has(path) ? input.vocabulary.slots(path).get('$value')?.scalar : undefined), bodies });
-	const coverage = familyCoverageOf({ routes, nodeMap, table: build.table, readTest });
+	const coverage = familyCoverageOf({ routes, nodeMap, table: build.table, readTest, kindEntries });
 	const typed = emitPortableTyped({ routes, input, nodeMap, kindEntries, readTest, table: build.table, presetCarried: build.presetCarried, covered: new Set(coverage.map(({ entry }) => entry)), totalIntegerReads: build.totalIntegerReads, freeTextClosedBy: build.freeTextClosedBy, flags: new Map([...plansByKind].map(([kind, plans]) => [kind, [...plans.keys()]])) });
 	return {
 		build: build.source,
@@ -92,9 +92,11 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 			textPaths: typed.reads.textPaths,
 			textInputs: typed.textInputs,
 			textValues: typed.textValues,
+			textKinds: [...input.vocabulary.kinds.keys()].filter((path) => textKind(input.vocabulary, path)).sort(byCodepoint),
 			flags: Object.fromEntries(typed.flags),
 			facts: Object.fromEntries(typed.facts),
 			holes: build.holes,
+			textChoices: build.textChoices,
 			decided: Object.fromEntries(typed.decided.map(([path, slotKinds]) => [path, Object.fromEntries(slotKinds)]))
 		},
 		typed,
@@ -107,6 +109,8 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 		nodeModel: emitPortableNodeModel(routes, readTest, coverage),
 		surface: emitPortableSurface({
 			nodeType: grammarNodeTypeName(nodeMap.name),
+			namespaces: input.vocabulary.namespaces,
+			aliases: input.vocabulary.aliases,
 			routes,
 			readTest,
 			factOf,

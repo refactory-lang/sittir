@@ -19,12 +19,12 @@ export interface JavaMap extends V.GrammarMap {
 		};
 		readonly 'clause.case.switch': {
 			readonly statements:
-				| V.Read<JavaMap, 'declaration.class'>
-				| V.Read<JavaMap, 'declaration.enum'>
-				| V.Read<JavaMap, 'declaration.enum.private'>
-				| V.Read<JavaMap, 'declaration.enum.public'>
-				| V.Read<JavaMap, 'declaration.interface'>
 				| V.Read<JavaMap, 'declaration.module'>
+				| V.Read<JavaMap, 'declaration.type.class'>
+				| V.Read<JavaMap, 'declaration.type.enum'>
+				| V.Read<JavaMap, 'declaration.type.enum.private'>
+				| V.Read<JavaMap, 'declaration.type.enum.public'>
+				| V.Read<JavaMap, 'declaration.type.interface'>
 				| V.Read<JavaMap, 'declaration.variable'>
 				| V.Read<JavaMap, 'declaration.variable.constant'>
 				| V.Read<JavaMap, 'expression.assignment'>
@@ -161,7 +161,6 @@ export interface JavaMap extends V.GrammarMap {
 			readonly $forms: V.Form<'switchLabels'>;
 		};
 		readonly 'clause.catch': {
-			readonly body: V.Read<JavaMap, 'statement.block'>;
 			readonly $forms: V.Form<'body' | 'catchFormalParameter'>;
 		};
 		readonly 'clause.extends': {
@@ -193,38 +192,6 @@ export interface JavaMap extends V.GrammarMap {
 		};
 		readonly 'comment.line': {
 			readonly $forms: V.Form<'$value'>;
-		};
-		readonly 'declaration.class': {
-			readonly body:
-				| V.Read<JavaMap, 'declaration.class'>
-				| V.Read<JavaMap, 'declaration.constructor'>
-				| V.Read<JavaMap, 'declaration.constructor.private'>
-				| V.Read<JavaMap, 'declaration.constructor.protected'>
-				| V.Read<JavaMap, 'declaration.constructor.public'>
-				| V.Read<JavaMap, 'declaration.enum'>
-				| V.Read<JavaMap, 'declaration.enum.private'>
-				| V.Read<JavaMap, 'declaration.enum.public'>
-				| V.Read<JavaMap, 'declaration.field'>
-				| V.Read<JavaMap, 'declaration.field.private'>
-				| V.Read<JavaMap, 'declaration.field.protected'>
-				| V.Read<JavaMap, 'declaration.field.public'>
-				| V.Read<JavaMap, 'declaration.interface'>
-				| V.Read<JavaMap, 'declaration.method'>
-				| V.Read<JavaMap, 'declaration.method.private'>
-				| V.Read<JavaMap, 'declaration.method.protected'>
-				| V.Read<JavaMap, 'declaration.method.public'>
-				| V.Read<JavaMap, 'declaration.method.signature.abstract'>
-				| V.Read<JavaMap, 'statement.block'>
-				| V.Read<JavaMap, 'statement.block.static'>
-				| ';'
-				| V.Unmapped<'java:annotation_type_declaration'>;
-			readonly extends: V.Read<JavaMap, 'clause.extends'>;
-			readonly implements: V.Read<JavaMap, 'clause.implements'>;
-			readonly name: V.Read<JavaMap, 'identifier'>;
-			readonly typeParameters: V.Read<JavaMap, 'declaration.type_parameter'>;
-			readonly $forms:
-				| V.Form<'body' | 'name', 'interfaces' | 'modifiers' | 'parameters'>
-				| V.Form<'body' | 'name' | 'parameters', 'extends' | 'implements' | 'permits'>;
 		};
 		readonly 'declaration.constant': {
 			readonly type:
@@ -304,78 +271,39 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void';
 			readonly $forms: V.Form<'declarators' | 'modifiers' | 'type'>;
 		};
-		readonly 'declaration.constructor': {
-			readonly body: V.Read<JavaMap, 'statement.block'> | V.Unmapped<'java:constructor_body'>;
+		readonly 'declaration.member.constructor': {
 			readonly parameters:
 				| V.Read<JavaMap, 'declaration.parameter.receiver'>
 				| V.Unmapped<'java:formal_parameters_list'>;
 			readonly typeParameters: V.Read<JavaMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'body' | 'name' | 'parameters'>;
 		};
-		readonly 'declaration.constructor.private': {
-			readonly body: V.Unmapped<'java:constructor_body'>;
+		readonly 'declaration.member.constructor.private': {
 			readonly parameters:
 				| V.Read<JavaMap, 'declaration.parameter.receiver'>
 				| V.Unmapped<'java:formal_parameters_list'>;
 			readonly typeParameters: V.Read<JavaMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'body' | 'modifiers' | 'name' | 'parameters'>;
 		};
-		readonly 'declaration.constructor.protected': {
-			readonly body: V.Unmapped<'java:constructor_body'>;
+		readonly 'declaration.member.constructor.protected': {
 			readonly parameters:
 				| V.Read<JavaMap, 'declaration.parameter.receiver'>
 				| V.Unmapped<'java:formal_parameters_list'>;
 			readonly typeParameters: V.Read<JavaMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'body' | 'modifiers' | 'name' | 'parameters'>;
 		};
-		readonly 'declaration.constructor.public': {
-			readonly body: V.Unmapped<'java:constructor_body'>;
+		readonly 'declaration.member.constructor.public': {
 			readonly parameters:
 				| V.Read<JavaMap, 'declaration.parameter.receiver'>
 				| V.Unmapped<'java:formal_parameters_list'>;
 			readonly typeParameters: V.Read<JavaMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'body' | 'modifiers' | 'name' | 'parameters'>;
 		};
-		readonly 'declaration.enum': {
-			readonly name: V.Read<JavaMap, 'identifier'>;
-			readonly $forms: V.Form<'body' | 'name'>;
-		};
-		readonly 'declaration.enum.private': {
-			readonly name: V.Read<JavaMap, 'identifier'>;
-			readonly $forms: V.Form<'body' | 'modifiers' | 'name'>;
-		};
-		readonly 'declaration.enum.public': {
-			readonly name: V.Read<JavaMap, 'identifier'>;
-			readonly $forms: V.Form<'body' | 'modifiers' | 'name'>;
-		};
-		readonly 'declaration.enum_member': {
-			readonly body:
-				| V.Read<JavaMap, 'declaration.class'>
-				| V.Read<JavaMap, 'declaration.constructor'>
-				| V.Read<JavaMap, 'declaration.constructor.private'>
-				| V.Read<JavaMap, 'declaration.constructor.protected'>
-				| V.Read<JavaMap, 'declaration.constructor.public'>
-				| V.Read<JavaMap, 'declaration.enum'>
-				| V.Read<JavaMap, 'declaration.enum.private'>
-				| V.Read<JavaMap, 'declaration.enum.public'>
-				| V.Read<JavaMap, 'declaration.field'>
-				| V.Read<JavaMap, 'declaration.field.private'>
-				| V.Read<JavaMap, 'declaration.field.protected'>
-				| V.Read<JavaMap, 'declaration.field.public'>
-				| V.Read<JavaMap, 'declaration.interface'>
-				| V.Read<JavaMap, 'declaration.method'>
-				| V.Read<JavaMap, 'declaration.method.private'>
-				| V.Read<JavaMap, 'declaration.method.protected'>
-				| V.Read<JavaMap, 'declaration.method.public'>
-				| V.Read<JavaMap, 'declaration.method.signature.abstract'>
-				| V.Read<JavaMap, 'statement.block'>
-				| V.Read<JavaMap, 'statement.block.static'>
-				| ';'
-				| V.Unmapped<'java:annotation_type_declaration'>;
+		readonly 'declaration.member.enum_member': {
 			readonly name: V.Read<JavaMap, 'identifier'>;
 			readonly $forms: V.Form<'name'>;
 		};
-		readonly 'declaration.field': {
+		readonly 'declaration.member.field': {
 			readonly type:
 				| V.Read<JavaMap, 'identifier'>
 				| V.Read<JavaMap, 'identifier.qualified'>
@@ -401,7 +329,7 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void';
 			readonly $forms: V.Form<'declarators' | 'type'>;
 		};
-		readonly 'declaration.field.private': {
+		readonly 'declaration.member.field.private': {
 			readonly type:
 				| V.Read<JavaMap, 'identifier'>
 				| V.Read<JavaMap, 'identifier.qualified'>
@@ -427,7 +355,7 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void';
 			readonly $forms: V.Form<'declarators' | 'type'>;
 		};
-		readonly 'declaration.field.protected': {
+		readonly 'declaration.member.field.protected': {
 			readonly type:
 				| V.Read<JavaMap, 'identifier'>
 				| V.Read<JavaMap, 'identifier.qualified'>
@@ -453,7 +381,7 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void';
 			readonly $forms: V.Form<'declarators' | 'type'>;
 		};
-		readonly 'declaration.field.public': {
+		readonly 'declaration.member.field.public': {
 			readonly type:
 				| V.Read<JavaMap, 'identifier'>
 				| V.Read<JavaMap, 'identifier.qualified'>
@@ -479,13 +407,7 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void';
 			readonly $forms: V.Form<'declarators' | 'type'>;
 		};
-		readonly 'declaration.interface': {
-			readonly name: V.Read<JavaMap, 'identifier'>;
-			readonly typeParameters: V.Read<JavaMap, 'declaration.type_parameter'>;
-			readonly $forms: V.Form<'body' | 'name'>;
-		};
-		readonly 'declaration.method': {
-			readonly body: V.Read<JavaMap, 'statement.block'>;
+		readonly 'declaration.member.method': {
 			readonly name: V.Read<JavaMap, 'identifier'>;
 			readonly parameters:
 				| V.Read<JavaMap, 'declaration.parameter.receiver'>
@@ -516,8 +438,7 @@ export interface JavaMap extends V.GrammarMap {
 			readonly typeParameters: V.Read<JavaMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'name' | 'parameters' | 'returnType'>;
 		};
-		readonly 'declaration.method.private': {
-			readonly body: V.Read<JavaMap, 'statement.block'>;
+		readonly 'declaration.member.method.private': {
 			readonly name: V.Read<JavaMap, 'identifier'>;
 			readonly parameters:
 				| V.Read<JavaMap, 'declaration.parameter.receiver'>
@@ -548,8 +469,7 @@ export interface JavaMap extends V.GrammarMap {
 			readonly typeParameters: V.Read<JavaMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'name' | 'parameters' | 'returnType'>;
 		};
-		readonly 'declaration.method.protected': {
-			readonly body: V.Read<JavaMap, 'statement.block'>;
+		readonly 'declaration.member.method.protected': {
 			readonly name: V.Read<JavaMap, 'identifier'>;
 			readonly parameters:
 				| V.Read<JavaMap, 'declaration.parameter.receiver'>
@@ -580,8 +500,7 @@ export interface JavaMap extends V.GrammarMap {
 			readonly typeParameters: V.Read<JavaMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'name' | 'parameters' | 'returnType'>;
 		};
-		readonly 'declaration.method.public': {
-			readonly body: V.Read<JavaMap, 'statement.block'>;
+		readonly 'declaration.member.method.public': {
 			readonly name: V.Read<JavaMap, 'identifier'>;
 			readonly parameters:
 				| V.Read<JavaMap, 'declaration.parameter.receiver'>
@@ -612,8 +531,7 @@ export interface JavaMap extends V.GrammarMap {
 			readonly typeParameters: V.Read<JavaMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'name' | 'parameters' | 'returnType'>;
 		};
-		readonly 'declaration.method.signature': {
-			readonly body: never;
+		readonly 'declaration.member.method.signature': {
 			readonly name: V.Read<JavaMap, 'identifier'>;
 			readonly parameters:
 				| V.Read<JavaMap, 'declaration.parameter.receiver'>
@@ -644,8 +562,7 @@ export interface JavaMap extends V.GrammarMap {
 			readonly typeParameters: V.Read<JavaMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'name' | 'parameters' | 'returnType'>;
 		};
-		readonly 'declaration.method.signature.abstract': {
-			readonly body: never;
+		readonly 'declaration.member.method.signature.abstract': {
 			readonly name: V.Read<JavaMap, 'identifier'>;
 			readonly parameters:
 				| V.Read<JavaMap, 'declaration.parameter.receiver'>
@@ -675,14 +592,11 @@ export interface JavaMap extends V.GrammarMap {
 				| 'void';
 			readonly typeParameters: V.Read<JavaMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'name' | 'parameters' | 'returnType'>;
+		};
+		readonly 'declaration.member.static_block': {
+			readonly $forms: V.Form<'block'>;
 		};
 		readonly 'declaration.module': {
-			readonly body:
-				| V.Unmapped<'java:exports_module_directive'>
-				| V.Unmapped<'java:opens_module_directive'>
-				| V.Unmapped<'java:provides_module_directive'>
-				| V.Unmapped<'java:requires_module_directive'>
-				| V.Unmapped<'java:uses_module_directive'>;
 			readonly name: V.Read<JavaMap, 'identifier'> | V.Read<JavaMap, 'identifier.qualified'>;
 			readonly $forms: V.Form<'body' | 'name'>;
 		};
@@ -721,6 +635,32 @@ export interface JavaMap extends V.GrammarMap {
 			readonly name: never;
 			readonly type: never;
 			readonly $forms: V.Form<'unannotatedType' | 'variableDeclarator'>;
+		};
+		readonly 'declaration.type.class': {
+			readonly extends: V.Read<JavaMap, 'clause.extends'>;
+			readonly implements: V.Read<JavaMap, 'clause.implements'>;
+			readonly name: V.Read<JavaMap, 'identifier'>;
+			readonly typeParameters: V.Read<JavaMap, 'declaration.type_parameter'>;
+			readonly $forms:
+				| V.Form<'body' | 'name', 'interfaces' | 'modifiers' | 'parameters'>
+				| V.Form<'body' | 'name' | 'parameters', 'extends' | 'implements' | 'permits'>;
+		};
+		readonly 'declaration.type.enum': {
+			readonly name: V.Read<JavaMap, 'identifier'>;
+			readonly $forms: V.Form<'body' | 'name'>;
+		};
+		readonly 'declaration.type.enum.private': {
+			readonly name: V.Read<JavaMap, 'identifier'>;
+			readonly $forms: V.Form<'body' | 'modifiers' | 'name'>;
+		};
+		readonly 'declaration.type.enum.public': {
+			readonly name: V.Read<JavaMap, 'identifier'>;
+			readonly $forms: V.Form<'body' | 'modifiers' | 'name'>;
+		};
+		readonly 'declaration.type.interface': {
+			readonly name: V.Read<JavaMap, 'identifier'>;
+			readonly typeParameters: V.Read<JavaMap, 'declaration.type_parameter'>;
+			readonly $forms: V.Form<'body' | 'name'>;
 		};
 		readonly 'declaration.type_parameter': {
 			readonly bounds: V.Read<JavaMap, 'clause.bounds'>;
@@ -7274,14 +7214,14 @@ export interface JavaMap extends V.GrammarMap {
 		};
 		readonly 'literal.number.integer.binary': {
 			readonly suffix: 'L' | 'l';
-			readonly $forms: V.Form<'$value' | 'content' | 'prefix'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.hex': {
 			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.octal': {
 			readonly suffix: 'L' | 'l';
-			readonly $forms: V.Form<'$value' | 'content' | 'prefix'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.string': {
 			readonly elements:
@@ -7327,12 +7267,12 @@ export interface JavaMap extends V.GrammarMap {
 		};
 		readonly 'statement.block': {
 			readonly statements:
-				| V.Read<JavaMap, 'declaration.class'>
-				| V.Read<JavaMap, 'declaration.enum'>
-				| V.Read<JavaMap, 'declaration.enum.private'>
-				| V.Read<JavaMap, 'declaration.enum.public'>
-				| V.Read<JavaMap, 'declaration.interface'>
 				| V.Read<JavaMap, 'declaration.module'>
+				| V.Read<JavaMap, 'declaration.type.class'>
+				| V.Read<JavaMap, 'declaration.type.enum'>
+				| V.Read<JavaMap, 'declaration.type.enum.private'>
+				| V.Read<JavaMap, 'declaration.type.enum.public'>
+				| V.Read<JavaMap, 'declaration.type.interface'>
 				| V.Read<JavaMap, 'declaration.variable'>
 				| V.Read<JavaMap, 'declaration.variable.constant'>
 				| V.Read<JavaMap, 'expression.assignment'>
@@ -7467,10 +7407,6 @@ export interface JavaMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed;
 		};
-		readonly 'statement.block.static': {
-			readonly statements: never;
-			readonly $forms: V.Form<'block'>;
-		};
 		readonly 'statement.break': {
 			readonly label: V.Read<JavaMap, 'identifier'>;
 		};
@@ -7479,12 +7415,12 @@ export interface JavaMap extends V.GrammarMap {
 		};
 		readonly 'statement.if': {
 			readonly alternative:
-				| V.Read<JavaMap, 'declaration.class'>
-				| V.Read<JavaMap, 'declaration.enum'>
-				| V.Read<JavaMap, 'declaration.enum.private'>
-				| V.Read<JavaMap, 'declaration.enum.public'>
-				| V.Read<JavaMap, 'declaration.interface'>
 				| V.Read<JavaMap, 'declaration.module'>
+				| V.Read<JavaMap, 'declaration.type.class'>
+				| V.Read<JavaMap, 'declaration.type.enum'>
+				| V.Read<JavaMap, 'declaration.type.enum.private'>
+				| V.Read<JavaMap, 'declaration.type.enum.public'>
+				| V.Read<JavaMap, 'declaration.type.interface'>
 				| V.Read<JavaMap, 'declaration.variable'>
 				| V.Read<JavaMap, 'declaration.variable.constant'>
 				| V.Read<JavaMap, 'expression.assignment'>
@@ -7619,146 +7555,6 @@ export interface JavaMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed;
 			readonly condition: V.Read<JavaMap, 'expression.parenthesized'> | T.ParenthesizedExpression.Parsed;
-			readonly consequence:
-				| V.Read<JavaMap, 'declaration.class'>
-				| V.Read<JavaMap, 'declaration.enum'>
-				| V.Read<JavaMap, 'declaration.enum.private'>
-				| V.Read<JavaMap, 'declaration.enum.public'>
-				| V.Read<JavaMap, 'declaration.interface'>
-				| V.Read<JavaMap, 'declaration.module'>
-				| V.Read<JavaMap, 'declaration.variable'>
-				| V.Read<JavaMap, 'declaration.variable.constant'>
-				| V.Read<JavaMap, 'expression.assignment'>
-				| V.Read<JavaMap, 'expression.assignment.compound.add'>
-				| V.Read<JavaMap, 'expression.assignment.compound.bitwise_and'>
-				| V.Read<JavaMap, 'expression.assignment.compound.bitwise_or'>
-				| V.Read<JavaMap, 'expression.assignment.compound.bitwise_xor'>
-				| V.Read<JavaMap, 'expression.assignment.compound.divide'>
-				| V.Read<JavaMap, 'expression.assignment.compound.modulo'>
-				| V.Read<JavaMap, 'expression.assignment.compound.multiply'>
-				| V.Read<JavaMap, 'expression.assignment.compound.shift_left'>
-				| V.Read<JavaMap, 'expression.assignment.compound.shift_right'>
-				| V.Read<JavaMap, 'expression.assignment.compound.shift_right_unsigned'>
-				| V.Read<JavaMap, 'expression.assignment.compound.subtract'>
-				| V.Read<JavaMap, 'expression.binary.arithmetic.add'>
-				| V.Read<JavaMap, 'expression.binary.arithmetic.divide'>
-				| V.Read<JavaMap, 'expression.binary.arithmetic.modulo'>
-				| V.Read<JavaMap, 'expression.binary.arithmetic.multiply'>
-				| V.Read<JavaMap, 'expression.binary.arithmetic.subtract'>
-				| V.Read<JavaMap, 'expression.binary.bitwise.and'>
-				| V.Read<JavaMap, 'expression.binary.bitwise.or'>
-				| V.Read<JavaMap, 'expression.binary.bitwise.xor'>
-				| V.Read<JavaMap, 'expression.binary.comparison.equal'>
-				| V.Read<JavaMap, 'expression.binary.comparison.greater'>
-				| V.Read<JavaMap, 'expression.binary.comparison.greater_equal'>
-				| V.Read<JavaMap, 'expression.binary.comparison.less'>
-				| V.Read<JavaMap, 'expression.binary.comparison.less_equal'>
-				| V.Read<JavaMap, 'expression.binary.comparison.not_equal'>
-				| V.Read<JavaMap, 'expression.binary.logical.and'>
-				| V.Read<JavaMap, 'expression.binary.logical.or'>
-				| V.Read<JavaMap, 'expression.binary.membership.instanceof'>
-				| V.Read<JavaMap, 'expression.binary.shift.left'>
-				| V.Read<JavaMap, 'expression.binary.shift.right'>
-				| V.Read<JavaMap, 'expression.binary.shift.right_unsigned'>
-				| V.Read<JavaMap, 'expression.call'>
-				| V.Read<JavaMap, 'expression.call.construct'>
-				| V.Read<JavaMap, 'expression.call.member'>
-				| V.Read<JavaMap, 'expression.call.template'>
-				| V.Read<JavaMap, 'expression.cast'>
-				| V.Read<JavaMap, 'expression.collection.list'>
-				| V.Read<JavaMap, 'expression.conditional'>
-				| V.Read<JavaMap, 'expression.lambda'>
-				| V.Read<JavaMap, 'expression.member'>
-				| V.Read<JavaMap, 'expression.parenthesized'>
-				| V.Read<JavaMap, 'expression.subscript'>
-				| V.Read<JavaMap, 'expression.unary.bitwise_not'>
-				| V.Read<JavaMap, 'expression.unary.negation'>
-				| V.Read<JavaMap, 'expression.unary.not'>
-				| V.Read<JavaMap, 'expression.unary.plus'>
-				| V.Read<JavaMap, 'expression.update.decrement'>
-				| V.Read<JavaMap, 'expression.update.increment'>
-				| V.Read<JavaMap, 'identifier'>
-				| V.Read<JavaMap, 'identifier.qualified'>
-				| V.Text<JavaMap, 'identifier.receiver'>
-				| V.Read<JavaMap, 'literal.boolean.false'>
-				| V.Read<JavaMap, 'literal.boolean.true'>
-				| V.Read<JavaMap, 'literal.character'>
-				| V.Read<JavaMap, 'literal.null'>
-				| V.Read<JavaMap, 'literal.number.float'>
-				| V.Read<JavaMap, 'literal.number.integer'>
-				| V.Read<JavaMap, 'literal.number.integer.binary'>
-				| V.Read<JavaMap, 'literal.number.integer.hex'>
-				| V.Read<JavaMap, 'literal.number.integer.octal'>
-				| V.Read<JavaMap, 'literal.string'>
-				| V.Read<JavaMap, 'literal.string.multiline'>
-				| V.Read<JavaMap, 'statement.assert'>
-				| V.Read<JavaMap, 'statement.block'>
-				| V.Read<JavaMap, 'statement.break'>
-				| V.Read<JavaMap, 'statement.continue'>
-				| V.Read<JavaMap, 'statement.if'>
-				| V.Read<JavaMap, 'statement.import'>
-				| V.Read<JavaMap, 'statement.labeled'>
-				| V.Read<JavaMap, 'statement.loop.counted'>
-				| V.Read<JavaMap, 'statement.loop.do_while'>
-				| V.Read<JavaMap, 'statement.loop.for_each'>
-				| V.Read<JavaMap, 'statement.loop.while'>
-				| V.Read<JavaMap, 'statement.resource'>
-				| V.Read<JavaMap, 'statement.return'>
-				| V.Read<JavaMap, 'statement.switch'>
-				| V.Read<JavaMap, 'statement.throw'>
-				| V.Read<JavaMap, 'statement.try'>
-				| V.Read<JavaMap, 'type.array'>
-				| V.Read<JavaMap, 'type.generic'>
-				| V.Text<JavaMap, 'type.primitive.boolean'>
-				| V.Text<JavaMap, 'type.primitive.character'>
-				| V.Text<JavaMap, 'type.primitive.floating.float32'>
-				| V.Text<JavaMap, 'type.primitive.floating.float64'>
-				| V.Text<JavaMap, 'type.primitive.integral.int16'>
-				| V.Text<JavaMap, 'type.primitive.integral.int32'>
-				| V.Text<JavaMap, 'type.primitive.integral.int64'>
-				| V.Text<JavaMap, 'type.primitive.integral.int8'>
-				| V.Text<JavaMap, 'type.primitive.void'>
-				| ';'
-				| 'boolean'
-				| 'byte'
-				| 'char'
-				| 'double'
-				| 'float'
-				| 'int'
-				| 'long'
-				| 'short'
-				| 'this'
-				| 'void'
-				| V.Unmapped<'java:annotation_type_declaration'>
-				| V.Unmapped<'java:method_reference'>
-				| V.Unmapped<'java:package_declaration'>
-				| V.Unmapped<'java:synchronized_statement'>
-				| T.ArrayAccess.Parsed
-				| T.AssertStatement.Parsed
-				| T.AssignmentExpression.Parsed
-				| T.BinaryExpression.Parsed
-				| T.BinaryIntegerLiteral.Parsed
-				| T.CastExpression.Parsed
-				| T.DecimalFloatingPointLiteral.Parsed
-				| T.DecimalIntegerLiteralArm2.Parsed
-				| T.EnhancedForStatement.Parsed
-				| T.FieldAccess.Parsed
-				| T.ForStatement.Parsed
-				| T.HexFloatingPointLiteral.Parsed
-				| T.HexIntegerLiteral.Parsed
-				| T.InstanceofExpression.Parsed
-				| T.LambdaExpression.Parsed
-				| T.OctalIntegerLiteral.Parsed
-				| T.ParenthesizedExpression.Parsed
-				| T.ReturnStatement.Parsed
-				| T.StringLiteralLine.Parsed
-				| T.TemplateExpression.Parsed
-				| T.TernaryExpression.Parsed
-				| T.ThrowStatement.Parsed
-				| T.TryStatementFinally.Parsed
-				| T.UnaryExpression.Parsed
-				| T.UpdateExpressionPostfix.Parsed
-				| T.UpdateExpressionPrefix.Parsed;
 			readonly $forms: V.Form<'condition' | 'consequence'>;
 		};
 		readonly 'statement.import': {
@@ -7768,146 +7564,6 @@ export interface JavaMap extends V.GrammarMap {
 			readonly $forms: V.Form<'identifier' | 'statement'>;
 		};
 		readonly 'statement.loop.counted': {
-			readonly body:
-				| V.Read<JavaMap, 'declaration.class'>
-				| V.Read<JavaMap, 'declaration.enum'>
-				| V.Read<JavaMap, 'declaration.enum.private'>
-				| V.Read<JavaMap, 'declaration.enum.public'>
-				| V.Read<JavaMap, 'declaration.interface'>
-				| V.Read<JavaMap, 'declaration.module'>
-				| V.Read<JavaMap, 'declaration.variable'>
-				| V.Read<JavaMap, 'declaration.variable.constant'>
-				| V.Read<JavaMap, 'expression.assignment'>
-				| V.Read<JavaMap, 'expression.assignment.compound.add'>
-				| V.Read<JavaMap, 'expression.assignment.compound.bitwise_and'>
-				| V.Read<JavaMap, 'expression.assignment.compound.bitwise_or'>
-				| V.Read<JavaMap, 'expression.assignment.compound.bitwise_xor'>
-				| V.Read<JavaMap, 'expression.assignment.compound.divide'>
-				| V.Read<JavaMap, 'expression.assignment.compound.modulo'>
-				| V.Read<JavaMap, 'expression.assignment.compound.multiply'>
-				| V.Read<JavaMap, 'expression.assignment.compound.shift_left'>
-				| V.Read<JavaMap, 'expression.assignment.compound.shift_right'>
-				| V.Read<JavaMap, 'expression.assignment.compound.shift_right_unsigned'>
-				| V.Read<JavaMap, 'expression.assignment.compound.subtract'>
-				| V.Read<JavaMap, 'expression.binary.arithmetic.add'>
-				| V.Read<JavaMap, 'expression.binary.arithmetic.divide'>
-				| V.Read<JavaMap, 'expression.binary.arithmetic.modulo'>
-				| V.Read<JavaMap, 'expression.binary.arithmetic.multiply'>
-				| V.Read<JavaMap, 'expression.binary.arithmetic.subtract'>
-				| V.Read<JavaMap, 'expression.binary.bitwise.and'>
-				| V.Read<JavaMap, 'expression.binary.bitwise.or'>
-				| V.Read<JavaMap, 'expression.binary.bitwise.xor'>
-				| V.Read<JavaMap, 'expression.binary.comparison.equal'>
-				| V.Read<JavaMap, 'expression.binary.comparison.greater'>
-				| V.Read<JavaMap, 'expression.binary.comparison.greater_equal'>
-				| V.Read<JavaMap, 'expression.binary.comparison.less'>
-				| V.Read<JavaMap, 'expression.binary.comparison.less_equal'>
-				| V.Read<JavaMap, 'expression.binary.comparison.not_equal'>
-				| V.Read<JavaMap, 'expression.binary.logical.and'>
-				| V.Read<JavaMap, 'expression.binary.logical.or'>
-				| V.Read<JavaMap, 'expression.binary.membership.instanceof'>
-				| V.Read<JavaMap, 'expression.binary.shift.left'>
-				| V.Read<JavaMap, 'expression.binary.shift.right'>
-				| V.Read<JavaMap, 'expression.binary.shift.right_unsigned'>
-				| V.Read<JavaMap, 'expression.call'>
-				| V.Read<JavaMap, 'expression.call.construct'>
-				| V.Read<JavaMap, 'expression.call.member'>
-				| V.Read<JavaMap, 'expression.call.template'>
-				| V.Read<JavaMap, 'expression.cast'>
-				| V.Read<JavaMap, 'expression.collection.list'>
-				| V.Read<JavaMap, 'expression.conditional'>
-				| V.Read<JavaMap, 'expression.lambda'>
-				| V.Read<JavaMap, 'expression.member'>
-				| V.Read<JavaMap, 'expression.parenthesized'>
-				| V.Read<JavaMap, 'expression.subscript'>
-				| V.Read<JavaMap, 'expression.unary.bitwise_not'>
-				| V.Read<JavaMap, 'expression.unary.negation'>
-				| V.Read<JavaMap, 'expression.unary.not'>
-				| V.Read<JavaMap, 'expression.unary.plus'>
-				| V.Read<JavaMap, 'expression.update.decrement'>
-				| V.Read<JavaMap, 'expression.update.increment'>
-				| V.Read<JavaMap, 'identifier'>
-				| V.Read<JavaMap, 'identifier.qualified'>
-				| V.Text<JavaMap, 'identifier.receiver'>
-				| V.Read<JavaMap, 'literal.boolean.false'>
-				| V.Read<JavaMap, 'literal.boolean.true'>
-				| V.Read<JavaMap, 'literal.character'>
-				| V.Read<JavaMap, 'literal.null'>
-				| V.Read<JavaMap, 'literal.number.float'>
-				| V.Read<JavaMap, 'literal.number.integer'>
-				| V.Read<JavaMap, 'literal.number.integer.binary'>
-				| V.Read<JavaMap, 'literal.number.integer.hex'>
-				| V.Read<JavaMap, 'literal.number.integer.octal'>
-				| V.Read<JavaMap, 'literal.string'>
-				| V.Read<JavaMap, 'literal.string.multiline'>
-				| V.Read<JavaMap, 'statement.assert'>
-				| V.Read<JavaMap, 'statement.block'>
-				| V.Read<JavaMap, 'statement.break'>
-				| V.Read<JavaMap, 'statement.continue'>
-				| V.Read<JavaMap, 'statement.if'>
-				| V.Read<JavaMap, 'statement.import'>
-				| V.Read<JavaMap, 'statement.labeled'>
-				| V.Read<JavaMap, 'statement.loop.counted'>
-				| V.Read<JavaMap, 'statement.loop.do_while'>
-				| V.Read<JavaMap, 'statement.loop.for_each'>
-				| V.Read<JavaMap, 'statement.loop.while'>
-				| V.Read<JavaMap, 'statement.resource'>
-				| V.Read<JavaMap, 'statement.return'>
-				| V.Read<JavaMap, 'statement.switch'>
-				| V.Read<JavaMap, 'statement.throw'>
-				| V.Read<JavaMap, 'statement.try'>
-				| V.Read<JavaMap, 'type.array'>
-				| V.Read<JavaMap, 'type.generic'>
-				| V.Text<JavaMap, 'type.primitive.boolean'>
-				| V.Text<JavaMap, 'type.primitive.character'>
-				| V.Text<JavaMap, 'type.primitive.floating.float32'>
-				| V.Text<JavaMap, 'type.primitive.floating.float64'>
-				| V.Text<JavaMap, 'type.primitive.integral.int16'>
-				| V.Text<JavaMap, 'type.primitive.integral.int32'>
-				| V.Text<JavaMap, 'type.primitive.integral.int64'>
-				| V.Text<JavaMap, 'type.primitive.integral.int8'>
-				| V.Text<JavaMap, 'type.primitive.void'>
-				| ';'
-				| 'boolean'
-				| 'byte'
-				| 'char'
-				| 'double'
-				| 'float'
-				| 'int'
-				| 'long'
-				| 'short'
-				| 'this'
-				| 'void'
-				| V.Unmapped<'java:annotation_type_declaration'>
-				| V.Unmapped<'java:method_reference'>
-				| V.Unmapped<'java:package_declaration'>
-				| V.Unmapped<'java:synchronized_statement'>
-				| T.ArrayAccess.Parsed
-				| T.AssertStatement.Parsed
-				| T.AssignmentExpression.Parsed
-				| T.BinaryExpression.Parsed
-				| T.BinaryIntegerLiteral.Parsed
-				| T.CastExpression.Parsed
-				| T.DecimalFloatingPointLiteral.Parsed
-				| T.DecimalIntegerLiteralArm2.Parsed
-				| T.EnhancedForStatement.Parsed
-				| T.FieldAccess.Parsed
-				| T.ForStatement.Parsed
-				| T.HexFloatingPointLiteral.Parsed
-				| T.HexIntegerLiteral.Parsed
-				| T.InstanceofExpression.Parsed
-				| T.LambdaExpression.Parsed
-				| T.OctalIntegerLiteral.Parsed
-				| T.ParenthesizedExpression.Parsed
-				| T.ReturnStatement.Parsed
-				| T.StringLiteralLine.Parsed
-				| T.TemplateExpression.Parsed
-				| T.TernaryExpression.Parsed
-				| T.ThrowStatement.Parsed
-				| T.TryStatementFinally.Parsed
-				| T.UnaryExpression.Parsed
-				| T.UpdateExpressionPostfix.Parsed
-				| T.UpdateExpressionPrefix.Parsed;
 			readonly condition:
 				| V.Read<JavaMap, 'expression.assignment'>
 				| V.Read<JavaMap, 'expression.assignment.compound.add'>
@@ -8018,438 +7674,17 @@ export interface JavaMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body', 'content'> | V.Form<'body' | 'content'>;
 		};
 		readonly 'statement.loop.do_while': {
-			readonly body:
-				| V.Read<JavaMap, 'declaration.class'>
-				| V.Read<JavaMap, 'declaration.enum'>
-				| V.Read<JavaMap, 'declaration.enum.private'>
-				| V.Read<JavaMap, 'declaration.enum.public'>
-				| V.Read<JavaMap, 'declaration.interface'>
-				| V.Read<JavaMap, 'declaration.module'>
-				| V.Read<JavaMap, 'declaration.variable'>
-				| V.Read<JavaMap, 'declaration.variable.constant'>
-				| V.Read<JavaMap, 'expression.assignment'>
-				| V.Read<JavaMap, 'expression.assignment.compound.add'>
-				| V.Read<JavaMap, 'expression.assignment.compound.bitwise_and'>
-				| V.Read<JavaMap, 'expression.assignment.compound.bitwise_or'>
-				| V.Read<JavaMap, 'expression.assignment.compound.bitwise_xor'>
-				| V.Read<JavaMap, 'expression.assignment.compound.divide'>
-				| V.Read<JavaMap, 'expression.assignment.compound.modulo'>
-				| V.Read<JavaMap, 'expression.assignment.compound.multiply'>
-				| V.Read<JavaMap, 'expression.assignment.compound.shift_left'>
-				| V.Read<JavaMap, 'expression.assignment.compound.shift_right'>
-				| V.Read<JavaMap, 'expression.assignment.compound.shift_right_unsigned'>
-				| V.Read<JavaMap, 'expression.assignment.compound.subtract'>
-				| V.Read<JavaMap, 'expression.binary.arithmetic.add'>
-				| V.Read<JavaMap, 'expression.binary.arithmetic.divide'>
-				| V.Read<JavaMap, 'expression.binary.arithmetic.modulo'>
-				| V.Read<JavaMap, 'expression.binary.arithmetic.multiply'>
-				| V.Read<JavaMap, 'expression.binary.arithmetic.subtract'>
-				| V.Read<JavaMap, 'expression.binary.bitwise.and'>
-				| V.Read<JavaMap, 'expression.binary.bitwise.or'>
-				| V.Read<JavaMap, 'expression.binary.bitwise.xor'>
-				| V.Read<JavaMap, 'expression.binary.comparison.equal'>
-				| V.Read<JavaMap, 'expression.binary.comparison.greater'>
-				| V.Read<JavaMap, 'expression.binary.comparison.greater_equal'>
-				| V.Read<JavaMap, 'expression.binary.comparison.less'>
-				| V.Read<JavaMap, 'expression.binary.comparison.less_equal'>
-				| V.Read<JavaMap, 'expression.binary.comparison.not_equal'>
-				| V.Read<JavaMap, 'expression.binary.logical.and'>
-				| V.Read<JavaMap, 'expression.binary.logical.or'>
-				| V.Read<JavaMap, 'expression.binary.membership.instanceof'>
-				| V.Read<JavaMap, 'expression.binary.shift.left'>
-				| V.Read<JavaMap, 'expression.binary.shift.right'>
-				| V.Read<JavaMap, 'expression.binary.shift.right_unsigned'>
-				| V.Read<JavaMap, 'expression.call'>
-				| V.Read<JavaMap, 'expression.call.construct'>
-				| V.Read<JavaMap, 'expression.call.member'>
-				| V.Read<JavaMap, 'expression.call.template'>
-				| V.Read<JavaMap, 'expression.cast'>
-				| V.Read<JavaMap, 'expression.collection.list'>
-				| V.Read<JavaMap, 'expression.conditional'>
-				| V.Read<JavaMap, 'expression.lambda'>
-				| V.Read<JavaMap, 'expression.member'>
-				| V.Read<JavaMap, 'expression.parenthesized'>
-				| V.Read<JavaMap, 'expression.subscript'>
-				| V.Read<JavaMap, 'expression.unary.bitwise_not'>
-				| V.Read<JavaMap, 'expression.unary.negation'>
-				| V.Read<JavaMap, 'expression.unary.not'>
-				| V.Read<JavaMap, 'expression.unary.plus'>
-				| V.Read<JavaMap, 'expression.update.decrement'>
-				| V.Read<JavaMap, 'expression.update.increment'>
-				| V.Read<JavaMap, 'identifier'>
-				| V.Read<JavaMap, 'identifier.qualified'>
-				| V.Text<JavaMap, 'identifier.receiver'>
-				| V.Read<JavaMap, 'literal.boolean.false'>
-				| V.Read<JavaMap, 'literal.boolean.true'>
-				| V.Read<JavaMap, 'literal.character'>
-				| V.Read<JavaMap, 'literal.null'>
-				| V.Read<JavaMap, 'literal.number.float'>
-				| V.Read<JavaMap, 'literal.number.integer'>
-				| V.Read<JavaMap, 'literal.number.integer.binary'>
-				| V.Read<JavaMap, 'literal.number.integer.hex'>
-				| V.Read<JavaMap, 'literal.number.integer.octal'>
-				| V.Read<JavaMap, 'literal.string'>
-				| V.Read<JavaMap, 'literal.string.multiline'>
-				| V.Read<JavaMap, 'statement.assert'>
-				| V.Read<JavaMap, 'statement.block'>
-				| V.Read<JavaMap, 'statement.break'>
-				| V.Read<JavaMap, 'statement.continue'>
-				| V.Read<JavaMap, 'statement.if'>
-				| V.Read<JavaMap, 'statement.import'>
-				| V.Read<JavaMap, 'statement.labeled'>
-				| V.Read<JavaMap, 'statement.loop.counted'>
-				| V.Read<JavaMap, 'statement.loop.do_while'>
-				| V.Read<JavaMap, 'statement.loop.for_each'>
-				| V.Read<JavaMap, 'statement.loop.while'>
-				| V.Read<JavaMap, 'statement.resource'>
-				| V.Read<JavaMap, 'statement.return'>
-				| V.Read<JavaMap, 'statement.switch'>
-				| V.Read<JavaMap, 'statement.throw'>
-				| V.Read<JavaMap, 'statement.try'>
-				| V.Read<JavaMap, 'type.array'>
-				| V.Read<JavaMap, 'type.generic'>
-				| V.Text<JavaMap, 'type.primitive.boolean'>
-				| V.Text<JavaMap, 'type.primitive.character'>
-				| V.Text<JavaMap, 'type.primitive.floating.float32'>
-				| V.Text<JavaMap, 'type.primitive.floating.float64'>
-				| V.Text<JavaMap, 'type.primitive.integral.int16'>
-				| V.Text<JavaMap, 'type.primitive.integral.int32'>
-				| V.Text<JavaMap, 'type.primitive.integral.int64'>
-				| V.Text<JavaMap, 'type.primitive.integral.int8'>
-				| V.Text<JavaMap, 'type.primitive.void'>
-				| ';'
-				| 'boolean'
-				| 'byte'
-				| 'char'
-				| 'double'
-				| 'float'
-				| 'int'
-				| 'long'
-				| 'short'
-				| 'this'
-				| 'void'
-				| V.Unmapped<'java:annotation_type_declaration'>
-				| V.Unmapped<'java:method_reference'>
-				| V.Unmapped<'java:package_declaration'>
-				| V.Unmapped<'java:synchronized_statement'>
-				| T.ArrayAccess.Parsed
-				| T.AssertStatement.Parsed
-				| T.AssignmentExpression.Parsed
-				| T.BinaryExpression.Parsed
-				| T.BinaryIntegerLiteral.Parsed
-				| T.CastExpression.Parsed
-				| T.DecimalFloatingPointLiteral.Parsed
-				| T.DecimalIntegerLiteralArm2.Parsed
-				| T.EnhancedForStatement.Parsed
-				| T.FieldAccess.Parsed
-				| T.ForStatement.Parsed
-				| T.HexFloatingPointLiteral.Parsed
-				| T.HexIntegerLiteral.Parsed
-				| T.InstanceofExpression.Parsed
-				| T.LambdaExpression.Parsed
-				| T.OctalIntegerLiteral.Parsed
-				| T.ParenthesizedExpression.Parsed
-				| T.ReturnStatement.Parsed
-				| T.StringLiteralLine.Parsed
-				| T.TemplateExpression.Parsed
-				| T.TernaryExpression.Parsed
-				| T.ThrowStatement.Parsed
-				| T.TryStatementFinally.Parsed
-				| T.UnaryExpression.Parsed
-				| T.UpdateExpressionPostfix.Parsed
-				| T.UpdateExpressionPrefix.Parsed;
 			readonly condition: V.Read<JavaMap, 'expression.parenthesized'> | T.ParenthesizedExpression.Parsed;
 			readonly $forms: V.Form<'body' | 'condition'>;
 		};
 		readonly 'statement.loop.for_each': {
-			readonly body:
-				| V.Read<JavaMap, 'declaration.class'>
-				| V.Read<JavaMap, 'declaration.enum'>
-				| V.Read<JavaMap, 'declaration.enum.private'>
-				| V.Read<JavaMap, 'declaration.enum.public'>
-				| V.Read<JavaMap, 'declaration.interface'>
-				| V.Read<JavaMap, 'declaration.module'>
-				| V.Read<JavaMap, 'declaration.variable'>
-				| V.Read<JavaMap, 'declaration.variable.constant'>
-				| V.Read<JavaMap, 'expression.assignment'>
-				| V.Read<JavaMap, 'expression.assignment.compound.add'>
-				| V.Read<JavaMap, 'expression.assignment.compound.bitwise_and'>
-				| V.Read<JavaMap, 'expression.assignment.compound.bitwise_or'>
-				| V.Read<JavaMap, 'expression.assignment.compound.bitwise_xor'>
-				| V.Read<JavaMap, 'expression.assignment.compound.divide'>
-				| V.Read<JavaMap, 'expression.assignment.compound.modulo'>
-				| V.Read<JavaMap, 'expression.assignment.compound.multiply'>
-				| V.Read<JavaMap, 'expression.assignment.compound.shift_left'>
-				| V.Read<JavaMap, 'expression.assignment.compound.shift_right'>
-				| V.Read<JavaMap, 'expression.assignment.compound.shift_right_unsigned'>
-				| V.Read<JavaMap, 'expression.assignment.compound.subtract'>
-				| V.Read<JavaMap, 'expression.binary.arithmetic.add'>
-				| V.Read<JavaMap, 'expression.binary.arithmetic.divide'>
-				| V.Read<JavaMap, 'expression.binary.arithmetic.modulo'>
-				| V.Read<JavaMap, 'expression.binary.arithmetic.multiply'>
-				| V.Read<JavaMap, 'expression.binary.arithmetic.subtract'>
-				| V.Read<JavaMap, 'expression.binary.bitwise.and'>
-				| V.Read<JavaMap, 'expression.binary.bitwise.or'>
-				| V.Read<JavaMap, 'expression.binary.bitwise.xor'>
-				| V.Read<JavaMap, 'expression.binary.comparison.equal'>
-				| V.Read<JavaMap, 'expression.binary.comparison.greater'>
-				| V.Read<JavaMap, 'expression.binary.comparison.greater_equal'>
-				| V.Read<JavaMap, 'expression.binary.comparison.less'>
-				| V.Read<JavaMap, 'expression.binary.comparison.less_equal'>
-				| V.Read<JavaMap, 'expression.binary.comparison.not_equal'>
-				| V.Read<JavaMap, 'expression.binary.logical.and'>
-				| V.Read<JavaMap, 'expression.binary.logical.or'>
-				| V.Read<JavaMap, 'expression.binary.membership.instanceof'>
-				| V.Read<JavaMap, 'expression.binary.shift.left'>
-				| V.Read<JavaMap, 'expression.binary.shift.right'>
-				| V.Read<JavaMap, 'expression.binary.shift.right_unsigned'>
-				| V.Read<JavaMap, 'expression.call'>
-				| V.Read<JavaMap, 'expression.call.construct'>
-				| V.Read<JavaMap, 'expression.call.member'>
-				| V.Read<JavaMap, 'expression.call.template'>
-				| V.Read<JavaMap, 'expression.cast'>
-				| V.Read<JavaMap, 'expression.collection.list'>
-				| V.Read<JavaMap, 'expression.conditional'>
-				| V.Read<JavaMap, 'expression.lambda'>
-				| V.Read<JavaMap, 'expression.member'>
-				| V.Read<JavaMap, 'expression.parenthesized'>
-				| V.Read<JavaMap, 'expression.subscript'>
-				| V.Read<JavaMap, 'expression.unary.bitwise_not'>
-				| V.Read<JavaMap, 'expression.unary.negation'>
-				| V.Read<JavaMap, 'expression.unary.not'>
-				| V.Read<JavaMap, 'expression.unary.plus'>
-				| V.Read<JavaMap, 'expression.update.decrement'>
-				| V.Read<JavaMap, 'expression.update.increment'>
-				| V.Read<JavaMap, 'identifier'>
-				| V.Read<JavaMap, 'identifier.qualified'>
-				| V.Text<JavaMap, 'identifier.receiver'>
-				| V.Read<JavaMap, 'literal.boolean.false'>
-				| V.Read<JavaMap, 'literal.boolean.true'>
-				| V.Read<JavaMap, 'literal.character'>
-				| V.Read<JavaMap, 'literal.null'>
-				| V.Read<JavaMap, 'literal.number.float'>
-				| V.Read<JavaMap, 'literal.number.integer'>
-				| V.Read<JavaMap, 'literal.number.integer.binary'>
-				| V.Read<JavaMap, 'literal.number.integer.hex'>
-				| V.Read<JavaMap, 'literal.number.integer.octal'>
-				| V.Read<JavaMap, 'literal.string'>
-				| V.Read<JavaMap, 'literal.string.multiline'>
-				| V.Read<JavaMap, 'statement.assert'>
-				| V.Read<JavaMap, 'statement.block'>
-				| V.Read<JavaMap, 'statement.break'>
-				| V.Read<JavaMap, 'statement.continue'>
-				| V.Read<JavaMap, 'statement.if'>
-				| V.Read<JavaMap, 'statement.import'>
-				| V.Read<JavaMap, 'statement.labeled'>
-				| V.Read<JavaMap, 'statement.loop.counted'>
-				| V.Read<JavaMap, 'statement.loop.do_while'>
-				| V.Read<JavaMap, 'statement.loop.for_each'>
-				| V.Read<JavaMap, 'statement.loop.while'>
-				| V.Read<JavaMap, 'statement.resource'>
-				| V.Read<JavaMap, 'statement.return'>
-				| V.Read<JavaMap, 'statement.switch'>
-				| V.Read<JavaMap, 'statement.throw'>
-				| V.Read<JavaMap, 'statement.try'>
-				| V.Read<JavaMap, 'type.array'>
-				| V.Read<JavaMap, 'type.generic'>
-				| V.Text<JavaMap, 'type.primitive.boolean'>
-				| V.Text<JavaMap, 'type.primitive.character'>
-				| V.Text<JavaMap, 'type.primitive.floating.float32'>
-				| V.Text<JavaMap, 'type.primitive.floating.float64'>
-				| V.Text<JavaMap, 'type.primitive.integral.int16'>
-				| V.Text<JavaMap, 'type.primitive.integral.int32'>
-				| V.Text<JavaMap, 'type.primitive.integral.int64'>
-				| V.Text<JavaMap, 'type.primitive.integral.int8'>
-				| V.Text<JavaMap, 'type.primitive.void'>
-				| ';'
-				| 'boolean'
-				| 'byte'
-				| 'char'
-				| 'double'
-				| 'float'
-				| 'int'
-				| 'long'
-				| 'short'
-				| 'this'
-				| 'void'
-				| V.Unmapped<'java:annotation_type_declaration'>
-				| V.Unmapped<'java:method_reference'>
-				| V.Unmapped<'java:package_declaration'>
-				| V.Unmapped<'java:synchronized_statement'>
-				| T.ArrayAccess.Parsed
-				| T.AssertStatement.Parsed
-				| T.AssignmentExpression.Parsed
-				| T.BinaryExpression.Parsed
-				| T.BinaryIntegerLiteral.Parsed
-				| T.CastExpression.Parsed
-				| T.DecimalFloatingPointLiteral.Parsed
-				| T.DecimalIntegerLiteralArm2.Parsed
-				| T.EnhancedForStatement.Parsed
-				| T.FieldAccess.Parsed
-				| T.ForStatement.Parsed
-				| T.HexFloatingPointLiteral.Parsed
-				| T.HexIntegerLiteral.Parsed
-				| T.InstanceofExpression.Parsed
-				| T.LambdaExpression.Parsed
-				| T.OctalIntegerLiteral.Parsed
-				| T.ParenthesizedExpression.Parsed
-				| T.ReturnStatement.Parsed
-				| T.StringLiteralLine.Parsed
-				| T.TemplateExpression.Parsed
-				| T.TernaryExpression.Parsed
-				| T.ThrowStatement.Parsed
-				| T.TryStatementFinally.Parsed
-				| T.UnaryExpression.Parsed
-				| T.UpdateExpressionPostfix.Parsed
-				| T.UpdateExpressionPrefix.Parsed;
 			readonly $forms: V.Form<'body' | 'name' | 'type' | 'value'>;
 		};
 		readonly 'statement.loop.while': {
-			readonly body:
-				| V.Read<JavaMap, 'declaration.class'>
-				| V.Read<JavaMap, 'declaration.enum'>
-				| V.Read<JavaMap, 'declaration.enum.private'>
-				| V.Read<JavaMap, 'declaration.enum.public'>
-				| V.Read<JavaMap, 'declaration.interface'>
-				| V.Read<JavaMap, 'declaration.module'>
-				| V.Read<JavaMap, 'declaration.variable'>
-				| V.Read<JavaMap, 'declaration.variable.constant'>
-				| V.Read<JavaMap, 'expression.assignment'>
-				| V.Read<JavaMap, 'expression.assignment.compound.add'>
-				| V.Read<JavaMap, 'expression.assignment.compound.bitwise_and'>
-				| V.Read<JavaMap, 'expression.assignment.compound.bitwise_or'>
-				| V.Read<JavaMap, 'expression.assignment.compound.bitwise_xor'>
-				| V.Read<JavaMap, 'expression.assignment.compound.divide'>
-				| V.Read<JavaMap, 'expression.assignment.compound.modulo'>
-				| V.Read<JavaMap, 'expression.assignment.compound.multiply'>
-				| V.Read<JavaMap, 'expression.assignment.compound.shift_left'>
-				| V.Read<JavaMap, 'expression.assignment.compound.shift_right'>
-				| V.Read<JavaMap, 'expression.assignment.compound.shift_right_unsigned'>
-				| V.Read<JavaMap, 'expression.assignment.compound.subtract'>
-				| V.Read<JavaMap, 'expression.binary.arithmetic.add'>
-				| V.Read<JavaMap, 'expression.binary.arithmetic.divide'>
-				| V.Read<JavaMap, 'expression.binary.arithmetic.modulo'>
-				| V.Read<JavaMap, 'expression.binary.arithmetic.multiply'>
-				| V.Read<JavaMap, 'expression.binary.arithmetic.subtract'>
-				| V.Read<JavaMap, 'expression.binary.bitwise.and'>
-				| V.Read<JavaMap, 'expression.binary.bitwise.or'>
-				| V.Read<JavaMap, 'expression.binary.bitwise.xor'>
-				| V.Read<JavaMap, 'expression.binary.comparison.equal'>
-				| V.Read<JavaMap, 'expression.binary.comparison.greater'>
-				| V.Read<JavaMap, 'expression.binary.comparison.greater_equal'>
-				| V.Read<JavaMap, 'expression.binary.comparison.less'>
-				| V.Read<JavaMap, 'expression.binary.comparison.less_equal'>
-				| V.Read<JavaMap, 'expression.binary.comparison.not_equal'>
-				| V.Read<JavaMap, 'expression.binary.logical.and'>
-				| V.Read<JavaMap, 'expression.binary.logical.or'>
-				| V.Read<JavaMap, 'expression.binary.membership.instanceof'>
-				| V.Read<JavaMap, 'expression.binary.shift.left'>
-				| V.Read<JavaMap, 'expression.binary.shift.right'>
-				| V.Read<JavaMap, 'expression.binary.shift.right_unsigned'>
-				| V.Read<JavaMap, 'expression.call'>
-				| V.Read<JavaMap, 'expression.call.construct'>
-				| V.Read<JavaMap, 'expression.call.member'>
-				| V.Read<JavaMap, 'expression.call.template'>
-				| V.Read<JavaMap, 'expression.cast'>
-				| V.Read<JavaMap, 'expression.collection.list'>
-				| V.Read<JavaMap, 'expression.conditional'>
-				| V.Read<JavaMap, 'expression.lambda'>
-				| V.Read<JavaMap, 'expression.member'>
-				| V.Read<JavaMap, 'expression.parenthesized'>
-				| V.Read<JavaMap, 'expression.subscript'>
-				| V.Read<JavaMap, 'expression.unary.bitwise_not'>
-				| V.Read<JavaMap, 'expression.unary.negation'>
-				| V.Read<JavaMap, 'expression.unary.not'>
-				| V.Read<JavaMap, 'expression.unary.plus'>
-				| V.Read<JavaMap, 'expression.update.decrement'>
-				| V.Read<JavaMap, 'expression.update.increment'>
-				| V.Read<JavaMap, 'identifier'>
-				| V.Read<JavaMap, 'identifier.qualified'>
-				| V.Text<JavaMap, 'identifier.receiver'>
-				| V.Read<JavaMap, 'literal.boolean.false'>
-				| V.Read<JavaMap, 'literal.boolean.true'>
-				| V.Read<JavaMap, 'literal.character'>
-				| V.Read<JavaMap, 'literal.null'>
-				| V.Read<JavaMap, 'literal.number.float'>
-				| V.Read<JavaMap, 'literal.number.integer'>
-				| V.Read<JavaMap, 'literal.number.integer.binary'>
-				| V.Read<JavaMap, 'literal.number.integer.hex'>
-				| V.Read<JavaMap, 'literal.number.integer.octal'>
-				| V.Read<JavaMap, 'literal.string'>
-				| V.Read<JavaMap, 'literal.string.multiline'>
-				| V.Read<JavaMap, 'statement.assert'>
-				| V.Read<JavaMap, 'statement.block'>
-				| V.Read<JavaMap, 'statement.break'>
-				| V.Read<JavaMap, 'statement.continue'>
-				| V.Read<JavaMap, 'statement.if'>
-				| V.Read<JavaMap, 'statement.import'>
-				| V.Read<JavaMap, 'statement.labeled'>
-				| V.Read<JavaMap, 'statement.loop.counted'>
-				| V.Read<JavaMap, 'statement.loop.do_while'>
-				| V.Read<JavaMap, 'statement.loop.for_each'>
-				| V.Read<JavaMap, 'statement.loop.while'>
-				| V.Read<JavaMap, 'statement.resource'>
-				| V.Read<JavaMap, 'statement.return'>
-				| V.Read<JavaMap, 'statement.switch'>
-				| V.Read<JavaMap, 'statement.throw'>
-				| V.Read<JavaMap, 'statement.try'>
-				| V.Read<JavaMap, 'type.array'>
-				| V.Read<JavaMap, 'type.generic'>
-				| V.Text<JavaMap, 'type.primitive.boolean'>
-				| V.Text<JavaMap, 'type.primitive.character'>
-				| V.Text<JavaMap, 'type.primitive.floating.float32'>
-				| V.Text<JavaMap, 'type.primitive.floating.float64'>
-				| V.Text<JavaMap, 'type.primitive.integral.int16'>
-				| V.Text<JavaMap, 'type.primitive.integral.int32'>
-				| V.Text<JavaMap, 'type.primitive.integral.int64'>
-				| V.Text<JavaMap, 'type.primitive.integral.int8'>
-				| V.Text<JavaMap, 'type.primitive.void'>
-				| ';'
-				| 'boolean'
-				| 'byte'
-				| 'char'
-				| 'double'
-				| 'float'
-				| 'int'
-				| 'long'
-				| 'short'
-				| 'this'
-				| 'void'
-				| V.Unmapped<'java:annotation_type_declaration'>
-				| V.Unmapped<'java:method_reference'>
-				| V.Unmapped<'java:package_declaration'>
-				| V.Unmapped<'java:synchronized_statement'>
-				| T.ArrayAccess.Parsed
-				| T.AssertStatement.Parsed
-				| T.AssignmentExpression.Parsed
-				| T.BinaryExpression.Parsed
-				| T.BinaryIntegerLiteral.Parsed
-				| T.CastExpression.Parsed
-				| T.DecimalFloatingPointLiteral.Parsed
-				| T.DecimalIntegerLiteralArm2.Parsed
-				| T.EnhancedForStatement.Parsed
-				| T.FieldAccess.Parsed
-				| T.ForStatement.Parsed
-				| T.HexFloatingPointLiteral.Parsed
-				| T.HexIntegerLiteral.Parsed
-				| T.InstanceofExpression.Parsed
-				| T.LambdaExpression.Parsed
-				| T.OctalIntegerLiteral.Parsed
-				| T.ParenthesizedExpression.Parsed
-				| T.ReturnStatement.Parsed
-				| T.StringLiteralLine.Parsed
-				| T.TemplateExpression.Parsed
-				| T.TernaryExpression.Parsed
-				| T.ThrowStatement.Parsed
-				| T.TryStatementFinally.Parsed
-				| T.UnaryExpression.Parsed
-				| T.UpdateExpressionPostfix.Parsed
-				| T.UpdateExpressionPrefix.Parsed;
 			readonly condition: V.Read<JavaMap, 'expression.parenthesized'> | T.ParenthesizedExpression.Parsed;
 			readonly $forms: V.Form<'body' | 'condition'>;
 		};
 		readonly 'statement.resource': {
-			readonly body: V.Read<JavaMap, 'statement.block'>;
 			readonly $forms: V.Form<'body' | 'resources'>;
 		};
 		readonly 'statement.return': {
@@ -8674,10 +7909,6 @@ export interface JavaMap extends V.GrammarMap {
 				| T.UpdateExpressionPrefix.Parsed;
 			readonly $forms: V.Form<'expression'>;
 		};
-		readonly 'statement.try': {
-			readonly body: V.Read<JavaMap, 'statement.block'>;
-			readonly $forms: V.Form<'body'>;
-		};
 		readonly 'type.array': {
 			readonly element:
 				| V.Read<JavaMap, 'identifier'>
@@ -8791,32 +8022,35 @@ export interface JavaMap extends V.GrammarMap {
 			readonly 'comment.block': TSKindId.BlockComment;
 			readonly 'comment.block.doc': TSKindId.BlockComment;
 			readonly 'comment.line': TSKindId.LineComment;
-			readonly 'declaration.class': TSKindId.ClassDeclaration | TSKindId.RecordDeclaration;
 			readonly 'declaration.constant': TSKindId.ConstantDeclaration;
 			readonly 'declaration.constant.private': TSKindId.ConstantDeclaration;
 			readonly 'declaration.constant.public': TSKindId.ConstantDeclaration;
-			readonly 'declaration.constructor': TSKindId.CompactConstructorDeclaration | TSKindId.ConstructorDeclaration;
-			readonly 'declaration.constructor.private': TSKindId.ConstructorDeclaration;
-			readonly 'declaration.constructor.protected': TSKindId.ConstructorDeclaration;
-			readonly 'declaration.constructor.public': TSKindId.ConstructorDeclaration;
-			readonly 'declaration.enum': TSKindId.EnumDeclaration;
-			readonly 'declaration.enum.private': TSKindId.EnumDeclaration;
-			readonly 'declaration.enum.public': TSKindId.EnumDeclaration;
-			readonly 'declaration.enum_member': TSKindId.EnumConstant;
-			readonly 'declaration.field': TSKindId.FieldDeclaration;
-			readonly 'declaration.field.private': TSKindId.FieldDeclaration;
-			readonly 'declaration.field.protected': TSKindId.FieldDeclaration;
-			readonly 'declaration.field.public': TSKindId.FieldDeclaration;
-			readonly 'declaration.interface': TSKindId.InterfaceDeclaration;
-			readonly 'declaration.method': TSKindId.MethodDeclaration;
-			readonly 'declaration.method.private': TSKindId.MethodDeclaration;
-			readonly 'declaration.method.protected': TSKindId.MethodDeclaration;
-			readonly 'declaration.method.public': TSKindId.MethodDeclaration;
-			readonly 'declaration.method.signature.abstract': TSKindId.MethodDeclaration;
+			readonly 'declaration.member.constructor':
+				| TSKindId.CompactConstructorDeclaration
+				| TSKindId.ConstructorDeclaration;
+			readonly 'declaration.member.constructor.private': TSKindId.ConstructorDeclaration;
+			readonly 'declaration.member.constructor.protected': TSKindId.ConstructorDeclaration;
+			readonly 'declaration.member.constructor.public': TSKindId.ConstructorDeclaration;
+			readonly 'declaration.member.enum_member': TSKindId.EnumConstant;
+			readonly 'declaration.member.field': TSKindId.FieldDeclaration;
+			readonly 'declaration.member.field.private': TSKindId.FieldDeclaration;
+			readonly 'declaration.member.field.protected': TSKindId.FieldDeclaration;
+			readonly 'declaration.member.field.public': TSKindId.FieldDeclaration;
+			readonly 'declaration.member.method': TSKindId.MethodDeclaration;
+			readonly 'declaration.member.method.private': TSKindId.MethodDeclaration;
+			readonly 'declaration.member.method.protected': TSKindId.MethodDeclaration;
+			readonly 'declaration.member.method.public': TSKindId.MethodDeclaration;
+			readonly 'declaration.member.method.signature.abstract': TSKindId.MethodDeclaration;
+			readonly 'declaration.member.static_block': TSKindId.StaticInitializer;
 			readonly 'declaration.module': TSKindId.ModuleDeclaration;
 			readonly 'declaration.parameter': TSKindId.FormalParameter;
 			readonly 'declaration.parameter.receiver': TSKindId.ReceiverParameter;
 			readonly 'declaration.parameter.variadic': TSKindId.SpreadParameter;
+			readonly 'declaration.type.class': TSKindId.ClassDeclaration | TSKindId.RecordDeclaration;
+			readonly 'declaration.type.enum': TSKindId.EnumDeclaration;
+			readonly 'declaration.type.enum.private': TSKindId.EnumDeclaration;
+			readonly 'declaration.type.enum.public': TSKindId.EnumDeclaration;
+			readonly 'declaration.type.interface': TSKindId.InterfaceDeclaration;
 			readonly 'declaration.type_parameter': TSKindId.TypeParameter;
 			readonly 'declaration.variable': TSKindId.LocalVariableDeclaration;
 			readonly 'declaration.variable.constant': TSKindId.LocalVariableDeclaration;
@@ -8902,7 +8136,6 @@ export interface JavaMap extends V.GrammarMap {
 			readonly 'pattern.wildcard': TSKindId.UnderscorePattern;
 			readonly 'statement.assert': TSKindId.AssertStatement;
 			readonly 'statement.block': TSKindId.Block;
-			readonly 'statement.block.static': TSKindId.StaticInitializer;
 			readonly 'statement.break': TSKindId.BreakStatement;
 			readonly 'statement.continue': TSKindId.ContinueStatement;
 			readonly 'statement.if': TSKindId.IfStatement;
@@ -8948,33 +8181,34 @@ export interface JavaMap extends V.GrammarMap {
 		readonly 'comment.block': never;
 		readonly 'comment.block.doc': never;
 		readonly 'comment.line': never;
-		readonly 'declaration.class': 'abstract';
 		readonly 'declaration.constant': never;
 		readonly 'declaration.constant.private': never;
 		readonly 'declaration.constant.public': never;
-		readonly 'declaration.constructor': never;
-		readonly 'declaration.constructor.private': never;
-		readonly 'declaration.constructor.protected': never;
-		readonly 'declaration.constructor.public': never;
-		readonly 'declaration.enum': never;
-		readonly 'declaration.enum.private': never;
-		readonly 'declaration.enum.public': never;
-		readonly 'declaration.enum_member': never;
-		readonly 'declaration.field': 'static';
-		readonly 'declaration.field.private': 'static';
-		readonly 'declaration.field.protected': 'static';
-		readonly 'declaration.field.public': 'static';
-		readonly 'declaration.interface': never;
-		readonly 'declaration.method': 'static';
-		readonly 'declaration.method.private': 'static';
-		readonly 'declaration.method.protected': 'static';
-		readonly 'declaration.method.public': 'static';
-		readonly 'declaration.method.signature': 'static';
-		readonly 'declaration.method.signature.abstract': 'static';
+		readonly 'declaration.member.constructor': never;
+		readonly 'declaration.member.constructor.private': never;
+		readonly 'declaration.member.constructor.protected': never;
+		readonly 'declaration.member.constructor.public': never;
+		readonly 'declaration.member.enum_member': never;
+		readonly 'declaration.member.field': 'static';
+		readonly 'declaration.member.field.private': 'static';
+		readonly 'declaration.member.field.protected': 'static';
+		readonly 'declaration.member.field.public': 'static';
+		readonly 'declaration.member.method': 'static';
+		readonly 'declaration.member.method.private': 'static';
+		readonly 'declaration.member.method.protected': 'static';
+		readonly 'declaration.member.method.public': 'static';
+		readonly 'declaration.member.method.signature': 'static';
+		readonly 'declaration.member.method.signature.abstract': 'static';
+		readonly 'declaration.member.static_block': never;
 		readonly 'declaration.module': never;
 		readonly 'declaration.parameter': never;
 		readonly 'declaration.parameter.receiver': never;
 		readonly 'declaration.parameter.variadic': never;
+		readonly 'declaration.type.class': 'abstract';
+		readonly 'declaration.type.enum': never;
+		readonly 'declaration.type.enum.private': never;
+		readonly 'declaration.type.enum.public': never;
+		readonly 'declaration.type.interface': never;
 		readonly 'declaration.type_parameter': never;
 		readonly 'declaration.variable': never;
 		readonly 'declaration.variable.constant': never;
@@ -9056,7 +8290,6 @@ export interface JavaMap extends V.GrammarMap {
 		readonly 'pattern.wildcard': never;
 		readonly 'statement.assert': never;
 		readonly 'statement.block': never;
-		readonly 'statement.block.static': never;
 		readonly 'statement.break': never;
 		readonly 'statement.continue': never;
 		readonly 'statement.if': never;
@@ -9087,59 +8320,53 @@ export interface JavaMap extends V.GrammarMap {
 	};
 	readonly facts: {};
 	readonly decided: {
-		readonly 'clause.catch': { readonly body: 'statement.block' };
-		readonly 'declaration.class': {
-			readonly extends: 'clause.extends';
-			readonly implements: 'clause.implements';
-			readonly typeParameters: 'declaration.type_parameter';
-		};
-		readonly 'declaration.constructor': {
-			readonly body: 'statement.block';
+		readonly 'declaration.member.constructor': {
 			readonly parameters: 'declaration.parameter.receiver';
 			readonly typeParameters: 'declaration.type_parameter';
 		};
-		readonly 'declaration.constructor.private': {
+		readonly 'declaration.member.constructor.private': {
 			readonly parameters: 'declaration.parameter.receiver';
 			readonly typeParameters: 'declaration.type_parameter';
 		};
-		readonly 'declaration.constructor.protected': {
+		readonly 'declaration.member.constructor.protected': {
 			readonly parameters: 'declaration.parameter.receiver';
 			readonly typeParameters: 'declaration.type_parameter';
 		};
-		readonly 'declaration.constructor.public': {
+		readonly 'declaration.member.constructor.public': {
 			readonly parameters: 'declaration.parameter.receiver';
 			readonly typeParameters: 'declaration.type_parameter';
 		};
-		readonly 'declaration.interface': { readonly typeParameters: 'declaration.type_parameter' };
-		readonly 'declaration.method': {
-			readonly body: 'statement.block';
+		readonly 'declaration.member.method': {
 			readonly parameters: 'declaration.parameter.receiver';
 			readonly typeParameters: 'declaration.type_parameter';
 		};
-		readonly 'declaration.method.private': {
-			readonly body: 'statement.block';
+		readonly 'declaration.member.method.private': {
 			readonly parameters: 'declaration.parameter.receiver';
 			readonly typeParameters: 'declaration.type_parameter';
 		};
-		readonly 'declaration.method.protected': {
-			readonly body: 'statement.block';
+		readonly 'declaration.member.method.protected': {
 			readonly parameters: 'declaration.parameter.receiver';
 			readonly typeParameters: 'declaration.type_parameter';
 		};
-		readonly 'declaration.method.public': {
-			readonly body: 'statement.block';
+		readonly 'declaration.member.method.public': {
 			readonly parameters: 'declaration.parameter.receiver';
 			readonly typeParameters: 'declaration.type_parameter';
 		};
-		readonly 'declaration.method.signature': {
+		readonly 'declaration.member.method.signature': {
 			readonly parameters: 'declaration.parameter.receiver';
 			readonly typeParameters: 'declaration.type_parameter';
 		};
-		readonly 'declaration.method.signature.abstract': {
+		readonly 'declaration.member.method.signature.abstract': {
 			readonly parameters: 'declaration.parameter.receiver';
 			readonly typeParameters: 'declaration.type_parameter';
 		};
 		readonly 'declaration.module': { readonly name: 'identifier.qualified' };
+		readonly 'declaration.type.class': {
+			readonly extends: 'clause.extends';
+			readonly implements: 'clause.implements';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.type.interface': { readonly typeParameters: 'declaration.type_parameter' };
 		readonly 'declaration.type_parameter': { readonly bounds: 'clause.bounds' };
 		readonly 'expression.lambda': { readonly parameters: 'declaration.parameter.receiver' };
 		readonly 'literal.string': { readonly elements: 'expression.interpolation' };
@@ -9147,8 +8374,6 @@ export interface JavaMap extends V.GrammarMap {
 		readonly 'statement.if': { readonly condition: 'expression.parenthesized' };
 		readonly 'statement.loop.do_while': { readonly condition: 'expression.parenthesized' };
 		readonly 'statement.loop.while': { readonly condition: 'expression.parenthesized' };
-		readonly 'statement.resource': { readonly body: 'statement.block' };
-		readonly 'statement.try': { readonly body: 'statement.block' };
 	};
 }
 
@@ -9156,16 +8381,10 @@ declare module '@sittir/types/vocabulary' {
 	interface UnmappedKinds {
 		readonly 'java:annotated_type': T.AnnotatedType.Parsed;
 		readonly 'java:annotation_type_declaration': T.AnnotationTypeDeclaration.Parsed;
-		readonly 'java:constructor_body': T.ConstructorBody.Parsed;
-		readonly 'java:exports_module_directive': T.ExportsModuleDirective.Parsed;
 		readonly 'java:formal_parameters_list': T.FormalParametersList.Parsed;
 		readonly 'java:method_reference': T.MethodReference.Parsed;
-		readonly 'java:opens_module_directive': T.OpensModuleDirective.Parsed;
 		readonly 'java:package_declaration': T.PackageDeclaration.Parsed;
-		readonly 'java:provides_module_directive': T.ProvidesModuleDirective.Parsed;
-		readonly 'java:requires_module_directive': T.RequiresModuleDirective.Parsed;
 		readonly 'java:synchronized_statement': T.SynchronizedStatement.Parsed;
-		readonly 'java:uses_module_directive': T.UsesModuleDirective.Parsed;
 		readonly 'java:variable_declarator': T.VariableDeclarator.Parsed;
 		readonly 'java:wildcard': T.Wildcard.Parsed;
 	}

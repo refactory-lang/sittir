@@ -408,8 +408,7 @@ const expression_assignment_compound_add$172_right = (value: expression_assignme
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.assignment.compound.add.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -789,8 +788,7 @@ const expression_assignment_compound_bitwise_and$172_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -1170,8 +1168,7 @@ const expression_assignment_compound_bitwise_or$172_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -1551,8 +1548,7 @@ const expression_assignment_compound_bitwise_xor$172_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -1930,8 +1926,7 @@ const expression_assignment_compound_divide$172_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.assignment.compound.divide.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -2309,8 +2304,7 @@ const expression_assignment_compound_modulo$172_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.assignment.compound.modulo.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -2690,8 +2684,7 @@ const expression_assignment_compound_multiply$172_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.assignment.compound.multiply.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -3071,8 +3064,7 @@ const expression_assignment_compound_shift_left$172_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -3452,8 +3444,7 @@ const expression_assignment_compound_shift_right$172_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -3833,8 +3824,7 @@ const expression_assignment_compound_shift_right_unsigned$172_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.shift_right_unsigned.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.assignment.compound.shift_right_unsigned.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -4214,8 +4204,7 @@ const expression_assignment_compound_subtract$172_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.assignment.compound.subtract.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -4559,8 +4548,7 @@ const expression_binary_arithmetic_add$173_left = (value: expression_binary_arit
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.add.left', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.arithmetic.add.left', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -4904,8 +4892,7 @@ const expression_binary_arithmetic_add$173_right = (value: expression_binary_ari
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.add.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.arithmetic.add.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -5249,8 +5236,7 @@ const expression_binary_arithmetic_divide$173_left = (value: expression_binary_a
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.arithmetic.divide.left', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -5594,8 +5580,7 @@ const expression_binary_arithmetic_divide$173_right = (value: expression_binary_
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.arithmetic.divide.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -5939,8 +5924,7 @@ const expression_binary_arithmetic_modulo$173_left = (value: expression_binary_a
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.arithmetic.modulo.left', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -6284,8 +6268,7 @@ const expression_binary_arithmetic_modulo$173_right = (value: expression_binary_
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.arithmetic.modulo.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -6629,8 +6612,7 @@ const expression_binary_arithmetic_multiply$173_left = (value: expression_binary
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.arithmetic.multiply.left', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -6976,8 +6958,7 @@ const expression_binary_arithmetic_multiply$173_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.arithmetic.multiply.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -7321,8 +7302,7 @@ const expression_binary_arithmetic_subtract$173_left = (value: expression_binary
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.arithmetic.subtract.left', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -7668,8 +7648,7 @@ const expression_binary_arithmetic_subtract$173_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.arithmetic.subtract.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -8013,8 +7992,7 @@ const expression_binary_bitwise_and$173_left = (value: expression_binary_bitwise
 		case 'literal.number.float':
 			return unbuilt('expression.binary.bitwise.and.left', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.bitwise.and.left', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -8358,8 +8336,7 @@ const expression_binary_bitwise_and$173_right = (value: expression_binary_bitwis
 		case 'literal.number.float':
 			return unbuilt('expression.binary.bitwise.and.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.bitwise.and.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -8703,8 +8680,7 @@ const expression_binary_bitwise_or$173_left = (value: expression_binary_bitwise_
 		case 'literal.number.float':
 			return unbuilt('expression.binary.bitwise.or.left', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.bitwise.or.left', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -9048,8 +9024,7 @@ const expression_binary_bitwise_or$173_right = (value: expression_binary_bitwise
 		case 'literal.number.float':
 			return unbuilt('expression.binary.bitwise.or.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.bitwise.or.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -9393,8 +9368,7 @@ const expression_binary_bitwise_xor$173_left = (value: expression_binary_bitwise
 		case 'literal.number.float':
 			return unbuilt('expression.binary.bitwise.xor.left', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.bitwise.xor.left', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -9738,8 +9712,7 @@ const expression_binary_bitwise_xor$173_right = (value: expression_binary_bitwis
 		case 'literal.number.float':
 			return unbuilt('expression.binary.bitwise.xor.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.bitwise.xor.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -10083,8 +10056,7 @@ const expression_binary_comparison_equal$173_left = (value: expression_binary_co
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.equal.left', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.comparison.equal.left', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -10428,8 +10400,7 @@ const expression_binary_comparison_equal$173_right = (value: expression_binary_c
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.equal.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.comparison.equal.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -10773,8 +10744,7 @@ const expression_binary_comparison_greater$173_left = (value: expression_binary_
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.greater.left', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.comparison.greater.left', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -11118,8 +11088,7 @@ const expression_binary_comparison_greater$173_right = (value: expression_binary
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.greater.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.comparison.greater.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -11465,8 +11434,7 @@ const expression_binary_comparison_greater_equal$173_left = (
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.greater_equal.left', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.comparison.greater_equal.left', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -11812,8 +11780,7 @@ const expression_binary_comparison_greater_equal$173_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.greater_equal.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.comparison.greater_equal.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -12157,8 +12124,7 @@ const expression_binary_comparison_less$173_left = (value: expression_binary_com
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.less.left', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.comparison.less.left', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -12502,8 +12468,7 @@ const expression_binary_comparison_less$173_right = (value: expression_binary_co
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.less.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.comparison.less.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -12849,8 +12814,7 @@ const expression_binary_comparison_less_equal$173_left = (
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.less_equal.left', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.comparison.less_equal.left', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -13196,8 +13160,7 @@ const expression_binary_comparison_less_equal$173_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.less_equal.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.comparison.less_equal.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -13543,8 +13506,7 @@ const expression_binary_comparison_not_equal$173_left = (
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.not_equal.left', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.comparison.not_equal.left', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -13890,8 +13852,7 @@ const expression_binary_comparison_not_equal$173_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.not_equal.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.comparison.not_equal.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -14235,8 +14196,7 @@ const expression_binary_logical_and$173_left = (value: expression_binary_logical
 		case 'literal.number.float':
 			return unbuilt('expression.binary.logical.and.left', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.logical.and.left', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -14580,8 +14540,7 @@ const expression_binary_logical_and$173_right = (value: expression_binary_logica
 		case 'literal.number.float':
 			return unbuilt('expression.binary.logical.and.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.logical.and.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -14925,8 +14884,7 @@ const expression_binary_logical_or$173_left = (value: expression_binary_logical_
 		case 'literal.number.float':
 			return unbuilt('expression.binary.logical.or.left', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.logical.or.left', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -15270,8 +15228,7 @@ const expression_binary_logical_or$173_right = (value: expression_binary_logical
 		case 'literal.number.float':
 			return unbuilt('expression.binary.logical.or.right', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.binary.logical.or.right', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -15615,8 +15572,7 @@ const expression_conditional$177_alternative = (value: expression_conditional$17
 		case 'literal.number.float':
 			return unbuilt('expression.conditional.alternative', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.conditional.alternative', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -15960,8 +15916,7 @@ const expression_conditional$177_condition = (value: expression_conditional$177_
 		case 'literal.number.float':
 			return unbuilt('expression.conditional.condition', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.conditional.condition', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -16305,8 +16260,7 @@ const expression_conditional$177_consequence = (value: expression_conditional$17
 		case 'literal.number.float':
 			return unbuilt('expression.conditional.consequence', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.conditional.consequence', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -16650,8 +16604,7 @@ const expression_interpolation$167_expression = (value: expression_interpolation
 		case 'literal.number.float':
 			return unbuilt('expression.interpolation.expression', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.interpolation.expression', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -16995,8 +16948,7 @@ const expression_parenthesized$183_expression = (value: expression_parenthesized
 		case 'literal.number.float':
 			return unbuilt('expression.parenthesized.expression', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('expression.parenthesized.expression', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -17031,6 +16983,32 @@ const literal_character$7_content = (value: literal_character$7_content$Item) =>
 		return unseated('literal.character.content', value);
 	}
 	throw new Error('literal.character.content takes no structure');
+};
+type literal_number_integer_binary$4_suffix$Item = 'L' | 'l';
+const literal_number_integer_binary$4_suffix = (value: literal_number_integer_binary$4_suffix$Item) => {
+	if (typeof value === 'string') {
+		return value;
+	}
+	if (typeof value === 'number') {
+		return unseated('literal.number.integer.binary.suffix', value);
+	}
+	if (isNode(value)) {
+		return unseated('literal.number.integer.binary.suffix', value);
+	}
+	throw new Error('literal.number.integer.binary.suffix takes no structure');
+};
+type literal_number_integer_octal$3_suffix$Item = 'L' | 'l';
+const literal_number_integer_octal$3_suffix = (value: literal_number_integer_octal$3_suffix$Item) => {
+	if (typeof value === 'string') {
+		return value;
+	}
+	if (typeof value === 'number') {
+		return unseated('literal.number.integer.octal.suffix', value);
+	}
+	if (isNode(value)) {
+		return unseated('literal.number.integer.octal.suffix', value);
+	}
+	throw new Error('literal.number.integer.octal.suffix takes no structure');
 };
 type literal_string$327_elements$Item =
 	| string
@@ -17164,18 +17142,18 @@ type statement_block$209_statements$Item =
 	| Text<JavaMap, 'type.primitive.integral.int8'>
 	| Text<JavaMap, 'type.primitive.void'>
 	| number
-	| BuildInput<JavaMap, 'declaration.class'>
-	| JavaMap['nodes']['declaration.class']
-	| BuildInput<JavaMap, 'declaration.enum'>
-	| JavaMap['nodes']['declaration.enum']
-	| BuildInput<JavaMap, 'declaration.enum.private'>
-	| JavaMap['nodes']['declaration.enum.private']
-	| BuildInput<JavaMap, 'declaration.enum.public'>
-	| JavaMap['nodes']['declaration.enum.public']
-	| BuildInput<JavaMap, 'declaration.interface'>
-	| JavaMap['nodes']['declaration.interface']
 	| BuildInput<JavaMap, 'declaration.module'>
 	| JavaMap['nodes']['declaration.module']
+	| BuildInput<JavaMap, 'declaration.type.class'>
+	| JavaMap['nodes']['declaration.type.class']
+	| BuildInput<JavaMap, 'declaration.type.enum'>
+	| JavaMap['nodes']['declaration.type.enum']
+	| BuildInput<JavaMap, 'declaration.type.enum.private'>
+	| JavaMap['nodes']['declaration.type.enum.private']
+	| BuildInput<JavaMap, 'declaration.type.enum.public'>
+	| JavaMap['nodes']['declaration.type.enum.public']
+	| BuildInput<JavaMap, 'declaration.type.interface'>
+	| JavaMap['nodes']['declaration.type.interface']
 	| BuildInput<JavaMap, 'declaration.variable'>
 	| JavaMap['nodes']['declaration.variable']
 	| BuildInput<JavaMap, 'declaration.variable.constant'>
@@ -17403,39 +17381,27 @@ const statement_block$209_statements = (value: statement_block$209_statements$It
 				value,
 				[
 					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+					180, 181, 183, 185, 187, 188, 189, 190, 192, 327, 328, 331, 332
 				]
 			)
 		)
 			return b.expressionStatement(value);
 		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
 			return b.expressionStatement(b.classLiteral(value));
-		if (
-			seated(
-				value,
-				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-				]
-			)
-		)
-			return b.yieldStatement(value);
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
-			return b.yieldStatement(b.classLiteral(value));
 		return unseated('statement.block.statements', value);
 	}
 	switch (value.$path) {
-		case 'declaration.class':
-			return unbuilt('statement.block.statements', value);
-		case 'declaration.enum':
-			return unbuilt('statement.block.statements', value);
-		case 'declaration.enum.private':
-			return unbuilt('statement.block.statements', value);
-		case 'declaration.enum.public':
-			return unbuilt('statement.block.statements', value);
-		case 'declaration.interface':
-			return unbuilt('statement.block.statements', value);
 		case 'declaration.module':
+			return unbuilt('statement.block.statements', value);
+		case 'declaration.type.class':
+			return unbuilt('statement.block.statements', value);
+		case 'declaration.type.enum':
+			return unbuilt('statement.block.statements', value);
+		case 'declaration.type.enum.private':
+			return unbuilt('statement.block.statements', value);
+		case 'declaration.type.enum.public':
+			return unbuilt('statement.block.statements', value);
+		case 'declaration.type.interface':
 			return unbuilt('statement.block.statements', value);
 		case 'declaration.variable':
 			return unbuilt('statement.block.statements', value);
@@ -17554,8 +17520,7 @@ const statement_block$209_statements = (value: statement_block$209_statements$It
 		case 'literal.number.float':
 			return unbuilt('statement.block.statements', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return b.expressionStatement(literal_number_integer$118(value));
-			return unbuilt('statement.block.statements', value);
+			return b.expressionStatement(literal_number_integer$118(value));
 		case 'literal.number.integer.binary':
 			return b.expressionStatement(literal_number_integer_binary$4(value));
 		case 'literal.number.integer.hex':
@@ -17577,7 +17542,7 @@ const statement_block$209_statements = (value: statement_block$209_statements$It
 		case 'statement.continue':
 			return statement_continue$215(value);
 		case 'statement.if':
-			return statement_if$228(value);
+			return unbuilt('statement.block.statements', value);
 		case 'statement.import':
 			return unbuilt('statement.block.statements', value);
 		case 'statement.labeled':
@@ -17585,11 +17550,11 @@ const statement_block$209_statements = (value: statement_block$209_statements$It
 		case 'statement.loop.counted':
 			return unbuilt('statement.block.statements', value);
 		case 'statement.loop.do_while':
-			return statement_loop_do_while$213(value);
+			return unbuilt('statement.block.statements', value);
 		case 'statement.loop.for_each':
 			return unbuilt('statement.block.statements', value);
 		case 'statement.loop.while':
-			return statement_loop_while$229(value);
+			return unbuilt('statement.block.statements', value);
 		case 'statement.resource':
 			return unbuilt('statement.block.statements', value);
 		case 'statement.return':
@@ -17655,1928 +17620,6 @@ const statement_continue$215_label = (value: statement_continue$215_label$Item) 
 		default:
 			return unbuilt('statement.continue.label', value);
 	}
-};
-type statement_if$228_alternative$Item =
-	| ';'
-	| 'boolean'
-	| 'byte'
-	| 'char'
-	| 'double'
-	| 'float'
-	| 'int'
-	| 'long'
-	| 'short'
-	| 'this'
-	| 'void'
-	| Text<JavaMap, 'identifier'>
-	| Text<JavaMap, 'identifier.receiver'>
-	| Text<JavaMap, 'literal.number.integer'>
-	| Text<JavaMap, 'literal.number.integer.hex'>
-	| Text<JavaMap, 'type.primitive.boolean'>
-	| Text<JavaMap, 'type.primitive.character'>
-	| Text<JavaMap, 'type.primitive.floating.float32'>
-	| Text<JavaMap, 'type.primitive.floating.float64'>
-	| Text<JavaMap, 'type.primitive.integral.int16'>
-	| Text<JavaMap, 'type.primitive.integral.int32'>
-	| Text<JavaMap, 'type.primitive.integral.int64'>
-	| Text<JavaMap, 'type.primitive.integral.int8'>
-	| Text<JavaMap, 'type.primitive.void'>
-	| number
-	| BuildInput<JavaMap, 'declaration.class'>
-	| JavaMap['nodes']['declaration.class']
-	| BuildInput<JavaMap, 'declaration.enum'>
-	| JavaMap['nodes']['declaration.enum']
-	| BuildInput<JavaMap, 'declaration.enum.private'>
-	| JavaMap['nodes']['declaration.enum.private']
-	| BuildInput<JavaMap, 'declaration.enum.public'>
-	| JavaMap['nodes']['declaration.enum.public']
-	| BuildInput<JavaMap, 'declaration.interface'>
-	| JavaMap['nodes']['declaration.interface']
-	| BuildInput<JavaMap, 'declaration.module'>
-	| JavaMap['nodes']['declaration.module']
-	| BuildInput<JavaMap, 'declaration.variable'>
-	| JavaMap['nodes']['declaration.variable']
-	| BuildInput<JavaMap, 'declaration.variable.constant'>
-	| JavaMap['nodes']['declaration.variable.constant']
-	| BuildInput<JavaMap, 'expression.assignment'>
-	| JavaMap['nodes']['expression.assignment']
-	| BuildInput<JavaMap, 'expression.assignment.compound.add'>
-	| JavaMap['nodes']['expression.assignment.compound.add']
-	| BuildInput<JavaMap, 'expression.assignment.compound.bitwise_and'>
-	| JavaMap['nodes']['expression.assignment.compound.bitwise_and']
-	| BuildInput<JavaMap, 'expression.assignment.compound.bitwise_or'>
-	| JavaMap['nodes']['expression.assignment.compound.bitwise_or']
-	| BuildInput<JavaMap, 'expression.assignment.compound.bitwise_xor'>
-	| JavaMap['nodes']['expression.assignment.compound.bitwise_xor']
-	| BuildInput<JavaMap, 'expression.assignment.compound.divide'>
-	| JavaMap['nodes']['expression.assignment.compound.divide']
-	| BuildInput<JavaMap, 'expression.assignment.compound.modulo'>
-	| JavaMap['nodes']['expression.assignment.compound.modulo']
-	| BuildInput<JavaMap, 'expression.assignment.compound.multiply'>
-	| JavaMap['nodes']['expression.assignment.compound.multiply']
-	| BuildInput<JavaMap, 'expression.assignment.compound.shift_left'>
-	| JavaMap['nodes']['expression.assignment.compound.shift_left']
-	| BuildInput<JavaMap, 'expression.assignment.compound.shift_right'>
-	| JavaMap['nodes']['expression.assignment.compound.shift_right']
-	| BuildInput<JavaMap, 'expression.assignment.compound.shift_right_unsigned'>
-	| JavaMap['nodes']['expression.assignment.compound.shift_right_unsigned']
-	| BuildInput<JavaMap, 'expression.assignment.compound.subtract'>
-	| JavaMap['nodes']['expression.assignment.compound.subtract']
-	| BuildInput<JavaMap, 'expression.binary.arithmetic.add'>
-	| JavaMap['nodes']['expression.binary.arithmetic.add']
-	| BuildInput<JavaMap, 'expression.binary.arithmetic.divide'>
-	| JavaMap['nodes']['expression.binary.arithmetic.divide']
-	| BuildInput<JavaMap, 'expression.binary.arithmetic.modulo'>
-	| JavaMap['nodes']['expression.binary.arithmetic.modulo']
-	| BuildInput<JavaMap, 'expression.binary.arithmetic.multiply'>
-	| JavaMap['nodes']['expression.binary.arithmetic.multiply']
-	| BuildInput<JavaMap, 'expression.binary.arithmetic.subtract'>
-	| JavaMap['nodes']['expression.binary.arithmetic.subtract']
-	| BuildInput<JavaMap, 'expression.binary.bitwise.and'>
-	| JavaMap['nodes']['expression.binary.bitwise.and']
-	| BuildInput<JavaMap, 'expression.binary.bitwise.or'>
-	| JavaMap['nodes']['expression.binary.bitwise.or']
-	| BuildInput<JavaMap, 'expression.binary.bitwise.xor'>
-	| JavaMap['nodes']['expression.binary.bitwise.xor']
-	| BuildInput<JavaMap, 'expression.binary.comparison.equal'>
-	| JavaMap['nodes']['expression.binary.comparison.equal']
-	| BuildInput<JavaMap, 'expression.binary.comparison.greater'>
-	| JavaMap['nodes']['expression.binary.comparison.greater']
-	| BuildInput<JavaMap, 'expression.binary.comparison.greater_equal'>
-	| JavaMap['nodes']['expression.binary.comparison.greater_equal']
-	| BuildInput<JavaMap, 'expression.binary.comparison.less'>
-	| JavaMap['nodes']['expression.binary.comparison.less']
-	| BuildInput<JavaMap, 'expression.binary.comparison.less_equal'>
-	| JavaMap['nodes']['expression.binary.comparison.less_equal']
-	| BuildInput<JavaMap, 'expression.binary.comparison.not_equal'>
-	| JavaMap['nodes']['expression.binary.comparison.not_equal']
-	| BuildInput<JavaMap, 'expression.binary.logical.and'>
-	| JavaMap['nodes']['expression.binary.logical.and']
-	| BuildInput<JavaMap, 'expression.binary.logical.or'>
-	| JavaMap['nodes']['expression.binary.logical.or']
-	| BuildInput<JavaMap, 'expression.binary.membership.instanceof'>
-	| JavaMap['nodes']['expression.binary.membership.instanceof']
-	| BuildInput<JavaMap, 'expression.binary.shift.left'>
-	| JavaMap['nodes']['expression.binary.shift.left']
-	| BuildInput<JavaMap, 'expression.binary.shift.right'>
-	| JavaMap['nodes']['expression.binary.shift.right']
-	| BuildInput<JavaMap, 'expression.binary.shift.right_unsigned'>
-	| JavaMap['nodes']['expression.binary.shift.right_unsigned']
-	| BuildInput<JavaMap, 'expression.call'>
-	| JavaMap['nodes']['expression.call']
-	| BuildInput<JavaMap, 'expression.call.construct'>
-	| JavaMap['nodes']['expression.call.construct']
-	| BuildInput<JavaMap, 'expression.call.member'>
-	| JavaMap['nodes']['expression.call.member']
-	| BuildInput<JavaMap, 'expression.call.template'>
-	| JavaMap['nodes']['expression.call.template']
-	| BuildInput<JavaMap, 'expression.cast'>
-	| JavaMap['nodes']['expression.cast']
-	| BuildInput<JavaMap, 'expression.collection.list'>
-	| JavaMap['nodes']['expression.collection.list']
-	| BuildInput<JavaMap, 'expression.conditional'>
-	| JavaMap['nodes']['expression.conditional']
-	| BuildInput<JavaMap, 'expression.lambda'>
-	| JavaMap['nodes']['expression.lambda']
-	| BuildInput<JavaMap, 'expression.member'>
-	| JavaMap['nodes']['expression.member']
-	| BuildInput<JavaMap, 'expression.parenthesized'>
-	| JavaMap['nodes']['expression.parenthesized']
-	| BuildInput<JavaMap, 'expression.subscript'>
-	| JavaMap['nodes']['expression.subscript']
-	| BuildInput<JavaMap, 'expression.unary.bitwise_not'>
-	| JavaMap['nodes']['expression.unary.bitwise_not']
-	| BuildInput<JavaMap, 'expression.unary.negation'>
-	| JavaMap['nodes']['expression.unary.negation']
-	| BuildInput<JavaMap, 'expression.unary.not'>
-	| JavaMap['nodes']['expression.unary.not']
-	| BuildInput<JavaMap, 'expression.unary.plus'>
-	| JavaMap['nodes']['expression.unary.plus']
-	| BuildInput<JavaMap, 'expression.update.decrement'>
-	| JavaMap['nodes']['expression.update.decrement']
-	| BuildInput<JavaMap, 'expression.update.increment'>
-	| JavaMap['nodes']['expression.update.increment']
-	| BuildInput<JavaMap, 'identifier'>
-	| JavaMap['nodes']['identifier']
-	| BuildInput<JavaMap, 'identifier.qualified'>
-	| JavaMap['nodes']['identifier.qualified']
-	| BuildInput<JavaMap, 'literal.boolean.false'>
-	| JavaMap['nodes']['literal.boolean.false']
-	| BuildInput<JavaMap, 'literal.boolean.true'>
-	| JavaMap['nodes']['literal.boolean.true']
-	| BuildInput<JavaMap, 'literal.character'>
-	| JavaMap['nodes']['literal.character']
-	| BuildInput<JavaMap, 'literal.null'>
-	| JavaMap['nodes']['literal.null']
-	| BuildInput<JavaMap, 'literal.number.float'>
-	| JavaMap['nodes']['literal.number.float']
-	| BuildInput<JavaMap, 'literal.number.integer'>
-	| JavaMap['nodes']['literal.number.integer']
-	| BuildInput<JavaMap, 'literal.number.integer.binary'>
-	| JavaMap['nodes']['literal.number.integer.binary']
-	| BuildInput<JavaMap, 'literal.number.integer.hex'>
-	| JavaMap['nodes']['literal.number.integer.hex']
-	| BuildInput<JavaMap, 'literal.number.integer.octal'>
-	| JavaMap['nodes']['literal.number.integer.octal']
-	| BuildInput<JavaMap, 'literal.string'>
-	| JavaMap['nodes']['literal.string']
-	| BuildInput<JavaMap, 'literal.string.multiline'>
-	| JavaMap['nodes']['literal.string.multiline']
-	| BuildInput<JavaMap, 'statement.assert'>
-	| JavaMap['nodes']['statement.assert']
-	| BuildInput<JavaMap, 'statement.block'>
-	| JavaMap['nodes']['statement.block']
-	| BuildInput<JavaMap, 'statement.break'>
-	| JavaMap['nodes']['statement.break']
-	| BuildInput<JavaMap, 'statement.continue'>
-	| JavaMap['nodes']['statement.continue']
-	| BuildInput<JavaMap, 'statement.if'>
-	| JavaMap['nodes']['statement.if']
-	| BuildInput<JavaMap, 'statement.import'>
-	| JavaMap['nodes']['statement.import']
-	| BuildInput<JavaMap, 'statement.labeled'>
-	| JavaMap['nodes']['statement.labeled']
-	| BuildInput<JavaMap, 'statement.loop.counted'>
-	| JavaMap['nodes']['statement.loop.counted']
-	| BuildInput<JavaMap, 'statement.loop.do_while'>
-	| JavaMap['nodes']['statement.loop.do_while']
-	| BuildInput<JavaMap, 'statement.loop.for_each'>
-	| JavaMap['nodes']['statement.loop.for_each']
-	| BuildInput<JavaMap, 'statement.loop.while'>
-	| JavaMap['nodes']['statement.loop.while']
-	| BuildInput<JavaMap, 'statement.resource'>
-	| JavaMap['nodes']['statement.resource']
-	| BuildInput<JavaMap, 'statement.return'>
-	| JavaMap['nodes']['statement.return']
-	| BuildInput<JavaMap, 'statement.switch'>
-	| JavaMap['nodes']['statement.switch']
-	| BuildInput<JavaMap, 'statement.throw'>
-	| JavaMap['nodes']['statement.throw']
-	| BuildInput<JavaMap, 'statement.try'>
-	| JavaMap['nodes']['statement.try']
-	| BuildInput<JavaMap, 'type.array'>
-	| JavaMap['nodes']['type.array']
-	| BuildInput<JavaMap, 'type.generic'>
-	| JavaMap['nodes']['type.generic']
-	| Unmapped<'java:annotation_type_declaration'>
-	| Unmapped<'java:method_reference'>
-	| Unmapped<'java:package_declaration'>
-	| Unmapped<'java:synchronized_statement'>;
-const statement_if$228_alternative = (value: statement_if$228_alternative$Item) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case ';':
-				return 66;
-			case 'this':
-				return b.expressionStatement(112);
-			case 'boolean':
-				return b.expressionStatement(b.classLiteral(106));
-			case 'byte':
-				return b.expressionStatement(b.classLiteral(99));
-			case 'char':
-				return b.expressionStatement(b.classLiteral(103));
-			case 'double':
-				return b.expressionStatement(b.classLiteral(105));
-			case 'float':
-				return b.expressionStatement(b.classLiteral(104));
-			case 'int':
-				return b.expressionStatement(b.classLiteral(101));
-			case 'long':
-				return b.expressionStatement(b.classLiteral(102));
-			case 'short':
-				return b.expressionStatement(b.classLiteral(100));
-			case 'void':
-				return b.expressionStatement(b.classLiteral(107));
-			default:
-				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
-					return b.expressionStatement(b.identifier(value));
-				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
-					return b.expressionStatement(b.classLiteral(b.identifier(value)));
-				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
-					return b.yieldStatement(b.identifier(value));
-				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
-					return b.yieldStatement(b.classLiteral(b.identifier(value)));
-				return b.expressionStatement(b.identifier(value));
-		}
-	}
-	if (typeof value === 'number') {
-		if (Number.isSafeInteger(value)) {
-			return b.expressionStatement(literal_number_integer$118({ $path: 'literal.number.integer', $value: value }));
-		}
-		return unnumbered('statement.if.alternative', 'float');
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240, 249, 250,
-					252, 256, 273, 274, 278, 301, 329, 330
-				]
-			)
-		)
-			return value;
-		if (
-			seated(
-				value,
-				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-				]
-			)
-		)
-			return b.expressionStatement(value);
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
-			return b.expressionStatement(b.classLiteral(value));
-		if (
-			seated(
-				value,
-				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-				]
-			)
-		)
-			return b.yieldStatement(value);
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
-			return b.yieldStatement(b.classLiteral(value));
-		return unseated('statement.if.alternative', value);
-	}
-	switch (value.$path) {
-		case 'declaration.class':
-			return unbuilt('statement.if.alternative', value);
-		case 'declaration.enum':
-			return unbuilt('statement.if.alternative', value);
-		case 'declaration.enum.private':
-			return unbuilt('statement.if.alternative', value);
-		case 'declaration.enum.public':
-			return unbuilt('statement.if.alternative', value);
-		case 'declaration.interface':
-			return unbuilt('statement.if.alternative', value);
-		case 'declaration.module':
-			return unbuilt('statement.if.alternative', value);
-		case 'declaration.variable':
-			return unbuilt('statement.if.alternative', value);
-		case 'declaration.variable.constant':
-			return unbuilt('statement.if.alternative', value);
-		case 'expression.assignment':
-			return unbuilt('statement.if.alternative', value);
-		case 'expression.assignment.compound.add':
-			return b.expressionStatement(expression_assignment_compound_add$172(value));
-		case 'expression.assignment.compound.bitwise_and':
-			return b.expressionStatement(expression_assignment_compound_bitwise_and$172(value));
-		case 'expression.assignment.compound.bitwise_or':
-			return b.expressionStatement(expression_assignment_compound_bitwise_or$172(value));
-		case 'expression.assignment.compound.bitwise_xor':
-			return b.expressionStatement(expression_assignment_compound_bitwise_xor$172(value));
-		case 'expression.assignment.compound.divide':
-			return b.expressionStatement(expression_assignment_compound_divide$172(value));
-		case 'expression.assignment.compound.modulo':
-			return b.expressionStatement(expression_assignment_compound_modulo$172(value));
-		case 'expression.assignment.compound.multiply':
-			return b.expressionStatement(expression_assignment_compound_multiply$172(value));
-		case 'expression.assignment.compound.shift_left':
-			return b.expressionStatement(expression_assignment_compound_shift_left$172(value));
-		case 'expression.assignment.compound.shift_right':
-			return b.expressionStatement(expression_assignment_compound_shift_right$172(value));
-		case 'expression.assignment.compound.shift_right_unsigned':
-			return b.expressionStatement(expression_assignment_compound_shift_right_unsigned$172(value));
-		case 'expression.assignment.compound.subtract':
-			return b.expressionStatement(expression_assignment_compound_subtract$172(value));
-		case 'expression.binary.arithmetic.add':
-			return b.expressionStatement(expression_binary_arithmetic_add$173(value));
-		case 'expression.binary.arithmetic.divide':
-			return b.expressionStatement(expression_binary_arithmetic_divide$173(value));
-		case 'expression.binary.arithmetic.modulo':
-			return b.expressionStatement(expression_binary_arithmetic_modulo$173(value));
-		case 'expression.binary.arithmetic.multiply':
-			return b.expressionStatement(expression_binary_arithmetic_multiply$173(value));
-		case 'expression.binary.arithmetic.subtract':
-			return b.expressionStatement(expression_binary_arithmetic_subtract$173(value));
-		case 'expression.binary.bitwise.and':
-			return b.expressionStatement(expression_binary_bitwise_and$173(value));
-		case 'expression.binary.bitwise.or':
-			return b.expressionStatement(expression_binary_bitwise_or$173(value));
-		case 'expression.binary.bitwise.xor':
-			return b.expressionStatement(expression_binary_bitwise_xor$173(value));
-		case 'expression.binary.comparison.equal':
-			return b.expressionStatement(expression_binary_comparison_equal$173(value));
-		case 'expression.binary.comparison.greater':
-			return b.expressionStatement(expression_binary_comparison_greater$173(value));
-		case 'expression.binary.comparison.greater_equal':
-			return b.expressionStatement(expression_binary_comparison_greater_equal$173(value));
-		case 'expression.binary.comparison.less':
-			return b.expressionStatement(expression_binary_comparison_less$173(value));
-		case 'expression.binary.comparison.less_equal':
-			return b.expressionStatement(expression_binary_comparison_less_equal$173(value));
-		case 'expression.binary.comparison.not_equal':
-			return b.expressionStatement(expression_binary_comparison_not_equal$173(value));
-		case 'expression.binary.logical.and':
-			return b.expressionStatement(expression_binary_logical_and$173(value));
-		case 'expression.binary.logical.or':
-			return b.expressionStatement(expression_binary_logical_or$173(value));
-		case 'expression.binary.membership.instanceof':
-			return unbuilt('statement.if.alternative', value);
-		case 'expression.binary.shift.left':
-			return unbuilt('statement.if.alternative', value);
-		case 'expression.binary.shift.right':
-			return unbuilt('statement.if.alternative', value);
-		case 'expression.binary.shift.right_unsigned':
-			return unbuilt('statement.if.alternative', value);
-		case 'expression.call':
-			return unbuilt('statement.if.alternative', value);
-		case 'expression.call.construct':
-			return unbuilt('statement.if.alternative', value);
-		case 'expression.call.member':
-			return unbuilt('statement.if.alternative', value);
-		case 'expression.call.template':
-			return unbuilt('statement.if.alternative', value);
-		case 'expression.cast':
-			return unbuilt('statement.if.alternative', value);
-		case 'expression.collection.list':
-			return unbuilt('statement.if.alternative', value);
-		case 'expression.conditional':
-			return b.expressionStatement(expression_conditional$177(value));
-		case 'expression.lambda':
-			return unbuilt('statement.if.alternative', value);
-		case 'expression.member':
-			return unbuilt('statement.if.alternative', value);
-		case 'expression.parenthesized':
-			return b.expressionStatement(expression_parenthesized$183(value));
-		case 'expression.subscript':
-			return unbuilt('statement.if.alternative', value);
-		case 'expression.unary.bitwise_not':
-			return unbuilt('statement.if.alternative', value);
-		case 'expression.unary.negation':
-			return unbuilt('statement.if.alternative', value);
-		case 'expression.unary.not':
-			return unbuilt('statement.if.alternative', value);
-		case 'expression.unary.plus':
-			return unbuilt('statement.if.alternative', value);
-		case 'expression.update.decrement':
-			return unbuilt('statement.if.alternative', value);
-		case 'expression.update.increment':
-			return unbuilt('statement.if.alternative', value);
-		case 'identifier':
-			return unbuilt('statement.if.alternative', value);
-		case 'identifier.qualified':
-			return unbuilt('statement.if.alternative', value);
-		case 'literal.boolean.false':
-			return unbuilt('statement.if.alternative', value);
-		case 'literal.boolean.true':
-			return unbuilt('statement.if.alternative', value);
-		case 'literal.character':
-			return b.expressionStatement(literal_character$7(value));
-		case 'literal.null':
-			return unbuilt('statement.if.alternative', value);
-		case 'literal.number.float':
-			return unbuilt('statement.if.alternative', value);
-		case 'literal.number.integer':
-			if (value.$value !== undefined) return b.expressionStatement(literal_number_integer$118(value));
-			return unbuilt('statement.if.alternative', value);
-		case 'literal.number.integer.binary':
-			return b.expressionStatement(literal_number_integer_binary$4(value));
-		case 'literal.number.integer.hex':
-			return b.expressionStatement(literal_number_integer_hex$2(value));
-		case 'literal.number.integer.octal':
-			return b.expressionStatement(literal_number_integer_octal$3(value));
-		case 'literal.string':
-			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return b.expressionStatement(literal_string$327(value));
-			return b.expressionStatement(literal_string$328(value));
-		case 'literal.string.multiline':
-			return b.expressionStatement(literal_string_multiline$328(value));
-		case 'statement.assert':
-			return unbuilt('statement.if.alternative', value);
-		case 'statement.block':
-			return statement_block$209(value);
-		case 'statement.break':
-			return statement_break$214(value);
-		case 'statement.continue':
-			return statement_continue$215(value);
-		case 'statement.if':
-			return statement_if$228(value);
-		case 'statement.import':
-			return unbuilt('statement.if.alternative', value);
-		case 'statement.labeled':
-			return unbuilt('statement.if.alternative', value);
-		case 'statement.loop.counted':
-			return unbuilt('statement.if.alternative', value);
-		case 'statement.loop.do_while':
-			return statement_loop_do_while$213(value);
-		case 'statement.loop.for_each':
-			return unbuilt('statement.if.alternative', value);
-		case 'statement.loop.while':
-			return statement_loop_while$229(value);
-		case 'statement.resource':
-			return unbuilt('statement.if.alternative', value);
-		case 'statement.return':
-			return statement_return$216(value);
-		case 'statement.switch':
-			return unbuilt('statement.if.alternative', value);
-		case 'statement.throw':
-			return statement_throw$219(value);
-		case 'statement.try':
-			return statement_try$330(value);
-		case 'type.array':
-			return unbuilt('statement.if.alternative', value);
-		case 'type.generic':
-			return unbuilt('statement.if.alternative', value);
-		default:
-			return unbuilt('statement.if.alternative', value);
-	}
-};
-type statement_if$228_condition$Item =
-	| PathInput<JavaMap, 'expression.parenthesized'>
-	| JavaMap['nodes']['expression.parenthesized'];
-const statement_if$228_condition = (value: statement_if$228_condition$Item) => {
-	if (typeof value === 'number') {
-		if (seated(value, [183])) return value;
-		return unseated('statement.if.condition', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [183])) return value;
-		return unseated('statement.if.condition', value);
-	}
-	return expression_parenthesized$183(value);
-};
-type statement_if$228_consequence$Item =
-	| ';'
-	| 'boolean'
-	| 'byte'
-	| 'char'
-	| 'double'
-	| 'float'
-	| 'int'
-	| 'long'
-	| 'short'
-	| 'this'
-	| 'void'
-	| Text<JavaMap, 'identifier'>
-	| Text<JavaMap, 'identifier.receiver'>
-	| Text<JavaMap, 'literal.number.integer'>
-	| Text<JavaMap, 'literal.number.integer.hex'>
-	| Text<JavaMap, 'type.primitive.boolean'>
-	| Text<JavaMap, 'type.primitive.character'>
-	| Text<JavaMap, 'type.primitive.floating.float32'>
-	| Text<JavaMap, 'type.primitive.floating.float64'>
-	| Text<JavaMap, 'type.primitive.integral.int16'>
-	| Text<JavaMap, 'type.primitive.integral.int32'>
-	| Text<JavaMap, 'type.primitive.integral.int64'>
-	| Text<JavaMap, 'type.primitive.integral.int8'>
-	| Text<JavaMap, 'type.primitive.void'>
-	| number
-	| BuildInput<JavaMap, 'declaration.class'>
-	| JavaMap['nodes']['declaration.class']
-	| BuildInput<JavaMap, 'declaration.enum'>
-	| JavaMap['nodes']['declaration.enum']
-	| BuildInput<JavaMap, 'declaration.enum.private'>
-	| JavaMap['nodes']['declaration.enum.private']
-	| BuildInput<JavaMap, 'declaration.enum.public'>
-	| JavaMap['nodes']['declaration.enum.public']
-	| BuildInput<JavaMap, 'declaration.interface'>
-	| JavaMap['nodes']['declaration.interface']
-	| BuildInput<JavaMap, 'declaration.module'>
-	| JavaMap['nodes']['declaration.module']
-	| BuildInput<JavaMap, 'declaration.variable'>
-	| JavaMap['nodes']['declaration.variable']
-	| BuildInput<JavaMap, 'declaration.variable.constant'>
-	| JavaMap['nodes']['declaration.variable.constant']
-	| BuildInput<JavaMap, 'expression.assignment'>
-	| JavaMap['nodes']['expression.assignment']
-	| BuildInput<JavaMap, 'expression.assignment.compound.add'>
-	| JavaMap['nodes']['expression.assignment.compound.add']
-	| BuildInput<JavaMap, 'expression.assignment.compound.bitwise_and'>
-	| JavaMap['nodes']['expression.assignment.compound.bitwise_and']
-	| BuildInput<JavaMap, 'expression.assignment.compound.bitwise_or'>
-	| JavaMap['nodes']['expression.assignment.compound.bitwise_or']
-	| BuildInput<JavaMap, 'expression.assignment.compound.bitwise_xor'>
-	| JavaMap['nodes']['expression.assignment.compound.bitwise_xor']
-	| BuildInput<JavaMap, 'expression.assignment.compound.divide'>
-	| JavaMap['nodes']['expression.assignment.compound.divide']
-	| BuildInput<JavaMap, 'expression.assignment.compound.modulo'>
-	| JavaMap['nodes']['expression.assignment.compound.modulo']
-	| BuildInput<JavaMap, 'expression.assignment.compound.multiply'>
-	| JavaMap['nodes']['expression.assignment.compound.multiply']
-	| BuildInput<JavaMap, 'expression.assignment.compound.shift_left'>
-	| JavaMap['nodes']['expression.assignment.compound.shift_left']
-	| BuildInput<JavaMap, 'expression.assignment.compound.shift_right'>
-	| JavaMap['nodes']['expression.assignment.compound.shift_right']
-	| BuildInput<JavaMap, 'expression.assignment.compound.shift_right_unsigned'>
-	| JavaMap['nodes']['expression.assignment.compound.shift_right_unsigned']
-	| BuildInput<JavaMap, 'expression.assignment.compound.subtract'>
-	| JavaMap['nodes']['expression.assignment.compound.subtract']
-	| BuildInput<JavaMap, 'expression.binary.arithmetic.add'>
-	| JavaMap['nodes']['expression.binary.arithmetic.add']
-	| BuildInput<JavaMap, 'expression.binary.arithmetic.divide'>
-	| JavaMap['nodes']['expression.binary.arithmetic.divide']
-	| BuildInput<JavaMap, 'expression.binary.arithmetic.modulo'>
-	| JavaMap['nodes']['expression.binary.arithmetic.modulo']
-	| BuildInput<JavaMap, 'expression.binary.arithmetic.multiply'>
-	| JavaMap['nodes']['expression.binary.arithmetic.multiply']
-	| BuildInput<JavaMap, 'expression.binary.arithmetic.subtract'>
-	| JavaMap['nodes']['expression.binary.arithmetic.subtract']
-	| BuildInput<JavaMap, 'expression.binary.bitwise.and'>
-	| JavaMap['nodes']['expression.binary.bitwise.and']
-	| BuildInput<JavaMap, 'expression.binary.bitwise.or'>
-	| JavaMap['nodes']['expression.binary.bitwise.or']
-	| BuildInput<JavaMap, 'expression.binary.bitwise.xor'>
-	| JavaMap['nodes']['expression.binary.bitwise.xor']
-	| BuildInput<JavaMap, 'expression.binary.comparison.equal'>
-	| JavaMap['nodes']['expression.binary.comparison.equal']
-	| BuildInput<JavaMap, 'expression.binary.comparison.greater'>
-	| JavaMap['nodes']['expression.binary.comparison.greater']
-	| BuildInput<JavaMap, 'expression.binary.comparison.greater_equal'>
-	| JavaMap['nodes']['expression.binary.comparison.greater_equal']
-	| BuildInput<JavaMap, 'expression.binary.comparison.less'>
-	| JavaMap['nodes']['expression.binary.comparison.less']
-	| BuildInput<JavaMap, 'expression.binary.comparison.less_equal'>
-	| JavaMap['nodes']['expression.binary.comparison.less_equal']
-	| BuildInput<JavaMap, 'expression.binary.comparison.not_equal'>
-	| JavaMap['nodes']['expression.binary.comparison.not_equal']
-	| BuildInput<JavaMap, 'expression.binary.logical.and'>
-	| JavaMap['nodes']['expression.binary.logical.and']
-	| BuildInput<JavaMap, 'expression.binary.logical.or'>
-	| JavaMap['nodes']['expression.binary.logical.or']
-	| BuildInput<JavaMap, 'expression.binary.membership.instanceof'>
-	| JavaMap['nodes']['expression.binary.membership.instanceof']
-	| BuildInput<JavaMap, 'expression.binary.shift.left'>
-	| JavaMap['nodes']['expression.binary.shift.left']
-	| BuildInput<JavaMap, 'expression.binary.shift.right'>
-	| JavaMap['nodes']['expression.binary.shift.right']
-	| BuildInput<JavaMap, 'expression.binary.shift.right_unsigned'>
-	| JavaMap['nodes']['expression.binary.shift.right_unsigned']
-	| BuildInput<JavaMap, 'expression.call'>
-	| JavaMap['nodes']['expression.call']
-	| BuildInput<JavaMap, 'expression.call.construct'>
-	| JavaMap['nodes']['expression.call.construct']
-	| BuildInput<JavaMap, 'expression.call.member'>
-	| JavaMap['nodes']['expression.call.member']
-	| BuildInput<JavaMap, 'expression.call.template'>
-	| JavaMap['nodes']['expression.call.template']
-	| BuildInput<JavaMap, 'expression.cast'>
-	| JavaMap['nodes']['expression.cast']
-	| BuildInput<JavaMap, 'expression.collection.list'>
-	| JavaMap['nodes']['expression.collection.list']
-	| BuildInput<JavaMap, 'expression.conditional'>
-	| JavaMap['nodes']['expression.conditional']
-	| BuildInput<JavaMap, 'expression.lambda'>
-	| JavaMap['nodes']['expression.lambda']
-	| BuildInput<JavaMap, 'expression.member'>
-	| JavaMap['nodes']['expression.member']
-	| BuildInput<JavaMap, 'expression.parenthesized'>
-	| JavaMap['nodes']['expression.parenthesized']
-	| BuildInput<JavaMap, 'expression.subscript'>
-	| JavaMap['nodes']['expression.subscript']
-	| BuildInput<JavaMap, 'expression.unary.bitwise_not'>
-	| JavaMap['nodes']['expression.unary.bitwise_not']
-	| BuildInput<JavaMap, 'expression.unary.negation'>
-	| JavaMap['nodes']['expression.unary.negation']
-	| BuildInput<JavaMap, 'expression.unary.not'>
-	| JavaMap['nodes']['expression.unary.not']
-	| BuildInput<JavaMap, 'expression.unary.plus'>
-	| JavaMap['nodes']['expression.unary.plus']
-	| BuildInput<JavaMap, 'expression.update.decrement'>
-	| JavaMap['nodes']['expression.update.decrement']
-	| BuildInput<JavaMap, 'expression.update.increment'>
-	| JavaMap['nodes']['expression.update.increment']
-	| BuildInput<JavaMap, 'identifier'>
-	| JavaMap['nodes']['identifier']
-	| BuildInput<JavaMap, 'identifier.qualified'>
-	| JavaMap['nodes']['identifier.qualified']
-	| BuildInput<JavaMap, 'literal.boolean.false'>
-	| JavaMap['nodes']['literal.boolean.false']
-	| BuildInput<JavaMap, 'literal.boolean.true'>
-	| JavaMap['nodes']['literal.boolean.true']
-	| BuildInput<JavaMap, 'literal.character'>
-	| JavaMap['nodes']['literal.character']
-	| BuildInput<JavaMap, 'literal.null'>
-	| JavaMap['nodes']['literal.null']
-	| BuildInput<JavaMap, 'literal.number.float'>
-	| JavaMap['nodes']['literal.number.float']
-	| BuildInput<JavaMap, 'literal.number.integer'>
-	| JavaMap['nodes']['literal.number.integer']
-	| BuildInput<JavaMap, 'literal.number.integer.binary'>
-	| JavaMap['nodes']['literal.number.integer.binary']
-	| BuildInput<JavaMap, 'literal.number.integer.hex'>
-	| JavaMap['nodes']['literal.number.integer.hex']
-	| BuildInput<JavaMap, 'literal.number.integer.octal'>
-	| JavaMap['nodes']['literal.number.integer.octal']
-	| BuildInput<JavaMap, 'literal.string'>
-	| JavaMap['nodes']['literal.string']
-	| BuildInput<JavaMap, 'literal.string.multiline'>
-	| JavaMap['nodes']['literal.string.multiline']
-	| BuildInput<JavaMap, 'statement.assert'>
-	| JavaMap['nodes']['statement.assert']
-	| BuildInput<JavaMap, 'statement.block'>
-	| JavaMap['nodes']['statement.block']
-	| BuildInput<JavaMap, 'statement.break'>
-	| JavaMap['nodes']['statement.break']
-	| BuildInput<JavaMap, 'statement.continue'>
-	| JavaMap['nodes']['statement.continue']
-	| BuildInput<JavaMap, 'statement.if'>
-	| JavaMap['nodes']['statement.if']
-	| BuildInput<JavaMap, 'statement.import'>
-	| JavaMap['nodes']['statement.import']
-	| BuildInput<JavaMap, 'statement.labeled'>
-	| JavaMap['nodes']['statement.labeled']
-	| BuildInput<JavaMap, 'statement.loop.counted'>
-	| JavaMap['nodes']['statement.loop.counted']
-	| BuildInput<JavaMap, 'statement.loop.do_while'>
-	| JavaMap['nodes']['statement.loop.do_while']
-	| BuildInput<JavaMap, 'statement.loop.for_each'>
-	| JavaMap['nodes']['statement.loop.for_each']
-	| BuildInput<JavaMap, 'statement.loop.while'>
-	| JavaMap['nodes']['statement.loop.while']
-	| BuildInput<JavaMap, 'statement.resource'>
-	| JavaMap['nodes']['statement.resource']
-	| BuildInput<JavaMap, 'statement.return'>
-	| JavaMap['nodes']['statement.return']
-	| BuildInput<JavaMap, 'statement.switch'>
-	| JavaMap['nodes']['statement.switch']
-	| BuildInput<JavaMap, 'statement.throw'>
-	| JavaMap['nodes']['statement.throw']
-	| BuildInput<JavaMap, 'statement.try'>
-	| JavaMap['nodes']['statement.try']
-	| BuildInput<JavaMap, 'type.array'>
-	| JavaMap['nodes']['type.array']
-	| BuildInput<JavaMap, 'type.generic'>
-	| JavaMap['nodes']['type.generic']
-	| Unmapped<'java:annotation_type_declaration'>
-	| Unmapped<'java:method_reference'>
-	| Unmapped<'java:package_declaration'>
-	| Unmapped<'java:synchronized_statement'>;
-const statement_if$228_consequence = (value: statement_if$228_consequence$Item) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case ';':
-				return 66;
-			case 'this':
-				return b.expressionStatement(112);
-			case 'boolean':
-				return b.expressionStatement(b.classLiteral(106));
-			case 'byte':
-				return b.expressionStatement(b.classLiteral(99));
-			case 'char':
-				return b.expressionStatement(b.classLiteral(103));
-			case 'double':
-				return b.expressionStatement(b.classLiteral(105));
-			case 'float':
-				return b.expressionStatement(b.classLiteral(104));
-			case 'int':
-				return b.expressionStatement(b.classLiteral(101));
-			case 'long':
-				return b.expressionStatement(b.classLiteral(102));
-			case 'short':
-				return b.expressionStatement(b.classLiteral(100));
-			case 'void':
-				return b.expressionStatement(b.classLiteral(107));
-			default:
-				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
-					return b.expressionStatement(b.identifier(value));
-				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
-					return b.expressionStatement(b.classLiteral(b.identifier(value)));
-				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
-					return b.yieldStatement(b.identifier(value));
-				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
-					return b.yieldStatement(b.classLiteral(b.identifier(value)));
-				return b.expressionStatement(b.identifier(value));
-		}
-	}
-	if (typeof value === 'number') {
-		if (Number.isSafeInteger(value)) {
-			return b.expressionStatement(literal_number_integer$118({ $path: 'literal.number.integer', $value: value }));
-		}
-		return unnumbered('statement.if.consequence', 'float');
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240, 249, 250,
-					252, 256, 273, 274, 278, 301, 329, 330
-				]
-			)
-		)
-			return value;
-		if (
-			seated(
-				value,
-				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-				]
-			)
-		)
-			return b.expressionStatement(value);
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
-			return b.expressionStatement(b.classLiteral(value));
-		if (
-			seated(
-				value,
-				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-				]
-			)
-		)
-			return b.yieldStatement(value);
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
-			return b.yieldStatement(b.classLiteral(value));
-		return unseated('statement.if.consequence', value);
-	}
-	switch (value.$path) {
-		case 'declaration.class':
-			return unbuilt('statement.if.consequence', value);
-		case 'declaration.enum':
-			return unbuilt('statement.if.consequence', value);
-		case 'declaration.enum.private':
-			return unbuilt('statement.if.consequence', value);
-		case 'declaration.enum.public':
-			return unbuilt('statement.if.consequence', value);
-		case 'declaration.interface':
-			return unbuilt('statement.if.consequence', value);
-		case 'declaration.module':
-			return unbuilt('statement.if.consequence', value);
-		case 'declaration.variable':
-			return unbuilt('statement.if.consequence', value);
-		case 'declaration.variable.constant':
-			return unbuilt('statement.if.consequence', value);
-		case 'expression.assignment':
-			return unbuilt('statement.if.consequence', value);
-		case 'expression.assignment.compound.add':
-			return b.expressionStatement(expression_assignment_compound_add$172(value));
-		case 'expression.assignment.compound.bitwise_and':
-			return b.expressionStatement(expression_assignment_compound_bitwise_and$172(value));
-		case 'expression.assignment.compound.bitwise_or':
-			return b.expressionStatement(expression_assignment_compound_bitwise_or$172(value));
-		case 'expression.assignment.compound.bitwise_xor':
-			return b.expressionStatement(expression_assignment_compound_bitwise_xor$172(value));
-		case 'expression.assignment.compound.divide':
-			return b.expressionStatement(expression_assignment_compound_divide$172(value));
-		case 'expression.assignment.compound.modulo':
-			return b.expressionStatement(expression_assignment_compound_modulo$172(value));
-		case 'expression.assignment.compound.multiply':
-			return b.expressionStatement(expression_assignment_compound_multiply$172(value));
-		case 'expression.assignment.compound.shift_left':
-			return b.expressionStatement(expression_assignment_compound_shift_left$172(value));
-		case 'expression.assignment.compound.shift_right':
-			return b.expressionStatement(expression_assignment_compound_shift_right$172(value));
-		case 'expression.assignment.compound.shift_right_unsigned':
-			return b.expressionStatement(expression_assignment_compound_shift_right_unsigned$172(value));
-		case 'expression.assignment.compound.subtract':
-			return b.expressionStatement(expression_assignment_compound_subtract$172(value));
-		case 'expression.binary.arithmetic.add':
-			return b.expressionStatement(expression_binary_arithmetic_add$173(value));
-		case 'expression.binary.arithmetic.divide':
-			return b.expressionStatement(expression_binary_arithmetic_divide$173(value));
-		case 'expression.binary.arithmetic.modulo':
-			return b.expressionStatement(expression_binary_arithmetic_modulo$173(value));
-		case 'expression.binary.arithmetic.multiply':
-			return b.expressionStatement(expression_binary_arithmetic_multiply$173(value));
-		case 'expression.binary.arithmetic.subtract':
-			return b.expressionStatement(expression_binary_arithmetic_subtract$173(value));
-		case 'expression.binary.bitwise.and':
-			return b.expressionStatement(expression_binary_bitwise_and$173(value));
-		case 'expression.binary.bitwise.or':
-			return b.expressionStatement(expression_binary_bitwise_or$173(value));
-		case 'expression.binary.bitwise.xor':
-			return b.expressionStatement(expression_binary_bitwise_xor$173(value));
-		case 'expression.binary.comparison.equal':
-			return b.expressionStatement(expression_binary_comparison_equal$173(value));
-		case 'expression.binary.comparison.greater':
-			return b.expressionStatement(expression_binary_comparison_greater$173(value));
-		case 'expression.binary.comparison.greater_equal':
-			return b.expressionStatement(expression_binary_comparison_greater_equal$173(value));
-		case 'expression.binary.comparison.less':
-			return b.expressionStatement(expression_binary_comparison_less$173(value));
-		case 'expression.binary.comparison.less_equal':
-			return b.expressionStatement(expression_binary_comparison_less_equal$173(value));
-		case 'expression.binary.comparison.not_equal':
-			return b.expressionStatement(expression_binary_comparison_not_equal$173(value));
-		case 'expression.binary.logical.and':
-			return b.expressionStatement(expression_binary_logical_and$173(value));
-		case 'expression.binary.logical.or':
-			return b.expressionStatement(expression_binary_logical_or$173(value));
-		case 'expression.binary.membership.instanceof':
-			return unbuilt('statement.if.consequence', value);
-		case 'expression.binary.shift.left':
-			return unbuilt('statement.if.consequence', value);
-		case 'expression.binary.shift.right':
-			return unbuilt('statement.if.consequence', value);
-		case 'expression.binary.shift.right_unsigned':
-			return unbuilt('statement.if.consequence', value);
-		case 'expression.call':
-			return unbuilt('statement.if.consequence', value);
-		case 'expression.call.construct':
-			return unbuilt('statement.if.consequence', value);
-		case 'expression.call.member':
-			return unbuilt('statement.if.consequence', value);
-		case 'expression.call.template':
-			return unbuilt('statement.if.consequence', value);
-		case 'expression.cast':
-			return unbuilt('statement.if.consequence', value);
-		case 'expression.collection.list':
-			return unbuilt('statement.if.consequence', value);
-		case 'expression.conditional':
-			return b.expressionStatement(expression_conditional$177(value));
-		case 'expression.lambda':
-			return unbuilt('statement.if.consequence', value);
-		case 'expression.member':
-			return unbuilt('statement.if.consequence', value);
-		case 'expression.parenthesized':
-			return b.expressionStatement(expression_parenthesized$183(value));
-		case 'expression.subscript':
-			return unbuilt('statement.if.consequence', value);
-		case 'expression.unary.bitwise_not':
-			return unbuilt('statement.if.consequence', value);
-		case 'expression.unary.negation':
-			return unbuilt('statement.if.consequence', value);
-		case 'expression.unary.not':
-			return unbuilt('statement.if.consequence', value);
-		case 'expression.unary.plus':
-			return unbuilt('statement.if.consequence', value);
-		case 'expression.update.decrement':
-			return unbuilt('statement.if.consequence', value);
-		case 'expression.update.increment':
-			return unbuilt('statement.if.consequence', value);
-		case 'identifier':
-			return unbuilt('statement.if.consequence', value);
-		case 'identifier.qualified':
-			return unbuilt('statement.if.consequence', value);
-		case 'literal.boolean.false':
-			return unbuilt('statement.if.consequence', value);
-		case 'literal.boolean.true':
-			return unbuilt('statement.if.consequence', value);
-		case 'literal.character':
-			return b.expressionStatement(literal_character$7(value));
-		case 'literal.null':
-			return unbuilt('statement.if.consequence', value);
-		case 'literal.number.float':
-			return unbuilt('statement.if.consequence', value);
-		case 'literal.number.integer':
-			if (value.$value !== undefined) return b.expressionStatement(literal_number_integer$118(value));
-			return unbuilt('statement.if.consequence', value);
-		case 'literal.number.integer.binary':
-			return b.expressionStatement(literal_number_integer_binary$4(value));
-		case 'literal.number.integer.hex':
-			return b.expressionStatement(literal_number_integer_hex$2(value));
-		case 'literal.number.integer.octal':
-			return b.expressionStatement(literal_number_integer_octal$3(value));
-		case 'literal.string':
-			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return b.expressionStatement(literal_string$327(value));
-			return b.expressionStatement(literal_string$328(value));
-		case 'literal.string.multiline':
-			return b.expressionStatement(literal_string_multiline$328(value));
-		case 'statement.assert':
-			return unbuilt('statement.if.consequence', value);
-		case 'statement.block':
-			return statement_block$209(value);
-		case 'statement.break':
-			return statement_break$214(value);
-		case 'statement.continue':
-			return statement_continue$215(value);
-		case 'statement.if':
-			return statement_if$228(value);
-		case 'statement.import':
-			return unbuilt('statement.if.consequence', value);
-		case 'statement.labeled':
-			return unbuilt('statement.if.consequence', value);
-		case 'statement.loop.counted':
-			return unbuilt('statement.if.consequence', value);
-		case 'statement.loop.do_while':
-			return statement_loop_do_while$213(value);
-		case 'statement.loop.for_each':
-			return unbuilt('statement.if.consequence', value);
-		case 'statement.loop.while':
-			return statement_loop_while$229(value);
-		case 'statement.resource':
-			return unbuilt('statement.if.consequence', value);
-		case 'statement.return':
-			return statement_return$216(value);
-		case 'statement.switch':
-			return unbuilt('statement.if.consequence', value);
-		case 'statement.throw':
-			return statement_throw$219(value);
-		case 'statement.try':
-			return statement_try$330(value);
-		case 'type.array':
-			return unbuilt('statement.if.consequence', value);
-		case 'type.generic':
-			return unbuilt('statement.if.consequence', value);
-		default:
-			return unbuilt('statement.if.consequence', value);
-	}
-};
-type statement_loop_do_while$213_body$Item =
-	| ';'
-	| 'boolean'
-	| 'byte'
-	| 'char'
-	| 'double'
-	| 'float'
-	| 'int'
-	| 'long'
-	| 'short'
-	| 'this'
-	| 'void'
-	| Text<JavaMap, 'identifier'>
-	| Text<JavaMap, 'identifier.receiver'>
-	| Text<JavaMap, 'literal.number.integer'>
-	| Text<JavaMap, 'literal.number.integer.hex'>
-	| Text<JavaMap, 'type.primitive.boolean'>
-	| Text<JavaMap, 'type.primitive.character'>
-	| Text<JavaMap, 'type.primitive.floating.float32'>
-	| Text<JavaMap, 'type.primitive.floating.float64'>
-	| Text<JavaMap, 'type.primitive.integral.int16'>
-	| Text<JavaMap, 'type.primitive.integral.int32'>
-	| Text<JavaMap, 'type.primitive.integral.int64'>
-	| Text<JavaMap, 'type.primitive.integral.int8'>
-	| Text<JavaMap, 'type.primitive.void'>
-	| number
-	| BuildInput<JavaMap, 'declaration.class'>
-	| JavaMap['nodes']['declaration.class']
-	| BuildInput<JavaMap, 'declaration.enum'>
-	| JavaMap['nodes']['declaration.enum']
-	| BuildInput<JavaMap, 'declaration.enum.private'>
-	| JavaMap['nodes']['declaration.enum.private']
-	| BuildInput<JavaMap, 'declaration.enum.public'>
-	| JavaMap['nodes']['declaration.enum.public']
-	| BuildInput<JavaMap, 'declaration.interface'>
-	| JavaMap['nodes']['declaration.interface']
-	| BuildInput<JavaMap, 'declaration.module'>
-	| JavaMap['nodes']['declaration.module']
-	| BuildInput<JavaMap, 'declaration.variable'>
-	| JavaMap['nodes']['declaration.variable']
-	| BuildInput<JavaMap, 'declaration.variable.constant'>
-	| JavaMap['nodes']['declaration.variable.constant']
-	| BuildInput<JavaMap, 'expression.assignment'>
-	| JavaMap['nodes']['expression.assignment']
-	| BuildInput<JavaMap, 'expression.assignment.compound.add'>
-	| JavaMap['nodes']['expression.assignment.compound.add']
-	| BuildInput<JavaMap, 'expression.assignment.compound.bitwise_and'>
-	| JavaMap['nodes']['expression.assignment.compound.bitwise_and']
-	| BuildInput<JavaMap, 'expression.assignment.compound.bitwise_or'>
-	| JavaMap['nodes']['expression.assignment.compound.bitwise_or']
-	| BuildInput<JavaMap, 'expression.assignment.compound.bitwise_xor'>
-	| JavaMap['nodes']['expression.assignment.compound.bitwise_xor']
-	| BuildInput<JavaMap, 'expression.assignment.compound.divide'>
-	| JavaMap['nodes']['expression.assignment.compound.divide']
-	| BuildInput<JavaMap, 'expression.assignment.compound.modulo'>
-	| JavaMap['nodes']['expression.assignment.compound.modulo']
-	| BuildInput<JavaMap, 'expression.assignment.compound.multiply'>
-	| JavaMap['nodes']['expression.assignment.compound.multiply']
-	| BuildInput<JavaMap, 'expression.assignment.compound.shift_left'>
-	| JavaMap['nodes']['expression.assignment.compound.shift_left']
-	| BuildInput<JavaMap, 'expression.assignment.compound.shift_right'>
-	| JavaMap['nodes']['expression.assignment.compound.shift_right']
-	| BuildInput<JavaMap, 'expression.assignment.compound.shift_right_unsigned'>
-	| JavaMap['nodes']['expression.assignment.compound.shift_right_unsigned']
-	| BuildInput<JavaMap, 'expression.assignment.compound.subtract'>
-	| JavaMap['nodes']['expression.assignment.compound.subtract']
-	| BuildInput<JavaMap, 'expression.binary.arithmetic.add'>
-	| JavaMap['nodes']['expression.binary.arithmetic.add']
-	| BuildInput<JavaMap, 'expression.binary.arithmetic.divide'>
-	| JavaMap['nodes']['expression.binary.arithmetic.divide']
-	| BuildInput<JavaMap, 'expression.binary.arithmetic.modulo'>
-	| JavaMap['nodes']['expression.binary.arithmetic.modulo']
-	| BuildInput<JavaMap, 'expression.binary.arithmetic.multiply'>
-	| JavaMap['nodes']['expression.binary.arithmetic.multiply']
-	| BuildInput<JavaMap, 'expression.binary.arithmetic.subtract'>
-	| JavaMap['nodes']['expression.binary.arithmetic.subtract']
-	| BuildInput<JavaMap, 'expression.binary.bitwise.and'>
-	| JavaMap['nodes']['expression.binary.bitwise.and']
-	| BuildInput<JavaMap, 'expression.binary.bitwise.or'>
-	| JavaMap['nodes']['expression.binary.bitwise.or']
-	| BuildInput<JavaMap, 'expression.binary.bitwise.xor'>
-	| JavaMap['nodes']['expression.binary.bitwise.xor']
-	| BuildInput<JavaMap, 'expression.binary.comparison.equal'>
-	| JavaMap['nodes']['expression.binary.comparison.equal']
-	| BuildInput<JavaMap, 'expression.binary.comparison.greater'>
-	| JavaMap['nodes']['expression.binary.comparison.greater']
-	| BuildInput<JavaMap, 'expression.binary.comparison.greater_equal'>
-	| JavaMap['nodes']['expression.binary.comparison.greater_equal']
-	| BuildInput<JavaMap, 'expression.binary.comparison.less'>
-	| JavaMap['nodes']['expression.binary.comparison.less']
-	| BuildInput<JavaMap, 'expression.binary.comparison.less_equal'>
-	| JavaMap['nodes']['expression.binary.comparison.less_equal']
-	| BuildInput<JavaMap, 'expression.binary.comparison.not_equal'>
-	| JavaMap['nodes']['expression.binary.comparison.not_equal']
-	| BuildInput<JavaMap, 'expression.binary.logical.and'>
-	| JavaMap['nodes']['expression.binary.logical.and']
-	| BuildInput<JavaMap, 'expression.binary.logical.or'>
-	| JavaMap['nodes']['expression.binary.logical.or']
-	| BuildInput<JavaMap, 'expression.binary.membership.instanceof'>
-	| JavaMap['nodes']['expression.binary.membership.instanceof']
-	| BuildInput<JavaMap, 'expression.binary.shift.left'>
-	| JavaMap['nodes']['expression.binary.shift.left']
-	| BuildInput<JavaMap, 'expression.binary.shift.right'>
-	| JavaMap['nodes']['expression.binary.shift.right']
-	| BuildInput<JavaMap, 'expression.binary.shift.right_unsigned'>
-	| JavaMap['nodes']['expression.binary.shift.right_unsigned']
-	| BuildInput<JavaMap, 'expression.call'>
-	| JavaMap['nodes']['expression.call']
-	| BuildInput<JavaMap, 'expression.call.construct'>
-	| JavaMap['nodes']['expression.call.construct']
-	| BuildInput<JavaMap, 'expression.call.member'>
-	| JavaMap['nodes']['expression.call.member']
-	| BuildInput<JavaMap, 'expression.call.template'>
-	| JavaMap['nodes']['expression.call.template']
-	| BuildInput<JavaMap, 'expression.cast'>
-	| JavaMap['nodes']['expression.cast']
-	| BuildInput<JavaMap, 'expression.collection.list'>
-	| JavaMap['nodes']['expression.collection.list']
-	| BuildInput<JavaMap, 'expression.conditional'>
-	| JavaMap['nodes']['expression.conditional']
-	| BuildInput<JavaMap, 'expression.lambda'>
-	| JavaMap['nodes']['expression.lambda']
-	| BuildInput<JavaMap, 'expression.member'>
-	| JavaMap['nodes']['expression.member']
-	| BuildInput<JavaMap, 'expression.parenthesized'>
-	| JavaMap['nodes']['expression.parenthesized']
-	| BuildInput<JavaMap, 'expression.subscript'>
-	| JavaMap['nodes']['expression.subscript']
-	| BuildInput<JavaMap, 'expression.unary.bitwise_not'>
-	| JavaMap['nodes']['expression.unary.bitwise_not']
-	| BuildInput<JavaMap, 'expression.unary.negation'>
-	| JavaMap['nodes']['expression.unary.negation']
-	| BuildInput<JavaMap, 'expression.unary.not'>
-	| JavaMap['nodes']['expression.unary.not']
-	| BuildInput<JavaMap, 'expression.unary.plus'>
-	| JavaMap['nodes']['expression.unary.plus']
-	| BuildInput<JavaMap, 'expression.update.decrement'>
-	| JavaMap['nodes']['expression.update.decrement']
-	| BuildInput<JavaMap, 'expression.update.increment'>
-	| JavaMap['nodes']['expression.update.increment']
-	| BuildInput<JavaMap, 'identifier'>
-	| JavaMap['nodes']['identifier']
-	| BuildInput<JavaMap, 'identifier.qualified'>
-	| JavaMap['nodes']['identifier.qualified']
-	| BuildInput<JavaMap, 'literal.boolean.false'>
-	| JavaMap['nodes']['literal.boolean.false']
-	| BuildInput<JavaMap, 'literal.boolean.true'>
-	| JavaMap['nodes']['literal.boolean.true']
-	| BuildInput<JavaMap, 'literal.character'>
-	| JavaMap['nodes']['literal.character']
-	| BuildInput<JavaMap, 'literal.null'>
-	| JavaMap['nodes']['literal.null']
-	| BuildInput<JavaMap, 'literal.number.float'>
-	| JavaMap['nodes']['literal.number.float']
-	| BuildInput<JavaMap, 'literal.number.integer'>
-	| JavaMap['nodes']['literal.number.integer']
-	| BuildInput<JavaMap, 'literal.number.integer.binary'>
-	| JavaMap['nodes']['literal.number.integer.binary']
-	| BuildInput<JavaMap, 'literal.number.integer.hex'>
-	| JavaMap['nodes']['literal.number.integer.hex']
-	| BuildInput<JavaMap, 'literal.number.integer.octal'>
-	| JavaMap['nodes']['literal.number.integer.octal']
-	| BuildInput<JavaMap, 'literal.string'>
-	| JavaMap['nodes']['literal.string']
-	| BuildInput<JavaMap, 'literal.string.multiline'>
-	| JavaMap['nodes']['literal.string.multiline']
-	| BuildInput<JavaMap, 'statement.assert'>
-	| JavaMap['nodes']['statement.assert']
-	| BuildInput<JavaMap, 'statement.block'>
-	| JavaMap['nodes']['statement.block']
-	| BuildInput<JavaMap, 'statement.break'>
-	| JavaMap['nodes']['statement.break']
-	| BuildInput<JavaMap, 'statement.continue'>
-	| JavaMap['nodes']['statement.continue']
-	| BuildInput<JavaMap, 'statement.if'>
-	| JavaMap['nodes']['statement.if']
-	| BuildInput<JavaMap, 'statement.import'>
-	| JavaMap['nodes']['statement.import']
-	| BuildInput<JavaMap, 'statement.labeled'>
-	| JavaMap['nodes']['statement.labeled']
-	| BuildInput<JavaMap, 'statement.loop.counted'>
-	| JavaMap['nodes']['statement.loop.counted']
-	| BuildInput<JavaMap, 'statement.loop.do_while'>
-	| JavaMap['nodes']['statement.loop.do_while']
-	| BuildInput<JavaMap, 'statement.loop.for_each'>
-	| JavaMap['nodes']['statement.loop.for_each']
-	| BuildInput<JavaMap, 'statement.loop.while'>
-	| JavaMap['nodes']['statement.loop.while']
-	| BuildInput<JavaMap, 'statement.resource'>
-	| JavaMap['nodes']['statement.resource']
-	| BuildInput<JavaMap, 'statement.return'>
-	| JavaMap['nodes']['statement.return']
-	| BuildInput<JavaMap, 'statement.switch'>
-	| JavaMap['nodes']['statement.switch']
-	| BuildInput<JavaMap, 'statement.throw'>
-	| JavaMap['nodes']['statement.throw']
-	| BuildInput<JavaMap, 'statement.try'>
-	| JavaMap['nodes']['statement.try']
-	| BuildInput<JavaMap, 'type.array'>
-	| JavaMap['nodes']['type.array']
-	| BuildInput<JavaMap, 'type.generic'>
-	| JavaMap['nodes']['type.generic']
-	| Unmapped<'java:annotation_type_declaration'>
-	| Unmapped<'java:method_reference'>
-	| Unmapped<'java:package_declaration'>
-	| Unmapped<'java:synchronized_statement'>;
-const statement_loop_do_while$213_body = (value: statement_loop_do_while$213_body$Item) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case ';':
-				return 66;
-			case 'this':
-				return b.expressionStatement(112);
-			case 'boolean':
-				return b.expressionStatement(b.classLiteral(106));
-			case 'byte':
-				return b.expressionStatement(b.classLiteral(99));
-			case 'char':
-				return b.expressionStatement(b.classLiteral(103));
-			case 'double':
-				return b.expressionStatement(b.classLiteral(105));
-			case 'float':
-				return b.expressionStatement(b.classLiteral(104));
-			case 'int':
-				return b.expressionStatement(b.classLiteral(101));
-			case 'long':
-				return b.expressionStatement(b.classLiteral(102));
-			case 'short':
-				return b.expressionStatement(b.classLiteral(100));
-			case 'void':
-				return b.expressionStatement(b.classLiteral(107));
-			default:
-				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
-					return b.expressionStatement(b.identifier(value));
-				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
-					return b.expressionStatement(b.classLiteral(b.identifier(value)));
-				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
-					return b.yieldStatement(b.identifier(value));
-				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
-					return b.yieldStatement(b.classLiteral(b.identifier(value)));
-				return b.expressionStatement(b.identifier(value));
-		}
-	}
-	if (typeof value === 'number') {
-		if (Number.isSafeInteger(value)) {
-			return b.expressionStatement(literal_number_integer$118({ $path: 'literal.number.integer', $value: value }));
-		}
-		return unnumbered('statement.loop.do_while.body', 'float');
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240, 249, 250,
-					252, 256, 273, 274, 278, 301, 329, 330
-				]
-			)
-		)
-			return value;
-		if (
-			seated(
-				value,
-				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-				]
-			)
-		)
-			return b.expressionStatement(value);
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
-			return b.expressionStatement(b.classLiteral(value));
-		if (
-			seated(
-				value,
-				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-				]
-			)
-		)
-			return b.yieldStatement(value);
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
-			return b.yieldStatement(b.classLiteral(value));
-		return unseated('statement.loop.do_while.body', value);
-	}
-	switch (value.$path) {
-		case 'declaration.class':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'declaration.enum':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'declaration.enum.private':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'declaration.enum.public':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'declaration.interface':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'declaration.module':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'declaration.variable':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'declaration.variable.constant':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'expression.assignment':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'expression.assignment.compound.add':
-			return b.expressionStatement(expression_assignment_compound_add$172(value));
-		case 'expression.assignment.compound.bitwise_and':
-			return b.expressionStatement(expression_assignment_compound_bitwise_and$172(value));
-		case 'expression.assignment.compound.bitwise_or':
-			return b.expressionStatement(expression_assignment_compound_bitwise_or$172(value));
-		case 'expression.assignment.compound.bitwise_xor':
-			return b.expressionStatement(expression_assignment_compound_bitwise_xor$172(value));
-		case 'expression.assignment.compound.divide':
-			return b.expressionStatement(expression_assignment_compound_divide$172(value));
-		case 'expression.assignment.compound.modulo':
-			return b.expressionStatement(expression_assignment_compound_modulo$172(value));
-		case 'expression.assignment.compound.multiply':
-			return b.expressionStatement(expression_assignment_compound_multiply$172(value));
-		case 'expression.assignment.compound.shift_left':
-			return b.expressionStatement(expression_assignment_compound_shift_left$172(value));
-		case 'expression.assignment.compound.shift_right':
-			return b.expressionStatement(expression_assignment_compound_shift_right$172(value));
-		case 'expression.assignment.compound.shift_right_unsigned':
-			return b.expressionStatement(expression_assignment_compound_shift_right_unsigned$172(value));
-		case 'expression.assignment.compound.subtract':
-			return b.expressionStatement(expression_assignment_compound_subtract$172(value));
-		case 'expression.binary.arithmetic.add':
-			return b.expressionStatement(expression_binary_arithmetic_add$173(value));
-		case 'expression.binary.arithmetic.divide':
-			return b.expressionStatement(expression_binary_arithmetic_divide$173(value));
-		case 'expression.binary.arithmetic.modulo':
-			return b.expressionStatement(expression_binary_arithmetic_modulo$173(value));
-		case 'expression.binary.arithmetic.multiply':
-			return b.expressionStatement(expression_binary_arithmetic_multiply$173(value));
-		case 'expression.binary.arithmetic.subtract':
-			return b.expressionStatement(expression_binary_arithmetic_subtract$173(value));
-		case 'expression.binary.bitwise.and':
-			return b.expressionStatement(expression_binary_bitwise_and$173(value));
-		case 'expression.binary.bitwise.or':
-			return b.expressionStatement(expression_binary_bitwise_or$173(value));
-		case 'expression.binary.bitwise.xor':
-			return b.expressionStatement(expression_binary_bitwise_xor$173(value));
-		case 'expression.binary.comparison.equal':
-			return b.expressionStatement(expression_binary_comparison_equal$173(value));
-		case 'expression.binary.comparison.greater':
-			return b.expressionStatement(expression_binary_comparison_greater$173(value));
-		case 'expression.binary.comparison.greater_equal':
-			return b.expressionStatement(expression_binary_comparison_greater_equal$173(value));
-		case 'expression.binary.comparison.less':
-			return b.expressionStatement(expression_binary_comparison_less$173(value));
-		case 'expression.binary.comparison.less_equal':
-			return b.expressionStatement(expression_binary_comparison_less_equal$173(value));
-		case 'expression.binary.comparison.not_equal':
-			return b.expressionStatement(expression_binary_comparison_not_equal$173(value));
-		case 'expression.binary.logical.and':
-			return b.expressionStatement(expression_binary_logical_and$173(value));
-		case 'expression.binary.logical.or':
-			return b.expressionStatement(expression_binary_logical_or$173(value));
-		case 'expression.binary.membership.instanceof':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'expression.binary.shift.left':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'expression.binary.shift.right':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'expression.binary.shift.right_unsigned':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'expression.call':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'expression.call.construct':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'expression.call.member':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'expression.call.template':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'expression.cast':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'expression.collection.list':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'expression.conditional':
-			return b.expressionStatement(expression_conditional$177(value));
-		case 'expression.lambda':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'expression.member':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'expression.parenthesized':
-			return b.expressionStatement(expression_parenthesized$183(value));
-		case 'expression.subscript':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'expression.unary.bitwise_not':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'expression.unary.negation':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'expression.unary.not':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'expression.unary.plus':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'expression.update.decrement':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'expression.update.increment':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'identifier':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'identifier.qualified':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'literal.boolean.false':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'literal.boolean.true':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'literal.character':
-			return b.expressionStatement(literal_character$7(value));
-		case 'literal.null':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'literal.number.float':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'literal.number.integer':
-			if (value.$value !== undefined) return b.expressionStatement(literal_number_integer$118(value));
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'literal.number.integer.binary':
-			return b.expressionStatement(literal_number_integer_binary$4(value));
-		case 'literal.number.integer.hex':
-			return b.expressionStatement(literal_number_integer_hex$2(value));
-		case 'literal.number.integer.octal':
-			return b.expressionStatement(literal_number_integer_octal$3(value));
-		case 'literal.string':
-			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return b.expressionStatement(literal_string$327(value));
-			return b.expressionStatement(literal_string$328(value));
-		case 'literal.string.multiline':
-			return b.expressionStatement(literal_string_multiline$328(value));
-		case 'statement.assert':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'statement.block':
-			return statement_block$209(value);
-		case 'statement.break':
-			return statement_break$214(value);
-		case 'statement.continue':
-			return statement_continue$215(value);
-		case 'statement.if':
-			return statement_if$228(value);
-		case 'statement.import':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'statement.labeled':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'statement.loop.counted':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'statement.loop.do_while':
-			return statement_loop_do_while$213(value);
-		case 'statement.loop.for_each':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'statement.loop.while':
-			return statement_loop_while$229(value);
-		case 'statement.resource':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'statement.return':
-			return statement_return$216(value);
-		case 'statement.switch':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'statement.throw':
-			return statement_throw$219(value);
-		case 'statement.try':
-			return statement_try$330(value);
-		case 'type.array':
-			return unbuilt('statement.loop.do_while.body', value);
-		case 'type.generic':
-			return unbuilt('statement.loop.do_while.body', value);
-		default:
-			return unbuilt('statement.loop.do_while.body', value);
-	}
-};
-type statement_loop_do_while$213_condition$Item =
-	| PathInput<JavaMap, 'expression.parenthesized'>
-	| JavaMap['nodes']['expression.parenthesized'];
-const statement_loop_do_while$213_condition = (value: statement_loop_do_while$213_condition$Item) => {
-	if (typeof value === 'number') {
-		if (seated(value, [183])) return value;
-		return unseated('statement.loop.do_while.condition', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [183])) return value;
-		return unseated('statement.loop.do_while.condition', value);
-	}
-	return expression_parenthesized$183(value);
-};
-type statement_loop_while$229_body$Item =
-	| ';'
-	| 'boolean'
-	| 'byte'
-	| 'char'
-	| 'double'
-	| 'float'
-	| 'int'
-	| 'long'
-	| 'short'
-	| 'this'
-	| 'void'
-	| Text<JavaMap, 'identifier'>
-	| Text<JavaMap, 'identifier.receiver'>
-	| Text<JavaMap, 'literal.number.integer'>
-	| Text<JavaMap, 'literal.number.integer.hex'>
-	| Text<JavaMap, 'type.primitive.boolean'>
-	| Text<JavaMap, 'type.primitive.character'>
-	| Text<JavaMap, 'type.primitive.floating.float32'>
-	| Text<JavaMap, 'type.primitive.floating.float64'>
-	| Text<JavaMap, 'type.primitive.integral.int16'>
-	| Text<JavaMap, 'type.primitive.integral.int32'>
-	| Text<JavaMap, 'type.primitive.integral.int64'>
-	| Text<JavaMap, 'type.primitive.integral.int8'>
-	| Text<JavaMap, 'type.primitive.void'>
-	| number
-	| BuildInput<JavaMap, 'declaration.class'>
-	| JavaMap['nodes']['declaration.class']
-	| BuildInput<JavaMap, 'declaration.enum'>
-	| JavaMap['nodes']['declaration.enum']
-	| BuildInput<JavaMap, 'declaration.enum.private'>
-	| JavaMap['nodes']['declaration.enum.private']
-	| BuildInput<JavaMap, 'declaration.enum.public'>
-	| JavaMap['nodes']['declaration.enum.public']
-	| BuildInput<JavaMap, 'declaration.interface'>
-	| JavaMap['nodes']['declaration.interface']
-	| BuildInput<JavaMap, 'declaration.module'>
-	| JavaMap['nodes']['declaration.module']
-	| BuildInput<JavaMap, 'declaration.variable'>
-	| JavaMap['nodes']['declaration.variable']
-	| BuildInput<JavaMap, 'declaration.variable.constant'>
-	| JavaMap['nodes']['declaration.variable.constant']
-	| BuildInput<JavaMap, 'expression.assignment'>
-	| JavaMap['nodes']['expression.assignment']
-	| BuildInput<JavaMap, 'expression.assignment.compound.add'>
-	| JavaMap['nodes']['expression.assignment.compound.add']
-	| BuildInput<JavaMap, 'expression.assignment.compound.bitwise_and'>
-	| JavaMap['nodes']['expression.assignment.compound.bitwise_and']
-	| BuildInput<JavaMap, 'expression.assignment.compound.bitwise_or'>
-	| JavaMap['nodes']['expression.assignment.compound.bitwise_or']
-	| BuildInput<JavaMap, 'expression.assignment.compound.bitwise_xor'>
-	| JavaMap['nodes']['expression.assignment.compound.bitwise_xor']
-	| BuildInput<JavaMap, 'expression.assignment.compound.divide'>
-	| JavaMap['nodes']['expression.assignment.compound.divide']
-	| BuildInput<JavaMap, 'expression.assignment.compound.modulo'>
-	| JavaMap['nodes']['expression.assignment.compound.modulo']
-	| BuildInput<JavaMap, 'expression.assignment.compound.multiply'>
-	| JavaMap['nodes']['expression.assignment.compound.multiply']
-	| BuildInput<JavaMap, 'expression.assignment.compound.shift_left'>
-	| JavaMap['nodes']['expression.assignment.compound.shift_left']
-	| BuildInput<JavaMap, 'expression.assignment.compound.shift_right'>
-	| JavaMap['nodes']['expression.assignment.compound.shift_right']
-	| BuildInput<JavaMap, 'expression.assignment.compound.shift_right_unsigned'>
-	| JavaMap['nodes']['expression.assignment.compound.shift_right_unsigned']
-	| BuildInput<JavaMap, 'expression.assignment.compound.subtract'>
-	| JavaMap['nodes']['expression.assignment.compound.subtract']
-	| BuildInput<JavaMap, 'expression.binary.arithmetic.add'>
-	| JavaMap['nodes']['expression.binary.arithmetic.add']
-	| BuildInput<JavaMap, 'expression.binary.arithmetic.divide'>
-	| JavaMap['nodes']['expression.binary.arithmetic.divide']
-	| BuildInput<JavaMap, 'expression.binary.arithmetic.modulo'>
-	| JavaMap['nodes']['expression.binary.arithmetic.modulo']
-	| BuildInput<JavaMap, 'expression.binary.arithmetic.multiply'>
-	| JavaMap['nodes']['expression.binary.arithmetic.multiply']
-	| BuildInput<JavaMap, 'expression.binary.arithmetic.subtract'>
-	| JavaMap['nodes']['expression.binary.arithmetic.subtract']
-	| BuildInput<JavaMap, 'expression.binary.bitwise.and'>
-	| JavaMap['nodes']['expression.binary.bitwise.and']
-	| BuildInput<JavaMap, 'expression.binary.bitwise.or'>
-	| JavaMap['nodes']['expression.binary.bitwise.or']
-	| BuildInput<JavaMap, 'expression.binary.bitwise.xor'>
-	| JavaMap['nodes']['expression.binary.bitwise.xor']
-	| BuildInput<JavaMap, 'expression.binary.comparison.equal'>
-	| JavaMap['nodes']['expression.binary.comparison.equal']
-	| BuildInput<JavaMap, 'expression.binary.comparison.greater'>
-	| JavaMap['nodes']['expression.binary.comparison.greater']
-	| BuildInput<JavaMap, 'expression.binary.comparison.greater_equal'>
-	| JavaMap['nodes']['expression.binary.comparison.greater_equal']
-	| BuildInput<JavaMap, 'expression.binary.comparison.less'>
-	| JavaMap['nodes']['expression.binary.comparison.less']
-	| BuildInput<JavaMap, 'expression.binary.comparison.less_equal'>
-	| JavaMap['nodes']['expression.binary.comparison.less_equal']
-	| BuildInput<JavaMap, 'expression.binary.comparison.not_equal'>
-	| JavaMap['nodes']['expression.binary.comparison.not_equal']
-	| BuildInput<JavaMap, 'expression.binary.logical.and'>
-	| JavaMap['nodes']['expression.binary.logical.and']
-	| BuildInput<JavaMap, 'expression.binary.logical.or'>
-	| JavaMap['nodes']['expression.binary.logical.or']
-	| BuildInput<JavaMap, 'expression.binary.membership.instanceof'>
-	| JavaMap['nodes']['expression.binary.membership.instanceof']
-	| BuildInput<JavaMap, 'expression.binary.shift.left'>
-	| JavaMap['nodes']['expression.binary.shift.left']
-	| BuildInput<JavaMap, 'expression.binary.shift.right'>
-	| JavaMap['nodes']['expression.binary.shift.right']
-	| BuildInput<JavaMap, 'expression.binary.shift.right_unsigned'>
-	| JavaMap['nodes']['expression.binary.shift.right_unsigned']
-	| BuildInput<JavaMap, 'expression.call'>
-	| JavaMap['nodes']['expression.call']
-	| BuildInput<JavaMap, 'expression.call.construct'>
-	| JavaMap['nodes']['expression.call.construct']
-	| BuildInput<JavaMap, 'expression.call.member'>
-	| JavaMap['nodes']['expression.call.member']
-	| BuildInput<JavaMap, 'expression.call.template'>
-	| JavaMap['nodes']['expression.call.template']
-	| BuildInput<JavaMap, 'expression.cast'>
-	| JavaMap['nodes']['expression.cast']
-	| BuildInput<JavaMap, 'expression.collection.list'>
-	| JavaMap['nodes']['expression.collection.list']
-	| BuildInput<JavaMap, 'expression.conditional'>
-	| JavaMap['nodes']['expression.conditional']
-	| BuildInput<JavaMap, 'expression.lambda'>
-	| JavaMap['nodes']['expression.lambda']
-	| BuildInput<JavaMap, 'expression.member'>
-	| JavaMap['nodes']['expression.member']
-	| BuildInput<JavaMap, 'expression.parenthesized'>
-	| JavaMap['nodes']['expression.parenthesized']
-	| BuildInput<JavaMap, 'expression.subscript'>
-	| JavaMap['nodes']['expression.subscript']
-	| BuildInput<JavaMap, 'expression.unary.bitwise_not'>
-	| JavaMap['nodes']['expression.unary.bitwise_not']
-	| BuildInput<JavaMap, 'expression.unary.negation'>
-	| JavaMap['nodes']['expression.unary.negation']
-	| BuildInput<JavaMap, 'expression.unary.not'>
-	| JavaMap['nodes']['expression.unary.not']
-	| BuildInput<JavaMap, 'expression.unary.plus'>
-	| JavaMap['nodes']['expression.unary.plus']
-	| BuildInput<JavaMap, 'expression.update.decrement'>
-	| JavaMap['nodes']['expression.update.decrement']
-	| BuildInput<JavaMap, 'expression.update.increment'>
-	| JavaMap['nodes']['expression.update.increment']
-	| BuildInput<JavaMap, 'identifier'>
-	| JavaMap['nodes']['identifier']
-	| BuildInput<JavaMap, 'identifier.qualified'>
-	| JavaMap['nodes']['identifier.qualified']
-	| BuildInput<JavaMap, 'literal.boolean.false'>
-	| JavaMap['nodes']['literal.boolean.false']
-	| BuildInput<JavaMap, 'literal.boolean.true'>
-	| JavaMap['nodes']['literal.boolean.true']
-	| BuildInput<JavaMap, 'literal.character'>
-	| JavaMap['nodes']['literal.character']
-	| BuildInput<JavaMap, 'literal.null'>
-	| JavaMap['nodes']['literal.null']
-	| BuildInput<JavaMap, 'literal.number.float'>
-	| JavaMap['nodes']['literal.number.float']
-	| BuildInput<JavaMap, 'literal.number.integer'>
-	| JavaMap['nodes']['literal.number.integer']
-	| BuildInput<JavaMap, 'literal.number.integer.binary'>
-	| JavaMap['nodes']['literal.number.integer.binary']
-	| BuildInput<JavaMap, 'literal.number.integer.hex'>
-	| JavaMap['nodes']['literal.number.integer.hex']
-	| BuildInput<JavaMap, 'literal.number.integer.octal'>
-	| JavaMap['nodes']['literal.number.integer.octal']
-	| BuildInput<JavaMap, 'literal.string'>
-	| JavaMap['nodes']['literal.string']
-	| BuildInput<JavaMap, 'literal.string.multiline'>
-	| JavaMap['nodes']['literal.string.multiline']
-	| BuildInput<JavaMap, 'statement.assert'>
-	| JavaMap['nodes']['statement.assert']
-	| BuildInput<JavaMap, 'statement.block'>
-	| JavaMap['nodes']['statement.block']
-	| BuildInput<JavaMap, 'statement.break'>
-	| JavaMap['nodes']['statement.break']
-	| BuildInput<JavaMap, 'statement.continue'>
-	| JavaMap['nodes']['statement.continue']
-	| BuildInput<JavaMap, 'statement.if'>
-	| JavaMap['nodes']['statement.if']
-	| BuildInput<JavaMap, 'statement.import'>
-	| JavaMap['nodes']['statement.import']
-	| BuildInput<JavaMap, 'statement.labeled'>
-	| JavaMap['nodes']['statement.labeled']
-	| BuildInput<JavaMap, 'statement.loop.counted'>
-	| JavaMap['nodes']['statement.loop.counted']
-	| BuildInput<JavaMap, 'statement.loop.do_while'>
-	| JavaMap['nodes']['statement.loop.do_while']
-	| BuildInput<JavaMap, 'statement.loop.for_each'>
-	| JavaMap['nodes']['statement.loop.for_each']
-	| BuildInput<JavaMap, 'statement.loop.while'>
-	| JavaMap['nodes']['statement.loop.while']
-	| BuildInput<JavaMap, 'statement.resource'>
-	| JavaMap['nodes']['statement.resource']
-	| BuildInput<JavaMap, 'statement.return'>
-	| JavaMap['nodes']['statement.return']
-	| BuildInput<JavaMap, 'statement.switch'>
-	| JavaMap['nodes']['statement.switch']
-	| BuildInput<JavaMap, 'statement.throw'>
-	| JavaMap['nodes']['statement.throw']
-	| BuildInput<JavaMap, 'statement.try'>
-	| JavaMap['nodes']['statement.try']
-	| BuildInput<JavaMap, 'type.array'>
-	| JavaMap['nodes']['type.array']
-	| BuildInput<JavaMap, 'type.generic'>
-	| JavaMap['nodes']['type.generic']
-	| Unmapped<'java:annotation_type_declaration'>
-	| Unmapped<'java:method_reference'>
-	| Unmapped<'java:package_declaration'>
-	| Unmapped<'java:synchronized_statement'>;
-const statement_loop_while$229_body = (value: statement_loop_while$229_body$Item) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case ';':
-				return 66;
-			case 'this':
-				return b.expressionStatement(112);
-			case 'boolean':
-				return b.expressionStatement(b.classLiteral(106));
-			case 'byte':
-				return b.expressionStatement(b.classLiteral(99));
-			case 'char':
-				return b.expressionStatement(b.classLiteral(103));
-			case 'double':
-				return b.expressionStatement(b.classLiteral(105));
-			case 'float':
-				return b.expressionStatement(b.classLiteral(104));
-			case 'int':
-				return b.expressionStatement(b.classLiteral(101));
-			case 'long':
-				return b.expressionStatement(b.classLiteral(102));
-			case 'short':
-				return b.expressionStatement(b.classLiteral(100));
-			case 'void':
-				return b.expressionStatement(b.classLiteral(107));
-			default:
-				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
-					return b.expressionStatement(b.identifier(value));
-				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
-					return b.expressionStatement(b.classLiteral(b.identifier(value)));
-				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
-					return b.yieldStatement(b.identifier(value));
-				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
-					return b.yieldStatement(b.classLiteral(b.identifier(value)));
-				return b.expressionStatement(b.identifier(value));
-		}
-	}
-	if (typeof value === 'number') {
-		if (Number.isSafeInteger(value)) {
-			return b.expressionStatement(literal_number_integer$118({ $path: 'literal.number.integer', $value: value }));
-		}
-		return unnumbered('statement.loop.while.body', 'float');
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240, 249, 250,
-					252, 256, 273, 274, 278, 301, 329, 330
-				]
-			)
-		)
-			return value;
-		if (
-			seated(
-				value,
-				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-				]
-			)
-		)
-			return b.expressionStatement(value);
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
-			return b.expressionStatement(b.classLiteral(value));
-		if (
-			seated(
-				value,
-				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
-					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-				]
-			)
-		)
-			return b.yieldStatement(value);
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
-			return b.yieldStatement(b.classLiteral(value));
-		return unseated('statement.loop.while.body', value);
-	}
-	switch (value.$path) {
-		case 'declaration.class':
-			return unbuilt('statement.loop.while.body', value);
-		case 'declaration.enum':
-			return unbuilt('statement.loop.while.body', value);
-		case 'declaration.enum.private':
-			return unbuilt('statement.loop.while.body', value);
-		case 'declaration.enum.public':
-			return unbuilt('statement.loop.while.body', value);
-		case 'declaration.interface':
-			return unbuilt('statement.loop.while.body', value);
-		case 'declaration.module':
-			return unbuilt('statement.loop.while.body', value);
-		case 'declaration.variable':
-			return unbuilt('statement.loop.while.body', value);
-		case 'declaration.variable.constant':
-			return unbuilt('statement.loop.while.body', value);
-		case 'expression.assignment':
-			return unbuilt('statement.loop.while.body', value);
-		case 'expression.assignment.compound.add':
-			return b.expressionStatement(expression_assignment_compound_add$172(value));
-		case 'expression.assignment.compound.bitwise_and':
-			return b.expressionStatement(expression_assignment_compound_bitwise_and$172(value));
-		case 'expression.assignment.compound.bitwise_or':
-			return b.expressionStatement(expression_assignment_compound_bitwise_or$172(value));
-		case 'expression.assignment.compound.bitwise_xor':
-			return b.expressionStatement(expression_assignment_compound_bitwise_xor$172(value));
-		case 'expression.assignment.compound.divide':
-			return b.expressionStatement(expression_assignment_compound_divide$172(value));
-		case 'expression.assignment.compound.modulo':
-			return b.expressionStatement(expression_assignment_compound_modulo$172(value));
-		case 'expression.assignment.compound.multiply':
-			return b.expressionStatement(expression_assignment_compound_multiply$172(value));
-		case 'expression.assignment.compound.shift_left':
-			return b.expressionStatement(expression_assignment_compound_shift_left$172(value));
-		case 'expression.assignment.compound.shift_right':
-			return b.expressionStatement(expression_assignment_compound_shift_right$172(value));
-		case 'expression.assignment.compound.shift_right_unsigned':
-			return b.expressionStatement(expression_assignment_compound_shift_right_unsigned$172(value));
-		case 'expression.assignment.compound.subtract':
-			return b.expressionStatement(expression_assignment_compound_subtract$172(value));
-		case 'expression.binary.arithmetic.add':
-			return b.expressionStatement(expression_binary_arithmetic_add$173(value));
-		case 'expression.binary.arithmetic.divide':
-			return b.expressionStatement(expression_binary_arithmetic_divide$173(value));
-		case 'expression.binary.arithmetic.modulo':
-			return b.expressionStatement(expression_binary_arithmetic_modulo$173(value));
-		case 'expression.binary.arithmetic.multiply':
-			return b.expressionStatement(expression_binary_arithmetic_multiply$173(value));
-		case 'expression.binary.arithmetic.subtract':
-			return b.expressionStatement(expression_binary_arithmetic_subtract$173(value));
-		case 'expression.binary.bitwise.and':
-			return b.expressionStatement(expression_binary_bitwise_and$173(value));
-		case 'expression.binary.bitwise.or':
-			return b.expressionStatement(expression_binary_bitwise_or$173(value));
-		case 'expression.binary.bitwise.xor':
-			return b.expressionStatement(expression_binary_bitwise_xor$173(value));
-		case 'expression.binary.comparison.equal':
-			return b.expressionStatement(expression_binary_comparison_equal$173(value));
-		case 'expression.binary.comparison.greater':
-			return b.expressionStatement(expression_binary_comparison_greater$173(value));
-		case 'expression.binary.comparison.greater_equal':
-			return b.expressionStatement(expression_binary_comparison_greater_equal$173(value));
-		case 'expression.binary.comparison.less':
-			return b.expressionStatement(expression_binary_comparison_less$173(value));
-		case 'expression.binary.comparison.less_equal':
-			return b.expressionStatement(expression_binary_comparison_less_equal$173(value));
-		case 'expression.binary.comparison.not_equal':
-			return b.expressionStatement(expression_binary_comparison_not_equal$173(value));
-		case 'expression.binary.logical.and':
-			return b.expressionStatement(expression_binary_logical_and$173(value));
-		case 'expression.binary.logical.or':
-			return b.expressionStatement(expression_binary_logical_or$173(value));
-		case 'expression.binary.membership.instanceof':
-			return unbuilt('statement.loop.while.body', value);
-		case 'expression.binary.shift.left':
-			return unbuilt('statement.loop.while.body', value);
-		case 'expression.binary.shift.right':
-			return unbuilt('statement.loop.while.body', value);
-		case 'expression.binary.shift.right_unsigned':
-			return unbuilt('statement.loop.while.body', value);
-		case 'expression.call':
-			return unbuilt('statement.loop.while.body', value);
-		case 'expression.call.construct':
-			return unbuilt('statement.loop.while.body', value);
-		case 'expression.call.member':
-			return unbuilt('statement.loop.while.body', value);
-		case 'expression.call.template':
-			return unbuilt('statement.loop.while.body', value);
-		case 'expression.cast':
-			return unbuilt('statement.loop.while.body', value);
-		case 'expression.collection.list':
-			return unbuilt('statement.loop.while.body', value);
-		case 'expression.conditional':
-			return b.expressionStatement(expression_conditional$177(value));
-		case 'expression.lambda':
-			return unbuilt('statement.loop.while.body', value);
-		case 'expression.member':
-			return unbuilt('statement.loop.while.body', value);
-		case 'expression.parenthesized':
-			return b.expressionStatement(expression_parenthesized$183(value));
-		case 'expression.subscript':
-			return unbuilt('statement.loop.while.body', value);
-		case 'expression.unary.bitwise_not':
-			return unbuilt('statement.loop.while.body', value);
-		case 'expression.unary.negation':
-			return unbuilt('statement.loop.while.body', value);
-		case 'expression.unary.not':
-			return unbuilt('statement.loop.while.body', value);
-		case 'expression.unary.plus':
-			return unbuilt('statement.loop.while.body', value);
-		case 'expression.update.decrement':
-			return unbuilt('statement.loop.while.body', value);
-		case 'expression.update.increment':
-			return unbuilt('statement.loop.while.body', value);
-		case 'identifier':
-			return unbuilt('statement.loop.while.body', value);
-		case 'identifier.qualified':
-			return unbuilt('statement.loop.while.body', value);
-		case 'literal.boolean.false':
-			return unbuilt('statement.loop.while.body', value);
-		case 'literal.boolean.true':
-			return unbuilt('statement.loop.while.body', value);
-		case 'literal.character':
-			return b.expressionStatement(literal_character$7(value));
-		case 'literal.null':
-			return unbuilt('statement.loop.while.body', value);
-		case 'literal.number.float':
-			return unbuilt('statement.loop.while.body', value);
-		case 'literal.number.integer':
-			if (value.$value !== undefined) return b.expressionStatement(literal_number_integer$118(value));
-			return unbuilt('statement.loop.while.body', value);
-		case 'literal.number.integer.binary':
-			return b.expressionStatement(literal_number_integer_binary$4(value));
-		case 'literal.number.integer.hex':
-			return b.expressionStatement(literal_number_integer_hex$2(value));
-		case 'literal.number.integer.octal':
-			return b.expressionStatement(literal_number_integer_octal$3(value));
-		case 'literal.string':
-			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return b.expressionStatement(literal_string$327(value));
-			return b.expressionStatement(literal_string$328(value));
-		case 'literal.string.multiline':
-			return b.expressionStatement(literal_string_multiline$328(value));
-		case 'statement.assert':
-			return unbuilt('statement.loop.while.body', value);
-		case 'statement.block':
-			return statement_block$209(value);
-		case 'statement.break':
-			return statement_break$214(value);
-		case 'statement.continue':
-			return statement_continue$215(value);
-		case 'statement.if':
-			return statement_if$228(value);
-		case 'statement.import':
-			return unbuilt('statement.loop.while.body', value);
-		case 'statement.labeled':
-			return unbuilt('statement.loop.while.body', value);
-		case 'statement.loop.counted':
-			return unbuilt('statement.loop.while.body', value);
-		case 'statement.loop.do_while':
-			return statement_loop_do_while$213(value);
-		case 'statement.loop.for_each':
-			return unbuilt('statement.loop.while.body', value);
-		case 'statement.loop.while':
-			return statement_loop_while$229(value);
-		case 'statement.resource':
-			return unbuilt('statement.loop.while.body', value);
-		case 'statement.return':
-			return statement_return$216(value);
-		case 'statement.switch':
-			return unbuilt('statement.loop.while.body', value);
-		case 'statement.throw':
-			return statement_throw$219(value);
-		case 'statement.try':
-			return statement_try$330(value);
-		case 'type.array':
-			return unbuilt('statement.loop.while.body', value);
-		case 'type.generic':
-			return unbuilt('statement.loop.while.body', value);
-		default:
-			return unbuilt('statement.loop.while.body', value);
-	}
-};
-type statement_loop_while$229_condition$Item =
-	| PathInput<JavaMap, 'expression.parenthesized'>
-	| JavaMap['nodes']['expression.parenthesized'];
-const statement_loop_while$229_condition = (value: statement_loop_while$229_condition$Item) => {
-	if (typeof value === 'number') {
-		if (seated(value, [183])) return value;
-		return unseated('statement.loop.while.condition', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [183])) return value;
-		return unseated('statement.loop.while.condition', value);
-	}
-	return expression_parenthesized$183(value);
 };
 type statement_return$216_expression$Item =
 	| 'boolean'
@@ -19899,8 +17942,7 @@ const statement_return$216_expression = (value: statement_return$216_expression$
 		case 'literal.number.float':
 			return unbuilt('statement.return.expression', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('statement.return.expression', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -20244,8 +18286,7 @@ const statement_throw$219_expression = (value: statement_throw$219_expression$It
 		case 'literal.number.float':
 			return unbuilt('statement.throw.expression', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return literal_number_integer$118(value);
-			return unbuilt('statement.throw.expression', value);
+			return literal_number_integer$118(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -20267,18 +18308,6 @@ const statement_throw$219_expression = (value: statement_throw$219_expression$It
 		default:
 			return unbuilt('statement.throw.expression', value);
 	}
-};
-type statement_try$330_body$Item = PathInput<JavaMap, 'statement.block'> | JavaMap['nodes']['statement.block'];
-const statement_try$330_body = (value: statement_try$330_body$Item) => {
-	if (typeof value === 'number') {
-		if (seated(value, [209])) return value;
-		return unseated('statement.try.body', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [209])) return value;
-		return unseated('statement.try.body', value);
-	}
-	return statement_block$209(value);
 };
 const expression_assignment_compound_add$172 = (
 	input: PathInput<JavaMap, 'expression.assignment.compound.add'>
@@ -20725,10 +18754,13 @@ const literal_number_integer$118 = (
 const literal_number_integer_binary$4 = (
 	input: PathInput<JavaMap, 'literal.number.integer.binary'>
 ): ReturnType<typeof b.binaryIntegerLiteral> => {
-	const unroutedSlot = unroutedIn(input, ['content', 'prefix', 'suffix']);
+	const unroutedSlot = unroutedIn(input, ['suffix']);
 	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.binary', unroutedSlot);
-	const value = input.$value;
-	return typeof value === 'bigint' ? b.binaryIntegerLiteral(value) : b.binaryIntegerLiteral(value);
+	return b.binaryIntegerLiteral({
+		suffix: input.suffix === undefined ? undefined : literal_number_integer_binary$4_suffix(input.suffix),
+		prefix: '0b',
+		content: input.$value
+	});
 };
 const literal_number_integer_hex$2 = (
 	input: PathInput<JavaMap, 'literal.number.integer.hex'>
@@ -20741,10 +18773,13 @@ const literal_number_integer_hex$2 = (
 const literal_number_integer_octal$3 = (
 	input: PathInput<JavaMap, 'literal.number.integer.octal'>
 ): ReturnType<typeof b.octalIntegerLiteral> => {
-	const unroutedSlot = unroutedIn(input, ['content', 'prefix', 'suffix']);
+	const unroutedSlot = unroutedIn(input, ['suffix']);
 	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.octal', unroutedSlot);
-	const value = input.$value;
-	return typeof value === 'bigint' ? b.octalIntegerLiteral(value) : b.octalIntegerLiteral(value);
+	return b.octalIntegerLiteral({
+		suffix: input.suffix === undefined ? undefined : literal_number_integer_octal$3_suffix(input.suffix),
+		prefix: '0o',
+		content: input.$value
+	});
 };
 const literal_string$327 = (input: PathInput<JavaMap, 'literal.string'>): ReturnType<typeof b.stringLiteralLine> => {
 	const unroutedSlot = unroutedIn(input, ['elements']);
@@ -20796,35 +18831,6 @@ const statement_continue$215 = (
 	if (unroutedSlot !== undefined) return unrouted('statement.continue', unroutedSlot);
 	return b.continueStatement(input.label === undefined ? undefined : statement_continue$215_label(input.label));
 };
-const statement_if$228 = (input: PathInput<JavaMap, 'statement.if'>): ReturnType<typeof b.ifStatement> => {
-	const unroutedSlot = unroutedIn(input, ['alternative', 'condition', 'consequence']);
-	if (unroutedSlot !== undefined) return unrouted('statement.if', unroutedSlot);
-	return b.ifStatement({
-		condition: statement_if$228_condition(input.condition),
-		consequence: statement_if$228_consequence(input.consequence),
-		alternative: input.alternative === undefined ? undefined : statement_if$228_alternative(input.alternative)
-	});
-};
-const statement_loop_do_while$213 = (
-	input: PathInput<JavaMap, 'statement.loop.do_while'>
-): ReturnType<typeof b.doStatement> => {
-	const unroutedSlot = unroutedIn(input, ['body', 'condition']);
-	if (unroutedSlot !== undefined) return unrouted('statement.loop.do_while', unroutedSlot);
-	return b.doStatement({
-		body: statement_loop_do_while$213_body(input.body),
-		condition: statement_loop_do_while$213_condition(input.condition)
-	});
-};
-const statement_loop_while$229 = (
-	input: PathInput<JavaMap, 'statement.loop.while'>
-): ReturnType<typeof b.whileStatement> => {
-	const unroutedSlot = unroutedIn(input, ['body', 'condition']);
-	if (unroutedSlot !== undefined) return unrouted('statement.loop.while', unroutedSlot);
-	return b.whileStatement({
-		condition: statement_loop_while$229_condition(input.condition),
-		body: statement_loop_while$229_body(input.body)
-	});
-};
 const statement_return$216 = (input: PathInput<JavaMap, 'statement.return'>): ReturnType<typeof b.returnStatement> => {
 	const unroutedSlot = unroutedIn(input, ['expression']);
 	if (unroutedSlot !== undefined) return unrouted('statement.return', unroutedSlot);
@@ -20842,9 +18848,9 @@ const statement_throw$219 = (input: PathInput<JavaMap, 'statement.throw'>): Retu
 	);
 };
 const statement_try$330 = (input: PathInput<JavaMap, 'statement.try'>): ReturnType<typeof b.tryStatementFinally> => {
-	const unroutedSlot = unroutedIn(input, ['body']);
+	const unroutedSlot = unroutedIn(input, []);
 	if (unroutedSlot !== undefined) return unrouted('statement.try', unroutedSlot);
-	return b.tryStatementFinally({ body: statement_try$330_body(input.body) });
+	return b.tryStatementFinally({});
 };
 const expression_assignment_compound_add = (input: PathInput<JavaMap, 'expression.assignment.compound.add'>) => {
 	return expression_assignment_compound_add$172(input);
@@ -20962,24 +18968,16 @@ const literal_character = (input: PathInput<JavaMap, 'literal.character'>) => {
 	return literal_character$7(input);
 };
 const literal_number_integer = (input: PathInput<JavaMap, 'literal.number.integer'>) => {
-	if (typeof input.$value === 'bigint') return literal_number_integer$118(input);
-	if (typeof input.$value === 'number') return literal_number_integer$118(input);
-	return unbuilt('literal.number.integer', input);
+	return literal_number_integer$118(input);
 };
 const literal_number_integer_binary = (input: PathInput<JavaMap, 'literal.number.integer.binary'>) => {
-	if (typeof input.$value === 'bigint') return literal_number_integer_binary$4(input);
-	if (typeof input.$value === 'number') return literal_number_integer_binary$4(input);
-	return unbuilt('literal.number.integer.binary', input);
+	return literal_number_integer_binary$4(input);
 };
 const literal_number_integer_hex = (input: PathInput<JavaMap, 'literal.number.integer.hex'>) => {
-	if (typeof input.$value === 'bigint') return literal_number_integer_hex$2(input);
-	if (typeof input.$value === 'number') return literal_number_integer_hex$2(input);
-	return unbuilt('literal.number.integer.hex', input);
+	return literal_number_integer_hex$2(input);
 };
 const literal_number_integer_octal = (input: PathInput<JavaMap, 'literal.number.integer.octal'>) => {
-	if (typeof input.$value === 'bigint') return literal_number_integer_octal$3(input);
-	if (typeof input.$value === 'number') return literal_number_integer_octal$3(input);
-	return unbuilt('literal.number.integer.octal', input);
+	return literal_number_integer_octal$3(input);
 };
 const literal_string = (input: PathInput<JavaMap, 'literal.string'>) => {
 	if ((input.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
@@ -20997,15 +18995,6 @@ const statement_break = (input: PathInput<JavaMap, 'statement.break'>) => {
 };
 const statement_continue = (input: PathInput<JavaMap, 'statement.continue'>) => {
 	return statement_continue$215(input);
-};
-const statement_if = (input: PathInput<JavaMap, 'statement.if'>) => {
-	return statement_if$228(input);
-};
-const statement_loop_do_while = (input: PathInput<JavaMap, 'statement.loop.do_while'>) => {
-	return statement_loop_do_while$213(input);
-};
-const statement_loop_while = (input: PathInput<JavaMap, 'statement.loop.while'>) => {
-	return statement_loop_while$229(input);
 };
 const statement_return = (input: PathInput<JavaMap, 'statement.return'>) => {
 	return statement_return$216(input);
@@ -21075,8 +19064,6 @@ export const portableBuild = {
 		block: statement_block,
 		break: statement_break,
 		continue: statement_continue,
-		if: statement_if,
-		loop: { do_while: statement_loop_do_while, while: statement_loop_while },
 		return: statement_return,
 		throw: statement_throw,
 		try: statement_try

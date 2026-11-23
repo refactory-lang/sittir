@@ -18,8 +18,8 @@ export interface Held {
 const slotKey = (path: string, slot: string): string => `${path}.${slot}`;
 
 export const UNHELD_SLOTS: readonly string[] = [
-	'declaration.property.definite',
-	'declaration.property.optionality',
+	'declaration.member.property.definite',
+	'declaration.member.property.optionality',
 	'declaration.type_parameter.parameters.bounds',
 	'declaration.type_parameter.value.bounds',
 	'declaration.type_parameter.variadic.bounds'
@@ -52,6 +52,7 @@ export function guardRows(p: Plan, composed: ReadonlySet<string>, held: Held): G
 	for (const feature of [...composed].sort(byCodepoint)) {
 		for (const kind of p.kinds.values())
 			if (kind.feature?.name === feature && !holdsPath(held, kind.path)) rows.push({ feature, path: kind.path, side: 'composed-not-claimed' });
+		for (const alias of p.aliases) if (alias.feature === feature && !holdsPath(held, alias.target)) rows.push({ feature, path: alias.path, side: 'composed-not-claimed' });
 		for (const [path, slots] of p.owned)
 			for (const [slot, o] of slots)
 				if (o.feature.name === feature && !UNHELD_SLOTS.includes(slotKey(path, slot)) && !holdsSlot(held, path, slot))

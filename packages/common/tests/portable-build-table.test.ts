@@ -61,14 +61,14 @@ describe('the portable build table', () => {
 		expect(armsOf('python', 'literal.string.escape').find((arm) => arm.content !== undefined)!.content!.seats[0]!.text).toBe(true);
 	});
 
-	it('tells a struct form apart by the kinds its body holds, through the list that holds them, or by the body missing', () => {
-		const brace = armOf('rust', 'declaration.struct', rust.kinds.StructItemBrace);
-		const tuple = armOf('rust', 'declaration.struct', rust.kinds.StructItemTuple);
-		const unit = armOf('rust', 'declaration.struct', rust.kinds.StructItemUnit);
+	it('tells a struct form apart by the kinds its fields hold, through the list that holds them, or by the fields missing', () => {
+		const brace = armOf('rust', 'declaration.type.struct', rust.kinds.StructItemBrace);
+		const tuple = armOf('rust', 'declaration.type.struct', rust.kinds.StructItemTuple);
+		const unit = armOf('rust', 'declaration.type.struct', rust.kinds.StructItemUnit);
 		expect(brace.builder).toBe('structItemBrace');
-		expect(brace.when).toContainEqual({ slot: 'body', kinds: [rust.kinds.FieldDeclaration] });
-		expect(tuple.when).toContainEqual({ slot: 'body', kinds: [rust.kinds.AttributedOrderedField] });
-		expect(unit.when).toContainEqual(expect.objectContaining({ absent: expect.arrayContaining(['body']) }));
+		expect(brace.when).toContainEqual({ slot: 'fields', kinds: [rust.kinds.FieldDeclaration] });
+		expect(tuple.when).toContainEqual({ slot: 'fields', kinds: [rust.kinds.AttributedOrderedField] });
+		expect(unit.when).toContainEqual(expect.objectContaining({ absent: expect.arrayContaining(['fields']) }));
 	});
 
 	it('presets the operator a refinement pins as its kind id', () => {
@@ -154,21 +154,24 @@ describe('the portable build table', () => {
 	});
 
 	it('tells forms apart by the kinds a slot holds, where the slot reaches them through the containers its grammar slot holds', () => {
-		expect(armOf('rust', 'pattern.struct', rust.kinds.StructPattern).when).toEqual([
-			{ slot: 'type', kinds: [rust.kinds.ScopedTypeIdentifier, rust.kinds.TypeIdentifier] },
-			{ absent: [], required: ['type'] }
-		]);
-		expect(armOf('rust', 'pattern.struct', rust.kinds.TupleStructPattern).when).toEqual([
-			{ slot: 'type', kinds: [rust.kinds.Identifier, rust.kinds.GenericTypeWithTurbofish, rust.kinds.ScopedIdentifier] },
-			{ absent: [], required: ['type'] }
-		]);
 		expect(armOf('typescript', 'expression.parenthesized', typescript.kinds.ParenthesizedExpressionSequence).when).toContainEqual({
 			slot: 'expression',
 			kinds: [typescript.kinds.SequenceExpression]
 		});
 	});
 
-	it("builds a form through its holder's mount, the step saying how the mount takes its input", () => {
+	it("gives rust's struct pattern forms a path each, so no pick by a slot's kinds lies between them", () => {
+		const paths = [
+			['pattern.struct', rust.kinds.StructPattern],
+			['pattern.struct.tuple', rust.kinds.TupleStructPattern]
+		] as const;
+		for (const [path, kind] of paths) {
+			expect(armsOf('rust', path).map((arm) => arm.kind)).toEqual([kind]);
+			expect(armOf('rust', path, kind).when.some((test) => 'kinds' in test)).toBe(false);
+		}
+	});
+
+	it("builds a form through its holder's mount, the step saying how the mount takes its input and which of its slot's forms it enters", () => {
 		const [left] = armOf('typescript', 'expression.binary.membership.in', typescript.kinds.BinaryExpression).slots.filter((slot) => slot.name === 'left' && slot.steps.length > 1);
 		expect(left!.steps[0]).toEqual({
 			key: 'binaryExpressionIn',
@@ -177,7 +180,7 @@ describe('the portable build table', () => {
 		});
 		expect(tables.typescript.table.builders['binaryExpression.in']).toBe('config');
 		const [right] = armOf('rust', 'pattern.range.inclusive', rust.kinds.RangePatternWithLeft).slots.filter((slot) => slot.name === 'right');
-		expect(right!.steps[0]).toEqual({ key: 'content', builder: 'rangePatternWithLeft.withRight', mounted: { call: 'merge', key: 'content' } });
+		expect(right!.steps[0]).toEqual({ key: 'content', builder: 'rangePatternWithLeft.withRight', mounted: { call: 'merge', key: 'content' }, kinds: [rust.kinds.RangePatternWithLeftWithRight] });
 	});
 
 	it("states a nested mount's call at the holder its holder is seated in, and registers the nested builder by that call", () => {
@@ -185,7 +188,8 @@ describe('the portable build table', () => {
 		expect(value.steps[1]).toEqual({
 			key: 'content',
 			builder: 'exportStatementDefaultDeclaration.defaultKw.value',
-			mounted: { call: 'child', key: 'content', outer: { call: 'keyedArgs', key: 'content', seats: 'direct' } }
+			mounted: { call: 'child', key: 'content', outer: { call: 'keyedArgs', key: 'content', seats: 'direct' } },
+			kinds: [typescript.kinds.ExportStatementDefaultDeclarationDefaultKwValue]
 		});
 		expect(tables.typescript.table.builders['exportStatementDefaultDeclaration.defaultKw.value']).toBe('config');
 		const list = armsOf('python', 'clause.catch')[0]!.slots.flatMap((slot) => slot.seats.flatMap((seat) => seat.within ?? []));
@@ -293,8 +297,8 @@ describe('the portable build table', () => {
 	});
 
 	it("writes the text a claim's predicate fixes, and spells a templated slot from its holes", () => {
-		expect(armOf('python', 'declaration.constructor', python.kinds.MethodDeclaration).presets).toContainEqual({ steps: [{ key: 'name' }], text: '__init__', builder: 'identifier' });
-		expect(armOf('python', 'declaration.method.special', python.kinds.MethodDeclaration).template).toEqual({ slot: 'name', pattern: '__${string}__', holes: ['stem'], match: '^__(?<stem>.*)__$' });
+		expect(armOf('python', 'declaration.member.constructor', python.kinds.MethodDeclaration).presets).toContainEqual({ steps: [{ key: 'name' }], text: '__init__', builder: 'identifier' });
+		expect(armOf('python', 'declaration.member.method.special', python.kinds.MethodDeclaration).template).toEqual({ slot: 'name', pattern: '__${string}__', holes: ['stem'], match: '^__(?<stem>.*)__$' });
 	});
 
 	it("writes the other token where a flag's slot must hold one of two, when the flag is unset", () => {
@@ -427,6 +431,32 @@ describe('the portable build of a registered option', () => {
 		});
 		builder({ $path: 'literal.number.big', $value: 3n, marker: 'l' } as never);
 		expect(calls).toEqual([[3n, { marker: 'l' }]]);
+	});
+});
+
+describe('the portable build of a number arm', () => {
+	const built = (arm: Partial<PortableBuildTable['paths'][string]['arms'][number]>, value: number) => {
+		const calls: unknown[][] = [];
+		const builder = portableBuilder({
+			language: 'test',
+			table: {
+				builders: { literal: 'config' },
+				paths: { 'literal.number.integer': { root: true, builds: { integer: 2 }, arms: [{ kind: 2, builder: 'literal', scalar: 'integer', slots: [], presets: [], flags: {}, when: [], ...arm }] } }
+			},
+			builders: { literal: (...args: unknown[]) => (calls.push(args), { $type: 2 }) },
+			kindName: () => 'literal',
+			readsAs: () => true
+		});
+		builder({ $path: 'literal.number.integer', $value: value } as never);
+		return calls;
+	};
+
+	it('writes the base prefix into its slot and the number into the digits', () => {
+		expect(built({ numeric: ['prefix', 'content'], digits: { base: 2, affix: '0b' } }, 5)).toEqual([[{ prefix: '0b', content: 5 }]]);
+	});
+
+	it('refuses a value where no slot spells it', () => {
+		expect(() => built({ numeric: [] }, 5)).toThrow('literal.number.integer: literal has no slots that spell a $value in test');
 	});
 });
 

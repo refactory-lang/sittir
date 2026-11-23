@@ -5,19 +5,10 @@ export namespace Expression {
 	export interface Function<G extends GrammarMap, K extends Under<'expression.function'> = 'expression.function'> {
 	}
 	export namespace Yield {
-		export interface Delegate<G extends GrammarMap, K extends Under<'expression.yield.delegate'> = 'expression.yield.delegate'> extends SubKindOf<V.Expression.Yield<G, K>> {
+		export interface Delegate<G extends GrammarMap, K extends Under<'expression.yield.delegate'> = 'expression.yield.delegate'> extends SubKindOf<V.Expression.Yield<G, K>, 'expression'> {
 			// claimed by pt
 			readonly $path: K;
-			readonly expression: Slot<
-				G,
-				K,
-				'expression',
-				| V.Declaration.Module<G>
-				| V.Expression.Any<G>
-				| V.Identifier.Any<G>
-				| V.Literal.Any<G>
-				| V.Pattern.Rest<G>
-			>;
+			readonly expression: Slot<G, K, 'expression', V.Expression.Any<G>>;
 		}
 	}
 }

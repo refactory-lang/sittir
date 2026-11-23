@@ -2729,9 +2729,12 @@ undeclared hidden choice that assembles as a supertype does not (see
 
 The subtype refs when this supertype is a flattened polymorph parent — at
 least two subtypes, every one stamped as a variant of this kind — or
-`undefined` otherwise. The model attribute emitters read instead of
-re-checking the subtype facts (sub-factory mounting through a slot, route
-emission).
+`undefined` otherwise. A supertype that is a context's copy owns its
+variants through its copy base (`copyBaseOf` over the grammar's `splitFrom`,
+the helper link uses when it gives a copy's variants to the base): python's
+`_suite_class_definition`, a copy of `_suite`, holds arms stamped as variants
+of `_suite`. The model attribute emitters read instead of re-checking the
+subtype facts (sub-factory mounting through a slot, route emission).
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype::defaultVariantSubtype`
 
@@ -5197,6 +5200,10 @@ The line-break arms a pattern can match and then continue past: an arm whose cha
 ### `packages/codegen/src/compiler/model/pattern-automaton.ts::edgeChars`
 
 The characters that label some edge of the automaton, as one set.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::patternsMeet`
+
+Whether some text, the empty text included, is accepted by both patterns. It searches the pairs of states the two automata reach on a shared character.
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::isFlatLeafOrKeyword`
 

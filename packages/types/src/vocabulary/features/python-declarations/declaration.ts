@@ -7,17 +7,20 @@ export namespace Declaration {
 		// p only
 	}
 	export namespace Parameter {
-		export interface Defaulted<G extends GrammarMap, K extends Under<'declaration.parameter.defaulted'> = 'declaration.parameter.defaulted'> extends SubKindOf<V.Declaration.Parameter<G, K>, 'default'> {
+		export type Identifier<G extends GrammarMap> = V.Identifier.Any<G>;
+		export type Rest<G extends GrammarMap> = V.Pattern.Rest.Any<G>;
+		export type Tuple<G extends GrammarMap> = V.Pattern.Tuple.Any<G>;
+		export interface Defaulted<G extends GrammarMap, K extends Under<'declaration.parameter.defaulted'> = 'declaration.parameter.defaulted'> extends SubKindOf<V.Declaration.Parameter<G, K>, 'default' | 'name'> {
 			// claimed by p
 			readonly $path: K;
 			readonly name: Slot<G, K, 'name', V.Identifier.Any<G> | V.Pattern.Tuple<G>>;
 		}
-		export interface Typed<G extends GrammarMap, K extends Under<'declaration.parameter.typed'> = 'declaration.parameter.typed'> extends SubKindOf<V.Declaration.Parameter<G, K>, 'type'> {
+		export interface Typed<G extends GrammarMap, K extends Under<'declaration.parameter.typed'> = 'declaration.parameter.typed'> extends SubKindOf<V.Declaration.Parameter<G, K>, 'name' | 'type'> {
 			// claimed by p
 			readonly $path: K;
 			readonly name: Slot<G, K, 'name', V.Identifier.Any<G> | V.Pattern.Rest.Any<G>>;
 		}
-		export interface TypedDefault<G extends GrammarMap, K extends Under<'declaration.parameter.typed_default'> = 'declaration.parameter.typed_default'> extends SubKindOf<V.Declaration.Parameter<G, K>, 'default' | 'type'> {
+		export interface TypedDefault<G extends GrammarMap, K extends Under<'declaration.parameter.typed_default'> = 'declaration.parameter.typed_default'> extends SubKindOf<V.Declaration.Parameter<G, K>, 'default' | 'name' | 'type'> {
 			// claimed by p
 			readonly $path: K;
 			readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;

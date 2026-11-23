@@ -1,16 +1,28 @@
 import type { PortableBuildArm, PortableBuildTable, PortableCondition, PortableContainer, PortableSlotRoute, PortableReadEntry, PortableSeat } from '@sittir/types';
 import { conditionHolds, type PlanItems } from '../query-holds.ts';
+import { vocabularyNamespaces } from './vocabulary-paths.ts';
+
+const namespaces: ReadonlySet<string> = new Set(vocabularyNamespaces);
+
+const kindLength = (facts: readonly string[]): number => {
+	let end = 1;
+	while (end < facts.length && namespaces.has(facts.slice(0, end + 1).join('.'))) end++;
+	return Math.min(end + 1, facts.length);
+};
 
 export function portablePathHasFacts(path: string, read: string | undefined): boolean {
 	if (read === undefined) return false;
 	const facts = path.split('.');
 	const segments = read.split('.');
-	const kind = Math.min(2, facts.length);
+	const kind = kindLength(facts);
 	for (let i = 0; i < kind; i++) if (facts[i] !== segments[i]) return false;
 	let at = kind;
 	for (let i = kind; i < segments.length && at < facts.length; i++) if (segments[i] === facts[at]) at++;
 	return at === facts.length;
 }
+
+export const portableRowHasFacts = (path: string, targets: readonly string[] | undefined, read: string | undefined): boolean =>
+	portablePathHasFacts(path, read) || (targets ?? []).some((target) => portablePathHasFacts(target, read));
 
 type Placement = Pick<PortableReadEntry, 'path'> & { readonly within: readonly unknown[]; readonly test: readonly Pick<PortableCondition, 'up'>[] };
 
@@ -38,6 +50,14 @@ export const textBuilt = (table: Pick<PortableBuildTable, 'builders'>, arm: Pick
 	arm.slots.length === 0 && arm.builder !== undefined && table.builders[arm.builder] === 'text';
 
 export const builtSlots = (arm: Pick<PortableBuildArm, 'slots' | 'content'>): readonly PortableSlotRoute[] => (arm.content === undefined ? arm.slots : [...arm.slots, arm.content]);
+
+const holdsList = (route: PortableSlotRoute): boolean => route.multiple || route.seats.some((seat) => seat.many === true);
+
+export const buildsOnlyItem = (arm: Pick<PortableBuildArm, 'slots'>, route: PortableSlotRoute): boolean =>
+	route.list === true && !holdsList(route) && arm.slots.some((other) => other.name === route.name && other.list === true && holdsList(other));
+
+export const readsEmptyWhenAbsent = (arms: readonly Pick<PortableBuildArm, 'slots'>[], name: string): boolean =>
+	arms.every((arm) => arm.slots.some((route) => route.name === name) && arm.slots.every((route) => route.name !== name || (route.list === true && route.emptyContainer !== true)));
 
 export const takesTextValue = (table: PortableBuildTable, arm: PortableBuildArm): boolean => arm.content !== undefined || textBuilt(table, arm);
 

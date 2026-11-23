@@ -839,3 +839,26 @@ describe('a generated layer checks its fixpoint where it is produced', () => {
 		}
 	}, 120_000);
 });
+
+describe('a copy shown under a new name in a layer', () => {
+	const hidden = (): GrammarResult =>
+		upstream({
+			item: ($: Symbols) => $.pair!,
+			pair: ($: Symbols) => seq($._h!, ',', $._h!),
+			_h: ($: Symbols) => seq('h', $.fn!),
+			fn: ($: Symbols) => seq('f', $.word!),
+			word: () => /[a-z]+/
+		});
+	const keep = ($: unknown, member: unknown): unknown => member;
+
+	it.each([
+		['the named reference first', { '0/(_h as hh)/1': keep, '2/(_h)/1': keep }],
+		['the bare reference first', { '2/(_h)/1': keep, '0/(_h as hh)/1': keep }]
+	])('records the new name on the copy whichever reference comes last, %s', async (_order, pair) => {
+		await withDslGlobals(async () => {
+			const record = layerRecordOf(layer(layer(hidden(), {}), { edits: { pair } as never }));
+			expect(record?.diagnostics).toEqual([]);
+			expect(record?.effects).toContainEqual(expect.objectContaining({ kind: 'copy', copy: '_h_pair', source: '_h', display: 'hh' }));
+		});
+	});
+});

@@ -44,13 +44,23 @@ const seated = <
 > => kinds.includes(typeof value === 'number' ? value : value.$type);
 const listed = <V>(
 	value: V
-): value is Exclude<
-	Extract<V, readonly unknown[]>,
-	| number
-	| {
-			readonly $type: number;
-	  }
-> => Array.isArray(value);
+): value is [
+	Exclude<
+		Extract<V, readonly unknown[]>,
+		| number
+		| {
+				readonly $type: number;
+		  }
+	>
+] extends [never]
+	? V & readonly never[]
+	: Exclude<
+			Extract<V, readonly unknown[]>,
+			| number
+			| {
+					readonly $type: number;
+			  }
+		> => Array.isArray(value);
 const unseated = (
 	owner: string,
 	value:
@@ -63,6 +73,9 @@ const unseated = (
 };
 const untexted = (owner: string, value: string): never => {
 	throw new Error(owner + ' has no route that seats the text "' + value + '"');
+};
+const unnumbered = (owner: string, scalar: string): never => {
+	throw new Error(owner + ' builds no ' + scalar + ' number');
 };
 const nonEmpty = <T>(owner: string, items: ReadonlyArray<T>): readonly [T, ...T[]] => {
 	const first = items[0];
@@ -95,6 +108,17 @@ const declaration_parameter_variadic$151_name = (value: declaration_parameter_va
 };
 type declaration_parameter_variadic$151_type$Item =
 	| Text<GoMap, 'identifier'>
+	| Text<GoMap, 'type.primitive.boolean'>
+	| Text<GoMap, 'type.primitive.character'>
+	| Text<GoMap, 'type.primitive.floating.float32'>
+	| Text<GoMap, 'type.primitive.floating.float64'>
+	| Text<GoMap, 'type.primitive.integral.int16'>
+	| Text<GoMap, 'type.primitive.integral.int32'>
+	| Text<GoMap, 'type.primitive.integral.int64'>
+	| Text<GoMap, 'type.primitive.integral.int8'>
+	| Text<GoMap, 'type.primitive.integral.size'>
+	| Text<GoMap, 'type.primitive.string'>
+	| Text<GoMap, 'type.primitive.unchecked'>
 	| BuildInput<GoMap, 'identifier'>
 	| GoMap['nodes']['identifier']
 	| BuildInput<GoMap, 'identifier.qualified'>
@@ -111,27 +135,16 @@ type declaration_parameter_variadic$151_type$Item =
 	| GoMap['nodes']['type.parenthesized']
 	| BuildInput<GoMap, 'type.pointer'>
 	| GoMap['nodes']['type.pointer']
-	| BuildInput<GoMap, 'type.primitive.boolean'>
 	| GoMap['nodes']['type.primitive.boolean']
-	| BuildInput<GoMap, 'type.primitive.character'>
 	| GoMap['nodes']['type.primitive.character']
-	| BuildInput<GoMap, 'type.primitive.floating.float32'>
 	| GoMap['nodes']['type.primitive.floating.float32']
-	| BuildInput<GoMap, 'type.primitive.floating.float64'>
 	| GoMap['nodes']['type.primitive.floating.float64']
-	| BuildInput<GoMap, 'type.primitive.integral.int16'>
 	| GoMap['nodes']['type.primitive.integral.int16']
-	| BuildInput<GoMap, 'type.primitive.integral.int32'>
 	| GoMap['nodes']['type.primitive.integral.int32']
-	| BuildInput<GoMap, 'type.primitive.integral.int64'>
 	| GoMap['nodes']['type.primitive.integral.int64']
-	| BuildInput<GoMap, 'type.primitive.integral.int8'>
 	| GoMap['nodes']['type.primitive.integral.int8']
-	| BuildInput<GoMap, 'type.primitive.integral.size'>
 	| GoMap['nodes']['type.primitive.integral.size']
-	| BuildInput<GoMap, 'type.primitive.string'>
 	| GoMap['nodes']['type.primitive.string']
-	| BuildInput<GoMap, 'type.primitive.unchecked'>
 	| GoMap['nodes']['type.primitive.unchecked']
 	| Unmapped<'go:interface_type_group'>
 	| Unmapped<'go:map_type'>;
@@ -318,590 +331,26 @@ const declaration_parameter_variadic$151_type = (value: declaration_parameter_va
 	if (typeof value === 'number') {
 		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return value;
 		if (seated(value, [261])) return b.interfaceType(value);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299]))
-			return b.channelTypeBidirectional(value);
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
+		if (seated(value, [266])) return b.channelTypeBidirectional(value);
+		if (seated(value, [267])) return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
+		if (seated(value, [268])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
+		if (seated(value, [165]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
-			return b.channelTypeBidirectional(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299]))
-			return b.channelTypeSendOnly(value);
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
-			return b.channelTypeSendOnly(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299]))
-			return b.channelTypeReceiveOnly(value);
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299])) return b.negatedType(value);
-		if (seated(value, [261])) return b.negatedType(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
-			return b.negatedType(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
-			return b.negatedType(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
 		return unseated('declaration.parameter.variadic.type', value);
 	}
 	if (isNode(value)) {
 		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return value;
 		if (seated(value, [261])) return b.interfaceType(value);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299]))
-			return b.channelTypeBidirectional(value);
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
+		if (seated(value, [266])) return b.channelTypeBidirectional(value);
+		if (seated(value, [267])) return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
+		if (seated(value, [268])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
+		if (seated(value, [165]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
-			return b.channelTypeBidirectional(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299]))
-			return b.channelTypeSendOnly(value);
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
-			return b.channelTypeSendOnly(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299]))
-			return b.channelTypeReceiveOnly(value);
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299])) return b.negatedType(value);
-		if (seated(value, [261])) return b.negatedType(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
-			return b.negatedType(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
-			return b.negatedType(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
 		return unseated('declaration.parameter.variadic.type', value);
 	}
 	switch (value.$path) {
 		case 'identifier':
-			return identifier$299(value);
+			return unbuilt('declaration.parameter.variadic.type', value);
 		case 'identifier.qualified':
 			return unbuilt('declaration.parameter.variadic.type', value);
 		case 'type.array':
@@ -917,28 +366,6 @@ const declaration_parameter_variadic$151_type = (value: declaration_parameter_va
 			return type_parenthesized$156(value);
 		case 'type.pointer':
 			return type_pointer$160(value);
-		case 'type.primitive.boolean':
-			return unbuilt('declaration.parameter.variadic.type', value);
-		case 'type.primitive.character':
-			return unbuilt('declaration.parameter.variadic.type', value);
-		case 'type.primitive.floating.float32':
-			return unbuilt('declaration.parameter.variadic.type', value);
-		case 'type.primitive.floating.float64':
-			return unbuilt('declaration.parameter.variadic.type', value);
-		case 'type.primitive.integral.int16':
-			return unbuilt('declaration.parameter.variadic.type', value);
-		case 'type.primitive.integral.int32':
-			return unbuilt('declaration.parameter.variadic.type', value);
-		case 'type.primitive.integral.int64':
-			return unbuilt('declaration.parameter.variadic.type', value);
-		case 'type.primitive.integral.int8':
-			return unbuilt('declaration.parameter.variadic.type', value);
-		case 'type.primitive.integral.size':
-			return unbuilt('declaration.parameter.variadic.type', value);
-		case 'type.primitive.string':
-			return unbuilt('declaration.parameter.variadic.type', value);
-		case 'type.primitive.unchecked':
-			return unbuilt('declaration.parameter.variadic.type', value);
 		default:
 			return unbuilt('declaration.parameter.variadic.type', value);
 	}
@@ -1067,18 +494,10 @@ const element_spread$210_expression = (value: element_spread$210_expression$Item
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('element.spread.expression', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('element.spread.expression', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -1210,12 +629,7 @@ const element_spread$210_expression = (value: element_spread$210_expression$Item
 		case 'literal.null':
 			return unbuilt('element.spread.expression', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('element.spread.expression', value);
 		case 'literal.number.integer':
 			return unbuilt('element.spread.expression', value);
 		case 'literal.number.integer.binary':
@@ -1223,6 +637,11 @@ const element_spread$210_expression = (value: element_spread$210_expression$Item
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('element.spread.expression', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -1358,18 +777,12 @@ const expression_assignment_compound_add$184_left = (value: expression_assignmen
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return b.expressionList(value);
-		return unseated('expression.assignment.compound.add.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.add.left', 'integer');
+		}
+		return b.expressionList(
+			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+		);
 	}
 	if (isNode(value)) {
 		if (
@@ -1501,12 +914,7 @@ const expression_assignment_compound_add$184_left = (value: expression_assignmen
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.add.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$85(value));
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$87(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$89(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$88(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$90(value));
-			return b.expressionList(literal_number_float$86(value));
+			return unbuilt('expression.assignment.compound.add.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.add.left', value);
 		case 'literal.number.integer.binary':
@@ -1514,6 +922,11 @@ const expression_assignment_compound_add$184_left = (value: expression_assignmen
 		case 'literal.number.integer.hex':
 			return b.expressionList(literal_number_integer_hex$84(value));
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
+				return b.expressionList(literal_number_integer_imaginary$97(value));
+			}
 			return unbuilt('expression.assignment.compound.add.left', value);
 		case 'literal.number.integer.octal':
 			return b.expressionList(literal_number_integer_octal$83(value));
@@ -1651,18 +1064,10 @@ const expression_assignment_compound_add$184_left$item = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.add.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.add.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -1794,12 +1199,7 @@ const expression_assignment_compound_add$184_left$item = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.add.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.assignment.compound.add.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.add.left', value);
 		case 'literal.number.integer.binary':
@@ -1807,6 +1207,11 @@ const expression_assignment_compound_add$184_left$item = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.assignment.compound.add.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -1942,18 +1347,12 @@ const expression_assignment_compound_add$184_right = (value: expression_assignme
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return b.expressionList(value);
-		return unseated('expression.assignment.compound.add.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.add.right', 'integer');
+		}
+		return b.expressionList(
+			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+		);
 	}
 	if (isNode(value)) {
 		if (
@@ -2085,12 +1484,7 @@ const expression_assignment_compound_add$184_right = (value: expression_assignme
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$85(value));
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$87(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$89(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$88(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$90(value));
-			return b.expressionList(literal_number_float$86(value));
+			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'literal.number.integer.binary':
@@ -2098,6 +1492,11 @@ const expression_assignment_compound_add$184_right = (value: expression_assignme
 		case 'literal.number.integer.hex':
 			return b.expressionList(literal_number_integer_hex$84(value));
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
+				return b.expressionList(literal_number_integer_imaginary$97(value));
+			}
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'literal.number.integer.octal':
 			return b.expressionList(literal_number_integer_octal$83(value));
@@ -2235,18 +1634,10 @@ const expression_assignment_compound_add$184_right$item = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.add.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.add.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -2378,12 +1769,7 @@ const expression_assignment_compound_add$184_right$item = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'literal.number.integer.binary':
@@ -2391,6 +1777,11 @@ const expression_assignment_compound_add$184_right$item = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -2528,18 +1919,12 @@ const expression_assignment_compound_bitwise_and$184_left = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return b.expressionList(value);
-		return unseated('expression.assignment.compound.bitwise_and.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.bitwise_and.left', 'integer');
+		}
+		return b.expressionList(
+			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+		);
 	}
 	if (isNode(value)) {
 		if (
@@ -2671,12 +2056,7 @@ const expression_assignment_compound_bitwise_and$184_left = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$85(value));
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$87(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$89(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$88(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$90(value));
-			return b.expressionList(literal_number_float$86(value));
+			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 		case 'literal.number.integer.binary':
@@ -2684,6 +2064,11 @@ const expression_assignment_compound_bitwise_and$184_left = (
 		case 'literal.number.integer.hex':
 			return b.expressionList(literal_number_integer_hex$84(value));
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
+				return b.expressionList(literal_number_integer_imaginary$97(value));
+			}
 			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 		case 'literal.number.integer.octal':
 			return b.expressionList(literal_number_integer_octal$83(value));
@@ -2821,18 +2206,10 @@ const expression_assignment_compound_bitwise_and$184_left$item = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.bitwise_and.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.bitwise_and.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -2964,12 +2341,7 @@ const expression_assignment_compound_bitwise_and$184_left$item = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 		case 'literal.number.integer.binary':
@@ -2977,6 +2349,11 @@ const expression_assignment_compound_bitwise_and$184_left$item = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -3114,18 +2491,12 @@ const expression_assignment_compound_bitwise_and$184_right = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return b.expressionList(value);
-		return unseated('expression.assignment.compound.bitwise_and.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.bitwise_and.right', 'integer');
+		}
+		return b.expressionList(
+			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+		);
 	}
 	if (isNode(value)) {
 		if (
@@ -3257,12 +2628,7 @@ const expression_assignment_compound_bitwise_and$184_right = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$85(value));
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$87(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$89(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$88(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$90(value));
-			return b.expressionList(literal_number_float$86(value));
+			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'literal.number.integer.binary':
@@ -3270,6 +2636,11 @@ const expression_assignment_compound_bitwise_and$184_right = (
 		case 'literal.number.integer.hex':
 			return b.expressionList(literal_number_integer_hex$84(value));
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
+				return b.expressionList(literal_number_integer_imaginary$97(value));
+			}
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'literal.number.integer.octal':
 			return b.expressionList(literal_number_integer_octal$83(value));
@@ -3407,18 +2778,10 @@ const expression_assignment_compound_bitwise_and$184_right$item = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.bitwise_and.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.bitwise_and.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -3550,12 +2913,7 @@ const expression_assignment_compound_bitwise_and$184_right$item = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'literal.number.integer.binary':
@@ -3563,6 +2921,11 @@ const expression_assignment_compound_bitwise_and$184_right$item = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -3700,18 +3063,12 @@ const expression_assignment_compound_bitwise_or$184_left = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return b.expressionList(value);
-		return unseated('expression.assignment.compound.bitwise_or.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.bitwise_or.left', 'integer');
+		}
+		return b.expressionList(
+			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+		);
 	}
 	if (isNode(value)) {
 		if (
@@ -3843,12 +3200,7 @@ const expression_assignment_compound_bitwise_or$184_left = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$85(value));
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$87(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$89(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$88(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$90(value));
-			return b.expressionList(literal_number_float$86(value));
+			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 		case 'literal.number.integer.binary':
@@ -3856,6 +3208,11 @@ const expression_assignment_compound_bitwise_or$184_left = (
 		case 'literal.number.integer.hex':
 			return b.expressionList(literal_number_integer_hex$84(value));
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
+				return b.expressionList(literal_number_integer_imaginary$97(value));
+			}
 			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 		case 'literal.number.integer.octal':
 			return b.expressionList(literal_number_integer_octal$83(value));
@@ -3993,18 +3350,10 @@ const expression_assignment_compound_bitwise_or$184_left$item = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.bitwise_or.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.bitwise_or.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -4136,12 +3485,7 @@ const expression_assignment_compound_bitwise_or$184_left$item = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 		case 'literal.number.integer.binary':
@@ -4149,6 +3493,11 @@ const expression_assignment_compound_bitwise_or$184_left$item = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -4286,18 +3635,12 @@ const expression_assignment_compound_bitwise_or$184_right = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return b.expressionList(value);
-		return unseated('expression.assignment.compound.bitwise_or.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.bitwise_or.right', 'integer');
+		}
+		return b.expressionList(
+			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+		);
 	}
 	if (isNode(value)) {
 		if (
@@ -4429,12 +3772,7 @@ const expression_assignment_compound_bitwise_or$184_right = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$85(value));
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$87(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$89(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$88(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$90(value));
-			return b.expressionList(literal_number_float$86(value));
+			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'literal.number.integer.binary':
@@ -4442,6 +3780,11 @@ const expression_assignment_compound_bitwise_or$184_right = (
 		case 'literal.number.integer.hex':
 			return b.expressionList(literal_number_integer_hex$84(value));
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
+				return b.expressionList(literal_number_integer_imaginary$97(value));
+			}
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'literal.number.integer.octal':
 			return b.expressionList(literal_number_integer_octal$83(value));
@@ -4579,18 +3922,10 @@ const expression_assignment_compound_bitwise_or$184_right$item = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.bitwise_or.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.bitwise_or.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -4722,12 +4057,7 @@ const expression_assignment_compound_bitwise_or$184_right$item = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'literal.number.integer.binary':
@@ -4735,6 +4065,11 @@ const expression_assignment_compound_bitwise_or$184_right$item = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -4872,18 +4207,12 @@ const expression_assignment_compound_bitwise_xor$184_left = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return b.expressionList(value);
-		return unseated('expression.assignment.compound.bitwise_xor.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.bitwise_xor.left', 'integer');
+		}
+		return b.expressionList(
+			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+		);
 	}
 	if (isNode(value)) {
 		if (
@@ -5015,12 +4344,7 @@ const expression_assignment_compound_bitwise_xor$184_left = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$85(value));
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$87(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$89(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$88(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$90(value));
-			return b.expressionList(literal_number_float$86(value));
+			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 		case 'literal.number.integer.binary':
@@ -5028,6 +4352,11 @@ const expression_assignment_compound_bitwise_xor$184_left = (
 		case 'literal.number.integer.hex':
 			return b.expressionList(literal_number_integer_hex$84(value));
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
+				return b.expressionList(literal_number_integer_imaginary$97(value));
+			}
 			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 		case 'literal.number.integer.octal':
 			return b.expressionList(literal_number_integer_octal$83(value));
@@ -5165,18 +4494,10 @@ const expression_assignment_compound_bitwise_xor$184_left$item = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.bitwise_xor.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.bitwise_xor.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -5308,12 +4629,7 @@ const expression_assignment_compound_bitwise_xor$184_left$item = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 		case 'literal.number.integer.binary':
@@ -5321,6 +4637,11 @@ const expression_assignment_compound_bitwise_xor$184_left$item = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -5458,18 +4779,12 @@ const expression_assignment_compound_bitwise_xor$184_right = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return b.expressionList(value);
-		return unseated('expression.assignment.compound.bitwise_xor.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.bitwise_xor.right', 'integer');
+		}
+		return b.expressionList(
+			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+		);
 	}
 	if (isNode(value)) {
 		if (
@@ -5601,12 +4916,7 @@ const expression_assignment_compound_bitwise_xor$184_right = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$85(value));
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$87(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$89(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$88(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$90(value));
-			return b.expressionList(literal_number_float$86(value));
+			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'literal.number.integer.binary':
@@ -5614,6 +4924,11 @@ const expression_assignment_compound_bitwise_xor$184_right = (
 		case 'literal.number.integer.hex':
 			return b.expressionList(literal_number_integer_hex$84(value));
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
+				return b.expressionList(literal_number_integer_imaginary$97(value));
+			}
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'literal.number.integer.octal':
 			return b.expressionList(literal_number_integer_octal$83(value));
@@ -5751,18 +5066,10 @@ const expression_assignment_compound_bitwise_xor$184_right$item = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.bitwise_xor.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.bitwise_xor.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -5894,12 +5201,7 @@ const expression_assignment_compound_bitwise_xor$184_right$item = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'literal.number.integer.binary':
@@ -5907,6 +5209,11 @@ const expression_assignment_compound_bitwise_xor$184_right$item = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -6042,18 +5349,12 @@ const expression_assignment_compound_divide$184_left = (value: expression_assign
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return b.expressionList(value);
-		return unseated('expression.assignment.compound.divide.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.divide.left', 'integer');
+		}
+		return b.expressionList(
+			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+		);
 	}
 	if (isNode(value)) {
 		if (
@@ -6185,12 +5486,7 @@ const expression_assignment_compound_divide$184_left = (value: expression_assign
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.divide.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$85(value));
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$87(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$89(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$88(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$90(value));
-			return b.expressionList(literal_number_float$86(value));
+			return unbuilt('expression.assignment.compound.divide.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.divide.left', value);
 		case 'literal.number.integer.binary':
@@ -6198,6 +5494,11 @@ const expression_assignment_compound_divide$184_left = (value: expression_assign
 		case 'literal.number.integer.hex':
 			return b.expressionList(literal_number_integer_hex$84(value));
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
+				return b.expressionList(literal_number_integer_imaginary$97(value));
+			}
 			return unbuilt('expression.assignment.compound.divide.left', value);
 		case 'literal.number.integer.octal':
 			return b.expressionList(literal_number_integer_octal$83(value));
@@ -6335,18 +5636,10 @@ const expression_assignment_compound_divide$184_left$item = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.divide.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.divide.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -6478,12 +5771,7 @@ const expression_assignment_compound_divide$184_left$item = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.divide.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.assignment.compound.divide.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.divide.left', value);
 		case 'literal.number.integer.binary':
@@ -6491,6 +5779,11 @@ const expression_assignment_compound_divide$184_left$item = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.assignment.compound.divide.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -6628,18 +5921,12 @@ const expression_assignment_compound_divide$184_right = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return b.expressionList(value);
-		return unseated('expression.assignment.compound.divide.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.divide.right', 'integer');
+		}
+		return b.expressionList(
+			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+		);
 	}
 	if (isNode(value)) {
 		if (
@@ -6771,12 +6058,7 @@ const expression_assignment_compound_divide$184_right = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$85(value));
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$87(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$89(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$88(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$90(value));
-			return b.expressionList(literal_number_float$86(value));
+			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'literal.number.integer.binary':
@@ -6784,6 +6066,11 @@ const expression_assignment_compound_divide$184_right = (
 		case 'literal.number.integer.hex':
 			return b.expressionList(literal_number_integer_hex$84(value));
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
+				return b.expressionList(literal_number_integer_imaginary$97(value));
+			}
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'literal.number.integer.octal':
 			return b.expressionList(literal_number_integer_octal$83(value));
@@ -6921,18 +6208,10 @@ const expression_assignment_compound_divide$184_right$item = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.divide.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.divide.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -7064,12 +6343,7 @@ const expression_assignment_compound_divide$184_right$item = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'literal.number.integer.binary':
@@ -7077,6 +6351,11 @@ const expression_assignment_compound_divide$184_right$item = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -7212,18 +6491,12 @@ const expression_assignment_compound_modulo$184_left = (value: expression_assign
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return b.expressionList(value);
-		return unseated('expression.assignment.compound.modulo.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.modulo.left', 'integer');
+		}
+		return b.expressionList(
+			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+		);
 	}
 	if (isNode(value)) {
 		if (
@@ -7355,12 +6628,7 @@ const expression_assignment_compound_modulo$184_left = (value: expression_assign
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.modulo.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$85(value));
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$87(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$89(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$88(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$90(value));
-			return b.expressionList(literal_number_float$86(value));
+			return unbuilt('expression.assignment.compound.modulo.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.modulo.left', value);
 		case 'literal.number.integer.binary':
@@ -7368,6 +6636,11 @@ const expression_assignment_compound_modulo$184_left = (value: expression_assign
 		case 'literal.number.integer.hex':
 			return b.expressionList(literal_number_integer_hex$84(value));
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
+				return b.expressionList(literal_number_integer_imaginary$97(value));
+			}
 			return unbuilt('expression.assignment.compound.modulo.left', value);
 		case 'literal.number.integer.octal':
 			return b.expressionList(literal_number_integer_octal$83(value));
@@ -7505,18 +6778,10 @@ const expression_assignment_compound_modulo$184_left$item = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.modulo.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.modulo.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -7648,12 +6913,7 @@ const expression_assignment_compound_modulo$184_left$item = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.modulo.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.assignment.compound.modulo.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.modulo.left', value);
 		case 'literal.number.integer.binary':
@@ -7661,6 +6921,11 @@ const expression_assignment_compound_modulo$184_left$item = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.assignment.compound.modulo.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -7798,18 +7063,12 @@ const expression_assignment_compound_modulo$184_right = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return b.expressionList(value);
-		return unseated('expression.assignment.compound.modulo.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.modulo.right', 'integer');
+		}
+		return b.expressionList(
+			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+		);
 	}
 	if (isNode(value)) {
 		if (
@@ -7941,12 +7200,7 @@ const expression_assignment_compound_modulo$184_right = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$85(value));
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$87(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$89(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$88(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$90(value));
-			return b.expressionList(literal_number_float$86(value));
+			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'literal.number.integer.binary':
@@ -7954,6 +7208,11 @@ const expression_assignment_compound_modulo$184_right = (
 		case 'literal.number.integer.hex':
 			return b.expressionList(literal_number_integer_hex$84(value));
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
+				return b.expressionList(literal_number_integer_imaginary$97(value));
+			}
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'literal.number.integer.octal':
 			return b.expressionList(literal_number_integer_octal$83(value));
@@ -8091,18 +7350,10 @@ const expression_assignment_compound_modulo$184_right$item = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.modulo.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.modulo.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -8234,12 +7485,7 @@ const expression_assignment_compound_modulo$184_right$item = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'literal.number.integer.binary':
@@ -8247,6 +7493,11 @@ const expression_assignment_compound_modulo$184_right$item = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -8384,18 +7635,12 @@ const expression_assignment_compound_multiply$184_left = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return b.expressionList(value);
-		return unseated('expression.assignment.compound.multiply.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.multiply.left', 'integer');
+		}
+		return b.expressionList(
+			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+		);
 	}
 	if (isNode(value)) {
 		if (
@@ -8527,12 +7772,7 @@ const expression_assignment_compound_multiply$184_left = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.multiply.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$85(value));
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$87(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$89(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$88(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$90(value));
-			return b.expressionList(literal_number_float$86(value));
+			return unbuilt('expression.assignment.compound.multiply.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.multiply.left', value);
 		case 'literal.number.integer.binary':
@@ -8540,6 +7780,11 @@ const expression_assignment_compound_multiply$184_left = (
 		case 'literal.number.integer.hex':
 			return b.expressionList(literal_number_integer_hex$84(value));
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
+				return b.expressionList(literal_number_integer_imaginary$97(value));
+			}
 			return unbuilt('expression.assignment.compound.multiply.left', value);
 		case 'literal.number.integer.octal':
 			return b.expressionList(literal_number_integer_octal$83(value));
@@ -8677,18 +7922,10 @@ const expression_assignment_compound_multiply$184_left$item = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.multiply.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.multiply.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -8820,12 +8057,7 @@ const expression_assignment_compound_multiply$184_left$item = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.multiply.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.assignment.compound.multiply.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.multiply.left', value);
 		case 'literal.number.integer.binary':
@@ -8833,6 +8065,11 @@ const expression_assignment_compound_multiply$184_left$item = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.assignment.compound.multiply.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -8970,18 +8207,12 @@ const expression_assignment_compound_multiply$184_right = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return b.expressionList(value);
-		return unseated('expression.assignment.compound.multiply.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.multiply.right', 'integer');
+		}
+		return b.expressionList(
+			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+		);
 	}
 	if (isNode(value)) {
 		if (
@@ -9113,12 +8344,7 @@ const expression_assignment_compound_multiply$184_right = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$85(value));
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$87(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$89(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$88(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$90(value));
-			return b.expressionList(literal_number_float$86(value));
+			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'literal.number.integer.binary':
@@ -9126,6 +8352,11 @@ const expression_assignment_compound_multiply$184_right = (
 		case 'literal.number.integer.hex':
 			return b.expressionList(literal_number_integer_hex$84(value));
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
+				return b.expressionList(literal_number_integer_imaginary$97(value));
+			}
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'literal.number.integer.octal':
 			return b.expressionList(literal_number_integer_octal$83(value));
@@ -9263,18 +8494,10 @@ const expression_assignment_compound_multiply$184_right$item = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.multiply.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.multiply.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -9406,12 +8629,7 @@ const expression_assignment_compound_multiply$184_right$item = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'literal.number.integer.binary':
@@ -9419,6 +8637,11 @@ const expression_assignment_compound_multiply$184_right$item = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -9556,18 +8779,12 @@ const expression_assignment_compound_shift_left$184_left = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return b.expressionList(value);
-		return unseated('expression.assignment.compound.shift_left.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.shift_left.left', 'integer');
+		}
+		return b.expressionList(
+			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+		);
 	}
 	if (isNode(value)) {
 		if (
@@ -9699,12 +8916,7 @@ const expression_assignment_compound_shift_left$184_left = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.shift_left.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$85(value));
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$87(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$89(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$88(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$90(value));
-			return b.expressionList(literal_number_float$86(value));
+			return unbuilt('expression.assignment.compound.shift_left.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.shift_left.left', value);
 		case 'literal.number.integer.binary':
@@ -9712,6 +8924,11 @@ const expression_assignment_compound_shift_left$184_left = (
 		case 'literal.number.integer.hex':
 			return b.expressionList(literal_number_integer_hex$84(value));
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
+				return b.expressionList(literal_number_integer_imaginary$97(value));
+			}
 			return unbuilt('expression.assignment.compound.shift_left.left', value);
 		case 'literal.number.integer.octal':
 			return b.expressionList(literal_number_integer_octal$83(value));
@@ -9849,18 +9066,10 @@ const expression_assignment_compound_shift_left$184_left$item = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.shift_left.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.shift_left.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -9992,12 +9201,7 @@ const expression_assignment_compound_shift_left$184_left$item = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.shift_left.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.assignment.compound.shift_left.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.shift_left.left', value);
 		case 'literal.number.integer.binary':
@@ -10005,6 +9209,11 @@ const expression_assignment_compound_shift_left$184_left$item = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.assignment.compound.shift_left.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -10142,18 +9351,12 @@ const expression_assignment_compound_shift_left$184_right = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return b.expressionList(value);
-		return unseated('expression.assignment.compound.shift_left.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.shift_left.right', 'integer');
+		}
+		return b.expressionList(
+			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+		);
 	}
 	if (isNode(value)) {
 		if (
@@ -10285,12 +9488,7 @@ const expression_assignment_compound_shift_left$184_right = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$85(value));
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$87(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$89(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$88(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$90(value));
-			return b.expressionList(literal_number_float$86(value));
+			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'literal.number.integer.binary':
@@ -10298,6 +9496,11 @@ const expression_assignment_compound_shift_left$184_right = (
 		case 'literal.number.integer.hex':
 			return b.expressionList(literal_number_integer_hex$84(value));
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
+				return b.expressionList(literal_number_integer_imaginary$97(value));
+			}
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'literal.number.integer.octal':
 			return b.expressionList(literal_number_integer_octal$83(value));
@@ -10435,18 +9638,10 @@ const expression_assignment_compound_shift_left$184_right$item = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.shift_left.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.shift_left.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -10578,12 +9773,7 @@ const expression_assignment_compound_shift_left$184_right$item = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'literal.number.integer.binary':
@@ -10591,6 +9781,11 @@ const expression_assignment_compound_shift_left$184_right$item = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -10728,18 +9923,12 @@ const expression_assignment_compound_shift_right$184_left = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return b.expressionList(value);
-		return unseated('expression.assignment.compound.shift_right.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.shift_right.left', 'integer');
+		}
+		return b.expressionList(
+			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+		);
 	}
 	if (isNode(value)) {
 		if (
@@ -10871,12 +10060,7 @@ const expression_assignment_compound_shift_right$184_left = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.shift_right.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$85(value));
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$87(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$89(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$88(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$90(value));
-			return b.expressionList(literal_number_float$86(value));
+			return unbuilt('expression.assignment.compound.shift_right.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.shift_right.left', value);
 		case 'literal.number.integer.binary':
@@ -10884,6 +10068,11 @@ const expression_assignment_compound_shift_right$184_left = (
 		case 'literal.number.integer.hex':
 			return b.expressionList(literal_number_integer_hex$84(value));
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
+				return b.expressionList(literal_number_integer_imaginary$97(value));
+			}
 			return unbuilt('expression.assignment.compound.shift_right.left', value);
 		case 'literal.number.integer.octal':
 			return b.expressionList(literal_number_integer_octal$83(value));
@@ -11021,18 +10210,10 @@ const expression_assignment_compound_shift_right$184_left$item = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.shift_right.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.shift_right.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -11164,12 +10345,7 @@ const expression_assignment_compound_shift_right$184_left$item = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.shift_right.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.assignment.compound.shift_right.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.shift_right.left', value);
 		case 'literal.number.integer.binary':
@@ -11177,6 +10353,11 @@ const expression_assignment_compound_shift_right$184_left$item = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.assignment.compound.shift_right.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -11314,18 +10495,12 @@ const expression_assignment_compound_shift_right$184_right = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return b.expressionList(value);
-		return unseated('expression.assignment.compound.shift_right.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.shift_right.right', 'integer');
+		}
+		return b.expressionList(
+			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+		);
 	}
 	if (isNode(value)) {
 		if (
@@ -11457,12 +10632,7 @@ const expression_assignment_compound_shift_right$184_right = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$85(value));
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$87(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$89(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$88(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$90(value));
-			return b.expressionList(literal_number_float$86(value));
+			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'literal.number.integer.binary':
@@ -11470,6 +10640,11 @@ const expression_assignment_compound_shift_right$184_right = (
 		case 'literal.number.integer.hex':
 			return b.expressionList(literal_number_integer_hex$84(value));
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
+				return b.expressionList(literal_number_integer_imaginary$97(value));
+			}
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'literal.number.integer.octal':
 			return b.expressionList(literal_number_integer_octal$83(value));
@@ -11607,18 +10782,10 @@ const expression_assignment_compound_shift_right$184_right$item = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.shift_right.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.shift_right.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -11750,12 +10917,7 @@ const expression_assignment_compound_shift_right$184_right$item = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'literal.number.integer.binary':
@@ -11763,6 +10925,11 @@ const expression_assignment_compound_shift_right$184_right$item = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -11900,18 +11067,12 @@ const expression_assignment_compound_subtract$184_left = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return b.expressionList(value);
-		return unseated('expression.assignment.compound.subtract.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.subtract.left', 'integer');
+		}
+		return b.expressionList(
+			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+		);
 	}
 	if (isNode(value)) {
 		if (
@@ -12043,12 +11204,7 @@ const expression_assignment_compound_subtract$184_left = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.subtract.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$85(value));
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$87(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$89(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$88(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$90(value));
-			return b.expressionList(literal_number_float$86(value));
+			return unbuilt('expression.assignment.compound.subtract.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.subtract.left', value);
 		case 'literal.number.integer.binary':
@@ -12056,6 +11212,11 @@ const expression_assignment_compound_subtract$184_left = (
 		case 'literal.number.integer.hex':
 			return b.expressionList(literal_number_integer_hex$84(value));
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
+				return b.expressionList(literal_number_integer_imaginary$97(value));
+			}
 			return unbuilt('expression.assignment.compound.subtract.left', value);
 		case 'literal.number.integer.octal':
 			return b.expressionList(literal_number_integer_octal$83(value));
@@ -12193,18 +11354,10 @@ const expression_assignment_compound_subtract$184_left$item = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.subtract.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.subtract.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -12336,12 +11489,7 @@ const expression_assignment_compound_subtract$184_left$item = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.subtract.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.assignment.compound.subtract.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.subtract.left', value);
 		case 'literal.number.integer.binary':
@@ -12349,6 +11497,11 @@ const expression_assignment_compound_subtract$184_left$item = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.assignment.compound.subtract.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -12486,18 +11639,12 @@ const expression_assignment_compound_subtract$184_right = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return b.expressionList(value);
-		return unseated('expression.assignment.compound.subtract.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.subtract.right', 'integer');
+		}
+		return b.expressionList(
+			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+		);
 	}
 	if (isNode(value)) {
 		if (
@@ -12629,12 +11776,7 @@ const expression_assignment_compound_subtract$184_right = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$85(value));
-			if (value.$value !== undefined) return b.expressionList(literal_number_float$87(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$89(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$88(value));
-			if (value.$value === undefined) return b.expressionList(literal_number_float$90(value));
-			return b.expressionList(literal_number_float$86(value));
+			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'literal.number.integer.binary':
@@ -12642,6 +11784,11 @@ const expression_assignment_compound_subtract$184_right = (
 		case 'literal.number.integer.hex':
 			return b.expressionList(literal_number_integer_hex$84(value));
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
+				return b.expressionList(literal_number_integer_imaginary$97(value));
+			}
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'literal.number.integer.octal':
 			return b.expressionList(literal_number_integer_octal$83(value));
@@ -12779,18 +11926,10 @@ const expression_assignment_compound_subtract$184_right$item = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.assignment.compound.subtract.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.assignment.compound.subtract.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -12922,12 +12061,7 @@ const expression_assignment_compound_subtract$184_right$item = (
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'literal.number.integer.binary':
@@ -12935,6 +12069,11 @@ const expression_assignment_compound_subtract$184_right$item = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -13070,18 +12209,10 @@ const expression_binary$225_left = (value: expression_binary$225_left$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -13213,12 +12344,7 @@ const expression_binary$225_left = (value: expression_binary$225_left$Item) => {
 		case 'literal.null':
 			return unbuilt('expression.binary.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.left', value);
 		case 'literal.number.integer.binary':
@@ -13226,6 +12352,11 @@ const expression_binary$225_left = (value: expression_binary$225_left$Item) => {
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -13435,18 +12566,10 @@ const expression_binary$225_right = (value: expression_binary$225_right$Item) =>
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -13578,12 +12701,7 @@ const expression_binary$225_right = (value: expression_binary$225_right$Item) =>
 		case 'literal.null':
 			return unbuilt('expression.binary.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.right', value);
 		case 'literal.number.integer.binary':
@@ -13591,6 +12709,11 @@ const expression_binary$225_right = (value: expression_binary$225_right$Item) =>
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -13726,18 +12849,10 @@ const expression_binary_arithmetic_add$225_left = (value: expression_binary_arit
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.arithmetic.add.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.arithmetic.add.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -13869,12 +12984,7 @@ const expression_binary_arithmetic_add$225_left = (value: expression_binary_arit
 		case 'literal.null':
 			return unbuilt('expression.binary.arithmetic.add.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.arithmetic.add.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.arithmetic.add.left', value);
 		case 'literal.number.integer.binary':
@@ -13882,6 +12992,11 @@ const expression_binary_arithmetic_add$225_left = (value: expression_binary_arit
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.arithmetic.add.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -14017,18 +13132,10 @@ const expression_binary_arithmetic_add$225_right = (value: expression_binary_ari
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.arithmetic.add.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.arithmetic.add.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -14160,12 +13267,7 @@ const expression_binary_arithmetic_add$225_right = (value: expression_binary_ari
 		case 'literal.null':
 			return unbuilt('expression.binary.arithmetic.add.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.arithmetic.add.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.arithmetic.add.right', value);
 		case 'literal.number.integer.binary':
@@ -14173,6 +13275,11 @@ const expression_binary_arithmetic_add$225_right = (value: expression_binary_ari
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.arithmetic.add.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -14308,18 +13415,10 @@ const expression_binary_arithmetic_divide$225_left = (value: expression_binary_a
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.arithmetic.divide.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.arithmetic.divide.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -14451,12 +13550,7 @@ const expression_binary_arithmetic_divide$225_left = (value: expression_binary_a
 		case 'literal.null':
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.arithmetic.divide.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
 		case 'literal.number.integer.binary':
@@ -14464,6 +13558,11 @@ const expression_binary_arithmetic_divide$225_left = (value: expression_binary_a
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -14599,18 +13698,10 @@ const expression_binary_arithmetic_divide$225_right = (value: expression_binary_
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.arithmetic.divide.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.arithmetic.divide.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -14742,12 +13833,7 @@ const expression_binary_arithmetic_divide$225_right = (value: expression_binary_
 		case 'literal.null':
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.arithmetic.divide.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
 		case 'literal.number.integer.binary':
@@ -14755,6 +13841,11 @@ const expression_binary_arithmetic_divide$225_right = (value: expression_binary_
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -14890,18 +13981,10 @@ const expression_binary_arithmetic_modulo$225_left = (value: expression_binary_a
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.arithmetic.modulo.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.arithmetic.modulo.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -15033,12 +14116,7 @@ const expression_binary_arithmetic_modulo$225_left = (value: expression_binary_a
 		case 'literal.null':
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 		case 'literal.number.integer.binary':
@@ -15046,6 +14124,11 @@ const expression_binary_arithmetic_modulo$225_left = (value: expression_binary_a
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -15181,18 +14264,10 @@ const expression_binary_arithmetic_modulo$225_right = (value: expression_binary_
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.arithmetic.modulo.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.arithmetic.modulo.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -15324,12 +14399,7 @@ const expression_binary_arithmetic_modulo$225_right = (value: expression_binary_
 		case 'literal.null':
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 		case 'literal.number.integer.binary':
@@ -15337,6 +14407,11 @@ const expression_binary_arithmetic_modulo$225_right = (value: expression_binary_
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -15472,18 +14547,10 @@ const expression_binary_arithmetic_multiply$225_left = (value: expression_binary
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.arithmetic.multiply.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.arithmetic.multiply.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -15615,12 +14682,7 @@ const expression_binary_arithmetic_multiply$225_left = (value: expression_binary
 		case 'literal.null':
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 		case 'literal.number.integer.binary':
@@ -15628,6 +14690,11 @@ const expression_binary_arithmetic_multiply$225_left = (value: expression_binary
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -15765,18 +14832,10 @@ const expression_binary_arithmetic_multiply$225_right = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.arithmetic.multiply.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.arithmetic.multiply.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -15908,12 +14967,7 @@ const expression_binary_arithmetic_multiply$225_right = (
 		case 'literal.null':
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 		case 'literal.number.integer.binary':
@@ -15921,6 +14975,11 @@ const expression_binary_arithmetic_multiply$225_right = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -16056,18 +15115,10 @@ const expression_binary_arithmetic_subtract$225_left = (value: expression_binary
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.arithmetic.subtract.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.arithmetic.subtract.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -16199,12 +15250,7 @@ const expression_binary_arithmetic_subtract$225_left = (value: expression_binary
 		case 'literal.null':
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 		case 'literal.number.integer.binary':
@@ -16212,6 +15258,11 @@ const expression_binary_arithmetic_subtract$225_left = (value: expression_binary
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -16349,18 +15400,10 @@ const expression_binary_arithmetic_subtract$225_right = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.arithmetic.subtract.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.arithmetic.subtract.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -16492,12 +15535,7 @@ const expression_binary_arithmetic_subtract$225_right = (
 		case 'literal.null':
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 		case 'literal.number.integer.binary':
@@ -16505,6 +15543,11 @@ const expression_binary_arithmetic_subtract$225_right = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -16640,18 +15683,10 @@ const expression_binary_bitwise_and$225_left = (value: expression_binary_bitwise
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.bitwise.and.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.bitwise.and.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -16783,12 +15818,7 @@ const expression_binary_bitwise_and$225_left = (value: expression_binary_bitwise
 		case 'literal.null':
 			return unbuilt('expression.binary.bitwise.and.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.bitwise.and.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.bitwise.and.left', value);
 		case 'literal.number.integer.binary':
@@ -16796,6 +15826,11 @@ const expression_binary_bitwise_and$225_left = (value: expression_binary_bitwise
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.bitwise.and.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -16931,18 +15966,10 @@ const expression_binary_bitwise_and$225_right = (value: expression_binary_bitwis
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.bitwise.and.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.bitwise.and.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -17074,12 +16101,7 @@ const expression_binary_bitwise_and$225_right = (value: expression_binary_bitwis
 		case 'literal.null':
 			return unbuilt('expression.binary.bitwise.and.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.bitwise.and.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.bitwise.and.right', value);
 		case 'literal.number.integer.binary':
@@ -17087,6 +16109,11 @@ const expression_binary_bitwise_and$225_right = (value: expression_binary_bitwis
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.bitwise.and.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -17222,18 +16249,10 @@ const expression_binary_bitwise_or$225_left = (value: expression_binary_bitwise_
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.bitwise.or.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.bitwise.or.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -17365,12 +16384,7 @@ const expression_binary_bitwise_or$225_left = (value: expression_binary_bitwise_
 		case 'literal.null':
 			return unbuilt('expression.binary.bitwise.or.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.bitwise.or.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.bitwise.or.left', value);
 		case 'literal.number.integer.binary':
@@ -17378,6 +16392,11 @@ const expression_binary_bitwise_or$225_left = (value: expression_binary_bitwise_
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.bitwise.or.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -17513,18 +16532,10 @@ const expression_binary_bitwise_or$225_right = (value: expression_binary_bitwise
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.bitwise.or.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.bitwise.or.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -17656,12 +16667,7 @@ const expression_binary_bitwise_or$225_right = (value: expression_binary_bitwise
 		case 'literal.null':
 			return unbuilt('expression.binary.bitwise.or.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.bitwise.or.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.bitwise.or.right', value);
 		case 'literal.number.integer.binary':
@@ -17669,6 +16675,11 @@ const expression_binary_bitwise_or$225_right = (value: expression_binary_bitwise
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.bitwise.or.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -17804,18 +16815,10 @@ const expression_binary_bitwise_xor$225_left = (value: expression_binary_bitwise
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.bitwise.xor.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.bitwise.xor.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -17947,12 +16950,7 @@ const expression_binary_bitwise_xor$225_left = (value: expression_binary_bitwise
 		case 'literal.null':
 			return unbuilt('expression.binary.bitwise.xor.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.bitwise.xor.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.bitwise.xor.left', value);
 		case 'literal.number.integer.binary':
@@ -17960,6 +16958,11 @@ const expression_binary_bitwise_xor$225_left = (value: expression_binary_bitwise
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.bitwise.xor.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -18095,18 +17098,10 @@ const expression_binary_bitwise_xor$225_right = (value: expression_binary_bitwis
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.bitwise.xor.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.bitwise.xor.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -18238,12 +17233,7 @@ const expression_binary_bitwise_xor$225_right = (value: expression_binary_bitwis
 		case 'literal.null':
 			return unbuilt('expression.binary.bitwise.xor.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.bitwise.xor.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.bitwise.xor.right', value);
 		case 'literal.number.integer.binary':
@@ -18251,6 +17241,11 @@ const expression_binary_bitwise_xor$225_right = (value: expression_binary_bitwis
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.bitwise.xor.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -18386,18 +17381,10 @@ const expression_binary_comparison_equal$225_left = (value: expression_binary_co
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.comparison.equal.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.comparison.equal.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -18529,12 +17516,7 @@ const expression_binary_comparison_equal$225_left = (value: expression_binary_co
 		case 'literal.null':
 			return unbuilt('expression.binary.comparison.equal.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.comparison.equal.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.comparison.equal.left', value);
 		case 'literal.number.integer.binary':
@@ -18542,6 +17524,11 @@ const expression_binary_comparison_equal$225_left = (value: expression_binary_co
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.comparison.equal.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -18677,18 +17664,10 @@ const expression_binary_comparison_equal$225_right = (value: expression_binary_c
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.comparison.equal.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.comparison.equal.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -18820,12 +17799,7 @@ const expression_binary_comparison_equal$225_right = (value: expression_binary_c
 		case 'literal.null':
 			return unbuilt('expression.binary.comparison.equal.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.comparison.equal.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.comparison.equal.right', value);
 		case 'literal.number.integer.binary':
@@ -18833,6 +17807,11 @@ const expression_binary_comparison_equal$225_right = (value: expression_binary_c
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.comparison.equal.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -18968,18 +17947,10 @@ const expression_binary_comparison_greater$225_left = (value: expression_binary_
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.comparison.greater.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.comparison.greater.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -19111,12 +18082,7 @@ const expression_binary_comparison_greater$225_left = (value: expression_binary_
 		case 'literal.null':
 			return unbuilt('expression.binary.comparison.greater.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.comparison.greater.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.comparison.greater.left', value);
 		case 'literal.number.integer.binary':
@@ -19124,6 +18090,11 @@ const expression_binary_comparison_greater$225_left = (value: expression_binary_
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.comparison.greater.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -19259,18 +18230,10 @@ const expression_binary_comparison_greater$225_right = (value: expression_binary
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.comparison.greater.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.comparison.greater.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -19402,12 +18365,7 @@ const expression_binary_comparison_greater$225_right = (value: expression_binary
 		case 'literal.null':
 			return unbuilt('expression.binary.comparison.greater.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.comparison.greater.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.comparison.greater.right', value);
 		case 'literal.number.integer.binary':
@@ -19415,6 +18373,11 @@ const expression_binary_comparison_greater$225_right = (value: expression_binary
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.comparison.greater.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -19552,18 +18515,10 @@ const expression_binary_comparison_greater_equal$225_left = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.comparison.greater_equal.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.comparison.greater_equal.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -19695,12 +18650,7 @@ const expression_binary_comparison_greater_equal$225_left = (
 		case 'literal.null':
 			return unbuilt('expression.binary.comparison.greater_equal.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.comparison.greater_equal.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.comparison.greater_equal.left', value);
 		case 'literal.number.integer.binary':
@@ -19708,6 +18658,11 @@ const expression_binary_comparison_greater_equal$225_left = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.comparison.greater_equal.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -19845,18 +18800,10 @@ const expression_binary_comparison_greater_equal$225_right = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.comparison.greater_equal.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.comparison.greater_equal.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -19988,12 +18935,7 @@ const expression_binary_comparison_greater_equal$225_right = (
 		case 'literal.null':
 			return unbuilt('expression.binary.comparison.greater_equal.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.comparison.greater_equal.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.comparison.greater_equal.right', value);
 		case 'literal.number.integer.binary':
@@ -20001,6 +18943,11 @@ const expression_binary_comparison_greater_equal$225_right = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.comparison.greater_equal.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -20136,18 +19083,10 @@ const expression_binary_comparison_less$225_left = (value: expression_binary_com
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.comparison.less.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.comparison.less.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -20279,12 +19218,7 @@ const expression_binary_comparison_less$225_left = (value: expression_binary_com
 		case 'literal.null':
 			return unbuilt('expression.binary.comparison.less.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.comparison.less.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.comparison.less.left', value);
 		case 'literal.number.integer.binary':
@@ -20292,6 +19226,11 @@ const expression_binary_comparison_less$225_left = (value: expression_binary_com
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.comparison.less.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -20427,18 +19366,10 @@ const expression_binary_comparison_less$225_right = (value: expression_binary_co
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.comparison.less.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.comparison.less.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -20570,12 +19501,7 @@ const expression_binary_comparison_less$225_right = (value: expression_binary_co
 		case 'literal.null':
 			return unbuilt('expression.binary.comparison.less.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.comparison.less.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.comparison.less.right', value);
 		case 'literal.number.integer.binary':
@@ -20583,6 +19509,11 @@ const expression_binary_comparison_less$225_right = (value: expression_binary_co
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.comparison.less.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -20720,18 +19651,10 @@ const expression_binary_comparison_less_equal$225_left = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.comparison.less_equal.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.comparison.less_equal.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -20863,12 +19786,7 @@ const expression_binary_comparison_less_equal$225_left = (
 		case 'literal.null':
 			return unbuilt('expression.binary.comparison.less_equal.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.comparison.less_equal.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.comparison.less_equal.left', value);
 		case 'literal.number.integer.binary':
@@ -20876,6 +19794,11 @@ const expression_binary_comparison_less_equal$225_left = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.comparison.less_equal.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -21013,18 +19936,10 @@ const expression_binary_comparison_less_equal$225_right = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.comparison.less_equal.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.comparison.less_equal.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -21156,12 +20071,7 @@ const expression_binary_comparison_less_equal$225_right = (
 		case 'literal.null':
 			return unbuilt('expression.binary.comparison.less_equal.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.comparison.less_equal.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.comparison.less_equal.right', value);
 		case 'literal.number.integer.binary':
@@ -21169,6 +20079,11 @@ const expression_binary_comparison_less_equal$225_right = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.comparison.less_equal.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -21306,18 +20221,10 @@ const expression_binary_comparison_not_equal$225_left = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.comparison.not_equal.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.comparison.not_equal.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -21449,12 +20356,7 @@ const expression_binary_comparison_not_equal$225_left = (
 		case 'literal.null':
 			return unbuilt('expression.binary.comparison.not_equal.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.comparison.not_equal.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.comparison.not_equal.left', value);
 		case 'literal.number.integer.binary':
@@ -21462,6 +20364,11 @@ const expression_binary_comparison_not_equal$225_left = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.comparison.not_equal.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -21599,18 +20506,10 @@ const expression_binary_comparison_not_equal$225_right = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.comparison.not_equal.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.comparison.not_equal.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -21742,12 +20641,7 @@ const expression_binary_comparison_not_equal$225_right = (
 		case 'literal.null':
 			return unbuilt('expression.binary.comparison.not_equal.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.comparison.not_equal.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.comparison.not_equal.right', value);
 		case 'literal.number.integer.binary':
@@ -21755,6 +20649,11 @@ const expression_binary_comparison_not_equal$225_right = (
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.comparison.not_equal.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -21890,18 +20789,10 @@ const expression_binary_logical_and$225_left = (value: expression_binary_logical
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.logical.and.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.logical.and.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -22033,12 +20924,7 @@ const expression_binary_logical_and$225_left = (value: expression_binary_logical
 		case 'literal.null':
 			return unbuilt('expression.binary.logical.and.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.logical.and.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.logical.and.left', value);
 		case 'literal.number.integer.binary':
@@ -22046,6 +20932,11 @@ const expression_binary_logical_and$225_left = (value: expression_binary_logical
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.logical.and.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -22181,18 +21072,10 @@ const expression_binary_logical_and$225_right = (value: expression_binary_logica
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.logical.and.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.logical.and.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -22324,12 +21207,7 @@ const expression_binary_logical_and$225_right = (value: expression_binary_logica
 		case 'literal.null':
 			return unbuilt('expression.binary.logical.and.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.logical.and.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.logical.and.right', value);
 		case 'literal.number.integer.binary':
@@ -22337,6 +21215,11 @@ const expression_binary_logical_and$225_right = (value: expression_binary_logica
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.logical.and.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -22472,18 +21355,10 @@ const expression_binary_logical_or$225_left = (value: expression_binary_logical_
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.logical.or.left', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.logical.or.left', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -22615,12 +21490,7 @@ const expression_binary_logical_or$225_left = (value: expression_binary_logical_
 		case 'literal.null':
 			return unbuilt('expression.binary.logical.or.left', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.logical.or.left', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.logical.or.left', value);
 		case 'literal.number.integer.binary':
@@ -22628,6 +21498,11 @@ const expression_binary_logical_or$225_left = (value: expression_binary_logical_
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.logical.or.left', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -22763,18 +21638,10 @@ const expression_binary_logical_or$225_right = (value: expression_binary_logical
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.binary.logical.or.right', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.binary.logical.or.right', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -22906,12 +21773,7 @@ const expression_binary_logical_or$225_right = (value: expression_binary_logical
 		case 'literal.null':
 			return unbuilt('expression.binary.logical.or.right', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.binary.logical.or.right', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.logical.or.right', value);
 		case 'literal.number.integer.binary':
@@ -22919,6 +21781,11 @@ const expression_binary_logical_or$225_right = (value: expression_binary_logical
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.binary.logical.or.right', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -23054,18 +21921,10 @@ const expression_parenthesized$208_expression = (value: expression_parenthesized
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('expression.parenthesized.expression', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('expression.parenthesized.expression', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -23197,12 +22056,7 @@ const expression_parenthesized$208_expression = (value: expression_parenthesized
 		case 'literal.null':
 			return unbuilt('expression.parenthesized.expression', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('expression.parenthesized.expression', value);
 		case 'literal.number.integer':
 			return unbuilt('expression.parenthesized.expression', value);
 		case 'literal.number.integer.binary':
@@ -23210,6 +22064,11 @@ const expression_parenthesized$208_expression = (value: expression_parenthesized
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('expression.parenthesized.expression', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -23289,7 +22148,21 @@ const literal_character$107_content = (value: literal_character$107_content$Item
 type literal_character$108_content$Item = string | '"' | "'" | '\\' | 'a' | 'b' | 'f' | 'n' | 'r' | 't' | 'v';
 const literal_character$108_content = (value: literal_character$108_content$Item) => {
 	if (typeof value === 'string') {
-		return value;
+		switch (value) {
+			case 'a':
+			case 'b':
+			case 'f':
+			case 'n':
+			case 'r':
+			case 't':
+			case 'v':
+			case '\\':
+			case "'":
+			case '"':
+				return value;
+			default:
+				return untexted('literal.character.content', value);
+		}
 	}
 	if (typeof value === 'number') {
 		return unseated('literal.character.content', value);
@@ -23367,6 +22240,17 @@ const statement_continue$190_label = (value: statement_continue$190_label$Item) 
 };
 type type_array$161_element$Item =
 	| Text<GoMap, 'identifier'>
+	| Text<GoMap, 'type.primitive.boolean'>
+	| Text<GoMap, 'type.primitive.character'>
+	| Text<GoMap, 'type.primitive.floating.float32'>
+	| Text<GoMap, 'type.primitive.floating.float64'>
+	| Text<GoMap, 'type.primitive.integral.int16'>
+	| Text<GoMap, 'type.primitive.integral.int32'>
+	| Text<GoMap, 'type.primitive.integral.int64'>
+	| Text<GoMap, 'type.primitive.integral.int8'>
+	| Text<GoMap, 'type.primitive.integral.size'>
+	| Text<GoMap, 'type.primitive.string'>
+	| Text<GoMap, 'type.primitive.unchecked'>
 	| BuildInput<GoMap, 'identifier'>
 	| GoMap['nodes']['identifier']
 	| BuildInput<GoMap, 'identifier.qualified'>
@@ -23383,27 +22267,16 @@ type type_array$161_element$Item =
 	| GoMap['nodes']['type.parenthesized']
 	| BuildInput<GoMap, 'type.pointer'>
 	| GoMap['nodes']['type.pointer']
-	| BuildInput<GoMap, 'type.primitive.boolean'>
 	| GoMap['nodes']['type.primitive.boolean']
-	| BuildInput<GoMap, 'type.primitive.character'>
 	| GoMap['nodes']['type.primitive.character']
-	| BuildInput<GoMap, 'type.primitive.floating.float32'>
 	| GoMap['nodes']['type.primitive.floating.float32']
-	| BuildInput<GoMap, 'type.primitive.floating.float64'>
 	| GoMap['nodes']['type.primitive.floating.float64']
-	| BuildInput<GoMap, 'type.primitive.integral.int16'>
 	| GoMap['nodes']['type.primitive.integral.int16']
-	| BuildInput<GoMap, 'type.primitive.integral.int32'>
 	| GoMap['nodes']['type.primitive.integral.int32']
-	| BuildInput<GoMap, 'type.primitive.integral.int64'>
 	| GoMap['nodes']['type.primitive.integral.int64']
-	| BuildInput<GoMap, 'type.primitive.integral.int8'>
 	| GoMap['nodes']['type.primitive.integral.int8']
-	| BuildInput<GoMap, 'type.primitive.integral.size'>
 	| GoMap['nodes']['type.primitive.integral.size']
-	| BuildInput<GoMap, 'type.primitive.string'>
 	| GoMap['nodes']['type.primitive.string']
-	| BuildInput<GoMap, 'type.primitive.unchecked'>
 	| GoMap['nodes']['type.primitive.unchecked']
 	| Unmapped<'go:interface_type_group'>
 	| Unmapped<'go:map_type'>;
@@ -23590,590 +22463,26 @@ const type_array$161_element = (value: type_array$161_element$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return value;
 		if (seated(value, [261])) return b.interfaceType(value);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299]))
-			return b.channelTypeBidirectional(value);
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
+		if (seated(value, [266])) return b.channelTypeBidirectional(value);
+		if (seated(value, [267])) return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
+		if (seated(value, [268])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
+		if (seated(value, [165]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
-			return b.channelTypeBidirectional(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299]))
-			return b.channelTypeSendOnly(value);
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
-			return b.channelTypeSendOnly(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299]))
-			return b.channelTypeReceiveOnly(value);
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299])) return b.negatedType(value);
-		if (seated(value, [261])) return b.negatedType(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
-			return b.negatedType(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
-			return b.negatedType(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
 		return unseated('type.array.element', value);
 	}
 	if (isNode(value)) {
 		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return value;
 		if (seated(value, [261])) return b.interfaceType(value);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299]))
-			return b.channelTypeBidirectional(value);
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
+		if (seated(value, [266])) return b.channelTypeBidirectional(value);
+		if (seated(value, [267])) return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
+		if (seated(value, [268])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
+		if (seated(value, [165]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
-			return b.channelTypeBidirectional(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299]))
-			return b.channelTypeSendOnly(value);
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
-			return b.channelTypeSendOnly(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299]))
-			return b.channelTypeReceiveOnly(value);
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299])) return b.negatedType(value);
-		if (seated(value, [261])) return b.negatedType(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
-			return b.negatedType(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
-			return b.negatedType(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
 		return unseated('type.array.element', value);
 	}
 	switch (value.$path) {
 		case 'identifier':
-			return identifier$299(value);
+			return unbuilt('type.array.element', value);
 		case 'identifier.qualified':
 			return unbuilt('type.array.element', value);
 		case 'type.array':
@@ -24189,28 +22498,6 @@ const type_array$161_element = (value: type_array$161_element$Item) => {
 			return type_parenthesized$156(value);
 		case 'type.pointer':
 			return type_pointer$160(value);
-		case 'type.primitive.boolean':
-			return unbuilt('type.array.element', value);
-		case 'type.primitive.character':
-			return unbuilt('type.array.element', value);
-		case 'type.primitive.floating.float32':
-			return unbuilt('type.array.element', value);
-		case 'type.primitive.floating.float64':
-			return unbuilt('type.array.element', value);
-		case 'type.primitive.integral.int16':
-			return unbuilt('type.array.element', value);
-		case 'type.primitive.integral.int32':
-			return unbuilt('type.array.element', value);
-		case 'type.primitive.integral.int64':
-			return unbuilt('type.array.element', value);
-		case 'type.primitive.integral.int8':
-			return unbuilt('type.array.element', value);
-		case 'type.primitive.integral.size':
-			return unbuilt('type.array.element', value);
-		case 'type.primitive.string':
-			return unbuilt('type.array.element', value);
-		case 'type.primitive.unchecked':
-			return unbuilt('type.array.element', value);
 		default:
 			return unbuilt('type.array.element', value);
 	}
@@ -24339,18 +22626,10 @@ const type_array$161_length = (value: type_array$161_length$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					1, 69, 70, 71, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-					103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 230,
-					231, 232, 233, 234, 235, 236
-				]
-			)
-		)
-			return value;
-		return unseated('type.array.length', value);
+		if (Number.isSafeInteger(value)) {
+			return unnumbered('type.array.length', 'integer');
+		}
+		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -24482,12 +22761,7 @@ const type_array$161_length = (value: type_array$161_length$Item) => {
 		case 'literal.null':
 			return unbuilt('type.array.length', value);
 		case 'literal.number.float':
-			if (value.$value !== undefined) return literal_number_float$85(value);
-			if (value.$value !== undefined) return literal_number_float$87(value);
-			if (value.$value === undefined) return literal_number_float$89(value);
-			if (value.$value === undefined) return literal_number_float$88(value);
-			if (value.$value === undefined) return literal_number_float$90(value);
-			return literal_number_float$86(value);
+			return unbuilt('type.array.length', value);
 		case 'literal.number.integer':
 			return unbuilt('type.array.length', value);
 		case 'literal.number.integer.binary':
@@ -24495,6 +22769,11 @@ const type_array$161_length = (value: type_array$161_length$Item) => {
 		case 'literal.number.integer.hex':
 			return literal_number_integer_hex$84(value);
 		case 'literal.number.integer.imaginary':
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
+				return literal_number_integer_imaginary$97(value);
+			}
 			return unbuilt('type.array.length', value);
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$83(value);
@@ -24508,6 +22787,17 @@ const type_array$161_length = (value: type_array$161_length$Item) => {
 };
 type type_array$163_element$Item =
 	| Text<GoMap, 'identifier'>
+	| Text<GoMap, 'type.primitive.boolean'>
+	| Text<GoMap, 'type.primitive.character'>
+	| Text<GoMap, 'type.primitive.floating.float32'>
+	| Text<GoMap, 'type.primitive.floating.float64'>
+	| Text<GoMap, 'type.primitive.integral.int16'>
+	| Text<GoMap, 'type.primitive.integral.int32'>
+	| Text<GoMap, 'type.primitive.integral.int64'>
+	| Text<GoMap, 'type.primitive.integral.int8'>
+	| Text<GoMap, 'type.primitive.integral.size'>
+	| Text<GoMap, 'type.primitive.string'>
+	| Text<GoMap, 'type.primitive.unchecked'>
 	| BuildInput<GoMap, 'identifier'>
 	| GoMap['nodes']['identifier']
 	| BuildInput<GoMap, 'identifier.qualified'>
@@ -24524,27 +22814,16 @@ type type_array$163_element$Item =
 	| GoMap['nodes']['type.parenthesized']
 	| BuildInput<GoMap, 'type.pointer'>
 	| GoMap['nodes']['type.pointer']
-	| BuildInput<GoMap, 'type.primitive.boolean'>
 	| GoMap['nodes']['type.primitive.boolean']
-	| BuildInput<GoMap, 'type.primitive.character'>
 	| GoMap['nodes']['type.primitive.character']
-	| BuildInput<GoMap, 'type.primitive.floating.float32'>
 	| GoMap['nodes']['type.primitive.floating.float32']
-	| BuildInput<GoMap, 'type.primitive.floating.float64'>
 	| GoMap['nodes']['type.primitive.floating.float64']
-	| BuildInput<GoMap, 'type.primitive.integral.int16'>
 	| GoMap['nodes']['type.primitive.integral.int16']
-	| BuildInput<GoMap, 'type.primitive.integral.int32'>
 	| GoMap['nodes']['type.primitive.integral.int32']
-	| BuildInput<GoMap, 'type.primitive.integral.int64'>
 	| GoMap['nodes']['type.primitive.integral.int64']
-	| BuildInput<GoMap, 'type.primitive.integral.int8'>
 	| GoMap['nodes']['type.primitive.integral.int8']
-	| BuildInput<GoMap, 'type.primitive.integral.size'>
 	| GoMap['nodes']['type.primitive.integral.size']
-	| BuildInput<GoMap, 'type.primitive.string'>
 	| GoMap['nodes']['type.primitive.string']
-	| BuildInput<GoMap, 'type.primitive.unchecked'>
 	| GoMap['nodes']['type.primitive.unchecked']
 	| Unmapped<'go:interface_type_group'>
 	| Unmapped<'go:map_type'>;
@@ -24731,590 +23010,26 @@ const type_array$163_element = (value: type_array$163_element$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return value;
 		if (seated(value, [261])) return b.interfaceType(value);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299]))
-			return b.channelTypeBidirectional(value);
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
+		if (seated(value, [266])) return b.channelTypeBidirectional(value);
+		if (seated(value, [267])) return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
+		if (seated(value, [268])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
+		if (seated(value, [165]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
-			return b.channelTypeBidirectional(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299]))
-			return b.channelTypeSendOnly(value);
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
-			return b.channelTypeSendOnly(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299]))
-			return b.channelTypeReceiveOnly(value);
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299])) return b.negatedType(value);
-		if (seated(value, [261])) return b.negatedType(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
-			return b.negatedType(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
-			return b.negatedType(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
 		return unseated('type.array.element', value);
 	}
 	if (isNode(value)) {
 		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return value;
 		if (seated(value, [261])) return b.interfaceType(value);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299]))
-			return b.channelTypeBidirectional(value);
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
+		if (seated(value, [266])) return b.channelTypeBidirectional(value);
+		if (seated(value, [267])) return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
+		if (seated(value, [268])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
+		if (seated(value, [165]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
-			return b.channelTypeBidirectional(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299]))
-			return b.channelTypeSendOnly(value);
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
-			return b.channelTypeSendOnly(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299]))
-			return b.channelTypeReceiveOnly(value);
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299])) return b.negatedType(value);
-		if (seated(value, [261])) return b.negatedType(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
-			return b.negatedType(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
-			return b.negatedType(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
 		return unseated('type.array.element', value);
 	}
 	switch (value.$path) {
 		case 'identifier':
-			return identifier$299(value);
+			return unbuilt('type.array.element', value);
 		case 'identifier.qualified':
 			return unbuilt('type.array.element', value);
 		case 'type.array':
@@ -25330,34 +23045,23 @@ const type_array$163_element = (value: type_array$163_element$Item) => {
 			return type_parenthesized$156(value);
 		case 'type.pointer':
 			return type_pointer$160(value);
-		case 'type.primitive.boolean':
-			return unbuilt('type.array.element', value);
-		case 'type.primitive.character':
-			return unbuilt('type.array.element', value);
-		case 'type.primitive.floating.float32':
-			return unbuilt('type.array.element', value);
-		case 'type.primitive.floating.float64':
-			return unbuilt('type.array.element', value);
-		case 'type.primitive.integral.int16':
-			return unbuilt('type.array.element', value);
-		case 'type.primitive.integral.int32':
-			return unbuilt('type.array.element', value);
-		case 'type.primitive.integral.int64':
-			return unbuilt('type.array.element', value);
-		case 'type.primitive.integral.int8':
-			return unbuilt('type.array.element', value);
-		case 'type.primitive.integral.size':
-			return unbuilt('type.array.element', value);
-		case 'type.primitive.string':
-			return unbuilt('type.array.element', value);
-		case 'type.primitive.unchecked':
-			return unbuilt('type.array.element', value);
 		default:
 			return unbuilt('type.array.element', value);
 	}
 };
 type type_generic$158_type$Item =
 	| Text<GoMap, 'identifier'>
+	| Text<GoMap, 'type.primitive.boolean'>
+	| Text<GoMap, 'type.primitive.character'>
+	| Text<GoMap, 'type.primitive.floating.float32'>
+	| Text<GoMap, 'type.primitive.floating.float64'>
+	| Text<GoMap, 'type.primitive.integral.int16'>
+	| Text<GoMap, 'type.primitive.integral.int32'>
+	| Text<GoMap, 'type.primitive.integral.int64'>
+	| Text<GoMap, 'type.primitive.integral.int8'>
+	| Text<GoMap, 'type.primitive.integral.size'>
+	| Text<GoMap, 'type.primitive.string'>
+	| Text<GoMap, 'type.primitive.unchecked'>
 	| BuildInput<GoMap, 'identifier'>
 	| GoMap['nodes']['identifier']
 	| BuildInput<GoMap, 'identifier.qualified'>
@@ -25374,27 +23078,16 @@ type type_generic$158_type$Item =
 	| GoMap['nodes']['type.parenthesized']
 	| BuildInput<GoMap, 'type.pointer'>
 	| GoMap['nodes']['type.pointer']
-	| BuildInput<GoMap, 'type.primitive.boolean'>
 	| GoMap['nodes']['type.primitive.boolean']
-	| BuildInput<GoMap, 'type.primitive.character'>
 	| GoMap['nodes']['type.primitive.character']
-	| BuildInput<GoMap, 'type.primitive.floating.float32'>
 	| GoMap['nodes']['type.primitive.floating.float32']
-	| BuildInput<GoMap, 'type.primitive.floating.float64'>
 	| GoMap['nodes']['type.primitive.floating.float64']
-	| BuildInput<GoMap, 'type.primitive.integral.int16'>
 	| GoMap['nodes']['type.primitive.integral.int16']
-	| BuildInput<GoMap, 'type.primitive.integral.int32'>
 	| GoMap['nodes']['type.primitive.integral.int32']
-	| BuildInput<GoMap, 'type.primitive.integral.int64'>
 	| GoMap['nodes']['type.primitive.integral.int64']
-	| BuildInput<GoMap, 'type.primitive.integral.int8'>
 	| GoMap['nodes']['type.primitive.integral.int8']
-	| BuildInput<GoMap, 'type.primitive.integral.size'>
 	| GoMap['nodes']['type.primitive.integral.size']
-	| BuildInput<GoMap, 'type.primitive.string'>
 	| GoMap['nodes']['type.primitive.string']
-	| BuildInput<GoMap, 'type.primitive.unchecked'>
 	| GoMap['nodes']['type.primitive.unchecked']
 	| Unmapped<'go:interface_type_group'>
 	| Unmapped<'go:map_type'>;
@@ -25448,157 +23141,27 @@ const type_generic$158_type = (value: type_generic$158_type$Item) => {
 	}
 	if (typeof value === 'number') {
 		if (seated(value, [226, 299])) return value;
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299])) return b.negatedType(value);
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173])) return b.negatedType(value);
 		if (seated(value, [261])) return b.negatedType(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
-			return b.negatedType(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
+		if (seated(value, [266])) return b.negatedType(b.channelTypeBidirectional(value));
+		if (seated(value, [267])) return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
+		if (seated(value, [268]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
-			return b.negatedType(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
 		return unseated('type.generic.type', value);
 	}
 	if (isNode(value)) {
 		if (seated(value, [226, 299])) return value;
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299])) return b.negatedType(value);
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173])) return b.negatedType(value);
 		if (seated(value, [261])) return b.negatedType(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
-			return b.negatedType(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
+		if (seated(value, [266])) return b.negatedType(b.channelTypeBidirectional(value));
+		if (seated(value, [267])) return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
+		if (seated(value, [268]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
-			return b.negatedType(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
 		return unseated('type.generic.type', value);
 	}
 	switch (value.$path) {
 		case 'identifier':
-			return identifier$299(value);
+			return unbuilt('type.generic.type', value);
 		case 'identifier.qualified':
 			return unbuilt('type.generic.type', value);
 		case 'type.array':
@@ -25614,34 +23177,23 @@ const type_generic$158_type = (value: type_generic$158_type$Item) => {
 			return b.negatedType(type_parenthesized$156(value));
 		case 'type.pointer':
 			return b.negatedType(type_pointer$160(value));
-		case 'type.primitive.boolean':
-			return unbuilt('type.generic.type', value);
-		case 'type.primitive.character':
-			return unbuilt('type.generic.type', value);
-		case 'type.primitive.floating.float32':
-			return unbuilt('type.generic.type', value);
-		case 'type.primitive.floating.float64':
-			return unbuilt('type.generic.type', value);
-		case 'type.primitive.integral.int16':
-			return unbuilt('type.generic.type', value);
-		case 'type.primitive.integral.int32':
-			return unbuilt('type.generic.type', value);
-		case 'type.primitive.integral.int64':
-			return unbuilt('type.generic.type', value);
-		case 'type.primitive.integral.int8':
-			return unbuilt('type.generic.type', value);
-		case 'type.primitive.integral.size':
-			return unbuilt('type.generic.type', value);
-		case 'type.primitive.string':
-			return unbuilt('type.generic.type', value);
-		case 'type.primitive.unchecked':
-			return unbuilt('type.generic.type', value);
 		default:
 			return unbuilt('type.generic.type', value);
 	}
 };
 type type_generic$158_typeArguments$item$Item =
 	| Text<GoMap, 'identifier'>
+	| Text<GoMap, 'type.primitive.boolean'>
+	| Text<GoMap, 'type.primitive.character'>
+	| Text<GoMap, 'type.primitive.floating.float32'>
+	| Text<GoMap, 'type.primitive.floating.float64'>
+	| Text<GoMap, 'type.primitive.integral.int16'>
+	| Text<GoMap, 'type.primitive.integral.int32'>
+	| Text<GoMap, 'type.primitive.integral.int64'>
+	| Text<GoMap, 'type.primitive.integral.int8'>
+	| Text<GoMap, 'type.primitive.integral.size'>
+	| Text<GoMap, 'type.primitive.string'>
+	| Text<GoMap, 'type.primitive.unchecked'>
 	| BuildInput<GoMap, 'identifier'>
 	| GoMap['nodes']['identifier']
 	| BuildInput<GoMap, 'identifier.qualified'>
@@ -25658,27 +23210,16 @@ type type_generic$158_typeArguments$item$Item =
 	| GoMap['nodes']['type.parenthesized']
 	| BuildInput<GoMap, 'type.pointer'>
 	| GoMap['nodes']['type.pointer']
-	| BuildInput<GoMap, 'type.primitive.boolean'>
 	| GoMap['nodes']['type.primitive.boolean']
-	| BuildInput<GoMap, 'type.primitive.character'>
 	| GoMap['nodes']['type.primitive.character']
-	| BuildInput<GoMap, 'type.primitive.floating.float32'>
 	| GoMap['nodes']['type.primitive.floating.float32']
-	| BuildInput<GoMap, 'type.primitive.floating.float64'>
 	| GoMap['nodes']['type.primitive.floating.float64']
-	| BuildInput<GoMap, 'type.primitive.integral.int16'>
 	| GoMap['nodes']['type.primitive.integral.int16']
-	| BuildInput<GoMap, 'type.primitive.integral.int32'>
 	| GoMap['nodes']['type.primitive.integral.int32']
-	| BuildInput<GoMap, 'type.primitive.integral.int64'>
 	| GoMap['nodes']['type.primitive.integral.int64']
-	| BuildInput<GoMap, 'type.primitive.integral.int8'>
 	| GoMap['nodes']['type.primitive.integral.int8']
-	| BuildInput<GoMap, 'type.primitive.integral.size'>
 	| GoMap['nodes']['type.primitive.integral.size']
-	| BuildInput<GoMap, 'type.primitive.string'>
 	| GoMap['nodes']['type.primitive.string']
-	| BuildInput<GoMap, 'type.primitive.unchecked'>
 	| GoMap['nodes']['type.primitive.unchecked']
 	| Unmapped<'go:interface_type_group'>
 	| Unmapped<'go:map_type'>;
@@ -25878,820 +23419,32 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 	if (typeof value === 'number') {
 		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return b.typeElem(value);
 		if (seated(value, [261])) return b.typeElem(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299]))
-			return b.typeElem(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.typeElem(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
-			return b.typeElem(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
+		if (seated(value, [266])) return b.typeElem(b.channelTypeBidirectional(value));
+		if (seated(value, [267])) return b.typeElem(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
+		if (seated(value, [268]))
 			return b.typeElem(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
+		if (seated(value, [165]))
 			return b.typeElem(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeBidirectional(
-					b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.typeElem(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeBidirectional(
-					b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
-			return b.typeElem(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeBidirectional(
-					b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.typeElem(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeBidirectional(
-					b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
-			return b.typeElem(b.channelTypeBidirectional(b.negatedType(value)));
-		if (seated(value, [261])) return b.typeElem(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.typeElem(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeBidirectional(
-					b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.typeElem(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeBidirectional(
-					b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299]))
-			return b.typeElem(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.typeElem(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
-			return b.typeElem(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeSendOnly(
-					b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.typeElem(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeSendOnly(
-					b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
-			return b.typeElem(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeSendOnly(
-					b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.typeElem(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeSendOnly(
-					b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
-			return b.typeElem(b.channelTypeSendOnly(b.negatedType(value)));
-		if (seated(value, [261])) return b.typeElem(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.typeElem(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeSendOnly(
-					b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.typeElem(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeSendOnly(
-					b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299]))
-			return b.typeElem(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.typeElem(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(
-					b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(
-					b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(
-					b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(
-					b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.negatedType(value)));
-		if (seated(value, [261])) return b.typeElem(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(
-					b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(
-					b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299]))
-			return b.typeElem(b.negatedType(value));
-		if (seated(value, [261])) return b.typeElem(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
-			return b.typeElem(b.negatedType(b.channelTypeBidirectional(value)));
-		if (seated(value, [261])) return b.typeElem(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.typeElem(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.negatedType(
-					b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.typeElem(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.negatedType(
-					b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
-			return b.typeElem(b.negatedType(b.channelTypeSendOnly(value)));
-		if (seated(value, [261])) return b.typeElem(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.typeElem(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.negatedType(
-					b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.typeElem(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.negatedType(
-					b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
-			return b.typeElem(b.negatedType(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261])) return b.typeElem(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.typeElem(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.negatedType(
-					b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.typeElem(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.negatedType(
-					b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-				)
 			);
 		return unseated('type.generic.typeArguments', value);
 	}
 	if (isNode(value)) {
 		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return b.typeElem(value);
 		if (seated(value, [261])) return b.typeElem(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299]))
-			return b.typeElem(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.typeElem(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
-			return b.typeElem(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
+		if (seated(value, [266])) return b.typeElem(b.channelTypeBidirectional(value));
+		if (seated(value, [267])) return b.typeElem(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
+		if (seated(value, [268]))
 			return b.typeElem(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
+		if (seated(value, [165]))
 			return b.typeElem(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeBidirectional(
-					b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.typeElem(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeBidirectional(
-					b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
-			return b.typeElem(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeBidirectional(
-					b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.typeElem(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeBidirectional(
-					b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
-			return b.typeElem(b.channelTypeBidirectional(b.negatedType(value)));
-		if (seated(value, [261])) return b.typeElem(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.typeElem(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeBidirectional(
-					b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.typeElem(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeBidirectional(
-					b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299]))
-			return b.typeElem(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.typeElem(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
-			return b.typeElem(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeSendOnly(
-					b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.typeElem(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeSendOnly(
-					b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
-			return b.typeElem(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeSendOnly(
-					b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.typeElem(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeSendOnly(
-					b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
-			return b.typeElem(b.channelTypeSendOnly(b.negatedType(value)));
-		if (seated(value, [261])) return b.typeElem(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.typeElem(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeSendOnly(
-					b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.typeElem(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeSendOnly(
-					b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299]))
-			return b.typeElem(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.typeElem(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(
-					b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(
-					b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(
-					b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(
-					b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.negatedType(value)));
-		if (seated(value, [261])) return b.typeElem(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(
-					b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.channelTypeReceiveOnly(
-					b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299]))
-			return b.typeElem(b.negatedType(value));
-		if (seated(value, [261])) return b.typeElem(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
-			return b.typeElem(b.negatedType(b.channelTypeBidirectional(value)));
-		if (seated(value, [261])) return b.typeElem(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.typeElem(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.negatedType(
-					b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.typeElem(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.negatedType(
-					b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
-			return b.typeElem(b.negatedType(b.channelTypeSendOnly(value)));
-		if (seated(value, [261])) return b.typeElem(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.typeElem(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.negatedType(
-					b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.typeElem(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.negatedType(
-					b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
-			return b.typeElem(b.negatedType(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261])) return b.typeElem(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.typeElem(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.negatedType(
-					b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-				)
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.typeElem(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.typeElem(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.typeElem(
-				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))))
-			);
-		if (seated(value, [261]))
-			return b.typeElem(
-				b.negatedType(
-					b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-				)
 			);
 		return unseated('type.generic.typeArguments', value);
 	}
 	switch (value.$path) {
 		case 'identifier':
-			return b.typeElem(identifier$299(value));
+			return unbuilt('type.generic.typeArguments', value);
 		case 'identifier.qualified':
 			return unbuilt('type.generic.typeArguments', value);
 		case 'type.array':
@@ -26707,34 +23460,23 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 			return b.typeElem(type_parenthesized$156(value));
 		case 'type.pointer':
 			return b.typeElem(type_pointer$160(value));
-		case 'type.primitive.boolean':
-			return unbuilt('type.generic.typeArguments', value);
-		case 'type.primitive.character':
-			return unbuilt('type.generic.typeArguments', value);
-		case 'type.primitive.floating.float32':
-			return unbuilt('type.generic.typeArguments', value);
-		case 'type.primitive.floating.float64':
-			return unbuilt('type.generic.typeArguments', value);
-		case 'type.primitive.integral.int16':
-			return unbuilt('type.generic.typeArguments', value);
-		case 'type.primitive.integral.int32':
-			return unbuilt('type.generic.typeArguments', value);
-		case 'type.primitive.integral.int64':
-			return unbuilt('type.generic.typeArguments', value);
-		case 'type.primitive.integral.int8':
-			return unbuilt('type.generic.typeArguments', value);
-		case 'type.primitive.integral.size':
-			return unbuilt('type.generic.typeArguments', value);
-		case 'type.primitive.string':
-			return unbuilt('type.generic.typeArguments', value);
-		case 'type.primitive.unchecked':
-			return unbuilt('type.generic.typeArguments', value);
 		default:
 			return unbuilt('type.generic.typeArguments', value);
 	}
 };
 type type_parenthesized$156_type$Item =
 	| Text<GoMap, 'identifier'>
+	| Text<GoMap, 'type.primitive.boolean'>
+	| Text<GoMap, 'type.primitive.character'>
+	| Text<GoMap, 'type.primitive.floating.float32'>
+	| Text<GoMap, 'type.primitive.floating.float64'>
+	| Text<GoMap, 'type.primitive.integral.int16'>
+	| Text<GoMap, 'type.primitive.integral.int32'>
+	| Text<GoMap, 'type.primitive.integral.int64'>
+	| Text<GoMap, 'type.primitive.integral.int8'>
+	| Text<GoMap, 'type.primitive.integral.size'>
+	| Text<GoMap, 'type.primitive.string'>
+	| Text<GoMap, 'type.primitive.unchecked'>
 	| BuildInput<GoMap, 'identifier'>
 	| GoMap['nodes']['identifier']
 	| BuildInput<GoMap, 'identifier.qualified'>
@@ -26751,27 +23493,16 @@ type type_parenthesized$156_type$Item =
 	| GoMap['nodes']['type.parenthesized']
 	| BuildInput<GoMap, 'type.pointer'>
 	| GoMap['nodes']['type.pointer']
-	| BuildInput<GoMap, 'type.primitive.boolean'>
 	| GoMap['nodes']['type.primitive.boolean']
-	| BuildInput<GoMap, 'type.primitive.character'>
 	| GoMap['nodes']['type.primitive.character']
-	| BuildInput<GoMap, 'type.primitive.floating.float32'>
 	| GoMap['nodes']['type.primitive.floating.float32']
-	| BuildInput<GoMap, 'type.primitive.floating.float64'>
 	| GoMap['nodes']['type.primitive.floating.float64']
-	| BuildInput<GoMap, 'type.primitive.integral.int16'>
 	| GoMap['nodes']['type.primitive.integral.int16']
-	| BuildInput<GoMap, 'type.primitive.integral.int32'>
 	| GoMap['nodes']['type.primitive.integral.int32']
-	| BuildInput<GoMap, 'type.primitive.integral.int64'>
 	| GoMap['nodes']['type.primitive.integral.int64']
-	| BuildInput<GoMap, 'type.primitive.integral.int8'>
 	| GoMap['nodes']['type.primitive.integral.int8']
-	| BuildInput<GoMap, 'type.primitive.integral.size'>
 	| GoMap['nodes']['type.primitive.integral.size']
-	| BuildInput<GoMap, 'type.primitive.string'>
 	| GoMap['nodes']['type.primitive.string']
-	| BuildInput<GoMap, 'type.primitive.unchecked'>
 	| GoMap['nodes']['type.primitive.unchecked']
 	| Unmapped<'go:interface_type_group'>
 	| Unmapped<'go:map_type'>;
@@ -26958,590 +23689,26 @@ const type_parenthesized$156_type = (value: type_parenthesized$156_type$Item) =>
 	if (typeof value === 'number') {
 		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return value;
 		if (seated(value, [261])) return b.interfaceType(value);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299]))
-			return b.channelTypeBidirectional(value);
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
+		if (seated(value, [266])) return b.channelTypeBidirectional(value);
+		if (seated(value, [267])) return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
+		if (seated(value, [268])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
+		if (seated(value, [165]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
-			return b.channelTypeBidirectional(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299]))
-			return b.channelTypeSendOnly(value);
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
-			return b.channelTypeSendOnly(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299]))
-			return b.channelTypeReceiveOnly(value);
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299])) return b.negatedType(value);
-		if (seated(value, [261])) return b.negatedType(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
-			return b.negatedType(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
-			return b.negatedType(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
 		return unseated('type.parenthesized.type', value);
 	}
 	if (isNode(value)) {
 		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return value;
 		if (seated(value, [261])) return b.interfaceType(value);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299]))
-			return b.channelTypeBidirectional(value);
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
+		if (seated(value, [266])) return b.channelTypeBidirectional(value);
+		if (seated(value, [267])) return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
+		if (seated(value, [268])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
+		if (seated(value, [165]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
-			return b.channelTypeBidirectional(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299]))
-			return b.channelTypeSendOnly(value);
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
-			return b.channelTypeSendOnly(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299]))
-			return b.channelTypeReceiveOnly(value);
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299])) return b.negatedType(value);
-		if (seated(value, [261])) return b.negatedType(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
-			return b.negatedType(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
-			return b.negatedType(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
 		return unseated('type.parenthesized.type', value);
 	}
 	switch (value.$path) {
 		case 'identifier':
-			return identifier$299(value);
+			return unbuilt('type.parenthesized.type', value);
 		case 'identifier.qualified':
 			return unbuilt('type.parenthesized.type', value);
 		case 'type.array':
@@ -27557,34 +23724,23 @@ const type_parenthesized$156_type = (value: type_parenthesized$156_type$Item) =>
 			return type_parenthesized$156(value);
 		case 'type.pointer':
 			return type_pointer$160(value);
-		case 'type.primitive.boolean':
-			return unbuilt('type.parenthesized.type', value);
-		case 'type.primitive.character':
-			return unbuilt('type.parenthesized.type', value);
-		case 'type.primitive.floating.float32':
-			return unbuilt('type.parenthesized.type', value);
-		case 'type.primitive.floating.float64':
-			return unbuilt('type.parenthesized.type', value);
-		case 'type.primitive.integral.int16':
-			return unbuilt('type.parenthesized.type', value);
-		case 'type.primitive.integral.int32':
-			return unbuilt('type.parenthesized.type', value);
-		case 'type.primitive.integral.int64':
-			return unbuilt('type.parenthesized.type', value);
-		case 'type.primitive.integral.int8':
-			return unbuilt('type.parenthesized.type', value);
-		case 'type.primitive.integral.size':
-			return unbuilt('type.parenthesized.type', value);
-		case 'type.primitive.string':
-			return unbuilt('type.parenthesized.type', value);
-		case 'type.primitive.unchecked':
-			return unbuilt('type.parenthesized.type', value);
 		default:
 			return unbuilt('type.parenthesized.type', value);
 	}
 };
 type type_pointer$160_type$Item =
 	| Text<GoMap, 'identifier'>
+	| Text<GoMap, 'type.primitive.boolean'>
+	| Text<GoMap, 'type.primitive.character'>
+	| Text<GoMap, 'type.primitive.floating.float32'>
+	| Text<GoMap, 'type.primitive.floating.float64'>
+	| Text<GoMap, 'type.primitive.integral.int16'>
+	| Text<GoMap, 'type.primitive.integral.int32'>
+	| Text<GoMap, 'type.primitive.integral.int64'>
+	| Text<GoMap, 'type.primitive.integral.int8'>
+	| Text<GoMap, 'type.primitive.integral.size'>
+	| Text<GoMap, 'type.primitive.string'>
+	| Text<GoMap, 'type.primitive.unchecked'>
 	| BuildInput<GoMap, 'identifier'>
 	| GoMap['nodes']['identifier']
 	| BuildInput<GoMap, 'identifier.qualified'>
@@ -27601,27 +23757,16 @@ type type_pointer$160_type$Item =
 	| GoMap['nodes']['type.parenthesized']
 	| BuildInput<GoMap, 'type.pointer'>
 	| GoMap['nodes']['type.pointer']
-	| BuildInput<GoMap, 'type.primitive.boolean'>
 	| GoMap['nodes']['type.primitive.boolean']
-	| BuildInput<GoMap, 'type.primitive.character'>
 	| GoMap['nodes']['type.primitive.character']
-	| BuildInput<GoMap, 'type.primitive.floating.float32'>
 	| GoMap['nodes']['type.primitive.floating.float32']
-	| BuildInput<GoMap, 'type.primitive.floating.float64'>
 	| GoMap['nodes']['type.primitive.floating.float64']
-	| BuildInput<GoMap, 'type.primitive.integral.int16'>
 	| GoMap['nodes']['type.primitive.integral.int16']
-	| BuildInput<GoMap, 'type.primitive.integral.int32'>
 	| GoMap['nodes']['type.primitive.integral.int32']
-	| BuildInput<GoMap, 'type.primitive.integral.int64'>
 	| GoMap['nodes']['type.primitive.integral.int64']
-	| BuildInput<GoMap, 'type.primitive.integral.int8'>
 	| GoMap['nodes']['type.primitive.integral.int8']
-	| BuildInput<GoMap, 'type.primitive.integral.size'>
 	| GoMap['nodes']['type.primitive.integral.size']
-	| BuildInput<GoMap, 'type.primitive.string'>
 	| GoMap['nodes']['type.primitive.string']
-	| BuildInput<GoMap, 'type.primitive.unchecked'>
 	| GoMap['nodes']['type.primitive.unchecked']
 	| Unmapped<'go:interface_type_group'>
 	| Unmapped<'go:map_type'>;
@@ -27808,590 +23953,26 @@ const type_pointer$160_type = (value: type_pointer$160_type$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return value;
 		if (seated(value, [261])) return b.interfaceType(value);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299]))
-			return b.channelTypeBidirectional(value);
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
+		if (seated(value, [266])) return b.channelTypeBidirectional(value);
+		if (seated(value, [267])) return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
+		if (seated(value, [268])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
+		if (seated(value, [165]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
-			return b.channelTypeBidirectional(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299]))
-			return b.channelTypeSendOnly(value);
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
-			return b.channelTypeSendOnly(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299]))
-			return b.channelTypeReceiveOnly(value);
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299])) return b.negatedType(value);
-		if (seated(value, [261])) return b.negatedType(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
-			return b.negatedType(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
-			return b.negatedType(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
 		return unseated('type.pointer.type', value);
 	}
 	if (isNode(value)) {
 		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return value;
 		if (seated(value, [261])) return b.interfaceType(value);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299]))
-			return b.channelTypeBidirectional(value);
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
+		if (seated(value, [266])) return b.channelTypeBidirectional(value);
+		if (seated(value, [267])) return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
+		if (seated(value, [268])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
+		if (seated(value, [165]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
-			return b.channelTypeBidirectional(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeBidirectional(
-				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299]))
-			return b.channelTypeSendOnly(value);
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
-			return b.channelTypeSendOnly(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeSendOnly(
-				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299]))
-			return b.channelTypeReceiveOnly(value);
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(value));
-		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.channelTypeReceiveOnly(
-				b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299])) return b.negatedType(value);
-		if (seated(value, [261])) return b.negatedType(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
-			return b.negatedType(b.channelTypeBidirectional(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
-			return b.negatedType(b.channelTypeSendOnly(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(value));
-		if (seated(value, [261])) return b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
-			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
-		if (seated(value, [261]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
-			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
-		if (seated(value, [261]))
-			return b.negatedType(
-				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
-			);
 		return unseated('type.pointer.type', value);
 	}
 	switch (value.$path) {
 		case 'identifier':
-			return identifier$299(value);
+			return unbuilt('type.pointer.type', value);
 		case 'identifier.qualified':
 			return unbuilt('type.pointer.type', value);
 		case 'type.array':
@@ -28407,28 +23988,6 @@ const type_pointer$160_type = (value: type_pointer$160_type$Item) => {
 			return type_parenthesized$156(value);
 		case 'type.pointer':
 			return type_pointer$160(value);
-		case 'type.primitive.boolean':
-			return unbuilt('type.pointer.type', value);
-		case 'type.primitive.character':
-			return unbuilt('type.pointer.type', value);
-		case 'type.primitive.floating.float32':
-			return unbuilt('type.pointer.type', value);
-		case 'type.primitive.floating.float64':
-			return unbuilt('type.pointer.type', value);
-		case 'type.primitive.integral.int16':
-			return unbuilt('type.pointer.type', value);
-		case 'type.primitive.integral.int32':
-			return unbuilt('type.pointer.type', value);
-		case 'type.primitive.integral.int64':
-			return unbuilt('type.pointer.type', value);
-		case 'type.primitive.integral.int8':
-			return unbuilt('type.pointer.type', value);
-		case 'type.primitive.integral.size':
-			return unbuilt('type.pointer.type', value);
-		case 'type.primitive.string':
-			return unbuilt('type.pointer.type', value);
-		case 'type.primitive.unchecked':
-			return unbuilt('type.pointer.type', value);
 		default:
 			return unbuilt('type.pointer.type', value);
 	}
@@ -29001,11 +24560,6 @@ const identifier$1 = (input: PathInput<GoMap, 'identifier'>): ReturnType<typeof 
 	if (unroutedSlot !== undefined) return unrouted('identifier', unroutedSlot);
 	return b.identifier(typeof input === 'string' ? input : input.$value);
 };
-const identifier$299 = (input: PathInput<GoMap, 'identifier'>): ReturnType<typeof b.simpleType.identifier> => {
-	const unroutedSlot = unroutedIn(input, []);
-	if (unroutedSlot !== undefined) return unrouted('identifier', unroutedSlot);
-	return b.simpleType.identifier();
-};
 const literal_character$103 = (input: PathInput<GoMap, 'literal.character'>): ReturnType<typeof b.runeLiteralArm1> => {
 	const unroutedSlot = unroutedIn(input, ['content']);
 	if (unroutedSlot !== undefined) return unrouted('literal.character', unroutedSlot);
@@ -29058,49 +24612,6 @@ const literal_character$108 = (
 		input.content === undefined ? missing('literal.character.content') : literal_character$108_content(input.content)
 	);
 };
-const literal_number_float$85 = (
-	input: PathInput<GoMap, 'literal.number.float'>
-): ReturnType<typeof b.floatLiteralArm1> => {
-	const unroutedSlot = unroutedIn(input, []);
-	if (unroutedSlot !== undefined) return unrouted('literal.number.float', unroutedSlot);
-	return b.floatLiteralArm1({ content: input.$value });
-};
-const literal_number_float$86 = (
-	input: PathInput<GoMap, 'literal.number.float'>
-): ReturnType<typeof b.floatLiteral.arm2> => {
-	const unroutedSlot = unroutedIn(input, []);
-	if (unroutedSlot !== undefined) return unrouted('literal.number.float', unroutedSlot);
-	return b.floatLiteral.arm2(input.$value);
-};
-const literal_number_float$87 = (
-	input: PathInput<GoMap, 'literal.number.float'>
-): ReturnType<typeof b.floatLiteralArm3> => {
-	const unroutedSlot = unroutedIn(input, []);
-	if (unroutedSlot !== undefined) return unrouted('literal.number.float', unroutedSlot);
-	const value = input.$value;
-	return typeof value === 'bigint' ? b.floatLiteralArm3(value) : b.floatLiteralArm3(value);
-};
-const literal_number_float$88 = (
-	input: PathInput<GoMap, 'literal.number.float'>
-): ReturnType<typeof b.floatLiteralArm4Arm1> => {
-	const unroutedSlot = unroutedIn(input, []);
-	if (unroutedSlot !== undefined) return unrouted('literal.number.float', unroutedSlot);
-	return b.floatLiteralArm4Arm1({});
-};
-const literal_number_float$89 = (
-	input: PathInput<GoMap, 'literal.number.float'>
-): ReturnType<typeof b.floatLiteralArm4Arm2> => {
-	const unroutedSlot = unroutedIn(input, []);
-	if (unroutedSlot !== undefined) return unrouted('literal.number.float', unroutedSlot);
-	return b.floatLiteralArm4Arm2({});
-};
-const literal_number_float$90 = (
-	input: PathInput<GoMap, 'literal.number.float'>
-): ReturnType<typeof b.floatLiteralArm4Arm3> => {
-	const unroutedSlot = unroutedIn(input, []);
-	if (unroutedSlot !== undefined) return unrouted('literal.number.float', unroutedSlot);
-	return b.floatLiteralArm4Arm3({});
-};
 const literal_number_integer_binary$80 = (
 	input: PathInput<GoMap, 'literal.number.integer.binary'>
 ): ReturnType<typeof b.intLiteral.arm1> => {
@@ -29130,6 +24641,7 @@ const literal_number_integer_imaginary$97 = (
 ): ReturnType<typeof b.imaginaryLiteralArm7> => {
 	const unroutedSlot = unroutedIn(input, []);
 	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.imaginary', unroutedSlot);
+	if (typeof input.$value === 'bigint') return unnumbered('literal.number.integer.imaginary', 'bigint');
 	return b.imaginaryLiteralArm7(input.$value);
 };
 const literal_number_integer_octal$83 = (
@@ -29342,34 +24854,22 @@ const literal_character = (input: PathInput<GoMap, 'literal.character'>) => {
 		return literal_character$107(input);
 	return literal_character$108(input);
 };
-const literal_number_float = (input: PathInput<GoMap, 'literal.number.float'>) => {
-	if (typeof input.$value === 'bigint') return literal_number_float$87(input);
-	if (typeof input.$value === 'number')
-		return Number.isSafeInteger(input.$value) ? literal_number_float$87(input) : literal_number_float$85(input);
-	return unbuilt('literal.number.float', input);
-};
 const literal_number_integer_binary = (input: PathInput<GoMap, 'literal.number.integer.binary'>) => {
-	if (typeof input.$value === 'bigint') return literal_number_integer_binary$80(input);
-	if (typeof input.$value === 'number') return literal_number_integer_binary$80(input);
-	return unbuilt('literal.number.integer.binary', input);
+	return literal_number_integer_binary$80(input);
 };
 const literal_number_integer_hex = (input: PathInput<GoMap, 'literal.number.integer.hex'>) => {
-	if (typeof input.$value === 'bigint') return literal_number_integer_hex$84(input);
-	if (typeof input.$value === 'number') return literal_number_integer_hex$84(input);
-	return unbuilt('literal.number.integer.hex', input);
+	return literal_number_integer_hex$84(input);
 };
 const literal_number_integer_imaginary = (input: PathInput<GoMap, 'literal.number.integer.imaginary'>) => {
 	if (typeof input.$value === 'bigint') return literal_number_integer_imaginary$91(input);
-	if (typeof input.$value === 'number')
-		return Number.isSafeInteger(input.$value)
-			? literal_number_integer_imaginary$91(input)
-			: literal_number_integer_imaginary$97(input);
+	if (typeof input.$value === 'number') {
+		if (Number.isSafeInteger(input.$value)) return literal_number_integer_imaginary$91(input);
+		return literal_number_integer_imaginary$97(input);
+	}
 	return unbuilt('literal.number.integer.imaginary', input);
 };
 const literal_number_integer_octal = (input: PathInput<GoMap, 'literal.number.integer.octal'>) => {
-	if (typeof input.$value === 'bigint') return literal_number_integer_octal$83(input);
-	if (typeof input.$value === 'number') return literal_number_integer_octal$83(input);
-	return unbuilt('literal.number.integer.octal', input);
+	return literal_number_integer_octal$83(input);
 };
 const literal_string = (input: PathInput<GoMap, 'literal.string'>) => {
 	return literal_string$228(input);
@@ -29432,7 +24932,6 @@ export const portableBuild = {
 	literal: {
 		character: literal_character,
 		number: {
-			float: literal_number_float,
 			integer: {
 				binary: literal_number_integer_binary,
 				hex: literal_number_integer_hex,

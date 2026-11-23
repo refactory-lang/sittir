@@ -25,12 +25,18 @@ export interface PortableIds {
 	declaration:
 		| TSKindId.ConstSpec
 		| TSKindId.FieldDeclaration
+		| TSKindId.FieldIdentifier
 		| TSKindId.FunctionDeclaration
+		| TSKindId.Identifier
+		| TSKindId.LabelName
 		| TSKindId.MethodDeclaration
 		| TSKindId.MethodElem
+		| TSKindId.PackageIdentifier
 		| TSKindId.ParameterDeclaration
+		| TSKindId.QualifiedType
 		| TSKindId.ShortVarDeclaration
 		| TSKindId.TypeAlias
+		| TSKindId.TypeIdentifier
 		| TSKindId.TypeParameterDeclaration
 		| TSKindId.TypeSpec
 		| TSKindId.VarSpec
@@ -38,26 +44,50 @@ export interface PortableIds {
 	'declaration.constant': TSKindId.ConstSpec;
 	'declaration.constant.private': TSKindId.ConstSpec;
 	'declaration.constant.public': TSKindId.ConstSpec;
-	'declaration.field': TSKindId.FieldDeclaration;
-	'declaration.field.private': TSKindId.FieldDeclaration;
-	'declaration.field.public': TSKindId.FieldDeclaration;
 	'declaration.function': TSKindId.FunctionDeclaration;
 	'declaration.function.private': TSKindId.FunctionDeclaration;
 	'declaration.function.public': TSKindId.FunctionDeclaration;
 	'declaration.function.signature': TSKindId.FunctionDeclaration;
-	'declaration.interface': TSKindId.TypeSpec;
-	'declaration.method': TSKindId.MethodDeclaration | TSKindId.MethodElem;
-	'declaration.method.private': TSKindId.MethodDeclaration;
-	'declaration.method.public': TSKindId.MethodDeclaration;
-	'declaration.method.signature': TSKindId.MethodElem;
-	'declaration.parameter': TSKindId.ParameterDeclaration | TSKindId.VariadicParameterDeclaration;
+	'declaration.member':
+		| TSKindId.ConstSpec
+		| TSKindId.FieldDeclaration
+		| TSKindId.MethodDeclaration
+		| TSKindId.MethodElem
+		| TSKindId.TypeAlias;
+	'declaration.member.constant': TSKindId.ConstSpec;
+	'declaration.member.field': TSKindId.FieldDeclaration;
+	'declaration.member.field.private': TSKindId.FieldDeclaration;
+	'declaration.member.field.public': TSKindId.FieldDeclaration;
+	'declaration.member.method': TSKindId.MethodDeclaration | TSKindId.MethodElem;
+	'declaration.member.method.private': TSKindId.MethodDeclaration;
+	'declaration.member.method.public': TSKindId.MethodDeclaration;
+	'declaration.member.method.signature': TSKindId.MethodElem;
+	'declaration.member.type_alias': TSKindId.TypeAlias;
+	'declaration.parameter':
+		| TSKindId.FieldIdentifier
+		| TSKindId.Identifier
+		| TSKindId.LabelName
+		| TSKindId.PackageIdentifier
+		| TSKindId.ParameterDeclaration
+		| TSKindId.QualifiedType
+		| TSKindId.TypeIdentifier
+		| TSKindId.VariadicParameterDeclaration;
+	'declaration.parameter.identifier':
+		| TSKindId.FieldIdentifier
+		| TSKindId.Identifier
+		| TSKindId.LabelName
+		| TSKindId.PackageIdentifier
+		| TSKindId.QualifiedType
+		| TSKindId.TypeIdentifier;
 	'declaration.parameter.variadic': TSKindId.VariadicParameterDeclaration;
-	'declaration.struct': TSKindId.TypeSpec;
-	'declaration.struct.private': TSKindId.TypeSpec;
-	'declaration.struct.public': TSKindId.TypeSpec;
-	'declaration.type_alias': TSKindId.TypeAlias;
-	'declaration.type_alias.private': TSKindId.TypeAlias;
-	'declaration.type_alias.public': TSKindId.TypeAlias;
+	'declaration.type': TSKindId.TypeAlias | TSKindId.TypeSpec;
+	'declaration.type.interface': TSKindId.TypeSpec;
+	'declaration.type.struct': TSKindId.TypeSpec;
+	'declaration.type.struct.private': TSKindId.TypeSpec;
+	'declaration.type.struct.public': TSKindId.TypeSpec;
+	'declaration.type.type_alias': TSKindId.TypeAlias;
+	'declaration.type.type_alias.private': TSKindId.TypeAlias;
+	'declaration.type.type_alias.public': TSKindId.TypeAlias;
 	'declaration.type_parameter': TSKindId.TypeParameterDeclaration;
 	'declaration.variable': TSKindId.ShortVarDeclaration | TSKindId.VarSpec;
 	'declaration.variable.private': TSKindId.VarSpec;
@@ -68,17 +98,70 @@ export interface PortableIds {
 	expression:
 		| TSKindId.AssignmentStatement
 		| TSKindId.BinaryExpression
+		| TSKindId.Block
+		| TSKindId.BreakStatement
 		| TSKindId.CallExpression
 		| TSKindId.CompositeLiteral
+		| TSKindId.ContinueStatement
 		| TSKindId.DecStatement
+		| TSKindId.EscapeSequenceArm1
+		| TSKindId.EscapeSequenceArm2
+		| TSKindId.EscapeSequenceArm3
+		| TSKindId.EscapeSequenceArm4
+		| TSKindId.EscapeSequenceArm5
+		| TSKindId.False
+		| TSKindId.FieldIdentifier
+		| TSKindId.FloatLiteralArm1
+		| TSKindId.FloatLiteralArm2
+		| TSKindId.FloatLiteralArm3
+		| TSKindId.FloatLiteralArm4Arm1
+		| TSKindId.FloatLiteralArm4Arm2
+		| TSKindId.FloatLiteralArm4Arm3
+		| TSKindId.ForStatement
 		| TSKindId.FuncLiteral
+		| TSKindId.Identifier
+		| TSKindId.IfStatement
+		| TSKindId.ImaginaryLiteralArm1
+		| TSKindId.ImaginaryLiteralArm10Arm1
+		| TSKindId.ImaginaryLiteralArm10Arm2
+		| TSKindId.ImaginaryLiteralArm10Arm3
+		| TSKindId.ImaginaryLiteralArm2
+		| TSKindId.ImaginaryLiteralArm3
+		| TSKindId.ImaginaryLiteralArm4
+		| TSKindId.ImaginaryLiteralArm5
+		| TSKindId.ImaginaryLiteralArm6
+		| TSKindId.ImaginaryLiteralArm7
+		| TSKindId.ImaginaryLiteralArm8
+		| TSKindId.ImaginaryLiteralArm9
 		| TSKindId.IncStatement
 		| TSKindId.IndexExpression
+		| TSKindId.IntLiteralArm1
+		| TSKindId.IntLiteralArm2
+		| TSKindId.IntLiteralArm3
+		| TSKindId.IntLiteralArm4
+		| TSKindId.IntLiteralArm5
+		| TSKindId.InterpretedStringLiteral
+		| TSKindId.InterpretedStringLiteralContent
+		| TSKindId.LabelName
+		| TSKindId.Nil
+		| TSKindId.PackageIdentifier
 		| TSKindId.ParenthesizedExpression
+		| TSKindId.QualifiedType
+		| TSKindId.RawStringLiteral
+		| TSKindId.RawStringLiteralContent
+		| TSKindId.ReturnStatement
+		| TSKindId.RuneLiteralArm1
+		| TSKindId.RuneLiteralArm2Arm1
+		| TSKindId.RuneLiteralArm2Arm2
+		| TSKindId.RuneLiteralArm2Arm3
+		| TSKindId.RuneLiteralArm2Arm4
+		| TSKindId.RuneLiteralArm2Arm5
 		| TSKindId.SelectorExpression
 		| TSKindId.SliceExpression
+		| TSKindId.True
 		| TSKindId.TypeAssertionExpression
 		| TSKindId.TypeConversionExpression
+		| TSKindId.TypeIdentifier
 		| TSKindId.TypeInstantiationExpression
 		| TSKindId.UnaryExpression;
 	'expression.assignment': TSKindId.AssignmentStatement;
@@ -117,6 +200,8 @@ export interface PortableIds {
 	'expression.binary.shift': TSKindId.BinaryExpression;
 	'expression.binary.shift.left': TSKindId.BinaryExpression;
 	'expression.binary.shift.right': TSKindId.BinaryExpression;
+	'expression.block': TSKindId.Block;
+	'expression.break': TSKindId.BreakStatement;
 	'expression.call': TSKindId.CallExpression;
 	'expression.call.member': TSKindId.CallExpression;
 	'expression.cast': TSKindId.TypeAssertionExpression | TSKindId.TypeConversionExpression;
@@ -125,11 +210,64 @@ export interface PortableIds {
 	'expression.collection.list': TSKindId.CompositeLiteral;
 	'expression.collection.map': TSKindId.CompositeLiteral;
 	'expression.collection.struct': TSKindId.CompositeLiteral;
+	'expression.continue': TSKindId.ContinueStatement;
 	'expression.function': TSKindId.FuncLiteral;
+	'expression.identifier':
+		| TSKindId.FieldIdentifier
+		| TSKindId.Identifier
+		| TSKindId.LabelName
+		| TSKindId.PackageIdentifier
+		| TSKindId.QualifiedType
+		| TSKindId.TypeIdentifier;
+	'expression.if': TSKindId.IfStatement;
 	'expression.instantiation': TSKindId.TypeInstantiationExpression;
+	'expression.literal':
+		| TSKindId.EscapeSequenceArm1
+		| TSKindId.EscapeSequenceArm2
+		| TSKindId.EscapeSequenceArm3
+		| TSKindId.EscapeSequenceArm4
+		| TSKindId.EscapeSequenceArm5
+		| TSKindId.False
+		| TSKindId.FloatLiteralArm1
+		| TSKindId.FloatLiteralArm2
+		| TSKindId.FloatLiteralArm3
+		| TSKindId.FloatLiteralArm4Arm1
+		| TSKindId.FloatLiteralArm4Arm2
+		| TSKindId.FloatLiteralArm4Arm3
+		| TSKindId.ImaginaryLiteralArm1
+		| TSKindId.ImaginaryLiteralArm10Arm1
+		| TSKindId.ImaginaryLiteralArm10Arm2
+		| TSKindId.ImaginaryLiteralArm10Arm3
+		| TSKindId.ImaginaryLiteralArm2
+		| TSKindId.ImaginaryLiteralArm3
+		| TSKindId.ImaginaryLiteralArm4
+		| TSKindId.ImaginaryLiteralArm5
+		| TSKindId.ImaginaryLiteralArm6
+		| TSKindId.ImaginaryLiteralArm7
+		| TSKindId.ImaginaryLiteralArm8
+		| TSKindId.ImaginaryLiteralArm9
+		| TSKindId.IntLiteralArm1
+		| TSKindId.IntLiteralArm2
+		| TSKindId.IntLiteralArm3
+		| TSKindId.IntLiteralArm4
+		| TSKindId.IntLiteralArm5
+		| TSKindId.InterpretedStringLiteral
+		| TSKindId.InterpretedStringLiteralContent
+		| TSKindId.Nil
+		| TSKindId.RawStringLiteral
+		| TSKindId.RawStringLiteralContent
+		| TSKindId.RuneLiteralArm1
+		| TSKindId.RuneLiteralArm2Arm1
+		| TSKindId.RuneLiteralArm2Arm2
+		| TSKindId.RuneLiteralArm2Arm3
+		| TSKindId.RuneLiteralArm2Arm4
+		| TSKindId.RuneLiteralArm2Arm5
+		| TSKindId.True;
+	'expression.loop': TSKindId.ForStatement;
 	'expression.member': TSKindId.SelectorExpression;
 	'expression.parenthesized': TSKindId.ParenthesizedExpression;
 	'expression.reference': TSKindId.UnaryExpression;
+	'expression.return': TSKindId.ReturnStatement;
 	'expression.slice': TSKindId.SliceExpression;
 	'expression.subscript': TSKindId.IndexExpression;
 	'expression.unary': TSKindId.UnaryExpression;
@@ -288,24 +426,287 @@ export interface PortableIds {
 	'literal.string.multiline': TSKindId.RawStringLiteral;
 	'literal.string.raw': TSKindId.RawStringLiteral;
 	'literal.string.text': TSKindId.InterpretedStringLiteralContent | TSKindId.RawStringLiteralContent;
-	pattern: TSKindId.BlankIdentifier;
+	pattern:
+		| TSKindId.BlankIdentifier
+		| TSKindId.EscapeSequenceArm1
+		| TSKindId.EscapeSequenceArm2
+		| TSKindId.EscapeSequenceArm3
+		| TSKindId.EscapeSequenceArm4
+		| TSKindId.EscapeSequenceArm5
+		| TSKindId.False
+		| TSKindId.FieldIdentifier
+		| TSKindId.FloatLiteralArm1
+		| TSKindId.FloatLiteralArm2
+		| TSKindId.FloatLiteralArm3
+		| TSKindId.FloatLiteralArm4Arm1
+		| TSKindId.FloatLiteralArm4Arm2
+		| TSKindId.FloatLiteralArm4Arm3
+		| TSKindId.Identifier
+		| TSKindId.ImaginaryLiteralArm1
+		| TSKindId.ImaginaryLiteralArm10Arm1
+		| TSKindId.ImaginaryLiteralArm10Arm2
+		| TSKindId.ImaginaryLiteralArm10Arm3
+		| TSKindId.ImaginaryLiteralArm2
+		| TSKindId.ImaginaryLiteralArm3
+		| TSKindId.ImaginaryLiteralArm4
+		| TSKindId.ImaginaryLiteralArm5
+		| TSKindId.ImaginaryLiteralArm6
+		| TSKindId.ImaginaryLiteralArm7
+		| TSKindId.ImaginaryLiteralArm8
+		| TSKindId.ImaginaryLiteralArm9
+		| TSKindId.IndexExpression
+		| TSKindId.IntLiteralArm1
+		| TSKindId.IntLiteralArm2
+		| TSKindId.IntLiteralArm3
+		| TSKindId.IntLiteralArm4
+		| TSKindId.IntLiteralArm5
+		| TSKindId.InterpretedStringLiteral
+		| TSKindId.InterpretedStringLiteralContent
+		| TSKindId.LabelName
+		| TSKindId.Nil
+		| TSKindId.PackageIdentifier
+		| TSKindId.QualifiedType
+		| TSKindId.RawStringLiteral
+		| TSKindId.RawStringLiteralContent
+		| TSKindId.RuneLiteralArm1
+		| TSKindId.RuneLiteralArm2Arm1
+		| TSKindId.RuneLiteralArm2Arm2
+		| TSKindId.RuneLiteralArm2Arm3
+		| TSKindId.RuneLiteralArm2Arm4
+		| TSKindId.RuneLiteralArm2Arm5
+		| TSKindId.SelectorExpression
+		| TSKindId.True
+		| TSKindId.TypeIdentifier;
+	'pattern.identifier':
+		| TSKindId.FieldIdentifier
+		| TSKindId.Identifier
+		| TSKindId.LabelName
+		| TSKindId.PackageIdentifier
+		| TSKindId.QualifiedType
+		| TSKindId.TypeIdentifier;
+	'pattern.literal':
+		| TSKindId.EscapeSequenceArm1
+		| TSKindId.EscapeSequenceArm2
+		| TSKindId.EscapeSequenceArm3
+		| TSKindId.EscapeSequenceArm4
+		| TSKindId.EscapeSequenceArm5
+		| TSKindId.False
+		| TSKindId.FloatLiteralArm1
+		| TSKindId.FloatLiteralArm2
+		| TSKindId.FloatLiteralArm3
+		| TSKindId.FloatLiteralArm4Arm1
+		| TSKindId.FloatLiteralArm4Arm2
+		| TSKindId.FloatLiteralArm4Arm3
+		| TSKindId.ImaginaryLiteralArm1
+		| TSKindId.ImaginaryLiteralArm10Arm1
+		| TSKindId.ImaginaryLiteralArm10Arm2
+		| TSKindId.ImaginaryLiteralArm10Arm3
+		| TSKindId.ImaginaryLiteralArm2
+		| TSKindId.ImaginaryLiteralArm3
+		| TSKindId.ImaginaryLiteralArm4
+		| TSKindId.ImaginaryLiteralArm5
+		| TSKindId.ImaginaryLiteralArm6
+		| TSKindId.ImaginaryLiteralArm7
+		| TSKindId.ImaginaryLiteralArm8
+		| TSKindId.ImaginaryLiteralArm9
+		| TSKindId.IntLiteralArm1
+		| TSKindId.IntLiteralArm2
+		| TSKindId.IntLiteralArm3
+		| TSKindId.IntLiteralArm4
+		| TSKindId.IntLiteralArm5
+		| TSKindId.InterpretedStringLiteral
+		| TSKindId.InterpretedStringLiteralContent
+		| TSKindId.Nil
+		| TSKindId.RawStringLiteral
+		| TSKindId.RawStringLiteralContent
+		| TSKindId.RuneLiteralArm1
+		| TSKindId.RuneLiteralArm2Arm1
+		| TSKindId.RuneLiteralArm2Arm2
+		| TSKindId.RuneLiteralArm2Arm3
+		| TSKindId.RuneLiteralArm2Arm4
+		| TSKindId.RuneLiteralArm2Arm5
+		| TSKindId.True;
+	'pattern.member': TSKindId.SelectorExpression;
+	'pattern.subscript': TSKindId.IndexExpression;
 	'pattern.wildcard': TSKindId.BlankIdentifier;
 	statement:
+		| TSKindId.AssignmentStatement
+		| TSKindId.BinaryExpression
 		| TSKindId.Block
 		| TSKindId.BreakStatement
+		| TSKindId.CallExpression
+		| TSKindId.CompositeLiteral
+		| TSKindId.ConstSpec
 		| TSKindId.ContinueStatement
+		| TSKindId.DecStatement
 		| TSKindId.EmptyStatement
+		| TSKindId.EscapeSequenceArm1
+		| TSKindId.EscapeSequenceArm2
+		| TSKindId.EscapeSequenceArm3
+		| TSKindId.EscapeSequenceArm4
+		| TSKindId.EscapeSequenceArm5
 		| TSKindId.ExpressionSwitchStatement
+		| TSKindId.False
+		| TSKindId.FieldDeclaration
+		| TSKindId.FieldIdentifier
+		| TSKindId.FloatLiteralArm1
+		| TSKindId.FloatLiteralArm2
+		| TSKindId.FloatLiteralArm3
+		| TSKindId.FloatLiteralArm4Arm1
+		| TSKindId.FloatLiteralArm4Arm2
+		| TSKindId.FloatLiteralArm4Arm3
 		| TSKindId.ForStatement
+		| TSKindId.FuncLiteral
+		| TSKindId.FunctionDeclaration
+		| TSKindId.Identifier
 		| TSKindId.IfStatement
+		| TSKindId.ImaginaryLiteralArm1
+		| TSKindId.ImaginaryLiteralArm10Arm1
+		| TSKindId.ImaginaryLiteralArm10Arm2
+		| TSKindId.ImaginaryLiteralArm10Arm3
+		| TSKindId.ImaginaryLiteralArm2
+		| TSKindId.ImaginaryLiteralArm3
+		| TSKindId.ImaginaryLiteralArm4
+		| TSKindId.ImaginaryLiteralArm5
+		| TSKindId.ImaginaryLiteralArm6
+		| TSKindId.ImaginaryLiteralArm7
+		| TSKindId.ImaginaryLiteralArm8
+		| TSKindId.ImaginaryLiteralArm9
 		| TSKindId.ImportDeclaration
+		| TSKindId.IncStatement
+		| TSKindId.IndexExpression
+		| TSKindId.IntLiteralArm1
+		| TSKindId.IntLiteralArm2
+		| TSKindId.IntLiteralArm3
+		| TSKindId.IntLiteralArm4
+		| TSKindId.IntLiteralArm5
+		| TSKindId.InterpretedStringLiteral
+		| TSKindId.InterpretedStringLiteralContent
+		| TSKindId.LabelName
 		| TSKindId.LabeledStatement
+		| TSKindId.MethodDeclaration
+		| TSKindId.MethodElem
+		| TSKindId.Nil
+		| TSKindId.PackageIdentifier
+		| TSKindId.ParameterDeclaration
+		| TSKindId.ParenthesizedExpression
+		| TSKindId.QualifiedType
+		| TSKindId.RawStringLiteral
+		| TSKindId.RawStringLiteralContent
 		| TSKindId.ReturnStatement
-		| TSKindId.TypeSwitchStatement;
+		| TSKindId.RuneLiteralArm1
+		| TSKindId.RuneLiteralArm2Arm1
+		| TSKindId.RuneLiteralArm2Arm2
+		| TSKindId.RuneLiteralArm2Arm3
+		| TSKindId.RuneLiteralArm2Arm4
+		| TSKindId.RuneLiteralArm2Arm5
+		| TSKindId.SelectorExpression
+		| TSKindId.ShortVarDeclaration
+		| TSKindId.SliceExpression
+		| TSKindId.True
+		| TSKindId.TypeAlias
+		| TSKindId.TypeAssertionExpression
+		| TSKindId.TypeConversionExpression
+		| TSKindId.TypeIdentifier
+		| TSKindId.TypeInstantiationExpression
+		| TSKindId.TypeParameterDeclaration
+		| TSKindId.TypeSpec
+		| TSKindId.TypeSwitchStatement
+		| TSKindId.UnaryExpression
+		| TSKindId.VarSpec
+		| TSKindId.VariadicParameterDeclaration;
 	'statement.block': TSKindId.Block;
 	'statement.break': TSKindId.BreakStatement;
 	'statement.continue': TSKindId.ContinueStatement;
+	'statement.declaration':
+		| TSKindId.ConstSpec
+		| TSKindId.FieldDeclaration
+		| TSKindId.FieldIdentifier
+		| TSKindId.FunctionDeclaration
+		| TSKindId.Identifier
+		| TSKindId.LabelName
+		| TSKindId.MethodDeclaration
+		| TSKindId.MethodElem
+		| TSKindId.PackageIdentifier
+		| TSKindId.ParameterDeclaration
+		| TSKindId.QualifiedType
+		| TSKindId.ShortVarDeclaration
+		| TSKindId.TypeAlias
+		| TSKindId.TypeIdentifier
+		| TSKindId.TypeParameterDeclaration
+		| TSKindId.TypeSpec
+		| TSKindId.VarSpec
+		| TSKindId.VariadicParameterDeclaration;
 	'statement.empty': TSKindId.EmptyStatement;
+	'statement.expression':
+		| TSKindId.AssignmentStatement
+		| TSKindId.BinaryExpression
+		| TSKindId.Block
+		| TSKindId.BreakStatement
+		| TSKindId.CallExpression
+		| TSKindId.CompositeLiteral
+		| TSKindId.ContinueStatement
+		| TSKindId.DecStatement
+		| TSKindId.EscapeSequenceArm1
+		| TSKindId.EscapeSequenceArm2
+		| TSKindId.EscapeSequenceArm3
+		| TSKindId.EscapeSequenceArm4
+		| TSKindId.EscapeSequenceArm5
+		| TSKindId.False
+		| TSKindId.FieldIdentifier
+		| TSKindId.FloatLiteralArm1
+		| TSKindId.FloatLiteralArm2
+		| TSKindId.FloatLiteralArm3
+		| TSKindId.FloatLiteralArm4Arm1
+		| TSKindId.FloatLiteralArm4Arm2
+		| TSKindId.FloatLiteralArm4Arm3
+		| TSKindId.ForStatement
+		| TSKindId.FuncLiteral
+		| TSKindId.Identifier
+		| TSKindId.IfStatement
+		| TSKindId.ImaginaryLiteralArm1
+		| TSKindId.ImaginaryLiteralArm10Arm1
+		| TSKindId.ImaginaryLiteralArm10Arm2
+		| TSKindId.ImaginaryLiteralArm10Arm3
+		| TSKindId.ImaginaryLiteralArm2
+		| TSKindId.ImaginaryLiteralArm3
+		| TSKindId.ImaginaryLiteralArm4
+		| TSKindId.ImaginaryLiteralArm5
+		| TSKindId.ImaginaryLiteralArm6
+		| TSKindId.ImaginaryLiteralArm7
+		| TSKindId.ImaginaryLiteralArm8
+		| TSKindId.ImaginaryLiteralArm9
+		| TSKindId.IncStatement
+		| TSKindId.IndexExpression
+		| TSKindId.IntLiteralArm1
+		| TSKindId.IntLiteralArm2
+		| TSKindId.IntLiteralArm3
+		| TSKindId.IntLiteralArm4
+		| TSKindId.IntLiteralArm5
+		| TSKindId.InterpretedStringLiteral
+		| TSKindId.InterpretedStringLiteralContent
+		| TSKindId.LabelName
+		| TSKindId.Nil
+		| TSKindId.PackageIdentifier
+		| TSKindId.ParenthesizedExpression
+		| TSKindId.QualifiedType
+		| TSKindId.RawStringLiteral
+		| TSKindId.RawStringLiteralContent
+		| TSKindId.ReturnStatement
+		| TSKindId.RuneLiteralArm1
+		| TSKindId.RuneLiteralArm2Arm1
+		| TSKindId.RuneLiteralArm2Arm2
+		| TSKindId.RuneLiteralArm2Arm3
+		| TSKindId.RuneLiteralArm2Arm4
+		| TSKindId.RuneLiteralArm2Arm5
+		| TSKindId.SelectorExpression
+		| TSKindId.SliceExpression
+		| TSKindId.True
+		| TSKindId.TypeAssertionExpression
+		| TSKindId.TypeConversionExpression
+		| TSKindId.TypeIdentifier
+		| TSKindId.TypeInstantiationExpression
+		| TSKindId.UnaryExpression;
 	'statement.if': TSKindId.IfStatement;
 	'statement.import': TSKindId.ImportDeclaration;
 	'statement.labeled': TSKindId.LabeledStatement;
@@ -317,17 +718,160 @@ export interface PortableIds {
 	type:
 		| TSKindId.PointerTypeFieldDeclarationArm
 		| TSKindId.ArrayType
+		| TSKindId.AssignmentStatement
+		| TSKindId.BinaryExpression
+		| TSKindId.Block
+		| TSKindId.BreakStatement
+		| TSKindId.CallExpression
+		| TSKindId.CompositeLiteral
+		| TSKindId.ContinueStatement
+		| TSKindId.DecStatement
+		| TSKindId.EscapeSequenceArm1
+		| TSKindId.EscapeSequenceArm2
+		| TSKindId.EscapeSequenceArm3
+		| TSKindId.EscapeSequenceArm4
+		| TSKindId.EscapeSequenceArm5
+		| TSKindId.False
+		| TSKindId.FieldIdentifier
+		| TSKindId.FloatLiteralArm1
+		| TSKindId.FloatLiteralArm2
+		| TSKindId.FloatLiteralArm3
+		| TSKindId.FloatLiteralArm4Arm1
+		| TSKindId.FloatLiteralArm4Arm2
+		| TSKindId.FloatLiteralArm4Arm3
+		| TSKindId.ForStatement
+		| TSKindId.FuncLiteral
 		| TSKindId.FunctionType
 		| TSKindId.GenericType
+		| TSKindId.Identifier
+		| TSKindId.IfStatement
+		| TSKindId.ImaginaryLiteralArm1
+		| TSKindId.ImaginaryLiteralArm10Arm1
+		| TSKindId.ImaginaryLiteralArm10Arm2
+		| TSKindId.ImaginaryLiteralArm10Arm3
+		| TSKindId.ImaginaryLiteralArm2
+		| TSKindId.ImaginaryLiteralArm3
+		| TSKindId.ImaginaryLiteralArm4
+		| TSKindId.ImaginaryLiteralArm5
+		| TSKindId.ImaginaryLiteralArm6
+		| TSKindId.ImaginaryLiteralArm7
+		| TSKindId.ImaginaryLiteralArm8
+		| TSKindId.ImaginaryLiteralArm9
 		| TSKindId.ImplicitLengthArrayType
+		| TSKindId.IncStatement
+		| TSKindId.IndexExpression
+		| TSKindId.IntLiteralArm1
+		| TSKindId.IntLiteralArm2
+		| TSKindId.IntLiteralArm3
+		| TSKindId.IntLiteralArm4
+		| TSKindId.IntLiteralArm5
+		| TSKindId.InterpretedStringLiteral
+		| TSKindId.InterpretedStringLiteralContent
+		| TSKindId.LabelName
+		| TSKindId.Nil
+		| TSKindId.PackageIdentifier
+		| TSKindId.ParenthesizedExpression
 		| TSKindId.ParenthesizedType
 		| TSKindId.PointerType
+		| TSKindId.QualifiedType
+		| TSKindId.RawStringLiteral
+		| TSKindId.RawStringLiteralContent
+		| TSKindId.ReturnStatement
+		| TSKindId.RuneLiteralArm1
+		| TSKindId.RuneLiteralArm2Arm1
+		| TSKindId.RuneLiteralArm2Arm2
+		| TSKindId.RuneLiteralArm2Arm3
+		| TSKindId.RuneLiteralArm2Arm4
+		| TSKindId.RuneLiteralArm2Arm5
+		| TSKindId.SelectorExpression
+		| TSKindId.SliceExpression
 		| TSKindId.SliceType
 		| TSKindId.StructType
-		| TSKindId.TypeIdentifier;
+		| TSKindId.True
+		| TSKindId.TypeAssertionExpression
+		| TSKindId.TypeConversionExpression
+		| TSKindId.TypeIdentifier
+		| TSKindId.TypeInstantiationExpression
+		| TSKindId.UnaryExpression;
 	'type.array': TSKindId.ArrayType | TSKindId.ImplicitLengthArrayType | TSKindId.SliceType;
+	'type.expression':
+		| TSKindId.AssignmentStatement
+		| TSKindId.BinaryExpression
+		| TSKindId.Block
+		| TSKindId.BreakStatement
+		| TSKindId.CallExpression
+		| TSKindId.CompositeLiteral
+		| TSKindId.ContinueStatement
+		| TSKindId.DecStatement
+		| TSKindId.EscapeSequenceArm1
+		| TSKindId.EscapeSequenceArm2
+		| TSKindId.EscapeSequenceArm3
+		| TSKindId.EscapeSequenceArm4
+		| TSKindId.EscapeSequenceArm5
+		| TSKindId.False
+		| TSKindId.FieldIdentifier
+		| TSKindId.FloatLiteralArm1
+		| TSKindId.FloatLiteralArm2
+		| TSKindId.FloatLiteralArm3
+		| TSKindId.FloatLiteralArm4Arm1
+		| TSKindId.FloatLiteralArm4Arm2
+		| TSKindId.FloatLiteralArm4Arm3
+		| TSKindId.ForStatement
+		| TSKindId.FuncLiteral
+		| TSKindId.Identifier
+		| TSKindId.IfStatement
+		| TSKindId.ImaginaryLiteralArm1
+		| TSKindId.ImaginaryLiteralArm10Arm1
+		| TSKindId.ImaginaryLiteralArm10Arm2
+		| TSKindId.ImaginaryLiteralArm10Arm3
+		| TSKindId.ImaginaryLiteralArm2
+		| TSKindId.ImaginaryLiteralArm3
+		| TSKindId.ImaginaryLiteralArm4
+		| TSKindId.ImaginaryLiteralArm5
+		| TSKindId.ImaginaryLiteralArm6
+		| TSKindId.ImaginaryLiteralArm7
+		| TSKindId.ImaginaryLiteralArm8
+		| TSKindId.ImaginaryLiteralArm9
+		| TSKindId.IncStatement
+		| TSKindId.IndexExpression
+		| TSKindId.IntLiteralArm1
+		| TSKindId.IntLiteralArm2
+		| TSKindId.IntLiteralArm3
+		| TSKindId.IntLiteralArm4
+		| TSKindId.IntLiteralArm5
+		| TSKindId.InterpretedStringLiteral
+		| TSKindId.InterpretedStringLiteralContent
+		| TSKindId.LabelName
+		| TSKindId.Nil
+		| TSKindId.PackageIdentifier
+		| TSKindId.ParenthesizedExpression
+		| TSKindId.QualifiedType
+		| TSKindId.RawStringLiteral
+		| TSKindId.RawStringLiteralContent
+		| TSKindId.ReturnStatement
+		| TSKindId.RuneLiteralArm1
+		| TSKindId.RuneLiteralArm2Arm1
+		| TSKindId.RuneLiteralArm2Arm2
+		| TSKindId.RuneLiteralArm2Arm3
+		| TSKindId.RuneLiteralArm2Arm4
+		| TSKindId.RuneLiteralArm2Arm5
+		| TSKindId.SelectorExpression
+		| TSKindId.SliceExpression
+		| TSKindId.True
+		| TSKindId.TypeAssertionExpression
+		| TSKindId.TypeConversionExpression
+		| TSKindId.TypeIdentifier
+		| TSKindId.TypeInstantiationExpression
+		| TSKindId.UnaryExpression;
 	'type.function': TSKindId.FunctionType;
 	'type.generic': TSKindId.GenericType;
+	'type.identifier':
+		| TSKindId.FieldIdentifier
+		| TSKindId.Identifier
+		| TSKindId.LabelName
+		| TSKindId.PackageIdentifier
+		| TSKindId.QualifiedType
+		| TSKindId.TypeIdentifier;
 	'type.object': TSKindId.StructType;
 	'type.parenthesized': TSKindId.ParenthesizedType;
 	'type.pointer': TSKindId.PointerTypeFieldDeclarationArm | TSKindId.PointerType;
@@ -363,26 +907,31 @@ export interface PortableTexts {
 	'declaration.constant': never;
 	'declaration.constant.private': never;
 	'declaration.constant.public': never;
-	'declaration.field': never;
-	'declaration.field.private': never;
-	'declaration.field.public': never;
 	'declaration.function': never;
 	'declaration.function.private': never;
 	'declaration.function.public': never;
 	'declaration.function.signature': never;
-	'declaration.interface': never;
-	'declaration.method': never;
-	'declaration.method.private': never;
-	'declaration.method.public': never;
-	'declaration.method.signature': never;
+	'declaration.member': never;
+	'declaration.member.constant': never;
+	'declaration.member.field': never;
+	'declaration.member.field.private': never;
+	'declaration.member.field.public': never;
+	'declaration.member.method': never;
+	'declaration.member.method.private': never;
+	'declaration.member.method.public': never;
+	'declaration.member.method.signature': never;
+	'declaration.member.type_alias': never;
 	'declaration.parameter': never;
+	'declaration.parameter.identifier': never;
 	'declaration.parameter.variadic': never;
-	'declaration.struct': never;
-	'declaration.struct.private': never;
-	'declaration.struct.public': never;
-	'declaration.type_alias': never;
-	'declaration.type_alias.private': never;
-	'declaration.type_alias.public': never;
+	'declaration.type': never;
+	'declaration.type.interface': never;
+	'declaration.type.struct': never;
+	'declaration.type.struct.private': never;
+	'declaration.type.struct.public': never;
+	'declaration.type.type_alias': never;
+	'declaration.type.type_alias.private': never;
+	'declaration.type.type_alias.public': never;
 	'declaration.type_parameter': never;
 	'declaration.variable': never;
 	'declaration.variable.private': never;
@@ -427,6 +976,8 @@ export interface PortableTexts {
 	'expression.binary.shift': never;
 	'expression.binary.shift.left': never;
 	'expression.binary.shift.right': never;
+	'expression.block': never;
+	'expression.break': never;
 	'expression.call': never;
 	'expression.call.member': never;
 	'expression.cast': never;
@@ -435,11 +986,17 @@ export interface PortableTexts {
 	'expression.collection.list': never;
 	'expression.collection.map': never;
 	'expression.collection.struct': never;
+	'expression.continue': never;
 	'expression.function': never;
+	'expression.identifier': never;
+	'expression.if': never;
 	'expression.instantiation': never;
+	'expression.literal': never;
+	'expression.loop': never;
 	'expression.member': never;
 	'expression.parenthesized': never;
 	'expression.reference': never;
+	'expression.return': never;
 	'expression.slice': never;
 	'expression.subscript': never;
 	'expression.unary': never;
@@ -474,12 +1031,18 @@ export interface PortableTexts {
 	'literal.string.raw': never;
 	'literal.string.text': never;
 	pattern: '_';
+	'pattern.identifier': never;
+	'pattern.literal': never;
+	'pattern.member': never;
+	'pattern.subscript': never;
 	'pattern.wildcard': '_';
 	statement: ';';
 	'statement.block': never;
 	'statement.break': never;
 	'statement.continue': never;
+	'statement.declaration': never;
 	'statement.empty': ';';
+	'statement.expression': never;
 	'statement.if': never;
 	'statement.import': never;
 	'statement.labeled': never;
@@ -490,8 +1053,10 @@ export interface PortableTexts {
 	'statement.switch': never;
 	type: never;
 	'type.array': never;
+	'type.expression': never;
 	'type.function': never;
 	'type.generic': never;
+	'type.identifier': never;
 	'type.object': never;
 	'type.parenthesized': never;
 	'type.pointer': never;
@@ -543,13 +1108,10 @@ export interface PortableKindsAt {
 	declaration: {
 		readonly $path: 'declaration';
 		readonly constant: PortableKindsAt['declaration.constant'];
-		readonly field: PortableKindsAt['declaration.field'];
 		readonly function: PortableKindsAt['declaration.function'];
-		readonly interface: PortableKindsAt['declaration.interface'];
-		readonly method: PortableKindsAt['declaration.method'];
+		readonly member: PortableKindsAt['declaration.member'];
 		readonly parameter: PortableKindsAt['declaration.parameter'];
-		readonly struct: PortableKindsAt['declaration.struct'];
-		readonly type_alias: PortableKindsAt['declaration.type_alias'];
+		readonly type: PortableKindsAt['declaration.type'];
 		readonly type_parameter: PortableKindsAt['declaration.type_parameter'];
 		readonly variable: PortableKindsAt['declaration.variable'];
 	};
@@ -560,13 +1122,6 @@ export interface PortableKindsAt {
 	};
 	'declaration.constant.private': { readonly $path: 'declaration.constant.private' };
 	'declaration.constant.public': { readonly $path: 'declaration.constant.public' };
-	'declaration.field': {
-		readonly $path: 'declaration.field';
-		readonly private: PortableKindsAt['declaration.field.private'];
-		readonly public: PortableKindsAt['declaration.field.public'];
-	};
-	'declaration.field.private': { readonly $path: 'declaration.field.private' };
-	'declaration.field.public': { readonly $path: 'declaration.field.public' };
 	'declaration.function': {
 		readonly $path: 'declaration.function';
 		readonly private: PortableKindsAt['declaration.function.private'];
@@ -576,35 +1131,59 @@ export interface PortableKindsAt {
 	'declaration.function.private': { readonly $path: 'declaration.function.private' };
 	'declaration.function.public': { readonly $path: 'declaration.function.public' };
 	'declaration.function.signature': { readonly $path: 'declaration.function.signature' };
-	'declaration.interface': { readonly $path: 'declaration.interface' };
-	'declaration.method': {
-		readonly $path: 'declaration.method';
-		readonly private: PortableKindsAt['declaration.method.private'];
-		readonly public: PortableKindsAt['declaration.method.public'];
-		readonly signature: PortableKindsAt['declaration.method.signature'];
+	'declaration.member': {
+		readonly $namespace: 'declaration.member';
+		readonly constant: PortableKindsAt['declaration.member.constant'];
+		readonly field: PortableKindsAt['declaration.member.field'];
+		readonly method: PortableKindsAt['declaration.member.method'];
+		readonly type_alias: PortableKindsAt['declaration.member.type_alias'];
 	};
-	'declaration.method.private': { readonly $path: 'declaration.method.private' };
-	'declaration.method.public': { readonly $path: 'declaration.method.public' };
-	'declaration.method.signature': { readonly $path: 'declaration.method.signature' };
+	'declaration.member.constant': { readonly $namespace: 'declaration.member.constant' };
+	'declaration.member.field': {
+		readonly $path: 'declaration.member.field';
+		readonly private: PortableKindsAt['declaration.member.field.private'];
+		readonly public: PortableKindsAt['declaration.member.field.public'];
+	};
+	'declaration.member.field.private': { readonly $path: 'declaration.member.field.private' };
+	'declaration.member.field.public': { readonly $path: 'declaration.member.field.public' };
+	'declaration.member.method': {
+		readonly $path: 'declaration.member.method';
+		readonly private: PortableKindsAt['declaration.member.method.private'];
+		readonly public: PortableKindsAt['declaration.member.method.public'];
+		readonly signature: PortableKindsAt['declaration.member.method.signature'];
+	};
+	'declaration.member.method.private': { readonly $path: 'declaration.member.method.private' };
+	'declaration.member.method.public': { readonly $path: 'declaration.member.method.public' };
+	'declaration.member.method.signature': { readonly $path: 'declaration.member.method.signature' };
+	'declaration.member.type_alias': { readonly $namespace: 'declaration.member.type_alias' };
 	'declaration.parameter': {
 		readonly $path: 'declaration.parameter';
+		readonly identifier: PortableKindsAt['declaration.parameter.identifier'];
 		readonly variadic: PortableKindsAt['declaration.parameter.variadic'];
 	};
+	'declaration.parameter.identifier': { readonly $namespace: 'declaration.parameter.identifier' };
 	'declaration.parameter.variadic': { readonly $path: 'declaration.parameter.variadic' };
-	'declaration.struct': {
-		readonly $path: 'declaration.struct';
-		readonly private: PortableKindsAt['declaration.struct.private'];
-		readonly public: PortableKindsAt['declaration.struct.public'];
+	'declaration.type': {
+		readonly $namespace: 'declaration.type';
+		readonly interface: PortableKindsAt['declaration.type.interface'];
+		readonly struct: PortableKindsAt['declaration.type.struct'];
+		readonly type_alias: PortableKindsAt['declaration.type.type_alias'];
 	};
-	'declaration.struct.private': { readonly $path: 'declaration.struct.private' };
-	'declaration.struct.public': { readonly $path: 'declaration.struct.public' };
-	'declaration.type_alias': {
-		readonly $path: 'declaration.type_alias';
-		readonly private: PortableKindsAt['declaration.type_alias.private'];
-		readonly public: PortableKindsAt['declaration.type_alias.public'];
+	'declaration.type.interface': { readonly $path: 'declaration.type.interface' };
+	'declaration.type.struct': {
+		readonly $path: 'declaration.type.struct';
+		readonly private: PortableKindsAt['declaration.type.struct.private'];
+		readonly public: PortableKindsAt['declaration.type.struct.public'];
 	};
-	'declaration.type_alias.private': { readonly $path: 'declaration.type_alias.private' };
-	'declaration.type_alias.public': { readonly $path: 'declaration.type_alias.public' };
+	'declaration.type.struct.private': { readonly $path: 'declaration.type.struct.private' };
+	'declaration.type.struct.public': { readonly $path: 'declaration.type.struct.public' };
+	'declaration.type.type_alias': {
+		readonly $path: 'declaration.type.type_alias';
+		readonly private: PortableKindsAt['declaration.type.type_alias.private'];
+		readonly public: PortableKindsAt['declaration.type.type_alias.public'];
+	};
+	'declaration.type.type_alias.private': { readonly $path: 'declaration.type.type_alias.private' };
+	'declaration.type.type_alias.public': { readonly $path: 'declaration.type.type_alias.public' };
 	'declaration.type_parameter': { readonly $path: 'declaration.type_parameter' };
 	'declaration.variable': {
 		readonly $path: 'declaration.variable';
@@ -624,14 +1203,22 @@ export interface PortableKindsAt {
 		readonly $path: 'expression';
 		readonly assignment: PortableKindsAt['expression.assignment'];
 		readonly binary: PortableKindsAt['expression.binary'];
+		readonly block: PortableKindsAt['expression.block'];
+		readonly break: PortableKindsAt['expression.break'];
 		readonly call: PortableKindsAt['expression.call'];
 		readonly cast: PortableKindsAt['expression.cast'];
 		readonly collection: PortableKindsAt['expression.collection'];
+		readonly continue: PortableKindsAt['expression.continue'];
 		readonly function: PortableKindsAt['expression.function'];
+		readonly identifier: PortableKindsAt['expression.identifier'];
+		readonly if: PortableKindsAt['expression.if'];
 		readonly instantiation: PortableKindsAt['expression.instantiation'];
+		readonly literal: PortableKindsAt['expression.literal'];
+		readonly loop: PortableKindsAt['expression.loop'];
 		readonly member: PortableKindsAt['expression.member'];
 		readonly parenthesized: PortableKindsAt['expression.parenthesized'];
 		readonly reference: PortableKindsAt['expression.reference'];
+		readonly return: PortableKindsAt['expression.return'];
 		readonly slice: PortableKindsAt['expression.slice'];
 		readonly subscript: PortableKindsAt['expression.subscript'];
 		readonly unary: PortableKindsAt['expression.unary'];
@@ -673,7 +1260,7 @@ export interface PortableKindsAt {
 		readonly shift: PortableKindsAt['expression.binary.shift'];
 	};
 	'expression.binary.arithmetic': {
-		readonly $path: 'expression.binary.arithmetic';
+		readonly $namespace: 'expression.binary.arithmetic';
 		readonly add: PortableKindsAt['expression.binary.arithmetic.add'];
 		readonly divide: PortableKindsAt['expression.binary.arithmetic.divide'];
 		readonly modulo: PortableKindsAt['expression.binary.arithmetic.modulo'];
@@ -686,7 +1273,7 @@ export interface PortableKindsAt {
 	'expression.binary.arithmetic.multiply': { readonly $path: 'expression.binary.arithmetic.multiply' };
 	'expression.binary.arithmetic.subtract': { readonly $path: 'expression.binary.arithmetic.subtract' };
 	'expression.binary.bitwise': {
-		readonly $path: 'expression.binary.bitwise';
+		readonly $namespace: 'expression.binary.bitwise';
 		readonly and: PortableKindsAt['expression.binary.bitwise.and'];
 		readonly or: PortableKindsAt['expression.binary.bitwise.or'];
 		readonly xor: PortableKindsAt['expression.binary.bitwise.xor'];
@@ -695,7 +1282,7 @@ export interface PortableKindsAt {
 	'expression.binary.bitwise.or': { readonly $path: 'expression.binary.bitwise.or' };
 	'expression.binary.bitwise.xor': { readonly $path: 'expression.binary.bitwise.xor' };
 	'expression.binary.comparison': {
-		readonly $path: 'expression.binary.comparison';
+		readonly $namespace: 'expression.binary.comparison';
 		readonly equal: PortableKindsAt['expression.binary.comparison.equal'];
 		readonly greater: PortableKindsAt['expression.binary.comparison.greater'];
 		readonly greater_equal: PortableKindsAt['expression.binary.comparison.greater_equal'];
@@ -717,12 +1304,14 @@ export interface PortableKindsAt {
 	'expression.binary.logical.and': { readonly $path: 'expression.binary.logical.and' };
 	'expression.binary.logical.or': { readonly $path: 'expression.binary.logical.or' };
 	'expression.binary.shift': {
-		readonly $path: 'expression.binary.shift';
+		readonly $namespace: 'expression.binary.shift';
 		readonly left: PortableKindsAt['expression.binary.shift.left'];
 		readonly right: PortableKindsAt['expression.binary.shift.right'];
 	};
 	'expression.binary.shift.left': { readonly $path: 'expression.binary.shift.left' };
 	'expression.binary.shift.right': { readonly $path: 'expression.binary.shift.right' };
+	'expression.block': { readonly $namespace: 'expression.block' };
+	'expression.break': { readonly $namespace: 'expression.break' };
 	'expression.call': { readonly $path: 'expression.call'; readonly member: PortableKindsAt['expression.call.member'] };
 	'expression.call.member': { readonly $path: 'expression.call.member' };
 	'expression.cast': {
@@ -731,7 +1320,7 @@ export interface PortableKindsAt {
 	};
 	'expression.cast.conversion': { readonly $path: 'expression.cast.conversion' };
 	'expression.collection': {
-		readonly $path: 'expression.collection';
+		readonly $namespace: 'expression.collection';
 		readonly list: PortableKindsAt['expression.collection.list'];
 		readonly map: PortableKindsAt['expression.collection.map'];
 		readonly struct: PortableKindsAt['expression.collection.struct'];
@@ -739,11 +1328,17 @@ export interface PortableKindsAt {
 	'expression.collection.list': { readonly $path: 'expression.collection.list' };
 	'expression.collection.map': { readonly $path: 'expression.collection.map' };
 	'expression.collection.struct': { readonly $path: 'expression.collection.struct' };
+	'expression.continue': { readonly $namespace: 'expression.continue' };
 	'expression.function': { readonly $path: 'expression.function' };
+	'expression.identifier': { readonly $namespace: 'expression.identifier' };
+	'expression.if': { readonly $namespace: 'expression.if' };
 	'expression.instantiation': { readonly $path: 'expression.instantiation' };
+	'expression.literal': { readonly $namespace: 'expression.literal' };
+	'expression.loop': { readonly $namespace: 'expression.loop' };
 	'expression.member': { readonly $path: 'expression.member' };
 	'expression.parenthesized': { readonly $path: 'expression.parenthesized' };
 	'expression.reference': { readonly $path: 'expression.reference' };
+	'expression.return': { readonly $namespace: 'expression.return' };
 	'expression.slice': { readonly $path: 'expression.slice' };
 	'expression.subscript': { readonly $path: 'expression.subscript' };
 	'expression.unary': {
@@ -819,14 +1414,27 @@ export interface PortableKindsAt {
 	'literal.string.multiline': { readonly $path: 'literal.string.multiline' };
 	'literal.string.raw': { readonly $path: 'literal.string.raw' };
 	'literal.string.text': { readonly $path: 'literal.string.text' };
-	pattern: { readonly $path: 'pattern'; readonly wildcard: PortableKindsAt['pattern.wildcard'] };
+	pattern: {
+		readonly $path: 'pattern';
+		readonly identifier: PortableKindsAt['pattern.identifier'];
+		readonly literal: PortableKindsAt['pattern.literal'];
+		readonly member: PortableKindsAt['pattern.member'];
+		readonly subscript: PortableKindsAt['pattern.subscript'];
+		readonly wildcard: PortableKindsAt['pattern.wildcard'];
+	};
+	'pattern.identifier': { readonly $namespace: 'pattern.identifier' };
+	'pattern.literal': { readonly $namespace: 'pattern.literal' };
+	'pattern.member': { readonly $namespace: 'pattern.member' };
+	'pattern.subscript': { readonly $namespace: 'pattern.subscript' };
 	'pattern.wildcard': { readonly $path: 'pattern.wildcard' };
 	statement: {
 		readonly $path: 'statement';
 		readonly block: PortableKindsAt['statement.block'];
 		readonly break: PortableKindsAt['statement.break'];
 		readonly continue: PortableKindsAt['statement.continue'];
+		readonly declaration: PortableKindsAt['statement.declaration'];
 		readonly empty: PortableKindsAt['statement.empty'];
+		readonly expression: PortableKindsAt['statement.expression'];
 		readonly if: PortableKindsAt['statement.if'];
 		readonly import: PortableKindsAt['statement.import'];
 		readonly labeled: PortableKindsAt['statement.labeled'];
@@ -837,7 +1445,9 @@ export interface PortableKindsAt {
 	'statement.block': { readonly $path: 'statement.block' };
 	'statement.break': { readonly $path: 'statement.break' };
 	'statement.continue': { readonly $path: 'statement.continue' };
+	'statement.declaration': { readonly $namespace: 'statement.declaration' };
 	'statement.empty': { readonly $path: 'statement.empty' };
+	'statement.expression': { readonly $namespace: 'statement.expression' };
 	'statement.if': { readonly $path: 'statement.if' };
 	'statement.import': { readonly $path: 'statement.import' };
 	'statement.labeled': { readonly $path: 'statement.labeled' };
@@ -853,16 +1463,20 @@ export interface PortableKindsAt {
 	type: {
 		readonly $path: 'type';
 		readonly array: PortableKindsAt['type.array'];
+		readonly expression: PortableKindsAt['type.expression'];
 		readonly function: PortableKindsAt['type.function'];
 		readonly generic: PortableKindsAt['type.generic'];
+		readonly identifier: PortableKindsAt['type.identifier'];
 		readonly object: PortableKindsAt['type.object'];
 		readonly parenthesized: PortableKindsAt['type.parenthesized'];
 		readonly pointer: PortableKindsAt['type.pointer'];
 		readonly primitive: PortableKindsAt['type.primitive'];
 	};
 	'type.array': { readonly $path: 'type.array' };
+	'type.expression': { readonly $namespace: 'type.expression' };
 	'type.function': { readonly $path: 'type.function' };
 	'type.generic': { readonly $path: 'type.generic' };
+	'type.identifier': { readonly $namespace: 'type.identifier' };
 	'type.object': { readonly $path: 'type.object' };
 	'type.parenthesized': { readonly $path: 'type.parenthesized' };
 	'type.pointer': { readonly $path: 'type.pointer' };
@@ -948,13 +1562,10 @@ export interface PortableIsAt {
 	'comment.line': PortableGuard<PortableIds['comment.line'], GoNode, TSKindId, PortableTexts['comment.line']> & {};
 	declaration: PortableGuard<PortableIds['declaration'], GoNode, TSKindId, PortableTexts['declaration']> & {
 		readonly constant: PortableIsAt['declaration.constant'];
-		readonly field: PortableIsAt['declaration.field'];
 		readonly function: PortableIsAt['declaration.function'];
-		readonly interface: PortableIsAt['declaration.interface'];
-		readonly method: PortableIsAt['declaration.method'];
+		readonly member: PortableIsAt['declaration.member'];
 		readonly parameter: PortableIsAt['declaration.parameter'];
-		readonly struct: PortableIsAt['declaration.struct'];
-		readonly type_alias: PortableIsAt['declaration.type_alias'];
+		readonly type: PortableIsAt['declaration.type'];
 		readonly type_parameter: PortableIsAt['declaration.type_parameter'];
 		readonly variable: PortableIsAt['declaration.variable'];
 	};
@@ -978,27 +1589,6 @@ export interface PortableIsAt {
 		GoNode,
 		TSKindId,
 		PortableTexts['declaration.constant.public']
-	> & {};
-	'declaration.field': PortableGuard<
-		PortableIds['declaration.field'],
-		GoNode,
-		TSKindId,
-		PortableTexts['declaration.field']
-	> & {
-		readonly private: PortableIsAt['declaration.field.private'];
-		readonly public: PortableIsAt['declaration.field.public'];
-	};
-	'declaration.field.private': PortableGuard<
-		PortableIds['declaration.field.private'],
-		GoNode,
-		TSKindId,
-		PortableTexts['declaration.field.private']
-	> & {};
-	'declaration.field.public': PortableGuard<
-		PortableIds['declaration.field.public'],
-		GoNode,
-		TSKindId,
-		PortableTexts['declaration.field.public']
 	> & {};
 	'declaration.function': PortableGuard<
 		PortableIds['declaration.function'],
@@ -1028,93 +1618,156 @@ export interface PortableIsAt {
 		TSKindId,
 		PortableTexts['declaration.function.signature']
 	> & {};
-	'declaration.interface': PortableGuard<
-		PortableIds['declaration.interface'],
+	'declaration.member': PortableGuard<
+		PortableIds['declaration.member'],
 		GoNode,
 		TSKindId,
-		PortableTexts['declaration.interface']
-	> & {};
-	'declaration.method': PortableGuard<
-		PortableIds['declaration.method'],
-		GoNode,
-		TSKindId,
-		PortableTexts['declaration.method']
+		PortableTexts['declaration.member']
 	> & {
-		readonly private: PortableIsAt['declaration.method.private'];
-		readonly public: PortableIsAt['declaration.method.public'];
-		readonly signature: PortableIsAt['declaration.method.signature'];
+		readonly constant: PortableIsAt['declaration.member.constant'];
+		readonly field: PortableIsAt['declaration.member.field'];
+		readonly method: PortableIsAt['declaration.member.method'];
+		readonly type_alias: PortableIsAt['declaration.member.type_alias'];
 	};
-	'declaration.method.private': PortableGuard<
-		PortableIds['declaration.method.private'],
+	'declaration.member.constant': PortableGuard<
+		PortableIds['declaration.member.constant'],
 		GoNode,
 		TSKindId,
-		PortableTexts['declaration.method.private']
+		PortableTexts['declaration.member.constant']
 	> & {};
-	'declaration.method.public': PortableGuard<
-		PortableIds['declaration.method.public'],
+	'declaration.member.field': PortableGuard<
+		PortableIds['declaration.member.field'],
 		GoNode,
 		TSKindId,
-		PortableTexts['declaration.method.public']
+		PortableTexts['declaration.member.field']
+	> & {
+		readonly private: PortableIsAt['declaration.member.field.private'];
+		readonly public: PortableIsAt['declaration.member.field.public'];
+	};
+	'declaration.member.field.private': PortableGuard<
+		PortableIds['declaration.member.field.private'],
+		GoNode,
+		TSKindId,
+		PortableTexts['declaration.member.field.private']
 	> & {};
-	'declaration.method.signature': PortableGuard<
-		PortableIds['declaration.method.signature'],
+	'declaration.member.field.public': PortableGuard<
+		PortableIds['declaration.member.field.public'],
 		GoNode,
 		TSKindId,
-		PortableTexts['declaration.method.signature']
+		PortableTexts['declaration.member.field.public']
+	> & {};
+	'declaration.member.method': PortableGuard<
+		PortableIds['declaration.member.method'],
+		GoNode,
+		TSKindId,
+		PortableTexts['declaration.member.method']
+	> & {
+		readonly private: PortableIsAt['declaration.member.method.private'];
+		readonly public: PortableIsAt['declaration.member.method.public'];
+		readonly signature: PortableIsAt['declaration.member.method.signature'];
+	};
+	'declaration.member.method.private': PortableGuard<
+		PortableIds['declaration.member.method.private'],
+		GoNode,
+		TSKindId,
+		PortableTexts['declaration.member.method.private']
+	> & {};
+	'declaration.member.method.public': PortableGuard<
+		PortableIds['declaration.member.method.public'],
+		GoNode,
+		TSKindId,
+		PortableTexts['declaration.member.method.public']
+	> & {};
+	'declaration.member.method.signature': PortableGuard<
+		PortableIds['declaration.member.method.signature'],
+		GoNode,
+		TSKindId,
+		PortableTexts['declaration.member.method.signature']
+	> & {};
+	'declaration.member.type_alias': PortableGuard<
+		PortableIds['declaration.member.type_alias'],
+		GoNode,
+		TSKindId,
+		PortableTexts['declaration.member.type_alias']
 	> & {};
 	'declaration.parameter': PortableGuard<
 		PortableIds['declaration.parameter'],
 		GoNode,
 		TSKindId,
 		PortableTexts['declaration.parameter']
-	> & { readonly variadic: PortableIsAt['declaration.parameter.variadic'] };
+	> & {
+		readonly identifier: PortableIsAt['declaration.parameter.identifier'];
+		readonly variadic: PortableIsAt['declaration.parameter.variadic'];
+	};
+	'declaration.parameter.identifier': PortableGuard<
+		PortableIds['declaration.parameter.identifier'],
+		GoNode,
+		TSKindId,
+		PortableTexts['declaration.parameter.identifier']
+	> & {};
 	'declaration.parameter.variadic': PortableGuard<
 		PortableIds['declaration.parameter.variadic'],
 		GoNode,
 		TSKindId,
 		PortableTexts['declaration.parameter.variadic']
 	> & {};
-	'declaration.struct': PortableGuard<
-		PortableIds['declaration.struct'],
+	'declaration.type': PortableGuard<
+		PortableIds['declaration.type'],
 		GoNode,
 		TSKindId,
-		PortableTexts['declaration.struct']
+		PortableTexts['declaration.type']
 	> & {
-		readonly private: PortableIsAt['declaration.struct.private'];
-		readonly public: PortableIsAt['declaration.struct.public'];
+		readonly interface: PortableIsAt['declaration.type.interface'];
+		readonly struct: PortableIsAt['declaration.type.struct'];
+		readonly type_alias: PortableIsAt['declaration.type.type_alias'];
 	};
-	'declaration.struct.private': PortableGuard<
-		PortableIds['declaration.struct.private'],
+	'declaration.type.interface': PortableGuard<
+		PortableIds['declaration.type.interface'],
 		GoNode,
 		TSKindId,
-		PortableTexts['declaration.struct.private']
+		PortableTexts['declaration.type.interface']
 	> & {};
-	'declaration.struct.public': PortableGuard<
-		PortableIds['declaration.struct.public'],
+	'declaration.type.struct': PortableGuard<
+		PortableIds['declaration.type.struct'],
 		GoNode,
 		TSKindId,
-		PortableTexts['declaration.struct.public']
-	> & {};
-	'declaration.type_alias': PortableGuard<
-		PortableIds['declaration.type_alias'],
-		GoNode,
-		TSKindId,
-		PortableTexts['declaration.type_alias']
+		PortableTexts['declaration.type.struct']
 	> & {
-		readonly private: PortableIsAt['declaration.type_alias.private'];
-		readonly public: PortableIsAt['declaration.type_alias.public'];
+		readonly private: PortableIsAt['declaration.type.struct.private'];
+		readonly public: PortableIsAt['declaration.type.struct.public'];
 	};
-	'declaration.type_alias.private': PortableGuard<
-		PortableIds['declaration.type_alias.private'],
+	'declaration.type.struct.private': PortableGuard<
+		PortableIds['declaration.type.struct.private'],
 		GoNode,
 		TSKindId,
-		PortableTexts['declaration.type_alias.private']
+		PortableTexts['declaration.type.struct.private']
 	> & {};
-	'declaration.type_alias.public': PortableGuard<
-		PortableIds['declaration.type_alias.public'],
+	'declaration.type.struct.public': PortableGuard<
+		PortableIds['declaration.type.struct.public'],
 		GoNode,
 		TSKindId,
-		PortableTexts['declaration.type_alias.public']
+		PortableTexts['declaration.type.struct.public']
+	> & {};
+	'declaration.type.type_alias': PortableGuard<
+		PortableIds['declaration.type.type_alias'],
+		GoNode,
+		TSKindId,
+		PortableTexts['declaration.type.type_alias']
+	> & {
+		readonly private: PortableIsAt['declaration.type.type_alias.private'];
+		readonly public: PortableIsAt['declaration.type.type_alias.public'];
+	};
+	'declaration.type.type_alias.private': PortableGuard<
+		PortableIds['declaration.type.type_alias.private'],
+		GoNode,
+		TSKindId,
+		PortableTexts['declaration.type.type_alias.private']
+	> & {};
+	'declaration.type.type_alias.public': PortableGuard<
+		PortableIds['declaration.type.type_alias.public'],
+		GoNode,
+		TSKindId,
+		PortableTexts['declaration.type.type_alias.public']
 	> & {};
 	'declaration.type_parameter': PortableGuard<
 		PortableIds['declaration.type_parameter'],
@@ -1157,14 +1810,22 @@ export interface PortableIsAt {
 	expression: PortableGuard<PortableIds['expression'], GoNode, TSKindId, PortableTexts['expression']> & {
 		readonly assignment: PortableIsAt['expression.assignment'];
 		readonly binary: PortableIsAt['expression.binary'];
+		readonly block: PortableIsAt['expression.block'];
+		readonly break: PortableIsAt['expression.break'];
 		readonly call: PortableIsAt['expression.call'];
 		readonly cast: PortableIsAt['expression.cast'];
 		readonly collection: PortableIsAt['expression.collection'];
+		readonly continue: PortableIsAt['expression.continue'];
 		readonly function: PortableIsAt['expression.function'];
+		readonly identifier: PortableIsAt['expression.identifier'];
+		readonly if: PortableIsAt['expression.if'];
 		readonly instantiation: PortableIsAt['expression.instantiation'];
+		readonly literal: PortableIsAt['expression.literal'];
+		readonly loop: PortableIsAt['expression.loop'];
 		readonly member: PortableIsAt['expression.member'];
 		readonly parenthesized: PortableIsAt['expression.parenthesized'];
 		readonly reference: PortableIsAt['expression.reference'];
+		readonly return: PortableIsAt['expression.return'];
 		readonly slice: PortableIsAt['expression.slice'];
 		readonly subscript: PortableIsAt['expression.subscript'];
 		readonly unary: PortableIsAt['expression.unary'];
@@ -1426,6 +2087,18 @@ export interface PortableIsAt {
 		TSKindId,
 		PortableTexts['expression.binary.shift.right']
 	> & {};
+	'expression.block': PortableGuard<
+		PortableIds['expression.block'],
+		GoNode,
+		TSKindId,
+		PortableTexts['expression.block']
+	> & {};
+	'expression.break': PortableGuard<
+		PortableIds['expression.break'],
+		GoNode,
+		TSKindId,
+		PortableTexts['expression.break']
+	> & {};
 	'expression.call': PortableGuard<
 		PortableIds['expression.call'],
 		GoNode,
@@ -1478,17 +2151,42 @@ export interface PortableIsAt {
 		TSKindId,
 		PortableTexts['expression.collection.struct']
 	> & {};
+	'expression.continue': PortableGuard<
+		PortableIds['expression.continue'],
+		GoNode,
+		TSKindId,
+		PortableTexts['expression.continue']
+	> & {};
 	'expression.function': PortableGuard<
 		PortableIds['expression.function'],
 		GoNode,
 		TSKindId,
 		PortableTexts['expression.function']
 	> & {};
+	'expression.identifier': PortableGuard<
+		PortableIds['expression.identifier'],
+		GoNode,
+		TSKindId,
+		PortableTexts['expression.identifier']
+	> & {};
+	'expression.if': PortableGuard<PortableIds['expression.if'], GoNode, TSKindId, PortableTexts['expression.if']> & {};
 	'expression.instantiation': PortableGuard<
 		PortableIds['expression.instantiation'],
 		GoNode,
 		TSKindId,
 		PortableTexts['expression.instantiation']
+	> & {};
+	'expression.literal': PortableGuard<
+		PortableIds['expression.literal'],
+		GoNode,
+		TSKindId,
+		PortableTexts['expression.literal']
+	> & {};
+	'expression.loop': PortableGuard<
+		PortableIds['expression.loop'],
+		GoNode,
+		TSKindId,
+		PortableTexts['expression.loop']
 	> & {};
 	'expression.member': PortableGuard<
 		PortableIds['expression.member'],
@@ -1507,6 +2205,12 @@ export interface PortableIsAt {
 		GoNode,
 		TSKindId,
 		PortableTexts['expression.reference']
+	> & {};
+	'expression.return': PortableGuard<
+		PortableIds['expression.return'],
+		GoNode,
+		TSKindId,
+		PortableTexts['expression.return']
 	> & {};
 	'expression.slice': PortableGuard<
 		PortableIds['expression.slice'],
@@ -1708,8 +2412,36 @@ export interface PortableIsAt {
 		PortableTexts['literal.string.text']
 	> & {};
 	pattern: PortableGuard<PortableIds['pattern'], GoNode, TSKindId, PortableTexts['pattern']> & {
+		readonly identifier: PortableIsAt['pattern.identifier'];
+		readonly literal: PortableIsAt['pattern.literal'];
+		readonly member: PortableIsAt['pattern.member'];
+		readonly subscript: PortableIsAt['pattern.subscript'];
 		readonly wildcard: PortableIsAt['pattern.wildcard'];
 	};
+	'pattern.identifier': PortableGuard<
+		PortableIds['pattern.identifier'],
+		GoNode,
+		TSKindId,
+		PortableTexts['pattern.identifier']
+	> & {};
+	'pattern.literal': PortableGuard<
+		PortableIds['pattern.literal'],
+		GoNode,
+		TSKindId,
+		PortableTexts['pattern.literal']
+	> & {};
+	'pattern.member': PortableGuard<
+		PortableIds['pattern.member'],
+		GoNode,
+		TSKindId,
+		PortableTexts['pattern.member']
+	> & {};
+	'pattern.subscript': PortableGuard<
+		PortableIds['pattern.subscript'],
+		GoNode,
+		TSKindId,
+		PortableTexts['pattern.subscript']
+	> & {};
 	'pattern.wildcard': PortableGuard<
 		PortableIds['pattern.wildcard'],
 		GoNode,
@@ -1720,7 +2452,9 @@ export interface PortableIsAt {
 		readonly block: PortableIsAt['statement.block'];
 		readonly break: PortableIsAt['statement.break'];
 		readonly continue: PortableIsAt['statement.continue'];
+		readonly declaration: PortableIsAt['statement.declaration'];
 		readonly empty: PortableIsAt['statement.empty'];
+		readonly expression: PortableIsAt['statement.expression'];
 		readonly if: PortableIsAt['statement.if'];
 		readonly import: PortableIsAt['statement.import'];
 		readonly labeled: PortableIsAt['statement.labeled'];
@@ -1746,11 +2480,23 @@ export interface PortableIsAt {
 		TSKindId,
 		PortableTexts['statement.continue']
 	> & {};
+	'statement.declaration': PortableGuard<
+		PortableIds['statement.declaration'],
+		GoNode,
+		TSKindId,
+		PortableTexts['statement.declaration']
+	> & {};
 	'statement.empty': PortableGuard<
 		PortableIds['statement.empty'],
 		GoNode,
 		TSKindId,
 		PortableTexts['statement.empty']
+	> & {};
+	'statement.expression': PortableGuard<
+		PortableIds['statement.expression'],
+		GoNode,
+		TSKindId,
+		PortableTexts['statement.expression']
 	> & {};
 	'statement.if': PortableGuard<PortableIds['statement.if'], GoNode, TSKindId, PortableTexts['statement.if']> & {};
 	'statement.import': PortableGuard<
@@ -1795,16 +2541,30 @@ export interface PortableIsAt {
 	> & {};
 	type: PortableGuard<PortableIds['type'], GoNode, TSKindId, PortableTexts['type']> & {
 		readonly array: PortableIsAt['type.array'];
+		readonly expression: PortableIsAt['type.expression'];
 		readonly function: PortableIsAt['type.function'];
 		readonly generic: PortableIsAt['type.generic'];
+		readonly identifier: PortableIsAt['type.identifier'];
 		readonly object: PortableIsAt['type.object'];
 		readonly parenthesized: PortableIsAt['type.parenthesized'];
 		readonly pointer: PortableIsAt['type.pointer'];
 		readonly primitive: PortableIsAt['type.primitive'];
 	};
 	'type.array': PortableGuard<PortableIds['type.array'], GoNode, TSKindId, PortableTexts['type.array']> & {};
+	'type.expression': PortableGuard<
+		PortableIds['type.expression'],
+		GoNode,
+		TSKindId,
+		PortableTexts['type.expression']
+	> & {};
 	'type.function': PortableGuard<PortableIds['type.function'], GoNode, TSKindId, PortableTexts['type.function']> & {};
 	'type.generic': PortableGuard<PortableIds['type.generic'], GoNode, TSKindId, PortableTexts['type.generic']> & {};
+	'type.identifier': PortableGuard<
+		PortableIds['type.identifier'],
+		GoNode,
+		TSKindId,
+		PortableTexts['type.identifier']
+	> & {};
 	'type.object': PortableGuard<PortableIds['type.object'], GoNode, TSKindId, PortableTexts['type.object']> & {};
 	'type.parenthesized': PortableGuard<
 		PortableIds['type.parenthesized'],
@@ -1964,45 +2724,92 @@ const table: PortableTable = {
 			ids: [
 				TSKindId.ConstSpec,
 				TSKindId.FieldDeclaration,
+				TSKindId.FieldIdentifier,
 				TSKindId.FunctionDeclaration,
+				TSKindId.Identifier,
+				TSKindId.LabelName,
 				TSKindId.MethodDeclaration,
 				TSKindId.MethodElem,
+				TSKindId.PackageIdentifier,
 				TSKindId.ParameterDeclaration,
+				TSKindId.QualifiedType,
 				TSKindId.ShortVarDeclaration,
 				TSKindId.TypeAlias,
+				TSKindId.TypeIdentifier,
 				TSKindId.TypeParameterDeclaration,
 				TSKindId.TypeSpec,
 				TSKindId.VarSpec,
 				TSKindId.VariadicParameterDeclaration
 			],
-			exact: true
+			exact: false,
+			targets: ['declaration.constant', 'declaration.type.type_alias', 'identifier']
 		},
 		'declaration.constant': { ids: [TSKindId.ConstSpec], exact: true },
 		'declaration.constant.private': { ids: [TSKindId.ConstSpec], exact: false },
 		'declaration.constant.public': { ids: [TSKindId.ConstSpec], exact: false },
-		'declaration.field': { ids: [TSKindId.FieldDeclaration], exact: true },
-		'declaration.field.private': { ids: [TSKindId.FieldDeclaration], exact: false },
-		'declaration.field.public': { ids: [TSKindId.FieldDeclaration], exact: false },
 		'declaration.function': { ids: [TSKindId.FunctionDeclaration], exact: true },
 		'declaration.function.private': { ids: [TSKindId.FunctionDeclaration], exact: false },
 		'declaration.function.public': { ids: [TSKindId.FunctionDeclaration], exact: false },
 		'declaration.function.signature': { ids: [TSKindId.FunctionDeclaration], exact: false },
-		'declaration.interface': { ids: [TSKindId.TypeSpec], exact: false },
-		'declaration.method': { ids: [TSKindId.MethodDeclaration, TSKindId.MethodElem], exact: true },
-		'declaration.method.private': { ids: [TSKindId.MethodDeclaration], exact: false },
-		'declaration.method.public': { ids: [TSKindId.MethodDeclaration], exact: false },
-		'declaration.method.signature': { ids: [TSKindId.MethodElem], exact: true },
+		'declaration.member': {
+			ids: [
+				TSKindId.ConstSpec,
+				TSKindId.FieldDeclaration,
+				TSKindId.MethodDeclaration,
+				TSKindId.MethodElem,
+				TSKindId.TypeAlias
+			],
+			exact: true,
+			targets: ['declaration.constant', 'declaration.type.type_alias']
+		},
+		'declaration.member.constant': { ids: [TSKindId.ConstSpec], exact: true, targets: ['declaration.constant'] },
+		'declaration.member.field': { ids: [TSKindId.FieldDeclaration], exact: true },
+		'declaration.member.field.private': { ids: [TSKindId.FieldDeclaration], exact: false },
+		'declaration.member.field.public': { ids: [TSKindId.FieldDeclaration], exact: false },
+		'declaration.member.method': { ids: [TSKindId.MethodDeclaration, TSKindId.MethodElem], exact: true },
+		'declaration.member.method.private': { ids: [TSKindId.MethodDeclaration], exact: false },
+		'declaration.member.method.public': { ids: [TSKindId.MethodDeclaration], exact: false },
+		'declaration.member.method.signature': { ids: [TSKindId.MethodElem], exact: true },
+		'declaration.member.type_alias': {
+			ids: [TSKindId.TypeAlias],
+			exact: true,
+			targets: ['declaration.type.type_alias']
+		},
 		'declaration.parameter': {
-			ids: [TSKindId.ParameterDeclaration, TSKindId.VariadicParameterDeclaration],
-			exact: true
+			ids: [
+				TSKindId.FieldIdentifier,
+				TSKindId.Identifier,
+				TSKindId.LabelName,
+				TSKindId.PackageIdentifier,
+				TSKindId.ParameterDeclaration,
+				TSKindId.QualifiedType,
+				TSKindId.TypeIdentifier,
+				TSKindId.VariadicParameterDeclaration
+			],
+			exact: false,
+			targets: ['identifier']
+		},
+		'declaration.parameter.identifier': {
+			ids: [
+				TSKindId.FieldIdentifier,
+				TSKindId.Identifier,
+				TSKindId.LabelName,
+				TSKindId.PackageIdentifier,
+				TSKindId.QualifiedType,
+				TSKindId.TypeIdentifier
+			],
+			exact: false,
+			targets: ['identifier']
 		},
 		'declaration.parameter.variadic': { ids: [TSKindId.VariadicParameterDeclaration], exact: true },
-		'declaration.struct': { ids: [TSKindId.TypeSpec], exact: false },
-		'declaration.struct.private': { ids: [TSKindId.TypeSpec], exact: false },
-		'declaration.struct.public': { ids: [TSKindId.TypeSpec], exact: false },
-		'declaration.type_alias': { ids: [TSKindId.TypeAlias], exact: true },
-		'declaration.type_alias.private': { ids: [TSKindId.TypeAlias], exact: false },
-		'declaration.type_alias.public': { ids: [TSKindId.TypeAlias], exact: false },
+		'declaration.type': { ids: [TSKindId.TypeAlias, TSKindId.TypeSpec], exact: false },
+		'declaration.type.interface': { ids: [TSKindId.TypeSpec], exact: false },
+		'declaration.type.struct': { ids: [TSKindId.TypeSpec], exact: false },
+		'declaration.type.struct.private': { ids: [TSKindId.TypeSpec], exact: false },
+		'declaration.type.struct.public': { ids: [TSKindId.TypeSpec], exact: false },
+		'declaration.type.type_alias': { ids: [TSKindId.TypeAlias], exact: true },
+		'declaration.type.type_alias.private': { ids: [TSKindId.TypeAlias], exact: false },
+		'declaration.type.type_alias.public': { ids: [TSKindId.TypeAlias], exact: false },
 		'declaration.type_parameter': { ids: [TSKindId.TypeParameterDeclaration], exact: true },
 		'declaration.variable': { ids: [TSKindId.ShortVarDeclaration, TSKindId.VarSpec], exact: true },
 		'declaration.variable.private': { ids: [TSKindId.VarSpec], exact: false },
@@ -2014,21 +2821,84 @@ const table: PortableTable = {
 			ids: [
 				TSKindId.AssignmentStatement,
 				TSKindId.BinaryExpression,
+				TSKindId.Block,
+				TSKindId.BreakStatement,
 				TSKindId.CallExpression,
 				TSKindId.CompositeLiteral,
+				TSKindId.ContinueStatement,
 				TSKindId.DecStatement,
+				TSKindId.EscapeSequenceArm1,
+				TSKindId.EscapeSequenceArm2,
+				TSKindId.EscapeSequenceArm3,
+				TSKindId.EscapeSequenceArm4,
+				TSKindId.EscapeSequenceArm5,
+				TSKindId.False,
+				TSKindId.FieldIdentifier,
+				TSKindId.FloatLiteralArm1,
+				TSKindId.FloatLiteralArm2,
+				TSKindId.FloatLiteralArm3,
+				TSKindId.FloatLiteralArm4Arm1,
+				TSKindId.FloatLiteralArm4Arm2,
+				TSKindId.FloatLiteralArm4Arm3,
+				TSKindId.ForStatement,
 				TSKindId.FuncLiteral,
+				TSKindId.Identifier,
+				TSKindId.IfStatement,
+				TSKindId.ImaginaryLiteralArm1,
+				TSKindId.ImaginaryLiteralArm10Arm1,
+				TSKindId.ImaginaryLiteralArm10Arm2,
+				TSKindId.ImaginaryLiteralArm10Arm3,
+				TSKindId.ImaginaryLiteralArm2,
+				TSKindId.ImaginaryLiteralArm3,
+				TSKindId.ImaginaryLiteralArm4,
+				TSKindId.ImaginaryLiteralArm5,
+				TSKindId.ImaginaryLiteralArm6,
+				TSKindId.ImaginaryLiteralArm7,
+				TSKindId.ImaginaryLiteralArm8,
+				TSKindId.ImaginaryLiteralArm9,
 				TSKindId.IncStatement,
 				TSKindId.IndexExpression,
+				TSKindId.IntLiteralArm1,
+				TSKindId.IntLiteralArm2,
+				TSKindId.IntLiteralArm3,
+				TSKindId.IntLiteralArm4,
+				TSKindId.IntLiteralArm5,
+				TSKindId.InterpretedStringLiteral,
+				TSKindId.InterpretedStringLiteralContent,
+				TSKindId.LabelName,
+				TSKindId.Nil,
+				TSKindId.PackageIdentifier,
 				TSKindId.ParenthesizedExpression,
+				TSKindId.QualifiedType,
+				TSKindId.RawStringLiteral,
+				TSKindId.RawStringLiteralContent,
+				TSKindId.ReturnStatement,
+				TSKindId.RuneLiteralArm1,
+				TSKindId.RuneLiteralArm2Arm1,
+				TSKindId.RuneLiteralArm2Arm2,
+				TSKindId.RuneLiteralArm2Arm3,
+				TSKindId.RuneLiteralArm2Arm4,
+				TSKindId.RuneLiteralArm2Arm5,
 				TSKindId.SelectorExpression,
 				TSKindId.SliceExpression,
+				TSKindId.True,
 				TSKindId.TypeAssertionExpression,
 				TSKindId.TypeConversionExpression,
+				TSKindId.TypeIdentifier,
 				TSKindId.TypeInstantiationExpression,
 				TSKindId.UnaryExpression
 			],
-			exact: false
+			exact: false,
+			targets: [
+				'identifier',
+				'literal',
+				'statement.block',
+				'statement.break',
+				'statement.continue',
+				'statement.if',
+				'statement.loop',
+				'statement.return'
+			]
 		},
 		'expression.assignment': { ids: [TSKindId.AssignmentStatement], exact: true },
 		'expression.assignment.compound': { ids: [TSKindId.AssignmentStatement], exact: false },
@@ -2066,6 +2936,8 @@ const table: PortableTable = {
 		'expression.binary.shift': { ids: [TSKindId.BinaryExpression], exact: false },
 		'expression.binary.shift.left': { ids: [TSKindId.BinaryExpression], exact: false },
 		'expression.binary.shift.right': { ids: [TSKindId.BinaryExpression], exact: false },
+		'expression.block': { ids: [TSKindId.Block], exact: true, targets: ['statement.block'] },
+		'expression.break': { ids: [TSKindId.BreakStatement], exact: true, targets: ['statement.break'] },
 		'expression.call': { ids: [TSKindId.CallExpression], exact: true },
 		'expression.call.member': { ids: [TSKindId.CallExpression], exact: false },
 		'expression.cast': { ids: [TSKindId.TypeAssertionExpression, TSKindId.TypeConversionExpression], exact: true },
@@ -2074,11 +2946,74 @@ const table: PortableTable = {
 		'expression.collection.list': { ids: [TSKindId.CompositeLiteral], exact: false },
 		'expression.collection.map': { ids: [TSKindId.CompositeLiteral], exact: false },
 		'expression.collection.struct': { ids: [TSKindId.CompositeLiteral], exact: false },
+		'expression.continue': { ids: [TSKindId.ContinueStatement], exact: true, targets: ['statement.continue'] },
 		'expression.function': { ids: [TSKindId.FuncLiteral], exact: true },
+		'expression.identifier': {
+			ids: [
+				TSKindId.FieldIdentifier,
+				TSKindId.Identifier,
+				TSKindId.LabelName,
+				TSKindId.PackageIdentifier,
+				TSKindId.QualifiedType,
+				TSKindId.TypeIdentifier
+			],
+			exact: false,
+			targets: ['identifier']
+		},
+		'expression.if': { ids: [TSKindId.IfStatement], exact: true, targets: ['statement.if'] },
 		'expression.instantiation': { ids: [TSKindId.TypeInstantiationExpression], exact: true },
+		'expression.literal': {
+			ids: [
+				TSKindId.EscapeSequenceArm1,
+				TSKindId.EscapeSequenceArm2,
+				TSKindId.EscapeSequenceArm3,
+				TSKindId.EscapeSequenceArm4,
+				TSKindId.EscapeSequenceArm5,
+				TSKindId.False,
+				TSKindId.FloatLiteralArm1,
+				TSKindId.FloatLiteralArm2,
+				TSKindId.FloatLiteralArm3,
+				TSKindId.FloatLiteralArm4Arm1,
+				TSKindId.FloatLiteralArm4Arm2,
+				TSKindId.FloatLiteralArm4Arm3,
+				TSKindId.ImaginaryLiteralArm1,
+				TSKindId.ImaginaryLiteralArm10Arm1,
+				TSKindId.ImaginaryLiteralArm10Arm2,
+				TSKindId.ImaginaryLiteralArm10Arm3,
+				TSKindId.ImaginaryLiteralArm2,
+				TSKindId.ImaginaryLiteralArm3,
+				TSKindId.ImaginaryLiteralArm4,
+				TSKindId.ImaginaryLiteralArm5,
+				TSKindId.ImaginaryLiteralArm6,
+				TSKindId.ImaginaryLiteralArm7,
+				TSKindId.ImaginaryLiteralArm8,
+				TSKindId.ImaginaryLiteralArm9,
+				TSKindId.IntLiteralArm1,
+				TSKindId.IntLiteralArm2,
+				TSKindId.IntLiteralArm3,
+				TSKindId.IntLiteralArm4,
+				TSKindId.IntLiteralArm5,
+				TSKindId.InterpretedStringLiteral,
+				TSKindId.InterpretedStringLiteralContent,
+				TSKindId.Nil,
+				TSKindId.RawStringLiteral,
+				TSKindId.RawStringLiteralContent,
+				TSKindId.RuneLiteralArm1,
+				TSKindId.RuneLiteralArm2Arm1,
+				TSKindId.RuneLiteralArm2Arm2,
+				TSKindId.RuneLiteralArm2Arm3,
+				TSKindId.RuneLiteralArm2Arm4,
+				TSKindId.RuneLiteralArm2Arm5,
+				TSKindId.True
+			],
+			exact: true,
+			targets: ['literal']
+		},
+		'expression.loop': { ids: [TSKindId.ForStatement], exact: true, targets: ['statement.loop'] },
 		'expression.member': { ids: [TSKindId.SelectorExpression], exact: true },
 		'expression.parenthesized': { ids: [TSKindId.ParenthesizedExpression], exact: true },
 		'expression.reference': { ids: [TSKindId.UnaryExpression], exact: false },
+		'expression.return': { ids: [TSKindId.ReturnStatement], exact: true, targets: ['statement.return'] },
 		'expression.slice': { ids: [TSKindId.SliceExpression], exact: true },
 		'expression.subscript': { ids: [TSKindId.IndexExpression], exact: true },
 		'expression.unary': { ids: [TSKindId.UnaryExpression], exact: true },
@@ -2276,28 +3211,340 @@ const table: PortableTable = {
 			ids: [TSKindId.InterpretedStringLiteralContent, TSKindId.RawStringLiteralContent],
 			exact: true
 		},
-		pattern: { ids: [TSKindId.BlankIdentifier], exact: true },
+		pattern: {
+			ids: [
+				TSKindId.BlankIdentifier,
+				TSKindId.EscapeSequenceArm1,
+				TSKindId.EscapeSequenceArm2,
+				TSKindId.EscapeSequenceArm3,
+				TSKindId.EscapeSequenceArm4,
+				TSKindId.EscapeSequenceArm5,
+				TSKindId.False,
+				TSKindId.FieldIdentifier,
+				TSKindId.FloatLiteralArm1,
+				TSKindId.FloatLiteralArm2,
+				TSKindId.FloatLiteralArm3,
+				TSKindId.FloatLiteralArm4Arm1,
+				TSKindId.FloatLiteralArm4Arm2,
+				TSKindId.FloatLiteralArm4Arm3,
+				TSKindId.Identifier,
+				TSKindId.ImaginaryLiteralArm1,
+				TSKindId.ImaginaryLiteralArm10Arm1,
+				TSKindId.ImaginaryLiteralArm10Arm2,
+				TSKindId.ImaginaryLiteralArm10Arm3,
+				TSKindId.ImaginaryLiteralArm2,
+				TSKindId.ImaginaryLiteralArm3,
+				TSKindId.ImaginaryLiteralArm4,
+				TSKindId.ImaginaryLiteralArm5,
+				TSKindId.ImaginaryLiteralArm6,
+				TSKindId.ImaginaryLiteralArm7,
+				TSKindId.ImaginaryLiteralArm8,
+				TSKindId.ImaginaryLiteralArm9,
+				TSKindId.IndexExpression,
+				TSKindId.IntLiteralArm1,
+				TSKindId.IntLiteralArm2,
+				TSKindId.IntLiteralArm3,
+				TSKindId.IntLiteralArm4,
+				TSKindId.IntLiteralArm5,
+				TSKindId.InterpretedStringLiteral,
+				TSKindId.InterpretedStringLiteralContent,
+				TSKindId.LabelName,
+				TSKindId.Nil,
+				TSKindId.PackageIdentifier,
+				TSKindId.QualifiedType,
+				TSKindId.RawStringLiteral,
+				TSKindId.RawStringLiteralContent,
+				TSKindId.RuneLiteralArm1,
+				TSKindId.RuneLiteralArm2Arm1,
+				TSKindId.RuneLiteralArm2Arm2,
+				TSKindId.RuneLiteralArm2Arm3,
+				TSKindId.RuneLiteralArm2Arm4,
+				TSKindId.RuneLiteralArm2Arm5,
+				TSKindId.SelectorExpression,
+				TSKindId.True,
+				TSKindId.TypeIdentifier
+			],
+			exact: false,
+			targets: ['expression.member', 'expression.subscript', 'identifier', 'literal']
+		},
+		'pattern.identifier': {
+			ids: [
+				TSKindId.FieldIdentifier,
+				TSKindId.Identifier,
+				TSKindId.LabelName,
+				TSKindId.PackageIdentifier,
+				TSKindId.QualifiedType,
+				TSKindId.TypeIdentifier
+			],
+			exact: false,
+			targets: ['identifier']
+		},
+		'pattern.literal': {
+			ids: [
+				TSKindId.EscapeSequenceArm1,
+				TSKindId.EscapeSequenceArm2,
+				TSKindId.EscapeSequenceArm3,
+				TSKindId.EscapeSequenceArm4,
+				TSKindId.EscapeSequenceArm5,
+				TSKindId.False,
+				TSKindId.FloatLiteralArm1,
+				TSKindId.FloatLiteralArm2,
+				TSKindId.FloatLiteralArm3,
+				TSKindId.FloatLiteralArm4Arm1,
+				TSKindId.FloatLiteralArm4Arm2,
+				TSKindId.FloatLiteralArm4Arm3,
+				TSKindId.ImaginaryLiteralArm1,
+				TSKindId.ImaginaryLiteralArm10Arm1,
+				TSKindId.ImaginaryLiteralArm10Arm2,
+				TSKindId.ImaginaryLiteralArm10Arm3,
+				TSKindId.ImaginaryLiteralArm2,
+				TSKindId.ImaginaryLiteralArm3,
+				TSKindId.ImaginaryLiteralArm4,
+				TSKindId.ImaginaryLiteralArm5,
+				TSKindId.ImaginaryLiteralArm6,
+				TSKindId.ImaginaryLiteralArm7,
+				TSKindId.ImaginaryLiteralArm8,
+				TSKindId.ImaginaryLiteralArm9,
+				TSKindId.IntLiteralArm1,
+				TSKindId.IntLiteralArm2,
+				TSKindId.IntLiteralArm3,
+				TSKindId.IntLiteralArm4,
+				TSKindId.IntLiteralArm5,
+				TSKindId.InterpretedStringLiteral,
+				TSKindId.InterpretedStringLiteralContent,
+				TSKindId.Nil,
+				TSKindId.RawStringLiteral,
+				TSKindId.RawStringLiteralContent,
+				TSKindId.RuneLiteralArm1,
+				TSKindId.RuneLiteralArm2Arm1,
+				TSKindId.RuneLiteralArm2Arm2,
+				TSKindId.RuneLiteralArm2Arm3,
+				TSKindId.RuneLiteralArm2Arm4,
+				TSKindId.RuneLiteralArm2Arm5,
+				TSKindId.True
+			],
+			exact: true,
+			targets: ['literal']
+		},
+		'pattern.member': { ids: [TSKindId.SelectorExpression], exact: true, targets: ['expression.member'] },
+		'pattern.subscript': { ids: [TSKindId.IndexExpression], exact: true, targets: ['expression.subscript'] },
 		'pattern.wildcard': { ids: [TSKindId.BlankIdentifier], exact: true },
 		statement: {
 			ids: [
+				TSKindId.AssignmentStatement,
+				TSKindId.BinaryExpression,
 				TSKindId.Block,
 				TSKindId.BreakStatement,
+				TSKindId.CallExpression,
+				TSKindId.CompositeLiteral,
+				TSKindId.ConstSpec,
 				TSKindId.ContinueStatement,
+				TSKindId.DecStatement,
 				TSKindId.EmptyStatement,
+				TSKindId.EscapeSequenceArm1,
+				TSKindId.EscapeSequenceArm2,
+				TSKindId.EscapeSequenceArm3,
+				TSKindId.EscapeSequenceArm4,
+				TSKindId.EscapeSequenceArm5,
 				TSKindId.ExpressionSwitchStatement,
+				TSKindId.False,
+				TSKindId.FieldDeclaration,
+				TSKindId.FieldIdentifier,
+				TSKindId.FloatLiteralArm1,
+				TSKindId.FloatLiteralArm2,
+				TSKindId.FloatLiteralArm3,
+				TSKindId.FloatLiteralArm4Arm1,
+				TSKindId.FloatLiteralArm4Arm2,
+				TSKindId.FloatLiteralArm4Arm3,
 				TSKindId.ForStatement,
+				TSKindId.FuncLiteral,
+				TSKindId.FunctionDeclaration,
+				TSKindId.Identifier,
 				TSKindId.IfStatement,
+				TSKindId.ImaginaryLiteralArm1,
+				TSKindId.ImaginaryLiteralArm10Arm1,
+				TSKindId.ImaginaryLiteralArm10Arm2,
+				TSKindId.ImaginaryLiteralArm10Arm3,
+				TSKindId.ImaginaryLiteralArm2,
+				TSKindId.ImaginaryLiteralArm3,
+				TSKindId.ImaginaryLiteralArm4,
+				TSKindId.ImaginaryLiteralArm5,
+				TSKindId.ImaginaryLiteralArm6,
+				TSKindId.ImaginaryLiteralArm7,
+				TSKindId.ImaginaryLiteralArm8,
+				TSKindId.ImaginaryLiteralArm9,
 				TSKindId.ImportDeclaration,
+				TSKindId.IncStatement,
+				TSKindId.IndexExpression,
+				TSKindId.IntLiteralArm1,
+				TSKindId.IntLiteralArm2,
+				TSKindId.IntLiteralArm3,
+				TSKindId.IntLiteralArm4,
+				TSKindId.IntLiteralArm5,
+				TSKindId.InterpretedStringLiteral,
+				TSKindId.InterpretedStringLiteralContent,
+				TSKindId.LabelName,
 				TSKindId.LabeledStatement,
+				TSKindId.MethodDeclaration,
+				TSKindId.MethodElem,
+				TSKindId.Nil,
+				TSKindId.PackageIdentifier,
+				TSKindId.ParameterDeclaration,
+				TSKindId.ParenthesizedExpression,
+				TSKindId.QualifiedType,
+				TSKindId.RawStringLiteral,
+				TSKindId.RawStringLiteralContent,
 				TSKindId.ReturnStatement,
-				TSKindId.TypeSwitchStatement
+				TSKindId.RuneLiteralArm1,
+				TSKindId.RuneLiteralArm2Arm1,
+				TSKindId.RuneLiteralArm2Arm2,
+				TSKindId.RuneLiteralArm2Arm3,
+				TSKindId.RuneLiteralArm2Arm4,
+				TSKindId.RuneLiteralArm2Arm5,
+				TSKindId.SelectorExpression,
+				TSKindId.ShortVarDeclaration,
+				TSKindId.SliceExpression,
+				TSKindId.True,
+				TSKindId.TypeAlias,
+				TSKindId.TypeAssertionExpression,
+				TSKindId.TypeConversionExpression,
+				TSKindId.TypeIdentifier,
+				TSKindId.TypeInstantiationExpression,
+				TSKindId.TypeParameterDeclaration,
+				TSKindId.TypeSpec,
+				TSKindId.TypeSwitchStatement,
+				TSKindId.UnaryExpression,
+				TSKindId.VarSpec,
+				TSKindId.VariadicParameterDeclaration
 			],
-			exact: true
+			exact: false,
+			targets: [
+				'declaration',
+				'declaration.constant',
+				'declaration.type.type_alias',
+				'expression',
+				'identifier',
+				'literal',
+				'statement.block',
+				'statement.break',
+				'statement.continue',
+				'statement.if',
+				'statement.loop',
+				'statement.return'
+			]
 		},
 		'statement.block': { ids: [TSKindId.Block], exact: true },
 		'statement.break': { ids: [TSKindId.BreakStatement], exact: true },
 		'statement.continue': { ids: [TSKindId.ContinueStatement], exact: true },
+		'statement.declaration': {
+			ids: [
+				TSKindId.ConstSpec,
+				TSKindId.FieldDeclaration,
+				TSKindId.FieldIdentifier,
+				TSKindId.FunctionDeclaration,
+				TSKindId.Identifier,
+				TSKindId.LabelName,
+				TSKindId.MethodDeclaration,
+				TSKindId.MethodElem,
+				TSKindId.PackageIdentifier,
+				TSKindId.ParameterDeclaration,
+				TSKindId.QualifiedType,
+				TSKindId.ShortVarDeclaration,
+				TSKindId.TypeAlias,
+				TSKindId.TypeIdentifier,
+				TSKindId.TypeParameterDeclaration,
+				TSKindId.TypeSpec,
+				TSKindId.VarSpec,
+				TSKindId.VariadicParameterDeclaration
+			],
+			exact: false,
+			targets: ['declaration', 'declaration.constant', 'declaration.type.type_alias', 'identifier']
+		},
 		'statement.empty': { ids: [TSKindId.EmptyStatement], exact: true },
+		'statement.expression': {
+			ids: [
+				TSKindId.AssignmentStatement,
+				TSKindId.BinaryExpression,
+				TSKindId.Block,
+				TSKindId.BreakStatement,
+				TSKindId.CallExpression,
+				TSKindId.CompositeLiteral,
+				TSKindId.ContinueStatement,
+				TSKindId.DecStatement,
+				TSKindId.EscapeSequenceArm1,
+				TSKindId.EscapeSequenceArm2,
+				TSKindId.EscapeSequenceArm3,
+				TSKindId.EscapeSequenceArm4,
+				TSKindId.EscapeSequenceArm5,
+				TSKindId.False,
+				TSKindId.FieldIdentifier,
+				TSKindId.FloatLiteralArm1,
+				TSKindId.FloatLiteralArm2,
+				TSKindId.FloatLiteralArm3,
+				TSKindId.FloatLiteralArm4Arm1,
+				TSKindId.FloatLiteralArm4Arm2,
+				TSKindId.FloatLiteralArm4Arm3,
+				TSKindId.ForStatement,
+				TSKindId.FuncLiteral,
+				TSKindId.Identifier,
+				TSKindId.IfStatement,
+				TSKindId.ImaginaryLiteralArm1,
+				TSKindId.ImaginaryLiteralArm10Arm1,
+				TSKindId.ImaginaryLiteralArm10Arm2,
+				TSKindId.ImaginaryLiteralArm10Arm3,
+				TSKindId.ImaginaryLiteralArm2,
+				TSKindId.ImaginaryLiteralArm3,
+				TSKindId.ImaginaryLiteralArm4,
+				TSKindId.ImaginaryLiteralArm5,
+				TSKindId.ImaginaryLiteralArm6,
+				TSKindId.ImaginaryLiteralArm7,
+				TSKindId.ImaginaryLiteralArm8,
+				TSKindId.ImaginaryLiteralArm9,
+				TSKindId.IncStatement,
+				TSKindId.IndexExpression,
+				TSKindId.IntLiteralArm1,
+				TSKindId.IntLiteralArm2,
+				TSKindId.IntLiteralArm3,
+				TSKindId.IntLiteralArm4,
+				TSKindId.IntLiteralArm5,
+				TSKindId.InterpretedStringLiteral,
+				TSKindId.InterpretedStringLiteralContent,
+				TSKindId.LabelName,
+				TSKindId.Nil,
+				TSKindId.PackageIdentifier,
+				TSKindId.ParenthesizedExpression,
+				TSKindId.QualifiedType,
+				TSKindId.RawStringLiteral,
+				TSKindId.RawStringLiteralContent,
+				TSKindId.ReturnStatement,
+				TSKindId.RuneLiteralArm1,
+				TSKindId.RuneLiteralArm2Arm1,
+				TSKindId.RuneLiteralArm2Arm2,
+				TSKindId.RuneLiteralArm2Arm3,
+				TSKindId.RuneLiteralArm2Arm4,
+				TSKindId.RuneLiteralArm2Arm5,
+				TSKindId.SelectorExpression,
+				TSKindId.SliceExpression,
+				TSKindId.True,
+				TSKindId.TypeAssertionExpression,
+				TSKindId.TypeConversionExpression,
+				TSKindId.TypeIdentifier,
+				TSKindId.TypeInstantiationExpression,
+				TSKindId.UnaryExpression
+			],
+			exact: false,
+			targets: [
+				'expression',
+				'identifier',
+				'literal',
+				'statement.block',
+				'statement.break',
+				'statement.continue',
+				'statement.if',
+				'statement.loop',
+				'statement.return'
+			]
+		},
 		'statement.if': { ids: [TSKindId.IfStatement], exact: true },
 		'statement.import': { ids: [TSKindId.ImportDeclaration], exact: true },
 		'statement.labeled': { ids: [TSKindId.LabeledStatement], exact: true },
@@ -2310,20 +3557,194 @@ const table: PortableTable = {
 			ids: [
 				TSKindId.PointerTypeFieldDeclarationArm,
 				TSKindId.ArrayType,
+				TSKindId.AssignmentStatement,
+				TSKindId.BinaryExpression,
+				TSKindId.Block,
+				TSKindId.BreakStatement,
+				TSKindId.CallExpression,
+				TSKindId.CompositeLiteral,
+				TSKindId.ContinueStatement,
+				TSKindId.DecStatement,
+				TSKindId.EscapeSequenceArm1,
+				TSKindId.EscapeSequenceArm2,
+				TSKindId.EscapeSequenceArm3,
+				TSKindId.EscapeSequenceArm4,
+				TSKindId.EscapeSequenceArm5,
+				TSKindId.False,
+				TSKindId.FieldIdentifier,
+				TSKindId.FloatLiteralArm1,
+				TSKindId.FloatLiteralArm2,
+				TSKindId.FloatLiteralArm3,
+				TSKindId.FloatLiteralArm4Arm1,
+				TSKindId.FloatLiteralArm4Arm2,
+				TSKindId.FloatLiteralArm4Arm3,
+				TSKindId.ForStatement,
+				TSKindId.FuncLiteral,
 				TSKindId.FunctionType,
 				TSKindId.GenericType,
+				TSKindId.Identifier,
+				TSKindId.IfStatement,
+				TSKindId.ImaginaryLiteralArm1,
+				TSKindId.ImaginaryLiteralArm10Arm1,
+				TSKindId.ImaginaryLiteralArm10Arm2,
+				TSKindId.ImaginaryLiteralArm10Arm3,
+				TSKindId.ImaginaryLiteralArm2,
+				TSKindId.ImaginaryLiteralArm3,
+				TSKindId.ImaginaryLiteralArm4,
+				TSKindId.ImaginaryLiteralArm5,
+				TSKindId.ImaginaryLiteralArm6,
+				TSKindId.ImaginaryLiteralArm7,
+				TSKindId.ImaginaryLiteralArm8,
+				TSKindId.ImaginaryLiteralArm9,
 				TSKindId.ImplicitLengthArrayType,
+				TSKindId.IncStatement,
+				TSKindId.IndexExpression,
+				TSKindId.IntLiteralArm1,
+				TSKindId.IntLiteralArm2,
+				TSKindId.IntLiteralArm3,
+				TSKindId.IntLiteralArm4,
+				TSKindId.IntLiteralArm5,
+				TSKindId.InterpretedStringLiteral,
+				TSKindId.InterpretedStringLiteralContent,
+				TSKindId.LabelName,
+				TSKindId.Nil,
+				TSKindId.PackageIdentifier,
+				TSKindId.ParenthesizedExpression,
 				TSKindId.ParenthesizedType,
 				TSKindId.PointerType,
+				TSKindId.QualifiedType,
+				TSKindId.RawStringLiteral,
+				TSKindId.RawStringLiteralContent,
+				TSKindId.ReturnStatement,
+				TSKindId.RuneLiteralArm1,
+				TSKindId.RuneLiteralArm2Arm1,
+				TSKindId.RuneLiteralArm2Arm2,
+				TSKindId.RuneLiteralArm2Arm3,
+				TSKindId.RuneLiteralArm2Arm4,
+				TSKindId.RuneLiteralArm2Arm5,
+				TSKindId.SelectorExpression,
+				TSKindId.SliceExpression,
 				TSKindId.SliceType,
 				TSKindId.StructType,
-				TSKindId.TypeIdentifier
+				TSKindId.True,
+				TSKindId.TypeAssertionExpression,
+				TSKindId.TypeConversionExpression,
+				TSKindId.TypeIdentifier,
+				TSKindId.TypeInstantiationExpression,
+				TSKindId.UnaryExpression
 			],
-			exact: false
+			exact: false,
+			targets: [
+				'expression',
+				'identifier',
+				'literal',
+				'statement.block',
+				'statement.break',
+				'statement.continue',
+				'statement.if',
+				'statement.loop',
+				'statement.return'
+			]
 		},
 		'type.array': { ids: [TSKindId.ArrayType, TSKindId.ImplicitLengthArrayType, TSKindId.SliceType], exact: true },
+		'type.expression': {
+			ids: [
+				TSKindId.AssignmentStatement,
+				TSKindId.BinaryExpression,
+				TSKindId.Block,
+				TSKindId.BreakStatement,
+				TSKindId.CallExpression,
+				TSKindId.CompositeLiteral,
+				TSKindId.ContinueStatement,
+				TSKindId.DecStatement,
+				TSKindId.EscapeSequenceArm1,
+				TSKindId.EscapeSequenceArm2,
+				TSKindId.EscapeSequenceArm3,
+				TSKindId.EscapeSequenceArm4,
+				TSKindId.EscapeSequenceArm5,
+				TSKindId.False,
+				TSKindId.FieldIdentifier,
+				TSKindId.FloatLiteralArm1,
+				TSKindId.FloatLiteralArm2,
+				TSKindId.FloatLiteralArm3,
+				TSKindId.FloatLiteralArm4Arm1,
+				TSKindId.FloatLiteralArm4Arm2,
+				TSKindId.FloatLiteralArm4Arm3,
+				TSKindId.ForStatement,
+				TSKindId.FuncLiteral,
+				TSKindId.Identifier,
+				TSKindId.IfStatement,
+				TSKindId.ImaginaryLiteralArm1,
+				TSKindId.ImaginaryLiteralArm10Arm1,
+				TSKindId.ImaginaryLiteralArm10Arm2,
+				TSKindId.ImaginaryLiteralArm10Arm3,
+				TSKindId.ImaginaryLiteralArm2,
+				TSKindId.ImaginaryLiteralArm3,
+				TSKindId.ImaginaryLiteralArm4,
+				TSKindId.ImaginaryLiteralArm5,
+				TSKindId.ImaginaryLiteralArm6,
+				TSKindId.ImaginaryLiteralArm7,
+				TSKindId.ImaginaryLiteralArm8,
+				TSKindId.ImaginaryLiteralArm9,
+				TSKindId.IncStatement,
+				TSKindId.IndexExpression,
+				TSKindId.IntLiteralArm1,
+				TSKindId.IntLiteralArm2,
+				TSKindId.IntLiteralArm3,
+				TSKindId.IntLiteralArm4,
+				TSKindId.IntLiteralArm5,
+				TSKindId.InterpretedStringLiteral,
+				TSKindId.InterpretedStringLiteralContent,
+				TSKindId.LabelName,
+				TSKindId.Nil,
+				TSKindId.PackageIdentifier,
+				TSKindId.ParenthesizedExpression,
+				TSKindId.QualifiedType,
+				TSKindId.RawStringLiteral,
+				TSKindId.RawStringLiteralContent,
+				TSKindId.ReturnStatement,
+				TSKindId.RuneLiteralArm1,
+				TSKindId.RuneLiteralArm2Arm1,
+				TSKindId.RuneLiteralArm2Arm2,
+				TSKindId.RuneLiteralArm2Arm3,
+				TSKindId.RuneLiteralArm2Arm4,
+				TSKindId.RuneLiteralArm2Arm5,
+				TSKindId.SelectorExpression,
+				TSKindId.SliceExpression,
+				TSKindId.True,
+				TSKindId.TypeAssertionExpression,
+				TSKindId.TypeConversionExpression,
+				TSKindId.TypeIdentifier,
+				TSKindId.TypeInstantiationExpression,
+				TSKindId.UnaryExpression
+			],
+			exact: false,
+			targets: [
+				'expression',
+				'identifier',
+				'literal',
+				'statement.block',
+				'statement.break',
+				'statement.continue',
+				'statement.if',
+				'statement.loop',
+				'statement.return'
+			]
+		},
 		'type.function': { ids: [TSKindId.FunctionType], exact: true },
 		'type.generic': { ids: [TSKindId.GenericType], exact: true },
+		'type.identifier': {
+			ids: [
+				TSKindId.FieldIdentifier,
+				TSKindId.Identifier,
+				TSKindId.LabelName,
+				TSKindId.PackageIdentifier,
+				TSKindId.QualifiedType,
+				TSKindId.TypeIdentifier
+			],
+			exact: false,
+			targets: ['identifier']
+		},
 		'type.object': { ids: [TSKindId.StructType], exact: true },
 		'type.parenthesized': { ids: [TSKindId.ParenthesizedType], exact: true },
 		'type.pointer': { ids: [TSKindId.PointerTypeFieldDeclarationArm, TSKindId.PointerType], exact: true },
@@ -2576,7 +3997,7 @@ const table: PortableTable = {
 		[TSKindId.False]: [{ path: 'literal.boolean.false', within: [], test: [] }],
 		[TSKindId.FieldDeclaration]: [
 			{
-				path: 'declaration.field.public',
+				path: 'declaration.member.field.public',
 				within: [],
 				test: [
 					{
@@ -2588,7 +4009,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.field.private',
+				path: 'declaration.member.field.private',
 				within: [],
 				test: [
 					{
@@ -2599,7 +4020,7 @@ const table: PortableTable = {
 					{ up: 0, via: [], plan: { op: 'is', types: [295], slots: { '167': 0 } } }
 				]
 			},
-			{ path: 'declaration.field', within: [], test: [] }
+			{ path: 'declaration.member.field', within: [], test: [] }
 		],
 		[TSKindId.FieldIdentifier]: [{ path: 'identifier', within: [], test: [] }],
 		[TSKindId.FloatLiteralArm1]: [{ path: 'literal.number.float', within: [], test: [] }],
@@ -2694,7 +4115,7 @@ const table: PortableTable = {
 		[TSKindId.LabeledStatement]: [{ path: 'statement.labeled', within: [], test: [] }],
 		[TSKindId.MethodDeclaration]: [
 			{
-				path: 'declaration.method.public',
+				path: 'declaration.member.method.public',
 				within: [],
 				test: [
 					{
@@ -2705,7 +4126,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.private',
+				path: 'declaration.member.method.private',
 				within: [],
 				test: [
 					{
@@ -2715,9 +4136,9 @@ const table: PortableTable = {
 					}
 				]
 			},
-			{ path: 'declaration.method', within: [], test: [] }
+			{ path: 'declaration.member.method', within: [], test: [] }
 		],
-		[TSKindId.MethodElem]: [{ path: 'declaration.method.signature', within: [], test: [] }],
+		[TSKindId.MethodElem]: [{ path: 'declaration.member.method.signature', within: [], test: [] }],
 		[TSKindId.Nil]: [{ path: 'literal.null', within: [], test: [] }],
 		[TSKindId.PackageIdentifier]: [{ path: 'identifier', within: [], test: [] }],
 		[TSKindId.ParameterDeclaration]: [{ path: 'declaration.parameter', within: [], test: [] }],
@@ -2746,7 +4167,7 @@ const table: PortableTable = {
 		[TSKindId.True]: [{ path: 'literal.boolean.true', within: [], test: [] }],
 		[TSKindId.TypeAlias]: [
 			{
-				path: 'declaration.type_alias.public',
+				path: 'declaration.type.type_alias.public',
 				within: [],
 				test: [
 					{
@@ -2757,7 +4178,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.type_alias.private',
+				path: 'declaration.type.type_alias.private',
 				within: [],
 				test: [
 					{
@@ -2767,7 +4188,7 @@ const table: PortableTable = {
 					}
 				]
 			},
-			{ path: 'declaration.type_alias', within: [], test: [] }
+			{ path: 'declaration.type.type_alias', within: [], test: [] }
 		],
 		[TSKindId.TypeAssertionExpression]: [{ path: 'expression.cast', within: [], test: [] }],
 		[TSKindId.TypeCase]: [{ path: 'clause.case.switch', within: [], test: [] }],
@@ -2835,7 +4256,7 @@ const table: PortableTable = {
 		[TSKindId.TypeParameterDeclaration]: [{ path: 'declaration.type_parameter', within: [], test: [] }],
 		[TSKindId.TypeSpec]: [
 			{
-				path: 'declaration.struct.public',
+				path: 'declaration.type.struct.public',
 				within: [],
 				test: [
 					{
@@ -2847,7 +4268,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.struct.private',
+				path: 'declaration.type.struct.private',
 				within: [],
 				test: [
 					{
@@ -2859,12 +4280,12 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.struct',
+				path: 'declaration.type.struct',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'is', types: [164], slots: { '154': 2 } } }]
 			},
 			{
-				path: 'declaration.interface',
+				path: 'declaration.type.interface',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'is', types: [168], slots: { '154': 2 } } }]
 			},

@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { PortableContainer, PortableSeat, PortableSlotRoute, PortableSpelledFact } from '@sittir/types';
 import { describe, expect, it } from 'vitest';
-import { runPinned } from '../read.ts';
+import { runPinned, type PinnedInput } from '../read.ts';
 
 describe('the pinned child emits a portable build module', () => {
 	it('writes the module through the pinned builders and returns its text and diagnostics', async () => {
@@ -21,6 +21,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -61,6 +62,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -114,6 +116,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -138,6 +141,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -167,6 +171,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes,
@@ -219,6 +224,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -276,6 +282,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -319,6 +326,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: ['element.macro.fragment'],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -354,6 +362,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -366,6 +375,69 @@ describe('the pinned child emits a portable build module', () => {
 		expect(text).toContain("return typeof value === 'bigint' ? b.numberDecimal(value) : b.numberDecimal(value);");
 		expect(text).toContain('return b.numberBigint(input.$value);');
 		expect(text).toContain("return unbuilt('literal.number', input);");
+	}, 60_000);
+
+	const emittedNumber = (table: unknown) =>
+		runPinned('portableBuild', {
+			grammar: 'typescript',
+			node: 'TypeScriptNode',
+			map: 'TypeScriptMap',
+			imports: { vocabulary: '@sittir/types/vocabulary', builders: '../ir-strict.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: '@sittir/common/utils', types: '../types.js' },
+			table,
+			slots: {},
+			viewed: [],
+			textPaths: [],
+			textInputs: [],
+			textValues: [],
+			textKinds: [],
+			flags: {},
+			facts: {},
+			holes: [],
+			decided: {}
+		} as never);
+
+	it('writes a base prefix into its own slot beside the digits', async () => {
+		const { text } = await emittedNumber({
+			builders: { binary: 'config' },
+			paths: { 'literal.number.integer': { root: true, builds: { integer: 4 }, arms: [{ kind: 4, builder: 'binary', scalar: 'integer', numeric: ['prefix', 'content'], digits: { base: 2, affix: '0b' }, when: [], slots: [], presets: [], flags: {} }] } }
+		});
+		expect(text).toContain("return b.binary({ prefix: '0b', content: input.$value });");
+	}, 60_000);
+
+	it('builds nothing through a number arm no slot spells', async () => {
+		const { text } = await emittedNumber({
+			builders: { float: 'config' },
+			paths: { 'literal.number.float': { root: true, arms: [{ kind: 4, builder: 'float', scalar: 'float', numeric: [], when: [], slots: [], presets: [], flags: {} }] } }
+		});
+		expect(text).not.toContain('b.float(');
+		expect(text).toContain('export const portableBuild = {};');
+	}, 60_000);
+
+	it('narrows text to the fixed choices of a direct builder\'s seat, and refuses any other', async () => {
+		const route = { name: 'content', steps: [{ key: 'content' }], multiple: false, seats: [{ at: [4, 'content'], kinds: [], text: true }] };
+		const table = { builders: { escape: 'direct' }, paths: { 'literal.character': { root: true, arms: [{ kind: 4, builder: 'escape', when: [], slots: [route], presets: [], flags: {} }] } } };
+		const slots = { 'literal.character': { content: { paths: [], texts: [], unmapped: [], string: true, numbers: [], optional: false } } };
+		const { text } = await runPinned('portableBuild', {
+			grammar: 'typescript',
+			node: 'TypeScriptNode',
+			map: 'TypeScriptMap',
+			imports: { vocabulary: '@sittir/types/vocabulary', builders: '../ir-strict.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: '@sittir/common/utils', types: '../types.js' },
+			table,
+			slots,
+			viewed: ['literal.character'],
+			textPaths: [],
+			textInputs: [],
+			textValues: [],
+			textKinds: [],
+			flags: {},
+			facts: {},
+			holes: [],
+			decided: {},
+			textChoices: { '4 content': ['n', 't'] }
+		} as never);
+		expect(text).toContain("case 'n':");
+		expect(text).toContain("case 't':");
+		expect(text).toContain("untexted('literal.character.content', value)");
 	}, 60_000);
 
 	it('builds a bare number through its slot\'s takers, a safe integer by the integer arm and any other number by the float arm, and refuses a number type it takes no taker for', async () => {
@@ -411,6 +483,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -456,6 +529,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -506,6 +580,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -540,6 +615,7 @@ describe('the pinned child emits a portable build module', () => {
 				textPaths: [],
 				textInputs: [],
 				textValues: [],
+				textKinds: [],
 				flags: {},
 				facts: {},
 				holes: [],
@@ -575,6 +651,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: ['literal.string.text'],
 			textValues,
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -606,6 +683,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -619,33 +697,36 @@ describe('the pinned child emits a portable build module', () => {
 		expect(text.includes('case undefined:')).toBe(switched);
 	}, 60_000);
 
+	const exact = (optional: boolean) => ({ paths: ['statement.block'], texts: [], unmapped: [], string: false, numbers: [], optional });
+	const functionWithBody: PinnedInput<'portableBuild'> = {
+		grammar: 'python',
+		node: 'PythonNode',
+		map: 'PythonMap',
+		imports: { vocabulary: '@sittir/types/vocabulary', builders: './builders.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: './nodes.js', types: '../types.js' },
+		table: {
+			builders: { functionDefinition: 'config', block: 'nullary' },
+			paths: {
+				'declaration.function': {
+					root: true,
+					arms: [{ kind: 1, builder: 'functionDefinition', when: [{ empty: ['decorators'] }], slots: [{ name: 'body', steps: [{ key: 'body' }], multiple: false, seats: [{ at: [1, 'body'], kinds: [7] }] }], presets: [], flags: {} }]
+				},
+				'statement.block': { root: false, arms: [{ kind: 7, builder: 'block', when: [], slots: [], presets: [], flags: {} }] }
+			}
+		},
+		slots: { 'declaration.function': { body: exact(false), doc: exact(true), decorators: exact(true), returnType: exact(true) } },
+		viewed: ['statement.block'],
+		textPaths: [],
+		textInputs: [],
+		textValues: [],
+		textKinds: [],
+		flags: {},
+		facts: {},
+		holes: [],
+		decided: { 'declaration.function': { body: 'statement.block' } }
+	};
+
 	it('refuses a key the arm has no route for, whether or not the path admits it, as the interpreter does', async () => {
-		const exact = (optional: boolean) => ({ paths: ['statement.block'], texts: [], unmapped: [], string: false, numbers: [], optional });
-		const { text, diagnostics } = await runPinned('portableBuild', {
-			grammar: 'python',
-			node: 'PythonNode',
-			map: 'PythonMap',
-			imports: { vocabulary: '@sittir/types/vocabulary', builders: './builders.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: './nodes.js', types: '../types.js' },
-			table: {
-				builders: { functionDefinition: 'config', block: 'nullary' },
-				paths: {
-					'declaration.function': {
-						root: true,
-						arms: [{ kind: 1, builder: 'functionDefinition', when: [{ empty: ['decorators'] }], slots: [{ name: 'body', steps: [{ key: 'body' }], multiple: false, seats: [{ at: [1, 'body'], kinds: [7] }] }], presets: [], flags: {} }]
-					},
-					'statement.block': { root: false, arms: [{ kind: 7, builder: 'block', when: [], slots: [], presets: [], flags: {} }] }
-				}
-			},
-			slots: { 'declaration.function': { body: exact(false), doc: exact(true), decorators: exact(true), returnType: exact(true) } },
-			viewed: ['statement.block'],
-			textPaths: [],
-			textInputs: [],
-			textValues: [],
-			flags: {},
-			facts: {},
-			holes: [],
-			decided: { 'declaration.function': { body: 'statement.block' } }
-		});
+		const { text, diagnostics } = await runPinned('portableBuild', functionWithBody);
 		expect(diagnostics).toEqual([]);
 		const built = ((await imported(text)) as { readonly declaration: { readonly function: (input: object) => unknown } }).declaration.function;
 		const stated = { $path: 'declaration.function', body: { $path: 'statement.block' } };
@@ -653,6 +734,15 @@ describe('the pinned child emits a portable build module', () => {
 		expect(built({ ...stated, decorators: [], doc: undefined })).toEqual(built(stated));
 		for (const slot of ['doc', 'returnType', 'unexpected']) expect(() => built({ ...stated, [slot]: 'x' })).toThrow(`declaration.function has no slot ${slot}`);
 		expect(text).toContain('const unrouted = (owner: string, slot: string): never => {');
+	}, 60_000);
+
+	it('refuses a list for a slot the vocabulary takes as one value or a list where the grammar holds one, as the interpreter does', async () => {
+		const { text, diagnostics } = await runPinned('portableBuild', functionWithBody);
+		expect(diagnostics).toEqual([]);
+		const built = ((await imported(text)) as { readonly declaration: { readonly function: (input: object) => unknown } }).declaration.function;
+		const body = { $path: 'statement.block' };
+		expect(built({ $path: 'declaration.function', body })).toEqual({ functionDefinition: { body: { block: [] } } });
+		expect(() => built({ $path: 'declaration.function', body: [body] })).toThrow('declaration.function.body holds one value, not a list');
 	}, 60_000);
 
 	const formsOf = (slots: readonly PortableSlotRoute[], owners: readonly (readonly number[])[]) =>
@@ -683,6 +773,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -787,6 +878,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -798,6 +890,179 @@ describe('the pinned child emits a portable build module', () => {
 		const body = (statements: readonly string[]) => declaration.function({ $path: 'declaration.function', body: { $path: 'statement.block', statements } });
 		expect(body(['pass'])).toEqual({ functionDefinition: { body: { suiteInline: { statements: [5] } } } });
 		expect(body(['pass', 'x'])).toEqual({ functionDefinition: { body: { block: { statements: [5, { identifier: 'x' }] } } } });
+	}, 60_000);
+
+	it('places an arm whose seats set flags on it in the seat that sets the flags the input states, and builds it without them, as the interpreter does', async () => {
+		const set = (paths: readonly string[], string = false) => ({ paths, texts: [], unmapped: [], string, numbers: [], optional: false });
+		const statements: PortableSlotRoute = {
+			name: 'statements',
+			steps: [{ key: 'statements' }],
+			multiple: true,
+			list: true,
+			seats: [
+				{ at: [313, 'statements'], kinds: [259] },
+				{ at: [394, 'expression'], kinds: [259], refined: [259], within: [{ builder: 'expressionStatement', key: 'expression', through: ['content'], sets: { kind: 394, flags: ['terminated'], elements: [259] } }] }
+			]
+		};
+		const { text, diagnostics } = await runPinned('portableBuild', {
+			grammar: 'rust',
+			node: 'RustNode',
+			map: 'RustMap',
+			imports: { vocabulary: '@sittir/types/vocabulary', builders: './builders.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: './nodes.js', types: '../types.js' },
+			table: {
+				builders: { block: 'config', expressionStatement: 'config', macroInvocation: 'config', identifier: 'text' },
+				paths: {
+					'statement.block': { root: true, arms: [{ kind: 313, builder: 'block', when: [], slots: [statements], presets: [], flags: {} }] },
+					'expression.call.macro': {
+						root: true,
+						arms: [{ kind: 259, builder: 'macroInvocation', when: [], slots: [{ name: 'name', steps: [{ key: 'name' }], multiple: false, seats: [{ at: [259, 'name'], kinds: [1], leaf: 'identifier' }] }], presets: [], flags: {} }]
+					}
+				}
+			},
+			slots: { 'statement.block': { statements: set(['expression.call.macro']) }, 'expression.call.macro': { name: set([], true) } },
+			viewed: ['statement.block', 'expression.call.macro'],
+			textPaths: [],
+			textInputs: [],
+			textValues: [],
+			textKinds: [],
+			flags: { 'expression.call.macro': ['terminated'] },
+			facts: {},
+			holes: [],
+			decided: {}
+		});
+		expect(diagnostics).toEqual([]);
+		const { statement, expression } = (await imported(text)) as {
+			readonly statement: { readonly block: (input: object) => unknown };
+			readonly expression: { readonly call: { readonly macro: (input: object) => unknown } };
+		};
+		const macro = (flags?: readonly string[]) => ({ $path: 'expression.call.macro', name: 'foo', ...(flags === undefined ? {} : { $flags: flags }) });
+		const invocation = { macroInvocation: { name: { identifier: 'foo' } } };
+		expect(statement.block({ $path: 'statement.block', statements: [macro(['terminated']), macro()] })).toEqual({ block: { statements: [{ expressionStatement: { expression: invocation } }, invocation] } });
+		expect(() => expression.call.macro(macro(['terminated']))).toThrow('expression.call.macro builds no flag terminated');
+	}, 60_000);
+
+	it("picks an arm by the kinds a slot builds, sends a path the arm's kinds test excludes to another arm, and reports no unplaced arm for that path", async () => {
+		const set = (paths: readonly string[]) => ({ paths, texts: [], unmapped: [], string: false, numbers: [], optional: false });
+		const expression = (kind: number, kinds: readonly number[]): PortableSlotRoute => ({ name: 'expression', steps: [{ key: 'expression' }], multiple: false, list: false, seats: [{ at: [kind, 'expression'], kinds }] });
+		const nullary = (kind: number, builder: string) => ({ root: true, arms: [{ kind, builder, when: [], slots: [], presets: [], flags: {} }] });
+		const { text, diagnostics } = await runPinned('portableBuild', {
+			grammar: 'typescript',
+			node: 'TypescriptNode',
+			map: 'TypeScriptMap',
+			imports: { vocabulary: '@sittir/types/vocabulary', builders: './builders.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: './nodes.js', types: '../types.js' },
+			table: {
+				builders: { parenthesizedSequence: 'config', parenthesizedExpression: 'config', sequenceExpression: 'nullary', awaitExpression: 'nullary' },
+				paths: {
+					'expression.parenthesized': {
+						root: true,
+						arms: [
+							{ kind: 417, builder: 'parenthesizedSequence', when: [{ slot: 'expression', kinds: [272] }], slots: [expression(417, [272])], presets: [], flags: {} },
+							{ kind: 416, builder: 'parenthesizedExpression', when: [], slots: [expression(416, [5, 272])], presets: [], flags: {} }
+						]
+					},
+					'expression.sequence': nullary(272, 'sequenceExpression'),
+					'expression.await': nullary(5, 'awaitExpression')
+				}
+			},
+			slots: { 'expression.parenthesized': { expression: set(['expression.await', 'expression.sequence']) } },
+			viewed: ['expression.parenthesized', 'expression.sequence', 'expression.await'],
+			textPaths: [],
+			textInputs: [],
+			textValues: [],
+			textKinds: [],
+			flags: {},
+			facts: {},
+			holes: [],
+			decided: {}
+		});
+		expect(diagnostics).toEqual([]);
+		expect(text).toContain('[272].includes(expression_parenthesized$417_expression$kind(input.expression) ?? -1)');
+		const { expression: built } = (await imported(text)) as { readonly expression: { readonly parenthesized: (input: object) => unknown } };
+		const parenthesized = (inner: string) => built.parenthesized({ $path: 'expression.parenthesized', expression: { $path: inner } });
+		expect(parenthesized('expression.sequence')).toEqual({ parenthesizedSequence: { expression: { sequenceExpression: [] } } });
+		expect(parenthesized('expression.await')).toEqual({ parenthesizedExpression: { expression: { awaitExpression: [] } } });
+	}, 60_000);
+
+	it("places a number path in a slot by its value's scalar, as the root build does, and a float arm refuses a bigint", async () => {
+		const valued = { absent: [], required: ['$value'] };
+		const { text, diagnostics } = await runPinned('portableBuild', {
+			grammar: 'typescript',
+			node: 'TypescriptNode',
+			map: 'TypeScriptMap',
+			imports: { vocabulary: '@sittir/types/vocabulary', builders: './builders.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: './nodes.js', types: '../types.js' },
+			table: {
+				builders: { unaryExpression: 'config', intLiteral: 'direct', floatLiteral: 'direct' },
+				paths: {
+					'expression.unary': {
+						root: true,
+						arms: [{ kind: 10, builder: 'unaryExpression', when: [], slots: [{ name: 'operand', steps: [{ key: 'operand' }], multiple: false, list: false, seats: [{ at: [10, 'operand'], kinds: [20, 21] }] }], presets: [], flags: {} }]
+					},
+					'literal.number': {
+						root: true,
+						builds: { integer: 20, float: 21 },
+						arms: [
+							{ kind: 20, builder: 'intLiteral', scalar: 'integer', when: [valued], slots: [], presets: [], flags: {} },
+							{ kind: 21, builder: 'floatLiteral', scalar: 'float', when: [valued], slots: [], presets: [], flags: {} }
+						]
+					}
+				}
+			},
+			slots: { 'expression.unary': { operand: { paths: ['literal.number'], texts: [], unmapped: [], string: false, numbers: [], optional: false } } },
+			viewed: ['expression.unary', 'literal.number'],
+			textPaths: [],
+			textInputs: [],
+			textValues: [],
+			textKinds: [],
+			flags: {},
+			facts: {},
+			holes: [],
+			decided: {}
+		});
+		expect(diagnostics).toEqual([]);
+		expect(text).toContain("if (typeof input.$value === 'bigint') return unnumbered('literal.number', 'bigint');");
+		const { expression, literal } = (await imported(text)) as {
+			readonly expression: { readonly unary: (input: object) => unknown };
+			readonly literal: { readonly number: (input: object) => unknown };
+		};
+		const operand = ($value: number | bigint) => expression.unary({ $path: 'expression.unary', operand: { $path: 'literal.number', $value } });
+		expect(operand(2)).toEqual({ unaryExpression: { operand: { intLiteral: 2 } } });
+		expect(operand(1.5)).toEqual({ unaryExpression: { operand: { floatLiteral: 1.5 } } });
+		expect(operand(3n)).toEqual({ unaryExpression: { operand: { intLiteral: 3n } } });
+		expect(literal.number({ $path: 'literal.number', $value: 1.5 })).toEqual({ floatLiteral: 1.5 });
+	}, 60_000);
+
+	it('gives a path the vocabulary declares a text kind no structure case, and types it as its text', async () => {
+		const { text, diagnostics } = await runPinned('portableBuild', {
+			grammar: 'typescript',
+			node: 'TypescriptNode',
+			map: 'TypeScriptMap',
+			imports: { vocabulary: '@sittir/types/vocabulary', builders: './builders.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: './nodes.js', types: '../types.js' },
+			table: {
+				builders: { parameterDeclaration: 'config', qualifiedType: 'nullary', typeIdentifier: 'nullary' },
+				paths: {
+					'declaration.parameter': {
+						root: true,
+						arms: [{ kind: 30, builder: 'parameterDeclaration', when: [], slots: [{ name: 'type', steps: [{ key: 'type' }], multiple: false, list: false, seats: [{ at: [30, 'type'], kinds: [40, 41] }] }], presets: [], flags: {} }]
+					},
+					'identifier.qualified': { root: true, arms: [{ kind: 40, builder: 'qualifiedType', when: [], slots: [], presets: [], flags: {} }] },
+					'type.primitive.boolean': { root: false, arms: [{ kind: 41, builder: 'typeIdentifier', when: [], slots: [], presets: [], flags: {} }] }
+				}
+			},
+			slots: { 'declaration.parameter': { type: { paths: ['identifier.qualified', 'type.primitive.boolean'], texts: [], unmapped: [], string: false, numbers: [], optional: false } } },
+			viewed: ['declaration.parameter', 'identifier.qualified', 'type.primitive.boolean'],
+			textPaths: [],
+			textInputs: [],
+			textValues: [],
+			textKinds: ['type.primitive.boolean'],
+			flags: {},
+			facts: {},
+			holes: [],
+			decided: {}
+		});
+		expect(diagnostics).toEqual([]);
+		expect(text).toContain("case 'identifier.qualified':");
+		expect(text).not.toContain("case 'type.primitive.boolean':");
+		expect(text).toMatch(/type declaration_parameter\$30_type\$Item =[^;]*Text<TypeScriptMap, 'type\.primitive\.boolean'>[^;]*TypeScriptMap\['nodes'\]\['type\.primitive\.boolean'\]/);
 	}, 60_000);
 
 	it("places facts in the container that spells them, at the index and in the spelling $at records, and builds the container at the root when a fact is set or a slot it holds is stated", async () => {
@@ -867,6 +1132,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: ['identifier'],
+			textKinds: [],
 			flags: {},
 			facts: { 'declaration.method': ['override', 'static'], 'declaration.property.getter': ['getter', 'override'], 'declaration.property.setter': ['setter'] },
 			holes: [],

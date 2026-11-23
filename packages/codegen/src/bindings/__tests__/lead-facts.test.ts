@@ -62,7 +62,7 @@ const MODEL: SlotModel = new Map(
 	].map((n) => [n.kind, n])
 );
 
-const projectLeadFacts = (facts: BindingFacts, effects: readonly LeadEffect[]): BindingFacts => projectWith(facts, effects, MODEL);
+const projectLeadFacts = (facts: BindingFacts, effects: readonly LeadEffect[]): BindingFacts => projectWith(facts, effects, MODEL, new Set());
 
 const effect: LeadEffect = {
 	kind: 'lead',

@@ -19,13 +19,13 @@
 (parameter_declaration) @declaration.parameter
 (parameter_declaration type: (_) @type)
 (variadic_parameter) @declaration.parameter.variadic
-(field_declaration) @declaration.field
+(field_declaration) @declaration.member.field
 (field_declaration type: (_) @type)
-(struct_specifier) @declaration.struct
-(union_specifier) @declaration.union
-(enum_specifier) @declaration.enum
-(enumerator) @declaration.enum_member
-(type_definition) @declaration.type_alias
+(struct_specifier) @declaration.type.struct
+(union_specifier) @declaration.type.union
+(enum_specifier) @declaration.type.enum
+(enumerator) @declaration.member.enum_member
+(type_definition) @declaration.type.type_alias
 
 ; ── clause ─────────────────────────────────────────────────────────────────────
 (else_clause) @clause.else
@@ -141,7 +141,7 @@
 
 ; ── attribute ──────────────────────────────────────────────────────────────────
 (attribute_declaration) @attribute
-(attribute) @attribute.content
+(attribute) @attribute
 
 ; ── comment ────────────────────────────────────────────────────────────────────
 (comment_arm1) @comment.line

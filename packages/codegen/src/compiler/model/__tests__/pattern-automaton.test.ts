@@ -5,7 +5,7 @@ import { allGrammars, grammarPackage, sittirDirOf } from '../../../grammars.ts';
 import { compileGrammar } from '../../compile.ts';
 import { loadGeneratedIdTables } from '../../generated-metadata.ts';
 import { anchoredLeafRegex } from '../leaf-pattern.ts';
-import { acceptsSomeEndingWith, acceptsSomeStartingWith, admitsInside, armsThrough, CharSet, dfaAccepts, endsWithLineBreak, includesNonEmpty, leadingChars, lineBreaksOf, opensLineEnd, patternDfa, requiresNonSpace, shortestAccepted, type PatternDfa } from '../pattern-automaton.ts';
+import { acceptsSomeEndingWith, acceptsSomeStartingWith, admitsInside, armsThrough, CharSet, dfaAccepts, endsWithLineBreak, includesNonEmpty, leadingChars, lineBreaksOf, opensLineEnd, patternDfa, patternsMeet, requiresNonSpace, shortestAccepted, type PatternDfa } from '../pattern-automaton.ts';
 import { lineTerminated, lineTerminatedKinds, triviaKinds } from '../trivia.ts';
 
 type NodeMap = Awaited<ReturnType<typeof compileGrammar>>['nodeMap'];
@@ -227,6 +227,24 @@ describe('leadingChars and shortestAccepted', () => {
 		expect(shortestAccepted(dfa('[bc]?r#*"'))).toBe('r"');
 		expect(shortestAccepted(dfa('"#*'))).toBe('"');
 		expect(shortestAccepted(dfa('[^]*'))).toBe('');
+	});
+});
+
+describe('patternsMeet', () => {
+	const dfa = (pattern: string) => patternDfa(pattern)!;
+
+	it('holds when some text is accepted by both', () => {
+		expect(patternsMeet(dfa("[^'\\\\]"), dfa('a|b|f|n|r|t|v'))).toBe(true);
+		expect(patternsMeet(dfa('ab+'), dfa('a*b'))).toBe(true);
+	});
+
+	it('holds when both accept the empty text', () => {
+		expect(patternsMeet(dfa('a*'), dfa('b*'))).toBe(true);
+	});
+
+	it('does not hold when no text is accepted by both', () => {
+		expect(patternsMeet(dfa('[0-7]{3}'), dfa('[0-9a-f]{2}'))).toBe(false);
+		expect(patternsMeet(dfa('a+'), dfa('b*'))).toBe(false);
 	});
 });
 

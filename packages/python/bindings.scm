@@ -8,21 +8,29 @@
 ; ── declaration ────────────────────────────────────────────────────────────────
 (function_definition) @declaration.function
 (function_definition type_parameters: (type_params (_) @typeParameters))
+(function_definition body: (suite_block (block statements: (_) @statements)))
+(function_definition body: (suite_inline elements: (_) @statements))
+(function_definition body: (_) @dropped)
+(constructor_declaration body: (suite_block (block statements: (_) @statements)))
+(constructor_declaration body: (suite_inline elements: (_) @statements))
 (function_definition body: (suite_block (block . (simple_statements (simple_statements_elements . item: (expression_statement (string) @doc))))))
-(class_definition superclasses: (_)? @bases) @declaration.class
+(class_definition superclasses: (_)? @bases) @declaration.type.class
 (class_definition type_parameters: (type_params (_) @typeParameters))
+(class_definition body: (suite_block (block statements: (_) @members)))
+(class_definition body: (suite_inline elements: (_) @members))
+(class_definition body: (_) @dropped)
 (class_definition body: (suite_block (block . (simple_statements (simple_statements_elements . item: (expression_statement (string) @doc))))))
-(class_definition body: (suite_block (block (function_definition) @declaration.method)))
-(class_definition body: (suite_block (block (decorated_definition definition: (function_definition) @declaration.method))))
-((decorated_definition_class_declaration (decorator (identifier) @_fact) definition: (method_declaration return_type: (_) @type) @declaration.property.getter) (#eq? @_fact "property"))
-((decorated_definition_class_declaration (decorator (attribute object: (identifier) @_object attribute: (identifier) @_fact)) definition: (method_declaration name: (identifier) @name return_type: (_) @returnType) @declaration.property.setter) (#eq? @_object @name) (#eq? @_fact "setter"))
-((decorated_definition_class_declaration (decorator (identifier) @_fact) definition: (method_declaration) @declaration.method.static) (#eq? @_fact "staticmethod"))
-((decorated_definition_class_declaration (decorator (identifier) @_fact) definition: (method_declaration) @declaration.method.override) (#eq? @_fact "override"))
-((decorated_definition_class_declaration (decorator (attribute object: (identifier) @_module attribute: (identifier) @_fact)) definition: (method_declaration) @declaration.method.override) (#eq? @_module "typing") (#eq? @_fact "override"))
-((method_declaration name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))
-(constructor_declaration) @declaration.constructor
-((method_declaration name: (identifier) @name) @declaration.method.special (#match? @name "^__(?<stem>.*)__$"))
-((method_declaration name: (identifier) @name) @declaration.method.privateName (#match? @name "^__(?<name>.*[^_]_?)$"))
+(class_definition body: (suite_block (block (function_definition) @declaration.member.method)))
+(class_definition body: (suite_block (block (decorated_definition definition: (function_definition) @declaration.member.method))))
+((decorated_definition_class_declaration (decorator (identifier) @_fact) definition: (method_declaration return_type: (_) @type) @declaration.member.property.getter) (#eq? @_fact "property"))
+((decorated_definition_class_declaration (decorator (attribute object: (identifier) @_object attribute: (identifier) @_fact)) definition: (method_declaration name: (identifier) @name return_type: (_) @returnType) @declaration.member.property.setter) (#eq? @_object @name) (#eq? @_fact "setter"))
+((decorated_definition_class_declaration (decorator (identifier) @_fact) definition: (method_declaration) @declaration.member.method.static) (#eq? @_fact "staticmethod"))
+((decorated_definition_class_declaration (decorator (identifier) @_fact) definition: (method_declaration) @declaration.member.method.override) (#eq? @_fact "override"))
+((decorated_definition_class_declaration (decorator (attribute object: (identifier) @_module attribute: (identifier) @_fact)) definition: (method_declaration) @declaration.member.method.override) (#eq? @_module "typing") (#eq? @_fact "override"))
+((method_declaration name: (identifier) @name) @declaration.member.constructor (#eq? @name "__init__"))
+(constructor_declaration) @declaration.member.constructor
+((method_declaration name: (identifier) @name) @declaration.member.method.special (#match? @name "^__(?<stem>.*)__$"))
+((method_declaration name: (identifier) @name) @declaration.member.method.privateName (#match? @name "^__(?<name>.*[^_]_?)$"))
 (decorated_definition (decorator)* @decorators definition: (_) @element)
 (typed_parameter) @declaration.parameter.typed
 (default_parameter value: (_)? @default) @declaration.parameter.defaulted
@@ -37,7 +45,7 @@
 ((assignment_eq left: (identifier) @name) @declaration.constant (#match? @name "^[A-Z][A-Z_0-9]*$"))
 ((assignment_typed left: (identifier) @name) @declaration.constant (#match? @name "^[A-Z][A-Z_0-9]*$"))
 ((assignment_type left: (identifier) @name) @declaration.constant (#match? @name "^[A-Z][A-Z_0-9]*$"))
-(type_alias_statement) @declaration.type_alias
+(type_alias_statement) @declaration.type.type_alias
 (type_alias_statement type_parameters: (type_params (_) @typeParameters))
 
 ; ── statement ──────────────────────────────────────────────────────────────────
@@ -45,10 +53,22 @@
 (suite_inline) @statement.block
 (suite_inline elements: (_) @statements)
 (if_statement) @statement.if
+(if_statement consequence: (suite_block (block statements: (_) @statements)))
+(if_statement consequence: (suite_inline elements: (_) @statements))
+(if_statement consequence: (_) @dropped)
 (for_statement) @statement.loop.for_each
+(for_statement body: (suite_block (block statements: (_) @statements)))
+(for_statement body: (suite_inline elements: (_) @statements))
+(for_statement body: (_) @dropped)
 (while_statement) @statement.loop.while
+(while_statement body: (suite_block (block statements: (_) @statements)))
+(while_statement body: (suite_inline elements: (_) @statements))
+(while_statement body: (_) @dropped)
 (return_statement (_)? @expression) @statement.return
 (try_statement (except_clause)* @handlers (else_clause)? @alternative (finally_clause)? @finalizer) @statement.try
+(try_statement body: (suite_block (block statements: (_) @statements)))
+(try_statement body: (suite_inline elements: (_) @statements))
+(try_statement body: (_) @dropped)
 (raise_statement (_)? @expression) @statement.raise
 (import_statement) @statement.import
 (import_from_statement) @statement.import.from
@@ -60,6 +80,9 @@
 (subjects "," @trailingComma .)
 ((subjects (_) @element) (#set! reason "a subject list with a comma reads as a tuple; one subject without one reads as itself"))
 (with_statement) @statement.resource
+(with_statement body: (suite_block (block statements: (_) @statements)))
+(with_statement body: (suite_inline elements: (_) @statements))
+(with_statement body: (_) @dropped)
 (assert_statement) @statement.assert
 (delete_statement) @statement.delete
 (pass_statement) @statement.pass
@@ -84,17 +107,29 @@
 
 ; ── clause ─────────────────────────────────────────────────────────────────────
 (elif_clause) @clause.elif
+(elif_clause consequence: (suite_block (block statements: (_) @statements)))
+(elif_clause consequence: (suite_inline elements: (_) @statements))
+(elif_clause consequence: (_) @dropped)
 (else_clause) @clause.else
+(else_clause body: (suite_block (block statements: (_) @statements)))
+(else_clause body: (suite_inline elements: (_) @statements))
+(else_clause body: (_) @dropped)
 (except_clause) @clause.except
 (except_clause (except_clause_exception (except_clause_exception_as value: (_) @type)))
 (except_clause (except_clause_exception (except_clause_exception_as alias: (_) @name)))
 (except_clause (except_clause_exception (except_clause_exception_list) @type))
-(except_clause [(suite_block) (suite_empty) (suite_inline)] @body)
+(except_clause body: (suite_block (block statements: (_) @statements)))
+(except_clause body: (suite_inline elements: (_) @statements))
+(except_clause body: (_) @dropped)
 (finally_clause) @clause.finally
-(finally_clause block: (_) @body)
+(finally_clause body: (suite_block (block statements: (_) @statements)))
+(finally_clause body: (suite_inline elements: (_) @statements))
+(finally_clause body: (_) @dropped)
 (case_clause) @clause.case.match
 (case_clause guard: (if_clause condition: _ @guard))
-(case_clause consequence: _ @body)
+(case_clause body: (suite_block (block statements: (_) @statements)))
+(case_clause body: (suite_inline elements: (_) @statements))
+(case_clause body: (_) @dropped)
 (with_clause with_items: (_)? @items) @clause.resource
 (with_item) @clause.resource.item
 (with_item value: (as_pattern expression: (_) @value))

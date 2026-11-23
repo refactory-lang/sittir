@@ -44,6 +44,7 @@ import {
 	type ParseKindCollisionValue
 } from '../../types/parsekind-collisions.ts';
 import { RuleWalker } from '../../dsl/rule-walker.ts';
+import { copyBaseOf } from '../../dsl/automatic-variants.ts';
 import { wordCharAsciiTable } from '../../util/word-matcher.ts';
 
 const renderRuleWalker = new RuleWalker<RenderRule>();
@@ -2568,6 +2569,7 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 		return true;
 	}
 	readonly #subtypes: readonly NodeOrTerminal[];
+	readonly #variantOwner: string;
 	transitiveParseKinds?: readonly NodeOrTerminal[];
 	optionDefaultArm?: string;
 
@@ -2578,6 +2580,7 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 		opts: KindFacts
 	) {
 		super(kind, rule, { ...opts, hidden: true, rowless: 'supertype' });
+		this.#variantOwner = copyBaseOf(opts.provenance?.splitFrom)(kind);
 		this.#subtypes = subtypes.map(
 			({ name, storageKindId, ...armFacts }): NodeOrTerminal => ({
 				node: { kind: 'unresolved-ref', name },
@@ -2602,7 +2605,7 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 
 	get variantSubtypes(): readonly NodeBackedRef[] | undefined {
 		const refs = this.#subtypes.filter(isNodeRef);
-		return refs.length >= 2 && refs.every((ref) => ref.variantOf === this.kind && ref.variant !== undefined)
+		return refs.length >= 2 && refs.every((ref) => ref.variantOf === this.#variantOwner && ref.variant !== undefined)
 			? refs
 			: undefined;
 	}

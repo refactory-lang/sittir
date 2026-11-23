@@ -14,7 +14,7 @@ import type {
 	UnionType
 } from '@sittir/typescript';
 import { isNode, parsedTypescript, type Kinds, type Span, type Statement, type TypescriptSource } from './pinned-typescript.ts';
-import { type Declared, type FeatureIndex, FLAG, FLAGGED, type DeclaredSlot, type SlotArity, REFINED_BY, SLOT, SUB_KIND_OF, TEXT } from './vocabulary.ts';
+import { ANY_WITH, type Declared, type FeatureIndex, FLAG, FLAGGED, type DeclaredSlot, type SlotArity, REFINED_BY, SLOT, SUB_KIND_OF, TEXT } from './vocabulary.ts';
 
 interface Source extends Omit<TypescriptSource, 'spelled'> {
 	readonly text: (item: object | number) => string;
@@ -134,9 +134,27 @@ function flagNames(type: AliasType | undefined, source: Source): string[] {
 	return [name];
 }
 
+function aliasTarget(value: AliasType, source: Source): string | undefined {
+	const { K, text } = source;
+	if (!isNode(value) || value.$type !== K.GenericType) return undefined;
+	const name = value.name();
+	if (name.$type !== K.NestedTypeIdentifier) return undefined;
+	const spelled = text(name);
+	return spelled.startsWith('V.') ? spelled.slice(2) : undefined;
+}
+
 function declareText(declaration: TypeAliasDeclaration.Parsed, scope: readonly string[], out: Declared[], source: Source): void {
 	const { K, text } = source;
 	const value = declaration.value();
+	if (text(declaration.name()).startsWith(ANY_WITH)) {
+		out.push({ qname: [...scope, text(declaration.name())].join('.'), path: undefined, parent: undefined, refines: undefined, heritage: [], restated: [], slots: [], shared: true });
+		return;
+	}
+	const target = aliasTarget(value, source);
+	if (target !== undefined) {
+		out.push({ qname: [...scope, text(declaration.name())].join('.'), path: undefined, parent: undefined, refines: undefined, heritage: [], restated: [], slots: [], target });
+		return;
+	}
 	const flagged = isNode(value) && value.$type === K.GenericType && text(value.name()) === FLAGGED ? value : undefined;
 	const [looked, named] = flagged === undefined ? [value, undefined] : (flagged.typeArguments()?.types() ?? []);
 	const path = textsPath(looked, source);

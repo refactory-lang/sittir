@@ -78,9 +78,10 @@ const USING_ASSIGNMENT = 'TypeScript using declaration: `using` opens a declarat
 const USING_ASSIGNMENT_WITNESSES = [
 	{ text: 'x = using y = 1;\n', form: ['using', { symbol: '_lhs_expression' }, '=', { symbol: 'expression' }], kind: 'assignment_expression', production: USING_ASSIGNMENT }
 ] as const;
-const USING_FOR_INITIALIZER_WITNESSES = [
-	{ text: 'for (using r = acquire(); false;) {}\n', form: ['for', '(', { symbol: 'using_declaration' }, { symbol: '_expressions' }, ';', { symbol: '_expressions' }, ')', { symbol: 'statement' }], kind: 'using_declaration', read: 'assignment_expression' },
-	{ text: 'for (await using r = acquire(); false;) {}\n', form: ['for', '(', { symbol: 'using_declaration' }, { symbol: '_expressions' }, ';', { symbol: '_expressions' }, ')', { symbol: 'statement' }], kind: 'using_declaration', read: 'assignment_expression' }
+const FOR_INITIALIZER_SEMICOLON = 'ECMAScript ForStatement: the two semicolons of a for header are never inserted automatically, so a declaration initializer is followed by the loop\'s own `;`';
+const FOR_INITIALIZER_WITNESSES = [
+	{ text: 'for (let i = 0\ni < 3;) {}\n', form: ['for', '(', { symbol: 'lexical_declaration' }, { symbol: '_expressions' }, ';', ')', { symbol: 'statement' }], kind: 'for_statement', production: FOR_INITIALIZER_SEMICOLON },
+	{ text: 'for (var i = 0\ni < 3;) {}\n', form: ['for', '(', { symbol: 'variable_declaration' }, { symbol: '_expressions' }, ';', ')', { symbol: 'statement' }], kind: 'for_statement', production: FOR_INITIALIZER_SEMICOLON }
 ] as const;
 const NAMESPACE_EXPRESSION = 'TypeScript NamespaceDeclaration: `namespace` IdentifierPath `{` NamespaceBody `}` is a declaration, never an expression; in an expression `namespace` is an identifier (tsc TS1005)';
 const NAMESPACE_EXPRESSION_WITNESSES = [
@@ -653,8 +654,14 @@ export default grammar(enrich(base), wire({
 			'1/2/2': field('terminator'),
 			'1/3': variant('using_kind'),
 			'1/3/2': field('terminator')
-		}
+		},
+
+		_for_initializer: { 0: variant('let_const_kind'), 1: variant('var_kind'), 2: variant('using_kind') }
 	},
+	precedences: ($, previous) => [
+		...(previous ?? []),
+		[$.for_initializer_let_const_kind, $.primary_expression]
+	],
 	extras: ($, previous) => [...(previous ?? [])],
 	expectDiagnostics: {
 		'unclassifiable-shape': ['binary_expression', 'public_field_definition_plain'],
@@ -703,9 +710,17 @@ export default grammar(enrich(base), wire({
 		assignment_expression: reauthored('accepts-invalid-syntax', USING_ASSIGNMENT_WITNESSES, ($) =>
 			prec.right('assign', seq(field('left', choice($.parenthesized_expression, alias($._lhs_expression, $.lhs_expression))), '=', field('right', $.expression)))
 		),
-		for_statement: reauthored('misreads-valid-syntax', USING_FOR_INITIALIZER_WITNESSES, ($, original) =>
-			edit(original, { '2/0': field('initializer', choice($.lexical_declaration, $.variable_declaration, $.using_declaration)) })
+		for_statement: reauthored('accepts-invalid-syntax', FOR_INITIALIZER_WITNESSES, ($, original) =>
+			edit(original, { '2/0': seq(field('initializer', $._for_initializer), ';') })
 		),
+		_for_initializer: vocabulary(($) => {
+			const declarators = () => seq(field('declarators', $.variable_declarator), repeat(seq(',', field('declarators', $.variable_declarator))));
+			return choice(
+				seq(field('kind', $._kind), declarators()),
+				seq('var', declarators()),
+				seq(field('kind', choice('using', $.using_declaration_arm)), declarators())
+			);
+		}),
 		expression: reauthored('accepts-invalid-syntax', NAMESPACE_EXPRESSION_WITNESSES, ($, original) =>
 			choice(...original.members.filter((member: GrammarRule) => !(member.type === 'SYMBOL' && member.name === 'internal_module')))
 		),

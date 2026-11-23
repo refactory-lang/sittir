@@ -736,7 +736,6 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							list: false,
 							seats: [
 								{
 									at: [221, 'body'],
@@ -1184,7 +1183,3754 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.class': {
+		'declaration.constant': {
+			root: true,
+			arms: [
+				{
+					kind: 281,
+					builder: 'constantDeclaration',
+					slots: [
+						{
+							name: 'modifiers',
+							steps: [
+								{
+									key: 'modifiers',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [281, 'modifiers'],
+									kinds: [257]
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [281, 'type'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'declarators',
+							steps: [
+								{
+									key: 'declarators'
+								}
+							],
+							multiple: true,
+							nonEmpty: true,
+							seats: [
+								{
+									at: [281, 'declarators'],
+									kinds: [283],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['declarators', 'type']
+						}
+					]
+				}
+			]
+		},
+		'declaration.constant.private': {
+			root: true,
+			arms: [
+				{
+					kind: 281,
+					builder: 'constantDeclaration',
+					slots: [
+						{
+							name: 'modifiers',
+							steps: [
+								{
+									key: 'modifiers'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [281, 'modifiers'],
+									kinds: [257]
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [281, 'type'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'declarators',
+							steps: [
+								{
+									key: 'declarators'
+								}
+							],
+							multiple: true,
+							nonEmpty: true,
+							seats: [
+								{
+									at: [281, 'declarators'],
+									kinds: [283],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'modifiers',
+									builder: 'modifiers',
+									optional: true
+								},
+								{
+									key: 'elements'
+								}
+							],
+							kind: 137
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['declarators', 'modifiers', 'type']
+						}
+					]
+				}
+			]
+		},
+		'declaration.constant.public': {
+			root: true,
+			arms: [
+				{
+					kind: 281,
+					builder: 'constantDeclaration',
+					slots: [
+						{
+							name: 'modifiers',
+							steps: [
+								{
+									key: 'modifiers'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [281, 'modifiers'],
+									kinds: [257]
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [281, 'type'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'declarators',
+							steps: [
+								{
+									key: 'declarators'
+								}
+							],
+							multiple: true,
+							nonEmpty: true,
+							seats: [
+								{
+									at: [281, 'declarators'],
+									kinds: [283],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'modifiers',
+									builder: 'modifiers',
+									optional: true
+								},
+								{
+									key: 'elements'
+								}
+							],
+							kind: 135
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['declarators', 'modifiers', 'type']
+						}
+					]
+				}
+			]
+		},
+		'declaration.member.constructor': {
+			root: true,
+			arms: [
+				{
+					kind: 303,
+					builder: 'compactConstructorDeclaration',
+					slots: [
+						{
+							name: 'modifiers',
+							steps: [
+								{
+									key: 'modifiers',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [303, 'modifiers'],
+									kinds: [257]
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [303, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body',
+									stored: '_body'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [303, 'body'],
+									kinds: [209]
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							absent: ['parameters', 'throws', 'typeParameters'],
+							required: ['body', 'name']
+						}
+					]
+				},
+				{
+					kind: 267,
+					builder: 'constructorDeclaration',
+					slots: [
+						{
+							name: 'modifiers',
+							steps: [
+								{
+									key: 'modifiers',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [267, 'modifiers'],
+									kinds: [257]
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [267, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [258, 'typeParameters'],
+									kinds: [259],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'typeParameters'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [267, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [267, 'parameters'],
+									kinds: [296, 326]
+								},
+								{
+									at: [325, 'receiverParameter'],
+									kinds: [298],
+									within: [
+										{
+											builder: 'formalParametersReceiver',
+											key: 'receiverParameter'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'throws',
+							steps: [
+								{
+									key: 'throws',
+									stored: '_throws',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [267, 'throws'],
+									kinds: []
+								},
+								{
+									at: [300, 'types'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'throws',
+											key: 'types'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [267, 'body'],
+									kinds: [269]
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['body', 'name', 'parameters']
+						}
+					]
+				}
+			],
+			flags: ['async']
+		},
+		'declaration.member.constructor.private': {
+			root: true,
+			arms: [
+				{
+					kind: 267,
+					builder: 'constructorDeclaration',
+					slots: [
+						{
+							name: 'modifiers',
+							steps: [
+								{
+									key: 'modifiers'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [267, 'modifiers'],
+									kinds: [257]
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [267, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [258, 'typeParameters'],
+									kinds: [259],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'typeParameters'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [267, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [267, 'parameters'],
+									kinds: [296, 326]
+								},
+								{
+									at: [325, 'receiverParameter'],
+									kinds: [298],
+									within: [
+										{
+											builder: 'formalParametersReceiver',
+											key: 'receiverParameter'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'throws',
+							steps: [
+								{
+									key: 'throws',
+									stored: '_throws',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [267, 'throws'],
+									kinds: []
+								},
+								{
+									at: [300, 'types'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'throws',
+											key: 'types'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [267, 'body'],
+									kinds: [269]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'modifiers',
+									builder: 'modifiers',
+									optional: true
+								},
+								{
+									key: 'elements'
+								}
+							],
+							kind: 137
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['body', 'modifiers', 'name', 'parameters']
+						}
+					]
+				}
+			],
+			flags: ['async']
+		},
+		'declaration.member.constructor.protected': {
+			root: true,
+			arms: [
+				{
+					kind: 267,
+					builder: 'constructorDeclaration',
+					slots: [
+						{
+							name: 'modifiers',
+							steps: [
+								{
+									key: 'modifiers'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [267, 'modifiers'],
+									kinds: [257]
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [267, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [258, 'typeParameters'],
+									kinds: [259],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'typeParameters'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [267, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [267, 'parameters'],
+									kinds: [296, 326]
+								},
+								{
+									at: [325, 'receiverParameter'],
+									kinds: [298],
+									within: [
+										{
+											builder: 'formalParametersReceiver',
+											key: 'receiverParameter'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'throws',
+							steps: [
+								{
+									key: 'throws',
+									stored: '_throws',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [267, 'throws'],
+									kinds: []
+								},
+								{
+									at: [300, 'types'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'throws',
+											key: 'types'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [267, 'body'],
+									kinds: [269]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'modifiers',
+									builder: 'modifiers',
+									optional: true
+								},
+								{
+									key: 'elements'
+								}
+							],
+							kind: 136
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['body', 'modifiers', 'name', 'parameters']
+						}
+					]
+				}
+			],
+			flags: ['async']
+		},
+		'declaration.member.constructor.public': {
+			root: true,
+			arms: [
+				{
+					kind: 267,
+					builder: 'constructorDeclaration',
+					slots: [
+						{
+							name: 'modifiers',
+							steps: [
+								{
+									key: 'modifiers'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [267, 'modifiers'],
+									kinds: [257]
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [267, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [258, 'typeParameters'],
+									kinds: [259],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'typeParameters'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [267, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [267, 'parameters'],
+									kinds: [296, 326]
+								},
+								{
+									at: [325, 'receiverParameter'],
+									kinds: [298],
+									within: [
+										{
+											builder: 'formalParametersReceiver',
+											key: 'receiverParameter'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'throws',
+							steps: [
+								{
+									key: 'throws',
+									stored: '_throws',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [267, 'throws'],
+									kinds: []
+								},
+								{
+									at: [300, 'types'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'throws',
+											key: 'types'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [267, 'body'],
+									kinds: [269]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'modifiers',
+									builder: 'modifiers',
+									optional: true
+								},
+								{
+									key: 'elements'
+								}
+							],
+							kind: 135
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['body', 'modifiers', 'name', 'parameters']
+						}
+					]
+				}
+			],
+			flags: ['async']
+		},
+		'declaration.member.enum_member': {
+			root: true,
+			arms: [
+				{
+					kind: 255,
+					builder: 'enumConstant',
+					slots: [
+						{
+							name: 'modifiers',
+							steps: [
+								{
+									key: 'modifiers',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [255, 'modifiers'],
+									kinds: [257]
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [255, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'arguments',
+							steps: [
+								{
+									key: 'arguments',
+									optional: true
+								}
+							],
+							multiple: false,
+							emptyContainer: true,
+							seats: [
+								{
+									at: [255, 'arguments'],
+									kinds: []
+								},
+								{
+									at: [191, 'expressions'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 112
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'argumentList',
+											key: 'expressions',
+											optional: true
+										}
+									],
+									many: true
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'argumentList',
+											key: 'expressions',
+											optional: true
+										},
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body',
+									optional: true
+								}
+							],
+							multiple: false,
+							emptyContainer: true,
+							seats: [
+								{
+									at: [255, 'body'],
+									kinds: []
+								},
+								{
+									at: [265, 'classBodyDeclarations'],
+									kinds: [66, 209, 252, 256, 266, 267, 272, 273, 274, 278, 302, 303],
+									tokens: {
+										';': 66
+									},
+									within: [
+										{
+											builder: 'classBody',
+											key: 'classBodyDeclarations',
+											optional: true
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name']
+						}
+					]
+				}
+			]
+		},
+		'declaration.member.field': {
+			root: true,
+			arms: [
+				{
+					kind: 272,
+					builder: 'fieldDeclaration',
+					slots: [
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [272, 'type'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'declarators',
+							steps: [
+								{
+									key: 'declarators'
+								}
+							],
+							multiple: true,
+							nonEmpty: true,
+							seats: [
+								{
+									at: [272, 'declarators'],
+									kinds: [283],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'modifiers',
+											builder: 'modifiers',
+											optional: true
+										},
+										{
+											key: 'elements'
+										}
+									],
+									kind: 85
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['declarators', 'type']
+						}
+					]
+				}
+			],
+			flags: [
+				'computed',
+				'privateName',
+				'abstract',
+				'override',
+				'static',
+				'readonly',
+				'declare',
+				'definite',
+				'optional'
+			]
+		},
+		'declaration.member.field.private': {
+			root: true,
+			arms: [
+				{
+					kind: 272,
+					builder: 'fieldDeclaration',
+					slots: [
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [272, 'type'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'declarators',
+							steps: [
+								{
+									key: 'declarators'
+								}
+							],
+							multiple: true,
+							nonEmpty: true,
+							seats: [
+								{
+									at: [272, 'declarators'],
+									kinds: [283],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'modifiers',
+									builder: 'modifiers',
+									optional: true
+								},
+								{
+									key: 'elements'
+								}
+							],
+							kind: 137
+						}
+					],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'modifiers',
+											builder: 'modifiers',
+											optional: true
+										},
+										{
+											key: 'elements'
+										}
+									],
+									kind: 85
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['declarators', 'type']
+						}
+					]
+				}
+			],
+			flags: [
+				'computed',
+				'privateName',
+				'abstract',
+				'override',
+				'static',
+				'readonly',
+				'declare',
+				'definite',
+				'optional'
+			]
+		},
+		'declaration.member.field.protected': {
+			root: true,
+			arms: [
+				{
+					kind: 272,
+					builder: 'fieldDeclaration',
+					slots: [
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [272, 'type'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'declarators',
+							steps: [
+								{
+									key: 'declarators'
+								}
+							],
+							multiple: true,
+							nonEmpty: true,
+							seats: [
+								{
+									at: [272, 'declarators'],
+									kinds: [283],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'modifiers',
+									builder: 'modifiers',
+									optional: true
+								},
+								{
+									key: 'elements'
+								}
+							],
+							kind: 136
+						}
+					],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'modifiers',
+											builder: 'modifiers',
+											optional: true
+										},
+										{
+											key: 'elements'
+										}
+									],
+									kind: 85
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['declarators', 'type']
+						}
+					]
+				}
+			],
+			flags: [
+				'computed',
+				'privateName',
+				'abstract',
+				'override',
+				'static',
+				'readonly',
+				'declare',
+				'definite',
+				'optional'
+			]
+		},
+		'declaration.member.field.public': {
+			root: true,
+			arms: [
+				{
+					kind: 272,
+					builder: 'fieldDeclaration',
+					slots: [
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [272, 'type'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'declarators',
+							steps: [
+								{
+									key: 'declarators'
+								}
+							],
+							multiple: true,
+							nonEmpty: true,
+							seats: [
+								{
+									at: [272, 'declarators'],
+									kinds: [283],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'modifiers',
+									builder: 'modifiers',
+									optional: true
+								},
+								{
+									key: 'elements'
+								}
+							],
+							kind: 135
+						}
+					],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'modifiers',
+											builder: 'modifiers',
+											optional: true
+										},
+										{
+											key: 'elements'
+										}
+									],
+									kind: 85
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['declarators', 'type']
+						}
+					]
+				}
+			],
+			flags: [
+				'computed',
+				'privateName',
+				'abstract',
+				'override',
+				'static',
+				'readonly',
+				'declare',
+				'definite',
+				'optional'
+			]
+		},
+		'declaration.member.method': {
+			root: true,
+			arms: [
+				{
+					kind: 302,
+					builder: 'methodDeclaration',
+					slots: [
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [302, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [258, 'typeParameters'],
+									kinds: [259],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'typeParameters'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'annotations',
+							steps: [
+								{
+									key: 'annotations',
+									optional: true
+								}
+							],
+							multiple: true,
+							seats: [
+								{
+									at: [302, 'annotations'],
+									kinds: [233, 234],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'returnType',
+							steps: [
+								{
+									key: 'returnType'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [302, 'returnType'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [302, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [302, 'parameters'],
+									kinds: [296, 326]
+								},
+								{
+									at: [325, 'receiverParameter'],
+									kinds: [298],
+									within: [
+										{
+											builder: 'formalParametersReceiver',
+											key: 'receiverParameter'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'dimensions',
+							steps: [
+								{
+									key: 'dimensions',
+									optional: true
+								}
+							],
+							multiple: false,
+							emptyContainer: true,
+							seats: [
+								{
+									at: [302, 'dimensions'],
+									kinds: []
+								},
+								{
+									at: [196, 'annotations'],
+									kinds: [233, 234],
+									within: [
+										{
+											builder: 'dimensions',
+											key: 'annotations',
+											optional: true
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'throws',
+							steps: [
+								{
+									key: 'throws',
+									stored: '_throws',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [302, 'throws'],
+									kinds: []
+								},
+								{
+									at: [300, 'types'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'throws',
+											key: 'types'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [302, 'body'],
+									kinds: [209]
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'modifiers',
+											builder: 'modifiers',
+											optional: true
+										},
+										{
+											key: 'elements'
+										}
+									],
+									kind: 85
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters', 'returnType']
+						}
+					]
+				}
+			],
+			flags: [
+				'default',
+				'static',
+				'async',
+				'const',
+				'computed',
+				'generator',
+				'privateName',
+				'override',
+				'readonly',
+				'optional',
+				'unsafe'
+			]
+		},
+		'declaration.member.method.private': {
+			root: true,
+			arms: [
+				{
+					kind: 302,
+					builder: 'methodDeclaration',
+					slots: [
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [302, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [258, 'typeParameters'],
+									kinds: [259],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'typeParameters'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'annotations',
+							steps: [
+								{
+									key: 'annotations',
+									optional: true
+								}
+							],
+							multiple: true,
+							seats: [
+								{
+									at: [302, 'annotations'],
+									kinds: [233, 234],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'returnType',
+							steps: [
+								{
+									key: 'returnType'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [302, 'returnType'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [302, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [302, 'parameters'],
+									kinds: [296, 326]
+								},
+								{
+									at: [325, 'receiverParameter'],
+									kinds: [298],
+									within: [
+										{
+											builder: 'formalParametersReceiver',
+											key: 'receiverParameter'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'dimensions',
+							steps: [
+								{
+									key: 'dimensions',
+									optional: true
+								}
+							],
+							multiple: false,
+							emptyContainer: true,
+							seats: [
+								{
+									at: [302, 'dimensions'],
+									kinds: []
+								},
+								{
+									at: [196, 'annotations'],
+									kinds: [233, 234],
+									within: [
+										{
+											builder: 'dimensions',
+											key: 'annotations',
+											optional: true
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'throws',
+							steps: [
+								{
+									key: 'throws',
+									stored: '_throws',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [302, 'throws'],
+									kinds: []
+								},
+								{
+									at: [300, 'types'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'throws',
+											key: 'types'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [302, 'body'],
+									kinds: [209]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'modifiers',
+									builder: 'modifiers',
+									optional: true
+								},
+								{
+									key: 'elements'
+								}
+							],
+							kind: 137
+						}
+					],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'modifiers',
+											builder: 'modifiers',
+											optional: true
+										},
+										{
+											key: 'elements'
+										}
+									],
+									kind: 85
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters', 'returnType']
+						}
+					]
+				}
+			],
+			flags: [
+				'default',
+				'static',
+				'async',
+				'const',
+				'computed',
+				'generator',
+				'privateName',
+				'override',
+				'readonly',
+				'optional',
+				'unsafe'
+			]
+		},
+		'declaration.member.method.protected': {
+			root: true,
+			arms: [
+				{
+					kind: 302,
+					builder: 'methodDeclaration',
+					slots: [
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [302, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [258, 'typeParameters'],
+									kinds: [259],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'typeParameters'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'annotations',
+							steps: [
+								{
+									key: 'annotations',
+									optional: true
+								}
+							],
+							multiple: true,
+							seats: [
+								{
+									at: [302, 'annotations'],
+									kinds: [233, 234],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'returnType',
+							steps: [
+								{
+									key: 'returnType'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [302, 'returnType'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [302, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [302, 'parameters'],
+									kinds: [296, 326]
+								},
+								{
+									at: [325, 'receiverParameter'],
+									kinds: [298],
+									within: [
+										{
+											builder: 'formalParametersReceiver',
+											key: 'receiverParameter'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'dimensions',
+							steps: [
+								{
+									key: 'dimensions',
+									optional: true
+								}
+							],
+							multiple: false,
+							emptyContainer: true,
+							seats: [
+								{
+									at: [302, 'dimensions'],
+									kinds: []
+								},
+								{
+									at: [196, 'annotations'],
+									kinds: [233, 234],
+									within: [
+										{
+											builder: 'dimensions',
+											key: 'annotations',
+											optional: true
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'throws',
+							steps: [
+								{
+									key: 'throws',
+									stored: '_throws',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [302, 'throws'],
+									kinds: []
+								},
+								{
+									at: [300, 'types'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'throws',
+											key: 'types'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [302, 'body'],
+									kinds: [209]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'modifiers',
+									builder: 'modifiers',
+									optional: true
+								},
+								{
+									key: 'elements'
+								}
+							],
+							kind: 136
+						}
+					],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'modifiers',
+											builder: 'modifiers',
+											optional: true
+										},
+										{
+											key: 'elements'
+										}
+									],
+									kind: 85
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters', 'returnType']
+						}
+					]
+				}
+			],
+			flags: [
+				'default',
+				'static',
+				'async',
+				'const',
+				'computed',
+				'generator',
+				'privateName',
+				'override',
+				'readonly',
+				'optional',
+				'unsafe'
+			]
+		},
+		'declaration.member.method.public': {
+			root: true,
+			arms: [
+				{
+					kind: 302,
+					builder: 'methodDeclaration',
+					slots: [
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [302, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [258, 'typeParameters'],
+									kinds: [259],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'typeParameters'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'annotations',
+							steps: [
+								{
+									key: 'annotations',
+									optional: true
+								}
+							],
+							multiple: true,
+							seats: [
+								{
+									at: [302, 'annotations'],
+									kinds: [233, 234],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'returnType',
+							steps: [
+								{
+									key: 'returnType'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [302, 'returnType'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [302, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [302, 'parameters'],
+									kinds: [296, 326]
+								},
+								{
+									at: [325, 'receiverParameter'],
+									kinds: [298],
+									within: [
+										{
+											builder: 'formalParametersReceiver',
+											key: 'receiverParameter'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'dimensions',
+							steps: [
+								{
+									key: 'dimensions',
+									optional: true
+								}
+							],
+							multiple: false,
+							emptyContainer: true,
+							seats: [
+								{
+									at: [302, 'dimensions'],
+									kinds: []
+								},
+								{
+									at: [196, 'annotations'],
+									kinds: [233, 234],
+									within: [
+										{
+											builder: 'dimensions',
+											key: 'annotations',
+											optional: true
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'throws',
+							steps: [
+								{
+									key: 'throws',
+									stored: '_throws',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [302, 'throws'],
+									kinds: []
+								},
+								{
+									at: [300, 'types'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'throws',
+											key: 'types'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [302, 'body'],
+									kinds: [209]
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'modifiers',
+									builder: 'modifiers',
+									optional: true
+								},
+								{
+									key: 'elements'
+								}
+							],
+							kind: 135
+						}
+					],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'modifiers',
+											builder: 'modifiers',
+											optional: true
+										},
+										{
+											key: 'elements'
+										}
+									],
+									kind: 85
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters', 'returnType']
+						}
+					]
+				}
+			],
+			flags: [
+				'default',
+				'static',
+				'async',
+				'const',
+				'computed',
+				'generator',
+				'privateName',
+				'override',
+				'readonly',
+				'optional',
+				'unsafe'
+			]
+		},
+		'declaration.member.method.signature': {
+			root: true,
+			arms: [
+				{
+					kind: 302,
+					builder: 'methodDeclaration',
+					slots: [
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [302, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [258, 'typeParameters'],
+									kinds: [259],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'typeParameters'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'annotations',
+							steps: [
+								{
+									key: 'annotations',
+									optional: true
+								}
+							],
+							multiple: true,
+							seats: [
+								{
+									at: [302, 'annotations'],
+									kinds: [233, 234],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'returnType',
+							steps: [
+								{
+									key: 'returnType'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [302, 'returnType'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [302, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [302, 'parameters'],
+									kinds: [296, 326]
+								},
+								{
+									at: [325, 'receiverParameter'],
+									kinds: [298],
+									within: [
+										{
+											builder: 'formalParametersReceiver',
+											key: 'receiverParameter'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'dimensions',
+							steps: [
+								{
+									key: 'dimensions',
+									optional: true
+								}
+							],
+							multiple: false,
+							emptyContainer: true,
+							seats: [
+								{
+									at: [302, 'dimensions'],
+									kinds: []
+								},
+								{
+									at: [196, 'annotations'],
+									kinds: [233, 234],
+									within: [
+										{
+											builder: 'dimensions',
+											key: 'annotations',
+											optional: true
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'throws',
+							steps: [
+								{
+									key: 'throws',
+									stored: '_throws',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [302, 'throws'],
+									kinds: []
+								},
+								{
+									at: [300, 'types'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'throws',
+											key: 'types'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'modifiers',
+											builder: 'modifiers',
+											optional: true
+										},
+										{
+											key: 'elements'
+										}
+									],
+									kind: 85
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters', 'returnType']
+						}
+					]
+				}
+			],
+			flags: [
+				'static',
+				'async',
+				'override',
+				'readonly',
+				'optional',
+				'default',
+				'const',
+				'computed',
+				'generator',
+				'privateName',
+				'unsafe'
+			]
+		},
+		'declaration.member.method.signature.abstract': {
+			root: true,
+			arms: [
+				{
+					kind: 302,
+					builder: 'methodDeclaration',
+					slots: [
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [302, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [258, 'typeParameters'],
+									kinds: [259],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'typeParameters'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'annotations',
+							steps: [
+								{
+									key: 'annotations',
+									optional: true
+								}
+							],
+							multiple: true,
+							seats: [
+								{
+									at: [302, 'annotations'],
+									kinds: [233, 234],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'returnType',
+							steps: [
+								{
+									key: 'returnType'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [302, 'returnType'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [302, 'name'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'parameters',
+							steps: [
+								{
+									key: 'parameters'
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [302, 'parameters'],
+									kinds: [296, 326]
+								},
+								{
+									at: [325, 'receiverParameter'],
+									kinds: [298],
+									within: [
+										{
+											builder: 'formalParametersReceiver',
+											key: 'receiverParameter'
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'dimensions',
+							steps: [
+								{
+									key: 'dimensions',
+									optional: true
+								}
+							],
+							multiple: false,
+							emptyContainer: true,
+							seats: [
+								{
+									at: [302, 'dimensions'],
+									kinds: []
+								},
+								{
+									at: [196, 'annotations'],
+									kinds: [233, 234],
+									within: [
+										{
+											builder: 'dimensions',
+											key: 'annotations',
+											optional: true
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'throws',
+							steps: [
+								{
+									key: 'throws',
+									stored: '_throws',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [302, 'throws'],
+									kinds: []
+								},
+								{
+									at: [300, 'types'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'throws',
+											key: 'types'
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'modifiers',
+									builder: 'modifiers',
+									optional: true
+								},
+								{
+									key: 'elements'
+								}
+							],
+							kind: 138
+						}
+					],
+					flags: {
+						static: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'modifiers',
+											builder: 'modifiers',
+											optional: true
+										},
+										{
+											key: 'elements'
+										}
+									],
+									kind: 85
+								}
+							]
+						}
+					},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'parameters', 'returnType']
+						}
+					]
+				}
+			],
+			flags: [
+				'override',
+				'optional',
+				'static',
+				'async',
+				'readonly',
+				'default',
+				'const',
+				'computed',
+				'generator',
+				'privateName',
+				'unsafe'
+			]
+		},
+		'declaration.member.static_block': {
+			root: true,
+			arms: [
+				{
+					kind: 266,
+					builder: 'staticInitializer',
+					slots: [
+						{
+							name: 'block',
+							steps: [
+								{
+									key: 'block',
+									stored: '_block'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [266, 'block'],
+									kinds: [209]
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['block']
+						}
+					]
+				}
+			]
+		},
+		'declaration.module': {
+			root: true,
+			arms: [
+				{
+					kind: 240,
+					builder: 'moduleDeclaration',
+					slots: [
+						{
+							name: 'annotations',
+							steps: [
+								{
+									key: 'annotations',
+									optional: true
+								}
+							],
+							multiple: true,
+							seats: [
+								{
+									at: [240, 'annotations'],
+									kinds: [233, 234],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'open',
+							steps: [
+								{
+									key: 'open',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [240, 'open'],
+									kinds: [110],
+									tokens: {
+										open: 110
+									}
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [240, 'name'],
+									kinds: [1, 271],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'body',
+							steps: [
+								{
+									key: 'body',
+									stored: '_body'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [240, 'body'],
+									kinds: []
+								},
+								{
+									at: [241, 'moduleDirectives'],
+									kinds: [242, 243, 245, 246, 247, 248],
+									within: [
+										{
+											builder: 'moduleBody',
+											key: 'moduleDirectives',
+											optional: true
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['body', 'name']
+						}
+					]
+				}
+			]
+		},
+		'declaration.parameter': {
+			root: true,
+			arms: [
+				{
+					kind: 297,
+					builder: 'formalParameter',
+					slots: [
+						{
+							name: 'modifiers',
+							steps: [
+								{
+									key: 'modifiers',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [297, 'modifiers'],
+									kinds: [257]
+								}
+							]
+						},
+						{
+							name: 'type',
+							steps: [
+								{
+									key: 'type'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [297, 'type'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'name',
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [297, 'name'],
+									kinds: [1, 64],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										_: 64
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'dimensions',
+							steps: [
+								{
+									key: 'dimensions',
+									optional: true
+								}
+							],
+							multiple: false,
+							emptyContainer: true,
+							seats: [
+								{
+									at: [297, 'dimensions'],
+									kinds: []
+								},
+								{
+									at: [196, 'annotations'],
+									kinds: [233, 234],
+									within: [
+										{
+											builder: 'dimensions',
+											key: 'annotations',
+											optional: true
+										}
+									],
+									many: true
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['name', 'type']
+						}
+					]
+				}
+			],
+			flags: ['override', 'readonly', 'mutable', 'optional']
+		},
+		'declaration.parameter.receiver': {
+			root: true,
+			arms: [
+				{
+					kind: 298,
+					builder: 'receiverParameter',
+					slots: [
+						{
+							name: 'annotations',
+							steps: [
+								{
+									key: 'annotations',
+									optional: true
+								}
+							],
+							multiple: true,
+							seats: [
+								{
+									at: [298, 'annotations'],
+									kinds: [233, 234],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'unannotatedType',
+							steps: [
+								{
+									key: 'unannotatedType'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [298, 'unannotatedType'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'identifiers',
+							steps: [
+								{
+									key: 'identifiers',
+									optional: true
+								}
+							],
+							multiple: true,
+							seats: [
+								{
+									at: [298, 'identifiers'],
+									kinds: [1],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									many: true
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['unannotatedType']
+						}
+					]
+				}
+			],
+			flags: ['reference', 'mutable', 'override', 'readonly', 'optional']
+		},
+		'declaration.parameter.variadic': {
+			root: true,
+			arms: [
+				{
+					kind: 299,
+					builder: 'spreadParameter',
+					slots: [
+						{
+							name: 'modifiers',
+							steps: [
+								{
+									key: 'modifiers',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [299, 'modifiers'],
+									kinds: [257]
+								}
+							]
+						},
+						{
+							name: 'unannotatedType',
+							steps: [
+								{
+									key: 'unannotatedType'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [299, 'unannotatedType'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'annotations',
+							steps: [
+								{
+									key: 'annotations',
+									optional: true
+								}
+							],
+							multiple: true,
+							seats: [
+								{
+									at: [299, 'annotations'],
+									kinds: [233, 234],
+									many: true
+								}
+							]
+						},
+						{
+							name: 'variableDeclarator',
+							steps: [
+								{
+									key: 'variableDeclarator'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [299, 'variableDeclarator'],
+									kinds: [283]
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['unannotatedType', 'variableDeclarator']
+						}
+					]
+				}
+			],
+			flags: ['mutable', 'override', 'readonly', 'optional']
+		},
+		'declaration.type.class': {
 			root: true,
 			arms: [
 				{
@@ -1555,1087 +5301,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['abstract']
 		},
-		'declaration.constant': {
-			root: true,
-			arms: [
-				{
-					kind: 281,
-					builder: 'constantDeclaration',
-					slots: [
-						{
-							name: 'modifiers',
-							steps: [
-								{
-									key: 'modifiers',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [281, 'modifiers'],
-									kinds: [257]
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [281, 'type'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'declarators',
-							steps: [
-								{
-									key: 'declarators'
-								}
-							],
-							multiple: true,
-							nonEmpty: true,
-							seats: [
-								{
-									at: [281, 'declarators'],
-									kinds: [283],
-									many: true
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['declarators', 'type']
-						}
-					]
-				}
-			]
-		},
-		'declaration.constant.private': {
-			root: true,
-			arms: [
-				{
-					kind: 281,
-					builder: 'constantDeclaration',
-					slots: [
-						{
-							name: 'modifiers',
-							steps: [
-								{
-									key: 'modifiers'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [281, 'modifiers'],
-									kinds: [257]
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [281, 'type'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'declarators',
-							steps: [
-								{
-									key: 'declarators'
-								}
-							],
-							multiple: true,
-							nonEmpty: true,
-							seats: [
-								{
-									at: [281, 'declarators'],
-									kinds: [283],
-									many: true
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'modifiers',
-									builder: 'modifiers',
-									optional: true
-								},
-								{
-									key: 'elements'
-								}
-							],
-							kind: 137
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['declarators', 'modifiers', 'type']
-						}
-					]
-				}
-			]
-		},
-		'declaration.constant.public': {
-			root: true,
-			arms: [
-				{
-					kind: 281,
-					builder: 'constantDeclaration',
-					slots: [
-						{
-							name: 'modifiers',
-							steps: [
-								{
-									key: 'modifiers'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [281, 'modifiers'],
-									kinds: [257]
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [281, 'type'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'declarators',
-							steps: [
-								{
-									key: 'declarators'
-								}
-							],
-							multiple: true,
-							nonEmpty: true,
-							seats: [
-								{
-									at: [281, 'declarators'],
-									kinds: [283],
-									many: true
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'modifiers',
-									builder: 'modifiers',
-									optional: true
-								},
-								{
-									key: 'elements'
-								}
-							],
-							kind: 135
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['declarators', 'modifiers', 'type']
-						}
-					]
-				}
-			]
-		},
-		'declaration.constructor': {
-			root: true,
-			arms: [
-				{
-					kind: 303,
-					builder: 'compactConstructorDeclaration',
-					slots: [
-						{
-							name: 'modifiers',
-							steps: [
-								{
-									key: 'modifiers',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [303, 'modifiers'],
-									kinds: [257]
-								}
-							]
-						},
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [303, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body',
-									stored: '_body'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [303, 'body'],
-									kinds: [209]
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: ['parameters', 'throws', 'typeParameters'],
-							required: ['body', 'name']
-						}
-					]
-				},
-				{
-					kind: 267,
-					builder: 'constructorDeclaration',
-					slots: [
-						{
-							name: 'modifiers',
-							steps: [
-								{
-									key: 'modifiers',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [267, 'modifiers'],
-									kinds: [257]
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [267, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [258, 'typeParameters'],
-									kinds: [259],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'typeParameters'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [267, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [267, 'parameters'],
-									kinds: [296, 326]
-								},
-								{
-									at: [325, 'receiverParameter'],
-									kinds: [298],
-									within: [
-										{
-											builder: 'formalParametersReceiver',
-											key: 'receiverParameter'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'throws',
-							steps: [
-								{
-									key: 'throws',
-									stored: '_throws',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [267, 'throws'],
-									kinds: []
-								},
-								{
-									at: [300, 'types'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'throws',
-											key: 'types'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [267, 'body'],
-									kinds: [269]
-								}
-							]
-						}
-					],
-					empty: ['parameters'],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['body', 'name', 'parameters']
-						}
-					]
-				}
-			],
-			flags: ['async']
-		},
-		'declaration.constructor.private': {
-			root: true,
-			arms: [
-				{
-					kind: 267,
-					builder: 'constructorDeclaration',
-					slots: [
-						{
-							name: 'modifiers',
-							steps: [
-								{
-									key: 'modifiers'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [267, 'modifiers'],
-									kinds: [257]
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [267, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [258, 'typeParameters'],
-									kinds: [259],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'typeParameters'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [267, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [267, 'parameters'],
-									kinds: [296, 326]
-								},
-								{
-									at: [325, 'receiverParameter'],
-									kinds: [298],
-									within: [
-										{
-											builder: 'formalParametersReceiver',
-											key: 'receiverParameter'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'throws',
-							steps: [
-								{
-									key: 'throws',
-									stored: '_throws',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [267, 'throws'],
-									kinds: []
-								},
-								{
-									at: [300, 'types'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'throws',
-											key: 'types'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [267, 'body'],
-									kinds: [269]
-								}
-							]
-						}
-					],
-					empty: ['parameters'],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'modifiers',
-									builder: 'modifiers',
-									optional: true
-								},
-								{
-									key: 'elements'
-								}
-							],
-							kind: 137
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['body', 'modifiers', 'name', 'parameters']
-						}
-					]
-				}
-			],
-			flags: ['async']
-		},
-		'declaration.constructor.protected': {
-			root: true,
-			arms: [
-				{
-					kind: 267,
-					builder: 'constructorDeclaration',
-					slots: [
-						{
-							name: 'modifiers',
-							steps: [
-								{
-									key: 'modifiers'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [267, 'modifiers'],
-									kinds: [257]
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [267, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [258, 'typeParameters'],
-									kinds: [259],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'typeParameters'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [267, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [267, 'parameters'],
-									kinds: [296, 326]
-								},
-								{
-									at: [325, 'receiverParameter'],
-									kinds: [298],
-									within: [
-										{
-											builder: 'formalParametersReceiver',
-											key: 'receiverParameter'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'throws',
-							steps: [
-								{
-									key: 'throws',
-									stored: '_throws',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [267, 'throws'],
-									kinds: []
-								},
-								{
-									at: [300, 'types'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'throws',
-											key: 'types'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [267, 'body'],
-									kinds: [269]
-								}
-							]
-						}
-					],
-					empty: ['parameters'],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'modifiers',
-									builder: 'modifiers',
-									optional: true
-								},
-								{
-									key: 'elements'
-								}
-							],
-							kind: 136
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['body', 'modifiers', 'name', 'parameters']
-						}
-					]
-				}
-			],
-			flags: ['async']
-		},
-		'declaration.constructor.public': {
-			root: true,
-			arms: [
-				{
-					kind: 267,
-					builder: 'constructorDeclaration',
-					slots: [
-						{
-							name: 'modifiers',
-							steps: [
-								{
-									key: 'modifiers'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [267, 'modifiers'],
-									kinds: [257]
-								}
-							]
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [267, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [258, 'typeParameters'],
-									kinds: [259],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'typeParameters'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [267, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [267, 'parameters'],
-									kinds: [296, 326]
-								},
-								{
-									at: [325, 'receiverParameter'],
-									kinds: [298],
-									within: [
-										{
-											builder: 'formalParametersReceiver',
-											key: 'receiverParameter'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'throws',
-							steps: [
-								{
-									key: 'throws',
-									stored: '_throws',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [267, 'throws'],
-									kinds: []
-								},
-								{
-									at: [300, 'types'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'throws',
-											key: 'types'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [267, 'body'],
-									kinds: [269]
-								}
-							]
-						}
-					],
-					empty: ['parameters'],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'modifiers',
-									builder: 'modifiers',
-									optional: true
-								},
-								{
-									key: 'elements'
-								}
-							],
-							kind: 135
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['body', 'modifiers', 'name', 'parameters']
-						}
-					]
-				}
-			],
-			flags: ['async']
-		},
-		'declaration.enum': {
+		'declaration.type.enum': {
 			root: true,
 			arms: [
 				{
@@ -2725,7 +5391,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['const']
 		},
-		'declaration.enum.private': {
+		'declaration.type.enum.private': {
 			root: true,
 			arms: [
 				{
@@ -2828,7 +5494,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['const']
 		},
-		'declaration.enum.public': {
+		'declaration.type.enum.public': {
 			root: true,
 			arms: [
 				{
@@ -2931,605 +5597,7 @@ export const build: PortableBuildTable = {
 			],
 			flags: ['const']
 		},
-		'declaration.enum_member': {
-			root: true,
-			arms: [
-				{
-					kind: 255,
-					builder: 'enumConstant',
-					slots: [
-						{
-							name: 'modifiers',
-							steps: [
-								{
-									key: 'modifiers',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [255, 'modifiers'],
-									kinds: [257]
-								}
-							]
-						},
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [255, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'arguments',
-							steps: [
-								{
-									key: 'arguments',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [255, 'arguments'],
-									kinds: []
-								},
-								{
-									at: [191, 'expressions'],
-									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
-										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										this: 112
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'argumentList',
-											key: 'expressions',
-											optional: true
-										}
-									],
-									many: true
-								},
-								{
-									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'argumentList',
-											key: 'expressions',
-											optional: true
-										},
-										{
-											builder: 'classLiteral',
-											key: 'unannotatedType'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer'
-							}
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [255, 'body'],
-									kinds: []
-								},
-								{
-									at: [265, 'classBodyDeclarations'],
-									kinds: [66, 209, 252, 256, 266, 267, 272, 273, 274, 278, 302, 303],
-									tokens: {
-										';': 66
-									},
-									within: [
-										{
-											builder: 'classBody',
-											key: 'classBodyDeclarations',
-											optional: true
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['name']
-						}
-					]
-				}
-			]
-		},
-		'declaration.field': {
-			root: true,
-			arms: [
-				{
-					kind: 272,
-					builder: 'fieldDeclaration',
-					slots: [
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [272, 'type'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'declarators',
-							steps: [
-								{
-									key: 'declarators'
-								}
-							],
-							multiple: true,
-							nonEmpty: true,
-							seats: [
-								{
-									at: [272, 'declarators'],
-									kinds: [283],
-									many: true
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'modifiers',
-											builder: 'modifiers',
-											optional: true
-										},
-										{
-											key: 'elements'
-										}
-									],
-									kind: 85
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['declarators', 'type']
-						}
-					]
-				}
-			],
-			flags: [
-				'computed',
-				'privateName',
-				'abstract',
-				'override',
-				'static',
-				'readonly',
-				'declare',
-				'definite',
-				'optional'
-			]
-		},
-		'declaration.field.private': {
-			root: true,
-			arms: [
-				{
-					kind: 272,
-					builder: 'fieldDeclaration',
-					slots: [
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [272, 'type'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'declarators',
-							steps: [
-								{
-									key: 'declarators'
-								}
-							],
-							multiple: true,
-							nonEmpty: true,
-							seats: [
-								{
-									at: [272, 'declarators'],
-									kinds: [283],
-									many: true
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'modifiers',
-									builder: 'modifiers',
-									optional: true
-								},
-								{
-									key: 'elements'
-								}
-							],
-							kind: 137
-						}
-					],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'modifiers',
-											builder: 'modifiers',
-											optional: true
-										},
-										{
-											key: 'elements'
-										}
-									],
-									kind: 85
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['declarators', 'type']
-						}
-					]
-				}
-			],
-			flags: [
-				'computed',
-				'privateName',
-				'abstract',
-				'override',
-				'static',
-				'readonly',
-				'declare',
-				'definite',
-				'optional'
-			]
-		},
-		'declaration.field.protected': {
-			root: true,
-			arms: [
-				{
-					kind: 272,
-					builder: 'fieldDeclaration',
-					slots: [
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [272, 'type'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'declarators',
-							steps: [
-								{
-									key: 'declarators'
-								}
-							],
-							multiple: true,
-							nonEmpty: true,
-							seats: [
-								{
-									at: [272, 'declarators'],
-									kinds: [283],
-									many: true
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'modifiers',
-									builder: 'modifiers',
-									optional: true
-								},
-								{
-									key: 'elements'
-								}
-							],
-							kind: 136
-						}
-					],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'modifiers',
-											builder: 'modifiers',
-											optional: true
-										},
-										{
-											key: 'elements'
-										}
-									],
-									kind: 85
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['declarators', 'type']
-						}
-					]
-				}
-			],
-			flags: [
-				'computed',
-				'privateName',
-				'abstract',
-				'override',
-				'static',
-				'readonly',
-				'declare',
-				'definite',
-				'optional'
-			]
-		},
-		'declaration.field.public': {
-			root: true,
-			arms: [
-				{
-					kind: 272,
-					builder: 'fieldDeclaration',
-					slots: [
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [272, 'type'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'declarators',
-							steps: [
-								{
-									key: 'declarators'
-								}
-							],
-							multiple: true,
-							nonEmpty: true,
-							seats: [
-								{
-									at: [272, 'declarators'],
-									kinds: [283],
-									many: true
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'modifiers',
-									builder: 'modifiers',
-									optional: true
-								},
-								{
-									key: 'elements'
-								}
-							],
-							kind: 135
-						}
-					],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'modifiers',
-											builder: 'modifiers',
-											optional: true
-										},
-										{
-											key: 'elements'
-										}
-									],
-									kind: 85
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['declarators', 'type']
-						}
-					]
-				}
-			],
-			flags: [
-				'computed',
-				'privateName',
-				'abstract',
-				'override',
-				'static',
-				'readonly',
-				'declare',
-				'definite',
-				'optional'
-			]
-		},
-		'declaration.interface': {
+		'declaration.type.interface': {
 			root: true,
 			arms: [
 				{
@@ -3711,2051 +5779,6 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'declaration.method': {
-			root: true,
-			arms: [
-				{
-					kind: 302,
-					builder: 'methodDeclaration',
-					slots: [
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [302, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [258, 'typeParameters'],
-									kinds: [259],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'typeParameters'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'annotations',
-							steps: [
-								{
-									key: 'annotations',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [302, 'annotations'],
-									kinds: [233, 234],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'returnType',
-							steps: [
-								{
-									key: 'returnType'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [302, 'returnType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [302, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [302, 'parameters'],
-									kinds: [296, 326]
-								},
-								{
-									at: [325, 'receiverParameter'],
-									kinds: [298],
-									within: [
-										{
-											builder: 'formalParametersReceiver',
-											key: 'receiverParameter'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'dimensions',
-							steps: [
-								{
-									key: 'dimensions',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [302, 'dimensions'],
-									kinds: []
-								},
-								{
-									at: [196, 'annotations'],
-									kinds: [233, 234],
-									within: [
-										{
-											builder: 'dimensions',
-											key: 'annotations',
-											optional: true
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'throws',
-							steps: [
-								{
-									key: 'throws',
-									stored: '_throws',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [302, 'throws'],
-									kinds: []
-								},
-								{
-									at: [300, 'types'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'throws',
-											key: 'types'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [302, 'body'],
-									kinds: [209]
-								}
-							]
-						}
-					],
-					empty: ['parameters'],
-					presets: [],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'modifiers',
-											builder: 'modifiers',
-											optional: true
-										},
-										{
-											key: 'elements'
-										}
-									],
-									kind: 85
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name', 'parameters', 'returnType']
-						}
-					]
-				}
-			],
-			flags: [
-				'default',
-				'static',
-				'async',
-				'const',
-				'computed',
-				'generator',
-				'privateName',
-				'override',
-				'readonly',
-				'optional',
-				'unsafe'
-			]
-		},
-		'declaration.method.private': {
-			root: true,
-			arms: [
-				{
-					kind: 302,
-					builder: 'methodDeclaration',
-					slots: [
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [302, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [258, 'typeParameters'],
-									kinds: [259],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'typeParameters'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'annotations',
-							steps: [
-								{
-									key: 'annotations',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [302, 'annotations'],
-									kinds: [233, 234],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'returnType',
-							steps: [
-								{
-									key: 'returnType'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [302, 'returnType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [302, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [302, 'parameters'],
-									kinds: [296, 326]
-								},
-								{
-									at: [325, 'receiverParameter'],
-									kinds: [298],
-									within: [
-										{
-											builder: 'formalParametersReceiver',
-											key: 'receiverParameter'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'dimensions',
-							steps: [
-								{
-									key: 'dimensions',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [302, 'dimensions'],
-									kinds: []
-								},
-								{
-									at: [196, 'annotations'],
-									kinds: [233, 234],
-									within: [
-										{
-											builder: 'dimensions',
-											key: 'annotations',
-											optional: true
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'throws',
-							steps: [
-								{
-									key: 'throws',
-									stored: '_throws',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [302, 'throws'],
-									kinds: []
-								},
-								{
-									at: [300, 'types'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'throws',
-											key: 'types'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [302, 'body'],
-									kinds: [209]
-								}
-							]
-						}
-					],
-					empty: ['parameters'],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'modifiers',
-									builder: 'modifiers',
-									optional: true
-								},
-								{
-									key: 'elements'
-								}
-							],
-							kind: 137
-						}
-					],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'modifiers',
-											builder: 'modifiers',
-											optional: true
-										},
-										{
-											key: 'elements'
-										}
-									],
-									kind: 85
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name', 'parameters', 'returnType']
-						}
-					]
-				}
-			],
-			flags: [
-				'default',
-				'static',
-				'async',
-				'const',
-				'computed',
-				'generator',
-				'privateName',
-				'override',
-				'readonly',
-				'optional',
-				'unsafe'
-			]
-		},
-		'declaration.method.protected': {
-			root: true,
-			arms: [
-				{
-					kind: 302,
-					builder: 'methodDeclaration',
-					slots: [
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [302, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [258, 'typeParameters'],
-									kinds: [259],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'typeParameters'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'annotations',
-							steps: [
-								{
-									key: 'annotations',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [302, 'annotations'],
-									kinds: [233, 234],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'returnType',
-							steps: [
-								{
-									key: 'returnType'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [302, 'returnType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [302, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [302, 'parameters'],
-									kinds: [296, 326]
-								},
-								{
-									at: [325, 'receiverParameter'],
-									kinds: [298],
-									within: [
-										{
-											builder: 'formalParametersReceiver',
-											key: 'receiverParameter'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'dimensions',
-							steps: [
-								{
-									key: 'dimensions',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [302, 'dimensions'],
-									kinds: []
-								},
-								{
-									at: [196, 'annotations'],
-									kinds: [233, 234],
-									within: [
-										{
-											builder: 'dimensions',
-											key: 'annotations',
-											optional: true
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'throws',
-							steps: [
-								{
-									key: 'throws',
-									stored: '_throws',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [302, 'throws'],
-									kinds: []
-								},
-								{
-									at: [300, 'types'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'throws',
-											key: 'types'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [302, 'body'],
-									kinds: [209]
-								}
-							]
-						}
-					],
-					empty: ['parameters'],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'modifiers',
-									builder: 'modifiers',
-									optional: true
-								},
-								{
-									key: 'elements'
-								}
-							],
-							kind: 136
-						}
-					],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'modifiers',
-											builder: 'modifiers',
-											optional: true
-										},
-										{
-											key: 'elements'
-										}
-									],
-									kind: 85
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name', 'parameters', 'returnType']
-						}
-					]
-				}
-			],
-			flags: [
-				'default',
-				'static',
-				'async',
-				'const',
-				'computed',
-				'generator',
-				'privateName',
-				'override',
-				'readonly',
-				'optional',
-				'unsafe'
-			]
-		},
-		'declaration.method.public': {
-			root: true,
-			arms: [
-				{
-					kind: 302,
-					builder: 'methodDeclaration',
-					slots: [
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [302, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [258, 'typeParameters'],
-									kinds: [259],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'typeParameters'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'annotations',
-							steps: [
-								{
-									key: 'annotations',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [302, 'annotations'],
-									kinds: [233, 234],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'returnType',
-							steps: [
-								{
-									key: 'returnType'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [302, 'returnType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [302, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [302, 'parameters'],
-									kinds: [296, 326]
-								},
-								{
-									at: [325, 'receiverParameter'],
-									kinds: [298],
-									within: [
-										{
-											builder: 'formalParametersReceiver',
-											key: 'receiverParameter'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'dimensions',
-							steps: [
-								{
-									key: 'dimensions',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [302, 'dimensions'],
-									kinds: []
-								},
-								{
-									at: [196, 'annotations'],
-									kinds: [233, 234],
-									within: [
-										{
-											builder: 'dimensions',
-											key: 'annotations',
-											optional: true
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'throws',
-							steps: [
-								{
-									key: 'throws',
-									stored: '_throws',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [302, 'throws'],
-									kinds: []
-								},
-								{
-									at: [300, 'types'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'throws',
-											key: 'types'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [302, 'body'],
-									kinds: [209]
-								}
-							]
-						}
-					],
-					empty: ['parameters'],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'modifiers',
-									builder: 'modifiers',
-									optional: true
-								},
-								{
-									key: 'elements'
-								}
-							],
-							kind: 135
-						}
-					],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'modifiers',
-											builder: 'modifiers',
-											optional: true
-										},
-										{
-											key: 'elements'
-										}
-									],
-									kind: 85
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name', 'parameters', 'returnType']
-						}
-					]
-				}
-			],
-			flags: [
-				'default',
-				'static',
-				'async',
-				'const',
-				'computed',
-				'generator',
-				'privateName',
-				'override',
-				'readonly',
-				'optional',
-				'unsafe'
-			]
-		},
-		'declaration.method.signature': {
-			root: true,
-			arms: [
-				{
-					kind: 302,
-					builder: 'methodDeclaration',
-					slots: [
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [302, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [258, 'typeParameters'],
-									kinds: [259],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'typeParameters'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'annotations',
-							steps: [
-								{
-									key: 'annotations',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [302, 'annotations'],
-									kinds: [233, 234],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'returnType',
-							steps: [
-								{
-									key: 'returnType'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [302, 'returnType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [302, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [302, 'parameters'],
-									kinds: [296, 326]
-								},
-								{
-									at: [325, 'receiverParameter'],
-									kinds: [298],
-									within: [
-										{
-											builder: 'formalParametersReceiver',
-											key: 'receiverParameter'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'dimensions',
-							steps: [
-								{
-									key: 'dimensions',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [302, 'dimensions'],
-									kinds: []
-								},
-								{
-									at: [196, 'annotations'],
-									kinds: [233, 234],
-									within: [
-										{
-											builder: 'dimensions',
-											key: 'annotations',
-											optional: true
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'throws',
-							steps: [
-								{
-									key: 'throws',
-									stored: '_throws',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [302, 'throws'],
-									kinds: []
-								},
-								{
-									at: [300, 'types'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'throws',
-											key: 'types'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					empty: ['parameters'],
-					presets: [],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'modifiers',
-											builder: 'modifiers',
-											optional: true
-										},
-										{
-											key: 'elements'
-										}
-									],
-									kind: 85
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name', 'parameters', 'returnType']
-						}
-					]
-				}
-			],
-			flags: [
-				'static',
-				'async',
-				'override',
-				'readonly',
-				'optional',
-				'default',
-				'const',
-				'computed',
-				'generator',
-				'privateName',
-				'unsafe'
-			]
-		},
-		'declaration.method.signature.abstract': {
-			root: true,
-			arms: [
-				{
-					kind: 302,
-					builder: 'methodDeclaration',
-					slots: [
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [302, 'typeParameters'],
-									kinds: []
-								},
-								{
-									at: [258, 'typeParameters'],
-									kinds: [259],
-									within: [
-										{
-											builder: 'typeParameters',
-											key: 'typeParameters'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'annotations',
-							steps: [
-								{
-									key: 'annotations',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [302, 'annotations'],
-									kinds: [233, 234],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'returnType',
-							steps: [
-								{
-									key: 'returnType'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [302, 'returnType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [302, 'name'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [302, 'parameters'],
-									kinds: [296, 326]
-								},
-								{
-									at: [325, 'receiverParameter'],
-									kinds: [298],
-									within: [
-										{
-											builder: 'formalParametersReceiver',
-											key: 'receiverParameter'
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'dimensions',
-							steps: [
-								{
-									key: 'dimensions',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [302, 'dimensions'],
-									kinds: []
-								},
-								{
-									at: [196, 'annotations'],
-									kinds: [233, 234],
-									within: [
-										{
-											builder: 'dimensions',
-											key: 'annotations',
-											optional: true
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'throws',
-							steps: [
-								{
-									key: 'throws',
-									stored: '_throws',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [302, 'throws'],
-									kinds: []
-								},
-								{
-									at: [300, 'types'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'throws',
-											key: 'types'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					empty: ['parameters'],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'modifiers',
-									builder: 'modifiers',
-									optional: true
-								},
-								{
-									key: 'elements'
-								}
-							],
-							kind: 138
-						}
-					],
-					flags: {
-						static: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'modifiers',
-											builder: 'modifiers',
-											optional: true
-										},
-										{
-											key: 'elements'
-										}
-									],
-									kind: 85
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: [],
-							required: ['name', 'parameters', 'returnType']
-						}
-					]
-				}
-			],
-			flags: [
-				'override',
-				'optional',
-				'static',
-				'async',
-				'readonly',
-				'default',
-				'const',
-				'computed',
-				'generator',
-				'privateName',
-				'unsafe'
-			]
-		},
-		'declaration.module': {
-			root: true,
-			arms: [
-				{
-					kind: 240,
-					builder: 'moduleDeclaration',
-					slots: [
-						{
-							name: 'annotations',
-							steps: [
-								{
-									key: 'annotations',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [240, 'annotations'],
-									kinds: [233, 234],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'open',
-							steps: [
-								{
-									key: 'open',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [240, 'open'],
-									kinds: [110],
-									tokens: {
-										open: 110
-									}
-								}
-							]
-						},
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [240, 'name'],
-									kinds: [1, 271],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body',
-									stored: '_body'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [240, 'body'],
-									kinds: []
-								},
-								{
-									at: [241, 'moduleDirectives'],
-									kinds: [242, 243, 245, 246, 247, 248],
-									within: [
-										{
-											builder: 'moduleBody',
-											key: 'moduleDirectives',
-											optional: true
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['body', 'name']
-						}
-					]
-				}
-			]
-		},
-		'declaration.parameter': {
-			root: true,
-			arms: [
-				{
-					kind: 297,
-					builder: 'formalParameter',
-					slots: [
-						{
-							name: 'modifiers',
-							steps: [
-								{
-									key: 'modifiers',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [297, 'modifiers'],
-									kinds: [257]
-								}
-							]
-						},
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [297, 'type'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'name',
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [297, 'name'],
-									kinds: [1, 64],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										_: 64
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'dimensions',
-							steps: [
-								{
-									key: 'dimensions',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [297, 'dimensions'],
-									kinds: []
-								},
-								{
-									at: [196, 'annotations'],
-									kinds: [233, 234],
-									within: [
-										{
-											builder: 'dimensions',
-											key: 'annotations',
-											optional: true
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['name', 'type']
-						}
-					]
-				}
-			],
-			flags: ['override', 'readonly', 'mutable', 'optional']
-		},
-		'declaration.parameter.receiver': {
-			root: true,
-			arms: [
-				{
-					kind: 298,
-					builder: 'receiverParameter',
-					slots: [
-						{
-							name: 'annotations',
-							steps: [
-								{
-									key: 'annotations',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [298, 'annotations'],
-									kinds: [233, 234],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'unannotatedType',
-							steps: [
-								{
-									key: 'unannotatedType'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [298, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'identifiers',
-							steps: [
-								{
-									key: 'identifiers',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [298, 'identifiers'],
-									kinds: [1],
-									leaf: 'identifier',
-									texts: [1],
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									many: true
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['unannotatedType']
-						}
-					]
-				}
-			],
-			flags: ['reference', 'mutable', 'override', 'readonly', 'optional']
-		},
-		'declaration.parameter.variadic': {
-			root: true,
-			arms: [
-				{
-					kind: 299,
-					builder: 'spreadParameter',
-					slots: [
-						{
-							name: 'modifiers',
-							steps: [
-								{
-									key: 'modifiers',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [299, 'modifiers'],
-									kinds: [257]
-								}
-							]
-						},
-						{
-							name: 'unannotatedType',
-							steps: [
-								{
-									key: 'unannotatedType'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [299, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'annotations',
-							steps: [
-								{
-									key: 'annotations',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [299, 'annotations'],
-									kinds: [233, 234],
-									many: true
-								}
-							]
-						},
-						{
-							name: 'variableDeclarator',
-							steps: [
-								{
-									key: 'variableDeclarator'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [299, 'variableDeclarator'],
-									kinds: [283]
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['unannotatedType', 'variableDeclarator']
-						}
-					]
-				}
-			],
-			flags: ['mutable', 'override', 'readonly', 'optional']
-		},
 		'declaration.type_parameter': {
 			root: true,
 			arms: [
@@ -5907,7 +5930,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['declarators'],
 					presets: [],
 					flags: {},
 					when: [
@@ -5994,7 +6016,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['declarators'],
 					presets: [
 						{
 							steps: [
@@ -10408,6 +10429,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							emptyContainer: true,
 							list: true,
 							seats: [
 								{
@@ -10561,6 +10583,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							emptyContainer: true,
 							seats: [
 								{
 									at: [186, 'classBody'],
@@ -10584,7 +10607,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['arguments'],
 					presets: [],
 					flags: {},
 					when: [
@@ -13321,51 +13343,12 @@ export const build: PortableBuildTable = {
 				{
 					kind: 4,
 					builder: 'binaryIntegerLiteral',
+					numeric: ['prefix', 'content'],
 					digits: {
 						base: 2,
 						affix: '0b'
 					},
 					slots: [
-						{
-							name: 'prefix',
-							steps: [
-								{
-									key: 'prefix'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [4, 'prefix'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:0b|0B)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [4, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:(?:[01]+))+)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
 						{
 							name: 'suffix',
 							steps: [
@@ -13395,7 +13378,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['$value', 'content', 'prefix']
+							required: ['$value']
 						}
 					]
 				}
@@ -13436,51 +13419,12 @@ export const build: PortableBuildTable = {
 				{
 					kind: 3,
 					builder: 'octalIntegerLiteral',
+					numeric: ['prefix', 'content'],
 					digits: {
 						base: 8,
 						affix: '0o'
 					},
 					slots: [
-						{
-							name: 'prefix',
-							steps: [
-								{
-									key: 'prefix'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [3, 'prefix'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:0o|0O|0)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [3, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:(?:[0-7]+))+)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
 						{
 							name: 'suffix',
 							steps: [
@@ -13510,7 +13454,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['$value', 'content', 'prefix']
+							required: ['$value']
 						}
 					]
 				}
@@ -14310,41 +14254,6 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'statement.block.static': {
-			root: true,
-			arms: [
-				{
-					kind: 266,
-					builder: 'staticInitializer',
-					slots: [
-						{
-							name: 'block',
-							steps: [
-								{
-									key: 'block',
-									stored: '_block'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [266, 'block'],
-									kinds: [209]
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['block']
-						}
-					]
-				}
-			]
-		},
 		'statement.break': {
 			root: true,
 			arms: [
@@ -14451,7 +14360,6 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							list: false,
 							seats: [
 								{
 									at: [228, 'consequence'],
@@ -15100,7 +15008,6 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							list: false,
 							seats: [
 								{
 									at: [230, 'body'],
@@ -15461,7 +15368,6 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							list: false,
 							seats: [
 								{
 									at: [230, 'body'],
@@ -15611,7 +15517,6 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							list: false,
 							seats: [
 								{
 									at: [213, 'body'],
@@ -15851,6 +15756,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							emptyContainer: true,
 							seats: [
 								{
 									at: [231, 'dimensions'],
@@ -15935,7 +15841,6 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							list: false,
 							seats: [
 								{
 									at: [231, 'body'],
@@ -16103,7 +16008,6 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							list: false,
 							seats: [
 								{
 									at: [229, 'body'],
@@ -16270,7 +16174,6 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							list: false,
 							seats: [
 								{
 									at: [225, 'body'],
@@ -16543,33 +16446,10 @@ export const build: PortableBuildTable = {
 				{
 					kind: 330,
 					builder: 'tryStatementFinally',
-					slots: [
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body',
-									stored: '_body'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [330, 'body'],
-									kinds: [209]
-								}
-							]
-						}
-					],
+					slots: [],
 					presets: [],
 					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['body']
-						}
-					]
+					when: []
 				}
 			]
 		},
@@ -16727,7 +16607,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['typeArguments'],
 					presets: [],
 					flags: {},
 					when: [

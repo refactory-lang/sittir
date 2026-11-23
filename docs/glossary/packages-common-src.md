@@ -170,7 +170,7 @@ The `slice` step, with its bounds counted as an array counts them: truncated tow
 
 ### `packages/common/src/query.ts::ofTypeSteps`
 
-The steps an `ofType` call adds. A kind id becomes one `ofKinds` step over every type a node of that kind can have (`membership.membersOf`: the kind, a supertype's members, a polymorph's arms, an enum kind's member ids), resolved once when the step is added, the test the language's `is.*` guards make; nothing restamps a node's type to pass it. A portable kind becomes an `ofKinds` step over the ids the language's portable rows give its path (`portablePathOf`), the same ids the portable guards admit. A path whose ids decide it (`exact`) needs nothing more; otherwise a `filter` step follows that reads each node, or bare kind id, through `readsAs`, the guards' own test, so `ofType` and the guards cannot disagree. The filter is opaque, so the steps after it run over hydrated nodes, and the kinds stay known for a later `where`. A path the rows do not hold, or a grammar without portable rows, gives an empty `ofKinds` step, which yields nothing without a native call. Anything else, a kind name passed by mistake among it, is refused at the call rather than read as an empty result.
+The steps an `ofType` call adds. A kind id becomes one `ofKinds` step over every type a node of that kind can have (`membership.membersOf`: the kind, a supertype's members, a polymorph's arms, an enum kind's member ids), resolved once when the step is added, the test the language's `is.*` guards make; nothing restamps a node's type to pass it. A portable kind or a portable namespace becomes an `ofKinds` step over the ids the language's portable rows give its path (`portablePathArgument`, `portablePathOf`), the same ids the portable guards admit; the rows key a namespace like a path, so `ofType(kinds.declaration.member)` selects what `is.declaration.member` holds for. A path whose ids decide it (`exact`) needs nothing more; otherwise a `filter` step follows that reads each node, or bare kind id, through `readsAs`, the guards' own test, so `ofType` and the guards cannot disagree. The filter is opaque, so the steps after it run over hydrated nodes, and the kinds stay known for a later `where`. A path the rows do not hold, or a grammar without portable rows, gives an empty `ofKinds` step, which yields nothing without a native call. Anything else, a kind name passed by mistake among it, is refused at the call rather than read as an empty result.
 
 The step holds its kinds as a set, which each route reads. Pushed into a walk, or run over the tree's own entries, it reads membership alone: those elements are the tree's, so of its language. Run over elements after an opaque step, which may have put anything in their place, it is the language's kind test (`kindTest`, from `kindTestOf`), the test the language's guards are built with, so an element of another language never passes, as for the guards, and a bare kind id does.
 
@@ -754,9 +754,9 @@ Refuses a delimited composite whose content would not read back inside its own d
 
 A query result the native matcher returned as a coordinate, as a query entry: its kind and handle, and a `hydrate` that resolves the coordinate through `hydrateWith` under that tree's engine (`inTreeEngine`), so a match is read only when the caller asks for the node, and a match the registry already holds is the object its parent's accessor returns. It passes no role: a query yields each parser node once, as its alias envelope where an envelope and its content share one node.
 
-### `packages/common/src/query.ts::isPortableKind`
+### `packages/common/src/query.ts::portablePathArgument`
 
-Whether an `ofType` argument has a portable kind's shape: an object with a string `$path`. The path itself is not checked here; one the language's rows do not hold yields nothing (`ofTypeSteps`).
+The vocabulary path an `ofType` argument names: a portable kind's `$path`, or a portable namespace's `$namespace`, as the portable trees stamp them; `undefined` for any other value, which `ofTypeSteps` refuses. The path itself is not checked here; one the language's rows do not hold yields nothing (`ofTypeSteps`).
 
 ### `packages/common/src/language.ts::kindOf`
 
@@ -788,7 +788,7 @@ A parsed arena's independent lookup, hydration, typed candidate enumeration, ren
 
 ### `packages/common/src/portable/facts.ts::portablePathHasFacts`
 
-Whether a read path names every fact in a guard path: the top-level namespace matches, and each remaining whole segment occurs in order, allowing other refinement facts between them. Shared by namespace kind admission, exact-guard derivation, and the portable guards' matching of a node's reading. An absent read path matches nothing.
+Whether a read path names every fact in a guard path: the guard's kind matches, that is its root segment, any vocabulary namespaces after the root (the generated `vocabularyNamespaces`) and the segment that names the kind, and each remaining whole segment occurs in order, allowing other refinement facts between them. So `declaration.member.signature` does not read `declaration.member.method.signature`, and a namespace guard such as `declaration.member` reads every kind beneath it. Shared by namespace kind admission, exact-guard derivation, and the portable guards' matching of a node's reading. An absent read path matches nothing.
 
 ### `packages/common/src/portable/facts.ts::textBuilt`
 
@@ -801,6 +801,14 @@ Whether a build arm accepts a text value: the arm carries `content`, or the arm 
 ### `packages/common/src/portable/facts.ts::entriesHolding`
 
 The read entries that hold for a value, every condition of each (`conditionHolds`), less those another holding entry refines (`portablePathHasFacts`), in entry order. The classifier reads a value as the first one's path. Codegen's family coverage check (`covered.ts::familyCoverageOf`) runs it over each case a kind's slots allow, so a family path it finds covered is one the classifier never returns.
+
+### `packages/common/src/portable/facts.ts::buildsOnlyItem`
+
+Whether a route builds a list slot's only item: the slot's declared arity is a list (`list`), the route's form holds one node, and another route of the same slot in the arm holds the list. Such a route seats only the kinds its bindings capture names (an `else` holding one `if`), and a slot whose only item is one of them builds through it; any other value builds through the list form. The interpreter's owner choice and the build table's undecided-owner check read it here. The generated build's emitter keeps the same one-line test, since the pinned emitter imports nothing from `@sittir/common`; the generated-build parity test holds the two equal.
+
+### `packages/common/src/portable/facts.ts::readsEmptyWhenAbsent`
+
+Whether an absent slot of a path builds as the empty list: every arm of the path routes the slot, and every route of it is a list (`list`) with no `emptyContainer` stamp. That is what the read gives such a slot, `[]` whether or not its container is there, so a build takes the absent slot as `[]`: the interpreter's arm pick counts it as stated, and its slot values hold `[]` for it. Where some arm of the path has no route for the slot, absence picks that arm, as the read keeps rust's `mod m;` apart from `mod m {}`; on a stamped route an absent slot leaves the container out.
 
 ### `packages/common/src/portable/classify.ts::classifierOf`
 
@@ -816,7 +824,7 @@ The shared portable guard of a vocabulary path. It refuses a value without a kin
 
 ### `packages/common/src/portable/classify.ts::readsAs`
 
-Whether a node or a bare kind id reads as a vocabulary path by one language's rows. Its kind (a node's `$type`, or the id itself) must be among the ids the rows' table gives the path (`portablePathOf`); an exact path then holds by the kind alone, and otherwise the value's reading (`classifierOf`) must carry every fact of the path (`portablePathHasFacts`). The one test the shared guards (`guardOf`), a language's guards (`languageGuardOf`) and a query's `ofType` by a portable kind (`query.ts::ofTypeSteps`) run once they hold the rows.
+Whether a node or a bare kind id reads as a vocabulary path by one language's rows. Its kind (a node's `$type`, or the id itself) must be among the ids the rows' table gives the path (`portablePathOf`); an exact path then holds by the kind alone, and otherwise the value's reading (`classifierOf`) must carry every fact of the path or of one of the row's `targets` (`portableRowHasFacts`). The one test the shared guards (`guardOf`), a language's guards (`languageGuardOf`) and a query's `ofType` by a portable kind (`query.ts::ofTypeSteps`) run once they hold the rows.
 
 ### `packages/common/src/portable/classify.ts::portablePathOf`
 
@@ -833,6 +841,10 @@ What a language's portable guards need from a descriptor: its `name`, for the er
 ### `packages/common/src/portable/index.ts::portableGuardsOf`
 
 A language's view of the portable guards: `portableTrees` over the same `vocabularyPaths`, each guard built by `languageGuardOf`, so it has the shared tree's keys at every level but guard objects of its own. It is memoized per language object (`views`), so the descriptor's `is.portable`, the `is.portable` of every engine of that descriptor and its portable engine's `is` are one object. An engine of a copied descriptor gets the copy's own view (`guardsOf` rebuilds the shared members through the recorded builder), which finds the same rows. The shared tree, `portable.is`, stays node-only.
+
+### `packages/common/src/portable/index.ts::PortableQueryIds`
+
+The `Ids` of every query view a bound grammar's parsed nodes return (`View<T, Ids>`), from the grammar's `PortableReads`. It is keyed by every vocabulary path, namespace and alias path, read from the generated path list (`vocabularyPaths`, `vocabularyNamespaces`, `vocabularyAliasPaths`), because `ofType` looks a portable kind's `$path` and a portable namespace's `$namespace` up in it: a key the grammar reads nothing at maps to `never`, so the view narrows to nothing, and a value that names no key is refused at compile time.
 
 ### `packages/common/src/portable/language-guard.ts::languageGuardOf`
 
@@ -986,11 +998,15 @@ A language's kind test: the language check (`inLanguage`), then membership (`hol
 
 ### `packages/common/src/portable/tree.ts::ChildrenOf`
 
-The child segments of a path among a union of vocabulary paths: each path one segment below it, by its last segment. `RootsOf` is the same for the top level (the paths with no dot). With `string` for the union, both read as `string`, so a tree typed over arbitrary paths is an index signature.
+The child segments of a path among a union of vocabulary paths: the next segment of each path below it, whether the path that segment ends is a kind or a namespace. With `string` for the union, a tree typed over arbitrary paths is an index signature.
 
 ### `packages/common/src/portable/tree.ts::KindAt`
 
-The type of one node of the shared kind tree: its `$path` as a literal, and each child segment (`ChildrenOf`) as the node one level down. `GuardAt` is the same shape over the guards: each node is a `PortableGuard` holding its children. Both derive from the path union that `portableTrees` is given, which for the exported `portable` is `vocabularyPaths`'s element type, so the generated path list is the one source of the shared trees' types and values.
+The type of one node of the shared kind tree: a kind's `PortableKind` (its `$path` as a literal) at a kind's path, a `PortableNamespace` (its path as `$namespace`) at a namespace, and each child segment (`ChildrenOf`) as the node one level down. `GuardAt` is the same shape over the guards, where every node, a namespace's too, is a `PortableGuard` holding its children. Both derive from the path union that `portableTrees` is given, which for the exported `portable` is `vocabularyPaths`'s element type, so the generated path list is the one source of the shared trees' types and values.
+
+### `packages/common/src/portable/tree.ts::RootsOf`
+
+The top-level segments of a union of vocabulary paths: each path's first segment, whether it names a kind (`declaration`) or a namespace. `PortableKindTree` and `PortableGuardTree` map over it, and `ChildrenOf` does the same one level down.
 
 ### `packages/common/src/record-cell.ts::cellFormatOf`
 
@@ -1223,7 +1239,7 @@ Whether a node is read as the given path.
 
 ### `packages/common/src/portable/build.ts::portableBuilder`
 
-Returns the portable builder for a structure, built from the build context. Given an empty list for a slot whose every route in the picked arm is `nonEmpty`, where the arm has no `owners`, it refuses it as `<path>: <slot> requires at least one element`; in an arm with owners an empty list is left out, and the owner that builds without it builds.
+Returns the portable builder for a structure, built from the build context. Given an empty list for a slot whose every route in the picked arm is `nonEmpty`, where the arm has no `owners`, it refuses it as `<path>: <slot> requires at least one element`; in an arm with owners an empty list is left out, and the owner that builds without it builds. An empty list leaves out the first container on its route that may be left out, unless a step before it names an `empty` form, which it builds at that step instead, except on an `emptyContainer` route, where it builds that container empty and only an absent slot leaves it out. Where `readsEmptyWhenAbsent` holds, an absent slot builds as `[]`, in the arm pick and the slot's placement alike.
 
 ### `packages/common/src/portable/classify.ts::RowsReader::flagHolds`
 
@@ -1269,6 +1285,10 @@ Creates the portable runtime for a language.
 
 The text of a portable value, or undefined when the value has none.
 
+### `packages/common/src/portable/facts.ts::portableRowHasFacts`
+
+Whether a read lands at or under a path's row: at or under the path itself (`portablePathHasFacts`), or at or under one of the row's `targets`, what the aliases the language holds at or beneath the path reach. `readsAs` asks it of a row its kinds do not decide, and `emitPortableSurface` asks it when stamping `exact`, so the guard and the stamp read an alias one way.
+
 ### `packages/common/src/portable/read.ts::PortableCarry`
 
 What a read carries past the structure: unclaimed, a scalar or text, or a set of flags.
@@ -1311,11 +1331,15 @@ The text of a value, or undefined.
 
 ### `packages/common/src/portable/read.ts::portableReader`
 
-Returns the portable reader that turns a node into a structure, given the read context.
+Returns the portable reader that turns a node into a structure, given the read context. A list slot of a reading arm that holds nothing reads `[]`, except on an `emptyContainer` route, where it reads `[]` only when its container is present and is left absent when the container is.
 
 ### `packages/common/src/portable/read.ts::Hop`
 
 One step of a portable read route: the key it reads and the build it names, when it names one.
+
+### `packages/common/src/portable/read.ts::readRoutesOf`
+
+The routes the read takes for an arm: its `slots`, then its `readOnly` routes, which the read takes and no build does.
 
 ### `packages/common/src/portable/runtime.ts::PortableRuntime::read`
 

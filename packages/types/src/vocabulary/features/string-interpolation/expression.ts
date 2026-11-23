@@ -7,16 +7,7 @@ export namespace Expression {
 		readonly $path: K;
 		readonly debug?: Flag;
 		// p only
-		readonly expression?: Slot<
-			G,
-			K,
-			'expression',
-			| V.Declaration.Module<G>
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Pattern.Any<G>
-		>;
+		readonly expression?: Slot<G, K, 'expression', V.Expression.Any<G> | V.Pattern.Tuple.Bare<G>>;
 		readonly formatSpecifier?: Slot<G, K, 'formatSpecifier', V.Expression.Interpolation.Format<G>>;
 		// p only
 		readonly typeConversion?: Slot<G, K, 'typeConversion', V.Expression.Interpolation.Conversion<G>>;

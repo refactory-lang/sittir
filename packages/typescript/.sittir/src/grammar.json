@@ -1193,28 +1193,24 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "FIELD",
-              "name": "initializer",
-              "content": {
-                "type": "CHOICE",
-                "members": [
-                  {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "FIELD",
+                  "name": "initializer",
+                  "content": {
                     "type": "SYMBOL",
-                    "name": "lexical_declaration"
+                    "name": "_for_initializer"
                   },
-                  {
-                    "type": "SYMBOL",
-                    "name": "variable_declaration"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "using_declaration"
+                  "metadata": {
+                    "fieldSource": "override"
                   }
-                ]
-              },
-              "metadata": {
-                "fieldSource": "override"
-              },
+                },
+                {
+                  "type": "STRING",
+                  "value": ";"
+                }
+              ],
               "annotations": {
                 "variantOf": "for_statement"
               }
@@ -13853,6 +13849,35 @@
         "fieldSource": "override"
       }
     },
+    "_for_initializer": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "for_initializer_let_const_kind",
+          "annotations": {
+            "variant": "let_const_kind",
+            "variantOf": "_for_initializer"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "for_initializer_var_kind",
+          "annotations": {
+            "variant": "var_kind",
+            "variantOf": "_for_initializer"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "for_initializer_using_kind",
+          "annotations": {
+            "variant": "using_kind",
+            "variantOf": "_for_initializer"
+          }
+        }
+      ]
+    },
     "ambient_declaration_global": {
       "type": "SEQ",
       "members": [
@@ -17202,6 +17227,182 @@
         "hoisted": true
       }
     },
+    "for_initializer_let_const_kind": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "kind",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_kind"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "declarators",
+              "content": {
+                "type": "SYMBOL",
+                "name": "variable_declarator"
+              },
+              "metadata": {
+                "fieldSource": "override"
+              }
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": ","
+                  },
+                  {
+                    "type": "FIELD",
+                    "name": "declarators",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "variable_declarator"
+                    },
+                    "metadata": {
+                      "fieldSource": "override"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "for_initializer_var_kind": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "var"
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "declarators",
+              "content": {
+                "type": "SYMBOL",
+                "name": "variable_declarator"
+              },
+              "metadata": {
+                "fieldSource": "override"
+              }
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": ","
+                  },
+                  {
+                    "type": "FIELD",
+                    "name": "declarators",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "variable_declarator"
+                    },
+                    "metadata": {
+                      "fieldSource": "override"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "for_initializer_using_kind": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "kind",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "using"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "using_declaration_arm"
+              }
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "declarators",
+              "content": {
+                "type": "SYMBOL",
+                "name": "variable_declarator"
+              },
+              "metadata": {
+                "fieldSource": "override"
+              }
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": ","
+                  },
+                  {
+                    "type": "FIELD",
+                    "name": "declarators",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "variable_declarator"
+                    },
+                    "metadata": {
+                      "fieldSource": "override"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
     "_call_signature_get_accessor_signature": {
       "type": "SEQ",
       "members": [
@@ -19727,6 +19928,11 @@
     ],
     [
       "primary_expression",
+      "for_header_using_kind",
+      "for_initializer_using_kind"
+    ],
+    [
+      "primary_expression",
       "for_header_using_kind"
     ],
     [
@@ -19780,20 +19986,7 @@
     ],
     [
       "using_declaration",
-      "primary_expression",
-      "for_header_using_kind"
-    ],
-    [
-      "using_declaration",
       "primary_expression"
-    ],
-    [
-      "variable_declarator_plain",
-      "for_header_let_const_kind"
-    ],
-    [
-      "variable_declarator_plain",
-      "for_header_using_kind"
     ],
     [
       "_property_name",
@@ -20414,6 +20607,16 @@
         "type": "SYMBOL",
         "name": "_property_name"
       }
+    ],
+    [
+      {
+        "type": "SYMBOL",
+        "name": "for_initializer_let_const_kind"
+      },
+      {
+        "type": "SYMBOL",
+        "name": "primary_expression"
+      }
     ]
   ],
   "externals": [
@@ -20538,6 +20741,7 @@
     "_layout",
     "_class_body_member",
     "_enum_body_element",
+    "_for_initializer",
     "method_definition",
     "method_signature",
     "abstract_method_signature",
