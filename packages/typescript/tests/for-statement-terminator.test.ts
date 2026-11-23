@@ -23,7 +23,7 @@ describe('for_statement.condition', () => {
 		const condition = forStatement.condition();
 		expect(Array.isArray(condition)).toBe(false);
 		const node = condition as Read;
-		expect(node.$type).toBe(ts.kinds.BinaryExpression);
+		expect(node.$type).toBe(ts.kinds.BinaryExpressionDefault);
 		expect(sliceSpan(SOURCE, spanOf(node)!)).toBe('i < 3');
 	});
 

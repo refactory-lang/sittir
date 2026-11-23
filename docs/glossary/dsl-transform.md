@@ -507,6 +507,8 @@ applies them together; each remaining entry runs as its own site, through `appli
 parent is registered, the sibling defaults of every `default: true` entry are cleared, in the set's
 order, except for an entry whose path matched nothing.
 
+Before anything applies, `admittedVariantEntries` refuses an entry with a blank name and no `default: true`, and an entry whose minted name an earlier key already took (`edit-entry-invalid`). The `EVERY_ARM_KEY` entry applies last, after the keyed ones: `collapseUnnamedArms` gathers the arms no other key names into one nested choice at the first such arm's place, and the entry resolves there as an ordinary variant, so the arms become one rule that keeps each arm's own precedence. The parent registers for flattening after it, so a choice whose arms all end as variants is a supertype. The rule must be a choice with no precedence wrapper of its own, and some arm must be unnamed, or the entry is refused.
+
 #### body
 
 ```text
@@ -1790,6 +1792,10 @@ including a hoisted rule whose annotation lives on a named precedence wrapper.
 ### `packages/codegen/src/dsl/transform/transform-path.ts::memberIndex`
 
 Resolves a member index against a member count. A negative index counts from the end (`length + index`); any other index is returned unchanged.
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::EVERY_ARM_KEY`
+
+`*`: the edit key that names every arm of the rule's choice that no other key of the same edit names. It takes only `variant()`; the arms become one rule (`applyEveryArmVariant`), each keeping its own precedence. `parsePath` still refuses `*` as a path segment.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::namedFieldCount`
 

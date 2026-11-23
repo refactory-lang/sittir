@@ -1,3 +1,4 @@
+import { isBlankVariantName } from '../dsl/primitives/variant.ts';
 import { findOwnKindEntry } from '../dsl/symbol-table.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
@@ -104,7 +105,7 @@ export function emitIs(config: EmitIsConfig): string {
 		if (memberKinds.length === 0) continue;
 		const guarded = isAuthoredSupertype(st);
 		const guardKey = guarded ? claimGuardKey(st) : node.typeKey!;
-		const variants = variantParents.find((parent) => parent.node === st)?.variants ?? [];
+		const variants = (variantParents.find((parent) => parent.node === st)?.variants ?? []).filter((route) => !isBlankVariantName(route.name));
 		const own = findOwnKindEntry(kindEntries, kind);
 		supertypes.push({ kind, id: own?.id, member: own?.member, typeName, guardKey, memberKinds, memberIds, memberKindIds, variants, guarded });
 	}

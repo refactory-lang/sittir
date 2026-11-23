@@ -1,3 +1,4 @@
+import { isBlankVariantName } from '../../dsl/primitives/variant.ts';
 import type { PortableMountCall } from '@sittir/types';
 import type { NodeMap } from '../types.ts';
 import { EmitHaltedError, type GrammarDiagnostic } from '../../types/diagnostics.ts';
@@ -82,7 +83,7 @@ function textStorageOf(value: NodeOrTerminal, nodeMap: NodeMap): TextValueStorag
 type LabelledValue = NodeOrTerminal & { readonly variant: string };
 
 function isLabelled(value: NodeOrTerminal): value is LabelledValue {
-	return value.variant !== undefined;
+	return value.variant !== undefined && !isBlankVariantName(value.variant);
 }
 
 function kindOfValue(value: NodeOrTerminal): string | undefined {
@@ -125,7 +126,7 @@ function claimantOf(entry: SubFactory): string {
 }
 
 export function variantArmsOf(node: AssembledSupertype): readonly { readonly name: string; readonly ref: NodeBackedRef }[] {
-	return (node.variantSubtypes ?? []).map((ref) => ({ name: lowerCamelCase(ref.variant!), ref }));
+	return (node.variantSubtypes ?? []).filter((ref) => !isBlankVariantName(ref.variant)).map((ref) => ({ name: lowerCamelCase(ref.variant!), ref }));
 }
 
 function isCallableArm(child: AssembledNode, isEmitted: IsEmittedPredicate): boolean {

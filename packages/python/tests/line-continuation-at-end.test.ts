@@ -16,7 +16,7 @@ describe.each(storages)('a line continuation that ends the source (%s storage)',
 		const root = engine.parse(source);
 		expect(engine.render(root).toString()).toBe(source);
 		engine.release(root);
-		if (storage === 'arena') expect(engine.diagnostics.builtMemory()).toEqual({ chunks: 0, counts: 0, live: 0 });
+		if (storage === 'arena') expect(engine.diagnostics.builtMemory?.()).toEqual({ chunks: 0, counts: 0, live: 0 });
 	});
 
 	it.each([

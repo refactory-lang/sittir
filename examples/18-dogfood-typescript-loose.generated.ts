@@ -74,7 +74,7 @@ export function rebuildFormatLoose() {
 				kind: ts.kinds.ConstKeyword,
 				declarators: [ts.build.variableDeclaratorPlain({
 					name: "leading",
-					value: ts.build.binaryExpression({
+					value: ts.build.binaryExpressionDefault({
 						left: ts.build.memberExpression({
 							object: "boundary",
 							operator: ts.kinds.Dot,
@@ -88,7 +88,7 @@ export function rebuildFormatLoose() {
 				kind: ts.kinds.ConstKeyword,
 				declarators: [ts.build.variableDeclaratorPlain({
 					name: "trailing",
-					value: ts.build.binaryExpression({
+					value: ts.build.binaryExpressionDefault({
 						left: ts.build.memberExpression({
 							object: "boundary",
 							operator: ts.kinds.Dot,
@@ -119,13 +119,13 @@ export function rebuildFormatLoose() {
 				})],
 			}), ts.build.ifStatement({
 				condition: ts.build.parenthesizedExpressionTyped({
-					expression: ts.build.binaryExpression({
+					expression: ts.build.binaryExpressionDefault({
 						left: ts.build.unaryExpression({
 							operator: ts.kinds.Bang,
 							argument: "trivia",
 						}),
 						operator: ts.kinds.PipePipe,
-						right: ts.build.binaryExpression({
+						right: ts.build.binaryExpressionDefault({
 							left: ts.build.memberExpression({
 								object: "trivia",
 								operator: ts.kinds.Dot,
@@ -155,7 +155,7 @@ export function rebuildFormatLoose() {
 									name: "b",
 								})),
 							}),
-							body: ts.build.binaryExpression({
+							body: ts.build.binaryExpressionDefault({
 								left: ts.build.memberExpression({
 									object: "b",
 									operator: ts.kinds.Dot,
@@ -216,8 +216,8 @@ export function rebuildFormatLoose() {
 					})],
 				}), ts.build.expressionStatement(ts.build.assignmentExpression({
 					left: "result",
-					right: ts.build.binaryExpression({
-						left: ts.build.binaryExpression({
+					right: ts.build.binaryExpressionDefault({
+						left: ts.build.binaryExpressionDefault({
 							left: ts.build.callExpressionCall({
 								function: ts.build.memberExpression({
 									object: "result",
@@ -288,8 +288,8 @@ export function rebuildFormatLoose() {
 						}),
 					})],
 				}), ts.build.returnStatement(ts.build.object(ts.build.spreadElement("format"), ts.build.parenthesizedExpressionTyped({
-					expression: ts.build.binaryExpression({
-						left: ts.build.binaryExpression({
+					expression: ts.build.binaryExpressionDefault({
+						left: ts.build.binaryExpressionDefault({
 							left: "trivia",
 							operator: ts.kinds.BangEqEq,
 							right: ts.kinds.Undefined,
@@ -298,8 +298,8 @@ export function rebuildFormatLoose() {
 						right: ts.build.object("trivia"),
 					}),
 				}), ts.build.parenthesizedExpressionTyped({
-					expression: ts.build.binaryExpression({
-						left: ts.build.binaryExpression({
+					expression: ts.build.binaryExpressionDefault({
+						left: ts.build.binaryExpressionDefault({
 							left: "kinds",
 							operator: ts.kinds.BangEqEq,
 							right: ts.kinds.Undefined,
@@ -352,7 +352,7 @@ export function rebuildFormatLoose() {
 					}),
 					body: ts.build.statementBlock(ts.build.ifStatement({
 						condition: ts.build.parenthesizedExpressionTyped({
-							expression: ts.build.binaryExpression({
+							expression: ts.build.binaryExpressionDefault({
 								left: ts.build.memberExpression({
 									object: "item",
 									operator: ts.kinds.Dot,
@@ -367,7 +367,7 @@ export function rebuildFormatLoose() {
 						kind: ts.kinds.ConstKeyword,
 						declarators: [ts.build.variableDeclaratorPlain({
 							name: "newOffset",
-							value: ts.build.binaryExpression({
+							value: ts.build.binaryExpressionDefault({
 								left: ts.build.memberExpression({
 									object: "item",
 									operator: ts.kinds.Dot,

@@ -30,9 +30,9 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 				kind: ts.kinds.ConstKeyword,
 				declarators: [ts.build.variableDeclaratorPlain({
 					name: ts.build.identifier("x"),
-					value: ts.build.binaryExpression({
+					value: ts.build.binaryExpressionDefault({
 						left: ts.build.parenthesizedExpressionTyped({
-							expression: ts.build.binaryExpression({
+							expression: ts.build.binaryExpressionDefault({
 								left: ts.build.number.decimal("1"),
 								operator: ts.kinds.Plus,
 								right: ts.build.number.decimal("2"),
@@ -60,7 +60,7 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 				}, ts.build.expressionStatement(ts.build.assignmentExpression({
 					left: ts.build.lhsExpression(ts.build.identifier("x")),
 					right: ts.build.parenthesizedExpressionTyped({
-						expression: ts.build.binaryExpression({
+						expression: ts.build.binaryExpressionDefault({
 							left: ts.build.identifier("x"),
 							operator: ts.kinds.Dash,
 							right: ts.build.number.decimal("1"),
@@ -75,7 +75,7 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 						value: ts.build.number.decimal("0"),
 					})],
 				}),
-				condition: ts.build.binaryExpression({
+				condition: ts.build.binaryExpressionDefault({
 					left: ts.build.identifier("i"),
 					operator: ts.kinds.Lt,
 					right: ts.build.number.decimal("3"),
@@ -187,7 +187,7 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 				kind: ts.kinds.ConstKeyword,
 				declarators: [ts.build.variableDeclaratorPlain({
 					name: ts.build.identifier("k"),
-					value: ts.build.binaryExpression({
+					value: ts.build.binaryExpressionDefault({
 						left: ts.build.identifier("x"),
 						operator: ts.kinds.InstanceofKeyword,
 						right: ts.build.parenthesizedExpressionTyped({
@@ -199,7 +199,7 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 				kind: ts.kinds.ConstKeyword,
 				declarators: [ts.build.variableDeclaratorPlain({
 					name: ts.build.identifier("inn"),
-					value: ts.build.binaryExpression.in({
+					value: ts.build.binaryExpressionIn({
 						left: ts.build.stringDouble(ts.build.unescapedDoubleStringFragment("a")),
 						right: ts.build.parenthesizedExpressionTyped({
 							expression: ts.build.identifier("obj"),

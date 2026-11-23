@@ -278,31 +278,31 @@
 (new_expression constructor: (_)? @function) @expression.call.new
 (new_expression !arguments) @expression.call.new.bare
 (binary_expression) @expression.binary
-(binary_expression operator: "+") @expression.binary.arithmetic.add
-(binary_expression operator: "-") @expression.binary.arithmetic.subtract
-(binary_expression operator: "*") @expression.binary.arithmetic.multiply
-(binary_expression operator: "/") @expression.binary.arithmetic.divide
-(binary_expression operator: "%") @expression.binary.arithmetic.modulo
-(binary_expression operator: "**") @expression.binary.arithmetic.exponent
-(binary_expression operator: "==") @expression.binary.comparison.loose_equal
-(binary_expression operator: "!=") @expression.binary.comparison.loose_not_equal
-(binary_expression operator: "===") @expression.binary.comparison.equal
-(binary_expression operator: "!==") @expression.binary.comparison.not_equal
-(binary_expression operator: "<") @expression.binary.comparison.less
-(binary_expression operator: ">") @expression.binary.comparison.greater
-(binary_expression operator: "<=") @expression.binary.comparison.less_equal
-(binary_expression operator: ">=") @expression.binary.comparison.greater_equal
-(binary_expression operator: "&") @expression.binary.bitwise.and
-(binary_expression operator: "|") @expression.binary.bitwise.or
-(binary_expression operator: "^") @expression.binary.bitwise.xor
-(binary_expression left: (_) @operand operator: "<<" right: (_) @count) @expression.binary.shift.left
-(binary_expression left: (_) @operand operator: ">>" right: (_) @count) @expression.binary.shift.right
-(binary_expression left: (_) @operand operator: ">>>" right: (_) @count) @expression.binary.shift.right_unsigned
-(binary_expression operator: "&&") @expression.binary.logical.and
-(binary_expression operator: "||") @expression.binary.logical.or
-(binary_expression operator: "??") @expression.binary.coalesce
-(binary_expression (binary_expression_in left: (_) @left right: (_) @right)) @expression.binary.membership.in
-(binary_expression operator: "instanceof") @expression.binary.membership.instanceof
+(binary_expression_default operator: "+") @expression.binary.arithmetic.add
+(binary_expression_default operator: "-") @expression.binary.arithmetic.subtract
+(binary_expression_default operator: "*") @expression.binary.arithmetic.multiply
+(binary_expression_default operator: "/") @expression.binary.arithmetic.divide
+(binary_expression_default operator: "%") @expression.binary.arithmetic.modulo
+(binary_expression_default operator: "**") @expression.binary.arithmetic.exponent
+(binary_expression_default operator: "==") @expression.binary.comparison.loose_equal
+(binary_expression_default operator: "!=") @expression.binary.comparison.loose_not_equal
+(binary_expression_default operator: "===") @expression.binary.comparison.equal
+(binary_expression_default operator: "!==") @expression.binary.comparison.not_equal
+(binary_expression_default operator: "<") @expression.binary.comparison.less
+(binary_expression_default operator: ">") @expression.binary.comparison.greater
+(binary_expression_default operator: "<=") @expression.binary.comparison.less_equal
+(binary_expression_default operator: ">=") @expression.binary.comparison.greater_equal
+(binary_expression_default operator: "&") @expression.binary.bitwise.and
+(binary_expression_default operator: "|") @expression.binary.bitwise.or
+(binary_expression_default operator: "^") @expression.binary.bitwise.xor
+(binary_expression_default left: (_) @operand operator: "<<" right: (_) @count) @expression.binary.shift.left
+(binary_expression_default left: (_) @operand operator: ">>" right: (_) @count) @expression.binary.shift.right
+(binary_expression_default left: (_) @operand operator: ">>>" right: (_) @count) @expression.binary.shift.right_unsigned
+(binary_expression_default operator: "&&") @expression.binary.logical.and
+(binary_expression_default operator: "||") @expression.binary.logical.or
+(binary_expression_default operator: "??") @expression.binary.coalesce
+(binary_expression_in left: (_) @left right: (_) @right) @expression.binary.membership.in
+(binary_expression_default operator: "instanceof") @expression.binary.membership.instanceof
 (unary_expression) @expression.unary
 (unary_expression operator: "-") @expression.unary.negation
 (unary_expression operator: "+") @expression.unary.plus
