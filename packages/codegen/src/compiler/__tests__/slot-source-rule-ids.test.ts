@@ -5,7 +5,7 @@ import { assemblePredicted } from '../../__tests__/helpers/linked.ts';
 import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 
-const at =(path: string) => `rule:recursive_pattern:${path}`;
+const at = (path: string) => `rule:recursive_pattern:${path}`;
 
 describe("C#'s recursive_pattern: every occurrence of a slot is among its source rule ids", () => {
 	let nodeMap: Awaited<ReturnType<typeof compileGrammar>>['nodeMap'];
