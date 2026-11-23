@@ -99,7 +99,7 @@ Every slot whose content is a choice among units is encoded by the cell's kind i
 
 An automatic semicolon that a slot holds is read by the cell's kind, not by a row's width: whether a token has width is a fact of its kind.
 
-A parsed unit cell then holds the kind alone. That is the cell a built record already writes for a unit ("A builder takes a unit as its kind id ... and stores the kind in the holder's cell"). Parsed and built unit cells become one form. Whether a query lists a unit is a fact of its holder, slot and kind: `any` in `x as any` is listed and `const` in `x as const` is not, in one slot. The derive stamps each slot's listed unit kinds and its `field` in the slot's `CellShape`, from the slot's `#[kind(...)]`, and nothing is stored per node.
+A parsed unit cell then holds the kind alone. That is the cell a built record already writes for a unit ("A builder takes a unit as its kind id ... and stores the kind in the holder's cell"). Parsed and built unit cells become one form. Whether a query lists a unit is a fact of its holder, slot and kind: `any` in `x as any` is listed and `const` in `x as const` is not, in one slot. Each slot's `CellShape` answers it: a member of a visible enum the slot holds is listed, as is a token the grammar aliases to a visible kind (regex `class_range`'s `-`, which codegen stamps). A member of a hidden enum is not, and the parser's named fact answers for every other unit. The shape also holds the slot's `field`, and nothing is stored per node.
 
 Unit rows are slot content, not fixed tokens; the maintainer ruled that they go too, in the same stage. The numbers list them apart.
 
@@ -116,7 +116,7 @@ The render body is the only source of that order:
 - **No built record to copy.** A built record answers no navigation: a query facet refuses a node with no parsed tree (`query.ts::queryFacet`), and `siblings` answers parsed trees only.
 - **Cells are not in document order.** `recordLayoutOf` puts every boolean slot as a bit in the presence words, ahead of all cells.
   - Word cells follow the render body in all five grammars, and every body writes its slots in one order on every arm.
-  - A boolean slot written after a word cell puts a kind's cells out of document order. That is 20 kinds: rust 3, typescript 13, python 1, regex 2, scm 1.
+  - A boolean slot written after a word cell puts a kind's cells out of document order. That is 28 kinds: rust 4, typescript 20, python 1, regex 2, scm 1.
   - Two examples: rust `reference_type` `&'a mut T` stores `mutable_specifier` before the lifetime, and typescript `subscript_expression` `a?.[0]` stores `optional_chain` before the object.
 
 It lists no fixed token. Named fixed tokens leave navigation too: these are polymorph forms whose kind fixes a named node. The census counts them, as rows the render body writes that tree-sitter names:
@@ -345,7 +345,7 @@ The cascade over a parsed record walks its parsed cells (child cells and list ru
   - each parsed list's delimiter and slot separator, as `source_trailing_delimiter`, `slot_separator` and `slot_layouts` answer them;
   - line starts inside tokens;
   - placed sides: node, side, kind and span;
-  - query results, units' order included: each node's `$children` and `$descendants` as (kind, span) sequences, on every fixture, and on a fixture for each of the 20 kinds whose cells are out of document order where the corpus has none.
+  - query results, units' order included: each node's `$children` and `$descendants` as (kind, span) sequences, on every fixture, and on a fixture for each of the 28 kinds whose cells are out of document order where the corpus has none.
 - **Validation numbers** unchanged across all grammars (`sittir validate history`, compared per row). No render output is expected to change: an untouched node is its source slice, and a rebuilt one writes its template.
 - **Tests that pin rows** change by design: `record_nodes.rs`'s `backers_agree`, and `arena/parsed.rs::runs_agree`, which compare the records' navigation with the tree's. They then compare against the tree with fixed tokens and units filtered out by role. Each one is listed and shown to pin rows before its expectation changes.
 - **Parse and render timings** on CI's paired run against master's arena, per grammar. The walk does the same work and writes fewer words.
