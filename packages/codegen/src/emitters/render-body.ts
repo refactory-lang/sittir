@@ -542,6 +542,9 @@ export function bodyEdgeParts(body: Body, side: 'before' | 'after', optional: (s
 		for (const node of side === 'before' ? nodes : [...nodes].reverse()) {
 			switch (node.kind) {
 				case 'text':
+					if (isWhitespaceOnly(node.text)) break;
+					parts.push(token(node.text, guard));
+					return true;
 				case 'tokenSeam':
 					parts.push(token(node.text, guard));
 					return true;

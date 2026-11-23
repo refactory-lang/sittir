@@ -13710,7 +13710,7 @@ One thing a body can write at an edge, before its ids are resolved: a `token` by
 
 ### `packages/codegen/src/emitters/render-body.ts::bodyEdgeParts`
 
-What a body can write first (`before`) or last (`after`), nearest the edge first, so a reader finds the edge token of a record without a row for it. The walk passes seams and spacing, stops at an unconditional token or a required slot, and reads past a slot `optional` names and past an `if` unless every alternative ends the walk. A slot inside the arm that tests it counts as required there. Two shapes a `Guarded` part cannot state throw: a token under an arm gated by a slot's kind, and a fallback that writes at the edge beside an arm that writes nothing there.
+What a body can write first (`before`) or last (`after`), nearest the edge first, so a reader finds the edge token of a record without a row for it. The walk passes seams, spacing and whitespace-only text, which is no fixed token, stops at an unconditional token or a required slot, and reads past a slot `optional` names and past an `if` unless every alternative ends the walk. A slot inside the arm that tests it counts as required there. Two shapes a `Guarded` part cannot state throw: a token under an arm gated by a slot's kind, and a fallback that writes at the edge beside an arm that writes nothing there.
 
 ### `packages/codegen/src/emitters/factories.ts::slotGuardKey`
 

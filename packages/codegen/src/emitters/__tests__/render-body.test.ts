@@ -92,6 +92,12 @@ describe('bodyEdgeParts', () => {
 		expect(bodyEdgeParts(concat(seam('a'), text('x'), seam('b')), 'after')).toEqual([{ token: 'x' }]);
 	});
 
+	it('passes over whitespace-only text, which is no fixed token', () => {
+		expect(bodyEdgeParts(concat(slot('a'), text(' ')), 'after')).toEqual([{ cell: 'a' }]);
+		expect(bodyEdgeParts(concat(text('\n'), slot('a')), 'before')).toEqual([{ cell: 'a' }]);
+		expect(bodyEdgeParts(concat(text('x'), SPACE, text(' ')), 'after')).toEqual([{ token: 'x' }]);
+	});
+
 	it('names a depth part as its token', () => {
 		expect(bodyEdgeParts(concat(INDENT, slot('a'), DEDENT), 'before')).toEqual([{ token: INDENT_TEXT }]);
 		expect(bodyEdgeParts(concat(INDENT, slot('a'), DEDENT), 'after')).toEqual([{ token: DEDENT_TEXT }]);
