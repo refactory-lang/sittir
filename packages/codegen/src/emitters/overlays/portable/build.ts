@@ -1305,13 +1305,18 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		return { sole: { slot: listed[0]!, delimiter: Delimiter.Trailing } };
 	};
 	const byPath = new Map<string, Arm[]>();
+	const builtSlotNames = (arm: Arm): string => [...new Set(builtSlots(arm.arm).map((slot) => slot.name))].sort().join(' ');
 	for (const [kind, entries] of routes.readEntries) {
 		const node = modelNode(model, kind);
 		if (node === undefined || node.modelType === 'supertype' || typeOf(kind) === undefined) continue;
 		for (const entry of entries) {
 			const arms = byPath.get(entry.vocab) ?? byPath.set(entry.vocab, []).get(entry.vocab)!;
-			if (arms.some((arm) => arm.kind === kind)) continue;
-			arms.push(...armsOf(kind, entry));
+			const earlier = new Set(arms.filter((arm) => arm.kind === kind).map(builtSlotNames));
+			const noted = formDiagnostics.length;
+			const built = armsOf(kind, entry);
+			const fresh = earlier.size === 0 ? built : built.filter((arm) => !earlier.has(builtSlotNames(arm)));
+			if (fresh.length === 0) formDiagnostics.length = noted;
+			arms.push(...fresh);
 		}
 	}
 	for (const [path, arms] of byPath) {

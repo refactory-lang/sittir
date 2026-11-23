@@ -35717,7 +35717,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.RawStringLiteral.Parsed
 				| T.ScopedIdentifier.Parsed
 				| T.StringLiteral.Parsed;
-			readonly $forms: V.Form<'right', 'left'> | V.Form<'left' | 'right'>;
+			readonly $forms: V.Form<'right', 'left'> | V.Form<'left', 'right'> | V.Form<'left' | 'right'>;
 		};
 		readonly 'pattern.range.inclusive': {
 			readonly left:

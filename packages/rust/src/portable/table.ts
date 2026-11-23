@@ -52909,6 +52909,63 @@ export const build: PortableBuildTable = {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float'
 							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'content'
+								}
+							],
+							kind: 421
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: ['right'],
+							required: ['left']
+						}
+					]
+				},
+				{
+					kind: 422,
+					builder: 'rangePatternWithLeft',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [422, 'left'],
+									kinds: [
+										1, 116, 117, 125, 126, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330,
+										331, 332, 333, 334, 336, 367, 481
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										crate: 126,
+										self: 481,
+										super: 125
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						},
 						{
 							name: 'right',

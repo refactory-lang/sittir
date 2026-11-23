@@ -76409,7 +76409,7 @@ const identifier_qualified$354_qualifier = (value: identifier_qualified$354_qual
 			return unbuilt('identifier.qualified.qualifier', value);
 	}
 };
-type literal_number_negative$403_value$Item =
+type literal_number_negative$403$362_value$Item =
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
 	| number
@@ -76439,7 +76439,7 @@ type literal_number_negative$403_value$Item =
 			readonly $path: 'literal.number';
 			readonly $value: number | bigint;
 	  };
-const literal_number_negative$403_value = (value: literal_number_negative$403_value$Item) => {
+const literal_number_negative$403$362_value = (value: literal_number_negative$403$362_value$Item) => {
 	if (typeof value === 'string') {
 		return untexted('literal.number.negative.value', value);
 	}
@@ -93962,7 +93962,7 @@ const literal_number_negative$403$362 = (
 ): ReturnType<typeof b.literalType.negativeNumber> => {
 	const unroutedSlot = unroutedIn(input, ['value']);
 	if (unroutedSlot !== undefined) return unrouted('literal.number.negative', unroutedSlot);
-	return b.literalType.negativeNumber(literal_number_negative$403_value(input.value));
+	return b.literalType.negativeNumber(literal_number_negative$403$362_value(input.value));
 };
 const literal_regex$276 = (input: PathInput<TypeScriptMap, 'literal.regex'>): ReturnType<typeof b.regex> => {
 	const unroutedSlot = unroutedIn(input, ['flags', 'pattern']);

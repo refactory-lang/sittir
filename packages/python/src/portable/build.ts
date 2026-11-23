@@ -46197,7 +46197,7 @@ const literal_number_float_scientific$103_imaginary = (value: literal_number_flo
 	}
 	throw new Error('literal.number.float.scientific.imaginary takes no structure');
 };
-type literal_number_negative$296_value$Item =
+type literal_number_negative$296$189_value$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
@@ -46226,7 +46226,7 @@ type literal_number_negative$296_value$Item =
 	| PythonMap['nodes']['literal.number.integer.imaginary']
 	| BuildInput<PythonMap, 'literal.number.integer.octal'>
 	| PythonMap['nodes']['literal.number.integer.octal'];
-const literal_number_negative$296_value = (value: literal_number_negative$296_value$Item) => {
+const literal_number_negative$296$189_value = (value: literal_number_negative$296$189_value$Item) => {
 	if (typeof value === 'string') {
 		return untexted('literal.number.negative.value', value);
 	}
@@ -60627,7 +60627,7 @@ const literal_number_negative$296$189 = (
 ): ReturnType<typeof b.simplePattern.negative> => {
 	const unroutedSlot = unroutedIn(input, ['value']);
 	if (unroutedSlot !== undefined) return unrouted('literal.number.negative', unroutedSlot);
-	return b.simplePattern.negative(literal_number_negative$296_value(input.value));
+	return b.simplePattern.negative(literal_number_negative$296$189_value(input.value));
 };
 const literal_string$253 = (input: PathInput<PythonMap, 'literal.string'>): ReturnType<typeof b.string> => {
 	const unroutedSlot = unroutedIn(input, ['elements']);

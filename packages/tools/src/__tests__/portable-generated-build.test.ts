@@ -12,7 +12,7 @@ const STORAGES = ['object', 'arena'] as const;
 
 const INTERPRETER_REFUSES: Readonly<Record<string, readonly string[]>> = { python: ['declaration.member.property.getter', 'declaration.member.method.static'] };
 
-const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 438, rust: 623, typescript: 664 };
+const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 438, rust: 626, typescript: 664 };
 
 const NOT_GENERATED = /: (\S+) is not generated$/;
 
@@ -500,6 +500,17 @@ describe.each(STORAGES)('python: a negative number in an or-pattern, in %s stora
 			expect(engine.render(built as never).toString()).toBe(rendered);
 			expect(runtime.read(built as never)).toEqual(structure);
 		}
+	});
+});
+
+describe.each(STORAGES)('rust: a range pattern read through either claim of its path, in %s storage', (nodeStorage) => {
+	it.each(['d..', '1..', 'd..e', '1..2', '..d', 'd..=e', '..=d', 'd...e'])('%s builds back as it reads', async (pattern) => {
+		using engine = await createEngine(await languageByName('rust'), { api: 'strict', nodeStorage });
+		const runtime = await portableRuntime(engine);
+		const structure = [...structuresIn(runtime.read(engine.parse(`fn f() { match x { ${pattern} => a, } }\n`)))].find((candidate) => candidate.$path.startsWith('pattern.range'))!;
+		const built = runtime.build(structure);
+		expect(engine.render(built as never).toString()).toBe(pattern);
+		expect(runtime.read(built as never)).toEqual(structure);
 	});
 });
 

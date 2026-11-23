@@ -752,7 +752,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	};
 
 	const slotFunction = (owner: string, arm: PortableBuildArm, slot: PortableSlotRoute, skip: number, seats = slot.seats): string => {
-		const name = `${identifierOf(owner)}$${arm.kind}_${slot.name}${skip === 0 ? '' : '$item'}`;
+		const name = `${armFunctionName(owner, arm)}_${slot.name}${skip === 0 ? '' : '$item'}`;
 		return uses(slotFunctions.has(name) ? name : tracked(name, () => slotFunctionOf(name, owner, arm, { ...slot, seats }, skip, slot.seats)));
 	};
 
@@ -833,7 +833,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	const onlyItemName = (route: PortableSlotRoute): string => `${route.name}$only`;
 
 	const onlyItemFunction = (owner: string, arm: PortableBuildArm, slot: PortableSlotRoute): string => {
-		const name = `${identifierOf(owner)}$${arm.kind}_${slot.name}$only`;
+		const name = `${armFunctionName(owner, arm)}_${slot.name}$only`;
 		return uses(slotFunctions.has(name) ? name : tracked(name, () => onlyItemFunctionOf(name, owner, arm, slot)));
 	};
 
@@ -862,7 +862,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	};
 
 	const kindFunction = (owner: string, arm: PortableBuildArm, slot: PortableSlotRoute): string => {
-		const name = `${identifierOf(owner)}$${arm.kind}_${slot.name}$kind`;
+		const name = `${armFunctionName(owner, arm)}_${slot.name}$kind`;
 		if (slotFunctions.has(name)) return uses(name);
 		const known = failed.get(name);
 		if (known !== undefined) return fail(known);
@@ -1180,7 +1180,10 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		];
 	};
 
-	const armFunctionName = (path: string, arm: PortableBuildArm): string => `${identifierOf(path)}$${arm.kind}${arm.mounted === undefined ? '' : `$${arm.mounted.holder}`}`;
+	const armFunctionName = (path: string, arm: PortableBuildArm): string => {
+		const twin = (rowOf(path)?.arms ?? []).filter((other) => other.kind === arm.kind && other.mounted?.holder === arm.mounted?.holder).indexOf(arm);
+		return `${identifierOf(path)}$${arm.kind}${arm.mounted === undefined ? '' : `$${arm.mounted.holder}`}${twin > 0 ? `$${twin}` : ''}`;
+	};
 
 	function armName(path: string, arm: PortableBuildArm): string | undefined {
 		const name = armFunctionName(path, arm);
