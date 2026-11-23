@@ -220,6 +220,23 @@ so `n.$with.arguments(x)` on rust's `#[a = 1]` gives `#[a(x)]`. A slot every arm
 keeps its value. Clearing a slot its arm requires is a type error unless the choice has
 an empty arm, as an empty config is.
 
+A choice whose arms are told apart by kind makes its parent a supertype (the user,
+2026-11-23). One `variant()` can take several arms: the key `'*'` names every arm no
+other key of the edit names, and those arms become one rule, each keeping its own
+precedence. A blank name with `default: true` is a regular variant whose kind is
+`<parent>_default`, with no build path of its own, so `build.<parent>(...)` builds it:
+
+```ts
+binary_expression: { 24: variant('in'), '*': variant('', { default: true }) },
+```
+
+`a + b` reads as `binary_expression_default`, and `#x in y` as `binary_expression_in`
+with no wrapper. `binary_expression` is a supertype of the two: `is.binaryExpression`
+holds for both, `is.binaryExpressionIn` tells them apart, and `build.binaryExpression(...)`
+and `build.binaryExpression.in(...)` build them. A `conflicts` entry naming the parent
+names the default kind instead. A blank name without `default: true` is refused, and so
+is one variant name on two keys.
+
 A mandatory single group is the degenerate case with one overload. Today's
 forwarded parent already accepts the group's Config that way
 (`buildMatchBlock(config: MatchBlockArms.Config)`), emitted by the base
