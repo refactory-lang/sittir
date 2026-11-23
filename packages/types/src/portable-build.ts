@@ -238,6 +238,8 @@ export interface PortableBuildArm {
 	readonly seated?: PortableCallShape;
 	readonly scalar?: 'integer' | 'float' | 'bigint';
 	readonly numeric?: readonly string[] | PortableDecimalParts;
+	/** No value this arm reads can be told from an earlier arm's by its slot, so a read keeps the parsed node instead of a value that would rebuild as the other arm. */
+	readonly carriesNode?: true;
 	readonly scientific?: true;
 	readonly digits?: { readonly base: 2 | 8 | 10 | 16; readonly affix: string };
 	readonly literal?: { readonly value?: boolean };

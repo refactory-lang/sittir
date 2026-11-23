@@ -15340,6 +15340,42 @@ Whether a number kind's slots spell its value. One slot does only when its numbe
 
 The base-prefix slot and the digits slot of a config kind whose prefix is a choice of its own: the whole text has a prefixed integer shape, the interior opens with an enum slot holding that prefix, and one slot holds digits of that base. Empty for any other kind.
 
+### `packages/codegen/src/emitters/interior.ts::InteriorTextForm`
+
+How a token kind with one text slot spells a value: its fixed text, with a NUL where the slot sits, and the pattern of the slot.
+
+### `packages/codegen/src/emitters/interior.ts::interiorTextForm`
+
+The text form of a kind whose interior holds the named slot and nothing else besides fixed text. A kind with a flag or a second slot has none, because its value is not spelled by that one slot.
+
+### `packages/codegen/src/emitters/interior.ts::textFormsCollide`
+
+Whether one slot value could be spelled by both forms with different fixed text, so that building it through the wrong form changes what the source means. Two forms with the same fixed text never collide. A pattern with no automaton counts as colliding, since carrying the node is always safe and a guess is not.
+
+### `packages/codegen/src/emitters/interior.ts::RoutedTextForm`
+
+An arm's text form together with the name of the portable slot that routes to it.
+
+### `packages/codegen/src/emitters/interior.ts::collidesWithEarlier`
+
+Whether the arm at this position shares a portable slot with an arm before it and collides with that arm's text form. A build tries arms in table order and takes the first whose pattern admits the value, so only the later arm loses its values, and its read carries the parsed node. Go's rune escape is the case: `'\n'` read as `n` would rebuild as the plain rune `'n'`.
+
+### `packages/codegen/src/emitters/interior.ts::InteriorTextForm::fixed`
+
+The kind's fixed text in order, with a NUL at the slot.
+
+### `packages/codegen/src/emitters/interior.ts::InteriorTextForm::pattern`
+
+The pattern of the slot's text, or the alternatives of its enum values.
+
+### `packages/codegen/src/emitters/interior.ts::RoutedTextForm::name`
+
+The portable slot the arm routes to this form.
+
+### `packages/codegen/src/emitters/interior.ts::RoutedTextForm::form`
+
+The arm's text form.
+
 ### `packages/codegen/src/emitters/overlays/portable/build.ts::PickDiagnosticCode`
 
 The codes a pick diagnostic can carry.

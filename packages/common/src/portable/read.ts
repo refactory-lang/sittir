@@ -337,6 +337,7 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 		if (literal !== undefined) return literal.value === undefined ? { $path: path } : { $path: path, $value: literal.value };
 		if (typeof value === 'number') return tokenText(value, seats) ?? value;
 		const node = value as Node;
+		if (arms.every((arm) => arm.carriesNode === true)) return kept(node, { reason: 'text' }, carried);
 		const scalar = arms.flatMap((arm) => {
 			if (arm.scalar === undefined) return [];
 			const read = scalarOf(node, arm);

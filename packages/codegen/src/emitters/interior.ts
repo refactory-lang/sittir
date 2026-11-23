@@ -15,7 +15,7 @@ import {
 import type { NodeMap } from '../compiler/types.ts';
 import { lexedContentSlot, ownTextLeaf, slotLiteralValues, type LooseRefusal } from './shared.ts';
 import { anchoredLeafRegex, regexLiteral } from '../compiler/model/leaf-pattern.ts';
-import { includesNonEmpty, patternDfa } from '../compiler/model/pattern-automaton.ts';
+import { includesNonEmpty, patternDfa, patternsMeet } from '../compiler/model/pattern-automaton.ts';
 import { integerSpelling } from '@sittir/common/portable/utils';
 import type { PortableDecimalParts } from '@sittir/types';
 import { asLexed, withoutCaptures } from '../util/pattern-pieces.ts';
@@ -47,6 +47,39 @@ export function interiorSlotGuards(
 		const regex = guarded === undefined ? undefined : anchoredLeafRegex(kind, guarded.pattern);
 		return guarded === undefined || regex === undefined ? [] : [{ slot: guarded.slot, regex, literal: regexLiteral(regex), constName: `_slotRe_${node.rawFactoryName!}_${guarded.slot}`, ...('values' in guarded ? { values: guarded.values } : {}) }];
 	});
+}
+
+export interface InteriorTextForm {
+	readonly fixed: string;
+	readonly pattern: string;
+}
+
+export function interiorTextForm(node: AssembledNode, slot: string): InteriorTextForm | undefined {
+	const entries = interiorOf(node)?.entries;
+	if (entries === undefined) return undefined;
+	let pattern: string | undefined;
+	for (const entry of entries) {
+		if ('lit' in entry) continue;
+		if ('flag' in entry || ('enum' in entry ? entry.enum : entry.slot) !== slot || pattern !== undefined) return undefined;
+		pattern = 'enum' in entry ? interiorEnumArms(entry.values) : entry.pattern;
+	}
+	return pattern === undefined ? undefined : { fixed: entries.map((entry) => ('lit' in entry ? entry.lit : '\0')).join(''), pattern };
+}
+
+export function textFormsCollide(earlier: InteriorTextForm, later: InteriorTextForm): boolean {
+	if (earlier.fixed === later.fixed) return false;
+	const [a, b] = [patternDfa(earlier.pattern), patternDfa(later.pattern)];
+	return a === undefined || b === undefined || patternsMeet(a, b);
+}
+
+export interface RoutedTextForm {
+	readonly name: string;
+	readonly form: InteriorTextForm;
+}
+
+export function collidesWithEarlier(forms: readonly (RoutedTextForm | undefined)[], at: number): boolean {
+	const own = forms[at];
+	return own !== undefined && forms.slice(0, at).some((earlier) => earlier?.name === own.name && textFormsCollide(earlier.form, own.form));
 }
 
 export function interiorEntryPattern(entry: InteriorEntry): string {

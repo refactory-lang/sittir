@@ -1484,6 +1484,10 @@ The kind ids of the form a step enters, where its grammar slot holds other kinds
 
 The builder of the form of a step's grammar slot that holds nothing (it reads no slot, and the model's `writesText` says it writes no text), beside the form the step enters. It is stamped only where the step has `kinds` and exactly one such form exists. A list routed through the step that is empty, or absent where absence reads as empty, builds that form at the step and nothing past it; an optional step before it, or the step itself being optional, leaves the list out instead, and a route whose empty list builds its empty container keeps doing so. The interpreter and the generated build both take it: python's `def f():`, `if x:` and every other holder of `_suite` build `suite_empty` for no statements, and `suite_block` only around at least one. A form that writes a keyword or a terminator, such as typescript's `debugger;`, holds something, so `statement_block` steps carry no `empty`.
 
+### `packages/types/src/portable-build.ts::PortableBuildArm::carriesNode`
+
+Stamped on an arm whose slot admits a value an earlier arm of the path also takes, spelled with different fixed text. A read of that arm keeps the parsed node, because a read may normalize a value's spelling but never the value.
+
 ### `packages/types/src/vocabulary/features/range-expressions/expression.ts::Legacy`
 
 The legacy form of the inclusive range expression: a sub-kind of `Expression.Range.Inclusive`, with the `$kind` `expression.range.inclusive.legacy`, claimed by the `r` pattern.

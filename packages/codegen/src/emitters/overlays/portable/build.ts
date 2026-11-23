@@ -62,7 +62,7 @@ import { wrapperChainFor } from '../../../compiler/model/wrapper-chain.ts';
 import { buildFactoryMap } from '../../factory-map.ts';
 import { includesNonEmpty, patternDfa, type PatternDfa } from '../../../compiler/model/pattern-automaton.ts';
 import { slotResolverKinds, transparentEnvelopeTextLeaves } from '../../from.ts';
-import { DECIMAL_PARTS, interiorSlotGuards, kindNumberShape, numberSlotsSpellValue, numberSpelling, numericSlotShape, readsEveryInteger, slotPattern, wholeTextPattern, wholeTextShape, type NumberShape } from '../../interior.ts';
+import { DECIMAL_PARTS, interiorSlotGuards, collidesWithEarlier, interiorTextForm, type RoutedTextForm, kindNumberShape, numberSlotsSpellValue, numberSpelling, numericSlotShape, readsEveryInteger, slotPattern, wholeTextPattern, wholeTextShape, type NumberShape } from '../../interior.ts';
 import { leafReDeclaration } from '../../factories.ts';
 import { findKindEntry, fixedTextKinds, type KindEnumEntry } from '../../kind-discriminant.ts';
 import { membershipKindsOf } from '../../membership.ts';
@@ -1552,11 +1552,21 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			tests.set(arm, lacking.length === 0 && required.length === 0 ? emptied : [...emptied, { absent: lacking, required }]);
 		}
 		for (const arm of ordered) if (arm.chosen) presetCarried.add(arm.entry);
+		const textFormOf = (arm: Arm): RoutedTextForm | undefined => {
+			const routes = [...builtSlots(arm.arm), ...(arm.arm.content === undefined ? [] : [arm.arm.content])];
+			const node = nodeOf(arm.kind);
+			if (routes.length !== 1 || routes[0]!.steps.length !== 1 || node === undefined) return undefined;
+			const slot = node.slots.find((held) => held.propertyName === routes[0]!.steps[0]!.key);
+			const form = slot === undefined ? undefined : interiorTextForm(node, slot.name);
+			return form === undefined ? undefined : { name: routes[0]!.name, form };
+		};
+		const textForms = ordered.map((arm) => textFormOf(arm));
 		paths[path] = {
 			root: root && ordered.some((arm) => !holders.has(arm)),
 			arms: ordered.map(
-				(arm): PortableBuildArm => ({
+				(arm, i): PortableBuildArm => ({
 					...arm.arm,
+					...(collidesWithEarlier(textForms, i) ? { carriesNode: true as const } : {}),
 					...(arm.scalar === undefined ? {} : { scalar: arm.scalar }),
 					when: tests.get(arm)!,
 					...(holders.has(arm) ? { holders: holders.get(arm)! } : {}),

@@ -46,6 +46,14 @@ describe('the portable read of a node with a named child no slot reads', () => {
 	});
 });
 
+describe('the portable read of an arm whose slot cannot tell its value from an earlier arm', () => {
+	it('keeps the node', () => {
+		const at = table.paths['literal.character']!;
+		const built = { ...table, paths: { ...table.paths, 'literal.character': { ...at, arms: at.arms.map((arm) => ({ ...arm, carriesNode: true as const })) } } };
+		expect(carriesOf(built, "fn f() { 'x'; }")).toEqual([{ text: "'x'", carry: { reason: 'text' } }]);
+	});
+});
+
 describe('the portable read of a number no arm can read as a value', () => {
 	const armsOf = (path: string, change: (arm: PortableBuildTable['paths'][string]['arms'][number]) => PortableBuildTable['paths'][string]['arms'][number]): PortableBuildTable => {
 		const at = table.paths[path]!;

@@ -5237,6 +5237,10 @@ The line-break arms a pattern can match and then continue past: an arm whose cha
 
 The characters that label some edge of the automaton, as one set.
 
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::patternsMeet`
+
+Whether some text, the empty text included, is accepted by both patterns. It searches the pairs of states the two automata reach on a shared character.
+
 ### `packages/codegen/src/compiler/model/ir-surface.ts::isFlatLeafOrKeyword`
 
 ```text
