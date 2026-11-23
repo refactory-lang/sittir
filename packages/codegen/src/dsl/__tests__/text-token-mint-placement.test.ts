@@ -1,6 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { evaluatePackage } from '../evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
+import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 
 type Node = { readonly type: string; readonly name?: string; readonly immediate?: boolean; readonly annotations?: unknown; readonly content?: Node; readonly members?: readonly Node[] };
@@ -43,7 +44,17 @@ describe('the text-token mint runs in enrich', () => {
 
 describe('a minted token in rule order', () => {
 	it('keeps the rank its inline pattern had against a later token of the same length', async () => {
-		const names = Object.keys((await evaluatePackage(grammarPackage('c'))).rules);
+		const upstream = {
+			extras: '/\\s/',
+			rules: [
+				'source: ($) => repeat(choice($.preproc_if, $.preproc_call))',
+				"preproc_if: ($) => seq(/#[ \\t]*if/, $.word, /#[ \\t]*endif/)",
+				'preproc_call: ($) => seq($.preproc_directive, $.word)',
+				'preproc_directive: () => /#[ \\t]*[a-zA-Z]\\w*/',
+				'word: () => /[a-z]+/'
+			].join(', ')
+		};
+		const names = Object.keys((await evaluateTempGrammar(upstream, '')).rules);
 		expect(names.indexOf('preproc_if_text1')).toBeGreaterThan(names.indexOf('preproc_if'));
 		expect(names.indexOf('preproc_if_text1')).toBeLessThan(names.indexOf('preproc_directive'));
 	}, FULL_PIPELINE_TIMEOUT);

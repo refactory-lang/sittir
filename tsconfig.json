@@ -61,7 +61,6 @@
 		{ "path": "./packages/go/tsconfig.build.json" },
 		{ "path": "./packages/java/tsconfig.build.json" },
 		{ "path": "./packages/csharp/tsconfig.build.json" },
-		{ "path": "./packages/c/tsconfig.build.json" },
 		{ "path": "./packages/tools/tsconfig.build.json" },
 		{ "path": "./packages/cli/tsconfig.build.json" }
 	]

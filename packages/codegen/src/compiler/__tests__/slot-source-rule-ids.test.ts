@@ -1,9 +1,11 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { compileGrammar } from '../compile.ts';
 import { grammarPackage } from '../../grammars.ts';
+import { assemblePredicted } from '../../__tests__/helpers/linked.ts';
+import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 
-const at = (path: string) => `rule:recursive_pattern:${path}`;
+const at =(path: string) => `rule:recursive_pattern:${path}`;
 
 describe("C#'s recursive_pattern: every occurrence of a slot is among its source rule ids", () => {
 	let nodeMap: Awaited<ReturnType<typeof compileGrammar>>['nodeMap'];
@@ -67,12 +69,22 @@ describe('a rule id held by two kinds resolves to each kind its own slot', () =>
 	}
 });
 
-describe("C's _Generic controlling expression is its own slot", () => {
+describe('a fielded expression before a repeated expression group is its own slot', () => {
 	const controlling = 'rule:generic_expression:members.2';
-	let nodeMap: Awaited<ReturnType<typeof compileGrammar>>['nodeMap'];
+	const association = "seq($.type_descriptor, ':', $.expression)";
+	const upstream = {
+		extras: '/\\s/',
+		rules: [
+			'source: ($) => repeat($.generic_expression)',
+			`generic_expression: ($) => seq('_Generic', '(', $.expression, ',', ${association}, repeat(seq(',', ${association})), ')')`,
+			'expression: () => /[0-9]+/',
+			'type_descriptor: () => /[a-z]+/'
+		].join(', ')
+	};
+	let nodeMap: ReturnType<typeof assemblePredicted>['nodeMap'];
 
 	beforeAll(async () => {
-		({ nodeMap } = await compileGrammar({ package: grammarPackage('c') }));
+		({ nodeMap } = assemblePredicted(await evaluateTempGrammar(upstream, "edits: { generic_expression: { 2: field('controlling_expression') } }")));
 	}, FULL_PIPELINE_TIMEOUT);
 
 	it('its position resolves to controlling_expression', () => {

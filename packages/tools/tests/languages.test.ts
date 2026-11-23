@@ -14,7 +14,6 @@ describe('languageByName', () => {
 
 	it('types exactly the grammars on disk', () => {
 		const typed: Record<keyof LanguageApis, true> = {
-			c: true,
 			csharp: true,
 			go: true,
 			java: true,

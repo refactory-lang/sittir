@@ -1,5 +1,4 @@
 import type { Language, LanguageAPI } from '@sittir/types';
-import type { CAPI } from '@sittir/c';
 import type { CsharpAPI } from '@sittir/csharp';
 import type { GoAPI } from '@sittir/go';
 import type { JavaAPI } from '@sittir/java';
@@ -10,7 +9,6 @@ import type { ScmAPI } from '@sittir/scm';
 import type { TypescriptAPI } from '@sittir/typescript';
 
 export interface LanguageApis {
-	readonly c: CAPI;
 	readonly csharp: CsharpAPI;
 	readonly go: GoAPI;
 	readonly java: JavaAPI;
