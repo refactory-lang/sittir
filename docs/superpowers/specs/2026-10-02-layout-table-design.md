@@ -615,7 +615,7 @@ Typescript needs no capture: its positions are derived (above).
 What this changes in the table: a seam row carries its gap's valid set in place of the "admits a line break" bit.
 
 - **The kinds a gap's set can hold:** `tight`, `space`, `tab`, `newline`, `blankline`, `double_blankline`, plus python's `line_continuation`: seven.
-- **What stays out:** `indent` and `dedent` are depth marks, carried on the writer's depth and never ranked as a gap's text, so they are not members. Python's `line_continuation_nul` (`\` then a NUL) is an extra no render writes.
+- **What stays out:** `indent` and `dedent` are depth marks, carried on the writer's depth and never ranked as a gap's text, so they are not members. Python's `line_continuation_nul` (`\` then a NUL) has no builder, and a render writes only a parsed one's source bytes.
 - **Seven fit in the row's existing `fact` byte,** so the row stays 12 bytes.
 - **If the writer's `LayoutKinds` also carries the depth marks,** it is nine or more bits. Then the row needs a `u16` there, and alignment takes it to 16 bytes, a third more table per output byte. The table should store the gap's set without the depth marks either way. Confirm against the writer's `LayoutKinds` when its branch is named. Breaking rules and run patterns pick from that set and never decide legality themselves. The per-site flag byte beside `SITE_SPECS` is not needed.
 
