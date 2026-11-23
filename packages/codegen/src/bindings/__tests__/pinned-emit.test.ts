@@ -413,6 +413,33 @@ describe('the pinned child emits a portable build module', () => {
 		expect(text).toContain('export const portableBuild = {};');
 	}, 60_000);
 
+	it('narrows text to the fixed choices of a direct builder\'s seat, and refuses any other', async () => {
+		const route = { name: 'content', steps: [{ key: 'content' }], multiple: false, seats: [{ at: [4, 'content'], kinds: [], text: true }] };
+		const table = { builders: { escape: 'direct' }, paths: { 'literal.character': { root: true, arms: [{ kind: 4, builder: 'escape', when: [], slots: [route], presets: [], flags: {} }] } } };
+		const slots = { 'literal.character': { content: { paths: [], texts: [], unmapped: [], string: true, numbers: [], optional: false } } };
+		const { text } = await runPinned('portableBuild', {
+			grammar: 'typescript',
+			node: 'TypeScriptNode',
+			map: 'TypeScriptMap',
+			imports: { vocabulary: '@sittir/types/vocabulary', builders: '../ir-strict.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: '@sittir/common/utils', types: '../types.js' },
+			table,
+			slots,
+			viewed: ['literal.character'],
+			textPaths: [],
+			textInputs: [],
+			textValues: [],
+			textKinds: [],
+			flags: {},
+			facts: {},
+			holes: [],
+			decided: {},
+			textChoices: { '4 content': ['n', 't'] }
+		} as never);
+		expect(text).toContain("case 'n':");
+		expect(text).toContain("case 't':");
+		expect(text).toContain("untexted('literal.character.content', value)");
+	}, 60_000);
+
 	it('builds a bare number through its slot\'s takers, a safe integer by the integer arm and any other number by the float arm, and refuses a number type it takes no taker for', async () => {
 		const { text, diagnostics } = await runPinned('portableBuild', {
 			grammar: 'python',

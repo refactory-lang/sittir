@@ -13667,7 +13667,7 @@ projected like any other, and an optional pattern slot is an optional named grou
 
 ### `packages/codegen/src/emitters/interior.ts::interiorSlotGuards`
 
-The anchored regex literal of each pattern and enum slot in a lexed kind's interior, by slot name, with the name of the constant that holds it (`_slotRe_<factory>_<slot>`): a pattern slot's own pattern, an enum slot's arms longest first (`interiorEnumArms`), each through `anchoredLeafRegexLiteral`. A slot whose pattern yields no literal is left out. `buildLeafReConsts` exports one constant per entry from the raw factories module, and the raw builder's per-slot guard reads it there; the loose coercer imports the content slot's constant as `spelledInterior`'s `accepts`, so the strip and the guard test the same object.
+The anchored regex literal of each pattern and enum slot in a lexed kind's interior, by slot name, with the name of the constant that holds it (`_slotRe_<factory>_<slot>`): a pattern slot's own pattern, an enum slot's arms longest first (`interiorEnumArms`), each through `anchoredLeafRegexLiteral`. An enum slot also carries its `values`. A slot whose pattern yields no literal is left out. `buildLeafReConsts` exports one constant per entry from the raw factories module, and the raw builder's per-slot guard reads it there; the loose coercer imports the content slot's constant as `spelledInterior`'s `accepts`, so the strip and the guard test the same object.
 
 ### `packages/codegen/src/emitters/interior.ts::walkInterior`
 
@@ -15432,6 +15432,10 @@ The first route of an arm, and the landing it shares, where two routes of one sl
 
 Whether an arm has nothing to pass to a direct builder whose kind requires a slot: no route, preset, flag, number or text value fills it. Such an arm keeps no builder and is seated like a kind without one of its own, so it builds through its holder. A direct builder whose one slot is optional is still called bare.
 
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PortableBuildOutput::textChoices`
+
+The fixed texts of each enum seat the table holds, keyed by holder kind id and slot key, passed on as the emit input's `textChoices`. They stay out of the generated table.
+
 ### `packages/codegen/src/emitters/overlays/portable/index.ts::PortableOutputs::build`
 
 The emitted portable build source.
@@ -15575,3 +15579,7 @@ A hoisted read over a built holder: the hop expressions and whether the read is 
 ### `packages/codegen/src/emitters/node-members.ts::withHoists`
 
 Each setter entry of a node that reads a hoisted slot, given its hoist: `$with` on that slot sets through the existing wrapper chain instead of replacing the stored slot.
+
+### `packages/codegen/src/emitters/overlays/portable/emit-input.ts::PortableEmitInput::textChoices`
+
+The fixed texts each enum slot of a token's interior admits, keyed by the holder's kind id and the slot's key. A text value bound for a direct builder at such a seat is narrowed to them and any other text is refused, because that builder's parameter is the union of those texts rather than `string`.

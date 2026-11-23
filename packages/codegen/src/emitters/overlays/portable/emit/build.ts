@@ -605,7 +605,19 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		const place = (seat: PortableSeat, built: Expression = seat.leaf === undefined ? value : call(builderRef(seat.leaf), value)) => wrapOne((seat.within ?? []).slice(skip), built);
 		const tokenSeat = (kind: number): PortableSeat => seats.find((seat) => seat.kinds.includes(kind)) ?? seats[0]!;
 		const placed: Statement[] = leafChoices(seats, value).map(({ seat, condition }) => (condition === undefined ? ret(place(seat)) : when(condition, ret(place(seat)))));
-		if (placed.length === 0 && textSeat !== undefined) placed.push(ret(place(textSeat)));
+		const spelledTexts = textSeat !== undefined && holder.builder !== undefined && shapeOf(holder.builder) === 'direct' ? (input.textChoices?.[`${textSeat.at[0]} ${textSeat.at[1]}`] ?? []) : [];
+		if (placed.length === 0 && textSeat !== undefined)
+			placed.push(
+				spelledTexts.length === 0
+					? ret(place(textSeat))
+					: t.switchStatement({
+							value: paren(value),
+							body: t.switchBody(
+								...spelledTexts.map((text, i) => t.switchCase({ value: str(text), bodies: i === spelledTexts.length - 1 ? [ret(place(textSeat))] : [] })),
+								t.switchDefault({ bodies: [ret(call(id(uses('untexted')), str(`${owner}.${slot.name}`), value))] })
+							)
+						})
+			);
 		if (placed.length === 0 && (texted || tokens.length > 0)) placed.push(...wrappedText(owner, holder, exact, slot, skip, value, every));
 		if (tokens.length === 0) return placed;
 		return [

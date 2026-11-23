@@ -41,11 +41,11 @@ export function interiorEnumArms(values: readonly string[]): string {
 export function interiorSlotGuards(
 	kind: string,
 	node: AssembledNode
-): readonly { readonly slot: string; readonly regex: RegExp; readonly literal: string; readonly constName: string }[] {
+): readonly { readonly slot: string; readonly regex: RegExp; readonly literal: string; readonly constName: string; readonly values?: readonly string[] }[] {
 	return (interiorOf(node)?.entries ?? []).flatMap((entry) => {
-		const guarded = 'slot' in entry ? { slot: entry.slot, pattern: entry.pattern } : 'enum' in entry ? { slot: entry.enum, pattern: interiorEnumArms(entry.values) } : undefined;
+		const guarded = 'slot' in entry ? { slot: entry.slot, pattern: entry.pattern } : 'enum' in entry ? { slot: entry.enum, pattern: interiorEnumArms(entry.values), values: entry.values } : undefined;
 		const regex = guarded === undefined ? undefined : anchoredLeafRegex(kind, guarded.pattern);
-		return guarded === undefined || regex === undefined ? [] : [{ slot: guarded.slot, regex, literal: regexLiteral(regex), constName: `_slotRe_${node.rawFactoryName!}_${guarded.slot}` }];
+		return guarded === undefined || regex === undefined ? [] : [{ slot: guarded.slot, regex, literal: regexLiteral(regex), constName: `_slotRe_${node.rawFactoryName!}_${guarded.slot}`, ...('values' in guarded ? { values: guarded.values } : {}) }];
 	});
 }
 
