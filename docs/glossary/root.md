@@ -859,3 +859,7 @@ The name tree-sitter generates a grammar's parser under, which names its C entry
 ### `packages/codegen/src/grammars.ts::grammarNameAt`
 
 The `name` of the `grammar.json` at a path.
+
+### `packages/codegen/src/grammars.ts::upstreamDirOf`
+
+The real directory of the upstream package a grammar package depends on, found by walking `node_modules` up from the package. It does not use `require.resolve`, because that also searches `NODE_PATH`, and pnpm's bin shims put every hoisted package there, so a package with no upstream dependency would read another grammar's.

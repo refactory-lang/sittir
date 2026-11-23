@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, realpathSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -99,14 +99,18 @@ export interface UpstreamGrammarEntry {
 	readonly 'file-types'?: unknown;
 }
 
-export function upstreamConfigPath(pkg: Pick<GrammarPackage, 'dir' | 'name'>): string | undefined {
-	let packageDir: string;
-	try {
-		packageDir = dirname(packageRequire(pkg).resolve(`${upstreamPackage(pkg.name)}/package.json`));
-	} catch (e) {
-		if ((e as NodeJS.ErrnoException).code === 'MODULE_NOT_FOUND') return undefined;
-		throw e;
+function upstreamDirOf(pkg: Pick<GrammarPackage, 'dir' | 'name'>): string | undefined {
+	const upstream = join('node_modules', upstreamPackage(pkg.name));
+	for (let dir = pkg.dir; ; dir = dirname(dir)) {
+		const candidate = join(dir, upstream);
+		if (existsSync(join(candidate, 'package.json'))) return realpathSync(candidate);
+		if (dirname(dir) === dir) return undefined;
 	}
+}
+
+export function upstreamConfigPath(pkg: Pick<GrammarPackage, 'dir' | 'name'>): string | undefined {
+	const packageDir = upstreamDirOf(pkg);
+	if (packageDir === undefined) return undefined;
 	const configPath = join(packageDir, 'tree-sitter.json');
 	return existsSync(configPath) ? configPath : undefined;
 }
