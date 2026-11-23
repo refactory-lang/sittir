@@ -33,7 +33,7 @@ Where the work stands:
   Of the six facts it left unread, three are still to read: a list slot's separator kind, MISSING, and an `ERROR` as a side entry against its own record. The other three are read and go to brainstorm with them.
 
   That spec is an enhancement, not stage-one work.
-- **Task 3a** is added: the spec's gate "The layout diagnostics answer for an arena tree" (accepted by the maintainer, 2026-11-18). It runs before Task 4, whose gate is the first to compare layout rows in arena storage.
+- **Task 3a** is added: the spec's gate "The stored-layout row answers for an arena tree" (accepted by the maintainer, 2026-11-18). It runs before Task 4, whose gate is the first to compare layout rows in arena storage.
 
 How this line is kept:
 - Each finished task is ticked, and this line names the task in progress.
@@ -209,37 +209,24 @@ Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), stil
 - [x] **Step 4: Run.** Run Step 2's command. Expected: PASS. `cargo test --workspace --no-default-features` is unchanged, since `parse_records` is still `All`.
 - [x] **Step 5: Commit:** `feat(core): a read that writes slot content and trivia rows only, beside today's`.
 
-### Task 3a: The layout diagnostics answer for an arena tree
+### Task 3a: The stored-layout row answers for an arena tree
 
-The spec's gate (accepted by the maintainer, 2026-11-18). It runs before Task 4, whose gate is the first to compare layout rows in arena storage.
-
-Today the three diagnostics answer only for an object tree:
-- the addon's `layoutBaseline`, `storedLayout` and `layoutWork` each take a tree id;
-- an arena parse has no tree id;
-- so `packages/tools/src/validate/layout-runs.ts` (`layoutRunsOf`, `storedLayoutOf`, `layoutWorkOf`) parses with a bare native engine.
-
-As a result, the layout-runs lane of `validate --node-storage arena` describes object trees.
+The spec's gate (accepted by the maintainer, 2026-11-18). It runs before Task 4, whose gate is the first to compare layout rows in arena storage. `layoutBaseline`, `layout-runs.ts` and `layout-baseline.test.ts` went with lazy placement, so `storedLayout` is the diagnostic left to move. `layoutWork` stays object-only: no validate row reads it, its two tests pin object storage, and an arena read has no tree to accumulate it on until the arena plan's Task 10 makes work the call's record.
 
 **Files:**
-- Modify `rust/crates/sittir-core/src/napi_engine.rs` (the three calls), `packages/common/src/engine.ts` (`NativeEngineLike`) and `packages/tools/src/validate/layout-runs.ts`.
-- Test: `packages/tools/tests/layout-baseline.test.ts`, `layout-scaling.test.ts` and `render-root-descents.test.ts`.
+- Modify `rust/crates/sittir-core/src/napi_engine.rs`, `packages/common/src/engine.ts` (`NativeEngineLike`) and `packages/tools/src/validate/stored-layout.ts`.
+- Test: `packages/tools/tests/stored-layout.test.ts`.
 
 **Interfaces:**
-- Consumes the runs that `backerParity` already computes from an arena read's records: 13,880 on the validation corpus, 0 apart from the object tree's.
-- What each call takes in place of a tree id for an arena tree is an addon signature change, listed in the PR body.
+- Produces the addon function `readStoredLayout(engine, node)`, listed in the PR body. `runStoredLayout` reads the storage its lane names.
 
-- [ ] **Step 1: Write the failing tests.** `layout-baseline.test.ts` runs under `nodeStorage: 'arena'` as well as object. For every validation-corpus source of the five grammars:
-  - `layoutRunsOf` under arena answers the records' runs, equal to `backerParity`'s (0 apart);
-  - `storedLayoutOf` and `layoutWorkOf` answer from the arena tree, not from a bare parse.
-- [ ] **Step 2: Run them.** Run `pnpm exec vitest run --config vitest.config.ts packages/tools/tests/layout-baseline.test.ts`. Expected: FAIL, since the arena lane has no tree id to pass.
-- [ ] **Step 3: Implement.**
-  - The three calls answer from an arena tree's records.
-  - `layout-runs.ts` parses with the engine of the storage the lane names.
+- [ ] **Step 1: Write the failing test.** `stored-layout.test.ts` runs under `nodeStorage: 'arena'` as well as object. For every validation-corpus source of the five grammars, the stored layout answers from the lane's own tree, not from a bare parse.
+- [ ] **Step 2: Run it.** Run `pnpm exec vitest run --config vitest.config.ts packages/tools/tests/stored-layout.test.ts`. Expected: FAIL, since the arena lane has no tree id to pass.
+- [ ] **Step 3: Implement** `readStoredLayout` and the lane's read.
 - [ ] **Step 4: Run.**
   - Step 2's command. Expected: PASS.
-  - `validate --node-storage arena`: its layout-runs rows now describe arena trees. Each row that moves is listed and sent to brainstorm. Once accepted, it is the arena baseline that Task 4 compares against. Object storage's rows do not move.
-  - The full unit suite.
-- [ ] **Step 5: Commit:** `feat(tools): the layout diagnostics answer for an arena tree from its records`.
+  - `validate --node-storage arena`: the stored-layout row now describes arena trees. Each row that moves is listed and sent to brainstorm. Once accepted, it is the arena baseline that Task 4 compares against. Object storage's rows do not move.
+- [ ] **Step 5: Commit:** `feat(tools): the stored-layout row answers for an arena tree`.
 
 ### Task 4: A list's delimiter and separators, resolved once in the read
 
