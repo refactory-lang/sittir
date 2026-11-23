@@ -2694,6 +2694,23 @@ impl<G: EngineGrammar> Engine<G> {
     /// The parser's failure, and what the read refuses.
     #[cfg(feature = "arena")]
     pub fn parse_records_with<N: crate::arena::HydrateNode>(&mut self, source: &str, rows: crate::arena::ReadRows) -> Result<ParsedRecords, String> {
+        self.read_records::<N>(source, rows, None)
+    }
+
+    /// `parse_records_with`, and each side the read placed. A diagnostic.
+    ///
+    /// # Errors
+    ///
+    /// The parser's failure, and what the read refuses.
+    #[cfg(feature = "arena")]
+    pub fn parse_placed_with<N: crate::arena::HydrateNode>(&mut self, source: &str, rows: crate::arena::ReadRows) -> Result<(ParsedRecords, Vec<crate::arena::Placed>), String> {
+        let mut kept = Vec::new();
+        let parsed = self.read_records::<N>(source, rows, Some(&mut kept))?;
+        Ok((parsed, kept))
+    }
+
+    #[cfg(feature = "arena")]
+    fn read_records<N: crate::arena::HydrateNode>(&mut self, source: &str, rows: crate::arena::ReadRows, kept: Option<&mut Vec<crate::arena::Placed>>) -> Result<ParsedRecords, String> {
         let tree = self.parser.parse(source, None).ok_or_else(|| {
             let snippet: String = source.chars().take(80).collect();
             format!("parse failed (source: {snippet:?})")
@@ -2715,6 +2732,9 @@ impl<G: EngineGrammar> Engine<G> {
             let root = crate::arena::hydrate_whole::<N>(&mut tree.walk(), &mut ctx, Some(entry), grammar.surface_kinds(), rows, &mut writer, &mut placed, &mut apart).map_err(|refusal| refusal.describe(&G::kind_name))?;
             writer.finish(entry, root).map_err(|refusal| refusal.to_string())?;
             drop(built);
+            if let Some(kept) = kept {
+                kept.extend_from_slice(&placed);
+            }
             self.place_extras(placed, apart).map_err(|refusal| refusal.to_string())?;
             root
         };

@@ -374,16 +374,17 @@ The maintainer's rulings (2026-11-17, the spec's Decided list):
 **Files:**
 - Modify `stage_one_parity.rs`.
 - Modify `arena/hydrate.rs`, only if the test finds an unexpected change.
+- Modify `engine.rs`: `Engine::parse_placed_with`, a diagnostic that returns the sides a read placed.
 
 **Interfaces:** Consumes Task 3's seating.
 
-- [ ] **Step 1: Write the failing tests.**
+- [x] **Step 1: Write the failing tests.**
   - `placements_differ_only_beside_named_fixed_tokens`: on `read_fixtures`, each placed side is compared as (holder kind, span, side, extra kind, extra span). They are equal between the trees, except where the old tree's target is a named fixed token. Each exception is printed.
   - `a_comment_beside_a_flag_stays_on_its_neighbour`: rust `fn f(x: & /* c */ mut T) {}` renders identically from both trees, the comment leads `T`, and no side is keyed to the flag.
-  - `a_comment_beside_a_unit_keeps_its_side_through_the_units_site`: a source whose comment the parse places on a named unit a cell holds renders identically from both trees, and its side's key is `NodeSite::Unit`. Rust `fn f(x: /* c */ u8) {}` is the first candidate (not checked: that the parse places this comment on `u8`).
-- [ ] **Step 2: Run them.** Run `PARITY -- placements comment_beside_a_unit`. Expected: PASS, or an exception that is not beside a named fixed token. Such an exception stops the plan, and the list goes to brainstorm.
-- [ ] **Step 3: Record and commit.**
-  - Put the printed list in the ledger and send it to brainstorm: these are the spec's "expected cases".
+  - `a_comment_beside_a_unit_keeps_its_side_through_the_units_site`: a source whose comment the parse places on a named unit a cell holds renders identically from both trees, and its side's key is `NodeSite::Unit`. Rust `fn f(x: /* c */ u8) {}` is that source: the parse places this comment on `u8`.
+- [x] **Step 2: Run them.** Run `PARITY -- placements comment_beside_a_unit`. Expected: PASS, or an exception that is not beside a named fixed token. Such an exception stops the plan, and the list goes to brainstorm.
+- [x] **Step 3: Record and commit.**
+  - Put the printed list in the ledger and send it to brainstorm: these are the spec's "expected cases". On `read_fixtures` the list is empty: rust 1,302, typescript 617, python 359, regex 1 and scm 110 placed sides are equal. A unit is compared with the row that spells it, since an enum kind's row and its member's cell name one node.
   - Commit: `test(parity): placed sides beside a named fixed token are the only ones that move`.
 
 ### Task 9: Rows go

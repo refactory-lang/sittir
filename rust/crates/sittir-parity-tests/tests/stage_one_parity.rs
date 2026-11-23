@@ -5,13 +5,14 @@
 use std::collections::BTreeMap;
 
 use sittir_core::arena::side::{RunEntry, SideRecord};
-use sittir_core::arena::{header_of, Address, ArenaRead, BodySlot, Cell, CellWord, EdgePart, HydrateNode, ListCell, ReadRows, RecordCells, RecordGrammar, RecordShape};
+use sittir_core::arena::{header_of, Address, ArenaRead, BodySlot, Cell, CellWord, EdgePart, HydrateNode, ListCell, NodeSite, Placed, ReadRows, RecordCells, RecordGrammar, RecordShape};
 use sittir_core::engine::{Backing, Descendant, Engine, EngineGrammar, Records};
 use sittir_core::layout::SlotLayout;
 use sittir_core::options::ResolvedOptions;
 use sittir_core::nodes::Nodes as _;
 use sittir_core::render::SourceTable as _;
-use sittir_core::slot::NodeIdOrCoordinate;
+use sittir_core::slot::{ChangedEdges, NodeIdOrCoordinate};
+use sittir_core::trivia_table::TriviaSide;
 use sittir_core::types::{Delimiter, KindId, NodeId, NodeIndex, Span};
 use sittir_parity_tests::{edge_chains, edge_sources, fixture_sources, named_fixed_pairs, out_of_order_units, parsed, read_fixtures, read_kids, with_layout, MIXED_LISTS};
 
@@ -421,4 +422,119 @@ fn a_token_read_by_its_interior_keeps_the_lines_inside_it() {
         });
     }
     each_grammar!(check);
+}
+
+/// What holds a placed side: its kind and span, none for a unit, which a
+/// read without rows knows by its cell alone.
+fn holder_of<G: RecordGrammar, N: RecordCells>(arena: &dyn ArenaRead, site: NodeSite) -> (KindId, Option<Span>) {
+    match site {
+        NodeSite::Record(at) => {
+            let side = side_of(arena, at);
+            (side.node.expect("a parsed record's facts").kind, side.at.map(|row| row.span))
+        }
+        NodeSite::Row { holder, entry } => match side_of(arena, holder).run[entry as usize] {
+            RunEntry::Row { facts, span, .. } => (facts.kind, Some(span)),
+            RunEntry::Record { at, .. } => holder_of::<G, N>(arena, NodeSite::Record(at)),
+        },
+        NodeSite::Unit(site) => {
+            let kind = header_of(arena.words(site.holder, 1).expect("a header")[0], sittir_core::record::PARSED_KIND_BITS).0;
+            let shape = N::shape(kind).expect("a record shape");
+            let words = arena.words(site.holder, shape.words).expect("a record");
+            let cell = *shape.cells.iter().find(|cell| cell.word == site.word).expect("the unit's cell");
+            let held = &words[cell.word as usize..(cell.word + cell.width) as usize];
+            let value = match cell.run {
+                None => Cell::decode_parsed(held, cell, G::KIND_BITS),
+                Some(width) => Cell::decode_parsed(ListCell::of_word(CellWord(held[0]), arena).expect("a list").items(arena, width).expect("its items").nth(site.item.0 as usize).expect("the unit's item"), cell, G::KIND_BITS),
+            };
+            (value.expect("a cell").kind().expect("a unit's kind"), None)
+        }
+        NodeSite::Flag { .. } => panic!("a side is placed on a flag"),
+    }
+}
+
+/// The token a row holds as its one child: the member an enum kind's row
+/// spells, which a read without rows holds as the unit, under the kind the
+/// grammar folds that raw token into, of the same name.
+fn spelled_by(arena: &dyn ArenaRead, site: NodeSite) -> Option<KindId> {
+    let NodeSite::Row { holder, entry } = site else { return None };
+    let run = side_of(arena, holder).run;
+    match (run.get(entry as usize)?, run.get(entry as usize + 1)) {
+        (RunEntry::Row { inner: 1, .. }, Some(RunEntry::Row { facts, .. })) => Some(facts.kind),
+        _ => None,
+    }
+}
+
+/// A placed side: its holder's kind and span, the side, the extra's kind and
+/// span, and the token its holder spells.
+type PlacedSide = (KindId, Option<Span>, TriviaSide, KindId, Span, Option<KindId>);
+
+fn placed_sides<G: RecordGrammar + Copy, N: HydrateNode + RecordCells>(grammar: G, options: fn() -> ResolvedOptions, source: &str, rows: ReadRows) -> (Vec<PlacedSide>, Vec<Placed>) {
+    let mut engine = Engine::new(grammar, options()).expect("an engine");
+    let (_, placed) = engine.parse_placed_with::<N>(source, rows).expect("a read");
+    let built = engine.written().built();
+    let sides = placed
+        .iter()
+        .map(|one| {
+            let (kind, span) = holder_of::<G, N>(&*built, one.site);
+            (kind, span, one.side, one.kind, one.span, spelled_by(&*built, one.site))
+        })
+        .collect();
+    (sides, placed)
+}
+
+fn rendered<G: RecordGrammar + Copy, N: HydrateNode>(grammar: G, options: fn() -> ResolvedOptions, source: &str, rows: ReadRows) -> String {
+    let mut engine = Engine::new(grammar, options()).expect("an engine");
+    let root = engine.parse_records_with::<N>(source, rows).expect("a read").root.expect("a root record");
+    let (built, options) = (engine.written().built(), engine.options().clone());
+    engine.render_at(&built, root, ChangedEdges::default(), &options, false, |_| Ok(())).expect("a render")
+}
+
+#[test]
+fn placements_differ_only_beside_named_fixed_tokens() {
+    fn check<G: RecordGrammar + Copy, N: HydrateNode + RecordCells>(name: &str, grammar: G, options: fn() -> ResolvedOptions) {
+        let pairs = named_fixed_pairs(name);
+        let (mut same, mut moved) = (0, Vec::new());
+        for source in read_fixtures(name) {
+            let (whole, _) = placed_sides::<G, N>(grammar, options, &source, ReadRows::All);
+            let (mut held, _) = placed_sides::<G, N>(grammar, options, &source, ReadRows::SlotContent);
+            for one in whole {
+                let found = held.iter().position(|other| (other.3, other.4) == (one.3, one.4));
+                let now = found.map(|at| held.swap_remove(at));
+                if now.is_some_and(|other| other.2 == one.2 && if other.1.is_none() { other.0 == one.0 || one.5.is_some_and(|spelled| G::kind_name(spelled) == G::kind_name(other.0)) } else { (other.0, other.1) == (one.0, one.1) }) {
+                    same += 1;
+                    continue;
+                }
+                assert!(pairs.iter().any(|pair| pair.token == G::kind_name(one.0)), "{name} {source:?}: {one:?} moved to {now:?}, beside no named fixed token");
+                moved.push(format!("{} {:?} {:?} -> {:?}", G::kind_name(one.0), one.2, one.4, now.map(|other| (G::kind_name(other.0), other.2))));
+            }
+            assert!(held.is_empty(), "{name} {source:?}: the read without rows places more: {held:?}");
+        }
+        eprintln!("{name}: {same} placed sides equal, {} beside a named fixed token", moved.len());
+        for one in moved {
+            eprintln!("  {name}: {one}");
+        }
+    }
+    each_grammar!(check);
+}
+
+#[test]
+fn a_comment_beside_a_flag_stays_on_its_neighbour() {
+    type N = sittir_rust::render::AnyNode;
+    let (grammar, options) = (sittir_rust::RustGrammar, sittir_rust::render::options::defaults as fn() -> ResolvedOptions);
+    let source = "fn f(x: & /* c */ mut T) {}";
+    assert_eq!(rendered::<_, N>(grammar, options, source, ReadRows::All), rendered::<_, N>(grammar, options, source, ReadRows::SlotContent));
+    let (sides, placed) = placed_sides::<_, N>(grammar, options, source, ReadRows::SlotContent);
+    assert!(!placed.iter().any(|one| matches!(one.site, NodeSite::Flag { .. })), "no side is keyed to the flag");
+    let at = u32::try_from(source.find('T').expect("the type")).expect("an offset");
+    assert!(sides.iter().any(|side| side.1 == Some(Span { start: at, end: at + 1 }) && side.2 == TriviaSide::Leading), "the comment leads `T`: {sides:?}");
+}
+
+#[test]
+fn a_comment_beside_a_unit_keeps_its_side_through_the_units_site() {
+    type N = sittir_rust::render::AnyNode;
+    let (grammar, options) = (sittir_rust::RustGrammar, sittir_rust::render::options::defaults as fn() -> ResolvedOptions);
+    let source = "fn f(x: /* c */ u8) {}";
+    assert_eq!(rendered::<_, N>(grammar, options, source, ReadRows::All), rendered::<_, N>(grammar, options, source, ReadRows::SlotContent));
+    let (_, placed) = placed_sides::<_, N>(grammar, options, source, ReadRows::SlotContent);
+    assert!(placed.iter().any(|one| matches!(one.site, NodeSite::Unit(_))), "a side is keyed to the unit's site: {placed:?}");
 }
