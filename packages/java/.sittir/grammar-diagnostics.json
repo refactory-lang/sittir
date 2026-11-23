@@ -1806,14 +1806,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.expression: expression has no exact set"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "java",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "statement.import: static has no exact set"
   },
   {

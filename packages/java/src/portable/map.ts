@@ -94,7 +94,6 @@ export interface JavaMap extends V.GrammarMap {
 				| V.Read<JavaMap, 'statement.block'>
 				| V.Read<JavaMap, 'statement.break'>
 				| V.Read<JavaMap, 'statement.continue'>
-				| V.Read<JavaMap, 'statement.expression'>
 				| V.Read<JavaMap, 'statement.if'>
 				| V.Read<JavaMap, 'statement.import'>
 				| V.Read<JavaMap, 'statement.labeled'>
@@ -142,7 +141,6 @@ export interface JavaMap extends V.GrammarMap {
 				| T.DecimalFloatingPointLiteral.Parsed
 				| T.DecimalIntegerLiteralArm2.Parsed
 				| T.EnhancedForStatement.Parsed
-				| T.ExpressionStatement.Parsed
 				| T.FieldAccess.Parsed
 				| T.ForStatement.Parsed
 				| T.HexFloatingPointLiteral.Parsed
@@ -7404,7 +7402,6 @@ export interface JavaMap extends V.GrammarMap {
 				| V.Read<JavaMap, 'statement.block'>
 				| V.Read<JavaMap, 'statement.break'>
 				| V.Read<JavaMap, 'statement.continue'>
-				| V.Read<JavaMap, 'statement.expression'>
 				| V.Read<JavaMap, 'statement.if'>
 				| V.Read<JavaMap, 'statement.import'>
 				| V.Read<JavaMap, 'statement.labeled'>
@@ -7452,7 +7449,6 @@ export interface JavaMap extends V.GrammarMap {
 				| T.DecimalFloatingPointLiteral.Parsed
 				| T.DecimalIntegerLiteralArm2.Parsed
 				| T.EnhancedForStatement.Parsed
-				| T.ExpressionStatement.Parsed
 				| T.FieldAccess.Parsed
 				| T.ForStatement.Parsed
 				| T.HexFloatingPointLiteral.Parsed
@@ -7480,9 +7476,6 @@ export interface JavaMap extends V.GrammarMap {
 		};
 		readonly 'statement.continue': {
 			readonly label: V.Read<JavaMap, 'identifier'>;
-		};
-		readonly 'statement.expression': {
-			readonly $forms: V.Form<'expression'>;
 		};
 		readonly 'statement.if': {
 			readonly alternative:
@@ -7561,7 +7554,6 @@ export interface JavaMap extends V.GrammarMap {
 				| V.Read<JavaMap, 'statement.block'>
 				| V.Read<JavaMap, 'statement.break'>
 				| V.Read<JavaMap, 'statement.continue'>
-				| V.Read<JavaMap, 'statement.expression'>
 				| V.Read<JavaMap, 'statement.if'>
 				| V.Read<JavaMap, 'statement.import'>
 				| V.Read<JavaMap, 'statement.labeled'>
@@ -7609,7 +7601,6 @@ export interface JavaMap extends V.GrammarMap {
 				| T.DecimalFloatingPointLiteral.Parsed
 				| T.DecimalIntegerLiteralArm2.Parsed
 				| T.EnhancedForStatement.Parsed
-				| T.ExpressionStatement.Parsed
 				| T.FieldAccess.Parsed
 				| T.ForStatement.Parsed
 				| T.HexFloatingPointLiteral.Parsed
@@ -7704,7 +7695,6 @@ export interface JavaMap extends V.GrammarMap {
 				| V.Read<JavaMap, 'statement.block'>
 				| V.Read<JavaMap, 'statement.break'>
 				| V.Read<JavaMap, 'statement.continue'>
-				| V.Read<JavaMap, 'statement.expression'>
 				| V.Read<JavaMap, 'statement.if'>
 				| V.Read<JavaMap, 'statement.import'>
 				| V.Read<JavaMap, 'statement.labeled'>
@@ -7752,7 +7742,6 @@ export interface JavaMap extends V.GrammarMap {
 				| T.DecimalFloatingPointLiteral.Parsed
 				| T.DecimalIntegerLiteralArm2.Parsed
 				| T.EnhancedForStatement.Parsed
-				| T.ExpressionStatement.Parsed
 				| T.FieldAccess.Parsed
 				| T.ForStatement.Parsed
 				| T.HexFloatingPointLiteral.Parsed
@@ -7855,7 +7844,6 @@ export interface JavaMap extends V.GrammarMap {
 				| V.Read<JavaMap, 'statement.block'>
 				| V.Read<JavaMap, 'statement.break'>
 				| V.Read<JavaMap, 'statement.continue'>
-				| V.Read<JavaMap, 'statement.expression'>
 				| V.Read<JavaMap, 'statement.if'>
 				| V.Read<JavaMap, 'statement.import'>
 				| V.Read<JavaMap, 'statement.labeled'>
@@ -7903,7 +7891,6 @@ export interface JavaMap extends V.GrammarMap {
 				| T.DecimalFloatingPointLiteral.Parsed
 				| T.DecimalIntegerLiteralArm2.Parsed
 				| T.EnhancedForStatement.Parsed
-				| T.ExpressionStatement.Parsed
 				| T.FieldAccess.Parsed
 				| T.ForStatement.Parsed
 				| T.HexFloatingPointLiteral.Parsed
@@ -8107,7 +8094,6 @@ export interface JavaMap extends V.GrammarMap {
 				| V.Read<JavaMap, 'statement.block'>
 				| V.Read<JavaMap, 'statement.break'>
 				| V.Read<JavaMap, 'statement.continue'>
-				| V.Read<JavaMap, 'statement.expression'>
 				| V.Read<JavaMap, 'statement.if'>
 				| V.Read<JavaMap, 'statement.import'>
 				| V.Read<JavaMap, 'statement.labeled'>
@@ -8155,7 +8141,6 @@ export interface JavaMap extends V.GrammarMap {
 				| T.DecimalFloatingPointLiteral.Parsed
 				| T.DecimalIntegerLiteralArm2.Parsed
 				| T.EnhancedForStatement.Parsed
-				| T.ExpressionStatement.Parsed
 				| T.FieldAccess.Parsed
 				| T.ForStatement.Parsed
 				| T.HexFloatingPointLiteral.Parsed
@@ -8253,7 +8238,6 @@ export interface JavaMap extends V.GrammarMap {
 				| V.Read<JavaMap, 'statement.block'>
 				| V.Read<JavaMap, 'statement.break'>
 				| V.Read<JavaMap, 'statement.continue'>
-				| V.Read<JavaMap, 'statement.expression'>
 				| V.Read<JavaMap, 'statement.if'>
 				| V.Read<JavaMap, 'statement.import'>
 				| V.Read<JavaMap, 'statement.labeled'>
@@ -8301,7 +8285,6 @@ export interface JavaMap extends V.GrammarMap {
 				| T.DecimalFloatingPointLiteral.Parsed
 				| T.DecimalIntegerLiteralArm2.Parsed
 				| T.EnhancedForStatement.Parsed
-				| T.ExpressionStatement.Parsed
 				| T.FieldAccess.Parsed
 				| T.ForStatement.Parsed
 				| T.HexFloatingPointLiteral.Parsed
@@ -8398,7 +8381,6 @@ export interface JavaMap extends V.GrammarMap {
 				| V.Read<JavaMap, 'statement.block'>
 				| V.Read<JavaMap, 'statement.break'>
 				| V.Read<JavaMap, 'statement.continue'>
-				| V.Read<JavaMap, 'statement.expression'>
 				| V.Read<JavaMap, 'statement.if'>
 				| V.Read<JavaMap, 'statement.import'>
 				| V.Read<JavaMap, 'statement.labeled'>
@@ -8446,7 +8428,6 @@ export interface JavaMap extends V.GrammarMap {
 				| T.DecimalFloatingPointLiteral.Parsed
 				| T.DecimalIntegerLiteralArm2.Parsed
 				| T.EnhancedForStatement.Parsed
-				| T.ExpressionStatement.Parsed
 				| T.FieldAccess.Parsed
 				| T.ForStatement.Parsed
 				| T.HexFloatingPointLiteral.Parsed
@@ -8924,7 +8905,6 @@ export interface JavaMap extends V.GrammarMap {
 			readonly 'statement.block.static': TSKindId.StaticInitializer;
 			readonly 'statement.break': TSKindId.BreakStatement;
 			readonly 'statement.continue': TSKindId.ContinueStatement;
-			readonly 'statement.expression': TSKindId.ExpressionStatement;
 			readonly 'statement.if': TSKindId.IfStatement;
 			readonly 'statement.import': TSKindId.ImportDeclaration;
 			readonly 'statement.labeled': TSKindId.LabeledStatement;
@@ -9079,7 +9059,6 @@ export interface JavaMap extends V.GrammarMap {
 		readonly 'statement.block.static': never;
 		readonly 'statement.break': never;
 		readonly 'statement.continue': never;
-		readonly 'statement.expression': never;
 		readonly 'statement.if': never;
 		readonly 'statement.import': never;
 		readonly 'statement.labeled': never;

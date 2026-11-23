@@ -451,9 +451,65 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [200, 'content'],
-									kinds: [209, 210, 219]
+									kinds: [209, 219]
+								},
+								{
+									at: [210, 'expression'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 112
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										},
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
 						}
 					],
 					presets: [],
@@ -518,13 +574,66 @@ export const build: PortableBuildTable = {
 								{
 									at: [199, 'statements'],
 									kinds: [
-										66, 197, 208, 209, 210, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239,
-										240, 249, 250, 252, 256, 273, 274, 278, 301, 329, 330
+										66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
+										249, 250, 252, 256, 273, 274, 278, 301, 329, 330
 									],
 									tokens: {
 										';': 66
 									},
 									many: true
+								},
+								{
+									at: [210, 'expression'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 112
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										},
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
 								},
 								{
 									at: [217, 'expression'],
@@ -12499,13 +12608,66 @@ export const build: PortableBuildTable = {
 								{
 									at: [157, 'toplevelStatements'],
 									kinds: [
-										66, 197, 208, 209, 210, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239,
-										240, 249, 250, 252, 256, 273, 274, 278, 301, 302, 329, 330
+										66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
+										249, 250, 252, 256, 273, 274, 278, 301, 302, 329, 330
 									],
 									tokens: {
 										';': 66
 									},
 									many: true
+								},
+								{
+									at: [210, 'expression'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 112
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										},
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
 								},
 								{
 									at: [217, 'expression'],
@@ -14022,13 +14184,66 @@ export const build: PortableBuildTable = {
 								{
 									at: [209, 'statements'],
 									kinds: [
-										66, 197, 208, 209, 210, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239,
-										240, 249, 250, 252, 256, 273, 274, 278, 301, 329, 330
+										66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
+										249, 250, 252, 256, 273, 274, 278, 301, 329, 330
 									],
 									tokens: {
 										';': 66
 									},
 									many: true
+								},
+								{
+									at: [210, 'expression'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 112
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										},
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
 								},
 								{
 									at: [217, 'expression'],
@@ -14204,82 +14419,6 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'statement.expression': {
-			root: true,
-			arms: [
-				{
-					kind: 210,
-					builder: 'expressionStatement',
-					slots: [
-						{
-							name: 'expression',
-							steps: [
-								{
-									key: 'expression'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [210, 'expression'],
-									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
-										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										this: 112
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'classLiteral',
-											key: 'unannotatedType'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer'
-							}
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['expression']
-						}
-					]
-				}
-			]
-		},
 		'statement.if': {
 			root: true,
 			arms: [
@@ -14317,12 +14456,65 @@ export const build: PortableBuildTable = {
 								{
 									at: [228, 'consequence'],
 									kinds: [
-										66, 197, 208, 209, 210, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239,
-										240, 249, 250, 252, 256, 273, 274, 278, 301, 329, 330
+										66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
+										249, 250, 252, 256, 273, 274, 278, 301, 329, 330
 									],
 									tokens: {
 										';': 66
 									}
+								},
+								{
+									at: [210, 'expression'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 112
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										},
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
 								},
 								{
 									at: [217, 'expression'],
@@ -14396,12 +14588,65 @@ export const build: PortableBuildTable = {
 								{
 									at: [228, 'alternative'],
 									kinds: [
-										66, 197, 208, 209, 210, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239,
-										240, 249, 250, 252, 256, 273, 274, 278, 301, 329, 330
+										66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
+										249, 250, 252, 256, 273, 274, 278, 301, 329, 330
 									],
 									tokens: {
 										';': 66
 									}
+								},
+								{
+									at: [210, 'expression'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 112
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										},
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
 								},
 								{
 									at: [217, 'expression'],
@@ -14592,12 +14837,65 @@ export const build: PortableBuildTable = {
 								{
 									at: [211, 'statement'],
 									kinds: [
-										66, 197, 208, 209, 210, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239,
-										240, 249, 250, 252, 256, 273, 274, 278, 301, 329, 330
+										66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
+										249, 250, 252, 256, 273, 274, 278, 301, 329, 330
 									],
 									tokens: {
 										';': 66
 									}
+								},
+								{
+									at: [210, 'expression'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 112
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										},
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
 								},
 								{
 									at: [217, 'expression'],
@@ -14807,12 +15105,65 @@ export const build: PortableBuildTable = {
 								{
 									at: [230, 'body'],
 									kinds: [
-										66, 197, 208, 209, 210, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239,
-										240, 249, 250, 252, 256, 273, 274, 278, 301, 329, 330
+										66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
+										249, 250, 252, 256, 273, 274, 278, 301, 329, 330
 									],
 									tokens: {
 										';': 66
 									}
+								},
+								{
+									at: [210, 'expression'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 112
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										},
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
 								},
 								{
 									at: [217, 'expression'],
@@ -15115,12 +15466,65 @@ export const build: PortableBuildTable = {
 								{
 									at: [230, 'body'],
 									kinds: [
-										66, 197, 208, 209, 210, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239,
-										240, 249, 250, 252, 256, 273, 274, 278, 301, 329, 330
+										66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
+										249, 250, 252, 256, 273, 274, 278, 301, 329, 330
 									],
 									tokens: {
 										';': 66
 									}
+								},
+								{
+									at: [210, 'expression'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 112
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										},
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
 								},
 								{
 									at: [217, 'expression'],
@@ -15212,12 +15616,65 @@ export const build: PortableBuildTable = {
 								{
 									at: [213, 'body'],
 									kinds: [
-										66, 197, 208, 209, 210, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239,
-										240, 249, 250, 252, 256, 273, 274, 278, 301, 329, 330
+										66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
+										249, 250, 252, 256, 273, 274, 278, 301, 329, 330
 									],
 									tokens: {
 										';': 66
 									}
+								},
+								{
+									at: [210, 'expression'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 112
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										},
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
 								},
 								{
 									at: [217, 'expression'],
@@ -15483,12 +15940,65 @@ export const build: PortableBuildTable = {
 								{
 									at: [231, 'body'],
 									kinds: [
-										66, 197, 208, 209, 210, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239,
-										240, 249, 250, 252, 256, 273, 274, 278, 301, 329, 330
+										66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
+										249, 250, 252, 256, 273, 274, 278, 301, 329, 330
 									],
 									tokens: {
 										';': 66
 									}
+								},
+								{
+									at: [210, 'expression'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 112
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										},
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
 								},
 								{
 									at: [217, 'expression'],
@@ -15598,12 +16108,65 @@ export const build: PortableBuildTable = {
 								{
 									at: [229, 'body'],
 									kinds: [
-										66, 197, 208, 209, 210, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239,
-										240, 249, 250, 252, 256, 273, 274, 278, 301, 329, 330
+										66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
+										249, 250, 252, 256, 273, 274, 278, 301, 329, 330
 									],
 									tokens: {
 										';': 66
 									}
+								},
+								{
+									at: [210, 'expression'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 112
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 106,
+										byte: 99,
+										char: 103,
+										double: 105,
+										float: 104,
+										int: 101,
+										long: 102,
+										short: 100,
+										void: 107
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										},
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
 								},
 								{
 									at: [217, 'expression'],

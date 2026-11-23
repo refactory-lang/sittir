@@ -2604,29 +2604,6 @@
       "slots": []
     },
     "expression_statement": {
-      "vocab": "statement.expression",
-      "read": [
-        {
-          "vocab": "statement.expression",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "slots": [
-        {
-          "name": "expression",
-          "route": "slot",
-          "slot": "expression",
-          "path": [
-            {
-              "owner": "expression_statement",
-              "slot": "expression"
-            }
-          ]
-        }
-      ],
       "container": {
         "slot": "expression",
         "kinds": [
@@ -6105,8 +6082,8 @@
       },
       {
         "depth": 2,
-        "paths": 62,
-        "kinds": 61,
+        "paths": 61,
+        "kinds": 60,
         "refinements": 5
       },
       {

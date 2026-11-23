@@ -89905,53 +89905,6 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'statement.expression': {
-			root: true,
-			arms: [
-				{
-					kind: 179,
-					builder: 'expressionStatement',
-					slots: [
-						{
-							name: 'expression',
-							steps: [
-								{
-									key: 'expression'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [179, 'expression'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['expression']
-						}
-					]
-				}
-			]
-		},
 		'statement.if': {
 			root: true,
 			arms: [
@@ -89971,7 +89924,30 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [195, 'initializer'],
-									kinds: [178, 179, 180, 182, 183, 184, 185]
+									kinds: [178, 180, 182, 183, 184, 185]
+								},
+								{
+									at: [179, 'expression'],
+									kinds: [
+										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
+										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 72
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -90136,9 +90112,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [186, 'statement'],
-									kinds: [
-										174, 176, 177, 178, 179, 180, 182, 183, 184, 185, 186, 188, 189, 190, 192, 195, 196, 199, 202
-									],
+									kinds: [174, 176, 177, 178, 180, 182, 183, 184, 185, 186, 188, 189, 190, 192, 195, 196, 199, 202],
 									tokens: {
 										';': 177,
 										fallthrough: 188
@@ -90214,6 +90188,29 @@ export const build: PortableBuildTable = {
 										}
 									],
 									many: true
+								},
+								{
+									at: [179, 'expression'],
+									kinds: [
+										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
+										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 72
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
 								},
 								{
 									at: [193, 'expression'],
@@ -90545,7 +90542,30 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [199, 'initializer'],
-									kinds: [178, 179, 180, 182, 183, 184, 185]
+									kinds: [178, 180, 182, 183, 184, 185]
+								},
+								{
+									at: [179, 'expression'],
+									kinds: [
+										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
+										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 72
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},
@@ -90622,7 +90642,30 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [202, 'initializer'],
-									kinds: [178, 179, 180, 182, 183, 184, 185]
+									kinds: [178, 180, 182, 183, 184, 185]
+								},
+								{
+									at: [179, 'expression'],
+									kinds: [
+										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
+										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 72
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'expression'
+										}
+									]
 								}
 							]
 						},

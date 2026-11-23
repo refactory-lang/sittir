@@ -253,7 +253,6 @@ export interface PortableIds {
 		| TSKindId.ContinueStatement
 		| TSKindId.DoStatement
 		| TSKindId.EnhancedForStatement
-		| TSKindId.ExpressionStatement
 		| TSKindId.ForStatement
 		| TSKindId.IfStatement
 		| TSKindId.ImportDeclaration
@@ -271,7 +270,6 @@ export interface PortableIds {
 	'statement.block.static': TSKindId.StaticInitializer;
 	'statement.break': TSKindId.BreakStatement;
 	'statement.continue': TSKindId.ContinueStatement;
-	'statement.expression': TSKindId.ExpressionStatement;
 	'statement.if': TSKindId.IfStatement;
 	'statement.import': TSKindId.ImportDeclaration;
 	'statement.labeled': TSKindId.LabeledStatement;
@@ -476,7 +474,6 @@ export interface PortableTexts {
 	'statement.block.static': never;
 	'statement.break': never;
 	'statement.continue': never;
-	'statement.expression': never;
 	'statement.if': never;
 	'statement.import': never;
 	'statement.labeled': never;
@@ -843,7 +840,6 @@ export interface PortableKindsAt {
 		readonly block: PortableKindsAt['statement.block'];
 		readonly break: PortableKindsAt['statement.break'];
 		readonly continue: PortableKindsAt['statement.continue'];
-		readonly expression: PortableKindsAt['statement.expression'];
 		readonly if: PortableKindsAt['statement.if'];
 		readonly import: PortableKindsAt['statement.import'];
 		readonly labeled: PortableKindsAt['statement.labeled'];
@@ -859,7 +855,6 @@ export interface PortableKindsAt {
 	'statement.block.static': { readonly $path: 'statement.block.static' };
 	'statement.break': { readonly $path: 'statement.break' };
 	'statement.continue': { readonly $path: 'statement.continue' };
-	'statement.expression': { readonly $path: 'statement.expression' };
 	'statement.if': { readonly $path: 'statement.if' };
 	'statement.import': { readonly $path: 'statement.import' };
 	'statement.labeled': { readonly $path: 'statement.labeled' };
@@ -1814,7 +1809,6 @@ export interface PortableIsAt {
 		readonly block: PortableIsAt['statement.block'];
 		readonly break: PortableIsAt['statement.break'];
 		readonly continue: PortableIsAt['statement.continue'];
-		readonly expression: PortableIsAt['statement.expression'];
 		readonly if: PortableIsAt['statement.if'];
 		readonly import: PortableIsAt['statement.import'];
 		readonly labeled: PortableIsAt['statement.labeled'];
@@ -1854,12 +1848,6 @@ export interface PortableIsAt {
 		JavaNode,
 		TSKindId,
 		PortableTexts['statement.continue']
-	> & {};
-	'statement.expression': PortableGuard<
-		PortableIds['statement.expression'],
-		JavaNode,
-		TSKindId,
-		PortableTexts['statement.expression']
 	> & {};
 	'statement.if': PortableGuard<PortableIds['statement.if'], JavaNode, TSKindId, PortableTexts['statement.if']> & {};
 	'statement.import': PortableGuard<
@@ -2370,7 +2358,6 @@ const table: PortableTable = {
 				TSKindId.ContinueStatement,
 				TSKindId.DoStatement,
 				TSKindId.EnhancedForStatement,
-				TSKindId.ExpressionStatement,
 				TSKindId.ForStatement,
 				TSKindId.IfStatement,
 				TSKindId.ImportDeclaration,
@@ -2391,7 +2378,6 @@ const table: PortableTable = {
 		'statement.block.static': { ids: [TSKindId.StaticInitializer], exact: true },
 		'statement.break': { ids: [TSKindId.BreakStatement], exact: true },
 		'statement.continue': { ids: [TSKindId.ContinueStatement], exact: true },
-		'statement.expression': { ids: [TSKindId.ExpressionStatement], exact: true },
 		'statement.if': { ids: [TSKindId.IfStatement], exact: true },
 		'statement.import': { ids: [TSKindId.ImportDeclaration], exact: true },
 		'statement.labeled': { ids: [TSKindId.LabeledStatement], exact: true },
@@ -2732,7 +2718,6 @@ const table: PortableTable = {
 		[TSKindId.EscapeSequenceArm3]: [{ path: 'literal.string.escape', within: [], test: [] }],
 		[TSKindId.EscapeSequenceArm4]: [{ path: 'literal.string.escape', within: [], test: [] }],
 		[TSKindId.EscapeSequenceArm5]: [{ path: 'literal.string.escape', within: [], test: [] }],
-		[TSKindId.ExpressionStatement]: [{ path: 'statement.expression', within: [], test: [] }],
 		[TSKindId.ExtendsInterfaces]: [{ path: 'clause.extends.type', within: [], test: [] }],
 		[TSKindId.False]: [{ path: 'literal.boolean.false', within: [], test: [] }],
 		[TSKindId.FieldAccess]: [{ path: 'expression.member', within: [], test: [] }],

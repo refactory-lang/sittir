@@ -17312,8 +17312,6 @@ type statement_block$209_statements$Item =
 	| JavaMap['nodes']['statement.break']
 	| BuildInput<JavaMap, 'statement.continue'>
 	| JavaMap['nodes']['statement.continue']
-	| BuildInput<JavaMap, 'statement.expression'>
-	| JavaMap['nodes']['statement.expression']
 	| BuildInput<JavaMap, 'statement.if'>
 	| JavaMap['nodes']['statement.if']
 	| BuildInput<JavaMap, 'statement.import'>
@@ -17352,36 +17350,40 @@ const statement_block$209_statements = (value: statement_block$209_statements$It
 			case ';':
 				return 66;
 			case 'this':
-				return b.yieldStatement(112);
+				return b.expressionStatement(112);
 			case 'boolean':
-				return b.yieldStatement(b.classLiteral(106));
+				return b.expressionStatement(b.classLiteral(106));
 			case 'byte':
-				return b.yieldStatement(b.classLiteral(99));
+				return b.expressionStatement(b.classLiteral(99));
 			case 'char':
-				return b.yieldStatement(b.classLiteral(103));
+				return b.expressionStatement(b.classLiteral(103));
 			case 'double':
-				return b.yieldStatement(b.classLiteral(105));
+				return b.expressionStatement(b.classLiteral(105));
 			case 'float':
-				return b.yieldStatement(b.classLiteral(104));
+				return b.expressionStatement(b.classLiteral(104));
 			case 'int':
-				return b.yieldStatement(b.classLiteral(101));
+				return b.expressionStatement(b.classLiteral(101));
 			case 'long':
-				return b.yieldStatement(b.classLiteral(102));
+				return b.expressionStatement(b.classLiteral(102));
 			case 'short':
-				return b.yieldStatement(b.classLiteral(100));
+				return b.expressionStatement(b.classLiteral(100));
 			case 'void':
-				return b.yieldStatement(b.classLiteral(107));
+				return b.expressionStatement(b.classLiteral(107));
 			default:
+				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
+					return b.expressionStatement(b.identifier(value));
+				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
+					return b.expressionStatement(b.classLiteral(b.identifier(value)));
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
 					return b.yieldStatement(b.identifier(value));
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
 					return b.yieldStatement(b.classLiteral(b.identifier(value)));
-				return b.yieldStatement(b.identifier(value));
+				return b.expressionStatement(b.identifier(value));
 		}
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return b.yieldStatement(literal_number_integer$118({ $path: 'literal.number.integer', $value: value }));
+			return b.expressionStatement(literal_number_integer$118({ $path: 'literal.number.integer', $value: value }));
 		}
 		return unnumbered('statement.block.statements', 'float');
 	}
@@ -17390,12 +17392,24 @@ const statement_block$209_statements = (value: statement_block$209_statements$It
 			seated(
 				value,
 				[
-					66, 197, 208, 209, 210, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240, 249,
-					250, 252, 256, 273, 274, 278, 301, 329, 330
+					66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240, 249, 250,
+					252, 256, 273, 274, 278, 301, 329, 330
 				]
 			)
 		)
 			return value;
+		if (
+			seated(
+				value,
+				[
+					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+				]
+			)
+		)
+			return b.expressionStatement(value);
+		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+			return b.expressionStatement(b.classLiteral(value));
 		if (
 			seated(
 				value,
@@ -17430,59 +17444,59 @@ const statement_block$209_statements = (value: statement_block$209_statements$It
 		case 'expression.assignment':
 			return unbuilt('statement.block.statements', value);
 		case 'expression.assignment.compound.add':
-			return b.yieldStatement(expression_assignment_compound_add$172(value));
+			return b.expressionStatement(expression_assignment_compound_add$172(value));
 		case 'expression.assignment.compound.bitwise_and':
-			return b.yieldStatement(expression_assignment_compound_bitwise_and$172(value));
+			return b.expressionStatement(expression_assignment_compound_bitwise_and$172(value));
 		case 'expression.assignment.compound.bitwise_or':
-			return b.yieldStatement(expression_assignment_compound_bitwise_or$172(value));
+			return b.expressionStatement(expression_assignment_compound_bitwise_or$172(value));
 		case 'expression.assignment.compound.bitwise_xor':
-			return b.yieldStatement(expression_assignment_compound_bitwise_xor$172(value));
+			return b.expressionStatement(expression_assignment_compound_bitwise_xor$172(value));
 		case 'expression.assignment.compound.divide':
-			return b.yieldStatement(expression_assignment_compound_divide$172(value));
+			return b.expressionStatement(expression_assignment_compound_divide$172(value));
 		case 'expression.assignment.compound.modulo':
-			return b.yieldStatement(expression_assignment_compound_modulo$172(value));
+			return b.expressionStatement(expression_assignment_compound_modulo$172(value));
 		case 'expression.assignment.compound.multiply':
-			return b.yieldStatement(expression_assignment_compound_multiply$172(value));
+			return b.expressionStatement(expression_assignment_compound_multiply$172(value));
 		case 'expression.assignment.compound.shift_left':
-			return b.yieldStatement(expression_assignment_compound_shift_left$172(value));
+			return b.expressionStatement(expression_assignment_compound_shift_left$172(value));
 		case 'expression.assignment.compound.shift_right':
-			return b.yieldStatement(expression_assignment_compound_shift_right$172(value));
+			return b.expressionStatement(expression_assignment_compound_shift_right$172(value));
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return b.yieldStatement(expression_assignment_compound_shift_right_unsigned$172(value));
+			return b.expressionStatement(expression_assignment_compound_shift_right_unsigned$172(value));
 		case 'expression.assignment.compound.subtract':
-			return b.yieldStatement(expression_assignment_compound_subtract$172(value));
+			return b.expressionStatement(expression_assignment_compound_subtract$172(value));
 		case 'expression.binary.arithmetic.add':
-			return b.yieldStatement(expression_binary_arithmetic_add$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_add$173(value));
 		case 'expression.binary.arithmetic.divide':
-			return b.yieldStatement(expression_binary_arithmetic_divide$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_divide$173(value));
 		case 'expression.binary.arithmetic.modulo':
-			return b.yieldStatement(expression_binary_arithmetic_modulo$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_modulo$173(value));
 		case 'expression.binary.arithmetic.multiply':
-			return b.yieldStatement(expression_binary_arithmetic_multiply$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_multiply$173(value));
 		case 'expression.binary.arithmetic.subtract':
-			return b.yieldStatement(expression_binary_arithmetic_subtract$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_subtract$173(value));
 		case 'expression.binary.bitwise.and':
-			return b.yieldStatement(expression_binary_bitwise_and$173(value));
+			return b.expressionStatement(expression_binary_bitwise_and$173(value));
 		case 'expression.binary.bitwise.or':
-			return b.yieldStatement(expression_binary_bitwise_or$173(value));
+			return b.expressionStatement(expression_binary_bitwise_or$173(value));
 		case 'expression.binary.bitwise.xor':
-			return b.yieldStatement(expression_binary_bitwise_xor$173(value));
+			return b.expressionStatement(expression_binary_bitwise_xor$173(value));
 		case 'expression.binary.comparison.equal':
-			return b.yieldStatement(expression_binary_comparison_equal$173(value));
+			return b.expressionStatement(expression_binary_comparison_equal$173(value));
 		case 'expression.binary.comparison.greater':
-			return b.yieldStatement(expression_binary_comparison_greater$173(value));
+			return b.expressionStatement(expression_binary_comparison_greater$173(value));
 		case 'expression.binary.comparison.greater_equal':
-			return b.yieldStatement(expression_binary_comparison_greater_equal$173(value));
+			return b.expressionStatement(expression_binary_comparison_greater_equal$173(value));
 		case 'expression.binary.comparison.less':
-			return b.yieldStatement(expression_binary_comparison_less$173(value));
+			return b.expressionStatement(expression_binary_comparison_less$173(value));
 		case 'expression.binary.comparison.less_equal':
-			return b.yieldStatement(expression_binary_comparison_less_equal$173(value));
+			return b.expressionStatement(expression_binary_comparison_less_equal$173(value));
 		case 'expression.binary.comparison.not_equal':
-			return b.yieldStatement(expression_binary_comparison_not_equal$173(value));
+			return b.expressionStatement(expression_binary_comparison_not_equal$173(value));
 		case 'expression.binary.logical.and':
-			return b.yieldStatement(expression_binary_logical_and$173(value));
+			return b.expressionStatement(expression_binary_logical_and$173(value));
 		case 'expression.binary.logical.or':
-			return b.yieldStatement(expression_binary_logical_or$173(value));
+			return b.expressionStatement(expression_binary_logical_or$173(value));
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('statement.block.statements', value);
 		case 'expression.binary.shift.left':
@@ -17504,13 +17518,13 @@ const statement_block$209_statements = (value: statement_block$209_statements$It
 		case 'expression.collection.list':
 			return unbuilt('statement.block.statements', value);
 		case 'expression.conditional':
-			return b.yieldStatement(expression_conditional$177(value));
+			return b.expressionStatement(expression_conditional$177(value));
 		case 'expression.lambda':
 			return unbuilt('statement.block.statements', value);
 		case 'expression.member':
 			return unbuilt('statement.block.statements', value);
 		case 'expression.parenthesized':
-			return b.yieldStatement(expression_parenthesized$183(value));
+			return b.expressionStatement(expression_parenthesized$183(value));
 		case 'expression.subscript':
 			return unbuilt('statement.block.statements', value);
 		case 'expression.unary.bitwise_not':
@@ -17534,26 +17548,26 @@ const statement_block$209_statements = (value: statement_block$209_statements$It
 		case 'literal.boolean.true':
 			return unbuilt('statement.block.statements', value);
 		case 'literal.character':
-			return b.yieldStatement(literal_character$7(value));
+			return b.expressionStatement(literal_character$7(value));
 		case 'literal.null':
 			return unbuilt('statement.block.statements', value);
 		case 'literal.number.float':
 			return unbuilt('statement.block.statements', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return b.yieldStatement(literal_number_integer$118(value));
+			if (value.$value !== undefined) return b.expressionStatement(literal_number_integer$118(value));
 			return unbuilt('statement.block.statements', value);
 		case 'literal.number.integer.binary':
-			return b.yieldStatement(literal_number_integer_binary$4(value));
+			return b.expressionStatement(literal_number_integer_binary$4(value));
 		case 'literal.number.integer.hex':
-			return b.yieldStatement(literal_number_integer_hex$2(value));
+			return b.expressionStatement(literal_number_integer_hex$2(value));
 		case 'literal.number.integer.octal':
-			return b.yieldStatement(literal_number_integer_octal$3(value));
+			return b.expressionStatement(literal_number_integer_octal$3(value));
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return b.yieldStatement(literal_string$327(value));
-			return b.yieldStatement(literal_string$328(value));
+				return b.expressionStatement(literal_string$327(value));
+			return b.expressionStatement(literal_string$328(value));
 		case 'literal.string.multiline':
-			return b.yieldStatement(literal_string_multiline$328(value));
+			return b.expressionStatement(literal_string_multiline$328(value));
 		case 'statement.assert':
 			return unbuilt('statement.block.statements', value);
 		case 'statement.block':
@@ -17562,8 +17576,6 @@ const statement_block$209_statements = (value: statement_block$209_statements$It
 			return statement_break$214(value);
 		case 'statement.continue':
 			return statement_continue$215(value);
-		case 'statement.expression':
-			return unbuilt('statement.block.statements', value);
 		case 'statement.if':
 			return statement_if$228(value);
 		case 'statement.import':
@@ -17818,8 +17830,6 @@ type statement_if$228_alternative$Item =
 	| JavaMap['nodes']['statement.break']
 	| BuildInput<JavaMap, 'statement.continue'>
 	| JavaMap['nodes']['statement.continue']
-	| BuildInput<JavaMap, 'statement.expression'>
-	| JavaMap['nodes']['statement.expression']
 	| BuildInput<JavaMap, 'statement.if'>
 	| JavaMap['nodes']['statement.if']
 	| BuildInput<JavaMap, 'statement.import'>
@@ -17858,36 +17868,40 @@ const statement_if$228_alternative = (value: statement_if$228_alternative$Item) 
 			case ';':
 				return 66;
 			case 'this':
-				return b.yieldStatement(112);
+				return b.expressionStatement(112);
 			case 'boolean':
-				return b.yieldStatement(b.classLiteral(106));
+				return b.expressionStatement(b.classLiteral(106));
 			case 'byte':
-				return b.yieldStatement(b.classLiteral(99));
+				return b.expressionStatement(b.classLiteral(99));
 			case 'char':
-				return b.yieldStatement(b.classLiteral(103));
+				return b.expressionStatement(b.classLiteral(103));
 			case 'double':
-				return b.yieldStatement(b.classLiteral(105));
+				return b.expressionStatement(b.classLiteral(105));
 			case 'float':
-				return b.yieldStatement(b.classLiteral(104));
+				return b.expressionStatement(b.classLiteral(104));
 			case 'int':
-				return b.yieldStatement(b.classLiteral(101));
+				return b.expressionStatement(b.classLiteral(101));
 			case 'long':
-				return b.yieldStatement(b.classLiteral(102));
+				return b.expressionStatement(b.classLiteral(102));
 			case 'short':
-				return b.yieldStatement(b.classLiteral(100));
+				return b.expressionStatement(b.classLiteral(100));
 			case 'void':
-				return b.yieldStatement(b.classLiteral(107));
+				return b.expressionStatement(b.classLiteral(107));
 			default:
+				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
+					return b.expressionStatement(b.identifier(value));
+				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
+					return b.expressionStatement(b.classLiteral(b.identifier(value)));
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
 					return b.yieldStatement(b.identifier(value));
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
 					return b.yieldStatement(b.classLiteral(b.identifier(value)));
-				return b.yieldStatement(b.identifier(value));
+				return b.expressionStatement(b.identifier(value));
 		}
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return b.yieldStatement(literal_number_integer$118({ $path: 'literal.number.integer', $value: value }));
+			return b.expressionStatement(literal_number_integer$118({ $path: 'literal.number.integer', $value: value }));
 		}
 		return unnumbered('statement.if.alternative', 'float');
 	}
@@ -17896,12 +17910,24 @@ const statement_if$228_alternative = (value: statement_if$228_alternative$Item) 
 			seated(
 				value,
 				[
-					66, 197, 208, 209, 210, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240, 249,
-					250, 252, 256, 273, 274, 278, 301, 329, 330
+					66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240, 249, 250,
+					252, 256, 273, 274, 278, 301, 329, 330
 				]
 			)
 		)
 			return value;
+		if (
+			seated(
+				value,
+				[
+					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+				]
+			)
+		)
+			return b.expressionStatement(value);
+		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+			return b.expressionStatement(b.classLiteral(value));
 		if (
 			seated(
 				value,
@@ -17936,59 +17962,59 @@ const statement_if$228_alternative = (value: statement_if$228_alternative$Item) 
 		case 'expression.assignment':
 			return unbuilt('statement.if.alternative', value);
 		case 'expression.assignment.compound.add':
-			return b.yieldStatement(expression_assignment_compound_add$172(value));
+			return b.expressionStatement(expression_assignment_compound_add$172(value));
 		case 'expression.assignment.compound.bitwise_and':
-			return b.yieldStatement(expression_assignment_compound_bitwise_and$172(value));
+			return b.expressionStatement(expression_assignment_compound_bitwise_and$172(value));
 		case 'expression.assignment.compound.bitwise_or':
-			return b.yieldStatement(expression_assignment_compound_bitwise_or$172(value));
+			return b.expressionStatement(expression_assignment_compound_bitwise_or$172(value));
 		case 'expression.assignment.compound.bitwise_xor':
-			return b.yieldStatement(expression_assignment_compound_bitwise_xor$172(value));
+			return b.expressionStatement(expression_assignment_compound_bitwise_xor$172(value));
 		case 'expression.assignment.compound.divide':
-			return b.yieldStatement(expression_assignment_compound_divide$172(value));
+			return b.expressionStatement(expression_assignment_compound_divide$172(value));
 		case 'expression.assignment.compound.modulo':
-			return b.yieldStatement(expression_assignment_compound_modulo$172(value));
+			return b.expressionStatement(expression_assignment_compound_modulo$172(value));
 		case 'expression.assignment.compound.multiply':
-			return b.yieldStatement(expression_assignment_compound_multiply$172(value));
+			return b.expressionStatement(expression_assignment_compound_multiply$172(value));
 		case 'expression.assignment.compound.shift_left':
-			return b.yieldStatement(expression_assignment_compound_shift_left$172(value));
+			return b.expressionStatement(expression_assignment_compound_shift_left$172(value));
 		case 'expression.assignment.compound.shift_right':
-			return b.yieldStatement(expression_assignment_compound_shift_right$172(value));
+			return b.expressionStatement(expression_assignment_compound_shift_right$172(value));
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return b.yieldStatement(expression_assignment_compound_shift_right_unsigned$172(value));
+			return b.expressionStatement(expression_assignment_compound_shift_right_unsigned$172(value));
 		case 'expression.assignment.compound.subtract':
-			return b.yieldStatement(expression_assignment_compound_subtract$172(value));
+			return b.expressionStatement(expression_assignment_compound_subtract$172(value));
 		case 'expression.binary.arithmetic.add':
-			return b.yieldStatement(expression_binary_arithmetic_add$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_add$173(value));
 		case 'expression.binary.arithmetic.divide':
-			return b.yieldStatement(expression_binary_arithmetic_divide$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_divide$173(value));
 		case 'expression.binary.arithmetic.modulo':
-			return b.yieldStatement(expression_binary_arithmetic_modulo$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_modulo$173(value));
 		case 'expression.binary.arithmetic.multiply':
-			return b.yieldStatement(expression_binary_arithmetic_multiply$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_multiply$173(value));
 		case 'expression.binary.arithmetic.subtract':
-			return b.yieldStatement(expression_binary_arithmetic_subtract$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_subtract$173(value));
 		case 'expression.binary.bitwise.and':
-			return b.yieldStatement(expression_binary_bitwise_and$173(value));
+			return b.expressionStatement(expression_binary_bitwise_and$173(value));
 		case 'expression.binary.bitwise.or':
-			return b.yieldStatement(expression_binary_bitwise_or$173(value));
+			return b.expressionStatement(expression_binary_bitwise_or$173(value));
 		case 'expression.binary.bitwise.xor':
-			return b.yieldStatement(expression_binary_bitwise_xor$173(value));
+			return b.expressionStatement(expression_binary_bitwise_xor$173(value));
 		case 'expression.binary.comparison.equal':
-			return b.yieldStatement(expression_binary_comparison_equal$173(value));
+			return b.expressionStatement(expression_binary_comparison_equal$173(value));
 		case 'expression.binary.comparison.greater':
-			return b.yieldStatement(expression_binary_comparison_greater$173(value));
+			return b.expressionStatement(expression_binary_comparison_greater$173(value));
 		case 'expression.binary.comparison.greater_equal':
-			return b.yieldStatement(expression_binary_comparison_greater_equal$173(value));
+			return b.expressionStatement(expression_binary_comparison_greater_equal$173(value));
 		case 'expression.binary.comparison.less':
-			return b.yieldStatement(expression_binary_comparison_less$173(value));
+			return b.expressionStatement(expression_binary_comparison_less$173(value));
 		case 'expression.binary.comparison.less_equal':
-			return b.yieldStatement(expression_binary_comparison_less_equal$173(value));
+			return b.expressionStatement(expression_binary_comparison_less_equal$173(value));
 		case 'expression.binary.comparison.not_equal':
-			return b.yieldStatement(expression_binary_comparison_not_equal$173(value));
+			return b.expressionStatement(expression_binary_comparison_not_equal$173(value));
 		case 'expression.binary.logical.and':
-			return b.yieldStatement(expression_binary_logical_and$173(value));
+			return b.expressionStatement(expression_binary_logical_and$173(value));
 		case 'expression.binary.logical.or':
-			return b.yieldStatement(expression_binary_logical_or$173(value));
+			return b.expressionStatement(expression_binary_logical_or$173(value));
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('statement.if.alternative', value);
 		case 'expression.binary.shift.left':
@@ -18010,13 +18036,13 @@ const statement_if$228_alternative = (value: statement_if$228_alternative$Item) 
 		case 'expression.collection.list':
 			return unbuilt('statement.if.alternative', value);
 		case 'expression.conditional':
-			return b.yieldStatement(expression_conditional$177(value));
+			return b.expressionStatement(expression_conditional$177(value));
 		case 'expression.lambda':
 			return unbuilt('statement.if.alternative', value);
 		case 'expression.member':
 			return unbuilt('statement.if.alternative', value);
 		case 'expression.parenthesized':
-			return b.yieldStatement(expression_parenthesized$183(value));
+			return b.expressionStatement(expression_parenthesized$183(value));
 		case 'expression.subscript':
 			return unbuilt('statement.if.alternative', value);
 		case 'expression.unary.bitwise_not':
@@ -18040,26 +18066,26 @@ const statement_if$228_alternative = (value: statement_if$228_alternative$Item) 
 		case 'literal.boolean.true':
 			return unbuilt('statement.if.alternative', value);
 		case 'literal.character':
-			return b.yieldStatement(literal_character$7(value));
+			return b.expressionStatement(literal_character$7(value));
 		case 'literal.null':
 			return unbuilt('statement.if.alternative', value);
 		case 'literal.number.float':
 			return unbuilt('statement.if.alternative', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return b.yieldStatement(literal_number_integer$118(value));
+			if (value.$value !== undefined) return b.expressionStatement(literal_number_integer$118(value));
 			return unbuilt('statement.if.alternative', value);
 		case 'literal.number.integer.binary':
-			return b.yieldStatement(literal_number_integer_binary$4(value));
+			return b.expressionStatement(literal_number_integer_binary$4(value));
 		case 'literal.number.integer.hex':
-			return b.yieldStatement(literal_number_integer_hex$2(value));
+			return b.expressionStatement(literal_number_integer_hex$2(value));
 		case 'literal.number.integer.octal':
-			return b.yieldStatement(literal_number_integer_octal$3(value));
+			return b.expressionStatement(literal_number_integer_octal$3(value));
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return b.yieldStatement(literal_string$327(value));
-			return b.yieldStatement(literal_string$328(value));
+				return b.expressionStatement(literal_string$327(value));
+			return b.expressionStatement(literal_string$328(value));
 		case 'literal.string.multiline':
-			return b.yieldStatement(literal_string_multiline$328(value));
+			return b.expressionStatement(literal_string_multiline$328(value));
 		case 'statement.assert':
 			return unbuilt('statement.if.alternative', value);
 		case 'statement.block':
@@ -18068,8 +18094,6 @@ const statement_if$228_alternative = (value: statement_if$228_alternative$Item) 
 			return statement_break$214(value);
 		case 'statement.continue':
 			return statement_continue$215(value);
-		case 'statement.expression':
-			return unbuilt('statement.if.alternative', value);
 		case 'statement.if':
 			return statement_if$228(value);
 		case 'statement.import':
@@ -18290,8 +18314,6 @@ type statement_if$228_consequence$Item =
 	| JavaMap['nodes']['statement.break']
 	| BuildInput<JavaMap, 'statement.continue'>
 	| JavaMap['nodes']['statement.continue']
-	| BuildInput<JavaMap, 'statement.expression'>
-	| JavaMap['nodes']['statement.expression']
 	| BuildInput<JavaMap, 'statement.if'>
 	| JavaMap['nodes']['statement.if']
 	| BuildInput<JavaMap, 'statement.import'>
@@ -18330,36 +18352,40 @@ const statement_if$228_consequence = (value: statement_if$228_consequence$Item) 
 			case ';':
 				return 66;
 			case 'this':
-				return b.yieldStatement(112);
+				return b.expressionStatement(112);
 			case 'boolean':
-				return b.yieldStatement(b.classLiteral(106));
+				return b.expressionStatement(b.classLiteral(106));
 			case 'byte':
-				return b.yieldStatement(b.classLiteral(99));
+				return b.expressionStatement(b.classLiteral(99));
 			case 'char':
-				return b.yieldStatement(b.classLiteral(103));
+				return b.expressionStatement(b.classLiteral(103));
 			case 'double':
-				return b.yieldStatement(b.classLiteral(105));
+				return b.expressionStatement(b.classLiteral(105));
 			case 'float':
-				return b.yieldStatement(b.classLiteral(104));
+				return b.expressionStatement(b.classLiteral(104));
 			case 'int':
-				return b.yieldStatement(b.classLiteral(101));
+				return b.expressionStatement(b.classLiteral(101));
 			case 'long':
-				return b.yieldStatement(b.classLiteral(102));
+				return b.expressionStatement(b.classLiteral(102));
 			case 'short':
-				return b.yieldStatement(b.classLiteral(100));
+				return b.expressionStatement(b.classLiteral(100));
 			case 'void':
-				return b.yieldStatement(b.classLiteral(107));
+				return b.expressionStatement(b.classLiteral(107));
 			default:
+				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
+					return b.expressionStatement(b.identifier(value));
+				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
+					return b.expressionStatement(b.classLiteral(b.identifier(value)));
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
 					return b.yieldStatement(b.identifier(value));
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
 					return b.yieldStatement(b.classLiteral(b.identifier(value)));
-				return b.yieldStatement(b.identifier(value));
+				return b.expressionStatement(b.identifier(value));
 		}
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return b.yieldStatement(literal_number_integer$118({ $path: 'literal.number.integer', $value: value }));
+			return b.expressionStatement(literal_number_integer$118({ $path: 'literal.number.integer', $value: value }));
 		}
 		return unnumbered('statement.if.consequence', 'float');
 	}
@@ -18368,12 +18394,24 @@ const statement_if$228_consequence = (value: statement_if$228_consequence$Item) 
 			seated(
 				value,
 				[
-					66, 197, 208, 209, 210, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240, 249,
-					250, 252, 256, 273, 274, 278, 301, 329, 330
+					66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240, 249, 250,
+					252, 256, 273, 274, 278, 301, 329, 330
 				]
 			)
 		)
 			return value;
+		if (
+			seated(
+				value,
+				[
+					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+				]
+			)
+		)
+			return b.expressionStatement(value);
+		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+			return b.expressionStatement(b.classLiteral(value));
 		if (
 			seated(
 				value,
@@ -18408,59 +18446,59 @@ const statement_if$228_consequence = (value: statement_if$228_consequence$Item) 
 		case 'expression.assignment':
 			return unbuilt('statement.if.consequence', value);
 		case 'expression.assignment.compound.add':
-			return b.yieldStatement(expression_assignment_compound_add$172(value));
+			return b.expressionStatement(expression_assignment_compound_add$172(value));
 		case 'expression.assignment.compound.bitwise_and':
-			return b.yieldStatement(expression_assignment_compound_bitwise_and$172(value));
+			return b.expressionStatement(expression_assignment_compound_bitwise_and$172(value));
 		case 'expression.assignment.compound.bitwise_or':
-			return b.yieldStatement(expression_assignment_compound_bitwise_or$172(value));
+			return b.expressionStatement(expression_assignment_compound_bitwise_or$172(value));
 		case 'expression.assignment.compound.bitwise_xor':
-			return b.yieldStatement(expression_assignment_compound_bitwise_xor$172(value));
+			return b.expressionStatement(expression_assignment_compound_bitwise_xor$172(value));
 		case 'expression.assignment.compound.divide':
-			return b.yieldStatement(expression_assignment_compound_divide$172(value));
+			return b.expressionStatement(expression_assignment_compound_divide$172(value));
 		case 'expression.assignment.compound.modulo':
-			return b.yieldStatement(expression_assignment_compound_modulo$172(value));
+			return b.expressionStatement(expression_assignment_compound_modulo$172(value));
 		case 'expression.assignment.compound.multiply':
-			return b.yieldStatement(expression_assignment_compound_multiply$172(value));
+			return b.expressionStatement(expression_assignment_compound_multiply$172(value));
 		case 'expression.assignment.compound.shift_left':
-			return b.yieldStatement(expression_assignment_compound_shift_left$172(value));
+			return b.expressionStatement(expression_assignment_compound_shift_left$172(value));
 		case 'expression.assignment.compound.shift_right':
-			return b.yieldStatement(expression_assignment_compound_shift_right$172(value));
+			return b.expressionStatement(expression_assignment_compound_shift_right$172(value));
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return b.yieldStatement(expression_assignment_compound_shift_right_unsigned$172(value));
+			return b.expressionStatement(expression_assignment_compound_shift_right_unsigned$172(value));
 		case 'expression.assignment.compound.subtract':
-			return b.yieldStatement(expression_assignment_compound_subtract$172(value));
+			return b.expressionStatement(expression_assignment_compound_subtract$172(value));
 		case 'expression.binary.arithmetic.add':
-			return b.yieldStatement(expression_binary_arithmetic_add$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_add$173(value));
 		case 'expression.binary.arithmetic.divide':
-			return b.yieldStatement(expression_binary_arithmetic_divide$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_divide$173(value));
 		case 'expression.binary.arithmetic.modulo':
-			return b.yieldStatement(expression_binary_arithmetic_modulo$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_modulo$173(value));
 		case 'expression.binary.arithmetic.multiply':
-			return b.yieldStatement(expression_binary_arithmetic_multiply$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_multiply$173(value));
 		case 'expression.binary.arithmetic.subtract':
-			return b.yieldStatement(expression_binary_arithmetic_subtract$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_subtract$173(value));
 		case 'expression.binary.bitwise.and':
-			return b.yieldStatement(expression_binary_bitwise_and$173(value));
+			return b.expressionStatement(expression_binary_bitwise_and$173(value));
 		case 'expression.binary.bitwise.or':
-			return b.yieldStatement(expression_binary_bitwise_or$173(value));
+			return b.expressionStatement(expression_binary_bitwise_or$173(value));
 		case 'expression.binary.bitwise.xor':
-			return b.yieldStatement(expression_binary_bitwise_xor$173(value));
+			return b.expressionStatement(expression_binary_bitwise_xor$173(value));
 		case 'expression.binary.comparison.equal':
-			return b.yieldStatement(expression_binary_comparison_equal$173(value));
+			return b.expressionStatement(expression_binary_comparison_equal$173(value));
 		case 'expression.binary.comparison.greater':
-			return b.yieldStatement(expression_binary_comparison_greater$173(value));
+			return b.expressionStatement(expression_binary_comparison_greater$173(value));
 		case 'expression.binary.comparison.greater_equal':
-			return b.yieldStatement(expression_binary_comparison_greater_equal$173(value));
+			return b.expressionStatement(expression_binary_comparison_greater_equal$173(value));
 		case 'expression.binary.comparison.less':
-			return b.yieldStatement(expression_binary_comparison_less$173(value));
+			return b.expressionStatement(expression_binary_comparison_less$173(value));
 		case 'expression.binary.comparison.less_equal':
-			return b.yieldStatement(expression_binary_comparison_less_equal$173(value));
+			return b.expressionStatement(expression_binary_comparison_less_equal$173(value));
 		case 'expression.binary.comparison.not_equal':
-			return b.yieldStatement(expression_binary_comparison_not_equal$173(value));
+			return b.expressionStatement(expression_binary_comparison_not_equal$173(value));
 		case 'expression.binary.logical.and':
-			return b.yieldStatement(expression_binary_logical_and$173(value));
+			return b.expressionStatement(expression_binary_logical_and$173(value));
 		case 'expression.binary.logical.or':
-			return b.yieldStatement(expression_binary_logical_or$173(value));
+			return b.expressionStatement(expression_binary_logical_or$173(value));
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('statement.if.consequence', value);
 		case 'expression.binary.shift.left':
@@ -18482,13 +18520,13 @@ const statement_if$228_consequence = (value: statement_if$228_consequence$Item) 
 		case 'expression.collection.list':
 			return unbuilt('statement.if.consequence', value);
 		case 'expression.conditional':
-			return b.yieldStatement(expression_conditional$177(value));
+			return b.expressionStatement(expression_conditional$177(value));
 		case 'expression.lambda':
 			return unbuilt('statement.if.consequence', value);
 		case 'expression.member':
 			return unbuilt('statement.if.consequence', value);
 		case 'expression.parenthesized':
-			return b.yieldStatement(expression_parenthesized$183(value));
+			return b.expressionStatement(expression_parenthesized$183(value));
 		case 'expression.subscript':
 			return unbuilt('statement.if.consequence', value);
 		case 'expression.unary.bitwise_not':
@@ -18512,26 +18550,26 @@ const statement_if$228_consequence = (value: statement_if$228_consequence$Item) 
 		case 'literal.boolean.true':
 			return unbuilt('statement.if.consequence', value);
 		case 'literal.character':
-			return b.yieldStatement(literal_character$7(value));
+			return b.expressionStatement(literal_character$7(value));
 		case 'literal.null':
 			return unbuilt('statement.if.consequence', value);
 		case 'literal.number.float':
 			return unbuilt('statement.if.consequence', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return b.yieldStatement(literal_number_integer$118(value));
+			if (value.$value !== undefined) return b.expressionStatement(literal_number_integer$118(value));
 			return unbuilt('statement.if.consequence', value);
 		case 'literal.number.integer.binary':
-			return b.yieldStatement(literal_number_integer_binary$4(value));
+			return b.expressionStatement(literal_number_integer_binary$4(value));
 		case 'literal.number.integer.hex':
-			return b.yieldStatement(literal_number_integer_hex$2(value));
+			return b.expressionStatement(literal_number_integer_hex$2(value));
 		case 'literal.number.integer.octal':
-			return b.yieldStatement(literal_number_integer_octal$3(value));
+			return b.expressionStatement(literal_number_integer_octal$3(value));
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return b.yieldStatement(literal_string$327(value));
-			return b.yieldStatement(literal_string$328(value));
+				return b.expressionStatement(literal_string$327(value));
+			return b.expressionStatement(literal_string$328(value));
 		case 'literal.string.multiline':
-			return b.yieldStatement(literal_string_multiline$328(value));
+			return b.expressionStatement(literal_string_multiline$328(value));
 		case 'statement.assert':
 			return unbuilt('statement.if.consequence', value);
 		case 'statement.block':
@@ -18540,8 +18578,6 @@ const statement_if$228_consequence = (value: statement_if$228_consequence$Item) 
 			return statement_break$214(value);
 		case 'statement.continue':
 			return statement_continue$215(value);
-		case 'statement.expression':
-			return unbuilt('statement.if.consequence', value);
 		case 'statement.if':
 			return statement_if$228(value);
 		case 'statement.import':
@@ -18748,8 +18784,6 @@ type statement_loop_do_while$213_body$Item =
 	| JavaMap['nodes']['statement.break']
 	| BuildInput<JavaMap, 'statement.continue'>
 	| JavaMap['nodes']['statement.continue']
-	| BuildInput<JavaMap, 'statement.expression'>
-	| JavaMap['nodes']['statement.expression']
 	| BuildInput<JavaMap, 'statement.if'>
 	| JavaMap['nodes']['statement.if']
 	| BuildInput<JavaMap, 'statement.import'>
@@ -18788,36 +18822,40 @@ const statement_loop_do_while$213_body = (value: statement_loop_do_while$213_bod
 			case ';':
 				return 66;
 			case 'this':
-				return b.yieldStatement(112);
+				return b.expressionStatement(112);
 			case 'boolean':
-				return b.yieldStatement(b.classLiteral(106));
+				return b.expressionStatement(b.classLiteral(106));
 			case 'byte':
-				return b.yieldStatement(b.classLiteral(99));
+				return b.expressionStatement(b.classLiteral(99));
 			case 'char':
-				return b.yieldStatement(b.classLiteral(103));
+				return b.expressionStatement(b.classLiteral(103));
 			case 'double':
-				return b.yieldStatement(b.classLiteral(105));
+				return b.expressionStatement(b.classLiteral(105));
 			case 'float':
-				return b.yieldStatement(b.classLiteral(104));
+				return b.expressionStatement(b.classLiteral(104));
 			case 'int':
-				return b.yieldStatement(b.classLiteral(101));
+				return b.expressionStatement(b.classLiteral(101));
 			case 'long':
-				return b.yieldStatement(b.classLiteral(102));
+				return b.expressionStatement(b.classLiteral(102));
 			case 'short':
-				return b.yieldStatement(b.classLiteral(100));
+				return b.expressionStatement(b.classLiteral(100));
 			case 'void':
-				return b.yieldStatement(b.classLiteral(107));
+				return b.expressionStatement(b.classLiteral(107));
 			default:
+				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
+					return b.expressionStatement(b.identifier(value));
+				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
+					return b.expressionStatement(b.classLiteral(b.identifier(value)));
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
 					return b.yieldStatement(b.identifier(value));
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
 					return b.yieldStatement(b.classLiteral(b.identifier(value)));
-				return b.yieldStatement(b.identifier(value));
+				return b.expressionStatement(b.identifier(value));
 		}
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return b.yieldStatement(literal_number_integer$118({ $path: 'literal.number.integer', $value: value }));
+			return b.expressionStatement(literal_number_integer$118({ $path: 'literal.number.integer', $value: value }));
 		}
 		return unnumbered('statement.loop.do_while.body', 'float');
 	}
@@ -18826,12 +18864,24 @@ const statement_loop_do_while$213_body = (value: statement_loop_do_while$213_bod
 			seated(
 				value,
 				[
-					66, 197, 208, 209, 210, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240, 249,
-					250, 252, 256, 273, 274, 278, 301, 329, 330
+					66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240, 249, 250,
+					252, 256, 273, 274, 278, 301, 329, 330
 				]
 			)
 		)
 			return value;
+		if (
+			seated(
+				value,
+				[
+					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+				]
+			)
+		)
+			return b.expressionStatement(value);
+		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+			return b.expressionStatement(b.classLiteral(value));
 		if (
 			seated(
 				value,
@@ -18866,59 +18916,59 @@ const statement_loop_do_while$213_body = (value: statement_loop_do_while$213_bod
 		case 'expression.assignment':
 			return unbuilt('statement.loop.do_while.body', value);
 		case 'expression.assignment.compound.add':
-			return b.yieldStatement(expression_assignment_compound_add$172(value));
+			return b.expressionStatement(expression_assignment_compound_add$172(value));
 		case 'expression.assignment.compound.bitwise_and':
-			return b.yieldStatement(expression_assignment_compound_bitwise_and$172(value));
+			return b.expressionStatement(expression_assignment_compound_bitwise_and$172(value));
 		case 'expression.assignment.compound.bitwise_or':
-			return b.yieldStatement(expression_assignment_compound_bitwise_or$172(value));
+			return b.expressionStatement(expression_assignment_compound_bitwise_or$172(value));
 		case 'expression.assignment.compound.bitwise_xor':
-			return b.yieldStatement(expression_assignment_compound_bitwise_xor$172(value));
+			return b.expressionStatement(expression_assignment_compound_bitwise_xor$172(value));
 		case 'expression.assignment.compound.divide':
-			return b.yieldStatement(expression_assignment_compound_divide$172(value));
+			return b.expressionStatement(expression_assignment_compound_divide$172(value));
 		case 'expression.assignment.compound.modulo':
-			return b.yieldStatement(expression_assignment_compound_modulo$172(value));
+			return b.expressionStatement(expression_assignment_compound_modulo$172(value));
 		case 'expression.assignment.compound.multiply':
-			return b.yieldStatement(expression_assignment_compound_multiply$172(value));
+			return b.expressionStatement(expression_assignment_compound_multiply$172(value));
 		case 'expression.assignment.compound.shift_left':
-			return b.yieldStatement(expression_assignment_compound_shift_left$172(value));
+			return b.expressionStatement(expression_assignment_compound_shift_left$172(value));
 		case 'expression.assignment.compound.shift_right':
-			return b.yieldStatement(expression_assignment_compound_shift_right$172(value));
+			return b.expressionStatement(expression_assignment_compound_shift_right$172(value));
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return b.yieldStatement(expression_assignment_compound_shift_right_unsigned$172(value));
+			return b.expressionStatement(expression_assignment_compound_shift_right_unsigned$172(value));
 		case 'expression.assignment.compound.subtract':
-			return b.yieldStatement(expression_assignment_compound_subtract$172(value));
+			return b.expressionStatement(expression_assignment_compound_subtract$172(value));
 		case 'expression.binary.arithmetic.add':
-			return b.yieldStatement(expression_binary_arithmetic_add$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_add$173(value));
 		case 'expression.binary.arithmetic.divide':
-			return b.yieldStatement(expression_binary_arithmetic_divide$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_divide$173(value));
 		case 'expression.binary.arithmetic.modulo':
-			return b.yieldStatement(expression_binary_arithmetic_modulo$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_modulo$173(value));
 		case 'expression.binary.arithmetic.multiply':
-			return b.yieldStatement(expression_binary_arithmetic_multiply$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_multiply$173(value));
 		case 'expression.binary.arithmetic.subtract':
-			return b.yieldStatement(expression_binary_arithmetic_subtract$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_subtract$173(value));
 		case 'expression.binary.bitwise.and':
-			return b.yieldStatement(expression_binary_bitwise_and$173(value));
+			return b.expressionStatement(expression_binary_bitwise_and$173(value));
 		case 'expression.binary.bitwise.or':
-			return b.yieldStatement(expression_binary_bitwise_or$173(value));
+			return b.expressionStatement(expression_binary_bitwise_or$173(value));
 		case 'expression.binary.bitwise.xor':
-			return b.yieldStatement(expression_binary_bitwise_xor$173(value));
+			return b.expressionStatement(expression_binary_bitwise_xor$173(value));
 		case 'expression.binary.comparison.equal':
-			return b.yieldStatement(expression_binary_comparison_equal$173(value));
+			return b.expressionStatement(expression_binary_comparison_equal$173(value));
 		case 'expression.binary.comparison.greater':
-			return b.yieldStatement(expression_binary_comparison_greater$173(value));
+			return b.expressionStatement(expression_binary_comparison_greater$173(value));
 		case 'expression.binary.comparison.greater_equal':
-			return b.yieldStatement(expression_binary_comparison_greater_equal$173(value));
+			return b.expressionStatement(expression_binary_comparison_greater_equal$173(value));
 		case 'expression.binary.comparison.less':
-			return b.yieldStatement(expression_binary_comparison_less$173(value));
+			return b.expressionStatement(expression_binary_comparison_less$173(value));
 		case 'expression.binary.comparison.less_equal':
-			return b.yieldStatement(expression_binary_comparison_less_equal$173(value));
+			return b.expressionStatement(expression_binary_comparison_less_equal$173(value));
 		case 'expression.binary.comparison.not_equal':
-			return b.yieldStatement(expression_binary_comparison_not_equal$173(value));
+			return b.expressionStatement(expression_binary_comparison_not_equal$173(value));
 		case 'expression.binary.logical.and':
-			return b.yieldStatement(expression_binary_logical_and$173(value));
+			return b.expressionStatement(expression_binary_logical_and$173(value));
 		case 'expression.binary.logical.or':
-			return b.yieldStatement(expression_binary_logical_or$173(value));
+			return b.expressionStatement(expression_binary_logical_or$173(value));
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('statement.loop.do_while.body', value);
 		case 'expression.binary.shift.left':
@@ -18940,13 +18990,13 @@ const statement_loop_do_while$213_body = (value: statement_loop_do_while$213_bod
 		case 'expression.collection.list':
 			return unbuilt('statement.loop.do_while.body', value);
 		case 'expression.conditional':
-			return b.yieldStatement(expression_conditional$177(value));
+			return b.expressionStatement(expression_conditional$177(value));
 		case 'expression.lambda':
 			return unbuilt('statement.loop.do_while.body', value);
 		case 'expression.member':
 			return unbuilt('statement.loop.do_while.body', value);
 		case 'expression.parenthesized':
-			return b.yieldStatement(expression_parenthesized$183(value));
+			return b.expressionStatement(expression_parenthesized$183(value));
 		case 'expression.subscript':
 			return unbuilt('statement.loop.do_while.body', value);
 		case 'expression.unary.bitwise_not':
@@ -18970,26 +19020,26 @@ const statement_loop_do_while$213_body = (value: statement_loop_do_while$213_bod
 		case 'literal.boolean.true':
 			return unbuilt('statement.loop.do_while.body', value);
 		case 'literal.character':
-			return b.yieldStatement(literal_character$7(value));
+			return b.expressionStatement(literal_character$7(value));
 		case 'literal.null':
 			return unbuilt('statement.loop.do_while.body', value);
 		case 'literal.number.float':
 			return unbuilt('statement.loop.do_while.body', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return b.yieldStatement(literal_number_integer$118(value));
+			if (value.$value !== undefined) return b.expressionStatement(literal_number_integer$118(value));
 			return unbuilt('statement.loop.do_while.body', value);
 		case 'literal.number.integer.binary':
-			return b.yieldStatement(literal_number_integer_binary$4(value));
+			return b.expressionStatement(literal_number_integer_binary$4(value));
 		case 'literal.number.integer.hex':
-			return b.yieldStatement(literal_number_integer_hex$2(value));
+			return b.expressionStatement(literal_number_integer_hex$2(value));
 		case 'literal.number.integer.octal':
-			return b.yieldStatement(literal_number_integer_octal$3(value));
+			return b.expressionStatement(literal_number_integer_octal$3(value));
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return b.yieldStatement(literal_string$327(value));
-			return b.yieldStatement(literal_string$328(value));
+				return b.expressionStatement(literal_string$327(value));
+			return b.expressionStatement(literal_string$328(value));
 		case 'literal.string.multiline':
-			return b.yieldStatement(literal_string_multiline$328(value));
+			return b.expressionStatement(literal_string_multiline$328(value));
 		case 'statement.assert':
 			return unbuilt('statement.loop.do_while.body', value);
 		case 'statement.block':
@@ -18998,8 +19048,6 @@ const statement_loop_do_while$213_body = (value: statement_loop_do_while$213_bod
 			return statement_break$214(value);
 		case 'statement.continue':
 			return statement_continue$215(value);
-		case 'statement.expression':
-			return unbuilt('statement.loop.do_while.body', value);
 		case 'statement.if':
 			return statement_if$228(value);
 		case 'statement.import':
@@ -19220,8 +19268,6 @@ type statement_loop_while$229_body$Item =
 	| JavaMap['nodes']['statement.break']
 	| BuildInput<JavaMap, 'statement.continue'>
 	| JavaMap['nodes']['statement.continue']
-	| BuildInput<JavaMap, 'statement.expression'>
-	| JavaMap['nodes']['statement.expression']
 	| BuildInput<JavaMap, 'statement.if'>
 	| JavaMap['nodes']['statement.if']
 	| BuildInput<JavaMap, 'statement.import'>
@@ -19260,36 +19306,40 @@ const statement_loop_while$229_body = (value: statement_loop_while$229_body$Item
 			case ';':
 				return 66;
 			case 'this':
-				return b.yieldStatement(112);
+				return b.expressionStatement(112);
 			case 'boolean':
-				return b.yieldStatement(b.classLiteral(106));
+				return b.expressionStatement(b.classLiteral(106));
 			case 'byte':
-				return b.yieldStatement(b.classLiteral(99));
+				return b.expressionStatement(b.classLiteral(99));
 			case 'char':
-				return b.yieldStatement(b.classLiteral(103));
+				return b.expressionStatement(b.classLiteral(103));
 			case 'double':
-				return b.yieldStatement(b.classLiteral(105));
+				return b.expressionStatement(b.classLiteral(105));
 			case 'float':
-				return b.yieldStatement(b.classLiteral(104));
+				return b.expressionStatement(b.classLiteral(104));
 			case 'int':
-				return b.yieldStatement(b.classLiteral(101));
+				return b.expressionStatement(b.classLiteral(101));
 			case 'long':
-				return b.yieldStatement(b.classLiteral(102));
+				return b.expressionStatement(b.classLiteral(102));
 			case 'short':
-				return b.yieldStatement(b.classLiteral(100));
+				return b.expressionStatement(b.classLiteral(100));
 			case 'void':
-				return b.yieldStatement(b.classLiteral(107));
+				return b.expressionStatement(b.classLiteral(107));
 			default:
+				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
+					return b.expressionStatement(b.identifier(value));
+				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
+					return b.expressionStatement(b.classLiteral(b.identifier(value)));
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
 					return b.yieldStatement(b.identifier(value));
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
 					return b.yieldStatement(b.classLiteral(b.identifier(value)));
-				return b.yieldStatement(b.identifier(value));
+				return b.expressionStatement(b.identifier(value));
 		}
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return b.yieldStatement(literal_number_integer$118({ $path: 'literal.number.integer', $value: value }));
+			return b.expressionStatement(literal_number_integer$118({ $path: 'literal.number.integer', $value: value }));
 		}
 		return unnumbered('statement.loop.while.body', 'float');
 	}
@@ -19298,12 +19348,24 @@ const statement_loop_while$229_body = (value: statement_loop_while$229_body$Item
 			seated(
 				value,
 				[
-					66, 197, 208, 209, 210, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240, 249,
-					250, 252, 256, 273, 274, 278, 301, 329, 330
+					66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240, 249, 250,
+					252, 256, 273, 274, 278, 301, 329, 330
 				]
 			)
 		)
 			return value;
+		if (
+			seated(
+				value,
+				[
+					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+				]
+			)
+		)
+			return b.expressionStatement(value);
+		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+			return b.expressionStatement(b.classLiteral(value));
 		if (
 			seated(
 				value,
@@ -19338,59 +19400,59 @@ const statement_loop_while$229_body = (value: statement_loop_while$229_body$Item
 		case 'expression.assignment':
 			return unbuilt('statement.loop.while.body', value);
 		case 'expression.assignment.compound.add':
-			return b.yieldStatement(expression_assignment_compound_add$172(value));
+			return b.expressionStatement(expression_assignment_compound_add$172(value));
 		case 'expression.assignment.compound.bitwise_and':
-			return b.yieldStatement(expression_assignment_compound_bitwise_and$172(value));
+			return b.expressionStatement(expression_assignment_compound_bitwise_and$172(value));
 		case 'expression.assignment.compound.bitwise_or':
-			return b.yieldStatement(expression_assignment_compound_bitwise_or$172(value));
+			return b.expressionStatement(expression_assignment_compound_bitwise_or$172(value));
 		case 'expression.assignment.compound.bitwise_xor':
-			return b.yieldStatement(expression_assignment_compound_bitwise_xor$172(value));
+			return b.expressionStatement(expression_assignment_compound_bitwise_xor$172(value));
 		case 'expression.assignment.compound.divide':
-			return b.yieldStatement(expression_assignment_compound_divide$172(value));
+			return b.expressionStatement(expression_assignment_compound_divide$172(value));
 		case 'expression.assignment.compound.modulo':
-			return b.yieldStatement(expression_assignment_compound_modulo$172(value));
+			return b.expressionStatement(expression_assignment_compound_modulo$172(value));
 		case 'expression.assignment.compound.multiply':
-			return b.yieldStatement(expression_assignment_compound_multiply$172(value));
+			return b.expressionStatement(expression_assignment_compound_multiply$172(value));
 		case 'expression.assignment.compound.shift_left':
-			return b.yieldStatement(expression_assignment_compound_shift_left$172(value));
+			return b.expressionStatement(expression_assignment_compound_shift_left$172(value));
 		case 'expression.assignment.compound.shift_right':
-			return b.yieldStatement(expression_assignment_compound_shift_right$172(value));
+			return b.expressionStatement(expression_assignment_compound_shift_right$172(value));
 		case 'expression.assignment.compound.shift_right_unsigned':
-			return b.yieldStatement(expression_assignment_compound_shift_right_unsigned$172(value));
+			return b.expressionStatement(expression_assignment_compound_shift_right_unsigned$172(value));
 		case 'expression.assignment.compound.subtract':
-			return b.yieldStatement(expression_assignment_compound_subtract$172(value));
+			return b.expressionStatement(expression_assignment_compound_subtract$172(value));
 		case 'expression.binary.arithmetic.add':
-			return b.yieldStatement(expression_binary_arithmetic_add$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_add$173(value));
 		case 'expression.binary.arithmetic.divide':
-			return b.yieldStatement(expression_binary_arithmetic_divide$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_divide$173(value));
 		case 'expression.binary.arithmetic.modulo':
-			return b.yieldStatement(expression_binary_arithmetic_modulo$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_modulo$173(value));
 		case 'expression.binary.arithmetic.multiply':
-			return b.yieldStatement(expression_binary_arithmetic_multiply$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_multiply$173(value));
 		case 'expression.binary.arithmetic.subtract':
-			return b.yieldStatement(expression_binary_arithmetic_subtract$173(value));
+			return b.expressionStatement(expression_binary_arithmetic_subtract$173(value));
 		case 'expression.binary.bitwise.and':
-			return b.yieldStatement(expression_binary_bitwise_and$173(value));
+			return b.expressionStatement(expression_binary_bitwise_and$173(value));
 		case 'expression.binary.bitwise.or':
-			return b.yieldStatement(expression_binary_bitwise_or$173(value));
+			return b.expressionStatement(expression_binary_bitwise_or$173(value));
 		case 'expression.binary.bitwise.xor':
-			return b.yieldStatement(expression_binary_bitwise_xor$173(value));
+			return b.expressionStatement(expression_binary_bitwise_xor$173(value));
 		case 'expression.binary.comparison.equal':
-			return b.yieldStatement(expression_binary_comparison_equal$173(value));
+			return b.expressionStatement(expression_binary_comparison_equal$173(value));
 		case 'expression.binary.comparison.greater':
-			return b.yieldStatement(expression_binary_comparison_greater$173(value));
+			return b.expressionStatement(expression_binary_comparison_greater$173(value));
 		case 'expression.binary.comparison.greater_equal':
-			return b.yieldStatement(expression_binary_comparison_greater_equal$173(value));
+			return b.expressionStatement(expression_binary_comparison_greater_equal$173(value));
 		case 'expression.binary.comparison.less':
-			return b.yieldStatement(expression_binary_comparison_less$173(value));
+			return b.expressionStatement(expression_binary_comparison_less$173(value));
 		case 'expression.binary.comparison.less_equal':
-			return b.yieldStatement(expression_binary_comparison_less_equal$173(value));
+			return b.expressionStatement(expression_binary_comparison_less_equal$173(value));
 		case 'expression.binary.comparison.not_equal':
-			return b.yieldStatement(expression_binary_comparison_not_equal$173(value));
+			return b.expressionStatement(expression_binary_comparison_not_equal$173(value));
 		case 'expression.binary.logical.and':
-			return b.yieldStatement(expression_binary_logical_and$173(value));
+			return b.expressionStatement(expression_binary_logical_and$173(value));
 		case 'expression.binary.logical.or':
-			return b.yieldStatement(expression_binary_logical_or$173(value));
+			return b.expressionStatement(expression_binary_logical_or$173(value));
 		case 'expression.binary.membership.instanceof':
 			return unbuilt('statement.loop.while.body', value);
 		case 'expression.binary.shift.left':
@@ -19412,13 +19474,13 @@ const statement_loop_while$229_body = (value: statement_loop_while$229_body$Item
 		case 'expression.collection.list':
 			return unbuilt('statement.loop.while.body', value);
 		case 'expression.conditional':
-			return b.yieldStatement(expression_conditional$177(value));
+			return b.expressionStatement(expression_conditional$177(value));
 		case 'expression.lambda':
 			return unbuilt('statement.loop.while.body', value);
 		case 'expression.member':
 			return unbuilt('statement.loop.while.body', value);
 		case 'expression.parenthesized':
-			return b.yieldStatement(expression_parenthesized$183(value));
+			return b.expressionStatement(expression_parenthesized$183(value));
 		case 'expression.subscript':
 			return unbuilt('statement.loop.while.body', value);
 		case 'expression.unary.bitwise_not':
@@ -19442,26 +19504,26 @@ const statement_loop_while$229_body = (value: statement_loop_while$229_body$Item
 		case 'literal.boolean.true':
 			return unbuilt('statement.loop.while.body', value);
 		case 'literal.character':
-			return b.yieldStatement(literal_character$7(value));
+			return b.expressionStatement(literal_character$7(value));
 		case 'literal.null':
 			return unbuilt('statement.loop.while.body', value);
 		case 'literal.number.float':
 			return unbuilt('statement.loop.while.body', value);
 		case 'literal.number.integer':
-			if (value.$value !== undefined) return b.yieldStatement(literal_number_integer$118(value));
+			if (value.$value !== undefined) return b.expressionStatement(literal_number_integer$118(value));
 			return unbuilt('statement.loop.while.body', value);
 		case 'literal.number.integer.binary':
-			return b.yieldStatement(literal_number_integer_binary$4(value));
+			return b.expressionStatement(literal_number_integer_binary$4(value));
 		case 'literal.number.integer.hex':
-			return b.yieldStatement(literal_number_integer_hex$2(value));
+			return b.expressionStatement(literal_number_integer_hex$2(value));
 		case 'literal.number.integer.octal':
-			return b.yieldStatement(literal_number_integer_octal$3(value));
+			return b.expressionStatement(literal_number_integer_octal$3(value));
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\]+))$/u.test(item)))
-				return b.yieldStatement(literal_string$327(value));
-			return b.yieldStatement(literal_string$328(value));
+				return b.expressionStatement(literal_string$327(value));
+			return b.expressionStatement(literal_string$328(value));
 		case 'literal.string.multiline':
-			return b.yieldStatement(literal_string_multiline$328(value));
+			return b.expressionStatement(literal_string_multiline$328(value));
 		case 'statement.assert':
 			return unbuilt('statement.loop.while.body', value);
 		case 'statement.block':
@@ -19470,8 +19532,6 @@ const statement_loop_while$229_body = (value: statement_loop_while$229_body$Item
 			return statement_break$214(value);
 		case 'statement.continue':
 			return statement_continue$215(value);
-		case 'statement.expression':
-			return unbuilt('statement.loop.while.body', value);
 		case 'statement.if':
 			return statement_if$228(value);
 		case 'statement.import':

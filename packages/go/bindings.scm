@@ -73,7 +73,7 @@
 (continue_statement) @statement.continue
 (continue_statement (label_name) @label)
 (labeled_statement) @statement.labeled
-(expression_statement) @statement.expression
+(expression_statement (_) @element)
 (empty_statement) @statement.empty
 (inc_statement) @expression.update.increment
 (dec_statement) @expression.update.decrement

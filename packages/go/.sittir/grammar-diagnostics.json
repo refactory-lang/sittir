@@ -2462,8 +2462,8 @@
     "code": "portable-value-undecided",
     "severity": "warning",
     "canProceed": true,
-    "slotName": "expression integer",
-    "message": "statement.expression: a expression integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
+    "slotName": "initializer integer",
+    "message": "statement.if: a initializer integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2471,8 +2471,8 @@
     "code": "portable-value-undecided",
     "severity": "warning",
     "canProceed": true,
-    "slotName": "expression float",
-    "message": "statement.expression: a expression float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+    "slotName": "initializer float",
+    "message": "statement.if: a initializer float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -2552,6 +2552,24 @@
     "code": "portable-value-undecided",
     "severity": "warning",
     "canProceed": true,
+    "slotName": "initializer integer",
+    "message": "statement.switch: a initializer integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "portable-value-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "slotName": "initializer float",
+    "message": "statement.switch: a initializer float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "portable-value-undecided",
+    "severity": "warning",
+    "canProceed": true,
     "slotName": "value integer",
     "message": "statement.switch: a value integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
   },
@@ -2563,6 +2581,24 @@
     "canProceed": true,
     "slotName": "value float",
     "message": "statement.switch: a value float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "portable-value-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "slotName": "initializer integer",
+    "message": "statement.switch: a initializer integer value builds as any of float_literal_arm3, imaginary_literal_arm1, int_literal_arm1, int_literal_arm4, int_literal_arm5, and the grammar declares no default arm among them"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "portable-value-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "slotName": "initializer float",
+    "message": "statement.switch: a initializer float value builds as any of float_literal_arm1, imaginary_literal_arm7, and the grammar declares no default arm among them"
   },
   {
     "scope": "grammar",
@@ -3793,14 +3829,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "statement.empty: arm 177 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.expression: expression has no exact set"
   },
   {
     "scope": "grammar",

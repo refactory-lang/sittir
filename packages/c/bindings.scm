@@ -44,7 +44,8 @@
 (break_statement) @statement.break
 (continue_statement) @statement.continue
 (labeled_statement) @statement.labeled
-(expression_statement) @statement.expression
+((expression_statement) @statement.empty (#eq? @statement.empty ";"))
+(expression_statement (_) @element)
 
 ; ── expression ─────────────────────────────────────────────────────────────────
 (call_expression) @expression.call

@@ -87,7 +87,7 @@
 (try_statement) @statement.try
 (try_with_resources_statement) @statement.resource
 (assert_statement) @statement.assert
-(expression_statement) @statement.expression
+(expression_statement expression: (_) @element)
 
 ; ── expression ─────────────────────────────────────────────────────────────────
 (method_invocation) @expression.call

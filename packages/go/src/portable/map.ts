@@ -5472,9 +5472,6 @@ export interface GoMap extends V.GrammarMap {
 		readonly 'statement.empty': {
 			readonly $text: PortableTexts['statement.empty'];
 		};
-		readonly 'statement.expression': {
-			readonly $forms: V.Form<'expression'>;
-		};
 		readonly 'statement.if': {
 			readonly alternative: V.Read<GoMap, 'statement.block'> | V.Read<GoMap, 'statement.if'> | T.IfStatement.Parsed;
 			readonly condition:
@@ -6058,7 +6055,6 @@ export interface GoMap extends V.GrammarMap {
 			readonly 'statement.break': TSKindId.BreakStatement;
 			readonly 'statement.continue': TSKindId.ContinueStatement;
 			readonly 'statement.empty': TSKindId.EmptyStatement;
-			readonly 'statement.expression': TSKindId.ExpressionStatement;
 			readonly 'statement.if': TSKindId.IfStatement;
 			readonly 'statement.import': TSKindId.ImportDeclaration;
 			readonly 'statement.labeled': TSKindId.LabeledStatement;
@@ -6203,7 +6199,6 @@ export interface GoMap extends V.GrammarMap {
 		readonly 'statement.break': never;
 		readonly 'statement.continue': never;
 		readonly 'statement.empty': never;
-		readonly 'statement.expression': never;
 		readonly 'statement.if': never;
 		readonly 'statement.import': never;
 		readonly 'statement.labeled': never;
