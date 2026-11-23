@@ -22,16 +22,32 @@ const LOG = [
 	''
 ].join('\n');
 
+const FILTERED = [
+	'     Running unittests src/lib.rs (target/debug/deps/sittir_rust-1a2b.d)',
+	'test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s',
+	'',
+	'     Running tests/parity.rs (target/debug/deps/parity-9f8e.d)',
+	'test result: FAILED. 2 passed; 3 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.20s',
+	''
+].join('\n');
+
 describe('summarizeCargoTests', () => {
-	it('tallies a hand-counted log: 3 passed, 1 failed, 1 ignored across three binaries', () => {
+	it('tallies a hand-counted log: 3 passed, 1 failed, 1 ignored across three binaries, per-test check run', () => {
 		const tally = summarizeCargoTests(LOG, 'arena');
 		expect(tally.storage).toBe('arena');
 		expect([tally.passed, tally.failed, tally.ignored]).toEqual([3, 1, 1]);
+		expect(tally.perTestChecked).toBe(true);
 		expect(tally.binaries.map((b) => b.binary)).toEqual([
 			'unittests src/lib.rs (target/debug/deps/sittir_rust-1a2b.d)',
 			'tests/parity.rs (target/debug/deps/parity-9f8e.d)',
 			'sittir_rust'
 		]);
+	});
+
+	it('tallies a log with no per-test lines from its result lines, marking the per-test check as not run', () => {
+		const tally = summarizeCargoTests(FILTERED, 'object');
+		expect([tally.passed, tally.failed, tally.ignored]).toEqual([7, 3, 1]);
+		expect(tally.perTestChecked).toBe(false);
 	});
 
 	it('refuses a log whose result lines do not match its per-test lines', () => {

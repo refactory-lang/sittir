@@ -568,11 +568,11 @@ One test binary's totals: the name from its `Running` or `Doc-tests` line, and t
 
 ### `packages/tools/src/scripts/cargo-test-tally.ts::CargoTestTally`
 
-The tally of one cargo test run for one storage: the storage label, the passed, failed and ignored totals across its binaries, and each binary's own totals.
+The tally of one cargo test run for one storage: the storage label, the passed, failed and ignored totals across its binaries, whether the per-test lines checked those totals (`perTestChecked`), and each binary's own totals.
 
 ### `packages/tools/src/scripts/cargo-test-tally.ts::summarizeCargoTests`
 
-Tallies a cargo test log. Each binary's totals come from its `test result:` line, and the crate name from the `Running` or `Doc-tests` line before it. The totals are checked against an independent count of the per-test lines (`test ... ok`, `FAILED`, `ignored`): the summed passed, failed and ignored must equal those counts. Throws when they disagree, or when the log has no result line at all, so a truncated log (for example one cut short before a failing binary) is never tallied silently.
+Tallies a cargo test log. Each binary's totals come from its `test result:` line, and the crate name from the `Running` or `Doc-tests` line before it. When the log has per-test lines (`test ... ok`, `FAILED`, `ignored`, with or without a reason), their counts must equal the summed passed, failed and ignored, and the result has `perTestChecked` set. Throws when they disagree. A log with no per-test lines (a filtered or compacted run) is tallied from its result lines alone, with `perTestChecked` false, so the output says the per-test check was not run. Throws when the log has no result line at all.
 
 ### `packages/tools/src/scripts/cargo-test-tally.ts::run`
 

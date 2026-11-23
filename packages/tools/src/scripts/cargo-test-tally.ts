@@ -19,6 +19,7 @@ export interface CargoTestTally {
 	passed: number;
 	failed: number;
 	ignored: number;
+	perTestChecked: boolean;
 	binaries: CargoTestBinaryTally[];
 }
 
@@ -62,19 +63,24 @@ export function summarizeCargoTests(output: string, storage: string): CargoTestT
 	const passed = binaries.reduce((sum, b) => sum + b.passed, 0);
 	const failed = binaries.reduce((sum, b) => sum + b.failed, 0);
 	const ignored = binaries.reduce((sum, b) => sum + b.ignored, 0);
-	if (passed !== perTest.ok || failed !== perTest.failed || ignored !== perTest.ignored) {
+	const perTestLines = perTest.ok + perTest.failed + perTest.ignored;
+	const perTestChecked = perTestLines > 0;
+	if (perTestChecked && (passed !== perTest.ok || failed !== perTest.failed || ignored !== perTest.ignored)) {
 		throw new Error(
 			`result lines total ${passed} passed, ${failed} failed, ${ignored} ignored, but the per-test lines total ${perTest.ok} ok, ${perTest.failed} FAILED, ${perTest.ignored} ignored`
 		);
 	}
-	return { storage, passed, failed, ignored, binaries };
+	return { storage, passed, failed, ignored, perTestChecked, binaries };
 }
 
 function formatCargoTestTally(tally: CargoTestTally): string {
 	const lines = tally.binaries.map(
 		(b) => `${String(b.passed).padStart(6)} ${String(b.failed).padStart(6)} ${String(b.ignored).padStart(6)}  ${b.binary}`
 	);
-	lines.push(`${String(tally.passed).padStart(6)} ${String(tally.failed).padStart(6)} ${String(tally.ignored).padStart(6)}  total (${tally.storage})`);
+	const check = tally.perTestChecked ? '' : ', per-test check not run (the log has no per-test lines)';
+	lines.push(
+		`${String(tally.passed).padStart(6)} ${String(tally.failed).padStart(6)} ${String(tally.ignored).padStart(6)}  total (${tally.storage}${check})`
+	);
 	return lines.join('\n');
 }
 
