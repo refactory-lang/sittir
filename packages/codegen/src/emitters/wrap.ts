@@ -32,7 +32,7 @@ import {
 } from './shared.ts';
 import { formDefinedProperties } from './refine-emit.ts';
 import { chainReadsAsList, wrapperChainFor } from '../compiler/model/wrapper-chain.ts';
-import { builtTypeSurfaceOf, chainItemsAt, anyShapes, coOptionalBranchOfNode, hasShapes, chainItemsHop, delimitedCheck, delimitedSpecName, fieldElementType, listOptionKeys, listSelfViewPlan, seatPlanOf, separatedListSurface, splicedEnvelopeAdmission, splicedEnvelopeType, type GroupSeatHint, type ListViewPlan, type SeatPlan } from './factories.ts';
+import { armCrossingClears, builtTypeSurfaceOf, chainItemsAt, anyShapes, coOptionalBranchOfNode, hasShapes, chainItemsHop, delimitedCheck, delimitedSpecName, fieldElementType, listOptionKeys, listSelfViewPlan, seatPlanOf, separatedListSurface, splicedEnvelopeAdmission, splicedEnvelopeType, type GroupSeatHint, type ListViewPlan, type SeatPlan } from './factories.ts';
 import { collectKindEntries, errorKindEntry, findKindEntry, type KindEnumEntry } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { recordPlacesOf, recordVerbatimPlaceOf } from './record-construction.ts';
@@ -647,6 +647,8 @@ function inlineSetters(node: AuthoredCompound | AssembledList, nodeMap: NodeMap,
 		const method = f.propertyName;
 		const envelopeType = splicedEnvelopeType(f, nodeMap);
 		const admitted = envelopeType === undefined ? '' : ` | ${envelopeType}`;
+		const crossed = node instanceof AssembledList ? [] : armCrossingClears(node, node.slots, f);
+		const clearedKeys = crossed.map((other) => `${other.storageKey}: undefined, `).join('');
 		if (isMultiple(f) && restSlots.has(method)) {
 			const storageList = `NonNullable<T.${node.typeName}['${f.storageKey}']>`;
 			if (finalSeatOf(f) !== undefined && admitted !== '')
@@ -655,7 +657,7 @@ function inlineSetters(node: AuthoredCompound | AssembledList, nodeMap: NodeMap,
 			return {
 				name: method,
 				params: `...v: ${restType}`,
-				body: `${wrapFn}({ ...$edited(data), ${f.storageKey}: ${admittedSlot(node.kind, method, splicedEnvelopeAdmission(f, `restItems(${JSON.stringify(method)}, v)`, nodeMap, kindEntries, node.typeName))} }, tree)`
+				body: `${wrapFn}({ ...$edited(data), ${clearedKeys}${f.storageKey}: ${admittedSlot(node.kind, method, splicedEnvelopeAdmission(f, `restItems(${JSON.stringify(method)}, v)`, nodeMap, kindEntries, node.typeName))} }, tree)`
 			};
 		}
 		const setterValueType = `NonNullable<T.${node.typeName}['${f.storageKey}']>${admitted}${hasBlankArm(f) ? ' | null' : ''}`;
@@ -667,11 +669,18 @@ function inlineSetters(node: AuthoredCompound | AssembledList, nodeMap: NodeMap,
 					.join('')
 			: '';
 		const input = branch?.options.includes(method) === true && f.optionDefaultArm !== undefined ? `(v ?? ${JSON.stringify(f.optionDefaultArm)})` : 'v';
-		const set = `${wrapFn}({ ...$edited(data), ${f.storageKey}: ${admittedSlot(node.kind, method, splicedEnvelopeAdmission(f, blankFromInput(hasBlankArm(f), input), nodeMap, kindEntries, node.typeName))}${branchDefaults} }, tree)`;
+		const setOf = (cleared: string): string =>
+			`${wrapFn}({ ...$edited(data), ${cleared}${f.storageKey}: ${admittedSlot(node.kind, method, splicedEnvelopeAdmission(f, blankFromInput(hasBlankArm(f), input), nodeMap, kindEntries, node.typeName))}${branchDefaults} }, tree)`;
+		const set = setOf('');
 		return {
 			name: method,
 			params: `v: ${setterValueType}`,
-			body: branch?.needed.includes(method) === true ? `v === undefined ? ${wrapFn}({ ...$edited(data), ${branch.storageKeys.map((key) => `${key}: undefined`).join(', ')} }, tree) : ${set}` : set
+			body:
+				branch?.needed.includes(method) === true
+					? `v === undefined ? ${wrapFn}({ ...$edited(data), ${branch.storageKeys.map((key) => `${key}: undefined`).join(', ')} }, tree) : ${setOf(clearedKeys)}`
+					: crossed.length === 0
+						? set
+						: `v === undefined ? ${set} : ${setOf(clearedKeys)}`
 		};
 	});
 }

@@ -53,3 +53,25 @@ export function aKindWhoseArmsDifferOnlyInFlagsStaysOneConfig(): void {
 	const flags: T.PublicFieldDefinitionPlain.LooseArgs = [{ name: 'x', static: true, abstract: true, readonly: true }];
 	void flags;
 }
+
+declare const bound: T.BinaryExpression.Bound;
+
+export function aSetterForASlotItsArmRequiresTakesNoUndefined(): void {
+	// @ts-expect-error a binary expression needs one of its arms
+	bound.$with.left(undefined);
+	// @ts-expect-error a binary expression needs one of its arms
+	bound.$with.left();
+	// @ts-expect-error a binary expression needs one of its arms
+	bound.$with.binaryExpressionIn();
+}
+
+declare const parsedBinary: T.BinaryExpression.Parsed;
+declare const strictIn: NonNullable<T.BinaryExpression.Config['binaryExpressionIn']>;
+
+export function aSwitchedArmReadsTheOldArmsSlotsAsAbsent(): void {
+	const switched = parsedBinary.$with.binaryExpressionIn(strictIn);
+	const left: undefined = switched.left();
+	const operator: undefined = switched.operator();
+	void left;
+	void operator;
+}

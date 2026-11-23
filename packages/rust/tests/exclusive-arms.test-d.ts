@@ -31,3 +31,32 @@ export function anEmptyConfigIsAnError(): void {
 	void empty;
 	void none;
 }
+
+declare const bound: T.AttributeInput.Bound;
+declare const strictValue: NonNullable<T.AttributeInput.Config['value']>;
+declare const strictArguments: NonNullable<T.AttributeInput.Config['arguments']>;
+
+export function aSetterForASlotItsArmRequiresTakesNoUndefined(): void {
+	bound.$with.value(strictValue);
+	bound.$with.arguments(strictArguments);
+	// @ts-expect-error an attribute input needs one of its arms
+	bound.$with.value(undefined);
+	// @ts-expect-error an attribute input needs one of its arms
+	bound.$with.value();
+	// @ts-expect-error an attribute input needs one of its arms
+	bound.$with.arguments(undefined);
+}
+
+declare const parsed: T.AttributeInput.Parsed;
+
+export function aSwitchedArmReadsTheOldArmsSlotAsAbsent(): void {
+	const switched = parsed.$with.value(strictValue).$with.arguments(strictArguments);
+	const gone: undefined = switched.value();
+	// @ts-expect-error the value was cleared when the arguments were set
+	const kept: object = switched.value();
+	const back = switched.$with.value(strictValue);
+	const arguments_: undefined = back.arguments();
+	void gone;
+	void kept;
+	void arguments_;
+}

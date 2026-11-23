@@ -15367,12 +15367,20 @@ function buildAttributeInput$with(node: Held, setter: string, args: readonly unk
 	const config = node[INPUT] as T.AttributeInput.Config;
 	switch (setter) {
 		case 'value':
-			return applySetter(args, (value?: Admit<NonNullable<T.AttributeInput.Config>['value']>) =>
-				rebuilt(node, handle, () => buildAttributeInput({ ...config, value: value }))
+			return applySetter(args, (value: Admit<NonNullable<T.AttributeInput.Config>['value']>) =>
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildAttributeInput({ ...config, value: value })
+						: buildAttributeInput({ ...config, arguments: undefined, value: value })
+				)
 			);
 		case 'arguments':
-			return applySetter(args, (value?: Admit<T.DelimTokenTree>) =>
-				rebuilt(node, handle, () => buildAttributeInput({ ...config, arguments: value }))
+			return applySetter(args, (value: Admit<T.DelimTokenTree>) =>
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildAttributeInput({ ...config, arguments: value })
+						: buildAttributeInput({ ...config, value: undefined, arguments: value })
+				)
 			);
 	}
 	throw new Error(`attribute_input has no $with.${setter}`);

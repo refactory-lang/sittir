@@ -87,7 +87,9 @@ type HintsOf<Self> = Self extends { readonly __slotHints__?: infer H } ? NonNull
 export type FlagsHintOf<Self> = Self extends { readonly __flags__?: infer F } ? NonNullable<F> : never;
 /** The vocabulary flags a slot test can read on each of a node type's slots (its `__slotFlags__`), by slot accessor. */
 export type SlotFlagsHintOf<Self> = Self extends { readonly __slotFlags__?: infer F } ? NonNullable<F> : never;
-export type SlotHintsOf<Self> = Remap<HintsOf<Self>, '$listView' | '$listSlots' | '$flat' | '$branch'>;
+export type SlotHintsOf<Self> = Remap<HintsOf<Self>, '$listView' | '$listSlots' | '$flat' | '$branch' | '$clears'>;
+type ClearsOf<Self> = HintsOf<Self> extends { readonly $clears: infer C } ? C : {};
+type ClearedBy<Self, K> = K extends keyof ClearsOf<Self> ? ClearsOf<Self>[K] & PropertyKey : never;
 type FlatOf<Self> = HintsOf<Self> extends { readonly $flat: infer F } ? F : never;
 type BranchOf<Self> = HintsOf<Self> extends { readonly $branch: infer B } ? B : never;
 type BranchNames<B> = B extends BranchHint<infer Names, string, string> ? Names : never;
@@ -462,8 +464,10 @@ type ResolveInput<V, ByBound> =
 		: never;
 type BoundFormOf<Self, ByBound> = Self extends { readonly $type: infer T } ? (T extends keyof ByBound ? ByBound[T] : Self) : Self;
 type DraftTrivia<Self, ByBound> = Self extends { readonly $trivia: TriviaSetter<any, infer Trivia> } ? TriviaSetter<BoundFormOf<Self, ByBound>, Trivia> : never;
-export type WithSlot<Self, K extends PropertyKey, V, ByBound> = Remap<Self, K | '$with' | '$trivia' | '$query' | '$snapshot'> & {
+export type WithSlot<Self, K extends PropertyKey, V, ByBound> = Remap<Self, K | ClearedBy<Self, K> | '$with' | '$trivia' | '$query' | '$snapshot'> & {
 	[P in K]: () => ResolveInput<V, ByBound>;
+} & {
+	readonly [P in ClearedBy<Self, K>]: () => undefined;
 } & {
 	readonly $trivia: DraftTrivia<Self, ByBound>;
 	readonly $with: WithOf<WithSlot<Self, K, V, ByBound>, ByBound>;

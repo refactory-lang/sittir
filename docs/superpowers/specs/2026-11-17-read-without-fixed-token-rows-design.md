@@ -36,7 +36,7 @@ A **row** is a run entry for a node with no record: `RunEntry::Row { facts, span
 
 ## The end state
 
-- A parse writes a row only for slot content that is text the source carries (a variable-text leaf, or a node with no record holding one), and for what lies under trivia. It writes no row for a fixed token. It writes none for a unit either.
+- A parse writes a row only for slot content that is text the source carries (a variable-text leaf, or a node with no record holding one), and for what lies under trivia. It writes no row for a fixed token. It writes none for a unit either, unless the unit is or holds a `MISSING` token (§ Slots held by a kind id alone).
 - A fixed token's text comes from its kind. Where it sits comes from its holder's render body and the record's cells, the way a built node's template answers it. No byte offset of a fixed token is stored.
 - A slot whose content is a choice among units is held by its cell's kind id alone, parsed and built alike.
 - A record's own coordinate (`AT`: kind, start, end) stays, and so does every offset of text the source carries.
@@ -94,12 +94,16 @@ Every slot whose content is a choice among units is encoded by the cell's kind i
 |---|---|---|
 | keyword unit (`keyword`), including a boolean slot's keyword (`"storage":"boolean"`) | the keyword's kind id; for a boolean slot, the slot's flag | the text is the kind's, the place is the site |
 | punctuation or enum unit (`punctuation`, `enum`), including an enum member that a node with no record holds (`string` in `predefined_type`) | the member's kind id, which is the unit variant `EngineGrammar::unit_id` names | the enum kind is the slot's type; the member's text is its kind's |
-| external-scanner unit (a unit in `.sittir/src/grammar.json` `externals`, such as typescript's `_automatic_semicolon`) | its kind id | zero-width: its text is its kind's, which is empty in the source and `"\n"` in a render (`Kid::holder`'s doc) |
-| `MISSING` unit | the kind id of the unit the parser inserted | the source holds no text for it; its holder's `HOLDS_ERROR` fact stays (see § ERROR, header-only records, zero width and MISSING) |
+| external-scanner unit (a unit in `.sittir/src/grammar.json` `externals`, such as typescript's `_automatic_semicolon`) | its kind id | zero-width: the source holds no text for it, and its render writes only the seam it stands for (`ResolvedOptions::token_seam`). Between two tokens that seam is required. At a render's end it is a gap and is dropped, parsed and built alike; only whitespace inside a lexed token's own bytes (`SeamToken::Lexeme`, rust's shebang) is always written, and a file's final newline comes from the root's edge (the maintainer, 2026-11-23: "i'm good with the solution") |
+| `MISSING` unit | its zero-width row, the one unit that keeps a row of its own | the source holds no text for it, so an untouched render and an edit inside its holder write none, and a rebuild of its holder writes the token (see the `MISSING` rule below); its holder's `HOLDS_ERROR` fact stays (see § ERROR, header-only records, zero width and MISSING) |
 
 An automatic semicolon that a slot holds is read by the cell's kind, not by a row's width: whether a token has width is a fact of its kind.
 
-A parsed unit cell then holds the kind alone. That is the cell a built record already writes for a unit ("A builder takes a unit as its kind id ... and stores the kind in the holder's cell"). Parsed and built unit cells become one form.
+A parsed unit cell then holds the kind alone. That is the cell a built record already writes for a unit ("A builder takes a unit as its kind id ... and stores the kind in the holder's cell"). Parsed and built unit cells become one form. Whether a query lists a unit is a fact of its holder, slot and kind: `any` in `x as any` is listed and `const` in `x as const` is not, in one slot. Each slot's `CellShape` answers it: a member of a visible enum the slot holds is listed, as is a token the grammar aliases to a visible kind (regex `class_range`'s `-`, which codegen stamps). A member of a hidden enum is not, and the parser's named fact answers for every other unit. The shape also holds the slot's `field`, and nothing is stored per node.
+
+**A unit of several tokens.** Eight kinds carry the `unit` stamp and are more than one token in the grammar: rust `unit_type` and `unit_expression`; typescript `using_declaration_arm`, `meta_property_new_target`, `meta_property_import_meta` and `_formal_parameters_get_accessor_signature`; python `_not_in` and `_is_not`. Typescript `predefined_type`'s `unique symbol` member is the same case: an enum member a node with no record holds, two tokens in the grammar. Whitespace between its tokens isn't kept, so `( )` written from its holder's template is `()`, as a built one is. A unit has no inside (arena-trees spec, "A unit has no inside"): a comment or an `ERROR` between its tokens survives where the holder's source span is copied, and is lost when the holder is rebuilt, so `let x = (/* c */);` rebuilt is `let x = ();`. A `MISSING` token under one keeps the unit's row, and a rebuild writes the unit's whole text (§ ERROR, header-only records, zero width and MISSING). The walk reads this from the tree, and no kind is named in code.
+
+**A bare `'` in a rust token tree** is written through the `_token_keywords` sites, which are tight: `a!('lifetime);`. A space there is a lexical error (`rustc` E0762, unterminated character literal).
 
 Unit rows are slot content, not fixed tokens; the maintainer ruled that they go too, in the same stage. The numbers list them apart.
 
@@ -116,7 +120,7 @@ The render body is the only source of that order:
 - **No built record to copy.** A built record answers no navigation: a query facet refuses a node with no parsed tree (`query.ts::queryFacet`), and `siblings` answers parsed trees only.
 - **Cells are not in document order.** `recordLayoutOf` puts every boolean slot as a bit in the presence words, ahead of all cells.
   - Word cells follow the render body in all five grammars, and every body writes its slots in one order on every arm.
-  - A boolean slot written after a word cell puts a kind's cells out of document order. That is 20 kinds: rust 3, typescript 13, python 1, regex 2, scm 1.
+  - A boolean slot written after a word cell puts a kind's cells out of document order. That is 28 kinds: rust 4, typescript 20, python 1, regex 2, scm 1.
   - Two examples: rust `reference_type` `&'a mut T` stores `mutable_specifier` before the lifetime, and typescript `subscript_expression` `a?.[0]` stores `optional_chain` before the object.
 
 It lists no fixed token. Named fixed tokens leave navigation too: these are polymorph forms whose kind fixes a named node. The census counts them, as rows the render body writes that tree-sitter names:
@@ -145,7 +149,7 @@ Every reader takes a fixed token's offsets through navigation's `Kid`, which `Ru
   - A fixed token is fixed for its kind, or for the polymorph form that is the record's kind. A choice among literal texts is a slot (a `kindEnum` or `mixedEnum` slot), so its edge is the cell's kind.
   - The per-kind leading and trailing fixed token is generated with the crate from `render-bodies.json`, the source of fixed tokens, as one fact per kind. It is never derived from text at run time.
   - A list's separator at a record's edge follows the same rule, and nothing new is stored for it. The list's `delimiter` says whether a separator sits at that edge. Its kind is the list's resolved separator: `SideSlot::separator`, else the arm of the options the tree was read with. A zero-width automatic semicolon is no trailing delimiter, so that edge goes on to the last item.
-- **Identity.** `edge_levels` tests whether the coordinate's node is this node by `kid.span() != coord.span`. That becomes a test by index: the coordinate carries its node's index.
+- **Identity.** `edge_levels` finds the coordinate's node by its index and measures the edge from the coordinate's span, so no test compares the two spans. A root's coordinate spans its whole source on both storages, so a root with leading whitespace has no child at that edge. Only a source's root can hold an extra or `ERROR` as its first or last child, because a reduction leaves them outside the node it builds, so the walk reads that edge by position there.
 - **Proof.** A parity test compares the levels on every fixture, for each parsed node and side, before and after. A chain that ends in a list's separator can differ where the source's token there is not the list's resolved separator. Those chains are listed, and their proof is the render: every fixture's rendered bytes are unchanged on both storages.
 
 ### Depth moves: `Lookups::depth_move`
@@ -194,7 +198,7 @@ Every reader takes a fixed token's offsets through navigation's `Kid`, which `Ru
 - **Today.** The re-indent in `SpacingWriter` must not indent a line that starts inside a token. Two cases:
   - a line break inside a token's span: a variable-text leaf such as a template string or a block comment. Those spans are kept;
   - a token ending in a line break, with the next token starting at that offset, such as a string's content followed by its closing quote. Here the next token is often a fixed token.
-- **After.** The second case is a fact the hydration walk knows, since it meets both tokens. It is stamped as one bit on the variable-text leaf: "the next token starts where this one ends". Where the bit sits, on the leaf's row or on its cell, is left to the plan.
+- **After.** The second case is a fact the parse knows. For a leaf ending in a line break, the hydration walk asks the tree for the next token, because a record's side is written before the walk meets that token. The answer is stamped as one bit on the leaf's facts, `NodeFacts::abuts_next`: "the next token starts where this one ends".
   - Testing the source byte after the leaf is not used: it would re-derive with a character class what the parse knew (working standard 3).
   - The census did not count these leaves; the first step counts them.
 - **Proof.** A parity test compares the line starts of every parsed node on every fixture.
@@ -208,7 +212,7 @@ The rule is the parsed-comments spec's and does not change.
   - A fixed token still counts as the "child before it" in the first rule. For example, in `a, // c` the `,` is the child before the comment.
 - **What changes.** The walk keeps every token in its working list and drops the fixed tokens when it writes the run. It numbers the written entries, and a cell's row and a placed side's key name the written entry.
 - **No side is placed on a fixed token.** `placed` seats a side only on a named child, and an anonymous fixed token is never named.
-  - **Named fixed tokens.** For the named ones listed under navigation, a comment beside one is seated as if it were unnamed, as a built node seats it (the built form has no such child).
+  - **Named fixed tokens.** For the named ones listed under navigation, a comment beside one is seated as if it were unnamed, as a built node seats it (the built form has no such child). So `&mut /*c*/ x` keeps the comment on `x` when its holder is rebuilt. Where that leaves only the holder's inside and the holder's kind has none (it is not in codegen's `innerKinds`, as in rust's `& /*c*/ self`), no side is placed: the comment survives where the holder's source span is copied, and is lost when the holder is rebuilt.
   - **Expected cases.** These are the only placements expected to change. The parity test lists each one: node, side, kind and span, before and after.
 - **Sides on a unit** are keyed by the unit's site (holder, slot word, item). The shared-arena spec gives that key ("Sides by site"), and a built unit's sides already use it (`trivia_store::Site`). Parsed sides are keyed by row today ("each parsed tree's by row", `trivia_store.rs`). A flag's keyword has no cell, so it has no site, and no side is kept on it (the arena spec, "A side on a node that its holder keeps as a fixed token or a flag is not kept").
 
@@ -221,8 +225,9 @@ The rule is the parsed-comments spec's and does not change.
 - **The automatic semicolon** is a cell's kind where a slot holds it: 17,627 on matter.js, 224,938 on next.js. In a separator choice it's the gap's kind id, as above.
 - **MISSING.**
   - A MISSING fixed token has no row (2 on next.js).
-  - A MISSING unit is its kind in its cell (4 on next.js).
+  - A MISSING unit keeps its zero-width row (4 on next.js).
   - A MISSING variable-text leaf keeps its zero-width row (1 on next.js).
+  - An untouched render is its source, so it adds no text the source doesn't have. A rebuild writes the complete form the parser settled on, a `MISSING` token included, whether that token is a fixed token, a unit or an enum member: rust `let x = 1` rebuilt is `let x = 1;`, `let x = (;` is `let x = ();`, and python `a not b` is `a not in b` (the maintainer, 2026-11-23: "nothing we can do if the parser assumes it's there, right?", then "yes go ahead"). `$errors` has already reported the source. An edit inside a holder doesn't rebuild that holder, so a `MISSING` unit there still writes nothing: `private async() {};` with a comment added to its expression renders `/* c */ private async()`, and the same statement rebuilt through `$with.expression` renders `private async();`. The unit's zero-width row is what keeps those two apart, in both storages.
   - Its holder's `HOLDS_ERROR` fact stays: `NodeFacts::of` stamps it from the tree at parse (`hydrate.rs::facts_of`).
   - The parse's error list (`error_regions`, `engine.rs`) reports MISSING regions with their holder's span. To verify on the branch: it runs over the tree's navigation, before the tree is dropped, so it does not read records.
 
@@ -345,7 +350,7 @@ The cascade over a parsed record walks its parsed cells (child cells and list ru
   - each parsed list's delimiter and slot separator, as `source_trailing_delimiter`, `slot_separator` and `slot_layouts` answer them;
   - line starts inside tokens;
   - placed sides: node, side, kind and span;
-  - query results, units' order included: each node's `$children` and `$descendants` as (kind, span) sequences, on every fixture, and on a fixture for each of the 20 kinds whose cells are out of document order where the corpus has none.
+  - query results, units' order included: each node's `$children` and `$descendants` as (kind, span) sequences, on every fixture, and on a fixture for each of the 28 kinds whose cells are out of document order where the corpus has none.
 - **Validation numbers** unchanged across all grammars (`sittir validate history`, compared per row). No render output is expected to change: an untouched node is its source slice, and a rebuilt one writes its template.
 - **Tests that pin rows** change by design: `record_nodes.rs`'s `backers_agree`, and `arena/parsed.rs::runs_agree`, which compare the records' navigation with the tree's. They then compare against the tree with fixed tokens and units filtered out by role. Each one is listed and shown to pin rows before its expectation changes.
 - **Parse and render timings** on CI's paired run against master's arena, per grammar. The walk does the same work and writes fewer words.

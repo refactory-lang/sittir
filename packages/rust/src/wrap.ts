@@ -14666,16 +14666,30 @@ function wrapAttributeInput$with(node: Held, setter: string, args: readonly unkn
 		case 'value':
 			return applySetter(args, (v: NonNullable<T.AttributeInput['_value']>) =>
 				rebuilt(node, handle, () =>
-					wrapAttributeInput({ ...$edited(data), _value: admitSlot(handle, 'attribute_input', 'value', v) }, tree)
+					v === undefined
+						? wrapAttributeInput({ ...$edited(data), _value: admitSlot(handle, 'attribute_input', 'value', v) }, tree)
+						: wrapAttributeInput(
+								{ ...$edited(data), _arguments: undefined, _value: admitSlot(handle, 'attribute_input', 'value', v) },
+								tree
+							)
 				)
 			);
 		case 'arguments':
 			return applySetter(args, (v: NonNullable<T.AttributeInput['_arguments']>) =>
 				rebuilt(node, handle, () =>
-					wrapAttributeInput(
-						{ ...$edited(data), _arguments: admitSlot(handle, 'attribute_input', 'arguments', v) },
-						tree
-					)
+					v === undefined
+						? wrapAttributeInput(
+								{ ...$edited(data), _arguments: admitSlot(handle, 'attribute_input', 'arguments', v) },
+								tree
+							)
+						: wrapAttributeInput(
+								{
+									...$edited(data),
+									_value: undefined,
+									_arguments: admitSlot(handle, 'attribute_input', 'arguments', v)
+								},
+								tree
+							)
 				)
 			);
 	}

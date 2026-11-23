@@ -389,6 +389,8 @@ The maintainer's rulings (2026-11-17, the spec's Decided list):
 
 ### Task 9: Rows go
 
+**Status (2026-11-23):** in progress, nothing committed; local head `c87d2d4e0`, pushed head `f689b1893`. With the read on slot content, 25 of the 38 retaken tests still fail. The from-templates render follows the spec's § Slots held by a kind id alone: a zero-width unit writes its seam, a unit's sides come through its site, a `MISSING` unit keeps its zero-width row, and a unit of several tokens keeps a row only where a `MISSING` token lies under it. The parity test names three byte changes from object storage: whitespace, comments and `ERROR` inside a unit of several tokens, `predefined_type`'s `unique symbol` among them; a comment beside a named fixed token, which arena seats as if the token were unnamed; and a bare `'` in a rust token tree, where object storage writes `a!(' lifetime);`, which `rustc` rejects. Object storage's space is fixed in a PR of its own right after this branch, and that PR removes the second exception. A built whitespace seam at a render's end still writes where the spec now drops it: that moves built bytes, so it also takes a PR of its own after this branch. A unit holding a `MISSING` token keeps its row, as the spec's `MISSING` rule says: without it, an edit inside its holder writes the assumed text (`private async()` gains `;`), 6 arena tests fail, and the records comparison moves on 27 typescript sources and 1 regex source. Still to attribute: the 12 tests that compare records with the tree.
+
 **Files:**
 - Modify `engine.rs` (`parse_records`), every `ReadRows::All` branch from Tasks 3–7, `record_nodes.rs` (`backers_agree`), `arena/parsed.rs` (`runs_agree`), `stage_one_parity.rs` and `deep_read_words.rs`.
 - Test: `packages/{rust,typescript,python}/tests/named-fixed-query.test.ts`.
@@ -424,11 +426,11 @@ The arena spec's "A render keeps no table of the nodes it visits" (the maintaine
 **Interfaces:**
 - Consumes Task 2's `RecordShape`, Task 5's edge walk and Task 7's stamps.
 - The render walk names a node by its `NodeId`, its holder and the slot that holds it.
-- `Spans::Met` and `row_sites` go, and `RunTable`, `Table` and `Met` leave the render path. A navigation outside a render keeps only what it uses, for that navigation alone.
+- `Spans::Met` and `row_sites` go. On the render path `RunTable`, `Table` and `Met` hold at most one `Nodes` answer and are emptied before the next, so they keep no entry across a render. A navigation outside a render keeps only what it uses, for that navigation alone.
 - No public item changes.
 
 - [ ] **Step 1: Write the failing tests.**
-  - `a_render_keeps_no_row_per_node`: at a fixed depth, a render's peak heap above its output does not grow with the number of nodes it visits.
+  - `a_render_keeps_no_row_per_node`: at a fixed depth, a plain render's peak heap above its output does not grow with the number of nodes it visits. A template render's growth is the prepare pass's overlay alone, which stays parked (arena plan, "Costed and parked"), and a ceiling that only falls pins it.
   - `a_wide_list_renders_in_linear_run_decodes`: rendering a parsed list of `n` items decodes each run entry at most once.
 - [ ] **Step 2: Run them.** Run `PARITY -- a_render_keeps a_wide_list`. Expected: FAIL while the render builds its table.
 - [ ] **Step 3: Implement.** The walk follows a record's cells and reads a parsed node by its record's address. `Records` holds no row per node for a render, and release builds neither a tree nor a table.

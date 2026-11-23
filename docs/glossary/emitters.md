@@ -15573,6 +15573,18 @@ The arms of a kind's one required choice of arms, read from its slots' arm stamp
 
 `exclusiveArmsOf` for a node's own slots; undefined for a node with no slots and for a list. The overlay emitter reads it to give a kind whose config is one config per arm a seated table entry, so the entry's row is the kind's `BuildArgs` or `LooseArgs`.
 
+### `packages/codegen/src/emitters/factories.ts::armCrossingClears`
+
+The slots a setter clears when it sets `slot` on a kind that is a required choice of arms: every slot some arm holds that no arm holding `slot` holds. Setting a slot only another arm holds so gives that arm and drops the old arm's slots; a slot every arm holds clears nothing. Empty for a kind without arms and for a slot no arm holds. The built setters (objects and records) and the parsed setters emit it only for a defined value; clearing a slot with `undefined` clears that slot alone.
+
+### `packages/codegen/src/emitters/factories.ts::armRequiredSlot`
+
+Whether a slot's setter takes no `undefined`: every arm that holds the slot requires it, and no arm of the choice requires nothing. Clearing such a slot would leave a node no arm describes, so it is a type error; a choice with an empty arm keeps the clearing form. The setter's input is made non-nullable (the config's optional property would otherwise let `undefined` through) and it loses its zero-argument form.
+
+### `packages/codegen/src/emitters/factories.ts::armClearsOfNode`
+
+For each slot of a kind that is a required choice of arms, the names of the slots its setter clears (`armCrossingClears`), omitting a slot that clears none. The node's `$clears` hint is printed from it, so the type a setter returns reads each cleared slot as `undefined` instead of the refinement an earlier setter in the chain gave it. Empty for a kind without arms and for a list.
+
 ### `packages/codegen/src/emitters/node-members.ts::HoistSet`
 
 What a hoisted slot's `$with` setter takes from the emitter: the storage key, the wrapper slot it sets through, whether the holder slot is optional, the list spec, the wrap expression, the kind the value may already be, and the placed setter bodies for a whole wrapper and for a list.

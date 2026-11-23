@@ -1,12 +1,14 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { assemblePredicted } from '../../__tests__/helpers/linked.ts';
+import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
+import { emitWrap } from '../../__tests__/helpers/emit-wrap.ts';
 import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { buildRuleCatalog } from '../rule-catalog.ts';
 import { isSlotBearingCompound } from '../../emitters/shared.ts';
 import { collectKindEntries } from '../../emitters/kind-discriminant.ts';
-import { builtTypeSurfaceOf } from '../../emitters/factories.ts';
+import { armCrossingClears, armRequiredSlot, builtTypeSurfaceOf } from '../../emitters/factories.ts';
 import type { NodeMap, RawGrammar } from '../types.ts';
 
 function synthetic(rules: Record<string, unknown>): NodeMap {
@@ -44,6 +46,81 @@ const seq = (...members: unknown[]) => ({ type: 'SEQ', members });
 const repeat = (content: unknown) => ({ type: 'REPEAT', content });
 const repeat1 = (content: unknown) => ({ type: 'REPEAT1', content });
 const leaves = { digits: { type: 'PATTERN', value: '[0-9]+' }, word: { type: 'PATTERN', value: '[a-z]+' } };
+
+function slotOf(nodeMap: NodeMap, kind: string, field: string) {
+	const node = nodeMap.nodes.get(kind);
+	if (!node || !isSlotBearingCompound(node)) throw new Error(`expected '${kind}' to assemble as a compound`);
+	return { node, slot: node.slots.find((candidate) => candidate.fieldName === field)! };
+}
+
+describe('arm-crossing setters emission', () => {
+	const listArm = (): { generatedIdTables: never; nodeMap: NodeMap } => {
+		const { rules: catalogRules, ruleCatalog } = buildRuleCatalog({
+			input: choice(field('items', { type: 'REPEAT1', content: sym('word') }), field('value', sym('digits'))),
+			...leaves
+		} as never);
+		const raw: RawGrammar = { name: 'synth', fileTypes: [], rules: catalogRules, ruleCatalog, evaluateSynthesized: new Set<string>(), extras: [], externals: [], supertypes: [], factoryInline: [], inline: [], conflicts: [], precedences: [], word: null, references: [] };
+		const assembled = assemblePredicted(raw);
+		return { generatedIdTables: assembled.generatedIdTables as never, nodeMap: assembled.nodeMap };
+	};
+
+	it('clears the scalar arm when a parsed rest setter sets the list arm', () => {
+		const wrap = emitWrap({ ...listArm(), grammar: 'synth' });
+		expect(wrap).toMatch(/_value: undefined, _items: /);
+	});
+
+	it('clears the scalar arm when a built rest setter sets the list arm', () => {
+		const factories = emitFactories({ ...listArm(), grammar: 'synth' });
+		expect(factories).toMatch(/value: undefined, items: restItems/);
+	});
+});
+
+describe('arm-crossing setters in a co-optional branch', () => {
+	const branchArm = (): { generatedIdTables: never; nodeMap: NodeMap } => {
+		const { rules: catalogRules, ruleCatalog } = buildRuleCatalog({
+			input: choice(seq(field('left', sym('word')), { type: 'SEQ', multiplicity: 'optional', members: [{ ...field('exponent', sym('digits')), annotations: { coOptional: { required: true } } }, { ...field('sign', sym('word')), annotations: { coOptional: { required: false } } }] }), field('right', sym('word'))),
+			...leaves
+		} as never);
+		const raw: RawGrammar = { name: 'synth', fileTypes: [], rules: catalogRules, ruleCatalog, evaluateSynthesized: new Set<string>(), extras: [], externals: [], supertypes: [], factoryInline: [], inline: [], conflicts: [], precedences: [], word: null, references: [] };
+		const assembled = assemblePredicted(raw);
+		return { generatedIdTables: assembled.generatedIdTables as never, nodeMap: assembled.nodeMap };
+	};
+
+	it('refuses the parsed surface of a choice whose arm holds a co-optional branch', () => {
+		expect(() => emitWrap({ ...branchArm(), grammar: 'synth' })).toThrow(/optional branch/);
+	});
+
+	it('clears the other arm when a built setter in the branch sets a defined value', () => {
+		const factories = emitFactories({ ...branchArm(), grammar: 'synth' });
+		expect(factories).toMatch(/right: undefined, exponent: value/);
+	});
+});
+
+describe('arm-crossing setters', () => {
+	it('clears the slots only the old arm held and keeps a shared one', () => {
+		const nodeMap = synthetic({
+			input: choice(seq(field('shared', sym('digits')), field('left', sym('word'))), seq(field('right', sym('word')), field('shared', sym('digits')))),
+			...leaves
+		});
+		const crossing = (name: string) => {
+			const { node, slot } = slotOf(nodeMap, 'input', name);
+			return armCrossingClears(node as never, node.slots, slot).map((cleared) => cleared.fieldName);
+		};
+		expect(crossing('right')).toEqual(['left']);
+		expect(crossing('left')).toEqual(['right']);
+		expect(crossing('shared')).toEqual([]);
+	});
+
+	it('types a setter without undefined only for a slot its arm requires, and only when no arm is empty', () => {
+		const exclusive = synthetic({ input: choice(field('value', sym('digits')), field('arguments', sym('word'))), ...leaves });
+		const { node: exclusiveNode, slot: value } = slotOf(exclusive, 'input', 'value');
+		expect(armRequiredSlot(exclusiveNode as never, exclusiveNode.slots, value)).toBe(true);
+		const withEmptyArm = synthetic({ input: choice(field('value', sym('digits')), seq(choice(field('arguments', sym('word')), { type: 'BLANK' }))), ...leaves });
+		const { node, slot } = slotOf(withEmptyArm, 'input', 'value');
+		expect(slot.arms).toBeDefined();
+		expect(armRequiredSlot(node as never, node.slots, slot)).toBe(false);
+	});
+});
 
 describe('arms stamp', () => {
 	it('records which arm holds each slot and whether the arm requires it', () => {
