@@ -21,6 +21,7 @@ import {
 	currentHandle,
 	admitChildren,
 	checkDelimited,
+	hasSlot,
 	hoistedWith,
 	hoistRead,
 	listElementsHop,
@@ -2801,6 +2802,7 @@ export function buildCatchClause(config: Partial<T.CatchClause.Config> = {}): T.
 		body: () => hydrateStoredSlot(node, '_body'),
 		parameter: _catch_clause_group === undefined ? undefined : () => groupField(_catch_clause_group, 'parameter'),
 		type: _catch_clause_group === undefined ? undefined : () => groupField(_catch_clause_group, 'type'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -15560,6 +15562,7 @@ export function buildNumberFloatPoint(
 		marker: () => hydrateStoredSlot(node, '_marker'),
 		exponentSign: () => hydrateStoredSlot(node, '_exponent_sign'),
 		exponent: () => hydrateStoredSlot(node, '_exponent'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -15606,7 +15609,14 @@ function buildNumberFloatPoint$with(node: Held, setter: string, args: readonly u
 			);
 		case 'exponent':
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildNumberFloatPoint({ ...config, exponent: value }, options))
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildNumberFloatPoint(
+								{ ...config, exponentSign: undefined, exponent: undefined },
+								{ ...options, marker: undefined }
+							)
+						: buildNumberFloatPoint({ ...config, exponent: value }, options)
+				)
 			);
 	}
 	throw new Error(`number_float_point has no $with.${setter}`);
@@ -15698,6 +15708,7 @@ export function buildNumberFloatLeadingPoint(
 		marker: () => hydrateStoredSlot(node, '_marker'),
 		exponentSign: () => hydrateStoredSlot(node, '_exponent_sign'),
 		exponent: () => hydrateStoredSlot(node, '_exponent'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -15739,7 +15750,14 @@ function buildNumberFloatLeadingPoint$with(node: Held, setter: string, args: rea
 			);
 		case 'exponent':
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildNumberFloatLeadingPoint({ ...config, exponent: value }, options))
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildNumberFloatLeadingPoint(
+								{ ...config, exponentSign: undefined, exponent: undefined },
+								{ ...options, marker: undefined }
+							)
+						: buildNumberFloatLeadingPoint({ ...config, exponent: value }, options)
+				)
 			);
 	}
 	throw new Error(`number_float_leading_point has no $with.${setter}`);

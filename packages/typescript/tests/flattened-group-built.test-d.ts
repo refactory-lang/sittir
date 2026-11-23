@@ -1,7 +1,7 @@
 /**
  * Type-level pins: a node that seats an optional flattened group is the union
- * of a group-present and a group-absent shape, told apart by the seat's stored
- * property. The absent shape has no flattened getters, and its `$with` sets
+ * of a group-present and a group-absent shape, told apart by `$has` on the
+ * seat or on the group's required key. The absent shape has no flattened getters, and its `$with` sets
  * only the group's required field, which yields the present shape.
  *
  * Compile-time only: `pnpm --filter @sittir/typescript type-check`.
@@ -18,7 +18,7 @@ const engine = await createEngine(typescript);
 declare const typeAnnotation: T.TypeAnnotation.Parsed;
 
 export function presentGroupReadsEveryRequiredField(c: T.CatchClause.Bound): void {
-	if (c._catch_clause_group !== undefined) {
+	if (c.$has('catchClauseGroup')) {
 		expectTrue<Equals<undefined extends ReturnType<typeof c.parameter> ? true : false, false>>();
 		expectTrue<Equals<undefined extends ReturnType<typeof c.catchClauseGroup> ? true : false, false>>();
 		expectTrue<Equals<undefined extends ReturnType<typeof c.type> ? true : false, true>>();
@@ -33,7 +33,7 @@ export function presentGroupReadsEveryRequiredField(c: T.CatchClause.Bound): voi
 
 export function clearingTheGroupYieldsTheAbsentShape(c: T.CatchClause.Parsed): void {
 	const cleared = c.$with.catchClauseGroup();
-	expectTrue<Equals<typeof cleared._catch_clause_group, undefined>>();
+	expectTrue<Equals<ReturnType<typeof cleared.catchClauseGroup>, undefined>>();
 	// @ts-expect-error the cleared node has no flattened getters
 	cleared.parameter();
 	// @ts-expect-error the cleared node has no flattened getters
@@ -41,7 +41,7 @@ export function clearingTheGroupYieldsTheAbsentShape(c: T.CatchClause.Parsed): v
 }
 
 export function anAbsentGroupSetsOnlyItsRequiredField(c: T.CatchClause.Parsed): void {
-	if (c._catch_clause_group !== undefined) return;
+	if (c.$has('catchClauseGroup')) return;
 	// @ts-expect-error an absent group cannot take an optional field alone
 	c.$with.type(typeAnnotation);
 	const present = c.$with.parameter(engine.build.identifier('e'));
@@ -52,7 +52,7 @@ export function anAbsentGroupSetsOnlyItsRequiredField(c: T.CatchClause.Parsed): 
 
 export function aBuiltNodeNarrowsTheSameWay(): void {
 	const c = engine.build.catchClause({ body: engine.build.statementBlock({}), parameter: engine.build.identifier('e') });
-	if (c._catch_clause_group !== undefined) {
+	if (c.$has('parameter')) {
 		expectTrue<Equals<undefined extends ReturnType<typeof c.parameter> ? true : false, false>>();
 	}
 }
@@ -63,9 +63,17 @@ export function aFlattenedFieldIsAFunctionOnlyWhileTheGroupIsPresent(c: T.CatchC
 	if (c.parameter !== undefined) {
 		expectTrue<Equals<undefined extends ReturnType<typeof c.parameter> ? true : false, false>>();
 		expectTrue<Equals<undefined extends typeof c.type ? true : false, false>>();
-		expectTrue<Equals<undefined extends typeof c._catch_clause_group ? true : false, false>>();
 	} else {
 		expectTrue<Equals<typeof c.parameter, undefined>>();
 		expectTrue<Equals<typeof c.type, undefined>>();
 	}
+}
+
+export function theRequiredKeyNarrowsLikeTheSeat(c: T.CatchClause.Parsed): void {
+	if (c.$has('parameter')) {
+		expectTrue<Equals<undefined extends ReturnType<typeof c.catchClauseGroup> ? true : false, false>>();
+	} else {
+		expectTrue<Equals<ReturnType<typeof c.catchClauseGroup>, undefined>>();
+	}
+	expectTrue<Equals<ReturnType<typeof c.$has>, boolean>>();
 }

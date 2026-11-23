@@ -95,6 +95,11 @@ export const rawStringLiteral$flatten$rawStringLiteralEnd =
 		return _fwd<ReturnType<PF>>(parent, { ...rest, rawStringLiteralEnd: _c(child)(inner) }, options);
 	};
 
+export const attributeInput$branch =
+	<PF extends (...args: never[]) => unknown, R = ReturnType<PF>>(parent: PF) =>
+	(...args: readonly unknown[]): R =>
+		_s<R>(parent)(...args);
+
 export const attribute$input =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {

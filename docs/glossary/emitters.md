@@ -12328,8 +12328,17 @@ key, otherwise pass the rest through — the type is the parent's own input
 (the direct spelling with the built group under the seat key, and
 `undefined` where the parent's argument is optional), which names none of the
 group's flattened keys beside the seat (`WithoutGroup`), or `OmitEach<parent
-config, seat> & (group config | NoneOf<group keys>)`, so the flattened keys
-come together or not at all. The group's keys are read from its config type
+config, seat> & { seat?: never } & (group config | NoneOf<group keys>)`, so the
+flattened keys come together or not at all, and the seat and the keys exclude
+each other: a config gives the group whole under its seat, or its keys, or
+neither, in the strict and the loose input alike. Omitting the seat from the
+keyed arm is not enough: an object literal is checked for excess keys against the
+whole union, and the first arm names the seat, so a config with both would pass
+as the keyed arm with an unchecked extra key, and the keys would replace the
+seated group without a word. The input is one union in one parameter, never a
+set of overloads: `ArgsOf` and `Parameters` read only an overload's last
+signature, so an overload set would hide every arm but one from the types built
+on a factory's arguments. The group's keys are read from its config type
 without `$type`, and `WithoutGroup` lets a built node through as it is: a
 node is not a config, and its accessors share the group's key names. The type
 is written once, by `typeFor`, into the kind's rows; the method itself takes
@@ -15260,6 +15269,10 @@ A declaration of a name bound to a reference.
 
 The import lines for the sittir types the generated code uses.
 
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatedDeclarationOf`
+
+The printer of a kind's `$seated` table entry, for the strict or the loose surface: a `Seat` over the surface's row and the builder's return, carrying the numeric refusal the surface applies (`numericSeatRefusal`). Both `composeSeats` and `composeBranch` declare their entries through it, so every seated parent with a numeric slot refuses the literals its builder refuses, and one without prints the seat it always did.
+
 ### `packages/codegen/src/emitters/overlays/refines.ts::RefinedEntry`
 
 A refined entry: the node it refines and the members it adds.
@@ -15311,6 +15324,10 @@ Whether a number shape has every part it needs to read a number.
 ### `packages/codegen/src/emitters/interior.ts::numberShapes`
 
 The number shapes of a node map, by kind.
+
+### `packages/codegen/src/emitters/interior.ts::bareNumberShape`
+
+The number shape of the bare value a kind's loose entry takes as its whole text: the shape of its interior when the kind is a lexed leaf that takes a bare string, otherwise that of its sole numeric slot, `undefined` when it takes none. `numericInputRefusal` (the coercer's own refusal) and `numericSeatRefusal` (a seat's) both read it, so a bare number is judged one way wherever it is refused.
 
 ### `packages/codegen/src/emitters/overlays/portable/build.ts::PickDiagnosticCode`
 
@@ -15519,6 +15536,34 @@ The expression of the hop that reads a list kind's stored elements: `listElement
 ### `packages/codegen/src/emitters/factories.ts::storedHoistOf`
 
 The hops a holder's hoisted read takes over a stored (built) holder: one stored hop per wrapper up to the list-elements hop, and whether the read is a list. `undefined` for a slot with no chain.
+
+### `packages/codegen/src/emitters/factories.ts::CoOptionalBranch`
+
+The optional branch of a kind that has no group node to seat it, in the keys the config rows name: `keys` are the config keys the branch holds, `needed` the ones the branch needs to be present (a required slot of the branch that is not an option), and `options` the options the branch holds (the marker of a float's exponent).
+
+### `packages/codegen/src/emitters/factories.ts::coOptionalBranchOf`
+
+Reads a kind's `coOptional` stamps into its `CoOptionalBranch`, or `undefined` when no slot carries one. The stamps must name one branch and the branch must have a required config slot, since that slot is what tells it present from absent; a kind that fails either throws, rather than leave its row untyped. `fieldCarryingBuiltTypeSurface` wraps the kind's config rows in `CoOptionalRows` from it, and the polymorph overlay seats the kind's builder (`composeBranch`) from it, so the row and the table entry read one answer. A branch on a builder that spreads, forwards or leads with options throws too, since no row of those wraps.
+
+### `packages/codegen/src/emitters/factories.ts::coOptionalBranchOfNode`
+
+The optional branch of an assembled compound, read from the `coOptional` stamps on its own slots (`coOptionalBranchOf`), or `undefined` when no slot is stamped. The wrap emitter's `$with` setters, the builders' setters and the type emitter's branch hint all read the branch through it, so a setter that clears the branch's required slot, the node's present and absent shapes and the builder rows agree on one set of keys. A node whose stamps name more than one branch, or a branch with no required config slot, throws a shape failure at emit time.
+
+### `packages/codegen/src/emitters/factories.ts::hasShapes`
+
+Whether a kind's node has a present and an absent shape: it seats a flattened group (`groupSeatHints`) or has an optional branch (`coOptionalBranchOfNode`). The node-member emitters read it to put `$has` on exactly the nodes whose type declares it, so the type and the runtime answer from one predicate.
+
+### `packages/codegen/src/emitters/factories.ts::anyShapes`
+
+Whether any kind of the grammar has a present and an absent shape (`hasShapes`). The generated factories and wrap files import `hasSlot` only when it does, so a grammar with no such kind gains no unused import.
+
+### `packages/codegen/src/emitters/factories.ts::exclusiveArmsOf`
+
+The arms of a kind's one required choice of arms, read from its slots' arm stamps: the config keys of every arm, and per arm the keys it holds and the keys it requires. Arms with the same keys and required keys collapse to one. It answers undefined when no slot is stamped, and when the slots the arms do not all hold are flags (boolean storage), because arms that differ only in flags cannot be told apart by a config. It throws for slots stamped by two choices, and for an option slot an arm holds, rather than leave the row untyped. The builder's `BuildArgs` and `LooseArgs` wrap their rows in `ArmRows` over this fact.
+
+### `packages/codegen/src/emitters/factories.ts::exclusiveArmsOfNode`
+
+`exclusiveArmsOf` for a node's own slots; undefined for a node with no slots and for a list. The overlay emitter reads it to give a kind whose config is one config per arm a seated table entry, so the entry's row is the kind's `BuildArgs` or `LooseArgs`.
 
 ### `packages/codegen/src/emitters/node-members.ts::HoistSet`
 

@@ -433,6 +433,13 @@ their own copy (`site-addresses.ts`'s `PreferenceOrigin` is
 `Exclude<SeamOrigin, 'fallback' | 'word-default'>`, the subset `resolveLabels`
 itself ever produces).
 
+`coOptional` marks a member of an optional sequence that holds two or more
+slot-bearing members: `required` is whether the member was required inside the
+sequence before the optional was pushed onto it. `buildSeq` stamps it where the
+push happens, because the push replaces the member's own multiplicity and the
+fact cannot be read back afterwards. `collectSlots` carries it to the slot
+(`SlotCoOptional`).
+
 ```text
 /**
  * Declarative facts an author attached to a rule, carried through the phases

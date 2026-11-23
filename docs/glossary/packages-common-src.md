@@ -1538,6 +1538,10 @@ A hop of a hoisted read over a built holder: the wrapper's one slot, read as `st
 
 The element a list item builds. A config object of the element's group (`isGroupConfig` over `keys`) is built with `make`. In a list whose items are a wrapper (`wrapper`: its kind id and the key of its content), an item that is not a node of the wrapper kind is the wrapper's content, built into a wrapper with `make`; a wrapper node stays as it is. A list's factory and its `$with` setters all build their items through it, so a setter takes the bare content its item type admits as the factory does, in both storages.
 
+### `packages/common/src/utils.ts::hasSlot`
+
+The runtime of a node's `$has(name)`: whether the slot `name` holds a value, answered by calling the node's own getter and testing the result against `undefined`. It reads no stored property, so a node held as an object and a view over an arena chunk answer alike. The guard is exact only for a name the type declares as deciding the shape (a branch's required slot, a flattened group's seat or its one required key); for any other name it is a plain presence test. It is a node member, not data (`MEMBER_KEYS`), so a copy of a node's data never carries it.
+
 ### `packages/common/src/verify-structure.ts::checkHoisted`
 
 Checks the values given to a hoisted slot against the kinds its structure row names for that property, refusing a node of another kind with the strict factory's message.

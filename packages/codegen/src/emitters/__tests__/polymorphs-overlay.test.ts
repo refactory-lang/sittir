@@ -267,7 +267,7 @@ describe('a single hoisted group flattens onto its parent', () => {
 		const { buildArgs } = seatedRows({ nodeMap, generatedIdTables }, 'clause');
 		expect(buildArgs).toContain(`WithoutGroup<`);
 		expect(buildArgs).toContain(`, ${groupKeys}> | (OmitEach<NonNullable<`);
-		expect(buildArgs).toContain(`, '${seatKey}'> & (T.ClauseGroup.BuildArgs[0] | NoneOf<${groupKeys}>))`);
+		expect(buildArgs).toContain(`, '${seatKey}'> & { readonly ${seatKey}?: never } & (T.ClauseGroup.BuildArgs[0] | NoneOf<${groupKeys}>))`);
 		expect(wiring).toContain("const clause: Routes<Table>['clause'] = $at('clause$seated');");
 	});
 });

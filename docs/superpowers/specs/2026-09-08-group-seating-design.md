@@ -214,6 +214,12 @@ as well, so arms that differ only in flags take one config: typescript's
 `public_field_definition_plain` keeps `static`, `override`, `readonly` and `abstract`
 as independent booleans.
 
+A setter crosses arms (the user, 2026-11-23). On a node that holds one arm, setting a
+slot only another arm holds gives that arm and clears the slots only the old arm held,
+so `n.$with.arguments(x)` on rust's `#[a = 1]` gives `#[a(x)]`. A slot every arm holds
+keeps its value. Clearing a slot its arm requires is a type error unless the choice has
+an empty arm, as an empty config is.
+
 A mandatory single group is the degenerate case with one overload. Today's
 forwarded parent already accepts the group's Config that way
 (`buildMatchBlock(config: MatchBlockArms.Config)`), emitted by the base

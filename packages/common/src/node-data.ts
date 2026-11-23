@@ -261,7 +261,7 @@ export function isStorageKey(key: string): boolean {
 	return isSlotKey(key);
 }
 
-const MEMBER_KEYS: ReadonlySet<string> = new Set(['$with', '$trivia', '$engine', '$render']);
+const MEMBER_KEYS: ReadonlySet<string> = new Set(['$with', '$trivia', '$engine', '$render', '$has']);
 
 /**
  * Whether `key` carries node data across the boundary: a storage key, or a `$` metadata key that

@@ -20,8 +20,10 @@ import {
 	type LooseRefusal,
 	type RefusingParams
 } from '../shared.ts';
-import { looseRefusal } from '../interior.ts';
+import { looseRefusal, numericSeatRefusal } from '../interior.ts';
 import {
+	coOptionalBranchOfNode,
+	exclusiveArmsOfNode,
 	constructorTargetKind,
 	leadingOptionsSplit,
 	listHasOptions,
@@ -162,6 +164,7 @@ export interface PolymorphWireSet {
 	readonly elements?: readonly FlattenSeat[];
 	readonly tuples?: readonly FlattenSeat[];
 	readonly forwarded?: ForwardedSeats;
+	readonly branched?: true;
 }
 
 interface ForwardedSeats {
@@ -170,7 +173,7 @@ interface ForwardedSeats {
 }
 
 function seatCount(set: PolymorphWireSet): number {
-	return (set.flattens ?? []).length + (set.elements ?? []).length + (set.tuples ?? []).length + (set.forwarded?.elements ?? []).length;
+	return (set.flattens ?? []).length + (set.elements ?? []).length + (set.tuples ?? []).length + (set.forwarded?.elements ?? []).length + (set.branched === true ? 1 : 0);
 }
 
 export interface PolymorphWires {
@@ -234,6 +237,7 @@ export function collectPolymorphWires(nodeMap: NodeMap, options: { silent?: bool
 		const flattens = flattenSeatsOf(node, nodeMap).filter((seat) => isEmitted(seat.group.kind));
 		const elements = emittedElementsSeats(node, nodeMap, kindEntries);
 		const forwarded = forwardedSeatsOf(node);
+		const branched = coOptionalBranchOfNode(node) !== undefined || exclusiveArmsOfNode(node) !== undefined;
 		const claimed = new Set(subs.map((sub) => sub.slot));
 		const tuples = classifyFactoryShape(node, nodeMap) === 'forwarded' ? [] : tupleSeatOf(node, nodeMap).filter((e) => isEmitted(e.group.kind) && !claimed.has(e.slot));
 		visiting.add(node.kind);
@@ -241,7 +245,7 @@ export function collectPolymorphWires(nodeMap: NodeMap, options: { silent?: bool
 		if (forwarded !== undefined) visit(forwarded.list);
 		for (const alias of aliases) visit(alias.child);
 		visiting.delete(node.kind);
-		if (subs.length > 0 || aliases.length > 0 || flattens.length > 0 || elements.length > 0 || tuples.length > 0 || forwarded !== undefined) {
+		if (subs.length > 0 || aliases.length > 0 || flattens.length > 0 || elements.length > 0 || tuples.length > 0 || forwarded !== undefined || branched) {
 			order.push(node.kind);
 			byKind.set(node.kind, {
 				parentKey,
@@ -251,7 +255,8 @@ export function collectPolymorphWires(nodeMap: NodeMap, options: { silent?: bool
 				...(flattens.length > 0 ? { flattens } : {}),
 				...(elements.length > 0 ? { elements } : {}),
 				...(tuples.length > 0 ? { tuples } : {}),
-				...(forwarded === undefined ? {} : { forwarded })
+				...(forwarded === undefined ? {} : { forwarded }),
+				...(branched ? { branched: true as const } : {})
 			});
 		}
 		seen.add(node.kind);
@@ -411,10 +416,47 @@ function composeSeats(
 		});
 	}
 	const name = seatedKeyOf(wireSet.parentKey);
-	const seated = (argsType: string, returnType: string, expr: string): string =>
-		seatDeclaration(nodeMap, wireSet.node.kind, name, functionTypeOf(refusingParam('args', argsType, { rest: true, loose: looseRefusal(nodeMap) }), returnType), expr);
-	out.seated.strict.push(seated(`T.${wireSet.node.typeName}.BuildArgs`, `ReturnType<${p.strict.type}>`, strictExpr));
-	out.seated.loose.push(seated(`T.${wireSet.node.typeName}.LooseArgs`, `ReturnType<${p.coerce.type}>`, coerceExpr));
+	const seated = seatedDeclarationOf(wireSet.node, name, nodeMap);
+	out.seated.strict.push(seated('strict', `T.${wireSet.node.typeName}.BuildArgs`, `ReturnType<${p.strict.type}>`, strictExpr));
+	out.seated.loose.push(seated('loose', `T.${wireSet.node.typeName}.LooseArgs`, `ReturnType<${p.coerce.type}>`, coerceExpr));
+	const ref = tableRef(name);
+	return { refs: { strict: ref, coerce: ref }, callable: ref };
+}
+
+function seatedDeclarationOf(
+	node: AssembledNode,
+	name: string,
+	nodeMap: NodeMap
+): (surface: 'strict' | 'loose', argsType: string, returnType: string, expr: string) => string {
+	const branch = coOptionalBranchOfNode(node);
+	return (surface, argsType, returnType, expr) =>
+		seatDeclaration(
+			nodeMap,
+			node.kind,
+			name,
+			functionTypeOf(refusingParam('args', argsType, { rest: true, loose: looseRefusal(nodeMap), numeric: numericSeatRefusal(node, nodeMap, surface), ...(branch === undefined ? {} : { branch: branch.needed.map((name) => JSON.stringify(name)).join(' | ') }) }), returnType),
+			expr
+		);
+}
+
+function composeBranch(wireSet: PolymorphWireSet, wires: PolymorphWires, nodeMap: NodeMap, out: ChunkOut): SeatedParent {
+	const p = seatParentRefs(wireSet.node, wires.coerceEmitted);
+	if (p.coerce === undefined) {
+		throw emitShapeFailure({
+			code: 'seated-builder-without-loose-form',
+			ownerKind: wireSet.node.kind,
+			message: `${wireSet.node.kind}: its branched builder has no loose form, so the default engine's table has no builder for it`
+		});
+	}
+	const name = seatedKeyOf(wireSet.parentKey);
+	const m = methodName(wireSet.parentKey, 'branch');
+	out.combinators.push(
+		`export const ${m} = <PF extends (...args: never[]) => unknown, R = ReturnType<PF>>(parent: PF) =>`,
+		'	(...args: readonly unknown[]): R => _s<R>(parent)(...args);'
+	);
+	const branched = seatedDeclarationOf(wireSet.node, name, nodeMap);
+	out.seated.strict.push(branched('strict', `T.${wireSet.node.typeName}.BuildArgs`, `ReturnType<${p.strict.type}>`, `K.${m}(${p.strict.value})`));
+	out.seated.loose.push(branched('loose', `T.${wireSet.node.typeName}.LooseArgs`, `ReturnType<${p.coerce.type}>`, `K.${m}(${p.coerce.value})`));
 	const ref = tableRef(name);
 	return { refs: { strict: ref, coerce: ref }, callable: ref };
 }
@@ -760,7 +802,7 @@ function flattenShape(
 		: 'key';
 	const flattened = (p: string, c: string, config: string): string => {
 		const groupKeys = `OmitEach<NonNullable<${groupConfig(config)}>, '$type'>`;
-		return `WithoutGroup<${p}, ${groupKeys}> | (OmitEach<NonNullable<${p}>, '${k}'> & (${groupConfig(`${c}[0]`)} | NoneOf<${groupKeys}>))`;
+		return `WithoutGroup<${p}, ${groupKeys}> | (OmitEach<NonNullable<${p}>, '${k}'> & { readonly ${k}?: never } & (${groupConfig(`${c}[0]`)} | NoneOf<${groupKeys}>))`;
 	};
 	const buildGroup = directKey === undefined ? `${CALL_C}(inner)` : `${CALL_C}(inner[${JSON.stringify(directKey)}])`;
 	return {
@@ -806,7 +848,7 @@ function alwaysFlattenShape(k: string, keys: readonly FlattenKey[], m: string, d
 		typeFor: (p, c, config, surface) =>
 			keys.length === 0
 				? `OmitEach<NonNullable<${p}>, '${k}'>`
-				: `OmitEach<NonNullable<${p}>, '${k}'> & ${groupOf(directKey !== undefined && surface === 'loose' ? `NonNullable<${config}>['${directKey}']` : `${c}[0]`)}`
+				: `OmitEach<NonNullable<${p}>, '${k}'> & { readonly ${k}?: never } & ${groupOf(directKey !== undefined && surface === 'loose' ? `NonNullable<${config}>['${directKey}']` : `${c}[0]`)}`
 	};
 }
 
@@ -1032,7 +1074,7 @@ function referencedDecls(decls: readonly Decl[], roots: readonly string[]): Decl
 	return decls.filter((decl) => kept.has(decl.name));
 }
 
-const SITTIR_TYPES = ['ArgsOf', 'ConfigSeat', 'ElementsOf', 'EmptyForm', 'NoneOf', 'OmitEach', 'OmitLeadingOption', 'OptionalConfigSeat', 'OptionsArg', 'RefuseUndeclared', 'RenameKeys', 'Seat', 'WithoutGroup'];
+const SITTIR_TYPES = ['ArgsOf', 'ArmRows', 'CoOptionalRows', 'ConfigSeat', 'ElementsOf', 'EmptyForm', 'NoneOf', 'OmitEach', 'OmitLeadingOption', 'OptionalConfigSeat', 'OptionsArg', 'RefuseUndeclared', 'RenameKeys', 'Seat', 'WithoutGroup'];
 
 export function sittirTypesImport(body: readonly string[]): string[] {
 	const text = body.join('\n');
@@ -1088,7 +1130,10 @@ export function emitPolymorphsOverlay(config: {
 		const uses = new Set<string>();
 		const out: ChunkOut = { combinators: [], decls: [], seated: { loose: [], strict: [] } };
 		const seats = seatsOf(wireSet, wires);
-		const seated = composeSeats(seats, wireSet, wires, nodeMap, out);
+		if (wireSet.branched === true && seats.length > 0) {
+			throw new Error(`[polymorphs] kind '${wireSet.node.kind}': an optional branch beside a seat is not typed`);
+		}
+		const seated = wireSet.branched === true ? composeBranch(wireSet, wires, nodeMap, out) : composeSeats(seats, wireSet, wires, nodeMap, out);
 		if (seated !== undefined) for (const seat of seats) if (seat.child.set !== undefined) uses.add(seat.child.set);
 		const armEntries = new Map<string, ArmEntry>();
 		const flat: { readonly name: string; readonly ref: Ref }[] = [];
