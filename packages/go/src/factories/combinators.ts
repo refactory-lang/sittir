@@ -210,6 +210,10 @@ export const fieldDeclarationList$flatten$fieldDeclarationListGroup =
 			? _fwd<ReturnType<PF>>(parent, config, options)
 			: _fwd<ReturnType<PF>>(parent, _c(child)(config), options);
 
+export const fieldDeclaration$branch =
+	<PF extends (...args: never[]) => unknown, R = ReturnType<PF>>(parent: PF) =>
+	(...args: readonly unknown[]): R =>
+		_s<R>(parent)(...args);
 export const fieldDeclaration$arm =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -484,6 +488,11 @@ export const specialArgumentList$flatten$specialArgumentListGroup =
 		config === undefined || _built(config)
 			? _fwd<ReturnType<PF>>(parent, config, options)
 			: _fwd<ReturnType<PF>>(parent, _c(child)(config), options);
+
+export const sliceExpression$branch =
+	<PF extends (...args: never[]) => unknown, R = ReturnType<PF>>(parent: PF) =>
+	(...args: readonly unknown[]): R =>
+		_s<R>(parent)(...args);
 
 export const typeInstantiationExpression$types = <
 	PF extends (config: never) => unknown,

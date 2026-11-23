@@ -21,6 +21,7 @@ import {
 	currentHandle,
 	admitChildren,
 	checkDelimited,
+	hasSlot,
 	hoistedWith,
 	hoistRead,
 	listElementsHop,
@@ -2795,6 +2796,7 @@ export function buildCatchClause(config: Partial<T.CatchClause.Config> = {}): T.
 		body: () => hydrateStoredSlot(node, '_body'),
 		parameter: _catch_clause_group === undefined ? undefined : () => groupField(_catch_clause_group, 'parameter'),
 		type: _catch_clause_group === undefined ? undefined : () => groupField(_catch_clause_group, 'type'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -5835,20 +5837,42 @@ function buildBinaryExpression$with(node: Held, setter: string, args: readonly u
 	const config = node[INPUT] as T.BinaryExpression.Config;
 	switch (setter) {
 		case 'left':
-			return applySetter(args, (value?: Admit<NonNullable<T.BinaryExpression.Config>['left']>) =>
-				rebuilt(node, handle, () => buildBinaryExpression({ ...config, left: value }))
+			return applySetter(args, (value: Admit<NonNullable<T.BinaryExpression.Config>['left']>) =>
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildBinaryExpression({ ...config, left: value })
+						: buildBinaryExpression({ ...config, binaryExpressionIn: undefined, left: value })
+				)
 			);
 		case 'operator':
-			return applySetter(args, (value?: Admit<NonNullable<T.BinaryExpression.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildBinaryExpression({ ...config, operator: value }))
+			return applySetter(args, (value: Admit<NonNullable<T.BinaryExpression.Config>['operator']>) =>
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildBinaryExpression({ ...config, operator: value })
+						: buildBinaryExpression({ ...config, binaryExpressionIn: undefined, operator: value })
+				)
 			);
 		case 'right':
-			return applySetter(args, (value?: Admit<NonNullable<T.BinaryExpression.Config>['right']>) =>
-				rebuilt(node, handle, () => buildBinaryExpression({ ...config, right: value }))
+			return applySetter(args, (value: Admit<NonNullable<T.BinaryExpression.Config>['right']>) =>
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildBinaryExpression({ ...config, right: value })
+						: buildBinaryExpression({ ...config, binaryExpressionIn: undefined, right: value })
+				)
 			);
 		case 'binaryExpressionIn':
-			return applySetter(args, (value?: Admit<T.BinaryExpressionIn>) =>
-				rebuilt(node, handle, () => buildBinaryExpression({ ...config, binaryExpressionIn: value }))
+			return applySetter(args, (value: Admit<T.BinaryExpressionIn>) =>
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildBinaryExpression({ ...config, binaryExpressionIn: value })
+						: buildBinaryExpression({
+								...config,
+								left: undefined,
+								operator: undefined,
+								right: undefined,
+								binaryExpressionIn: value
+							})
+				)
 			);
 	}
 	throw new Error(`binary_expression has no $with.${setter}`);
@@ -15481,6 +15505,7 @@ export function buildNumberFloatPoint(
 		marker: () => hydrateStoredSlot(node, '_marker'),
 		exponentSign: () => hydrateStoredSlot(node, '_exponent_sign'),
 		exponent: () => hydrateStoredSlot(node, '_exponent'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -15527,7 +15552,14 @@ function buildNumberFloatPoint$with(node: Held, setter: string, args: readonly u
 			);
 		case 'exponent':
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildNumberFloatPoint({ ...config, exponent: value }, options))
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildNumberFloatPoint(
+								{ ...config, exponentSign: undefined, exponent: undefined },
+								{ ...options, marker: undefined }
+							)
+						: buildNumberFloatPoint({ ...config, exponent: value }, options)
+				)
 			);
 	}
 	throw new Error(`number_float_point has no $with.${setter}`);
@@ -15619,6 +15651,7 @@ export function buildNumberFloatLeadingPoint(
 		marker: () => hydrateStoredSlot(node, '_marker'),
 		exponentSign: () => hydrateStoredSlot(node, '_exponent_sign'),
 		exponent: () => hydrateStoredSlot(node, '_exponent'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -15660,7 +15693,14 @@ function buildNumberFloatLeadingPoint$with(node: Held, setter: string, args: rea
 			);
 		case 'exponent':
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildNumberFloatLeadingPoint({ ...config, exponent: value }, options))
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildNumberFloatLeadingPoint(
+								{ ...config, exponentSign: undefined, exponent: undefined },
+								{ ...options, marker: undefined }
+							)
+						: buildNumberFloatLeadingPoint({ ...config, exponent: value }, options)
+				)
 			);
 	}
 	throw new Error(`number_float_leading_point has no $with.${setter}`);

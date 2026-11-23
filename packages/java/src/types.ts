@@ -13,6 +13,7 @@ import type {
 	KindEnum,
 	NodeOfNamespaces,
 	OmitEach,
+	ArmRows,
 	GrammarTypeMap,
 	NodeMethods,
 	HoldsTrivia,
@@ -2308,11 +2309,16 @@ export interface CastExpression {
 	readonly __slotHints__?: {
 		readonly types: SlotHint<
 			Extract<NonNullable<NonNullable<T.CastExpression.Config>['types']>, readonly unknown[]>[number][],
-			true,
+			false,
 			true
 		>;
-		readonly value: SlotHint<NonNullable<T.CastExpression.Config>['value'], true>;
-		readonly castExpressionArm: SlotHint<T.CastExpressionArm, true>;
+		readonly value: SlotHint<NonNullable<NonNullable<T.CastExpression.Config>['value']>>;
+		readonly castExpressionArm: SlotHint<NonNullable<T.CastExpressionArm>>;
+		readonly $clears: {
+			readonly types: 'castExpressionArm';
+			readonly value: 'castExpressionArm';
+			readonly castExpressionArm: 'types' | 'value';
+		};
 	};
 	readonly types: () => readonly Type[];
 	readonly value: () => PrimaryExpression | LambdaExpression | undefined;
@@ -6589,7 +6595,7 @@ export interface ObjectCreationExpressionArm {
 	readonly __slotHints__?: {
 		readonly primaryExpression: SlotHint<NonNullable<T.ObjectCreationExpressionArm.Config>['primaryExpression']>;
 		readonly annotations: SlotHint<(T.MarkerAnnotation | T.Annotation)[], true, true>;
-		readonly typeArguments: SlotHint<T.TypeArguments, true>;
+		readonly typeArguments: SlotHint<NonNullable<T.TypeArguments>>;
 		readonly type: SlotHint<NonNullable<T.ObjectCreationExpressionArm.Config>['type']>;
 		readonly arguments: SlotHint<NonNullable<T.ObjectCreationExpressionArm.Config>['arguments']>;
 		readonly classBody: SlotHint<T.ClassBody, true>;
@@ -13107,8 +13113,16 @@ export namespace CastExpression {
 	}
 	export type Loose = LooseFor<TSKindId.CastExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CastExpression>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.CastExpression>>];
-	export type LooseArgs = [config?: T.CastExpression.Loose];
+	export type BuildArgs = ArmRows<
+		[config?: Partial<ConfigOf<T.CastExpression>>],
+		'types' | 'value' | 'castExpressionArm',
+		[['castExpressionArm', 'castExpressionArm'], ['types' | 'value', 'types' | 'value']]
+	>;
+	export type LooseArgs = ArmRows<
+		[config?: T.CastExpression.Loose],
+		'types' | 'value' | 'castExpressionArm',
+		[['castExpressionArm', 'castExpressionArm'], ['types' | 'value', 'types' | 'value']]
+	>;
 	export type Kind = TSKindId.CastExpression;
 }
 export namespace AssignmentExpression {
@@ -13449,8 +13463,16 @@ export namespace UnqualifiedObjectCreationExpression {
 	}
 	export type Loose = LooseFor<TSKindId.UnqualifiedObjectCreationExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UnqualifiedObjectCreationExpression>;
-	export type BuildArgs = [config: ConfigOf<T.UnqualifiedObjectCreationExpression>];
-	export type LooseArgs = [config: T.UnqualifiedObjectCreationExpression.Loose];
+	export type BuildArgs = ArmRows<
+		[config: ConfigOf<T.UnqualifiedObjectCreationExpression>],
+		'annotations' | 'typeArguments',
+		[['annotations' | 'typeArguments', 'typeArguments'], ['annotations', never]]
+	>;
+	export type LooseArgs = ArmRows<
+		[config: T.UnqualifiedObjectCreationExpression.Loose],
+		'annotations' | 'typeArguments',
+		[['annotations' | 'typeArguments', 'typeArguments'], ['annotations', never]]
+	>;
 	export type Kind = TSKindId.UnqualifiedObjectCreationExpression;
 }
 export namespace FieldAccess {
@@ -17082,8 +17104,22 @@ export namespace ObjectCreationExpressionArm {
 	}
 	export type Loose = LooseFor<TSKindId.ObjectCreationExpressionArm>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ObjectCreationExpressionArm>;
-	export type BuildArgs = [config: ConfigOf<T.ObjectCreationExpressionArm>];
-	export type LooseArgs = [config: T.ObjectCreationExpressionArm.Loose];
+	export type BuildArgs = ArmRows<
+		[config: ConfigOf<T.ObjectCreationExpressionArm>],
+		'annotations' | 'typeArguments' | 'type' | 'arguments' | 'classBody',
+		[
+			['annotations' | 'typeArguments' | 'type' | 'arguments' | 'classBody', 'typeArguments' | 'type' | 'arguments'],
+			['annotations' | 'type' | 'arguments', 'type' | 'arguments']
+		]
+	>;
+	export type LooseArgs = ArmRows<
+		[config: T.ObjectCreationExpressionArm.Loose],
+		'annotations' | 'typeArguments' | 'type' | 'arguments' | 'classBody',
+		[
+			['annotations' | 'typeArguments' | 'type' | 'arguments' | 'classBody', 'typeArguments' | 'type' | 'arguments'],
+			['annotations' | 'type' | 'arguments', 'type' | 'arguments']
+		]
+	>;
 	export type Kind = TSKindId.ObjectCreationExpressionArm;
 }
 export namespace MethodInvocationArm {

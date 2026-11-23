@@ -153,6 +153,8 @@ export interface Routes<Table extends AnyTable> {
 		};
 	};
 	readonly classPattern: Table['classPattern$seated'];
+	readonly floatPoint: Table['floatPoint$seated'];
+	readonly floatLeadingPoint: Table['floatLeadingPoint$seated'];
 	readonly slice: Table['slice$seated'];
 	readonly compoundStatement: {
 		readonly if: Table['buildIfStatement'];
@@ -211,9 +213,9 @@ export interface Routes<Table extends AnyTable> {
 		readonly simple: typeof F.buildEscapeSequenceSimple;
 		readonly named: typeof F.buildEscapeSequenceNamed;
 	};
-	readonly float: Table['buildFloatPoint'] & {
-		readonly point: Table['buildFloatPoint'];
-		readonly leadingPoint: Table['buildFloatLeadingPoint'];
+	readonly float: Routes<Table>['floatPoint'] & {
+		readonly point: Routes<Table>['floatPoint'];
+		readonly leadingPoint: Routes<Table>['floatLeadingPoint'];
 		readonly scientific: Table['buildFloatScientific'];
 	};
 	readonly lineContinuation: typeof F.buildLineContinuationNewline & {
@@ -440,23 +442,24 @@ export interface Routes<Table extends AnyTable> {
 		options?: OptionsArg<Table['buildKeywordPattern']>
 	) => ReturnType<Table['buildKeywordPattern']>;
 	readonly keywordPattern$point: <
-		const V extends OmitEach<ArgsOf<Table['buildKeywordPattern']>[0], 'pattern'> & ArgsOf<Table['buildFloatPoint']>[0]
+		const V extends OmitEach<ArgsOf<Table['buildKeywordPattern']>[0], 'pattern'> &
+			ArgsOf<Routes<Table>['floatPoint']>[0]
 	>(
 		config: V &
 			RefuseUndeclared<
 				V,
-				OmitEach<ArgsOf<Table['buildKeywordPattern']>[0], 'pattern'> & ArgsOf<Table['buildFloatPoint']>[0]
+				OmitEach<ArgsOf<Table['buildKeywordPattern']>[0], 'pattern'> & ArgsOf<Routes<Table>['floatPoint']>[0]
 			>,
 		options?: OptionsArg<Table['buildKeywordPattern']>
 	) => ReturnType<Table['buildKeywordPattern']>;
 	readonly keywordPattern$leadingPoint: <
 		const V extends OmitEach<ArgsOf<Table['buildKeywordPattern']>[0], 'pattern'> &
-			ArgsOf<Table['buildFloatLeadingPoint']>[0]
+			ArgsOf<Routes<Table>['floatLeadingPoint']>[0]
 	>(
 		config: V &
 			RefuseUndeclared<
 				V,
-				OmitEach<ArgsOf<Table['buildKeywordPattern']>[0], 'pattern'> & ArgsOf<Table['buildFloatLeadingPoint']>[0]
+				OmitEach<ArgsOf<Table['buildKeywordPattern']>[0], 'pattern'> & ArgsOf<Routes<Table>['floatLeadingPoint']>[0]
 			>,
 		options?: OptionsArg<Table['buildKeywordPattern']>
 	) => ReturnType<Table['buildKeywordPattern']>;
@@ -755,9 +758,9 @@ export interface Routes<Table extends AnyTable> {
 		ArgsOf<Routes<Table>['integerDecimal']>,
 		ReturnType<typeof F.buildSimplePattern>
 	>;
-	readonly simplePattern$point: Seat<ArgsOf<Table['buildFloatPoint']>, ReturnType<typeof F.buildSimplePattern>>;
+	readonly simplePattern$point: Seat<ArgsOf<Routes<Table>['floatPoint']>, ReturnType<typeof F.buildSimplePattern>>;
 	readonly simplePattern$leadingPoint: Seat<
-		ArgsOf<Table['buildFloatLeadingPoint']>,
+		ArgsOf<Routes<Table>['floatLeadingPoint']>,
 		ReturnType<typeof F.buildSimplePattern>
 	>;
 	readonly simplePattern$scientific: Seat<
@@ -1461,23 +1464,23 @@ export interface Routes<Table extends AnyTable> {
 		options?: OptionsArg<Table['buildKeyValuePattern']>
 	) => ReturnType<Table['buildKeyValuePattern']>;
 	readonly keyValuePattern$point: <
-		const V extends OmitEach<ArgsOf<Table['buildKeyValuePattern']>[0], 'key'> & ArgsOf<Table['buildFloatPoint']>[0]
+		const V extends OmitEach<ArgsOf<Table['buildKeyValuePattern']>[0], 'key'> & ArgsOf<Routes<Table>['floatPoint']>[0]
 	>(
 		config: V &
 			RefuseUndeclared<
 				V,
-				OmitEach<ArgsOf<Table['buildKeyValuePattern']>[0], 'key'> & ArgsOf<Table['buildFloatPoint']>[0]
+				OmitEach<ArgsOf<Table['buildKeyValuePattern']>[0], 'key'> & ArgsOf<Routes<Table>['floatPoint']>[0]
 			>,
 		options?: OptionsArg<Table['buildKeyValuePattern']>
 	) => ReturnType<Table['buildKeyValuePattern']>;
 	readonly keyValuePattern$leadingPoint: <
 		const V extends OmitEach<ArgsOf<Table['buildKeyValuePattern']>[0], 'key'> &
-			ArgsOf<Table['buildFloatLeadingPoint']>[0]
+			ArgsOf<Routes<Table>['floatLeadingPoint']>[0]
 	>(
 		config: V &
 			RefuseUndeclared<
 				V,
-				OmitEach<ArgsOf<Table['buildKeyValuePattern']>[0], 'key'> & ArgsOf<Table['buildFloatLeadingPoint']>[0]
+				OmitEach<ArgsOf<Table['buildKeyValuePattern']>[0], 'key'> & ArgsOf<Routes<Table>['floatLeadingPoint']>[0]
 			>,
 		options?: OptionsArg<Table['buildKeyValuePattern']>
 	) => ReturnType<Table['buildKeyValuePattern']>;
@@ -3564,8 +3567,8 @@ export interface Ir<Table extends AnyTable> {
 	readonly integerBinaryPlain: Table['buildIntegerBinaryPlain'];
 	readonly integerLegacyOctalLong: Table['buildIntegerLegacyOctalLong'];
 	readonly integerDecimalLong: Table['buildIntegerDecimalLong'];
-	readonly floatPoint: Table['buildFloatPoint'];
-	readonly floatLeadingPoint: Table['buildFloatLeadingPoint'];
+	readonly floatPoint: Routes<Table>['floatPoint'];
+	readonly floatLeadingPoint: Routes<Table>['floatLeadingPoint'];
 	readonly floatScientific: Table['buildFloatScientific'];
 	readonly splatPatternList: Table['buildSplatPatternList'];
 	readonly splatPatternDictionary: Table['buildSplatPatternDictionary'];
@@ -3742,6 +3745,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		} as const)
 	);
 	const classPattern: Routes<Table>['classPattern'] = $at('classPattern$seated');
+	const floatPoint: Routes<Table>['floatPoint'] = $at('floatPoint$seated');
+	const floatLeadingPoint: Routes<Table>['floatLeadingPoint'] = $at('floatLeadingPoint$seated');
 	const slice: Routes<Table>['slice'] = $at('slice$seated');
 	const compoundStatement: Routes<Table>['compoundStatement'] = Object.freeze({
 		if: $at('buildIfStatement'),
@@ -3807,9 +3812,9 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		} as const)
 	);
 	const float: Routes<Table>['float'] = Object.freeze(
-		Object.assign(delegate($at('buildFloatPoint')), {
-			point: $at('buildFloatPoint'),
-			leadingPoint: $at('buildFloatLeadingPoint'),
+		Object.assign(delegate(floatPoint), {
+			point: floatPoint,
+			leadingPoint: floatLeadingPoint,
 			scientific: $at('buildFloatScientific')
 		} as const)
 	);
@@ -3919,11 +3924,11 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	);
 	const keywordPattern$point: Routes<Table>['keywordPattern$point'] = K.keywordPattern$point(
 		$at('buildKeywordPattern'),
-		$at('buildFloatPoint')
+		floatPoint
 	);
 	const keywordPattern$leadingPoint: Routes<Table>['keywordPattern$leadingPoint'] = K.keywordPattern$leadingPoint(
 		$at('buildKeywordPattern'),
-		$at('buildFloatLeadingPoint')
+		floatLeadingPoint
 	);
 	const keywordPattern$scientific: Routes<Table>['keywordPattern$scientific'] = K.keywordPattern$scientific(
 		$at('buildKeywordPattern'),
@@ -4095,11 +4100,11 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	);
 	const simplePattern$point: Routes<Table>['simplePattern$point'] = K.simplePattern$point(
 		F.buildSimplePattern,
-		$at('buildFloatPoint')
+		floatPoint
 	);
 	const simplePattern$leadingPoint: Routes<Table>['simplePattern$leadingPoint'] = K.simplePattern$leadingPoint(
 		F.buildSimplePattern,
-		$at('buildFloatLeadingPoint')
+		floatLeadingPoint
 	);
 	const simplePattern$scientific: Routes<Table>['simplePattern$scientific'] = K.simplePattern$scientific(
 		F.buildSimplePattern,
@@ -4541,11 +4546,11 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	);
 	const keyValuePattern$point: Routes<Table>['keyValuePattern$point'] = K.keyValuePattern$point(
 		$at('buildKeyValuePattern'),
-		$at('buildFloatPoint')
+		floatPoint
 	);
 	const keyValuePattern$leadingPoint: Routes<Table>['keyValuePattern$leadingPoint'] = K.keyValuePattern$leadingPoint(
 		$at('buildKeyValuePattern'),
-		$at('buildFloatLeadingPoint')
+		floatLeadingPoint
 	);
 	const keyValuePattern$scientific: Routes<Table>['keyValuePattern$scientific'] = K.keyValuePattern$scientific(
 		$at('buildKeyValuePattern'),
@@ -6129,8 +6134,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		integerBinaryPlain: $at('buildIntegerBinaryPlain'),
 		integerLegacyOctalLong: $at('buildIntegerLegacyOctalLong'),
 		integerDecimalLong: $at('buildIntegerDecimalLong'),
-		floatPoint: $at('buildFloatPoint'),
-		floatLeadingPoint: $at('buildFloatLeadingPoint'),
+		floatPoint: floatPoint,
+		floatLeadingPoint: floatLeadingPoint,
 		floatScientific: $at('buildFloatScientific'),
 		splatPatternList: $at('buildSplatPatternList'),
 		splatPatternDictionary: $at('buildSplatPatternDictionary'),

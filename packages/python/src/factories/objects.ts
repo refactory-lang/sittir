@@ -17,6 +17,7 @@ import type { Held, Received } from '@sittir/common/utils';
 import {
 	currentHandle,
 	admitChildren,
+	hasSlot,
 	hoistedWith,
 	hoistRead,
 	listElementsHop,
@@ -6200,6 +6201,7 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Bound 
 		stop: () => hydrateStoredSlot(node, '_stop'),
 		step: () => hydrateStoredSlot(node, '_step'),
 		expression: _step === undefined ? undefined : () => groupField(_step, 'expression'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -8213,6 +8215,7 @@ export function buildString(config: Partial<T.String.Config> = {}, options?: T.S
 		contents: () => hydrateStoredSlots(node, '_content'),
 		stringEnd: () => hydrateStoredSlot(node, '_string_end'),
 		prefix: _string_start === undefined ? undefined : () => groupField(_string_start, 'prefix'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -12035,6 +12038,7 @@ export function buildFloatPoint(
 		exponentSign: () => hydrateStoredSlot(node, '_exponent_sign'),
 		exponent: () => hydrateStoredSlot(node, '_exponent'),
 		imaginary: () => hydrateStoredSlot(node, '_imaginary'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -12082,7 +12086,14 @@ function buildFloatPoint$with(node: Held, setter: string, args: readonly unknown
 			);
 		case 'exponent':
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildFloatPoint({ ...config, exponent: value }, options))
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildFloatPoint(
+								{ ...config, exponentSign: undefined, exponent: undefined },
+								{ ...options, marker: undefined }
+							)
+						: buildFloatPoint({ ...config, exponent: value }, options)
+				)
 			);
 		case 'imaginary':
 			return applySetter(args, (value?: Admit<string>) =>
@@ -12210,6 +12221,7 @@ export function buildFloatLeadingPoint(
 		exponentSign: () => hydrateStoredSlot(node, '_exponent_sign'),
 		exponent: () => hydrateStoredSlot(node, '_exponent'),
 		imaginary: () => hydrateStoredSlot(node, '_imaginary'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -12257,7 +12269,14 @@ function buildFloatLeadingPoint$with(node: Held, setter: string, args: readonly 
 			);
 		case 'exponent':
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, exponent: value }, options))
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildFloatLeadingPoint(
+								{ ...config, exponentSign: undefined, exponent: undefined },
+								{ ...options, marker: undefined }
+							)
+						: buildFloatLeadingPoint({ ...config, exponent: value }, options)
+				)
 			);
 		case 'imaginary':
 			return applySetter(args, (value?: Admit<string>) =>

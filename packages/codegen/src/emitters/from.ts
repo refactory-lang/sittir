@@ -4,7 +4,7 @@ import type { AuthoredCompound, FullForm } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { builtFromText } from './built-from-text.ts';
 import { hasOptionalElements, isBuilderTextLeaf } from '../compiler/model/node-map.ts';
-import { bareInteriorText, interiorSlotGuards, kindNumberShape, numberInputTest, numberInputType, numberTextArgs, looseRefusal, numericInputRefusal, numericLeafFacts, numericLeafShape, numericSlotShape, type NumberShape } from './interior.ts';
+import { bareInteriorText, bareNumberShape, interiorSlotGuards, kindNumberShape, numberInputTest, numberInputType, numberTextArgs, looseRefusal, numericInputRefusal, numericLeafFacts, numericLeafShape, numericSlotShape, type NumberShape } from './interior.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
 	collectKindEntries,
@@ -446,7 +446,7 @@ function emitBranchFrom(
 	const spelledTypeWith = (options: string): string | undefined =>
 		fullForm === undefined || spelled.length === 0 ? undefined : spelledReturnType(returnType, fullForm, spelled, options);
 	const spelledType = spelledTypeWith('O');
-	const bareShape = bareInteriorText(node.kind, node)?.number ?? (soleField === undefined ? undefined : numericSlotShape(soleField));
+	const bareShape = bareNumberShape(node, nodeMap);
 	const numericRefusal = numericInputRefusal(node, bareShape);
 	const loose = looseRefusal(nodeMap);
 	const refused = (...parts: readonly (string | undefined)[]): string => ['I', ...parts.filter((part) => part !== undefined)].join(' & ');

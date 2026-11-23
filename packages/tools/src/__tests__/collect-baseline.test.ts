@@ -82,13 +82,11 @@ describe('collect-baseline', () => {
 		delete process.env.SITTIR_BACKEND;
 	});
 
-	it('determinism — two runs produce byte-identical serialised output', async () => {
+	it('determinism — a fresh in-process run is byte-identical to the CLI subprocess run', async () => {
 		// Imported here, after the module reset, so the run and the grammar modules it loads share one module graph.
 		const fresh = await import('../scripts/collect-baseline.ts');
-		const a = await fresh.collectBaseline();
-		const b = await fresh.collectBaseline();
-		const sa = fresh.serialiseBaseline(a);
-		const sb = fresh.serialiseBaseline(b);
+		const sa = cli.stdout;
+		const sb = fresh.serialiseBaseline(await fresh.collectBaseline());
 		// Surface mismatches as a small diff for pinpoint diagnosis.
 		if (sa !== sb) {
 			const aLines = sa.split('\n');
@@ -97,7 +95,7 @@ describe('collect-baseline', () => {
 			const diffs: string[] = [];
 			for (let i = 0; i < max && diffs.length < 5; i++) {
 				if (aLines[i] !== bLines[i]) {
-					diffs.push(`line ${i + 1}:\n  a: ${aLines[i]}\n  b: ${bLines[i]}`);
+					diffs.push(`line ${i + 1}:\n  cli: ${aLines[i]}\n  run: ${bLines[i]}`);
 				}
 			}
 			throw new Error(`serialised output differs across runs\n${diffs.join('\n')}`);

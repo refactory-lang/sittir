@@ -3425,68 +3425,16 @@ function buildFieldDeclaration$patch(
 }
 function buildFieldDeclaration$set(
 	source: object,
-	...[slot, input]:
-		| ['names', Partial<T.FieldDeclaration.Config>]
-		| ['type', Partial<T.FieldDeclaration.Config>]
-		| ['fieldDeclarationArm', Partial<T.FieldDeclaration.Config>]
-		| ['tag', Partial<T.FieldDeclaration.Config>]
+	...[slot, input]: ['tag', Partial<T.FieldDeclaration.Config>]
 ): T.FieldDeclaration.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
-			case 'names':
-			case 'type':
-			case 'fieldDeclarationArm':
 			case 'tag':
 				return buildFieldDeclaration$patch(source, { ...(inputs.config as T.FieldDeclaration.Config), ...input });
 		}
 	}
 	switch (slot) {
-		case 'names': {
-			const config = input;
-			const _name = admitAliasContent<NonNullable<T.FieldDeclaration['_name']>>(
-				listStorage<NonNullable<T.FieldDeclaration['_name']>>(config.names ?? []),
-				[[[1], (v: unknown) => buildFieldIdentifier(v as never)]]
-			);
-			return setSlot(
-				source,
-				TSKindId.FieldDeclaration as const,
-				'field_declaration',
-				0,
-				'names',
-				_name
-			) as unknown as T.FieldDeclaration.Bound;
-		}
-		case 'type': {
-			const config = input;
-			const _type = admitAliasContent<NonNullable<T.FieldDeclaration['_type']>>(config.type, [
-				[[1], (v: unknown) => buildTypeIdentifier(v as never)]
-			]);
-			return setSlot(
-				source,
-				TSKindId.FieldDeclaration as const,
-				'field_declaration',
-				1,
-				'type',
-				_type
-			) as unknown as T.FieldDeclaration.Bound;
-		}
-		case 'fieldDeclarationArm': {
-			const config = input;
-			const _field_declaration_arm = wrapHoisted(
-				config.fieldDeclarationArm,
-				(v: never) => buildFieldDeclarationArm(v),
-				TSKindId.FieldDeclarationArm
-			);
-			return setSlot(
-				source,
-				TSKindId.FieldDeclaration as const,
-				'field_declaration',
-				2,
-				'fieldDeclarationArm',
-				_field_declaration_arm
-			) as unknown as T.FieldDeclaration.Bound;
-		}
 		case 'tag': {
 			const config = input;
 			const _tag = config.tag;
@@ -3504,15 +3452,35 @@ function buildFieldDeclaration$set(
 function withFieldDeclaration(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'names':
+		case 'names': {
+			const inputs = builtInputs(node);
+			const config = inputs.config as T.FieldDeclaration.Config;
 			return applySetter(args, (...values: Admit<(T.FieldIdentifier | T.FieldIdentifier.Types)[]>) =>
-				rebuilt(node, handle, () => buildFieldDeclaration$set(node, 'names', { names: restItems('names', values) }))
+				rebuilt(node, handle, () =>
+					restItems('names', values) === undefined
+						? buildFieldDeclaration$patch(node, { ...config, names: restItems('names', values) })
+						: buildFieldDeclaration$patch(node, {
+								...config,
+								fieldDeclarationArm: undefined,
+								names: restItems('names', values)
+							})
+				)
 			);
-		case 'type':
-			return applySetter(args, (value?: Admit<T.Type | T.TypeIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildFieldDeclaration$set(node, 'type', { type: value }))
+		}
+		case 'type': {
+			const inputs = builtInputs(node);
+			const config = inputs.config as T.FieldDeclaration.Config;
+			return applySetter(args, (value: Admit<T.Type | T.TypeIdentifier.Types>) =>
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildFieldDeclaration$patch(node, { ...config, type: value })
+						: buildFieldDeclaration$patch(node, { ...config, fieldDeclarationArm: undefined, type: value })
+				)
 			);
-		case 'fieldDeclarationArm':
+		}
+		case 'fieldDeclarationArm': {
+			const inputs = builtInputs(node);
+			const config = inputs.config as T.FieldDeclaration.Config;
 			return hoistedWith(
 				node,
 				'fieldDeclarationArm',
@@ -3523,9 +3491,16 @@ function withFieldDeclaration(node: object, setter: string, args: readonly unkno
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<NonNullable<T.FieldDeclaration.Config>['fieldDeclarationArm']>) =>
+					applySetter(args, (value: Admit<NonNullable<T.FieldDeclaration.Config>['fieldDeclarationArm']>) =>
 						rebuilt(node, handle, () =>
-							buildFieldDeclaration$set(node, 'fieldDeclarationArm', { fieldDeclarationArm: value })
+							value === undefined
+								? buildFieldDeclaration$patch(node, { ...config, fieldDeclarationArm: value })
+								: buildFieldDeclaration$patch(node, {
+										...config,
+										names: undefined,
+										type: undefined,
+										fieldDeclarationArm: value
+									})
 						)
 					),
 				undefined,
@@ -3533,6 +3508,7 @@ function withFieldDeclaration(node: object, setter: string, args: readonly unkno
 					args.map((v) => wrapHoisted(v, (v: never) => buildFieldDeclarationArm(v), TSKindId.FieldDeclarationArm)),
 				TSKindId.FieldDeclarationArm
 			);
+		}
 		case 'tag':
 			return applySetter(args, (value?: Admit<T.RawStringLiteral | T.InterpretedStringLiteral>) =>
 				rebuilt(node, handle, () => buildFieldDeclaration$set(node, 'tag', { tag: value }))

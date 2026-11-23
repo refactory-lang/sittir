@@ -70,13 +70,14 @@ export interface Routes<Table extends AnyTable> {
 		readonly constBlock: Routes<Table>['expressionStatement$constBlock'];
 	};
 	readonly rawStringLiteral: Table['rawStringLiteral$seated'];
+	readonly attributeInput: Table['attributeInput$seated'];
 	readonly attribute$input: <
-		const V extends OmitEach<ArgsOf<Table['buildAttribute']>[0], 'input'> & ArgsOf<Table['buildAttributeInput']>[0]
+		const V extends OmitEach<ArgsOf<Table['buildAttribute']>[0], 'input'> & ArgsOf<Routes<Table>['attributeInput']>[0]
 	>(
 		config: V &
 			RefuseUndeclared<
 				V,
-				OmitEach<ArgsOf<Table['buildAttribute']>[0], 'input'> & ArgsOf<Table['buildAttributeInput']>[0]
+				OmitEach<ArgsOf<Table['buildAttribute']>[0], 'input'> & ArgsOf<Routes<Table>['attributeInput']>[0]
 			>,
 		options?: OptionsArg<Table['buildAttribute']>
 	) => ReturnType<Table['buildAttribute']>;
@@ -1211,10 +1212,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		} as const)
 	);
 	const rawStringLiteral: Routes<Table>['rawStringLiteral'] = $at('rawStringLiteral$seated');
-	const attribute$input: Routes<Table>['attribute$input'] = K.attribute$input(
-		$at('buildAttribute'),
-		$at('buildAttributeInput')
-	);
+	const attributeInput: Routes<Table>['attributeInput'] = $at('attributeInput$seated');
+	const attribute$input: Routes<Table>['attribute$input'] = K.attribute$input($at('buildAttribute'), attributeInput);
 	const attribute: Routes<Table>['attribute'] = Object.freeze(
 		Object.assign(delegate($at('buildAttribute')), { input: attribute$input } as const)
 	);

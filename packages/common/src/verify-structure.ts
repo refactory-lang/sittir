@@ -1,4 +1,8 @@
 import type { KindMembership, StructureRow, StructureTable } from '@sittir/types';
+
+export interface NamedMembership extends KindMembership {
+	readonly nameOf?: (kind: number) => string | undefined;
+}
 import { rejectBareText } from './runtime.ts';
 import { Source } from './source.ts';
 import { isNodeValue } from './utils.ts';
@@ -6,11 +10,11 @@ import { isCoordinate } from './read.ts';
 import { sourceOf } from './source-stamp.ts';
 import { isBuiltNode } from './built-arena.ts';
 
-export function verifyStructure(value: unknown, table: StructureTable, membership: KindMembership, seen: WeakSet<object>): void {
+export function verifyStructure(value: unknown, table: StructureTable, membership: NamedMembership, seen: WeakSet<object>): void {
 	if (typeof value === 'object' && value !== null && !seen.has(value) && !isBuiltNode(value)) verifyNode(value as Record<string, unknown>, table, membership, seen);
 }
 
-function verifyNode(node: Record<string, unknown>, table: StructureTable, membership: KindMembership, seen: WeakSet<object>): void {
+function verifyNode(node: Record<string, unknown>, table: StructureTable, membership: NamedMembership, seen: WeakSet<object>): void {
 	const row = typeof node.$type === 'number' ? table[node.$type] : undefined;
 	if (row !== undefined) checkRow(node, row, membership);
 	for (const [key, child] of Object.entries(node)) {
@@ -19,7 +23,7 @@ function verifyNode(node: Record<string, unknown>, table: StructureTable, member
 	seen.add(node);
 }
 
-function verifyBuilt(value: unknown, table: StructureTable, membership: KindMembership, seen: WeakSet<object>): void {
+function verifyBuilt(value: unknown, table: StructureTable, membership: NamedMembership, seen: WeakSet<object>): void {
 	if (Array.isArray(value)) {
 		for (const item of value) verifyBuilt(item, table, membership, seen);
 		return;
@@ -29,7 +33,7 @@ function verifyBuilt(value: unknown, table: StructureTable, membership: KindMemb
 	if (sourceOf(node) === Source.Factory) verifyNode(node, table, membership, seen);
 }
 
-export function checkHoisted(row: StructureRow, property: string, values: readonly unknown[], membership: KindMembership): void {
+export function checkHoisted(row: StructureRow, property: string, values: readonly unknown[], membership: NamedMembership): void {
 	const entry = row.hoisted?.find(([name]) => name === property);
 	if (entry === undefined) return;
 	const [, label, expected, kinds] = entry;
@@ -72,7 +76,7 @@ function listInput(args: readonly unknown[], slot: string, arrival: 'key' | numb
 	return isConfigInput(only) && slot in only ? (Array.isArray(only[slot]) ? (only[slot] as readonly unknown[]) : [only[slot]]) : rest;
 }
 
-export function checkRow(node: Readonly<Record<string, unknown>>, row: StructureRow, membership: KindMembership): void {
+export function checkRow(node: Readonly<Record<string, unknown>>, row: StructureRow, membership: NamedMembership): void {
 	for (const [storage, slot] of row.required ?? []) {
 		if (node[storage] === undefined || node[storage] === null) throw new Error(`Missing required slot '${slot}' on ${row.kind}`);
 	}
@@ -99,7 +103,7 @@ export function checkRow(node: Readonly<Record<string, unknown>>, row: Structure
 	}
 }
 
-function checkFinal(items: unknown, label: string, rest: readonly number[], last: readonly number[], membership: KindMembership): void {
+function checkFinal(items: unknown, label: string, rest: readonly number[], last: readonly number[], membership: NamedMembership): void {
 	if (!Array.isArray(items) || items.length === 0) throw new Error(`${label}: ends with a node of kind ${last.join(' / ')}, and holds none`);
 	items.forEach((item, i) => {
 		const type = (item as { $type?: unknown } | null)?.$type;
@@ -139,7 +143,7 @@ function describeValue(value: unknown): string {
 	return `a ${typeof value}`;
 }
 
-function rejectForeignKind(value: unknown, label: string, expected: string, kinds: readonly number[], membership: KindMembership): void {
+function rejectForeignKind(value: unknown, label: string, expected: string, kinds: readonly number[], membership: NamedMembership): void {
 	if (Array.isArray(value)) {
 		for (const item of value) rejectForeignKind(item, label, expected, kinds, membership);
 		return;
@@ -147,6 +151,7 @@ function rejectForeignKind(value: unknown, label: string, expected: string, kind
 	if (typeof value !== 'object' || value === null || isCoordinate(value)) return;
 	const type = (value as { $type?: unknown }).$type;
 	if (typeof type === 'number' && !kinds.some((kind) => membership.isMember(kind, type))) {
-		throw new Error(`${label}: a strict factory takes ${expected}, not a node of kind ${type}`);
+		const named = (kind: number): string => membership.nameOf?.(kind) ?? String(kind);
+		throw new Error(`${label}: a strict factory takes ${expected}, not a node of kind ${type}${membership.nameOf === undefined ? '' : ` (${named(type)})`}; the slot admits ${kinds.map(named).join(' / ')}`);
 	}
 }

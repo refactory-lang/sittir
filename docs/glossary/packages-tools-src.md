@@ -449,3 +449,135 @@ The count of read-render-parse matches that needed spelling normalization.
 ### `packages/tools/src/probe/stages.ts::run`
 
 `sittir tool probe-stages`: one kind's rule as each compiler phase leaves it (evaluate, link, normalize, simplify), the assembled node, its interface and its template, as JSON. The template is emitted without join facts (`NO_JOINS`), so a fixed token's own seams are absent from it while generation emits them: Java's `method_declaration` ends in `choice(field('body', block), ';')`, whose `;` arm is plain text here and `[seam semi_before, ";"]` in generation, and the two take different paths through `emitChoice`. A template fix seen here is confirmed by generating the grammar.
+
+### `packages/tools/src/scripts/record-test-run.ts::VitestJsonAssertionResult`
+
+One assertion in a vitest JSON report's `assertionResults`. `fullName` is the assertion's full title; `failureMessages` holds the messages of a failed assertion, first message first.
+
+### `packages/tools/src/scripts/record-test-run.ts::VitestJsonTestResult`
+
+One test file in a vitest JSON report's `testResults`. `message` is the file-level message, the reason a file with no assertion results failed (a collection or load failure).
+
+### `packages/tools/src/scripts/test-failures.ts::TestFailuresOptions`
+
+Options for `run`: the report path (default `.vitest-report.json` in the working directory), whether to print JSON, and how many examples each group shows.
+
+### `packages/tools/src/scripts/test-failures.ts::FailureGroup`
+
+One group of failures that share a signature: the number of failures, the count per package (the `packages/<name>/` segment of the test file, or `(root)`), and up to the requested number of examples as `<repo-relative file> > <full name>`, or the file alone for a file-level failure.
+
+### `packages/tools/src/scripts/test-failures.ts::FailureSummary`
+
+The grouped result: total failures, the groups in order, and the split between failed assertions and failed files (suite errors, or files with no failing assertion). `failures` equals `failedTests + failedFiles`.
+
+### `packages/tools/src/scripts/test-failures.ts::summarizeFailures`
+
+Groups the failures of a parsed vitest JSON report. A failure is one failed assertion, or one failed test file that has a suite error (a non-empty file message, such as a failing `afterAll`) or no failing assertion. A file with a failed test and a suite error contributes both. Its signature is the headline of its first failure message, with ANSI escapes removed, file paths replaced by `<path>` (a comma-separated list of them collapsed to one `<path>`), each digit run replaced by `#`, and the text from the first ` on <Type>._<slot>` defect location onward dropped. The headline is the first non-empty line, except that an `Error: Command failed:` wrapper yields its first later line that starts with an error name. Nothing else is normalized, so a kind name in the message survives into the signature. Groups are sorted by count descending, then by signature. Throws when the failed assertion count differs from the report's `numFailedTests`, so a report that does not add up is never summarized silently. Throws when the report says `success: false` and names no failure, so a failed run never prints zero failures.
+
+### `packages/tools/src/scripts/test-failures.ts::formatFailureSummary`
+
+Renders a summary as plain text: each group's count and signature, its per-package counts, and its examples, followed by the totals line.
+
+### `packages/tools/src/scripts/test-failures.ts::run`
+
+Reads the vitest JSON report, summarizes it, and prints the text or JSON form. With `against`, compares it with an older report instead and prints the comparison. Returns 0 when the report was read and grouped or compared, even when it holds failures. Returns 1, printing the reason to stderr, when a report cannot be read, is not a vitest report, or its failure count does not match `numFailedTests`.
+
+### `packages/tools/src/scripts/test-failures.ts::FailureComparison`
+
+The result of comparing two reports' failures by key: the failure counts of the current and the older report, the keys failing now but not in the older report (`new`), the keys failing in the older report but not now (`fixed`), and the count failing in both (`unchanged`).
+
+### `packages/tools/src/scripts/test-failures.ts::compareFailures`
+
+Compares the failures of a current report with an older one. A failure's key is `<checkout-relative file> | <full name>`, or, for a failed file with a suite error or no failing assertion, `<file> | (file) <first line of its message>`. Throws when a key occurs twice in one report, since a repeated key would make the comparison ambiguous. Throws when `new + unchanged` differs from the current report's failure count, or `fixed + unchanged` from the older report's, so a comparison that does not reconcile is never returned. A test absent from the older report counts as new, including one that was renamed.
+
+### `packages/tools/src/scripts/vitest-report.ts::readVitestReport`
+
+Reads one vitest JSON report from a path and checks that it is one: `testResults`, `numTotalTests` and `numFailedTests` must be present. Throws, naming the path, when it is not, so a file that is not a report is never read as one.
+
+### `packages/tools/src/scripts/vitest-report.ts::checkoutRelativeNames`
+
+Keys every file a report names by its path inside the checkout the report ran in, as a map from the file's name in the report to its key with `/` separators. The checkout is found from the files that still exist: each one's nearest ancestor with a `.git` entry, which must agree across them. Throws when none of the files exists, when existing files lie in more than one checkout, when a live file is in no checkout, or when any named file (deleted ones included) falls outside that checkout. So a deleted file keeps its key, and a removed worktree, even one nested in the main checkout, is refused rather than named after its parent.
+
+### `packages/tools/src/scripts/test-durations.ts::TestDurationsOptions`
+
+Options for `run`: the report path (default `.vitest-report.json` in the working directory), whether to print JSON, and how many of the slowest tests to show.
+
+### `packages/tools/src/scripts/test-durations.ts::FileDuration`
+
+One test file's row: its checkout-relative path, its duration in milliseconds (the report's end time minus its start time, which is the time the file held a worker), and the number of assertions it ran.
+
+### `packages/tools/src/scripts/test-durations.ts::SlowTest`
+
+One test's duration: its checkout-relative file, a ` > `, and its full name, with the duration the reporter recorded for it in milliseconds. Tests the reporter gave no duration (skipped ones) are not listed.
+
+### `packages/tools/src/scripts/test-durations.ts::DurationSummary`
+
+The duration result: the per-file rows, longest first, the worker time (the sum of the per-file durations), and the slowest tests, longest first.
+
+### `packages/tools/src/scripts/test-durations.ts::summarizeDurations`
+
+Builds the duration summary of a parsed vitest JSON report. A file's duration is its end time minus its start time; a file without both times, or one that ends before it starts, throws, so a report whose timing is missing is never summarized with a silent zero. Throws when the sum of the printed rows differs from the sum over the report's files, so worker time always equals the per-file durations it is printed beside. Keeps the `slowest` longest tests, ties broken by name.
+
+### `packages/tools/src/scripts/test-durations.ts::run`
+
+Reads the vitest JSON report and prints its per-file durations, the slowest tests and the worker-seconds, as text or JSON. Returns 0 when the report was summarized. Returns 1, printing the reason to stderr, when the report cannot be read, is not a vitest report, or lacks the timing a duration needs.
+
+### `packages/tools/src/scripts/grammar-rule.ts::GrammarRuleOptions`
+
+Options for `run`: the grammar whose `.sittir/src/grammar.json` is read, and the rule name to print.
+
+### `packages/tools/src/scripts/grammar-rule.ts::GrammarJsonRule`
+
+One rule node of a tree-sitter grammar.json: its `type` and the fields that type carries (`name` for a symbol or field, `value` for a string, pattern, alias or precedence, `named` for an alias, `content` for a wrapper, `members` for a sequence or choice).
+
+### `packages/tools/src/scripts/grammar-rule.ts::formatRule`
+
+Prints one grammar.json rule in compact form: `seq(...)`, `choice(...)`, `opt(x)` for a choice of one rule and a blank, `repeat`, `repeat1`, `field(name, x)`, `alias(x, name)` for a named alias or `alias(x, "text")` otherwise, `token`, `immediate_token`, `prec(n, x)` with `prec.left`, `prec.right` and `prec.dynamic` for the variants, symbols by name, strings quoted and patterns between slashes. Throws on a rule type it does not know, so a grammar that gains a new rule type is refused rather than printed wrongly.
+
+### `packages/tools/src/scripts/grammar-rule.ts::grammarRule`
+
+Reads the grammar.json at a path and returns the named rule in compact form. Throws, naming the kind and the path, when the grammar has no rule of that name.
+
+### `packages/tools/src/scripts/grammar-rule.ts::run`
+
+Prints one rule of `packages/<grammar>/.sittir/src/grammar.json` in compact form. Returns 0 when the rule was printed. Returns 1, printing the reason to stderr, when the grammar.json cannot be read, has no rule of that name, or holds a rule type the printer does not know.
+
+### `packages/tools/src/scripts/type-errors.ts::TypeErrorsOptions`
+
+Options for `run`: the type-check log to read, and whether to print JSON.
+
+### `packages/tools/src/scripts/type-errors.ts::PackageTypeErrors`
+
+One package's distinct errors, each counted in the package that holds its file, and the number of projects that reported them.
+
+### `packages/tools/src/scripts/type-errors.ts::TypeErrorSummary`
+
+The type errors of a type-check log: the error records, the distinct errors (each counted once), the repeats (records beyond the first for each distinct error), and the packages in order of their distinct-error counts, most first.
+
+### `packages/tools/src/scripts/type-errors.ts::summarizeTypeErrors`
+
+Counts the distinct type errors of a type-check log per package that holds their file. A project's record is resolved against the `packages/<name> type-check:` prefix that reported it, so a file shared by several projects (each re-checking it through a relative import) gives one key: its path, line, column and code. The total is the number of `error TS` records, counted by a regex independent of the parser. Refuses a log whose records do not all parse, whose distinct per-package counts disagree with the distinct keys, or whose distinct errors plus repeats do not add up to the records. Each package row also says how many projects reported its errors.
+
+### `packages/tools/src/scripts/type-errors.ts::run`
+
+Reads a type-check log and prints its per-package error counts and total, as text or JSON. Returns 0 when the log was counted. Returns 1, printing the reason to stderr, when the log cannot be read or is not fully read.
+
+### `packages/tools/src/scripts/cargo-test-tally.ts::CargoTestTallyOptions`
+
+Options for `run`: the cargo test log to read, the storage label the run used (printed with the totals, not inferred from the log), and whether to print JSON.
+
+### `packages/tools/src/scripts/cargo-test-tally.ts::CargoTestBinaryTally`
+
+One test binary's totals: the name from its `Running` or `Doc-tests` line, and the passed, failed and ignored counts from its `test result:` line.
+
+### `packages/tools/src/scripts/cargo-test-tally.ts::CargoTestTally`
+
+The tally of one cargo test run for one storage: the storage label, the passed, failed and ignored totals across its binaries, whether the per-test lines checked those totals (`perTestChecked`), and each binary's own totals.
+
+### `packages/tools/src/scripts/cargo-test-tally.ts::summarizeCargoTests`
+
+Tallies a cargo test log. Each binary's totals come from its `test result:` line, and the crate name from the `Running` or `Doc-tests` line before it. When the log has per-test lines (`test ... ok`, `FAILED`, `ignored`, with or without a reason), their counts must equal the summed passed, failed and ignored, and the result has `perTestChecked` set. Throws when they disagree. A log with no per-test lines (a filtered or compacted run) is tallied from its result lines alone, with `perTestChecked` false, so the output says the per-test check was not run. Throws when the log has no result line at all.
+
+### `packages/tools/src/scripts/cargo-test-tally.ts::run`
+
+Tallies the cargo test log and prints the per-binary and total passed, failed and ignored counts, labelled with the storage, as text or JSON. Returns 0 when the log was tallied. Returns 1, printing the reason to stderr, when the log cannot be read, has no result line, or its totals do not match its per-test lines.

@@ -973,84 +973,57 @@ function buildCastExpression$patch(
 		return node as unknown as T.CastExpression.Bound;
 	});
 }
-function buildCastExpression$set(
-	source: object,
-	...[slot, input]:
-		| ['types', Partial<T.CastExpression.Config>]
-		| ['value', Partial<T.CastExpression.Config>]
-		| ['castExpressionArm', Partial<T.CastExpression.Config>]
-): T.CastExpression.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		switch (slot) {
-			case 'types':
-			case 'value':
-			case 'castExpressionArm':
-				return buildCastExpression$patch(source, { ...(inputs.config as T.CastExpression.Config), ...input });
-		}
-	}
-	switch (slot) {
-		case 'types': {
-			const config = input;
-			const _type = admitAliasContent<NonNullable<T.CastExpression['_type']>>(
-				listStorage<NonNullable<T.CastExpression['_type']>>(config.types ?? [], kindIdStorage),
-				[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
-			);
-			return setSlot(
-				source,
-				TSKindId.CastExpression as const,
-				'cast_expression',
-				0,
-				'types',
-				_type
-			) as unknown as T.CastExpression.Bound;
-		}
-		case 'value': {
-			const config = input;
-			const _value = kindIdStorage<NonNullable<T.CastExpression['_value']>>(config.value);
-			return setSlot(
-				source,
-				TSKindId.CastExpression as const,
-				'cast_expression',
-				1,
-				'value',
-				_value
-			) as unknown as T.CastExpression.Bound;
-		}
-		case 'castExpressionArm': {
-			const config = input;
-			const _cast_expression_arm = config.castExpressionArm;
-			return setSlot(
-				source,
-				TSKindId.CastExpression as const,
-				'cast_expression',
-				2,
-				'castExpressionArm',
-				_cast_expression_arm
-			) as unknown as T.CastExpression.Bound;
-		}
-	}
-}
 function withCastExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'types':
+		case 'types': {
+			const inputs = builtInputs(node);
+			const config = inputs.config as T.CastExpression.Config;
 			return applySetter(
 				args,
 				(
 					...values: Admit<
 						Extract<NonNullable<NonNullable<T.CastExpression.Config>['types']>, readonly unknown[]>[number][]
 					>
-				) => rebuilt(node, handle, () => buildCastExpression$set(node, 'types', { types: restItems('types', values) }))
+				) =>
+					rebuilt(node, handle, () =>
+						restItems('types', values) === undefined
+							? buildCastExpression$patch(node, { ...config, types: restItems('types', values) })
+							: buildCastExpression$patch(node, {
+									...config,
+									castExpressionArm: undefined,
+									types: restItems('types', values)
+								})
+					)
 			);
-		case 'value':
-			return applySetter(args, (value?: Admit<NonNullable<T.CastExpression.Config>['value']>) =>
-				rebuilt(node, handle, () => buildCastExpression$set(node, 'value', { value: value }))
+		}
+		case 'value': {
+			const inputs = builtInputs(node);
+			const config = inputs.config as T.CastExpression.Config;
+			return applySetter(args, (value: Admit<NonNullable<T.CastExpression.Config>['value']>) =>
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildCastExpression$patch(node, { ...config, value: value })
+						: buildCastExpression$patch(node, { ...config, castExpressionArm: undefined, value: value })
+				)
 			);
-		case 'castExpressionArm':
-			return applySetter(args, (value?: Admit<T.CastExpressionArm>) =>
-				rebuilt(node, handle, () => buildCastExpression$set(node, 'castExpressionArm', { castExpressionArm: value }))
+		}
+		case 'castExpressionArm': {
+			const inputs = builtInputs(node);
+			const config = inputs.config as T.CastExpression.Config;
+			return applySetter(args, (value: Admit<T.CastExpressionArm>) =>
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildCastExpression$patch(node, { ...config, castExpressionArm: value })
+						: buildCastExpression$patch(node, {
+								...config,
+								types: undefined,
+								value: undefined,
+								castExpressionArm: value
+							})
+				)
 			);
+		}
 	}
 	throw new Error(`cast_expression has no $with.${setter}`);
 }
@@ -16975,7 +16948,7 @@ function withObjectCreationExpressionArm(node: object, setter: string, args: rea
 				)
 			);
 		case 'typeArguments':
-			return applySetter(args, (value?: Admit<T.TypeArguments>) =>
+			return applySetter(args, (value: Admit<T.TypeArguments>) =>
 				rebuilt(node, handle, () =>
 					buildObjectCreationExpressionArm$set(node, 'typeArguments', { typeArguments: value })
 				)

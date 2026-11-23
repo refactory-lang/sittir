@@ -692,7 +692,11 @@ function wrapCastExpression$with(node: Held, setter: string, args: readonly unkn
 			return applySetter(args, (...v: NonNullable<T.CastExpression['_type']>[number][]) =>
 				rebuilt(node, handle, () =>
 					wrapCastExpression(
-						{ ...$edited(data), _type: admitSlot(handle, 'cast_expression', 'types', restItems('types', v)) },
+						{
+							...$edited(data),
+							_cast_expression_arm: undefined,
+							_type: admitSlot(handle, 'cast_expression', 'types', restItems('types', v))
+						},
 						tree
 					)
 				)
@@ -700,16 +704,38 @@ function wrapCastExpression$with(node: Held, setter: string, args: readonly unkn
 		case 'value':
 			return applySetter(args, (v: NonNullable<T.CastExpression['_value']>) =>
 				rebuilt(node, handle, () =>
-					wrapCastExpression({ ...$edited(data), _value: admitSlot(handle, 'cast_expression', 'value', v) }, tree)
+					v === undefined
+						? wrapCastExpression({ ...$edited(data), _value: admitSlot(handle, 'cast_expression', 'value', v) }, tree)
+						: wrapCastExpression(
+								{
+									...$edited(data),
+									_cast_expression_arm: undefined,
+									_value: admitSlot(handle, 'cast_expression', 'value', v)
+								},
+								tree
+							)
 				)
 			);
 		case 'castExpressionArm':
 			return applySetter(args, (v: NonNullable<T.CastExpression['_cast_expression_arm']>) =>
 				rebuilt(node, handle, () =>
-					wrapCastExpression(
-						{ ...$edited(data), _cast_expression_arm: admitSlot(handle, 'cast_expression', 'castExpressionArm', v) },
-						tree
-					)
+					v === undefined
+						? wrapCastExpression(
+								{
+									...$edited(data),
+									_cast_expression_arm: admitSlot(handle, 'cast_expression', 'castExpressionArm', v)
+								},
+								tree
+							)
+						: wrapCastExpression(
+								{
+									...$edited(data),
+									_type: undefined,
+									_value: undefined,
+									_cast_expression_arm: admitSlot(handle, 'cast_expression', 'castExpressionArm', v)
+								},
+								tree
+							)
 				)
 			);
 	}

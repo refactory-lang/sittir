@@ -53,8 +53,11 @@ export interface Routes<Table extends AnyTable> {
 		readonly arm4: Routes<Table>['multilineStringLiteralArm1$arm4'];
 		readonly arm5: Routes<Table>['multilineStringLiteralArm1$arm5'];
 	};
-	readonly castExpression$arm: Seat<ArgsOf<Table['buildCastExpressionArm']>, ReturnType<Table['buildCastExpression']>>;
-	readonly castExpression: Table['buildCastExpression'] & { readonly arm: Routes<Table>['castExpression$arm'] };
+	readonly castExpression$arm: Seat<
+		ArgsOf<Table['buildCastExpressionArm']>,
+		ReturnType<Table['castExpression$seated']>
+	>;
+	readonly castExpression: Table['castExpression$seated'] & { readonly arm: Routes<Table>['castExpression$arm'] };
 	readonly instanceofExpression$arm: <
 		const V extends OmitEach<ArgsOf<Table['buildInstanceofExpression']>[0], 'content'> &
 			ArgsOf<Table['buildInstanceofExpressionArm']>[0]
@@ -100,12 +103,14 @@ export interface Routes<Table extends AnyTable> {
 		readonly arm1: Routes<Table>['arrayCreationExpression$arm1'];
 		readonly arm2: Routes<Table>['arrayCreationExpression$arm2'];
 	};
+	readonly unqualifiedObjectCreationExpression: Table['unqualifiedObjectCreationExpression$seated'];
+	readonly objectCreationExpressionArm: Table['objectCreationExpressionArm$seated'];
 	readonly objectCreationExpression$unqualifiedObjectCreationExpression: Seat<
-		ArgsOf<Table['buildUnqualifiedObjectCreationExpression']>,
+		ArgsOf<Routes<Table>['unqualifiedObjectCreationExpression']>,
 		ReturnType<typeof F.buildObjectCreationExpression>
 	>;
 	readonly objectCreationExpression$arm: Seat<
-		ArgsOf<Table['buildObjectCreationExpressionArm']>,
+		ArgsOf<Routes<Table>['objectCreationExpressionArm']>,
 		ReturnType<typeof F.buildObjectCreationExpression>
 	>;
 	readonly objectCreationExpression: Table['buildObjectCreationExpression'] & {
@@ -938,7 +943,10 @@ export interface Routes<Table extends AnyTable> {
 		ArgsOf<Table['buildUnaryExpression']>,
 		ReturnType<typeof F.buildAssertStatement>
 	>;
-	readonly assertStatement$cast: Seat<ArgsOf<Table['buildCastExpression']>, ReturnType<typeof F.buildAssertStatement>>;
+	readonly assertStatement$cast: Seat<
+		ArgsOf<Routes<Table>['castExpression']>,
+		ReturnType<typeof F.buildAssertStatement>
+	>;
 	readonly assertStatement$switch: Seat<
 		ArgsOf<Table['buildSwitchExpression']>,
 		ReturnType<typeof F.buildAssertStatement>
@@ -1064,7 +1072,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly parenthesizedExpression: Table['buildParenthesizedExpression'];
 	readonly classLiteral: Table['buildClassLiteral'];
 	readonly objectCreationExpression: Routes<Table>['objectCreationExpression'];
-	readonly unqualifiedObjectCreationExpression: Table['buildUnqualifiedObjectCreationExpression'];
+	readonly unqualifiedObjectCreationExpression: Routes<Table>['unqualifiedObjectCreationExpression'];
 	readonly fieldAccess: Table['buildFieldAccess'];
 	readonly templateExpression: Table['buildTemplateExpression'];
 	readonly arrayAccess: Table['buildArrayAccess'];
@@ -1302,11 +1310,11 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		} as const)
 	);
 	const castExpression$arm: Routes<Table>['castExpression$arm'] = K.castExpression$arm(
-		$at('buildCastExpression'),
+		$at('castExpression$seated'),
 		$at('buildCastExpressionArm')
 	);
 	const castExpression: Routes<Table>['castExpression'] = Object.freeze(
-		Object.assign(delegate($at('buildCastExpression')), { arm: castExpression$arm } as const)
+		Object.assign(delegate($at('castExpression$seated')), { arm: castExpression$arm } as const)
 	);
 	const instanceofExpression$arm: Routes<Table>['instanceofExpression$arm'] = K.instanceofExpression$arm(
 		$at('buildInstanceofExpression'),
@@ -1329,14 +1337,20 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			arm2: arrayCreationExpression$arm2
 		} as const)
 	);
+	const unqualifiedObjectCreationExpression: Routes<Table>['unqualifiedObjectCreationExpression'] = $at(
+		'unqualifiedObjectCreationExpression$seated'
+	);
+	const objectCreationExpressionArm: Routes<Table>['objectCreationExpressionArm'] = $at(
+		'objectCreationExpressionArm$seated'
+	);
 	const objectCreationExpression$unqualifiedObjectCreationExpression: Routes<Table>['objectCreationExpression$unqualifiedObjectCreationExpression'] =
 		K.objectCreationExpression$unqualifiedObjectCreationExpression(
 			F.buildObjectCreationExpression,
-			$at('buildUnqualifiedObjectCreationExpression')
+			unqualifiedObjectCreationExpression
 		);
 	const objectCreationExpression$arm: Routes<Table>['objectCreationExpression$arm'] = K.objectCreationExpression$arm(
 		F.buildObjectCreationExpression,
-		$at('buildObjectCreationExpressionArm')
+		objectCreationExpressionArm
 	);
 	const objectCreationExpression: Routes<Table>['objectCreationExpression'] = Object.freeze(
 		Object.assign(delegate($at('buildObjectCreationExpression')), {
@@ -1816,7 +1830,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	);
 	const assertStatement$cast: Routes<Table>['assertStatement$cast'] = K.assertStatement$cast(
 		F.buildAssertStatement,
-		$at('buildCastExpression')
+		castExpression
 	);
 	const assertStatement$switch: Routes<Table>['assertStatement$switch'] = K.assertStatement$switch(
 		F.buildAssertStatement,
@@ -1923,7 +1937,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		parenthesizedExpression: $at('buildParenthesizedExpression'),
 		classLiteral: $at('buildClassLiteral'),
 		objectCreationExpression: objectCreationExpression,
-		unqualifiedObjectCreationExpression: $at('buildUnqualifiedObjectCreationExpression'),
+		unqualifiedObjectCreationExpression: unqualifiedObjectCreationExpression,
 		fieldAccess: $at('buildFieldAccess'),
 		templateExpression: $at('buildTemplateExpression'),
 		arrayAccess: $at('buildArrayAccess'),

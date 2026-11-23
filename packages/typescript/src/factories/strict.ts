@@ -290,6 +290,29 @@ export const catchClause$seated: Seat<
 	ReturnType<typeof F.buildCatchClause>
 > = K.catchClause$flatten$catchClauseGroup(F.buildCatchClause, F.buildCatchClauseGroup);
 
+export const binaryExpression$seated: Seat<
+	T.BinaryExpression.BuildArgs,
+	ReturnType<typeof F.buildBinaryExpression>
+> = K.binaryExpression$branch(F.buildBinaryExpression);
+
+export const numberFloatPoint$seated: Seat<
+	T.NumberFloatPoint.BuildArgs,
+	ReturnType<typeof F.buildNumberFloatPoint>,
+	false,
+	undefined,
+	{ integer: true; fraction: true; exponent: true },
+	'exponent'
+> = K.numberFloatPoint$branch(F.buildNumberFloatPoint);
+
+export const numberFloatLeadingPoint$seated: Seat<
+	T.NumberFloatLeadingPoint.BuildArgs,
+	ReturnType<typeof F.buildNumberFloatLeadingPoint>,
+	false,
+	undefined,
+	{ fraction: true; exponent: true },
+	'exponent'
+> = K.numberFloatLeadingPoint$branch(F.buildNumberFloatLeadingPoint);
+
 export const formalParametersElementsReceiver$seated: Seat<
 	T.FormalParametersElementsReceiver.BuildArgs,
 	ReturnType<typeof F.buildFormalParametersElementsReceiver>

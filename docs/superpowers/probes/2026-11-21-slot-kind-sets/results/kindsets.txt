@@ -1,0 +1,238 @@
+## Expression: 158 slots, 49 unions
+    69  + Pattern.Any (base)
+    62  + Declaration.Module (modules/module-declarations)
+    57  + Statement.Any (base)
+    36  + Pattern.Rest (destructuring/rest-patterns)
+    20  + Type.Any (base)
+    16  + string (text)
+    13  + Type.Primitive (?)
+     9  + Attribute.Call (decorators/member-decorators)
+     9  + Attribute.Member (decorators/member-decorators)
+     9  + Attribute.Parenthesized (decorators/member-decorators)
+     8  + Clause.Bounds.Removed (parametric-polymorphism/bounded-quantification/where-clauses)
+     6  + Argument.Any (base)
+     6  + Element.Spread (spreads)
+     4  + Modifier.Any (base)
+     4  + Identifier (base)
+     4  + Clause.Let.Any (match-expressions/let-patterns)
+     3  + Element.Spread.Any (spreads)
+     3  + Element.Spread.Parenthesized (set-literals)
+     2  + Element.Any (base)
+     2  + Element.Attributed (attributes)
+     2  + Statement.Empty (?)
+     1  + gate.In<G, features.Elisions, null> (?)
+     1  + Element.Pair (key-value-pairs)
+     1  + Declaration.Any (base)
+     1  + Declaration.TypeAlias (type-aliases)
+     1  + Expression.Block.Const (compile-time-evaluation)
+     1  + Clause.Let (match-expressions/let-patterns)
+     1  + Literal.String (base)
+     1  + Clause.Bounds.HigherRanked (parametric-polymorphism/bounded-quantification/higher-rank-polymorphism)
+     1  + Expression.Member (base)
+     1  + Element.Macro.TokenTree.Delimited.Brace (syntactic-metaprogramming)
+     1  + Element.Macro.TokenTree.Delimited.Bracket (syntactic-metaprogramming)
+     1  + Element.Macro.TokenTree.Delimited.Paren (syntactic-metaprogramming)
+     1  + Element.TypeArgument (parametric-polymorphism/generic-items)
+## Type: 84 slots, 16 unions
+    34  + Clause.Bounds.Removed (parametric-polymorphism/bounded-quantification/where-clauses)
+    34  + Expression.Call.Macro (syntactic-metaprogramming)
+     7  + Clause.Bounds.HigherRanked (parametric-polymorphism/bounded-quantification/higher-rank-polymorphism)
+     6  + string (text)
+     5  + Identifier (base)
+     3  + Declaration.Parameter (base)
+     3  + Declaration.Parameter.Private (visibility/class-visibility)
+     3  + Declaration.Parameter.Protected (visibility/class-visibility)
+     3  + Declaration.Parameter.Public (visibility/class-visibility)
+     3  + Declaration.Parameter.Receiver (explicit-receivers)
+     3  + Declaration.Parameter.Variadic (foreign-function-interface)
+     3  + Element.TypeArgument (parametric-polymorphism/generic-items)
+     2  + Declaration.Parameter.Any (base)
+     2  + Pattern.Any (base)
+     2  + Literal.Any (base)
+     2  + Statement.Block (base)
+     2  + Clause.Bounds.Use (parametric-polymorphism/bounded-quantification/where-clauses)
+     1  + Clause.Any (base)
+     1  + Element.TypeBinding (type-aliases/associated-types)
+     1  + Element.Tuple.Member.Any (type-annotations/type-algebra)
+## Identifier: 36 slots, 24 unions
+    16  + string (text)
+     7  + Literal.String (base)
+     6  + Literal.Any (base)
+     4  + Identifier.Qualified (base)
+     3  + Attribute.Member (decorators/member-decorators)
+     3  + Pattern.Rest (destructuring/rest-patterns)
+     3  + Type.Primitive (?)
+     2  + Literal.Number.Integer (base)
+     2  + Literal.Number.Integer.Binary (base)
+     2  + Literal.Number.Integer.Hex (base)
+     2  + Literal.Number.Integer.Octal (base)
+     2  + Pattern.Tuple (destructuring/tuple-patterns)
+     2  + Clause.Import.Alias (modules/import-aliases)
+     2  + Clause.Import.List.Any (modules/import-trees)
+     2  + Clause.Import.Wildcard (modules/wildcard-imports)
+     2  + Identifier (base)
+     2  + Element.Macro.TokenBinding (syntactic-metaprogramming)
+     2  + Element.Macro.TokenTree.Pattern.Brace (syntactic-metaprogramming)
+     2  + Element.Macro.TokenTree.Pattern.Bracket (syntactic-metaprogramming)
+     2  + Element.Macro.TokenTree.Pattern.Paren (syntactic-metaprogramming)
+     1  + Attribute.Call (decorators/member-decorators)
+     1  + Literal.String.Bytes.Any (byte-strings)
+     1  + Literal.String.Interpolated.Any (string-interpolation)
+     1  + Literal.String.Multiline (multiline-strings)
+     1  + Literal.String.Raw.Any (raw-strings)
+     1  + Literal.String.Unicode (unicode-strings)
+     1  + Declaration.Method (methods)
+     1  + Declaration.Method.Private (visibility)
+     1  + Declaration.Method.Protected (visibility/class-visibility)
+     1  + Declaration.Method.Public (visibility)
+     1  + Declaration.Property.Getter (methods/accessors)
+     1  + Declaration.Property.Getter.Private (visibility/class-visibility)
+     1  + Declaration.Property.Getter.Protected (visibility/class-visibility)
+     1  + Declaration.Property.Getter.Public (visibility/class-visibility)
+     1  + Declaration.Property.Setter (methods/accessors)
+     1  + Declaration.Property.Setter.Private (visibility/class-visibility)
+     1  + Declaration.Property.Setter.Protected (visibility/class-visibility)
+     1  + Declaration.Property.Setter.Public (visibility/class-visibility)
+     1  + Element.Any (base)
+     1  + Declaration.Parameter (base)
+     1  + Declaration.Parameter.Defaulted (python-declarations)
+     1  + Declaration.Parameter.Private (visibility/class-visibility)
+     1  + Declaration.Parameter.Protected (visibility/class-visibility)
+     1  + Declaration.Parameter.Public (visibility/class-visibility)
+     1  + Declaration.Parameter.Receiver (explicit-receivers)
+     1  + Declaration.Parameter.Typed (python-declarations)
+     1  + Declaration.Parameter.TypedDefault (python-declarations)
+     1  + Pattern.Rest.Map (destructuring/python-destructuring)
+     1  + Statement.Block (base)
+     1  + Pattern.Rest.Any (destructuring/rest-patterns)
+     1  + Type.Generic.Turbofish (type-annotations/systems-types)
+     1  + Element.Macro.Any (syntactic-metaprogramming)
+     1  + Element.Macro.TokenRepetition.Pattern (syntactic-metaprogramming)
+     1  + Element.Macro.TokenRepetition.Any (syntactic-metaprogramming)
+     1  + Element.Macro.TokenTree.Brace (syntactic-metaprogramming)
+     1  + Element.Macro.TokenTree.Bracket (syntactic-metaprogramming)
+     1  + Element.Macro.TokenTree.Delimited.Brace (syntactic-metaprogramming)
+     1  + Element.Macro.TokenTree.Delimited.Bracket (syntactic-metaprogramming)
+     1  + Element.Macro.TokenTree.Delimited.Paren (syntactic-metaprogramming)
+     1  + Element.Macro.TokenTree.Paren (syntactic-metaprogramming)
+     1  + Type.Predicate (type-annotations/type-algebra)
+## exception: 32 slots, 9 unions
+    19  + Identifier.Metavariable (syntactic-metaprogramming)
+    12  + Declaration.TypeParameter (parametric-polymorphism)
+    12  + Declaration.TypeParameter.Lifetime (parametric-polymorphism/lifetimes)
+    12  + Declaration.TypeParameter.Value (parametric-polymorphism/const-generics)
+     8  + Declaration.TypeAlias (type-aliases)
+     8  + Statement.Any (base)
+     7  + Declaration.TypeParameter.Any (parametric-polymorphism)
+     2  + Declaration.Any (base)
+     2  + string (text)
+     2  + Identifier.Qualified (base)
+     1  + Statement.Block (base)
+     1  + Statement.Block.Static (methods/classes/javascript-classes)
+     1  + Clause.Import.Relative (modules/from-imports)
+     1  + Clause.Import.Require (modules/javascript-modules)
+     1  + Literal.String (base)
+     1  + Clause.Import.Alias (modules/import-aliases)
+     1  + Clause.Import.Wildcard (modules/wildcard-imports)
+     1  + Statement.Export.Any (modules/javascript-modules)
+   ! declaration.function.body: Declaration.TypeAlias | Statement.Any
+   ! clause.catch.body: Declaration.TypeAlias | Statement.Any
+   ! clause.finally.body: Declaration.TypeAlias | Statement.Any
+   ! statement.try.body: Declaration.TypeAlias | Statement.Any
+   ! declaration.property.getter.typeParameters: Declaration.TypeParameter.Any | Identifier.Metavariable
+   ! declaration.property.setter.typeParameters: Declaration.TypeParameter.Any | Identifier.Metavariable
+   ! declaration.constructor.body: Declaration.TypeAlias | Statement.Any | Statement.Block
+   ! expression.class.body: Declaration.Any | Statement.Block.Static | string
+   ! declaration.method.body: Declaration.TypeAlias | Statement.Any
+   ! statement.import.from.moduleName: Clause.Import.Relative | Identifier.Qualified
+   ! statement.import.fromClause: Clause.Import.Require | Literal.String
+   ! statement.import.names: Clause.Import.Alias | Clause.Import.Wildcard | Identifier.Qualified | string
+   ! clause.bounds.higher_ranked.typeParameters: Declaration.TypeParameter | Declaration.TypeParameter.Lifetime | Declaration.TypeParameter.Value | Identifier.Metavariable
+   ! declaration.function.typeParameters: Declaration.TypeParameter.Any | Identifier.Metavariable
+   ! declaration.function.typeParameters: Declaration.TypeParameter.Any | Identifier.Metavariable
+   ! declaration.method.typeParameters: Declaration.TypeParameter.Any | Identifier.Metavariable
+   ! declaration.method.typeParameters: Declaration.TypeParameter.Any | Identifier.Metavariable
+   ! declaration.type_alias.typeParameters: Declaration.TypeParameter.Any | Identifier.Metavariable
+   ! declaration.enum.typeParameters: Declaration.TypeParameter | Declaration.TypeParameter.Lifetime | Declaration.TypeParameter.Value | Identifier.Metavariable
+   ! declaration.extension.typeParameters: Declaration.TypeParameter | Declaration.TypeParameter.Lifetime | Declaration.TypeParameter.Value | Identifier.Metavariable
+   ! declaration.extension.conformance.typeParameters: Declaration.TypeParameter | Declaration.TypeParameter.Lifetime | Declaration.TypeParameter.Value | Identifier.Metavariable
+   ! declaration.interface.trait.typeParameters: Declaration.TypeParameter | Declaration.TypeParameter.Lifetime | Declaration.TypeParameter.Value | Identifier.Metavariable
+   ! declaration.type_alias.associated.typeParameters: Declaration.TypeParameter | Declaration.TypeParameter.Lifetime | Declaration.TypeParameter.Value | Identifier.Metavariable
+   ! declaration.union.typeParameters: Declaration.TypeParameter | Declaration.TypeParameter.Lifetime | Declaration.TypeParameter.Value | Identifier.Metavariable
+   ! type.abstract.typeParameters: Declaration.TypeParameter | Declaration.TypeParameter.Lifetime | Declaration.TypeParameter.Value | Identifier.Metavariable
+   ! declaration.function.signature.typeParameters: Declaration.TypeParameter | Declaration.TypeParameter.Lifetime | Declaration.TypeParameter.Value | Identifier.Metavariable
+   ! declaration.interface.typeParameters: Declaration.TypeParameter | Declaration.TypeParameter.Lifetime | Declaration.TypeParameter.Value | Identifier.Metavariable
+   ! declaration.method.signature.typeParameters: Declaration.TypeParameter | Declaration.TypeParameter.Lifetime | Declaration.TypeParameter.Value | Identifier.Metavariable
+   ! clause.else_if.consequence: Declaration.TypeAlias | Statement.Any
+   ! statement.resource.body: Declaration.TypeAlias | Statement.Any
+   ! declaration.struct.typeParameters: Declaration.TypeParameter | Declaration.TypeParameter.Lifetime | Declaration.TypeParameter.Value | Identifier.Metavariable
+   ! type.object.members: Declaration.Any | Statement.Export.Any
+## Statement: 26 slots, 6 unions
+     7  + Attribute.Any (base)
+     7  + Expression.Call.Macro (syntactic-metaprogramming)
+     4  + Pattern.Any (base)
+     2  + Pattern.Rest (destructuring/rest-patterns)
+     1  + Statement.Block (base)
+## Pattern: 15 slots, 8 unions
+     5  + string (text)
+     4  + Type.Primitive (?)
+     3  + Literal.Null.Undefined (undefined-value)
+     2  + Declaration.Parameter (base)
+     2  + Declaration.Parameter.Defaulted (python-declarations)
+     2  + Declaration.Parameter.Private (visibility/class-visibility)
+     2  + Declaration.Parameter.Protected (visibility/class-visibility)
+     2  + Declaration.Parameter.Public (visibility/class-visibility)
+     2  + Declaration.Parameter.Receiver (explicit-receivers)
+     2  + Declaration.Parameter.Typed (python-declarations)
+     2  + Declaration.Parameter.TypedDefault (python-declarations)
+     2  + Declaration.Parameter.Any (base)
+## Declaration.Parameter (level): 14 slots, 1 unions
+## Declaration.Field (level): 6 slots, 1 unions
+     6  + Declaration.Field.Public.Any (visibility)
+## Clause.Comprehension (level): 5 slots, 1 unions
+## Element.Macro (level): 5 slots, 3 unions
+     2  + Element.Macro.TokenTree.Pattern.Brace (syntactic-metaprogramming)
+     2  + Element.Macro.TokenTree.Pattern.Bracket (syntactic-metaprogramming)
+     2  + Element.Macro.TokenTree.Pattern.Paren (syntactic-metaprogramming)
+     2  + Element.Macro.TokenTree.Brace (syntactic-metaprogramming)
+     2  + Element.Macro.TokenTree.Bracket (syntactic-metaprogramming)
+     2  + Element.Macro.TokenTree.Paren (syntactic-metaprogramming)
+     1  + Element.Macro.TokenTree.Delimited.Brace (syntactic-metaprogramming)
+     1  + Element.Macro.TokenTree.Delimited.Bracket (syntactic-metaprogramming)
+     1  + Element.Macro.TokenTree.Delimited.Paren (syntactic-metaprogramming)
+## Declaration.TypeParameter (level): 4 slots, 1 unions
+## Literal.Number (level): 3 slots, 2 unions
+     3  + Literal.Number.Float.Any (base)
+     2  + Literal.Number.Integer.Big (arbitrary-precision-integers)
+     2  + Literal.Number.Integer.Big.Binary (arbitrary-precision-integers/big-integer-radixes)
+     2  + Literal.Number.Integer.Big.Hex (arbitrary-precision-integers/big-integer-radixes)
+     2  + Literal.Number.Integer.Big.Octal (arbitrary-precision-integers/big-integer-radixes)
+     2  + Literal.Number.Integer.Binary (base)
+     2  + Literal.Number.Integer.Hex (base)
+     2  + Literal.Number.Integer.Imaginary (complex-numbers)
+     2  + Literal.Number.Integer.Octal (base)
+     1  + Literal.Number.Integer.Any (base)
+## Declaration.Variable (level): 3 slots, 1 unions
+## Literal.String (level): 2 slots, 2 unions
+     1  + Literal.String.Bytes.Any (byte-strings)
+     1  + Literal.String.Interpolated.Any (string-interpolation)
+     1  + Literal.String.Raw.Any (raw-strings)
+## Identifier.Label (level): 1 slots, 1 unions
+## Clause.Import (level): 1 slots, 1 unions
+     1  + Clause.Import.Specifier.Any (modules/javascript-modules)
+## Clause.Export (level): 1 slots, 1 unions
+## Clause.Case (level): 1 slots, 1 unions
+## Element.Comparator (level): 1 slots, 1 unions
+     1  + Element.Comparator.Comparison.Equal (python-operators)
+     1  + Element.Comparator.Comparison.Greater (python-operators)
+     1  + Element.Comparator.Comparison.GreaterEqual (python-operators)
+     1  + Element.Comparator.Comparison.Less (python-operators)
+     1  + Element.Comparator.Comparison.LessEqual (python-operators)
+     1  + Element.Comparator.Comparison.NotEqual.Any (python-operators)
+     1  + Element.Comparator.Identity.Is (python-operators)
+     1  + Element.Comparator.Identity.IsNot (python-operators)
+     1  + Element.Comparator.Membership.In (python-operators)
+     1  + Element.Comparator.Membership.NotIn (python-operators)
+## Element.Spread (level): 1 slots, 1 unions
+## Expression.Interpolation (level): 1 slots, 1 unions
+## Element.Struct (level): 1 slots, 1 unions

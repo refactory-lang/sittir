@@ -15,6 +15,7 @@ import type {
 	OmitRegistered,
 	NoneOf,
 	WithoutGroup,
+	ArmRows,
 	GrammarTypeMap,
 	NodeMethods,
 	HoldsTrivia,
@@ -1796,8 +1797,7 @@ export interface ImportSpecList {
 			'importSpecListGroup',
 			T.ImportSpecListGroup,
 			{ readonly importSpecs: 'importSpecs'; readonly importSpecListArm: 'importSpecListArm' },
-			true,
-			'_import_spec_list_group'
+			true
 		>;
 	};
 	readonly importSpecListGroup: () => ImportSpecListGroup | undefined;
@@ -1830,8 +1830,7 @@ export interface ConstSpec {
 			'constSpecGroup',
 			T.ConstSpecGroup,
 			{ readonly type: 'type'; readonly value: 'value' },
-			true,
-			'_const_spec_group'
+			true
 		>;
 	};
 	readonly names: () => NonEmptyArray<Identifier>;
@@ -2366,8 +2365,7 @@ export interface FieldDeclarationList {
 			'fieldDeclarationListGroup',
 			T.FieldDeclarationListGroup,
 			{ readonly fieldDeclarations: 'fieldDeclarations'; readonly importSpecListArm: 'importSpecListArm' },
-			true,
-			'_field_declaration_list_group'
+			true
 		>;
 	};
 	readonly fieldDeclarationListGroup: () => FieldDeclarationListGroup | undefined;
@@ -2405,10 +2403,15 @@ export interface FieldDeclaration {
 		)[];
 	};
 	readonly __slotHints__?: {
-		readonly names: SlotHint<(T.FieldIdentifier | T.FieldIdentifier.Types)[], true, true>;
-		readonly type: SlotHint<T.Type | T.TypeIdentifier.Types, true>;
-		readonly fieldDeclarationArm: SlotHint<NonNullable<T.FieldDeclaration.Config>['fieldDeclarationArm'], true>;
+		readonly names: SlotHint<(T.FieldIdentifier | T.FieldIdentifier.Types)[], false, true>;
+		readonly type: SlotHint<NonNullable<T.Type | T.TypeIdentifier.Types>>;
+		readonly fieldDeclarationArm: SlotHint<NonNullable<NonNullable<T.FieldDeclaration.Config>['fieldDeclarationArm']>>;
 		readonly tag: SlotHint<T.RawStringLiteral | T.InterpretedStringLiteral, true>;
+		readonly $clears: {
+			readonly names: 'fieldDeclarationArm';
+			readonly type: 'fieldDeclarationArm';
+			readonly fieldDeclarationArm: 'names' | 'type';
+		};
 	};
 	readonly names: () => readonly FieldIdentifier[];
 	readonly type: () => Type | undefined;
@@ -2433,8 +2436,7 @@ export interface InterfaceType {
 			'interfaceTypeGroup',
 			T.InterfaceTypeGroup,
 			{ readonly interfaceElems: 'interfaceElems'; readonly importSpecListArm: 'importSpecListArm' },
-			true,
-			'_interface_type_group'
+			true
 		>;
 	};
 	readonly interfaceTypeGroup: () => InterfaceTypeGroup | undefined;
@@ -3242,8 +3244,7 @@ export interface SpecialArgumentList {
 			'specialArgumentListGroup',
 			T.SpecialArgumentListGroup,
 			{ readonly type: 'type'; readonly expressions: 'expressions'; readonly trailingComma: 'trailingComma' },
-			true,
-			'_special_argument_list_group'
+			true
 		>;
 	};
 	readonly specialArgumentListGroup: () => SpecialArgumentListGroup | undefined;
@@ -4628,8 +4629,7 @@ export interface TypeDeclarationArm {
 			'typeDeclarationGroup',
 			T.TypeDeclarationGroup,
 			{ readonly elements: 'elements'; readonly importSpecListArm: 'importSpecListArm' },
-			true,
-			'_type_declaration_group'
+			true
 		>;
 	};
 	readonly typeDeclarationGroup: () => TypeDeclarationGroup | undefined;
@@ -9975,14 +9975,18 @@ export namespace ConstSpec {
 	export type BuildArgs = [
 		config:
 			| WithoutGroup<ConfigOf<T.ConstSpec>, OmitEach<NonNullable<T.ConstSpecGroup.Config>, '$type'>>
-			| (OmitEach<NonNullable<ConfigOf<T.ConstSpec>>, 'constSpecGroup'> &
-					(T.ConstSpecGroup.BuildArgs[0] | NoneOf<OmitEach<NonNullable<T.ConstSpecGroup.Config>, '$type'>>))
+			| (OmitEach<NonNullable<ConfigOf<T.ConstSpec>>, 'constSpecGroup'> & { readonly constSpecGroup?: never } & (
+						| T.ConstSpecGroup.BuildArgs[0]
+						| NoneOf<OmitEach<NonNullable<T.ConstSpecGroup.Config>, '$type'>>
+					))
 	];
 	export type LooseArgs = [
 		config:
 			| WithoutGroup<T.ConstSpec.Loose, OmitEach<NonNullable<T.ConstSpecGroup.LooseConfig>, '$type'>>
-			| (OmitEach<NonNullable<T.ConstSpec.Loose>, 'constSpecGroup'> &
-					(T.ConstSpecGroup.LooseArgs[0] | NoneOf<OmitEach<NonNullable<T.ConstSpecGroup.LooseConfig>, '$type'>>))
+			| (OmitEach<NonNullable<T.ConstSpec.Loose>, 'constSpecGroup'> & { readonly constSpecGroup?: never } & (
+						| T.ConstSpecGroup.LooseArgs[0]
+						| NoneOf<OmitEach<NonNullable<T.ConstSpecGroup.LooseConfig>, '$type'>>
+					))
 	];
 	export type Kind = TSKindId.ConstSpec;
 	type NonEmptySlots = Proven<
@@ -10622,8 +10626,16 @@ export namespace FieldDeclaration {
 	}
 	export type Loose = LooseFor<TSKindId.FieldDeclaration>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FieldDeclaration>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.FieldDeclaration>>];
-	export type LooseArgs = [config?: T.FieldDeclaration.Loose];
+	export type BuildArgs = ArmRows<
+		[config?: Partial<ConfigOf<T.FieldDeclaration>>],
+		'names' | 'type' | 'fieldDeclarationArm',
+		[['names' | 'type', 'names' | 'type'], ['fieldDeclarationArm', 'fieldDeclarationArm']]
+	>;
+	export type LooseArgs = ArmRows<
+		[config?: T.FieldDeclaration.Loose],
+		'names' | 'type' | 'fieldDeclarationArm',
+		[['names' | 'type', 'names' | 'type'], ['fieldDeclarationArm', 'fieldDeclarationArm']]
+	>;
 	export type Kind = TSKindId.FieldDeclaration;
 }
 export namespace InterfaceType {
@@ -11646,8 +11658,16 @@ export namespace SliceExpression {
 	}
 	export type Loose = LooseFor<TSKindId.SliceExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SliceExpression>;
-	export type BuildArgs = [config: ConfigOf<T.SliceExpression>];
-	export type LooseArgs = [config: T.SliceExpression.Loose];
+	export type BuildArgs = ArmRows<
+		[config: ConfigOf<T.SliceExpression>],
+		'start' | 'end' | 'capacity',
+		[['start' | 'end', never], ['start' | 'end' | 'capacity', 'end' | 'capacity']]
+	>;
+	export type LooseArgs = ArmRows<
+		[config: T.SliceExpression.Loose],
+		'start' | 'end' | 'capacity',
+		[['start' | 'end', never], ['start' | 'end' | 'capacity', 'end' | 'capacity']]
+	>;
 	export type Kind = TSKindId.SliceExpression;
 }
 export namespace TypeAssertionExpression {

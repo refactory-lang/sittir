@@ -16,6 +16,7 @@ import type {
 	OmitRegistered,
 	NoneOf,
 	WithoutGroup,
+	ArmRows,
 	GrammarTypeMap,
 	NodeMethods,
 	HoldsTrivia,
@@ -5637,13 +5638,7 @@ export interface UseWildcard {
 	};
 	readonly __slotHints__?: {
 		readonly useWildcardGroup: SlotHint<T.UseWildcardGroup, true>;
-		readonly $flat: FlatHint<
-			'useWildcardGroup',
-			T.UseWildcardGroup,
-			{ readonly path: 'path' },
-			true,
-			'_use_wildcard_group'
-		>;
+		readonly $flat: FlatHint<'useWildcardGroup', T.UseWildcardGroup, { readonly path: 'path' }, true>;
 	};
 	readonly useWildcardGroup: () => UseWildcardGroup | undefined;
 }
@@ -7686,8 +7681,7 @@ export interface LastMatchArm {
 			'match',
 			T.MatchPattern,
 			{ readonly pattern: 'pattern'; readonly condition: 'condition' },
-			false,
-			'_match'
+			false
 		>;
 	};
 	readonly attributes: () => readonly (AttributeItem | InnerAttributeItem)[];
@@ -8308,14 +8302,8 @@ export interface RawStringLiteral {
 		readonly stringContent: SlotHint<T.RawStringLiteralContent>;
 		readonly rawStringLiteralEnd: SlotHint<T.RawStringLiteralEnd>;
 		readonly $flat:
-			| FlatHint<
-					'rawStringLiteralStart',
-					T.RawStringLiteralStart,
-					{ readonly prefix: 'prefix' },
-					false,
-					'_raw_string_literal_start'
-			  >
-			| FlatHint<'rawStringLiteralEnd', T.RawStringLiteralEnd, {}, false, '_raw_string_literal_end'>;
+			| FlatHint<'rawStringLiteralStart', T.RawStringLiteralStart, { readonly prefix: 'prefix' }, false>
+			| FlatHint<'rawStringLiteralEnd', T.RawStringLiteralEnd, {}, false>;
 	};
 	readonly rawStringLiteralStart: () => RawStringLiteralStart;
 	readonly stringContent: () => RawStringLiteralContent;
@@ -9228,8 +9216,9 @@ export interface AttributeInput {
 			| Expression;
 	};
 	readonly __slotHints__?: {
-		readonly value: SlotHint<NonNullable<T.AttributeInput.Config>['value'], true>;
-		readonly arguments: SlotHint<T.DelimTokenTree, true>;
+		readonly value: SlotHint<NonNullable<NonNullable<T.AttributeInput.Config>['value']>>;
+		readonly arguments: SlotHint<NonNullable<T.DelimTokenTree>>;
+		readonly $clears: { readonly value: 'arguments'; readonly arguments: 'value' };
 	};
 	readonly value: () => Expression | undefined;
 	readonly arguments: () => DelimTokenTree | undefined;
@@ -10132,8 +10121,7 @@ export interface MatchArmWithComma {
 			'match',
 			T.MatchPattern,
 			{ readonly pattern: 'pattern'; readonly condition: 'condition' },
-			false,
-			'_match'
+			false
 		>;
 	};
 	readonly attributes: () => readonly (AttributeItem | InnerAttributeItem)[];
@@ -10182,8 +10170,7 @@ export interface MatchArmBlockEnding {
 			'match',
 			T.MatchPattern,
 			{ readonly pattern: 'pattern'; readonly condition: 'condition' },
-			false,
-			'_match'
+			false
 		>;
 	};
 	readonly attributes: () => readonly (AttributeItem | InnerAttributeItem)[];
@@ -11427,8 +11414,7 @@ export interface ParametersElementsReceiver {
 			'receiver',
 			T.AttributedParameterReceiver,
 			{ readonly attributeItem: 'attributeItem'; readonly content: 'content' },
-			false,
-			'_receiver'
+			false
 		>;
 		readonly $listSlots: {
 			readonly parametersElementsReceiverGroup: ListSlotHint<
@@ -22837,15 +22823,18 @@ export namespace LastMatchArm {
 					OmitRegistered<ConfigOf<T.LastMatchArm>, 'trailingComma'>,
 					OmitEach<NonNullable<T.MatchPattern.Config>, '$type'>
 			  >
-			| (OmitEach<NonNullable<OmitRegistered<ConfigOf<T.LastMatchArm>, 'trailingComma'>>, 'match'> &
-					(T.MatchPattern.BuildArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.Config>, '$type'>>)),
+			| (OmitEach<NonNullable<OmitRegistered<ConfigOf<T.LastMatchArm>, 'trailingComma'>>, 'match'> & {
+					readonly match?: never;
+			  } & (T.MatchPattern.BuildArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.Config>, '$type'>>)),
 		options?: T.LastMatchArm.Options
 	];
 	export type LooseArgs = [
 		config:
 			| WithoutGroup<T.LastMatchArm.Loose, OmitEach<NonNullable<T.MatchPattern.LooseConfig>, '$type'>>
-			| (OmitEach<NonNullable<T.LastMatchArm.Loose>, 'match'> &
-					(T.MatchPattern.LooseArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.LooseConfig>, '$type'>>)),
+			| (OmitEach<NonNullable<T.LastMatchArm.Loose>, 'match'> & { readonly match?: never } & (
+						| T.MatchPattern.LooseArgs[0]
+						| NoneOf<OmitEach<NonNullable<T.MatchPattern.LooseConfig>, '$type'>>
+					)),
 		options?: T.LastMatchArm.Options
 	];
 	export type Kind = TSKindId.LastMatchArm;
@@ -23577,8 +23566,8 @@ export namespace RawStringLiteral {
 		config: OmitEach<
 			NonNullable<
 				OmitEach<NonNullable<ConfigOf<T.RawStringLiteral>>, 'rawStringLiteralStart'> & {
-					prefix: T.RawStringLiteralStart.BuildArgs[0];
-				}
+					readonly rawStringLiteralStart?: never;
+				} & { prefix: T.RawStringLiteralStart.BuildArgs[0] }
 			>,
 			'rawStringLiteralEnd'
 		>
@@ -23587,8 +23576,8 @@ export namespace RawStringLiteral {
 		config: OmitEach<
 			NonNullable<
 				OmitEach<NonNullable<T.RawStringLiteral.Loose>, 'rawStringLiteralStart'> & {
-					prefix: NonNullable<T.RawStringLiteralStart.LooseConfig>['prefix'];
-				}
+					readonly rawStringLiteralStart?: never;
+				} & { prefix: NonNullable<T.RawStringLiteralStart.LooseConfig>['prefix'] }
 			>,
 			'rawStringLiteralEnd'
 		>
@@ -25425,8 +25414,16 @@ export namespace AttributeInput {
 	}
 	export type Loose = LooseFor<TSKindId.AttributeInput>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AttributeInput>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.AttributeInput>>];
-	export type LooseArgs = [config?: T.AttributeInput.Loose];
+	export type BuildArgs = ArmRows<
+		[config?: Partial<ConfigOf<T.AttributeInput>>],
+		'value' | 'arguments',
+		[['value', 'value'], ['arguments', 'arguments']]
+	>;
+	export type LooseArgs = ArmRows<
+		[config?: T.AttributeInput.Loose],
+		'value' | 'arguments',
+		[['value', 'value'], ['arguments', 'arguments']]
+	>;
 	export type Kind = TSKindId.AttributeInput;
 }
 export namespace ClosureExpressionBlock {
@@ -26159,14 +26156,18 @@ export namespace MatchArmWithComma {
 	export type BuildArgs = [
 		config:
 			| WithoutGroup<ConfigOf<T.MatchArmWithComma>, OmitEach<NonNullable<T.MatchPattern.Config>, '$type'>>
-			| (OmitEach<NonNullable<ConfigOf<T.MatchArmWithComma>>, 'match'> &
-					(T.MatchPattern.BuildArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.Config>, '$type'>>))
+			| (OmitEach<NonNullable<ConfigOf<T.MatchArmWithComma>>, 'match'> & { readonly match?: never } & (
+						| T.MatchPattern.BuildArgs[0]
+						| NoneOf<OmitEach<NonNullable<T.MatchPattern.Config>, '$type'>>
+					))
 	];
 	export type LooseArgs = [
 		config:
 			| WithoutGroup<T.MatchArmWithComma.Loose, OmitEach<NonNullable<T.MatchPattern.LooseConfig>, '$type'>>
-			| (OmitEach<NonNullable<T.MatchArmWithComma.Loose>, 'match'> &
-					(T.MatchPattern.LooseArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.LooseConfig>, '$type'>>))
+			| (OmitEach<NonNullable<T.MatchArmWithComma.Loose>, 'match'> & { readonly match?: never } & (
+						| T.MatchPattern.LooseArgs[0]
+						| NoneOf<OmitEach<NonNullable<T.MatchPattern.LooseConfig>, '$type'>>
+					))
 	];
 	export type Kind = TSKindId.MatchArmWithComma;
 }
@@ -26196,14 +26197,18 @@ export namespace MatchArmBlockEnding {
 	export type BuildArgs = [
 		config:
 			| WithoutGroup<ConfigOf<T.MatchArmBlockEnding>, OmitEach<NonNullable<T.MatchPattern.Config>, '$type'>>
-			| (OmitEach<NonNullable<ConfigOf<T.MatchArmBlockEnding>>, 'match'> &
-					(T.MatchPattern.BuildArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.Config>, '$type'>>))
+			| (OmitEach<NonNullable<ConfigOf<T.MatchArmBlockEnding>>, 'match'> & { readonly match?: never } & (
+						| T.MatchPattern.BuildArgs[0]
+						| NoneOf<OmitEach<NonNullable<T.MatchPattern.Config>, '$type'>>
+					))
 	];
 	export type LooseArgs = [
 		config:
 			| WithoutGroup<T.MatchArmBlockEnding.Loose, OmitEach<NonNullable<T.MatchPattern.LooseConfig>, '$type'>>
-			| (OmitEach<NonNullable<T.MatchArmBlockEnding.Loose>, 'match'> &
-					(T.MatchPattern.LooseArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.LooseConfig>, '$type'>>))
+			| (OmitEach<NonNullable<T.MatchArmBlockEnding.Loose>, 'match'> & { readonly match?: never } & (
+						| T.MatchPattern.LooseArgs[0]
+						| NoneOf<OmitEach<NonNullable<T.MatchPattern.LooseConfig>, '$type'>>
+					))
 	];
 	export type Kind = TSKindId.MatchArmBlockEnding;
 }
@@ -27513,8 +27518,7 @@ export namespace ParametersElementsReceiver {
 					ConfigOf<T.ParametersElementsReceiver>,
 					OmitEach<NonNullable<T.AttributedParameterReceiver.Config>, '$type'>
 			  >
-			| (OmitEach<NonNullable<ConfigOf<T.ParametersElementsReceiver>>, 'receiver'> &
-					(
+			| (OmitEach<NonNullable<ConfigOf<T.ParametersElementsReceiver>>, 'receiver'> & { readonly receiver?: never } & (
 						| T.AttributedParameterReceiver.BuildArgs[0]
 						| NoneOf<OmitEach<NonNullable<T.AttributedParameterReceiver.Config>, '$type'>>
 					))
@@ -27524,8 +27528,9 @@ export namespace ParametersElementsReceiver {
 								ConfigOf<T.ParametersElementsReceiver>,
 								OmitEach<NonNullable<T.AttributedParameterReceiver.Config>, '$type'>
 						  >
-						| (OmitEach<NonNullable<ConfigOf<T.ParametersElementsReceiver>>, 'receiver'> &
-								(
+						| (OmitEach<NonNullable<ConfigOf<T.ParametersElementsReceiver>>, 'receiver'> & {
+								readonly receiver?: never;
+						  } & (
 									| T.AttributedParameterReceiver.BuildArgs[0]
 									| NoneOf<OmitEach<NonNullable<T.AttributedParameterReceiver.Config>, '$type'>>
 								))
@@ -27539,8 +27544,7 @@ export namespace ParametersElementsReceiver {
 					T.ParametersElementsReceiver.Loose,
 					OmitEach<NonNullable<T.AttributedParameterReceiver.LooseConfig>, '$type'>
 			  >
-			| (OmitEach<NonNullable<T.ParametersElementsReceiver.Loose>, 'receiver'> &
-					(
+			| (OmitEach<NonNullable<T.ParametersElementsReceiver.Loose>, 'receiver'> & { readonly receiver?: never } & (
 						| T.AttributedParameterReceiver.LooseArgs[0]
 						| NoneOf<OmitEach<NonNullable<T.AttributedParameterReceiver.LooseConfig>, '$type'>>
 					))
@@ -27550,8 +27554,7 @@ export namespace ParametersElementsReceiver {
 								T.ParametersElementsReceiver.Loose,
 								OmitEach<NonNullable<T.AttributedParameterReceiver.LooseConfig>, '$type'>
 						  >
-						| (OmitEach<NonNullable<T.ParametersElementsReceiver.Loose>, 'receiver'> &
-								(
+						| (OmitEach<NonNullable<T.ParametersElementsReceiver.Loose>, 'receiver'> & { readonly receiver?: never } & (
 									| T.AttributedParameterReceiver.LooseArgs[0]
 									| NoneOf<OmitEach<NonNullable<T.AttributedParameterReceiver.LooseConfig>, '$type'>>
 								))

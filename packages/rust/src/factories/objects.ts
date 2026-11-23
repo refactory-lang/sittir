@@ -19,6 +19,7 @@ import {
 	currentHandle,
 	admitChildren,
 	checkDelimited,
+	hasSlot,
 	hoistedWith,
 	hoistRead,
 	listElementsHop,
@@ -5186,6 +5187,7 @@ function _buildUseWildcard(value?: Admit<T.UseWildcardGroup>): T.UseWildcard.Bou
 		$with: undefined as unknown as object,
 		useWildcardGroup: () => hydrateStoredSlot(node, '_use_wildcard_group'),
 		path: _use_wildcard_group === undefined ? undefined : () => groupField(_use_wildcard_group, 'path'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -9282,6 +9284,7 @@ export function buildLastMatchArm(
 		trailingComma: () => blankArmRead(_trailing_comma),
 		pattern: _match === undefined ? undefined : () => groupField(_match, 'pattern'),
 		condition: _match === undefined ? undefined : () => groupField(_match, 'condition'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -11294,6 +11297,7 @@ export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawS
 		stringContent: () => hydrateStoredSlot(node, '_string_content'),
 		rawStringLiteralEnd: () => hydrateStoredSlot(node, '_raw_string_literal_end'),
 		prefix: _raw_string_literal_start === undefined ? undefined : () => groupField(_raw_string_literal_start, 'prefix'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -15234,12 +15238,20 @@ function buildAttributeInput$with(node: Held, setter: string, args: readonly unk
 	const config = node[INPUT] as T.AttributeInput.Config;
 	switch (setter) {
 		case 'value':
-			return applySetter(args, (value?: Admit<NonNullable<T.AttributeInput.Config>['value']>) =>
-				rebuilt(node, handle, () => buildAttributeInput({ ...config, value: value }))
+			return applySetter(args, (value: Admit<NonNullable<T.AttributeInput.Config>['value']>) =>
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildAttributeInput({ ...config, value: value })
+						: buildAttributeInput({ ...config, arguments: undefined, value: value })
+				)
 			);
 		case 'arguments':
-			return applySetter(args, (value?: Admit<T.DelimTokenTree>) =>
-				rebuilt(node, handle, () => buildAttributeInput({ ...config, arguments: value }))
+			return applySetter(args, (value: Admit<T.DelimTokenTree>) =>
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildAttributeInput({ ...config, arguments: value })
+						: buildAttributeInput({ ...config, value: undefined, arguments: value })
+				)
 			);
 	}
 	throw new Error(`attribute_input has no $with.${setter}`);
@@ -17302,6 +17314,7 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 		body: () => hydrateStoredSlot(node, '_body'),
 		pattern: _match === undefined ? undefined : () => groupField(_match, 'pattern'),
 		condition: _match === undefined ? undefined : () => groupField(_match, 'condition'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -17427,6 +17440,7 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 		body: () => hydrateStoredSlot(node, '_body'),
 		pattern: _match === undefined ? undefined : () => groupField(_match, 'pattern'),
 		condition: _match === undefined ? undefined : () => groupField(_match, 'condition'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -20876,6 +20890,7 @@ export function buildParametersElementsReceiver(
 		parametersElementsReceiverGroup: () => hydrateStoredSlot(node, '_parameters_elements_receiver_group'),
 		attributeItem: _receiver === undefined ? undefined : () => groupField(_receiver, 'attributeItem'),
 		content: _receiver === undefined ? undefined : () => groupField(_receiver, 'content'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,

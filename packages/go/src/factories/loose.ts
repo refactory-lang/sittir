@@ -222,6 +222,11 @@ export const fieldDeclarationList$seated: EmptyForm<
 	)
 );
 
+export const fieldDeclaration$seated: Seat<
+	T.FieldDeclaration.LooseArgs,
+	ReturnType<typeof C.coerceToFieldDeclaration>
+> = K.fieldDeclaration$branch(C.coerceToFieldDeclaration);
+
 export const interfaceType$seated: EmptyForm<
 	T.EmptyInterfaceType,
 	Seat<T.InterfaceType.LooseArgs, ReturnType<typeof C.coerceToInterfaceType>>
@@ -236,6 +241,11 @@ export const specialArgumentList$seated: EmptyForm<
 		C.coerceToSpecialArgumentListGroup
 	)
 );
+
+export const sliceExpression$seated: Seat<
+	T.SliceExpression.LooseArgs,
+	ReturnType<typeof C.coerceToSliceExpression>
+> = K.sliceExpression$branch(C.coerceToSliceExpression);
 
 export const typeInstantiationExpression$seated: Seat<
 	T.TypeInstantiationExpression.LooseArgs,

@@ -8515,106 +8515,59 @@ function buildBinaryExpression$patch(
 		return node as unknown as T.BinaryExpression.Bound;
 	});
 }
-function buildBinaryExpression$set(
-	source: object,
-	...[slot, input]:
-		| ['left', Partial<T.BinaryExpression.Config>]
-		| ['operator', Partial<T.BinaryExpression.Config>]
-		| ['right', Partial<T.BinaryExpression.Config>]
-		| ['binaryExpressionIn', Partial<T.BinaryExpression.Config>]
-): T.BinaryExpression.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		switch (slot) {
-			case 'left':
-			case 'operator':
-			case 'right':
-			case 'binaryExpressionIn':
-				return buildBinaryExpression$patch(source, { ...(inputs.config as T.BinaryExpression.Config), ...input });
-		}
-	}
-	switch (slot) {
-		case 'left': {
-			const config = input;
-			const _left = rejectReservedText(
-				kindIdStorage<NonNullable<T.BinaryExpression['_left']>>(config.left),
-				'BinaryExpression.left',
-				TSKindId.Identifier,
-				_reservedWords_buildIdentifier
-			);
-			return setSlot(
-				source,
-				TSKindId.BinaryExpression as const,
-				'binary_expression',
-				0,
-				'left',
-				_left
-			) as unknown as T.BinaryExpression.Bound;
-		}
-		case 'operator': {
-			const config = input;
-			const _operator = kindIdStorage<NonNullable<T.BinaryExpression['_operator']>>(config.operator);
-			return setSlot(
-				source,
-				TSKindId.BinaryExpression as const,
-				'binary_expression',
-				1,
-				'operator',
-				_operator
-			) as unknown as T.BinaryExpression.Bound;
-		}
-		case 'right': {
-			const config = input;
-			const _right = rejectReservedText(
-				kindIdStorage<NonNullable<T.BinaryExpression['_right']>>(config.right),
-				'BinaryExpression.right',
-				TSKindId.Identifier,
-				_reservedWords_buildIdentifier
-			);
-			return setSlot(
-				source,
-				TSKindId.BinaryExpression as const,
-				'binary_expression',
-				2,
-				'right',
-				_right
-			) as unknown as T.BinaryExpression.Bound;
-		}
-		case 'binaryExpressionIn': {
-			const config = input;
-			const _binary_expression_in = config.binaryExpressionIn;
-			return setSlot(
-				source,
-				TSKindId.BinaryExpression as const,
-				'binary_expression',
-				3,
-				'binaryExpressionIn',
-				_binary_expression_in
-			) as unknown as T.BinaryExpression.Bound;
-		}
-	}
-}
 function withBinaryExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'left':
-			return applySetter(args, (value?: Admit<NonNullable<T.BinaryExpression.Config>['left']>) =>
-				rebuilt(node, handle, () => buildBinaryExpression$set(node, 'left', { left: value }))
-			);
-		case 'operator':
-			return applySetter(args, (value?: Admit<NonNullable<T.BinaryExpression.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildBinaryExpression$set(node, 'operator', { operator: value }))
-			);
-		case 'right':
-			return applySetter(args, (value?: Admit<NonNullable<T.BinaryExpression.Config>['right']>) =>
-				rebuilt(node, handle, () => buildBinaryExpression$set(node, 'right', { right: value }))
-			);
-		case 'binaryExpressionIn':
-			return applySetter(args, (value?: Admit<T.BinaryExpressionIn>) =>
+		case 'left': {
+			const inputs = builtInputs(node);
+			const config = inputs.config as T.BinaryExpression.Config;
+			return applySetter(args, (value: Admit<NonNullable<T.BinaryExpression.Config>['left']>) =>
 				rebuilt(node, handle, () =>
-					buildBinaryExpression$set(node, 'binaryExpressionIn', { binaryExpressionIn: value })
+					value === undefined
+						? buildBinaryExpression$patch(node, { ...config, left: value })
+						: buildBinaryExpression$patch(node, { ...config, binaryExpressionIn: undefined, left: value })
 				)
 			);
+		}
+		case 'operator': {
+			const inputs = builtInputs(node);
+			const config = inputs.config as T.BinaryExpression.Config;
+			return applySetter(args, (value: Admit<NonNullable<T.BinaryExpression.Config>['operator']>) =>
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildBinaryExpression$patch(node, { ...config, operator: value })
+						: buildBinaryExpression$patch(node, { ...config, binaryExpressionIn: undefined, operator: value })
+				)
+			);
+		}
+		case 'right': {
+			const inputs = builtInputs(node);
+			const config = inputs.config as T.BinaryExpression.Config;
+			return applySetter(args, (value: Admit<NonNullable<T.BinaryExpression.Config>['right']>) =>
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildBinaryExpression$patch(node, { ...config, right: value })
+						: buildBinaryExpression$patch(node, { ...config, binaryExpressionIn: undefined, right: value })
+				)
+			);
+		}
+		case 'binaryExpressionIn': {
+			const inputs = builtInputs(node);
+			const config = inputs.config as T.BinaryExpression.Config;
+			return applySetter(args, (value: Admit<T.BinaryExpressionIn>) =>
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildBinaryExpression$patch(node, { ...config, binaryExpressionIn: value })
+						: buildBinaryExpression$patch(node, {
+								...config,
+								left: undefined,
+								operator: undefined,
+								right: undefined,
+								binaryExpressionIn: value
+							})
+				)
+			);
+		}
 	}
 	throw new Error(`binary_expression has no $with.${setter}`);
 }
@@ -22504,7 +22457,15 @@ function withNumberFloatPoint(node: object, setter: string, args: readonly unkno
 			const config = inputs.config as T.NumberFloatPoint.Config;
 			const options = inputs.options as T.NumberFloatPoint.Options;
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildNumberFloatPoint$patch(node, { ...config, exponent: value }, options))
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildNumberFloatPoint$patch(
+								node,
+								{ ...config, exponentSign: undefined, exponent: undefined },
+								{ ...options, marker: undefined }
+							)
+						: buildNumberFloatPoint$patch(node, { ...config, exponent: value }, options)
+				)
 			);
 		}
 	}
@@ -22700,7 +22661,15 @@ function withNumberFloatLeadingPoint(node: object, setter: string, args: readonl
 			const config = inputs.config as T.NumberFloatLeadingPoint.Config;
 			const options = inputs.options as T.NumberFloatLeadingPoint.Options;
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildNumberFloatLeadingPoint$patch(node, { ...config, exponent: value }, options))
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildNumberFloatLeadingPoint$patch(
+								node,
+								{ ...config, exponentSign: undefined, exponent: undefined },
+								{ ...options, marker: undefined }
+							)
+						: buildNumberFloatLeadingPoint$patch(node, { ...config, exponent: value }, options)
+				)
 			);
 		}
 	}

@@ -77,7 +77,7 @@
 - Test: `packages/types/tests/build-input.test-d.ts`
 
 - [x] **Step 1: The failing tests:**
-  - python `BuildInput<PythonMap, 'declaration.property.getter'>['$flags']` admits `'async'` (decision 3);
+  - python `BuildInput<PythonMap, 'declaration.member.property.getter'>['$flags']` admits `'async'` (decision 3);
   - a `T.Block.Bound` is assignable to the getter's `body`, and a typescript node isn't (decision 2);
   - typescript `{ $path: 'literal.number', $value: 1 }` is assignable to an array element (decision 1);
   - the getter's input has no `parameters`;
@@ -193,6 +193,8 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
   - decision 7's bare booleans, once the emitter builds literal arms (`literal.boolean.*` arms are literal arms, unfit today), since a bare `true` has no generated path to go to until then;
   - Step 3 (generated-module type errors: 0 in all three grammars) and Step 4.
 
+**Ceiling:** the user allowed rust's count of structures only the interpreter builds to rise from 771 to 776 for the struct-pattern paths. Both builds refused those six rows before, and the generated build now stops at paths that were already ungenerated: `statement.match`, `file` and `element.type_argument`. A commit that generates one of them lowers the ceiling to its new count.
+
 **Files:**
 - Create: `packages/codegen/src/emitters/overlays/portable/emit/build.ts` (from the prototype, its builders typed by `emit/engine.ts`), run in the pinned child
 - Generated: `packages/<lang>/src/portable/build.ts` becomes `portableBuild`, a table a caller scopes with `scopeBuilders(engine, portableBuild)`
@@ -266,7 +268,7 @@ What the census checked, so the task needs no new probe:
   - `createEngine(python, { api: 'portable' })` has `build.declaration.property.getter`, typed by `BuildInput`.
   - `parse(source)` returns `File<G>`, projected whole in the call; `project(node, carried?)` reports kept nodes through `PortableCarried` from `@sittir/types`.
   - Nothing named in the spec's removed rows is exported.
-- [ ] **Step 2: Implement.** Delete the interpreters and move every caller (tools, tests, conformance) to the engine. Remove the Task 4 interpreter comparison, with its rows recorded in the commit.
+- [ ] **Step 2: Implement.** First, in every grammar, the count of corpus structures only the interpreter builds is zero, or each remaining path is a row the user has ruled on. Then delete the interpreters and move every caller (tools, tests, conformance) to the engine. Remove the Task 4 interpreter comparison, with its rows recorded in the commit.
 - [ ] **Step 3: Three-way verification,** plus the workspace type-check. Commit.
 
 ### Task 7: Gates and ratchets
@@ -295,3 +297,4 @@ The spec's ruling: rust's struct base (`P { x: 1, ..base }`), its struct pattern
 ## Follow-ups
 
 - **Aliasing a lift that an `options:` key addresses fails enrich.** When the grammar bindings alias an enrich lift and the grammar's `options:` block addresses that lift by name, evaluating the layer throws `resolveLiftNames: '<lift>' carries a variant name but is not a rule enrich minted`. No grammar hits this today, because the bindings keep the two kinds apart. The case: python's `integer_legacy_octal_long` has `{ 'marker:': preference('L') }`. Derive python's bindings with `sameShapeAs` not counting options, and the bindings alias it into `octal_big_integer_number_literal` (`integer_legacy_octal: { "-2": alias(…), "-1": alias(…) }`). `bindings-inventory --write` then fails evaluating the layer it wrote. The fix belongs in the enrich/wire layer: an alias at a lift should carry the lift's options with it, or refuse with the options key named.
+- **Python's map misfits `declaration.type.class.members`, and the type error stays** (the maintainer, 2026-11-21: "Leave the type error - it's transient"). Python's class body is a block, so `members` reads every item in it. Bare expressions (`print(1)`, `x`, `x += 1`, a string that isn't the docstring) read as expressions, identifiers, literals and `pattern.rest`, and today's interim `(Declaration.Any | Statement.Any)[]` admits none of them (TS2344 `Misfit<"declaration.type.class", "members">`). Neither widening the vocabulary type nor building a widening override is taken. The error clears when `members` is narrowed and python's override admits its statements, which the spec's "Rename now, narrow later" leaves for later. Until then the workspace type-check carries this one error; any other new error is a regression.

@@ -205,11 +205,15 @@ function buildSeq(input: { members: Built[]; multiplicity?: LeafMultiplicity }):
 		isSpliceableBareMember(m) ? m.members.map((member, k) => (k === 0 ? absorbIds(member, m) : member)) : [m]
 	);
 	const multToPush = multiplicity === 'nonEmptyArray' ? 'array' : multiplicity;
+	const isBare = (m: Built): boolean => (m.type === STRING || m.type === PATTERN) && !isSlotPromotedLiteral(m);
+	const coOptional = multToPush === 'optional' && rawMembers.filter((m) => !isBare(m)).length >= 2;
 	const pushed = rawMembers.map((m) => {
-		const isBareLiteral = (m.type === STRING || m.type === PATTERN) && !isSlotPromotedLiteral(m);
-		if (multToPush === undefined || isBareLiteral) return m;
+		if (multToPush === undefined || isBare(m)) return m;
 		const combined = combineMultiplicity(multToPush, m.multiplicity);
-		return combined !== undefined ? { ...m, multiplicity: combined } : m;
+		if (combined === undefined) return m;
+		if (!coOptional) return { ...m, multiplicity: combined };
+		const required = m.multiplicity === undefined || m.multiplicity === 'single' || m.multiplicity === 'nonEmptyArray';
+		return { ...m, multiplicity: combined, annotations: { ...m.annotations, coOptional: { required } } };
 	});
 	const hasBareLiteral = rawMembers.some((m) => m.type === STRING || m.type === PATTERN);
 	const seq: BuiltSeq = { type: SEQ, members: pushed, nonterminal: pushed.some((m) => m.nonterminal === true) };

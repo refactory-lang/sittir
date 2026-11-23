@@ -19,6 +19,7 @@ import {
 	currentHandle,
 	admitChildren,
 	checkDelimited,
+	hasSlot,
 	hoistedWith,
 	hoistRead,
 	listElementsHop,
@@ -440,6 +441,7 @@ export function buildImportSpecList(value?: Admit<T.ImportSpecListGroup>): T.Imp
 			_import_spec_list_group === undefined
 				? undefined
 				: () => groupField(_import_spec_list_group, 'importSpecListArm'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -584,6 +586,7 @@ export function buildConstSpec(config: T.ConstSpec.Config): T.ConstSpec.Bound {
 		constSpecGroup: () => hydrateStoredSlot(node, '_const_spec_group'),
 		type: _const_spec_group === undefined ? undefined : () => groupField(_const_spec_group, 'type'),
 		value: _const_spec_group === undefined ? undefined : () => groupField(_const_spec_group, 'value'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -2659,6 +2662,7 @@ export function buildFieldDeclarationList(value?: Admit<T.FieldDeclarationListGr
 			_field_declaration_list_group === undefined
 				? undefined
 				: () => groupField(_field_declaration_list_group, 'importSpecListArm'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -2818,11 +2822,19 @@ function buildFieldDeclaration$with(node: Held, setter: string, args: readonly u
 	switch (setter) {
 		case 'names':
 			return applySetter(args, (...values: Admit<(T.FieldIdentifier | T.FieldIdentifier.Types)[]>) =>
-				rebuilt(node, handle, () => buildFieldDeclaration({ ...config, names: restItems('names', values) }))
+				rebuilt(node, handle, () =>
+					restItems('names', values) === undefined
+						? buildFieldDeclaration({ ...config, names: restItems('names', values) })
+						: buildFieldDeclaration({ ...config, fieldDeclarationArm: undefined, names: restItems('names', values) })
+				)
 			);
 		case 'type':
-			return applySetter(args, (value?: Admit<T.Type | T.TypeIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildFieldDeclaration({ ...config, type: value }))
+			return applySetter(args, (value: Admit<T.Type | T.TypeIdentifier.Types>) =>
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildFieldDeclaration({ ...config, type: value })
+						: buildFieldDeclaration({ ...config, fieldDeclarationArm: undefined, type: value })
+				)
 			);
 		case 'fieldDeclarationArm':
 			return hoistedWith(
@@ -2835,8 +2847,12 @@ function buildFieldDeclaration$with(node: Held, setter: string, args: readonly u
 				handle,
 				args,
 				(args) =>
-					applySetter(args, (value?: Admit<NonNullable<T.FieldDeclaration.Config>['fieldDeclarationArm']>) =>
-						rebuilt(node, handle, () => buildFieldDeclaration({ ...config, fieldDeclarationArm: value }))
+					applySetter(args, (value: Admit<NonNullable<T.FieldDeclaration.Config>['fieldDeclarationArm']>) =>
+						rebuilt(node, handle, () =>
+							value === undefined
+								? buildFieldDeclaration({ ...config, fieldDeclarationArm: value })
+								: buildFieldDeclaration({ ...config, names: undefined, type: undefined, fieldDeclarationArm: value })
+						)
 					),
 				undefined,
 				(args: readonly never[]) =>
@@ -2881,6 +2897,7 @@ export function buildInterfaceType(value?: Admit<T.InterfaceTypeGroup>): T.Inter
 			_interface_type_group === undefined ? undefined : () => groupField(_interface_type_group, 'interfaceElems'),
 		importSpecListArm:
 			_interface_type_group === undefined ? undefined : () => groupField(_interface_type_group, 'importSpecListArm'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -5409,6 +5426,7 @@ export function buildSpecialArgumentList(value?: Admit<T.SpecialArgumentListGrou
 			_special_argument_list_group === undefined
 				? undefined
 				: () => groupField(_special_argument_list_group, 'trailingComma'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -10865,6 +10883,7 @@ export function buildTypeDeclarationArm(value?: Admit<T.TypeDeclarationGroup>): 
 			_type_declaration_group === undefined
 				? undefined
 				: () => groupField(_type_declaration_group, 'importSpecListArm'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,

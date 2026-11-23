@@ -135,11 +135,112 @@ type annotation.
 ### Shape 2 — an optional group splices onto the parent
 
 A group that occurs at most once in its seat has no name worth exposing. Its
-keys become keys of the parent's config, and the parent's factory carries
-two overloads per group, both keys or neither (per arm, when the group has
-arms). The overlay partitions the parent's keys, builds the group into the
-seat when its keys are present and leaves the seat empty otherwise. The
-co-optional binding is a type fact; nothing is checked at runtime.
+keys become keys of the parent's config, and the parent's argument row is a
+union per group, both keys or neither (per arm, when the group has arms). The
+overlay partitions the parent's keys, builds the group into the seat when its
+keys are present and leaves the seat empty otherwise. The co-optional binding
+is a type fact; nothing is checked at runtime.
+
+The seat and the keys exclude each other (the user, 2026-11-21). A config gives
+the group whole under its seat, or its keys, or neither, in the strict and the
+loose input alike, so `catchClause({ body, catchClauseGroup: g, parameter })`
+is a type error.
+
+An optional branch that binds several slots with no group is typed the same way
+(the user, 2026-11-21). Four float kinds spell their exponent so: typescript's
+`number_float_point` and `number_float_leading_point`, and python's `float_point`
+and `float_leading_point`, hold the marker, sign and digits of `1.5e+3` in one
+optional branch. The builder's argument row is a union of tuples derived from
+that branch, so a config and its options are checked together:
+
+```ts
+type Present = Base & { exponent: E; exponentSign?: S };
+type Absent = Base & { exponent?: never; exponentSign?: never };
+type BuildArgs =
+	| [config: Present, options?: { marker?: 'e' | 'E' }]
+	| [config: Present | Absent, options?: { marker?: never }];
+```
+
+`{ integer: 1, exponentSign: '+' }` and `{ integer: 1 }, { marker: 'E' }` are type
+errors. The row is a union of tuples and not a set of function overloads, because
+`ArgsOf` and `Parameters` read only an overload's last signature. The second tuple
+takes both forms because TypeScript does not spread one union-typed argument across
+the tuples, so a held config that may have the branch or not still builds, and takes
+no option of the branch. The builder's numeric refusals hold on every tuple.
+
+A slot the branch requires goes with the branch, and a slot optional inside it is
+allowed only while the branch is present. Such a branch lives inside a token, where
+the parse tree has no node for a hidden group to seat. Everywhere else an optional
+sequence of several slots is a group, as Go's `const_spec` and C's nested
+`gnu_asm_expression` are, and the group's own typing covers it. A flag is not a slot,
+so it is outside this rule.
+
+A node of such a kind is typed branch-present or branch-absent, as a node with a
+flattened group is (the user, 2026-11-21). With the branch absent, its setters take
+only a slot the branch requires and has no default for: `n.$with.exponent(2)` gives
+the present shape, and `n.$with.exponentSign('+')` is a type error. With it present,
+clearing a slot the branch requires clears the whole branch, so
+`n.$with.exponent()` removes the marker, the sign and the digits.
+
+Code tells the two shapes apart with one guard, on both storages, for an optional
+branch and a flattened group alike (the user, 2026-11-22): `n.$has('exponent')`
+narrows a node to its present shape, and its false side to the absent shape. A stored
+property such as `_exponent` does not discriminate them, because an arena node holds
+no such property, so the shape types don't declare one. `$has` narrows only for a name
+whose presence decides the shape: a slot the branch requires and has no default for,
+or a flattened group's seat or sole required key. For any other slot of the branch it
+answers a plain boolean, since an optional slot being unset says nothing about the
+branch.
+
+All of this is checked at compile time and lives on the client side (the user,
+2026-11-22). The types check configs, setters and shapes, and nothing validates them
+at runtime. Whether a parsed float has an exponent depends on its source, so `$has`
+is one read of the node's own getter in the TypeScript wrap layer, and its result
+narrows the type. No native crate or binding changes for it.
+
+A kind whose choice holds arms with different slots takes one config per arm, in
+the same union of tuples (the user, 2026-11-22). Java's cast holds `types` and
+`value`, or its `cast_expression_arm` group:
+
+```ts
+type BuildArgs =
+	| [config: { types: Type[]; value: V; castExpressionArm?: never }]
+	| [config: { castExpressionArm: Arm; types?: never; value?: never }];
+```
+
+Mixing the arms is a type error, and so is an empty config unless the choice has an
+empty arm. A slot every arm holds appears in each tuple. A flag is outside this rule
+as well, so arms that differ only in flags take one config: typescript's
+`public_field_definition_plain` keeps `static`, `override`, `readonly` and `abstract`
+as independent booleans.
+
+A setter crosses arms (the user, 2026-11-23). On a node that holds one arm, setting a
+slot only another arm holds gives that arm and clears the slots only the old arm held,
+so `n.$with.arguments(x)` on rust's `#[a = 1]` gives `#[a(x)]`. A slot every arm holds
+keeps its value. Clearing a slot its arm requires is a type error unless the choice has
+an empty arm, as an empty config is.
+
+A choice whose arms are told apart by kind makes its parent a supertype (the user,
+2026-11-23). One `variant()` can take several arms: the key `'*'` names every arm no
+other key of the edit names, and those arms become one rule, each keeping its own
+precedence. A blank name with `default: true` is a regular variant whose kind is
+`<parent>_default`, with no build path of its own, so `build.<parent>(...)` builds it:
+
+```ts
+binary_expression: { 24: variant('in'), '*': variant('', { default: true }) },
+```
+
+`a + b` reads as `binary_expression_default`, and `#x in y` as `binary_expression_in`
+with no wrapper. `binary_expression` is a supertype of the two: `is.binaryExpression`
+holds for both, `is.binaryExpressionIn` tells them apart, and `build.binaryExpression(...)`
+and `build.binaryExpression.in(...)` build them. A `conflicts` entry naming the parent
+names the default kind instead. A blank name without `default: true` is refused, and so
+is one variant name on two keys.
+
+`binary_expression_in` becoming its own kind puts it directly in the 129 typescript slots
+that hold an expression. It reads as a raw arm there for the reason it already did, so the
+typescript per-value raw-arm ceiling is 4,504 where it was 4,375, and the per-kind ceiling
+stays 30 (the maintainer, 2026-11-23: "Allow +129").
 
 A mandatory single group is the degenerate case with one overload. Today's
 forwarded parent already accepts the group's Config that way

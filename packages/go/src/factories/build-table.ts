@@ -162,20 +162,20 @@ export interface Routes<Table extends AnyTable> {
 	};
 	readonly fieldDeclarationList: Table['fieldDeclarationList$seated'];
 	readonly fieldDeclaration$arm: <
-		const V extends OmitEach<ArgsOf<Table['buildFieldDeclaration']>[0], 'fieldDeclarationArm'> & {
+		const V extends OmitEach<ArgsOf<Table['fieldDeclaration$seated']>[0], 'fieldDeclarationArm'> & {
 			fieldDeclarationArm: ArgsOf<Table['buildFieldDeclarationArm']>[0];
 		}
 	>(
 		config: V &
 			RefuseUndeclared<
 				V,
-				OmitEach<ArgsOf<Table['buildFieldDeclaration']>[0], 'fieldDeclarationArm'> & {
+				OmitEach<ArgsOf<Table['fieldDeclaration$seated']>[0], 'fieldDeclarationArm'> & {
 					fieldDeclarationArm: ArgsOf<Table['buildFieldDeclarationArm']>[0];
 				}
 			>,
-		options?: OptionsArg<Table['buildFieldDeclaration']>
-	) => ReturnType<Table['buildFieldDeclaration']>;
-	readonly fieldDeclaration: Table['buildFieldDeclaration'] & { readonly arm: Routes<Table>['fieldDeclaration$arm'] };
+		options?: OptionsArg<Table['fieldDeclaration$seated']>
+	) => ReturnType<Table['fieldDeclaration$seated']>;
+	readonly fieldDeclaration: Table['fieldDeclaration$seated'] & { readonly arm: Routes<Table>['fieldDeclaration$arm'] };
 	readonly interfaceType: Table['interfaceType$seated'];
 	readonly statementListGroup$semi: <
 		const V extends OmitEach<ArgsOf<Table['buildStatementListGroup']>[0], 'sourceFileText'>
@@ -572,6 +572,7 @@ export interface Routes<Table extends AnyTable> {
 		readonly arm2: Routes<Table>['callExpression$arm2'];
 	};
 	readonly specialArgumentList: Table['specialArgumentList$seated'];
+	readonly sliceExpression: Table['sliceExpression$seated'];
 	readonly typeInstantiationExpression: Table['typeInstantiationExpression$seated'];
 	readonly literalElement$literalValue: Seat<
 		ArgsOf<Table['buildLiteralValue']>,
@@ -743,7 +744,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly argumentList: Table['buildArgumentList'];
 	readonly selectorExpression: Table['buildSelectorExpression'];
 	readonly indexExpression: Table['buildIndexExpression'];
-	readonly sliceExpression: Table['buildSliceExpression'];
+	readonly sliceExpression: Routes<Table>['sliceExpression'];
 	readonly typeAssertionExpression: Table['buildTypeAssertionExpression'];
 	readonly typeConversionExpression: Table['buildTypeConversionExpression'];
 	readonly typeInstantiationExpression: Routes<Table>['typeInstantiationExpression'];
@@ -855,7 +856,7 @@ export interface Ir<Table extends AnyTable> {
 		readonly binary: Table['buildBinaryExpression'];
 		readonly selector: Table['buildSelectorExpression'];
 		readonly index: Table['buildIndexExpression'];
-		readonly slice: Table['buildSliceExpression'];
+		readonly slice: Routes<Table>['sliceExpression'];
 		readonly call: Routes<Table>['callExpression'];
 		readonly typeAssertion: Table['buildTypeAssertionExpression'];
 		readonly typeConversion: Table['buildTypeConversionExpression'];
@@ -992,11 +993,11 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	);
 	const fieldDeclarationList: Routes<Table>['fieldDeclarationList'] = $at('fieldDeclarationList$seated');
 	const fieldDeclaration$arm: Routes<Table>['fieldDeclaration$arm'] = K.fieldDeclaration$arm(
-		$at('buildFieldDeclaration'),
+		$at('fieldDeclaration$seated'),
 		$at('buildFieldDeclarationArm')
 	);
 	const fieldDeclaration: Routes<Table>['fieldDeclaration'] = Object.freeze(
-		Object.assign(delegate($at('buildFieldDeclaration')), { arm: fieldDeclaration$arm } as const)
+		Object.assign(delegate($at('fieldDeclaration$seated')), { arm: fieldDeclaration$arm } as const)
 	);
 	const interfaceType: Routes<Table>['interfaceType'] = $at('interfaceType$seated');
 	const statementListGroup$semi: Routes<Table>['statementListGroup$semi'] = K.statementListGroup$semi(
@@ -1195,6 +1196,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		} as const)
 	);
 	const specialArgumentList: Routes<Table>['specialArgumentList'] = $at('specialArgumentList$seated');
+	const sliceExpression: Routes<Table>['sliceExpression'] = $at('sliceExpression$seated');
 	const typeInstantiationExpression: Routes<Table>['typeInstantiationExpression'] = $at(
 		'typeInstantiationExpression$seated'
 	);
@@ -1378,7 +1380,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		argumentList: $at('buildArgumentList'),
 		selectorExpression: $at('buildSelectorExpression'),
 		indexExpression: $at('buildIndexExpression'),
-		sliceExpression: $at('buildSliceExpression'),
+		sliceExpression: sliceExpression,
 		typeAssertionExpression: $at('buildTypeAssertionExpression'),
 		typeConversionExpression: $at('buildTypeConversionExpression'),
 		typeInstantiationExpression: typeInstantiationExpression,
@@ -1490,7 +1492,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			binary: $at('buildBinaryExpression'),
 			selector: $at('buildSelectorExpression'),
 			index: $at('buildIndexExpression'),
-			slice: $at('buildSliceExpression'),
+			slice: sliceExpression,
 			call: callExpression,
 			typeAssertion: $at('buildTypeAssertionExpression'),
 			typeConversion: $at('buildTypeConversionExpression'),

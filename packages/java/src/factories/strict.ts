@@ -194,6 +194,21 @@ export {
 	buildTypeIdentifier
 } from './raw.js';
 
+export const castExpression$seated: Seat<
+	T.CastExpression.BuildArgs,
+	ReturnType<typeof F.buildCastExpression>
+> = K.castExpression$branch(F.buildCastExpression);
+
+export const unqualifiedObjectCreationExpression$seated: Seat<
+	T.UnqualifiedObjectCreationExpression.BuildArgs,
+	ReturnType<typeof F.buildUnqualifiedObjectCreationExpression>
+> = K.unqualifiedObjectCreationExpression$branch(F.buildUnqualifiedObjectCreationExpression);
+
+export const objectCreationExpressionArm$seated: Seat<
+	T.ObjectCreationExpressionArm.BuildArgs,
+	ReturnType<typeof F.buildObjectCreationExpressionArm>
+> = K.objectCreationExpressionArm$branch(F.buildObjectCreationExpressionArm);
+
 export const enumBody$seated: EmptyForm<
 	T.EmptyEnumBody,
 	Seat<T.EnumBody.BuildArgs, ReturnType<typeof F.buildEnumBody>>

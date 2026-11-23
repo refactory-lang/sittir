@@ -220,6 +220,11 @@ export const fieldDeclarationList$seated: EmptyForm<
 	)
 );
 
+export const fieldDeclaration$seated: Seat<
+	T.FieldDeclaration.BuildArgs,
+	ReturnType<typeof F.buildFieldDeclaration>
+> = K.fieldDeclaration$branch(F.buildFieldDeclaration);
+
 export const interfaceType$seated: EmptyForm<
 	T.EmptyInterfaceType,
 	Seat<T.InterfaceType.BuildArgs, ReturnType<typeof F.buildInterfaceType>>
@@ -231,6 +236,11 @@ export const specialArgumentList$seated: EmptyForm<
 > = withEmptyForm(
 	K.specialArgumentList$flatten$specialArgumentListGroup(F.buildSpecialArgumentList, F.buildSpecialArgumentListGroup)
 );
+
+export const sliceExpression$seated: Seat<
+	T.SliceExpression.BuildArgs,
+	ReturnType<typeof F.buildSliceExpression>
+> = K.sliceExpression$branch(F.buildSliceExpression);
 
 export const typeInstantiationExpression$seated: Seat<
 	T.TypeInstantiationExpression.BuildArgs,

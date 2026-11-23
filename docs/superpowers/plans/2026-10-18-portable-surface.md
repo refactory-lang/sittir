@@ -67,9 +67,9 @@ The cost of keeping bare ids on grammar guards: a bare id carries no language, s
 | grammar | claim | entries | form (ruled) |
 |---|---|---|---|
 | rust | a pattern within `closure_parameters` reads as `declaration.parameter` | 35 | an envelope alias at the `closure_parameters` site, one claim on the envelope |
-| rust | `function_item` / `function_signature_item` within an impl or trait `declaration_list` reads as `declaration.method` (`.signature`), with each visibility | 19 | the method alias (2026-10-10) |
+| rust | `function_item` / `function_signature_item` within an impl or trait `declaration_list` reads as `declaration.member.method` (`.signature`), with each visibility | 19 | the method alias (2026-10-10) |
 | rust | `crate` within `visibility_modifier` reads as `modifier.visibility.public.internal` | 1 | an alias, `internal_public_visibility_modifier` (2026-10-10, P2) |
-| python | `function_definition` in a class body, directly or decorated, reads as `declaration.method` | 2 | the method alias, five clones (2026-10-10, P1) |
+| python | `function_definition` in a class body, directly or decorated, reads as `declaration.member.method` | 2 | the method alias, five clones (2026-10-10, P1) |
 | python | `staticmethod` read through the enclosing `decorated_definition` (within it, and the `up: 1` condition) | 1 | the envelope sets its element's flag (2026-10-10, P4) |
 | python | an `identifier` within `parameters` / `lambda_parameters` reads as `declaration.parameter` | 2 | the claims are deleted: a leaf has no slots, an identifier is a leaf, and it reads through its parent's member |
 | python | an `identifier` within `type` reads as `identifier.type` | 1 | deleted, as above |
@@ -181,7 +181,7 @@ The guard already reaches the node's engine through `engineOf(node)`, and that e
 
 Ruled (2026-10-19): two parts. **3b-1**, from master: the `crate` alias, the closure-parameter envelope, and the python identifier claims deleted after their parent members are added; the ratchet tightens to rust 19, python 3 plus 1 `up`. **3b-2** waits for the authoring-DSL PR to merge: the method aliases and the static flag as path edits (they need ancestor copies, which the DSL rewrite derives), the emitter diagnostic gated at 0, and the ratchet deleted.
 
-3b-2 also adds one claim with the rust method alias: an impl `function_item` whose receiver is a typed `self` (`fn f(self: Box<Self>)`, the receiver lead's `receiver_parameter_declaration` arm) reads as `declaration.method`. Until the alias exists the claim would be placed (`within` the impl `declaration_list`) above the placed ratchet, so `bindings.scm` does not carry it. Leaving it out regresses nothing: master reads such a function as `declaration.method.static`, which is wrong too, and without the claim it reads as `declaration.function`. On the alias it needs no placement.
+3b-2 also adds one claim with the rust method alias: an impl `function_item` whose receiver is a typed `self` (`fn f(self: Box<Self>)`, the receiver lead's `receiver_parameter_declaration` arm) reads as `declaration.member.method`. Until the alias exists the claim would be placed (`within` the impl `declaration_list`) above the placed ratchet, so `bindings.scm` does not carry it. Leaving it out regresses nothing: master reads such a function as `declaration.member.method.static`, which is wrong too, and without the claim it reads as `declaration.function`. On the alias it needs no placement.
 
 **Files:**
 - Modify: `packages/rust/bindings.scm`, `packages/python/bindings.scm`, `packages/rust/grammar.sittir.ts`, `packages/python/grammar.sittir.ts` (the seven claims of Q1, in their ruled forms; `grammar.bindings.ts` regenerates from them), the bindings emitter that writes read entries (it refuses `within` and `up > 0` with a generator diagnostic)

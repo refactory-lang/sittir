@@ -194,6 +194,21 @@ export {
 	coerceToTypeIdentifier as buildTypeIdentifier
 } from './coerce.js';
 
+export const castExpression$seated: Seat<
+	T.CastExpression.LooseArgs,
+	ReturnType<typeof C.coerceToCastExpression>
+> = K.castExpression$branch(C.coerceToCastExpression);
+
+export const unqualifiedObjectCreationExpression$seated: Seat<
+	T.UnqualifiedObjectCreationExpression.LooseArgs,
+	ReturnType<typeof C.coerceToUnqualifiedObjectCreationExpression>
+> = K.unqualifiedObjectCreationExpression$branch(C.coerceToUnqualifiedObjectCreationExpression);
+
+export const objectCreationExpressionArm$seated: Seat<
+	T.ObjectCreationExpressionArm.LooseArgs,
+	ReturnType<typeof C.coerceToObjectCreationExpressionArm>
+> = K.objectCreationExpressionArm$branch(C.coerceToObjectCreationExpressionArm);
+
 export const enumBody$seated: EmptyForm<
 	T.EmptyEnumBody,
 	Seat<T.EnumBody.LooseArgs, ReturnType<typeof C.coerceToEnumBody>>

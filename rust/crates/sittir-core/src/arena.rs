@@ -210,8 +210,9 @@ pub enum ArenaError {
     /// A value no record holds: `what` names it.
     Unwritable(&'static str),
     /// A record of kind `kind` read where a value of the choice `owner` is
-    /// read, which decodes no node of that kind.
-    UnknownKind { kind: crate::types::KindId, owner: &'static str },
+    /// read, which decodes no node of that kind; `name` is the grammar's name
+    /// for the kind, where the reader knows it.
+    UnknownKind { kind: crate::types::KindId, name: Option<&'static str>, owner: &'static str },
     /// A read at `at`, whose chunk was freed once every entry in it was
     /// released.
     Released(Address),
@@ -241,7 +242,7 @@ impl fmt::Display for ArenaError {
             ArenaError::Malformed { what, word } => write!(f, "{what} {word} is not one a record writer writes"),
             ArenaError::UnknownSlot(key) => write!(f, "the layout names slot `{key}`, which has no stamped cell in its record"),
             ArenaError::Unwritable(what) => write!(f, "a record writer does not write {what}"),
-            ArenaError::UnknownKind { kind, owner } => f.write_str(&crate::boundary::unknown_kind(*kind, owner)),
+            ArenaError::UnknownKind { kind, name, owner } => f.write_str(&crate::boundary::unknown_kind_named(*kind, *name, owner)),
             ArenaError::Released(at) => write!(f, "the node at {} was released: the chunk its record was in is freed", at.0),
             ArenaError::MissingField(key) => write!(f, "Missing field `{key}`"),
             ArenaError::EmptyList { owner, key } => write!(f, "{} on {owner}.{key}", crate::non_empty::EmptyList),

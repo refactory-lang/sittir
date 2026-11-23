@@ -791,15 +791,28 @@ function buildCastExpression$with(node: Held, setter: string, args: readonly unk
 					...values: Admit<
 						Extract<NonNullable<NonNullable<T.CastExpression.Config>['types']>, readonly unknown[]>[number][]
 					>
-				) => rebuilt(node, handle, () => buildCastExpression({ ...config, types: restItems('types', values) }))
+				) =>
+					rebuilt(node, handle, () =>
+						restItems('types', values) === undefined
+							? buildCastExpression({ ...config, types: restItems('types', values) })
+							: buildCastExpression({ ...config, castExpressionArm: undefined, types: restItems('types', values) })
+					)
 			);
 		case 'value':
-			return applySetter(args, (value?: Admit<NonNullable<T.CastExpression.Config>['value']>) =>
-				rebuilt(node, handle, () => buildCastExpression({ ...config, value: value }))
+			return applySetter(args, (value: Admit<NonNullable<T.CastExpression.Config>['value']>) =>
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildCastExpression({ ...config, value: value })
+						: buildCastExpression({ ...config, castExpressionArm: undefined, value: value })
+				)
 			);
 		case 'castExpressionArm':
-			return applySetter(args, (value?: Admit<T.CastExpressionArm>) =>
-				rebuilt(node, handle, () => buildCastExpression({ ...config, castExpressionArm: value }))
+			return applySetter(args, (value: Admit<T.CastExpressionArm>) =>
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildCastExpression({ ...config, castExpressionArm: value })
+						: buildCastExpression({ ...config, types: undefined, value: undefined, castExpressionArm: value })
+				)
 			);
 	}
 	throw new Error(`cast_expression has no $with.${setter}`);
@@ -11626,7 +11639,7 @@ function buildObjectCreationExpressionArm$with(node: Held, setter: string, args:
 				)
 			);
 		case 'typeArguments':
-			return applySetter(args, (value?: Admit<T.TypeArguments>) =>
+			return applySetter(args, (value: Admit<T.TypeArguments>) =>
 				rebuilt(node, handle, () => buildObjectCreationExpressionArm({ ...config, typeArguments: value }))
 			);
 		case 'type':

@@ -44,7 +44,7 @@ import {
 import { buildSeparatedListContentSlot } from './wrap.ts';
 import { refersTo, writesText, type Body } from './render-body.ts';
 import { builtFromText } from './built-from-text.ts';
-import { valueStorageExpr, kindEnumTextExpr } from './factories.ts';
+import { exclusiveArmsOfNode, valueStorageExpr, kindEnumTextExpr } from './factories.ts';
 import { classifyFactoryEmission, leadingOptionsOf, registeredSlots } from './shared.ts';
 import { seatsConfigChild, subFactoriesOf, type SubFactory } from '../compiler/model/sub-factories.ts';
 import { collectPolymorphWires, emittedArmPath, type PolymorphWires } from './overlays/polymorphs.ts';
@@ -278,10 +278,21 @@ interface MinimalSlotsCtx {
 	readonly nodeMap: NodeMap;
 }
 
+function minimalArm(node: AbstractAssembledCompound, ctx: MinimalSlotsCtx) {
+	const held = ctx.nodeMap.nodes.get(node.kind);
+	const exclusive = held === undefined ? undefined : exclusiveArmsOfNode(held);
+	if (exclusive === undefined) return undefined;
+	const required = new Set(node.slots.filter(isRequired).map((slot) => slot.propertyName));
+	return { keys: exclusive.keys, arm: exclusive.arms.find((arm) => arm.needed.every((key) => required.has(key))) ?? exclusive.arms[0]! };
+}
+
 function minimalSlots(node: AbstractAssembledCompound, ctx: MinimalSlotsCtx): ReadonlySet<AssembledNonterminal> {
 	const rule = ctx.nodeMap.normalizedRules?.[node.kind];
-	const inArm = rule === undefined ? [] : armSeats(rule, { owned: ctx.nodeMap.slotByRuleId.get(node.kind) });
-	return new Set([...node.slots.filter(isRequired), ...inArm]);
+	const inRule = rule === undefined ? [] : armSeats(rule, { owned: ctx.nodeMap.slotByRuleId.get(node.kind) });
+	const chosen = minimalArm(node, ctx);
+	const outsideArms = inRule.filter((slot) => chosen?.keys.includes(slot.propertyName) !== true);
+	const inArm = node.slots.filter((slot) => chosen?.arm.needed.includes(slot.propertyName) === true);
+	return new Set([...node.slots.filter(isRequired), ...outsideArms, ...inArm]);
 }
 
 function factoryCallArgs(
@@ -294,7 +305,9 @@ function factoryCallArgs(
 ): { typeConfigArg: string; renderConfigArg: string; registeredOptionsArg: string | undefined } {
 	const registeredSet = new Set(registeredSlots(node));
 	const minimal = minimalSlots(node, { nodeMap });
-	const seated = (f: AssembledNonterminal): boolean => minimal.has(f) || (options?.populateOptional === true && !isMultiple(f));
+	const arm = minimalArm(node, { nodeMap })?.arm;
+	const inArm = (f: AssembledNonterminal): boolean => arm === undefined || arm.keys.includes(f.propertyName);
+	const seated = (f: AssembledNonterminal): boolean => minimal.has(f) || (options?.populateOptional === true && !isMultiple(f) && inArm(f));
 	const inner: DummyOptions | undefined = options?.texts === undefined ? undefined : { texts: options.texts };
 	const typeConfigParts: string[] = [];
 	for (const f of node.slots) {

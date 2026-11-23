@@ -1,4 +1,5 @@
 import type { TriviaSetter } from './core-types.ts';
+import type { RefuseNumeric } from './index.ts';
 import type { KeysOfUnion } from 'type-fest';
 import type { IsExactly } from './type-utils.ts';
 
@@ -55,14 +56,17 @@ export interface FlatHint<
 	Slot extends string,
 	Group,
 	Keys extends { readonly [Name: string]: string },
-	Optional extends boolean,
-	Stored extends string = string
+	Optional extends boolean
 > {
 	readonly slot: Slot;
 	readonly group: Group;
 	readonly keys: Keys;
 	readonly optional: Optional;
-	readonly stored: Stored;
+}
+export interface BranchHint<Names extends string, Required extends string, Needed extends string> {
+	readonly names: Names;
+	readonly required: Required;
+	readonly needed: Needed;
 }
 type IsBroadNumber<X> = (<Y>() => Y extends number ? 1 : 2) extends <Y>() => Y extends X ? 1 : 2 ? true : false;
 export type NarrowTo<T, D extends number> = T extends number
@@ -83,8 +87,12 @@ type HintsOf<Self> = Self extends { readonly __slotHints__?: infer H } ? NonNull
 export type FlagsHintOf<Self> = Self extends { readonly __flags__?: infer F } ? NonNullable<F> : never;
 /** The vocabulary flags a slot test can read on each of a node type's slots (its `__slotFlags__`), by slot accessor. */
 export type SlotFlagsHintOf<Self> = Self extends { readonly __slotFlags__?: infer F } ? NonNullable<F> : never;
-export type SlotHintsOf<Self> = Remap<HintsOf<Self>, '$listView' | '$listSlots' | '$flat'>;
+export type SlotHintsOf<Self> = Remap<HintsOf<Self>, '$listView' | '$listSlots' | '$flat' | '$branch' | '$clears'>;
+type ClearsOf<Self> = HintsOf<Self> extends { readonly $clears: infer C } ? C : {};
+type ClearedBy<Self, K> = K extends keyof ClearsOf<Self> ? ClearsOf<Self>[K] & PropertyKey : never;
 type FlatOf<Self> = HintsOf<Self> extends { readonly $flat: infer F } ? F : never;
+type BranchOf<Self> = HintsOf<Self> extends { readonly $branch: infer B } ? B : never;
+type BranchNames<B> = B extends BranchHint<infer Names, string, string> ? Names : never;
 type FlatNames<F> = F extends FlatHint<string, unknown, infer Keys, boolean> ? keyof Keys & string : never;
 type FlatSeatSlots<F> = F extends FlatHint<infer S, unknown, { readonly [Name: string]: string }, boolean> ? S : never;
 type FlatKeyNames<Self> = FlatNames<FlatOf<Self>>;
@@ -154,7 +162,7 @@ type ListOptionMembers<O> = Pick<O, Exclude<keyof O, 'separator'>> & { [K in Ext
 
 type MethodKeys<N> = keyof { [P in keyof N as N[P] extends () => unknown ? P : never]: 1 };
 type Accessors<N, ByKindId> = {
-	[P in MethodKeys<N> as P extends FlatKeyNames<N> | FlatSeatSlots<FlatOf<N>> ? never : P]: N[P] extends () => infer R
+	[P in MethodKeys<N> as P extends FlatKeyNames<N> | FlatSeatSlots<FlatOf<N>> | BranchNames<BranchOf<N>> ? never : P]: N[P] extends () => infer R
 		? () => Resolve<R, ByKindId>
 		: never;
 };
@@ -293,10 +301,58 @@ export type RefuseUndeclared<V, Declared = never, Signed extends boolean = false
  * @typeParam Args - the kind's row: `BuildArgs` in the strict table, `LooseArgs` in the default engine's.
  * @typeParam R - the node the builder returns.
  * @typeParam Signed - whether a negative number can build one of the grammar's numeric literals.
+ * @typeParam Bare - whether a bare number the row's first argument holds is an integer, or `undefined` when it takes none.
+ * @typeParam W - the numeric slots of a config the row's first argument holds, each mapped to whether it is an integer.
  */
-export type Seat<Args extends readonly unknown[], R, Signed extends boolean = false> = <const A extends Args>(
-	...args: A & RefuseUndeclared<A, Args, Signed> & RefuseLoneEmptyList<A, Args>
-) => R;
+export type Seat<
+	Args extends readonly unknown[],
+	R,
+	Signed extends boolean = false,
+	Bare extends boolean | undefined = undefined,
+	W extends Readonly<Record<string, boolean>> = {},
+	Needed extends string = never
+> = <const A extends Args>(...args: A & RefuseUndeclared<A, Args, Signed> & RefuseLoneEmptyList<A, Args> & RefuseNumericFirst<A, Bare, W>) => BuiltShape<A, R, Needed>;
+
+type PresentOf<R, Needed extends string> = R extends unknown
+	? Needed extends keyof R
+		? R[Needed] extends () => infer V
+			? [undefined] extends [V]
+				? never
+				: R
+			: never
+		: never
+	: never;
+
+type AbsentOf<R, Needed extends string> = R extends unknown
+	? Needed extends keyof R
+		? R[Needed] extends () => infer V
+			? [V] extends [undefined]
+				? R
+				: never
+			: never
+		: never
+	: never;
+
+type BuiltShape<A extends readonly unknown[], R, Needed extends string> = [Needed] extends [never]
+	? R
+	: A extends readonly [infer C, ...unknown[]]
+		? C extends string | number | bigint | boolean | { readonly $type: unknown }
+			? R
+			: C extends { readonly [K in Needed]: {} }
+				? PresentOf<R, Needed>
+				: [Extract<keyof C, Needed>] extends [never]
+					? AbsentOf<R, Needed>
+					: R
+		: R;
+
+type RefuseNumericFirst<A extends readonly unknown[], Bare extends boolean | undefined, W extends Readonly<Record<string, boolean>>> = [
+	Bare,
+	keyof W
+] extends [undefined, never]
+	? unknown
+	: A extends readonly [infer First, ...unknown[]]
+		? RefuseNumeric<First, Bare, W>
+		: unknown;
 
 type RefuseLoneEmptyList<A extends readonly unknown[], Args extends readonly unknown[]> = A extends readonly [infer Only]
 	? [Only] extends [never]
@@ -392,7 +448,7 @@ type SlotSetterOf<Self, Of, K extends keyof SlotHintsOf<Of>, ByBound, Reflect ex
 			: ValueSetter<Self, Of, K, ByBound, Reflect>
 		: ValueSetter<Self, Of, K, ByBound, Reflect>;
 
-type FlatOwned<Of> = FlatKeyNames<Of> | FlatSeatSlots<FlatOf<Of>>;
+type FlatOwned<Of> = FlatKeyNames<Of> | FlatSeatSlots<FlatOf<Of>> | BranchNames<BranchOf<Of>>;
 
 export type Setters<Self, ByBound, Reflect extends boolean = false, Of = Self> = {
 	[K in keyof SlotHintsOf<Of> as K extends FlatOwned<Of> ? never : K]: SlotSetterOf<Self, Of, K, ByBound, Reflect>;
@@ -408,8 +464,10 @@ type ResolveInput<V, ByBound> =
 		: never;
 type BoundFormOf<Self, ByBound> = Self extends { readonly $type: infer T } ? (T extends keyof ByBound ? ByBound[T] : Self) : Self;
 type DraftTrivia<Self, ByBound> = Self extends { readonly $trivia: TriviaSetter<any, infer Trivia> } ? TriviaSetter<BoundFormOf<Self, ByBound>, Trivia> : never;
-export type WithSlot<Self, K extends PropertyKey, V, ByBound> = Remap<Self, K | '$with' | '$trivia' | '$query' | '$snapshot'> & {
+export type WithSlot<Self, K extends PropertyKey, V, ByBound> = Remap<Self, K | ClearedBy<Self, K> | '$with' | '$trivia' | '$query' | '$snapshot'> & {
 	[P in K]: () => ResolveInput<V, ByBound>;
+} & {
+	readonly [P in ClearedBy<Self, K>]: () => undefined;
 } & {
 	readonly $trivia: DraftTrivia<Self, ByBound>;
 	readonly $with: WithOf<WithSlot<Self, K, V, ByBound>, ByBound>;
@@ -468,6 +526,7 @@ type SoleKey<U> = [U] extends [never] ? never : [IntersectionOf<U>] extends [nev
 
 type ShapeNode<Surface, N, H, F, Present extends boolean, ByChild> = Surface &
 	ShapesOf<Surface, N, H, Exclude<H, F>, ByChild> &
+	FlatHas<Surface, N, H, F, ByChild> &
 	(Present extends true ? PresentMembers<Surface, N, H, F, ByChild> : AbsentMembers<Surface, N, H, F, ByChild>);
 
 type SeatSetter<Surface, N, H, F, ByChild> =
@@ -477,8 +536,8 @@ type SeatSetter<Surface, N, H, F, ByChild> =
 		: never;
 
 type PresentMembers<Surface, N, H, F, ByChild> =
-	F extends FlatHint<infer S, infer G, infer Keys, boolean, infer Stored>
-		? { readonly [K in Stored]: NonNullable<N[K & keyof N]> } & FlatGetters<N, F, ByChild> & {
+	F extends FlatHint<infer S, infer G, infer Keys, boolean>
+		? FlatGetters<N, F, ByChild> & {
 				readonly $with: {
 					[P in keyof Keys & string]: KeySetter<G, Keys[P], ShapeNode<Surface, N, H, F, true, ByChild>>;
 				} & { [P in S]: SeatSetter<Surface, N, H, F, ByChild> };
@@ -486,8 +545,8 @@ type PresentMembers<Surface, N, H, F, ByChild> =
 		: never;
 
 type AbsentMembers<Surface, N, H, F, ByChild> =
-	F extends FlatHint<infer S, infer G, infer Keys, boolean, infer Stored>
-		? { readonly [K in Stored]?: undefined } & { readonly [P in FlatGetterNames<F>]?: undefined } & {
+	F extends FlatHint<infer S, infer G, infer Keys, boolean>
+		? { readonly [P in FlatGetterNames<F>]?: undefined } & {
 				[P in S & MethodKeys<N>]: () => undefined;
 			} & {
 				readonly $with: {
@@ -499,11 +558,21 @@ type AbsentMembers<Surface, N, H, F, ByChild> =
 			}
 		: never;
 
+/** `node.$has(name)`: whether the node's flattened group is present. Naming its seat or its one required key narrows the node to its present shape when true and to its absent shape when false; naming any other key of the group answers a boolean and narrows nothing. */
+type FlatHas<Surface, N, H, F, ByChild> =
+	F extends FlatHint<infer S, unknown, infer Keys, boolean>
+		? {
+				$has(name: S | SoleKey<RequiredFlatKeys<F>>): this is ShapeNode<Surface, N, H, F, true, ByChild>;
+				$has(name: Exclude<keyof Keys & string, SoleKey<RequiredFlatKeys<F>>>): boolean;
+			}
+		: never;
+
 type FlatShape<Surface, N, H, F, ByChild> =
 	F extends FlatHint<string, unknown, AnyKeys, infer O>
-		? O extends true
-			? PresentMembers<Surface, N, H, F, ByChild> | AbsentMembers<Surface, N, H, F, ByChild>
-			: PresentMembers<Surface, N, H, F, ByChild>
+		? FlatHas<Surface, N, H, F, ByChild> &
+				(O extends true
+					? PresentMembers<Surface, N, H, F, ByChild> | AbsentMembers<Surface, N, H, F, ByChild>
+					: PresentMembers<Surface, N, H, F, ByChild>)
 		: never;
 
 type IntersectionOf<U> = (U extends unknown ? (u: U) => void : never) extends (i: infer I) => void ? I : never;
@@ -517,6 +586,53 @@ type ShapesOf<Surface, N, H, Of, ByChild> = [Of] extends [never]
 		: {};
 
 export type FlatShapesOf<Surface, N, ByChild> = ShapesOf<Surface, N, FlatOf<N>, FlatOf<N>, ByChild>;
+
+type BranchGetter<N, ByChild, P, Present extends boolean, Required extends string> = P extends keyof N
+	? N[P] extends () => infer R
+		? () => Resolve<Present extends true ? (P extends Required ? NonNullable<R> : R) : undefined, ByChild>
+		: never
+	: never;
+
+type Edited<Surface> = Remap<Surface, '$query' | '$snapshot'>;
+
+type BranchNode<Surface, N, B, ByChild, Present extends boolean> = Edited<Surface> &
+	BranchHas<Edited<Surface>, N, B, ByChild> &
+	BranchMembers<Edited<Surface>, N, B, ByChild, Present>;
+
+type BranchSetter<Surface, N, B, ByChild, P extends string, Needed extends string> = AdmitsOne<
+	Admit<SlotInput<N, P & keyof SlotHintsOf<N>>>,
+	BranchNode<Surface, N, B, ByChild, true>
+> &
+	(P extends Needed
+		? () => BranchNode<Surface, N, B, ByChild, false>
+		: SlotOptional<N, P & keyof SlotHintsOf<N>> extends true
+			? () => BranchNode<Surface, N, B, ByChild, true>
+			: unknown);
+
+type BranchMembers<Surface, N, B, ByChild, Present extends boolean> =
+	B extends BranchHint<infer Names, infer Required, infer Needed>
+		? {
+				readonly [P in Names]: BranchGetter<N, ByChild, P, Present, Required>;
+			} & {
+				readonly $with: Present extends true
+					? { [P in Names]: BranchSetter<Surface, N, B, ByChild, P, Needed> }
+					: { [P in SoleKey<Needed>]: AdmitsOne<Admit<SlotInput<N, P & keyof SlotHintsOf<N>>>, BranchNode<Surface, N, B, ByChild, true>> };
+			}
+		: never;
+
+/** `node.$has(name)`: whether the node's optional branch is present. Naming a slot the branch requires narrows the node to its present shape when true and to its absent shape when false; naming any other slot of the branch answers a boolean and narrows nothing. */
+type BranchHas<Surface, N, B, ByChild> =
+	B extends BranchHint<infer Names, string, infer Needed>
+		? {
+				$has(name: Needed): this is BranchNode<Surface, N, B, ByChild, true>;
+				$has(name: Exclude<Names, Needed>): boolean;
+			}
+		: never;
+
+export type BranchShapesOf<Surface, N, ByChild> = [BranchOf<N>] extends [never]
+	? {}
+	: BranchHas<Surface, N, BranchOf<N>, ByChild> &
+			(BranchMembers<Surface, N, BranchOf<N>, ByChild, true> | BranchMembers<Surface, N, BranchOf<N>, ByChild, false>);
 
 type SurfaceOf<N, ByChild, S = Storage<N>> = S &
 	Accessors<N, ByChild> &

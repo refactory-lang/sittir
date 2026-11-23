@@ -34,6 +34,7 @@ import {
 	readNode,
 	listOption,
 	checkDelimited,
+	hasSlot,
 	rebuilt,
 	renderText,
 	refuseJSON,
@@ -2525,6 +2526,7 @@ export function wrapCatchClause(data: T.CatchClause, tree: TreeHandle): T.CatchC
 			data._catch_clause_group === undefined
 				? undefined
 				: () => groupField(hydrateSlot<T.CatchClauseGroup | undefined>(node, '_catch_clause_group', tree), 'type'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -5369,34 +5371,75 @@ function wrapBinaryExpression$with(node: Held, setter: string, args: readonly un
 		case 'left':
 			return applySetter(args, (v: NonNullable<T.BinaryExpression['_left']>) =>
 				rebuilt(node, handle, () =>
-					wrapBinaryExpression({ ...$edited(data), _left: admitSlot(handle, 'binary_expression', 'left', v) }, tree)
+					v === undefined
+						? wrapBinaryExpression({ ...$edited(data), _left: admitSlot(handle, 'binary_expression', 'left', v) }, tree)
+						: wrapBinaryExpression(
+								{
+									...$edited(data),
+									_binary_expression_in: undefined,
+									_left: admitSlot(handle, 'binary_expression', 'left', v)
+								},
+								tree
+							)
 				)
 			);
 		case 'operator':
 			return applySetter(args, (v: NonNullable<T.BinaryExpression['_operator']>) =>
 				rebuilt(node, handle, () =>
-					wrapBinaryExpression(
-						{ ...$edited(data), _operator: admitSlot(handle, 'binary_expression', 'operator', v) },
-						tree
-					)
+					v === undefined
+						? wrapBinaryExpression(
+								{ ...$edited(data), _operator: admitSlot(handle, 'binary_expression', 'operator', v) },
+								tree
+							)
+						: wrapBinaryExpression(
+								{
+									...$edited(data),
+									_binary_expression_in: undefined,
+									_operator: admitSlot(handle, 'binary_expression', 'operator', v)
+								},
+								tree
+							)
 				)
 			);
 		case 'right':
 			return applySetter(args, (v: NonNullable<T.BinaryExpression['_right']>) =>
 				rebuilt(node, handle, () =>
-					wrapBinaryExpression({ ...$edited(data), _right: admitSlot(handle, 'binary_expression', 'right', v) }, tree)
+					v === undefined
+						? wrapBinaryExpression(
+								{ ...$edited(data), _right: admitSlot(handle, 'binary_expression', 'right', v) },
+								tree
+							)
+						: wrapBinaryExpression(
+								{
+									...$edited(data),
+									_binary_expression_in: undefined,
+									_right: admitSlot(handle, 'binary_expression', 'right', v)
+								},
+								tree
+							)
 				)
 			);
 		case 'binaryExpressionIn':
 			return applySetter(args, (v: NonNullable<T.BinaryExpression['_binary_expression_in']>) =>
 				rebuilt(node, handle, () =>
-					wrapBinaryExpression(
-						{
-							...$edited(data),
-							_binary_expression_in: admitSlot(handle, 'binary_expression', 'binaryExpressionIn', v)
-						},
-						tree
-					)
+					v === undefined
+						? wrapBinaryExpression(
+								{
+									...$edited(data),
+									_binary_expression_in: admitSlot(handle, 'binary_expression', 'binaryExpressionIn', v)
+								},
+								tree
+							)
+						: wrapBinaryExpression(
+								{
+									...$edited(data),
+									_left: undefined,
+									_operator: undefined,
+									_right: undefined,
+									_binary_expression_in: admitSlot(handle, 'binary_expression', 'binaryExpressionIn', v)
+								},
+								tree
+							)
 				)
 			);
 	}
@@ -14314,6 +14357,7 @@ export function wrapNumberFloatPoint(data: T.NumberFloatPoint, tree: TreeHandle)
 			return hydrateSlot<string | undefined>(this, '_exponent', tree);
 		},
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -14366,7 +14410,7 @@ function wrapNumberFloatPoint$with(node: Held, setter: string, args: readonly un
 			return applySetter(args, (v: NonNullable<T.NumberFloatPoint['_marker']>) =>
 				rebuilt(node, handle, () =>
 					wrapNumberFloatPoint(
-						{ ...$edited(data), _marker: admitSlot(handle, 'number_float_point', 'marker', v) },
+						{ ...$edited(data), _marker: admitSlot(handle, 'number_float_point', 'marker', v ?? 'e') },
 						tree
 					)
 				)
@@ -14383,10 +14427,19 @@ function wrapNumberFloatPoint$with(node: Held, setter: string, args: readonly un
 		case 'exponent':
 			return applySetter(args, (v: NonNullable<T.NumberFloatPoint['_exponent']>) =>
 				rebuilt(node, handle, () =>
-					wrapNumberFloatPoint(
-						{ ...$edited(data), _exponent: admitSlot(handle, 'number_float_point', 'exponent', v) },
-						tree
-					)
+					v === undefined
+						? wrapNumberFloatPoint(
+								{ ...$edited(data), _marker: undefined, _exponent_sign: undefined, _exponent: undefined },
+								tree
+							)
+						: wrapNumberFloatPoint(
+								{
+									...$edited(data),
+									_exponent: admitSlot(handle, 'number_float_point', 'exponent', v),
+									_marker: data._marker ?? 'e'
+								},
+								tree
+							)
 				)
 			);
 	}
@@ -14429,6 +14482,7 @@ export function wrapNumberFloatLeadingPoint(
 			return hydrateSlot<string | undefined>(this, '_exponent', tree);
 		},
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -14471,7 +14525,7 @@ function wrapNumberFloatLeadingPoint$with(node: Held, setter: string, args: read
 			return applySetter(args, (v: NonNullable<T.NumberFloatLeadingPoint['_marker']>) =>
 				rebuilt(node, handle, () =>
 					wrapNumberFloatLeadingPoint(
-						{ ...$edited(data), _marker: admitSlot(handle, 'number_float_leading_point', 'marker', v) },
+						{ ...$edited(data), _marker: admitSlot(handle, 'number_float_leading_point', 'marker', v ?? 'e') },
 						tree
 					)
 				)
@@ -14488,10 +14542,19 @@ function wrapNumberFloatLeadingPoint$with(node: Held, setter: string, args: read
 		case 'exponent':
 			return applySetter(args, (v: NonNullable<T.NumberFloatLeadingPoint['_exponent']>) =>
 				rebuilt(node, handle, () =>
-					wrapNumberFloatLeadingPoint(
-						{ ...$edited(data), _exponent: admitSlot(handle, 'number_float_leading_point', 'exponent', v) },
-						tree
-					)
+					v === undefined
+						? wrapNumberFloatLeadingPoint(
+								{ ...$edited(data), _marker: undefined, _exponent_sign: undefined, _exponent: undefined },
+								tree
+							)
+						: wrapNumberFloatLeadingPoint(
+								{
+									...$edited(data),
+									_exponent: admitSlot(handle, 'number_float_leading_point', 'exponent', v),
+									_marker: data._marker ?? 'e'
+								},
+								tree
+							)
 				)
 			);
 	}
@@ -23441,6 +23504,7 @@ function viewCatchClause(data: RecordPosition, tree: TreeHandle): T.CatchClause.
 		parameter: undefined as typeof viewCatchClause$parameter | undefined,
 		type: undefined as typeof viewCatchClause$type | undefined,
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
@@ -29112,6 +29176,7 @@ function viewNumberFloatPoint(data: RecordPosition, tree: TreeHandle): T.NumberF
 		exponentSign: viewNumberFloatPoint$exponentSign,
 		exponent: viewNumberFloatPoint$exponent,
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
@@ -29160,6 +29225,7 @@ function viewNumberFloatLeadingPoint(data: RecordPosition, tree: TreeHandle): T.
 		exponentSign: viewNumberFloatLeadingPoint$exponentSign,
 		exponent: viewNumberFloatLeadingPoint$exponent,
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,

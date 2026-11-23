@@ -225,7 +225,7 @@
 
 - [x] **Step 1:** Write the failing tests over the generated rust, python and typescript tables:
   - Every builder an arm, a step or a leaf names resolves to a function in the strict table, and `builders` gives its shape.
-  - `paths['declaration.struct']`: the brace and tuple arms are told apart by `{ member: 'body', kinds }` (the field lists), and the unit arm by `absent` holding `body`.
+  - `paths['declaration.type.struct']`: the brace and tuple arms are told apart by `{ member: 'body', kinds }` (the field lists), and the unit arm by `absent` holding `body`.
   - `paths['expression.binary.arithmetic.add'].arms[0].presets` is `[{ steps: [{ key: 'operator' }], kind: kinds.Plus }]`.
   - The `closure_parameter` arm of `declaration.parameter` has no builder and `seated: 'direct'`.
   - `paths['identifier.qualified'].root` is false in rust, whose arms have holders; a `scoped_type_identifier` arm is keyed by `[kinds.ReferenceType, 'type']`.
@@ -297,9 +297,9 @@
   - the same with `$flags: ['async']` renders `async fn f() {}`;
   - `$path: 'declaration.function.public'` renders `pub fn f() {}`;
   - `{ $path: 'expression.binary.arithmetic.add', left: 'a', right: 'b' }` renders `a + b`;
-  - `{ $path: 'declaration.struct', name: 'S', body: [] }` builds a `struct_item_brace`, and the same without `body` builds `struct_item_unit`;
+  - `{ $path: 'declaration.type.struct', name: 'S', body: [] }` builds a `struct_item_brace`, and the same without `body` builds `struct_item_unit`;
   - `{ $path: 'identifier.qualified', ... }` at the root throws an error naming `identifier.qualified` and its holders; the same structure in a type slot builds `scoped_type_identifier` (Review Focus 2);
-  - `{ $path: 'declaration.class', ... }` on rust throws naming the path and `rust` (Review Focus 1);
+  - `{ $path: 'declaration.type.class', ... }` on rust throws naming the path and `rust` (Review Focus 1);
   - `$flags: ['static']` on `declaration.function` throws naming the flag and `function_item`;
   - python: `{ $path: 'declaration.function', name: 'f', parameters: [], body: [...] }` renders `def f():` and its body;
   - one build per mount call the grammars use:

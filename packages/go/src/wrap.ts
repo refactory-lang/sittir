@@ -33,6 +33,7 @@ import {
 	readNode,
 	listOption,
 	checkDelimited,
+	hasSlot,
 	rebuilt,
 	renderText,
 	refuseJSON,
@@ -375,6 +376,7 @@ export function wrapImportSpecList(data: T.ImportSpecList, tree: TreeHandle): T.
 							hydrateSlot<T.ImportSpecListGroup | undefined>(node, '_import_spec_list_group', tree),
 							'importSpecListArm'
 						),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -552,6 +554,7 @@ export function wrapConstSpec(data: T.ConstSpec, tree: TreeHandle): T.ConstSpec.
 			data._const_spec_group === undefined
 				? undefined
 				: () => groupField(hydrateSlot<T.ConstSpecGroup | undefined>(node, '_const_spec_group', tree), 'value'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -2635,6 +2638,7 @@ export function wrapFieldDeclarationList(
 							hydrateSlot<T.FieldDeclarationListGroup | undefined>(node, '_field_declaration_list_group', tree),
 							'importSpecListArm'
 						),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -2821,7 +2825,11 @@ function wrapFieldDeclaration$with(node: Held, setter: string, args: readonly un
 			return applySetter(args, (...v: NonNullable<T.FieldDeclaration['_name']>[number][]) =>
 				rebuilt(node, handle, () =>
 					wrapFieldDeclaration(
-						{ ...$edited(data), _name: admitSlot(handle, 'field_declaration', 'names', restItems('names', v)) },
+						{
+							...$edited(data),
+							_field_declaration_arm: undefined,
+							_name: admitSlot(handle, 'field_declaration', 'names', restItems('names', v))
+						},
 						tree
 					)
 				)
@@ -2829,7 +2837,16 @@ function wrapFieldDeclaration$with(node: Held, setter: string, args: readonly un
 		case 'type':
 			return applySetter(args, (v: NonNullable<T.FieldDeclaration['_type']>) =>
 				rebuilt(node, handle, () =>
-					wrapFieldDeclaration({ ...$edited(data), _type: admitSlot(handle, 'field_declaration', 'type', v) }, tree)
+					v === undefined
+						? wrapFieldDeclaration({ ...$edited(data), _type: admitSlot(handle, 'field_declaration', 'type', v) }, tree)
+						: wrapFieldDeclaration(
+								{
+									...$edited(data),
+									_field_declaration_arm: undefined,
+									_type: admitSlot(handle, 'field_declaration', 'type', v)
+								},
+								tree
+							)
 				)
 			);
 		case 'fieldDeclarationArm':
@@ -2845,13 +2862,23 @@ function wrapFieldDeclaration$with(node: Held, setter: string, args: readonly un
 				(args) =>
 					applySetter(args, (v: NonNullable<T.FieldDeclaration['_field_declaration_arm']>) =>
 						rebuilt(node, handle, () =>
-							wrapFieldDeclaration(
-								{
-									...$edited(data),
-									_field_declaration_arm: admitSlot(handle, 'field_declaration', 'fieldDeclarationArm', v)
-								},
-								tree
-							)
+							v === undefined
+								? wrapFieldDeclaration(
+										{
+											...$edited(data),
+											_field_declaration_arm: admitSlot(handle, 'field_declaration', 'fieldDeclarationArm', v)
+										},
+										tree
+									)
+								: wrapFieldDeclaration(
+										{
+											...$edited(data),
+											_name: undefined,
+											_type: undefined,
+											_field_declaration_arm: admitSlot(handle, 'field_declaration', 'fieldDeclarationArm', v)
+										},
+										tree
+									)
 						)
 					),
 				undefined,
@@ -2911,6 +2938,7 @@ export function wrapInterfaceType(data: T.InterfaceType, tree: TreeHandle): T.In
 							hydrateSlot<T.InterfaceTypeGroup | undefined>(node, '_interface_type_group', tree),
 							'importSpecListArm'
 						),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -5586,6 +5614,7 @@ export function wrapSpecialArgumentList(data: T.SpecialArgumentList, tree: TreeH
 							hydrateSlot<T.SpecialArgumentListGroup | undefined>(node, '_special_argument_list_group', tree),
 							'trailingComma'
 						),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -10692,6 +10721,7 @@ export function wrapTypeDeclarationArm(data: T.TypeDeclarationArm, tree: TreeHan
 							hydrateSlot<T.TypeDeclarationGroup | undefined>(node, '_type_declaration_group', tree),
 							'importSpecListArm'
 						),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -12055,6 +12085,7 @@ function viewImportSpecList(data: RecordPosition, tree: TreeHandle): T.ImportSpe
 		importSpecs: undefined as typeof viewImportSpecList$importSpecs | undefined,
 		importSpecListArm: undefined as typeof viewImportSpecList$importSpecListArm | undefined,
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
@@ -12128,6 +12159,7 @@ function viewConstSpec(data: RecordPosition, tree: TreeHandle): T.ConstSpec.Pars
 		type: undefined as typeof viewConstSpec$type | undefined,
 		value: undefined as typeof viewConstSpec$value | undefined,
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
@@ -13098,6 +13130,7 @@ function viewFieldDeclarationList(data: RecordPosition, tree: TreeHandle): T.Fie
 		fieldDeclarations: undefined as typeof viewFieldDeclarationList$fieldDeclarations | undefined,
 		importSpecListArm: undefined as typeof viewFieldDeclarationList$importSpecListArm | undefined,
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
@@ -13203,6 +13236,7 @@ function viewInterfaceType(data: RecordPosition, tree: TreeHandle): T.InterfaceT
 		interfaceElems: undefined as typeof viewInterfaceType$interfaceElems | undefined,
 		importSpecListArm: undefined as typeof viewInterfaceType$importSpecListArm | undefined,
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
@@ -14472,6 +14506,7 @@ function viewSpecialArgumentList(data: RecordPosition, tree: TreeHandle): T.Spec
 		expressions: undefined as typeof viewSpecialArgumentList$expressions | undefined,
 		trailingComma: undefined as typeof viewSpecialArgumentList$trailingComma | undefined,
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
@@ -17148,6 +17183,7 @@ function viewTypeDeclarationArm(data: RecordPosition, tree: TreeHandle): T.TypeD
 		elements: undefined as typeof viewTypeDeclarationArm$elements | undefined,
 		importSpecListArm: undefined as typeof viewTypeDeclarationArm$importSpecListArm | undefined,
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,

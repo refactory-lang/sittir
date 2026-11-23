@@ -72,6 +72,7 @@ export interface NodeMemberSpec {
 	readonly extra?: readonly string[];
 	readonly tail?: readonly string[];
 	readonly parsed?: true;
+	readonly shapes?: true;
 	readonly root?: boolean;
 	readonly text?: string;
 }
@@ -188,6 +189,7 @@ export function nodeMemberParts(spec: NodeMemberSpec): NodeMemberParts {
 	for (const accessor of spec.accessors) lines.push(`    ${accessor.name}: () => ${accessorRead(accessor)},`);
 	if (spec.text !== undefined) lines.push(`    $text: () => ${spec.text},`);
 	lines.push(...(spec.extra ?? []));
+	if (spec.shapes === true) lines.push('    $has: hasSlot,');
 	lines.push(
 		'    $render: () => renderText(handle, node),',
 		'    toString: () => node.$render(),',

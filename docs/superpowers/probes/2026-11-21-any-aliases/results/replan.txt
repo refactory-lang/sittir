@@ -1,0 +1,68 @@
+slots read by some map: 497; one namespace Any: 430 {"declaration.member":19,"expression":86,"pattern":118,"type":112,"statement":68,"declaration.parameter":27}; more than one: 67
+attribute.call.arguments → expression + typescript: element.spread
+attribute.call.function → pattern + typescript: attribute.member
+attribute.input → expression + rust: element.macro.token_tree.delimited.brace element.macro.token_tree.delimited.bracket element.macro.token_tree.delimited.paren
+attribute.member.object → pattern + typescript: attribute.member
+attribute.parenthesized.expression → pattern + typescript: attribute.call attribute.member
+clause.case.match.guard → expression + rust: clause.let clause.let.chain
+clause.catch.name → type + typescript: pattern.list pattern.object
+clause.import.list.useClauses → pattern + rust: clause.import.alias clause.import.list clause.import.list.scoped clause.import.wildcard
+clause.let.chain.left → expression + rust: clause.let clause.let.chain
+clause.let.chain.rights → expression + rust: clause.let
+clause.where.predicate.bounds → type + rust: clause.bounds.higher_ranked
+clause.where.predicate.left → type + rust: clause.bounds.higher_ranked
+declaration.constant.value → statement + python: pattern.tuple.bare
+declaration.function.parameters → statement + rust: clause.bounds.removed type.abstract type.array type.bounded type.dynamic type.function type.generic type.pointer type.reference type.tuple ; python: pattern.tuple
+declaration.function.signature.parameters → type + rust: declaration.parameter declaration.parameter.receiver declaration.parameter.variadic ; typescript: declaration.parameter declaration.parameter.receiver
+declaration.member.constructor.decorators → type + typescript: attribute.call attribute.member attribute.parenthesized
+declaration.member.field.decorators → pattern + typescript: attribute.call attribute.member attribute.parenthesized
+declaration.member.method.decorators → type + typescript: attribute.call attribute.member attribute.parenthesized
+declaration.member.method.parameters → statement + rust: clause.bounds.removed type.abstract type.array type.bounded type.dynamic type.function type.generic type.pointer type.reference type.tuple ; python: pattern.tuple
+declaration.member.method.signature.parameters → type + rust: declaration.parameter declaration.parameter.receiver declaration.parameter.variadic ; typescript: declaration.parameter declaration.parameter.receiver
+declaration.member.property.decorators → pattern + typescript: attribute.call attribute.member attribute.parenthesized
+declaration.parameter.decorators → pattern + typescript: attribute.call attribute.member attribute.parenthesized
+declaration.type_parameter.bounds → type + rust: clause.bounds.higher_ranked
+declaration.type_parameter.default → type + typescript: clause.default
+declaration.type.class.bases → type + python: argument.named element.spread element.spread.map element.spread.parenthesized
+declaration.type.class.decorators → type + typescript: attribute.call attribute.member attribute.parenthesized
+declaration.type.interface.trait.extends → type + rust: clause.bounds.higher_ranked
+declaration.type.type_alias.associated.bounds → type + rust: clause.bounds.higher_ranked
+declaration.variable.value → statement + python: pattern.tuple.bare
+element.macro.token_repetition.pattern.tokenPatterns → pattern + rust: element.macro.token_binding element.macro.token_repetition.pattern element.macro.token_tree.pattern.brace element.macro.token_tree.pattern.bracket element.macro.token_tree.pattern.paren
+element.macro.token_repetition.tokens → pattern + rust: element.macro.token_repetition element.macro.token_tree.brace element.macro.token_tree.bracket element.macro.token_tree.paren
+element.macro.token_tree.tokens → pattern + rust: element.macro.token_binding element.macro.token_repetition element.macro.token_repetition.pattern element.macro.token_tree.brace element.macro.token_tree.bracket element.macro.token_tree.delimited.brace element.macro.token_tree.delimited.bracket element.macro.token_tree.delimited.paren element.macro.token_tree.paren element.macro.token_tree.pattern.brace element.macro.token_tree.pattern.bracket element.macro.token_tree.pattern.paren
+element.type_argument.argument → expression + rust: clause.bounds.removed element.type_binding type.abstract type.array type.bounded type.dynamic type.function type.generic type.pointer type.reference type.tuple
+element.type_argument.bounds → type + rust: clause.bounds.higher_ranked
+expression.assignment.compound.left → expression + python: pattern.list pattern.tuple pattern.tuple.bare
+expression.assignment.compound.right → expression + python: pattern.tuple.bare
+expression.assignment.left → expression + typescript: pattern.list pattern.object
+expression.call.arguments → expression + rust: argument ; typescript: element.spread ; python: argument.named element.spread element.spread.map element.spread.parenthesized
+expression.call.construct.arguments → expression + typescript: element.spread
+expression.call.member.arguments → expression + rust: argument ; typescript: element.spread ; python: argument.named element.spread element.spread.map element.spread.parenthesized
+expression.call.member.typeArguments → type + rust: element.type_argument
+expression.call.qualified.arguments → expression + rust: argument
+expression.call.typeArguments → type + rust: element.type_argument
+expression.class.decorators → pattern + typescript: attribute.call attribute.member attribute.parenthesized
+expression.collection.list.elements → expression + rust: element.attributed ; typescript: element.spread ; python: element.spread element.spread.parenthesized
+expression.collection.object.properties → statement + typescript: element.pair element.spread
+expression.collection.set.elements → type + python: element.spread element.spread.parenthesized
+expression.collection.tuple.elements → expression + rust: element.attributed ; python: element.spread element.spread.parenthesized
+expression.instantiation.typeArguments → type + rust: element.type_argument
+expression.interpolation.expression → expression + python: pattern.tuple.bare
+expression.lambda.parameters → declaration.parameter + typescript: identifier
+pattern.tuple.elements → pattern + rust: expression.lambda
+statement.export.decorators → pattern + typescript: attribute.call attribute.member attribute.parenthesized
+statement.if.condition → expression + rust: clause.let clause.let.chain
+statement.import.argument → pattern + rust: clause.import.alias clause.import.list clause.import.list.scoped clause.import.wildcard
+statement.import.from.moduleName → declaration.parameter + python: clause.import.relative
+statement.import.fromClause → pattern + typescript: clause.import.require
+statement.import.names → declaration.parameter + python: clause.import.alias
+statement.loop.while.condition → expression + rust: clause.let clause.let.chain
+type.bounded.left → type + rust: clause.bounds.use
+type.bounded.right → type + rust: clause.bounds.use
+type.dynamic.trait → type + rust: clause.bounds.higher_ranked
+type.function.parameters → type + rust: declaration.parameter declaration.parameter.receiver declaration.parameter.variadic ; typescript: declaration.parameter declaration.parameter.receiver
+type.generic.typeArguments → type + rust: element.type_argument
+type.query.expression → type + typescript: expression.instantiation
+type.template.elements → pattern + typescript: element.template.substitution
+type.tuple.tupleTypeMembers → type + typescript: element.tuple.member element.tuple.member.optional

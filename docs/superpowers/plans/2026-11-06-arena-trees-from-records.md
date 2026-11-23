@@ -251,7 +251,25 @@ Task 5 planned these reads on records, but its no-tree test covered render, quer
 
 ### Task 6: Hydrate at parse and drop the tree inside the read call
 
-**Status:** open as #1227 (the codec stage and the tree dropped inside the read call; #1183 is superseded and was closed 2026-11-17 on the maintainer's word, its branch kept). Its landing gate, set 2026-11-14, is measured on CI: render and edit against master's arena, parse plus whole read against object storage. Its gates, Task 6b's speed gate included, are measured on the arm runner only (the maintainer, 2026-11-20: "No need for x64"). On `6664f9dbe` (paired run, Rust 1.100.0): parse plus whole read is ×0.63–0.70 of object, so that gate holds; render is ×1.31–1.46 of master's arena, so that gate does not. The render gap is placement-time navigation, which Task 6c's steps 3 and 4 delete. **Ruled 2026-11-16: "Keep the gate; fold placement into #1227".** Task 6c is built on this branch and the two land as one PR when render and edit meet the gate. Head `3cc483b10`. The order left, all inside #1227 (2026-11-18): the `NodeId` newtype's naming part (one `NodeId` names any arena node, a leaf included; `NodeName` and `Cell::Child`'s tree link go); then the paired run; then Task 6c's steps 3 and 4, with the newtype's render part inside them or right after (the arena builds no `NodeCoordinate`, and the source table and the render's writer take `NodeIdOrCoordinate`), since rewriting the placement-time reads that steps 3 and 4 delete would be wasted work. While steps 3 and 4 are built, the coordinate methods of the source table a render still needs after them are listed, and that list is the render part's scope. **The rest runs straight through** (the maintainer, 2026-11-20: "Can it do the rest in one shot?", then "Once at the end"): Task 6d's proposal goes to the maintainer first; then Task 6c's step 4 remainder, the two parse fixes (hydration's vectors reserved from the tree's node count, and the render options' defaults built once per grammar), Task 6e and Task 6b run without a stop for review. Each commit runs its own targeted tests, red then green, and each piece is pushed so CI runs its suite; the three-way verification, storage parity and the corpus probe run once, on the final head, and a failure there is found by stepping back through the commits. The stop rules are unchanged. One paired run on the arm runner then measures each piece's last commit as a candidate.
+**Status:** open as #1227 (the codec stage and the tree dropped inside the read call; #1183 is superseded and was closed 2026-11-17 on the maintainer's word, its branch kept). Its landing gate, set 2026-11-14, is measured on CI: render and edit against master's arena, parse plus whole read against object storage. Its gates, Task 6b's speed gate included, are measured on the arm runner only (the maintainer, 2026-11-20: "No need for x64"). On `6664f9dbe` (paired run, Rust 1.100.0): parse plus whole read is ×0.63–0.70 of object, so that gate holds; render is ×1.31–1.46 of master's arena, so that gate does not. The render gap is placement-time navigation, which Task 6c's steps 3 and 4 delete. **Ruled 2026-11-16: "Keep the gate; fold placement into #1227".** Task 6c is built on this branch and the two land as one PR when render and edit meet the gate. Head `3cc483b10`. The order left, all inside #1227 (2026-11-18): the `NodeId` newtype's naming part (one `NodeId` names any arena node, a leaf included; `NodeName` and `Cell::Child`'s tree link go); then the paired run; then Task 6c's steps 3 and 4, with the newtype's render part inside them or right after (the arena builds no `NodeCoordinate`, and the source table and the render's writer take `NodeIdOrCoordinate`), since rewriting the placement-time reads that steps 3 and 4 delete would be wasted work. While steps 3 and 4 are built, the coordinate methods of the source table a render still needs after them are listed, and that list is the render part's scope. **The rest runs straight through** (the maintainer, 2026-11-20: "Can it do the rest in one shot?", then "Once at the end"): Task 6d's proposal goes to the maintainer first; then Task 6c's step 4 remainder, the two parse fixes (hydration's vectors reserved from the tree's node count, and the render options' defaults built once per grammar), Task 6e and Task 6b run without a stop for review. Each commit runs its own targeted tests, red then green, and each piece is pushed so CI runs its suite; the three-way verification, storage parity and the corpus probe run once, on the final head, and a failure there is found by stepping back through the commits. The stop rules are unchanged. One paired run on the arm runner then measures each piece's last commit as a candidate. **The fixed-token rows and the render's table land inside this PR too** (the maintainer, 2026-11-22: "2 and let's have prototype finish it in one shot"). The prototype session builds Tasks 2–10 of `2026-11-17-read-without-fixed-token-rows.md` here, by this same straight-through rule.
+
+**Paired run 44926794963** (arm, Neoverse-N2, head `94e35b803`, against master `2735cdbc0`):
+- **Faster than master:** corpus render in python, rust, typescript and scm (−51% to −63%); corpus edit in all five (−25% to −52%); parse plus whole read against object (−40% to −49%); retained memory equal or lower everywhere.
+- **Worse than master on the same run:**
+  - regex render ×1.11. The cause: render walks arena records where master stepped tree-sitter's cursor, and it sets up and drops a tree view on every call. Most of the gap is that per-call setup, and regex has no comments for the parse-placed sides to save.
+  - Built-tree render and pipeline on 8000 roots (+7% to +9%) and 8000-reused build (+20%). Render rose at the entry-starts commit.
+  - Built-tree edit (+15% to +20% in four cases). Edit plus its release is flat, since the first parse fix moved freeing from release into edit.
+- **Ruled 2026-11-21:**
+  - "Fix in #1227 first": the gate stays. #1227 cuts the per-call render setup and the entry-starts cost on built-tree render and build, then runs the paired run again before its merge question.
+  - "Edit with its release": a built-tree edit is judged with its release, since the cost moved between the two phases rather than grew.
+  - Task 6d's edit cost (corpus edit +4% to +22% over 6b, still 44–50% under master) was not accepted as is, and the maintainer asked for alternatives to counting every record. The cost was a defect: a holder that only names a record moved its handle's count, so releasing an edit freed the whole parse it came from. Fixed in `acccdffc6`, which splits `adopt` (move a handle's count, else take one more) from `hold` (always one more) in both languages. A local re-measure on the rust corpus has release back at 6b's level (0.11 ms a pass against 0.135, from 0.93) and edit unchanged. The next paired run confirms it.
+- **Ruled 2026-11-21, after the Codex adversarial review of 6d and the re-measure:**
+  - "One solution: count both". Parsed and built records are counted and released by one rule, 6d's. Counting only the source for parsed content is not taken, since built records have no source to fall back on and would need a second rule.
+  - "Always from itself". A parsed record's navigation is rooted at the record a call names, as a built node's is, live or released. An arena node is named by its `NodeId`, and a site node by its holder record and site. This fixes Codex's finding that a kept fragment climbs its non-owning parent links into a released parse. Two facts the climb read are stamped at parse on the record's own side record: content its envelope's node reads, and held by an ERROR. The third it read, a list item's parse neighbours, is no longer asked: a blank-line fact and an owned separator go with their item (the user, 2026-11-21), so list edges and their neighbour comparison go. A navigation finds its root's subtree end from the root's last descendant and refuses any record outside it, so no lookup reads above its root. A kept fragment in a built parent takes its list context from that parent. A fragment that is a root answers as a render root, with no parent and no siblings to navigate. A read keeps one side record of its own, named by its source's entry and held as the source is: the read's record spans and entry starts. A navigation rooted at any of a read's records reads them there in place, never copying them.
+  - "Close it". A parse made inside `engine.commit()` is released at the scope's end unless kept, as a build is, and nested scopes carry a kept root out.
+  - What `keep` does with a child view of a parsed tree is not ruled. The maintainer: "I don't know if I even like keep". It stays as it is until `keep` itself is revisited.
+  - Codex's other two findings stay in #1227: release no longer quadratic in a wide list, and holds past a saturated count batched so they don't cross to native one at a time.
+  - **The render's per-item `ParsedTree` goes, in this task's PR** (the maintainer, 2026-11-21: stop the faster lookup, "needs to be fixed now"). A rebuilt list of parsed items makes a temporary `ParsedTree` for each item's record, and each lookup walks those already made, so arena render grows quadratically (4,000 items: 2,278 ms against object storage's 22 ms). As the spec's Tree lifetime section rules, no arena path makes a `ParsedTree` over records or builds a `NodeCoordinate`: an arena node is named by its `NodeId` and shared code takes `NodeIdOrCoordinate`. What a call needs from a source is made once for that source and dropped with the call. Object storage keeps its tree and coordinates.
 
 This is tree lifetime only, as the spec's Tree lifetime section rules. It adds no per-tree owner, slot, table or count, and it designs no node release.
 
@@ -430,7 +448,20 @@ Run on Task 6's branch before its PR is opened. Tasks 2–5 carry the standard C
   - retained memory on matter.js and next.js;
   - each against the ×1.10 bar.
   Anything over the bar is reported before the PR, with its cause.
-- [ ] **Step 2: Open Task 6's PR to master.** The body carries the table and checks the spec's memory claim against it. Merge waits for the user's word.
+- [x] **Step 2: Open Task 6's PR to master.** The body carries the table and checks the spec's memory claim against it. Merge waits for the user's word. Opened as #1227.
+
+### Task 7b: How a caller bounds what it keeps, specified before more is built on it
+
+**Status:** added 2026-11-21, after #1227 lands and before Task 9.
+- `engine.commit()` and its `keep` came in with #924 on 2026-11-02 (`bff4a3ced`). The maintainer had ruled on 2026-11-01 that the commit scope ships with #924, that explicit release stays the contract, and that the scope is specified first. No spec followed. #1227 extends the scope to parses, as ruled 2026-11-21 ("Close it"), and the maintainer doubts `keep` itself: "I don't know if I even like keep".
+- The node API spec (`2026-10-02-node-query-traversal-modification-api-design.md`) already gives `engine.commit(...drafts)` and `$commit()` another meaning: committing edit drafts into a new tree version. The two uses share one name.
+
+- [ ] **Step 1: The spec, before code.**
+  - How a caller bounds the lifetime of what it parses and builds: explicit release, `using` and dispose, a scope, or some other form, with an example of each.
+  - What a scope does with a parse's child view, which was left unruled 2026-11-21.
+  - One meaning for "commit".
+  - Proposed to the maintainer as options with examples. Nothing in Tasks 9–13 depends on the answer, since they change who owns memory, not which records are live.
+- [ ] **Step 2: Re-read Tasks 9–13 against #1227 as merged.** Task 6's "always from itself" addressing is still being built as this task is written. Correct any line it leaves stale, as Tasks 11 and 12 were corrected on 2026-11-21.
 
 ### Task 8: The lock-free census
 
@@ -492,6 +523,8 @@ A ratchet that every later task lowers. Each of Tasks 9–12 starts by lowering 
 
 ### Task 11: The placement and the trivia store are plain data
 
+Since Task 6c, `trivia_table/place.rs` is object storage's alone. Arena storage places comments and ERRORs at parse and has no placer (the maintainer, 2026-11-20: "Keep object's"). This task changes object storage's placement and the trivia store, and nothing in arena storage's read.
+
 **Files:**
 - Modify: `trivia_table/place.rs`.
   - `Placement` loses `Mutex<State>`, `OnceLock<Published>`, `AtomicBool` and the `AtomicU32` published slots.
@@ -518,18 +551,23 @@ A ratchet that every later task lowers. Each of Tasks 9–12 starts by lowering 
 
 ### Task 12: Arena state is plain, and chunk memory has one owner
 
+Two kinds of counting are involved, and this task touches only the second.
+- **Which records are live:** the one-byte count every arena record carries in its chunk's meta. Parsed and built records follow one rule (Task 6d; the maintainer, 2026-11-21: "One solution: count both"), and this task doesn't change it.
+- **Who frees a chunk's memory once nothing in it is live:** today that's shared between native code and the JavaScript buffer's finalizer (`release_share`). This task gives it to the engine alone, and removes Rust's `Arc`, `Rc` and lock counts from arena state.
+
 **Files:**
 - Modify: `engine.rs`, `arena.rs`, `arena/*.rs` and `napi_engine.rs`.
   - Arena storage's records, slots, items and gaps, its arena, lines and depth members: no `Mutex`, `OnceLock` or atomic. Lazily built values are `Option` fields.
   - Task 5's rows `Arc`: the rows are node data the engine owns, and `RecordNodes` borrows them.
-  - The source: owned as `Box<str>`, read as `&str`. `SourceTable::source_of` returns `Option<&str>`.
+  - The source: since Task 6d an arena source is an entry in the string pool, counted once per parsed side record that names it and freed with its string chunk. It is read as `&str` from that entry, and `SourceTable::source_of` returns `Option<&str>`. Object storage's source stays its tree's.
   - Cached `Arc` values (`Record`, `NodeSlots`, `SlotItems`) become owned values that lookups borrow.
 - Modify: `arena.rs`, `arena/memory.rs`, `arena/count.rs` and `napi_engine.rs` (`external_view`, `release_share`, `Buffers`).
   - Chunk memory becomes the engine's alone if every path that frees a chunk detaches its views in the same call first. The external buffer's finalizer then frees nothing.
+  - The paths that free a chunk since Task 6d: a built word chunk left with no live entry; a read chunk left with no live entry by a parsed root's release; a string chunk whose cells' count reaches zero, the source's included.
   - A path that can't is listed for the maintainer, and that structure stays as it is.
 - Test: `rust/crates/sittir-parity-tests/tests/arena_from_records.rs` and `packages/common/tests/built-chunk-views.test.ts`.
 
-- [ ] **Step 1: Lower the arena files' ceilings.** Write `freeing_a_chunk_detaches_every_view_first`: it keeps a JavaScript view of a built chunk, releases the node that frees it, and asserts the view's `byteLength` is 0 and that the engine reports the chunk's bytes as freed.
+- [ ] **Step 1: Lower the arena files' ceilings.** Write `freeing_a_chunk_detaches_every_view_first`, with one case per path above. Each keeps a JavaScript view of the chunk (a built chunk, a read chunk, a string chunk), releases what frees it (the built node, the parsed root, the last holder of the text), and asserts the view's `byteLength` is 0 and that the engine reports the chunk's bytes as freed.
 - [ ] **Step 2:** Run it and the census. The census fails, and the view test passes or fails as the code stands. Record which.
 - [ ] **Step 3: Implement.**
 - [ ] **Step 4: Run the three-way verification,** the arena corpus render and parity, and the census.
