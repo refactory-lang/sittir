@@ -1748,15 +1748,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "modifier.visibility.private: arm 381 mounts into its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "modifier.visibility.public: arm 381 mounts into its holder"
+    "message": "modifier.visibility.private: a preset at visibilityModifierPubScope.content that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -1772,7 +1764,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "modifier.visibility.public.parent: arm 381 mounts into its holder"
+    "message": "modifier.visibility.public.parent: a preset at visibilityModifierPubScope.content that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -1780,7 +1772,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "modifier.visibility.public.restricted: arm 381 mounts into its holder"
+    "message": "modifier.visibility.public.restricted: scope's step at visibilityModifierPubScope is not a plain slot"
   },
   {
     "scope": "grammar",

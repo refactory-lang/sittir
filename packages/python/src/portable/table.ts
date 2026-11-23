@@ -15073,7 +15073,11 @@ export const build: PortableBuildTable = {
 							required: ['value']
 						}
 					],
-					holders: [[189, 'content']]
+					holders: [
+						[189, 'content'],
+						[191, 'left'],
+						[191, 'right']
+					]
 				},
 				{
 					kind: 296,

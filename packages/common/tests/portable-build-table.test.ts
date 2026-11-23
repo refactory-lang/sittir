@@ -211,7 +211,15 @@ describe('the portable build table', () => {
 		const negative = tables.python.table.paths['literal.number.negative']!;
 		expect(negative.root).toBe(false);
 		expect(negative.arms.map((arm) => [arm.kind, arm.builder, arm.holders])).toEqual([
-			[python.kinds.SimplePatternNegative, 'simplePattern.negative', [[python.kinds.SimplePattern, 'content']]],
+			[
+				python.kinds.SimplePatternNegative,
+				'simplePattern.negative',
+				[
+					[python.kinds.SimplePattern, 'content'],
+					[python.kinds.UnionPattern, 'left'],
+					[python.kinds.UnionPattern, 'right']
+				]
+			],
 			[python.kinds.SimplePatternNegative, 'keywordPattern.negative', [[python.kinds.KeywordPattern, 'pattern']]]
 		]);
 	});

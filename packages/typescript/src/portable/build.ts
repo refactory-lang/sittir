@@ -76409,6 +76409,91 @@ const identifier_qualified$354_qualifier = (value: identifier_qualified$354_qual
 			return unbuilt('identifier.qualified.qualifier', value);
 	}
 };
+type literal_number_negative$403_value$Item =
+	| Text<TypeScriptMap, 'literal.number.integer'>
+	| bigint
+	| number
+	| BuildInput<TypeScriptMap, 'literal.number.float'>
+	| TypeScriptMap['nodes']['literal.number.float']
+	| BuildInput<TypeScriptMap, 'literal.number.float.leading_point'>
+	| TypeScriptMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<TypeScriptMap, 'literal.number.float.scientific'>
+	| TypeScriptMap['nodes']['literal.number.float.scientific']
+	| BuildInput<TypeScriptMap, 'literal.number.integer'>
+	| TypeScriptMap['nodes']['literal.number.integer']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big'>
+	| TypeScriptMap['nodes']['literal.number.integer.big']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.binary'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.hex'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.octal'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.binary'>
+	| TypeScriptMap['nodes']['literal.number.integer.binary']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.hex'>
+	| TypeScriptMap['nodes']['literal.number.integer.hex']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.octal'>
+	| TypeScriptMap['nodes']['literal.number.integer.octal']
+	| {
+			readonly $path: 'literal.number';
+			readonly $value: number | bigint;
+	  };
+const literal_number_negative$403_value = (value: literal_number_negative$403_value$Item) => {
+	if (typeof value === 'string') {
+		return untexted('literal.number.negative.value', value);
+	}
+	if (typeof value === 'bigint') {
+		return literal_number$166({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number$160({ $path: 'literal.number', $value: value });
+		}
+		return literal_number$156({ $path: 'literal.number', $value: value });
+	}
+	if (isNode(value)) {
+		if (seated(value, [155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 277, 404])) return value;
+		return unseated('literal.number.negative.value', value);
+	}
+	switch (value.$path) {
+		case 'literal.number.float':
+			return literal_number_float$156(value);
+		case 'literal.number.float.leading_point':
+			return literal_number_float_leading_point$157(value);
+		case 'literal.number.float.scientific':
+			return literal_number_float_scientific$158(value);
+		case 'literal.number.integer':
+			return literal_number_integer$160(value);
+		case 'literal.number.integer.big':
+			return literal_number_integer_big$166(value);
+		case 'literal.number.integer.big.binary':
+			return literal_number_integer_big_binary$164(value);
+		case 'literal.number.integer.big.hex':
+			return literal_number_integer_big_hex$163(value);
+		case 'literal.number.integer.big.octal':
+			return literal_number_integer_big_octal$165(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$161(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$155(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$162(value);
+		case 'literal.number':
+			if (typeof value.$value === 'bigint') {
+				return literal_number$166({ $path: 'literal.number', $value: value.$value });
+			}
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) {
+					return literal_number$160({ $path: 'literal.number', $value: value.$value });
+				}
+				return literal_number$156({ $path: 'literal.number', $value: value.$value });
+			}
+			return unbuilt('literal.number.negative.value', value);
+		default:
+			return unbuilt('literal.number.negative.value', value);
+	}
+};
 type literal_regex$276_flags$Item =
 	| Text<TypeScriptMap, 'literal.regex.flags'>
 	| BuildInput<TypeScriptMap, 'literal.regex.flags'>
@@ -93872,6 +93957,13 @@ const literal_number_integer_octal$162 = (
 	const value = input.$value;
 	return typeof value === 'bigint' ? b.numberOctal(value) : b.numberOctal(value);
 };
+const literal_number_negative$403$362 = (
+	input: PathInput<TypeScriptMap, 'literal.number.negative'>
+): ReturnType<typeof b.literalType.negativeNumber> => {
+	const unroutedSlot = unroutedIn(input, ['value']);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.negative', unroutedSlot);
+	return b.literalType.negativeNumber(literal_number_negative$403_value(input.value));
+};
 const literal_regex$276 = (input: PathInput<TypeScriptMap, 'literal.regex'>): ReturnType<typeof b.regex> => {
 	const unroutedSlot = unroutedIn(input, ['flags', 'pattern']);
 	if (unroutedSlot !== undefined) return unrouted('literal.regex', unroutedSlot);
@@ -94850,6 +94942,9 @@ const literal_number_integer_hex = (input: PathInput<TypeScriptMap, 'literal.num
 const literal_number_integer_octal = (input: PathInput<TypeScriptMap, 'literal.number.integer.octal'>) => {
 	return literal_number_integer_octal$162(input);
 };
+const literal_number_negative = (input: PathInput<TypeScriptMap, 'literal.number.negative'>) => {
+	return literal_number_negative$403$362(input);
+};
 const literal_regex = (input: PathInput<TypeScriptMap, 'literal.regex'>) => {
 	return literal_regex$276(input);
 };
@@ -95146,7 +95241,8 @@ export const portableBuild = {
 				binary: literal_number_integer_binary,
 				hex: literal_number_integer_hex,
 				octal: literal_number_integer_octal
-			})
+			}),
+			negative: literal_number_negative
 		}),
 		regex: Object.assign(literal_regex, { flags: literal_regex_flags, pattern: literal_regex_pattern }),
 		string: Object.assign(literal_string, {

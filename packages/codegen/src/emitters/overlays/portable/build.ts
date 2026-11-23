@@ -1483,8 +1483,20 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 	for (const [path, arms] of [...byPath].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))) {
 		const tests = new Map<Arm, PortablePickTest[]>(arms.map((arm) => [arm, []]));
 		holders = new Map();
+		const sites = new Set(arms.flatMap(({ site }) => (site === undefined ? [] : [`${site[0]} ${site[1]}`])));
+		const unmountedSeats = (arm: Arm, holderId: number): readonly (readonly [number, string])[] => {
+			const holderKind = holderSlots.find(({ holder }) => holder.kindId === holderId)?.holder.kind;
+			return holderSlots.flatMap(({ holder, slot, kinds }) => {
+				const at = `${holder.kindId} ${slot.propertyName}`;
+				return holderKind !== undefined && slot.splicedEnvelope === holderKind && kinds.has(arm.builds) && !sites.has(at) && seated.has(`${at} ${arm.arm.kind}`) ? [[holder.kindId!, slot.propertyName] as const] : [];
+			});
+		};
 		const admittedAt = (arm: Arm): readonly (readonly [number, string])[] =>
-			arm.site !== undefined ? [arm.site] : holderSlots.flatMap(({ holder, slot, kinds }) => (kinds.has(arm.builds) ? [[holder.kindId!, slot.propertyName] as const] : []));
+			arm.site === undefined
+				? holderSlots.flatMap(({ holder, slot, kinds }) => (kinds.has(arm.builds) ? [[holder.kindId!, slot.propertyName] as const] : []))
+				: arm.arm.mounted?.call === 'child'
+					? [arm.site, ...unmountedSeats(arm, arm.arm.mounted.holder)]
+					: [arm.site];
 		const admits = (arm: Arm, holder: number, key: string): boolean => admittedAt(arm).some(([h, k]) => h === holder && k === key);
 		const union = new Set(arms.flatMap((arm) => admittedAt(arm).map(([holder, key]) => `${holder} ${key}`)));
 		for (const arm of arms) {
@@ -1521,7 +1533,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const missingOf = (arm: Arm): string[] => [...stated].filter((name) => !slotNames(arm).includes(name)).sort();
 		const emptyOf = (arm: Arm): string[] => (arm.text === undefined && arm.entry.empty === true ? missingOf(arm).filter((name) => listed.has(name)) : []);
 		const decidedOrder = decide(arms);
-		const shared = arms.filter((arm) => admittedAt(arm).length > 1);
+		const shared = arms.filter((arm) => arm.site === undefined && admittedAt(arm).length > 1);
 		if (!root && shared.length === 1 && arms.every((arm) => holders.has(arm))) {
 			holders.delete(shared[0]!);
 			root = true;

@@ -608,22 +608,6 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.or.left: literal.number.negative has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.or.right: literal.number.negative has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,

@@ -634,7 +634,15 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	const placedArm = (path: string, slot: PortableSlotRoute, { arm, seats }: Fitting, skip: number, value: Primary): Statement | undefined => {
 		const name = armName(path, arm);
 		if (name === undefined) return undefined;
-		const groups = [...new Map(seats.map((seat) => [JSON.stringify((seat.within ?? []).slice(skip)), (seat.within ?? []).slice(skip)] as const)).values()];
+		const placedWithin = seats.flatMap((seat): (readonly PortableContainer[])[] => {
+			const within = seat.within ?? [];
+			const rest = within.slice(skip);
+			if (arm.mounted === undefined || seat.at[0] !== arm.mounted.holder || seat.at[1] !== arm.mounted.key) return [rest];
+			if (within.length === 0) return [];
+			return within.at(-1)!.key !== arm.mounted.key ? [rest] : rest.length === 0 ? [] : [rest.slice(0, -1)];
+		});
+		if (placedWithin.length === 0) return undefined;
+		const groups = [...new Map(placedWithin.map((within) => [JSON.stringify(within), within] as const)).values()];
 		const statements = placement(path, arm, groups, value, (given) => call(id(name), given), `${slot.name}'s seats`);
 		return statements.length === 1 ? statements[0] : block(...statements);
 	};
@@ -1019,7 +1027,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 
 	const armBody = (path: string, arm: PortableBuildArm, input: () => Built<B['identifier']>): Statement[] => {
 		if (arm.builder === undefined) return fail(`arm ${arm.kind} builds through its holder`);
-		if (arm.mounted !== undefined) return fail(`arm ${arm.kind} mounts into its holder`);
+		if (arm.mounted !== undefined && (arm.mounted.call !== 'child' || arm.mounted.outer !== undefined)) return fail(`arm ${arm.kind} mounts into its holder`);
 		if (arm.template !== undefined) return fail(`a template-spelled slot (${arm.template.slot})`);
 		if (arm.sole !== undefined) return fail(`a sole-item delimiter on ${arm.sole.slot}`);
 		if (arm.literal !== undefined) return fail(`arm ${arm.kind} is a literal token`);
@@ -1172,8 +1180,10 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		];
 	};
 
+	const armFunctionName = (path: string, arm: PortableBuildArm): string => `${identifierOf(path)}$${arm.kind}${arm.mounted === undefined ? '' : `$${arm.mounted.holder}`}`;
+
 	function armName(path: string, arm: PortableBuildArm): string | undefined {
-		const name = `${identifierOf(path)}$${arm.kind}`;
+		const name = armFunctionName(path, arm);
 		if (armFunctions.has(name)) return uses(name);
 		if (failed.has(name)) return undefined;
 		armFunctions.set(name, constant(name, id('undefined')));
@@ -1242,7 +1252,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 				generated = false;
 			}
 			if (!generated) {
-				const reason = failed.get(path) ?? arms.map((arm) => failed.get(`${identifierOf(path)}$${arm.kind}`)).find((message) => message !== undefined) ?? 'no arm builds it at the root';
+				const reason = failed.get(path) ?? arms.map((arm) => failed.get(armFunctionName(path, arm))).find((message) => message !== undefined) ?? 'no arm builds it at the root';
 				found.push([{ code: 'portable-emit-unfit-slot', path, message: reason }, undefined]);
 				continue;
 			}

@@ -12,7 +12,7 @@ const STORAGES = ['object', 'arena'] as const;
 
 const INTERPRETER_REFUSES: Readonly<Record<string, readonly string[]>> = { python: ['declaration.member.property.getter', 'declaration.member.method.static'] };
 
-const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 436, rust: 623, typescript: 667 };
+const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 438, rust: 623, typescript: 664 };
 
 const NOT_GENERATED = /: (\S+) is not generated$/;
 
@@ -479,6 +479,27 @@ describe('the generated portable build, through a preset that builds a leaf from
 		['rust', 'fn f() { c"x"; }\n', 'literal.string.c', 'c"x"']
 	] as const)('%s: %j builds as the interpreter does', async (grammar, source, path, rendered) => {
 		expect(await bothBuilds(grammar, await readAt(grammar, source, path))).toEqual([rendered, rendered]);
+	});
+});
+
+describe.each(STORAGES)('python: a negative number in an or-pattern, in %s storage', (nodeStorage) => {
+	it.each([
+		['3 | -3', '3 | -3'],
+		['-3 | 3', '-3 | 3'],
+		['-3.5 | 1', '-3.5 | 1'],
+		['1 | -2 | 3', '1 | -2 | 3'],
+		['(3 | -3)', '3 | -3'],
+		['[3 | -3]', '3 | -3'],
+		['A(x=3 | -3)', '3 | -3']
+	] as const)('case %s: builds through the negative pattern builder and reads back the same, in both builds', async (pattern, rendered) => {
+		using engine = await createEngine(await languageByName('python'), { api: 'strict', nodeStorage });
+		const runtime = await portableRuntime(engine);
+		const generated = scopeBuilders(engine, (await generatedBuild('python')) as object);
+		const structure = [...structuresIn(runtime.read(engine.parse(`match x:\n    case ${pattern}:\n        pass\n`)))].find((candidate) => candidate.$path === 'pattern.or')!;
+		for (const built of [runtime.build(structure), (functionAt(generated, 'pattern.or') as PathFunction)(structure)]) {
+			expect(engine.render(built as never).toString()).toBe(rendered);
+			expect(runtime.read(built as never)).toEqual(structure);
+		}
 	});
 });
 

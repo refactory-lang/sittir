@@ -85564,6 +85564,13 @@ const modifier_extern$234 = (input: PathInput<RustMap, 'modifier.extern'>): Retu
 	if (unroutedSlot !== undefined) return unrouted('modifier.extern', unroutedSlot);
 	return b.externModifier(input.abi === undefined ? undefined : modifier_extern$234_abi(input.abi));
 };
+const modifier_visibility_public$381$235 = (
+	input: PathInput<RustMap, 'modifier.visibility.public'>
+): ReturnType<typeof b.visibilityModifier.pub> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('modifier.visibility.public', unroutedSlot);
+	return b.visibilityModifier.pub();
+};
 const pattern_as$325 = (input: PathInput<RustMap, 'pattern.as'>): ReturnType<typeof b.capturedPattern> => {
 	const unroutedSlot = unroutedIn(input, ['name', 'pattern']);
 	if (unroutedSlot !== undefined) return unrouted('pattern.as', unroutedSlot);
@@ -87089,6 +87096,9 @@ const literal_string_escape = (input: PathInput<RustMap, 'literal.string.escape'
 const modifier_extern = (input: PathInput<RustMap, 'modifier.extern'>) => {
 	return modifier_extern$234(input);
 };
+const modifier_visibility_public = (input: PathInput<RustMap, 'modifier.visibility.public'>) => {
+	return modifier_visibility_public$381$235(input);
+};
 const pattern_as = (input: PathInput<RustMap, 'pattern.as'>) => {
 	return pattern_as$325(input);
 };
@@ -87334,7 +87344,7 @@ export const portableBuild = {
 			escape: literal_string_escape
 		})
 	},
-	modifier: { extern: modifier_extern },
+	modifier: { extern: modifier_extern, visibility: { public: modifier_visibility_public } },
 	pattern: {
 		as: pattern_as,
 		generic: pattern_generic,

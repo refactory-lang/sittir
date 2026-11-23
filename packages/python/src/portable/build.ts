@@ -1056,7 +1056,7 @@ const clause_case_match$161_pattern = (value: clause_case_match$161_pattern$Item
 		case 'literal.number.integer.octal':
 			return b.casePattern(b.simplePattern(literal_number_integer_octal$93(value)));
 		case 'literal.number.negative':
-			return unbuilt('clause.case.match.pattern', value);
+			return b.casePattern(literal_number_negative$296$189(value));
 		case 'literal.string':
 			return b.casePattern(b.simplePattern(literal_string$253(value)));
 		case 'literal.string.bytes':
@@ -46197,6 +46197,82 @@ const literal_number_float_scientific$103_imaginary = (value: literal_number_flo
 	}
 	throw new Error('literal.number.float.scientific.imaginary takes no structure');
 };
+type literal_number_negative$296_value$Item =
+	| Text<PythonMap, 'literal.number.integer'>
+	| Text<PythonMap, 'literal.number.integer.imaginary'>
+	| bigint
+	| number
+	| BuildInput<PythonMap, 'literal.number.float'>
+	| PythonMap['nodes']['literal.number.float']
+	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+	| PythonMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<PythonMap, 'literal.number.float.scientific'>
+	| PythonMap['nodes']['literal.number.float.scientific']
+	| BuildInput<PythonMap, 'literal.number.integer'>
+	| PythonMap['nodes']['literal.number.integer']
+	| BuildInput<PythonMap, 'literal.number.integer.big'>
+	| PythonMap['nodes']['literal.number.integer.big']
+	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+	| PythonMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+	| PythonMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+	| PythonMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<PythonMap, 'literal.number.integer.binary'>
+	| PythonMap['nodes']['literal.number.integer.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.hex'>
+	| PythonMap['nodes']['literal.number.integer.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+	| PythonMap['nodes']['literal.number.integer.imaginary']
+	| BuildInput<PythonMap, 'literal.number.integer.octal'>
+	| PythonMap['nodes']['literal.number.integer.octal'];
+const literal_number_negative$296_value = (value: literal_number_negative$296_value$Item) => {
+	if (typeof value === 'string') {
+		return untexted('literal.number.negative.value', value);
+	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (seated(value, [90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 260, 261, 291, 292, 293, 294, 295]))
+			return value;
+		return unseated('literal.number.negative.value', value);
+	}
+	switch (value.$path) {
+		case 'literal.number.float':
+			return literal_number_float$101(value);
+		case 'literal.number.float.leading_point':
+			return literal_number_float_leading_point$102(value);
+		case 'literal.number.float.scientific':
+			return literal_number_float_scientific$103(value);
+		case 'literal.number.integer':
+			return literal_number_integer$100(value);
+		case 'literal.number.integer.big':
+			return literal_number_integer_big$98(value);
+		case 'literal.number.integer.big.binary':
+			return literal_number_integer_big_binary$94(value);
+		case 'literal.number.integer.big.hex':
+			return literal_number_integer_big_hex$90(value);
+		case 'literal.number.integer.big.octal':
+			return literal_number_integer_big_octal$92(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$95(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$91(value);
+		case 'literal.number.integer.imaginary':
+			return unbuilt('literal.number.negative.value', value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$93(value);
+		default:
+			return unbuilt('literal.number.negative.value', value);
+	}
+};
 type literal_string$253_elements$Item =
 	| '\\'
 	| Text<PythonMap, 'literal.string.escape'>
@@ -46551,7 +46627,7 @@ const pattern_as$190_pattern = (value: pattern_as$190_pattern$Item) => {
 		case 'literal.number.integer.octal':
 			return b.casePattern(b.simplePattern(literal_number_integer_octal$93(value)));
 		case 'literal.number.negative':
-			return unbuilt('pattern.as.pattern', value);
+			return b.casePattern(literal_number_negative$296$189(value));
 		case 'literal.string':
 			return b.casePattern(b.simplePattern(literal_string$253(value)));
 		case 'literal.string.bytes':
@@ -47325,7 +47401,7 @@ const pattern_list$284_elements$item = (value: pattern_list$284_elements$item$It
 		case 'literal.number.integer.octal':
 			return b.casePattern(b.simplePattern(literal_number_integer_octal$93(value)));
 		case 'literal.number.negative':
-			return unbuilt('pattern.list.elements', value);
+			return b.casePattern(literal_number_negative$296$189(value));
 		case 'literal.string':
 			return b.casePattern(b.simplePattern(literal_string$253(value)));
 		case 'literal.string.bytes':
@@ -47572,7 +47648,7 @@ const pattern_or$191_left = (value: pattern_or$191_left$Item) => {
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.number.negative':
-			return unbuilt('pattern.or.left', value);
+			return literal_number_negative$296$189(value);
 		case 'literal.string':
 			return literal_string$253(value);
 		case 'literal.string.bytes':
@@ -47791,7 +47867,7 @@ const pattern_or$191_right = (value: pattern_or$191_right$Item) => {
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.number.negative':
-			return unbuilt('pattern.or.right', value);
+			return literal_number_negative$296$189(value);
 		case 'literal.string':
 			return literal_string$253(value);
 		case 'literal.string.bytes':
@@ -48161,7 +48237,7 @@ const pattern_struct$196_fields$item = (value: pattern_struct$196_fields$item$It
 		case 'literal.number.integer.octal':
 			return b.casePattern(b.simplePattern(literal_number_integer_octal$93(value)));
 		case 'literal.number.negative':
-			return unbuilt('pattern.struct.fields', value);
+			return b.casePattern(literal_number_negative$296$189(value));
 		case 'literal.string':
 			return b.casePattern(b.simplePattern(literal_string$253(value)));
 		case 'literal.string.bytes':
@@ -48888,7 +48964,7 @@ const pattern_tuple$283_elements$item = (value: pattern_tuple$283_elements$item$
 		case 'literal.number.integer.octal':
 			return b.casePattern(b.simplePattern(literal_number_integer_octal$93(value)));
 		case 'literal.number.negative':
-			return unbuilt('pattern.tuple.elements', value);
+			return b.casePattern(literal_number_negative$296$189(value));
 		case 'literal.string':
 			return b.casePattern(b.simplePattern(literal_string$253(value)));
 		case 'literal.string.bytes':
@@ -49358,7 +49434,7 @@ const pattern_tuple_bare$280_elements = (value: pattern_tuple_bare$280_elements$
 		case 'literal.number.integer.octal':
 			return b.casePattern(b.simplePattern(literal_number_integer_octal$93(value)));
 		case 'literal.number.negative':
-			return unbuilt('pattern.tuple.bare.elements', value);
+			return b.casePattern(literal_number_negative$296$189(value));
 		case 'literal.string':
 			return b.casePattern(b.simplePattern(literal_string$253(value)));
 		case 'literal.string.bytes':
@@ -60545,6 +60621,13 @@ const literal_number_integer_octal$93 = (
 	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.octal', unroutedSlot);
 	const value = input.$value;
 	return typeof value === 'bigint' ? b.integerOctalPlain(value) : b.integerOctalPlain(value);
+};
+const literal_number_negative$296$189 = (
+	input: PathInput<PythonMap, 'literal.number.negative'>
+): ReturnType<typeof b.simplePattern.negative> => {
+	const unroutedSlot = unroutedIn(input, ['value']);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.negative', unroutedSlot);
+	return b.simplePattern.negative(literal_number_negative$296_value(input.value));
 };
 const literal_string$253 = (input: PathInput<PythonMap, 'literal.string'>): ReturnType<typeof b.string> => {
 	const unroutedSlot = unroutedIn(input, ['elements']);
