@@ -179,8 +179,15 @@ describe('the portable build table', () => {
 			mounted: { call: 'child', key: 'binaryExpressionIn' }
 		});
 		expect(tables.typescript.table.builders['binaryExpression.in']).toBe('config');
-		const [end] = armOf('rust', 'pattern.range.inclusive', rust.kinds.RangePatternWithLeft).slots.filter((slot) => slot.name === 'end');
-		expect(end!.steps[0]).toEqual({ key: 'content', builder: 'rangePatternWithLeft.withRight', mounted: { call: 'merge', key: 'content' }, kinds: [rust.kinds.RangePatternWithLeftWithRight] });
+		const clause = armsOf('typescript', 'statement.export')
+			.flatMap((arm) => arm.slots)
+			.find((slot) => slot.name === 'exportClause' && slot.steps[0]?.builder === 'exportStatementDefaultFrom.clauseFrom');
+		expect(clause!.steps[0]).toEqual({
+			key: 'content',
+			builder: 'exportStatementDefaultFrom.clauseFrom',
+			mounted: { call: 'merge', key: 'content' },
+			kinds: [typescript.kinds.ExportStatementDefaultFromClauseFrom]
+		});
 	});
 
 	it("states a nested mount's call at the holder its holder is seated in, and registers the nested builder by that call", () => {
@@ -253,8 +260,8 @@ describe('the portable build table', () => {
 		expect(traitForm!.when).toEqual([{ absent: ['extern'], required: ['trait'] }]);
 	});
 
-	it('drops an arm with a required grammar slot no slot, flag or preset fills, so the bare path builds nothing', () => {
-		expect(armsOf('rust', 'pattern.range')).toEqual([]);
+	it('drops an arm with a required grammar slot no slot, flag or preset fills, so a bare path builds only the forms with nothing to preset', () => {
+		expect(armsOf('rust', 'pattern.range').map((arm) => arm.kind)).toEqual([rust.kinds.RangePatternLowerBounded]);
 		expect(armsOf('rust', 'expression.binary')).toEqual([]);
 		expect(armsOf('rust', 'pattern.range.inclusive').length).toBeGreaterThan(0);
 	});

@@ -410,7 +410,7 @@ export function rebuildSpliceLoose() {
 								object: "buf",
 								property: "replace_range",
 							}),
-							arguments: [rs.build.rangeExpressionBinary({
+							arguments: [rs.build.rangeExpressionBounded({
 								start: "start",
 								operator: rs.kinds.DotDot,
 								end: "end",

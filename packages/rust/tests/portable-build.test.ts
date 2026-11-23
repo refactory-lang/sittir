@@ -92,8 +92,9 @@ describe('the portable build through the strict table', () => {
 		expect(render(runtime.build({ $path: 'pattern.range.inclusive', end: 'b' }))).toBe('..=b');
 	});
 
-	it('refuses a bare range, whose operator only a refinement presets, naming the path', () => {
-		expect(() => runtime.build({ $path: 'pattern.range', start: 'a', end: 'b' })).toThrow(/pattern\.range does not build in rust/);
+	it('builds a bare range with no operator to choose, and refuses one whose operator only a refinement presets', () => {
+		expect(render(runtime.build({ $path: 'pattern.range', start: 'a' }))).toBe('a..');
+		expect(() => runtime.build({ $path: 'pattern.range', start: 'a', end: 'b' })).toThrow(/pattern\.range: range_pattern_lower_bounded has no slot/);
 	});
 
 	it("builds a function type's trait form through the mount that seats the form's input at its holder's key", () => {

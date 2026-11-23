@@ -813,16 +813,16 @@ export const records = {
 	OrPatternPrefixNode: { words: 6, builtWords: 3, right: { word: 2, width: 4, forms: 3, built: 2 } },
 	PointerTypeConstNode: { words: 6, builtWords: 3, type_: { word: 2, width: 4, forms: 3, built: 2 } },
 	PointerTypeMutNode: { words: 6, builtWords: 3, type_: { word: 2, width: 4, forms: 3, built: 2 } },
-	RangeExpressionBinaryNode: {
+	RangeExpressionBoundedNode: {
 		words: 11,
 		builtWords: 5,
 		start: { word: 2, width: 4, forms: 3, built: 2 },
 		operator: { word: 6, width: 1, forms: 2, built: 3 },
 		end: { word: 7, width: 4, forms: 3, built: 4 }
 	},
-	RangeExpressionPostfixNode: { words: 6, builtWords: 3, start: { word: 2, width: 4, forms: 3, built: 2 } },
-	RangeExpressionPrefixNode: { words: 6, builtWords: 3, end: { word: 2, width: 4, forms: 3, built: 2 } },
-	RangeExpressionBareNode: { words: 2, builtWords: 2 },
+	RangeExpressionLowerBoundedNode: { words: 6, builtWords: 3, start: { word: 2, width: 4, forms: 3, built: 2 } },
+	RangeExpressionUpperBoundedNode: { words: 6, builtWords: 3, end: { word: 2, width: 4, forms: 3, built: 2 } },
+	RangeExpressionUnboundedNode: { words: 2, builtWords: 2 },
 	ExpressionStatementWithSemiNode: { words: 6, builtWords: 3, expression: { word: 2, width: 4, forms: 3, built: 2 } },
 	ForeignModItemSemiNode: {
 		words: 11,
@@ -916,24 +916,20 @@ export const records = {
 		name: { word: 2, width: 3, forms: 1, built: 2 },
 		macro_rules: { word: 5, width: 3, inline: 3, forms: 8, built: 3 }
 	},
-	RangePatternPrefixNode: {
+	RangePatternUpperBoundedNode: {
 		words: 7,
 		builtWords: 4,
 		operator: { word: 2, width: 1, forms: 2, built: 2 },
 		end: { word: 3, width: 4, forms: 3, built: 3 }
 	},
-	RangePatternWithLeftWithRightNode: {
-		words: 7,
-		builtWords: 4,
-		operator: { word: 2, width: 1, forms: 2, built: 2 },
-		end: { word: 3, width: 4, forms: 3, built: 3 }
-	},
-	RangePatternWithLeftNode: {
-		words: 10,
-		builtWords: 4,
+	RangePatternBoundedNode: {
+		words: 11,
+		builtWords: 5,
 		start: { word: 2, width: 4, forms: 3, built: 2 },
-		content: { word: 6, width: 4, forms: 3, built: 3 }
+		operator: { word: 6, width: 1, forms: 2, built: 3 },
+		end: { word: 7, width: 4, forms: 3, built: 4 }
 	},
+	RangePatternLowerBoundedNode: { words: 6, builtWords: 3, start: { word: 2, width: 4, forms: 3, built: 2 } },
 	StructItemBraceNode: {
 		words: 36,
 		builtWords: 7,

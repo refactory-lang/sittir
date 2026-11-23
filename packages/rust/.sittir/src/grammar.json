@@ -5105,33 +5105,33 @@
         "members": [
           {
             "type": "SYMBOL",
-            "name": "range_expression_binary",
+            "name": "range_expression_bounded",
             "annotations": {
-              "variant": "binary",
+              "variant": "bounded",
               "variantOf": "range_expression"
             }
           },
           {
             "type": "SYMBOL",
-            "name": "range_expression_postfix",
+            "name": "range_expression_lower_bounded",
             "annotations": {
-              "variant": "postfix",
+              "variant": "lower_bounded",
               "variantOf": "range_expression"
             }
           },
           {
             "type": "SYMBOL",
-            "name": "range_expression_prefix",
+            "name": "range_expression_upper_bounded",
             "annotations": {
-              "variant": "prefix",
+              "variant": "upper_bounded",
               "variantOf": "range_expression"
             }
           },
           {
             "type": "SYMBOL",
-            "name": "range_expression_bare",
+            "name": "range_expression_unbounded",
             "annotations": {
-              "variant": "bare",
+              "variant": "unbounded",
               "variantOf": "range_expression"
             }
           }
@@ -7898,23 +7898,28 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "range_pattern_with_left",
-          "metadata": {
-            "symbolSource": "group-lift"
-          },
+          "name": "range_pattern_bounded",
           "annotations": {
-            "variant": "with_left",
+            "variant": "bounded",
             "variantOf": "range_pattern"
           }
         },
         {
           "type": "SYMBOL",
-          "name": "range_pattern_prefix",
+          "name": "range_pattern_lower_bounded",
+          "annotations": {
+            "variant": "lower_bounded",
+            "variantOf": "range_pattern"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "range_pattern_upper_bounded",
           "metadata": {
             "symbolSource": "group-lift"
           },
           "annotations": {
-            "variant": "prefix",
+            "variant": "upper_bounded",
             "variantOf": "range_pattern"
           }
         }
@@ -11057,7 +11062,7 @@
         }
       ]
     },
-    "_range_expression_bare": {
+    "_range_expression_unbounded": {
       "type": "STRING",
       "value": ".."
     },
@@ -13170,7 +13175,7 @@
         "hoisted": true
       }
     },
-    "range_expression_binary": {
+    "range_expression_bounded": {
       "type": "PREC_LEFT",
       "value": 1,
       "content": {
@@ -13229,7 +13234,7 @@
         }
       }
     },
-    "range_expression_postfix": {
+    "range_expression_lower_bounded": {
       "type": "PREC_LEFT",
       "value": 1,
       "content": {
@@ -13264,7 +13269,7 @@
         }
       }
     },
-    "range_expression_prefix": {
+    "range_expression_upper_bounded": {
       "type": "PREC_LEFT",
       "value": 1,
       "content": {
@@ -13299,9 +13304,9 @@
         }
       }
     },
-    "range_expression_bare": {
+    "range_expression_unbounded": {
       "type": "SYMBOL",
-      "name": "_range_expression_bare",
+      "name": "_range_expression_unbounded",
       "annotations": {
         "hoisted": true
       }
@@ -14450,7 +14455,7 @@
         "hoisted": true
       }
     },
-    "range_pattern_prefix": {
+    "range_pattern_upper_bounded": {
       "type": "SEQ",
       "members": [
         {
@@ -14460,14 +14465,14 @@
               "type": "STRING",
               "value": "..=",
               "annotations": {
-                "variantOf": "range_pattern_prefix"
+                "variantOf": "range_pattern_upper_bounded"
               }
             },
             {
               "type": "STRING",
               "value": "..",
               "annotations": {
-                "variantOf": "range_pattern_prefix"
+                "variantOf": "range_pattern_upper_bounded"
               }
             }
           ]
@@ -14497,65 +14502,7 @@
         "hoisted": true
       }
     },
-    "range_pattern_with_left_with_right": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "STRING",
-              "value": "...",
-              "annotations": {
-                "variantOf": "range_pattern_with_left_with_right"
-              }
-            },
-            {
-              "type": "STRING",
-              "value": "..=",
-              "annotations": {
-                "variantOf": "range_pattern_with_left_with_right"
-              }
-            },
-            {
-              "type": "STRING",
-              "value": "..",
-              "annotations": {
-                "variantOf": "range_pattern_with_left_with_right"
-              }
-            }
-          ]
-        },
-        {
-          "type": "FIELD",
-          "name": "end",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "_literal_pattern"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "_path"
-              }
-            ]
-          },
-          "metadata": {
-            "fieldSource": "override"
-          }
-        }
-      ],
-      "annotations": {
-        "hoisted": true
-      }
-    },
-    "range_pattern_with_left_bare": {
-      "type": "STRING",
-      "value": ".."
-    },
-    "range_pattern_with_left": {
+    "range_pattern_bounded": {
       "type": "SEQ",
       "members": [
         {
@@ -14582,25 +14529,80 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "range_pattern_with_left_with_right",
-              "metadata": {
-                "symbolSource": "group-lift"
-              },
+              "type": "STRING",
+              "value": "...",
               "annotations": {
-                "variant": "with_right",
-                "variantOf": "range_pattern_with_left"
+                "variantOf": "range_pattern_bounded"
               }
             },
             {
-              "type": "SYMBOL",
-              "name": "range_pattern_with_left_bare",
+              "type": "STRING",
+              "value": "..=",
               "annotations": {
-                "variant": "bare",
-                "variantOf": "range_pattern_with_left"
+                "variantOf": "range_pattern_bounded"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "..",
+              "annotations": {
+                "variantOf": "range_pattern_bounded"
               }
             }
           ]
+        },
+        {
+          "type": "FIELD",
+          "name": "end",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_literal_pattern"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_path"
+              }
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "range_pattern_lower_bounded": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "start",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_literal_pattern"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_path"
+              }
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "..",
+          "annotations": {}
         }
       ],
       "annotations": {

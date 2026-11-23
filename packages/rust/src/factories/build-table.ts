@@ -468,112 +468,44 @@ export interface Routes<Table extends AnyTable> {
 	readonly macroDefinitionParen: Table['macroDefinitionParen$seated'];
 	readonly macroDefinitionBracket: Table['macroDefinitionBracket$seated'];
 	readonly macroDefinitionBrace: Table['macroDefinitionBrace$seated'];
-	readonly rangePatternPrefix$dotDotEq: <
-		const V extends OmitEach<ArgsOf<Table['buildRangePatternPrefix']>[0], 'operator'>
+	readonly rangePatternUpperBounded$dotDotEq: <
+		const V extends OmitEach<ArgsOf<Table['buildRangePatternUpperBounded']>[0], 'operator'>
 	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternPrefix']>[0], 'operator'>>,
-		options?: OptionsArg<Table['buildRangePatternPrefix']>
-	) => ReturnType<Table['buildRangePatternPrefix']>;
-	readonly rangePatternPrefix$dotDot: <
-		const V extends OmitEach<ArgsOf<Table['buildRangePatternPrefix']>[0], 'operator'>
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternUpperBounded']>[0], 'operator'>>,
+		options?: OptionsArg<Table['buildRangePatternUpperBounded']>
+	) => ReturnType<Table['buildRangePatternUpperBounded']>;
+	readonly rangePatternUpperBounded$dotDot: <
+		const V extends OmitEach<ArgsOf<Table['buildRangePatternUpperBounded']>[0], 'operator'>
 	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternPrefix']>[0], 'operator'>>,
-		options?: OptionsArg<Table['buildRangePatternPrefix']>
-	) => ReturnType<Table['buildRangePatternPrefix']>;
-	readonly rangePatternPrefix: Table['buildRangePatternPrefix'] & {
-		readonly dotDotEq: Routes<Table>['rangePatternPrefix$dotDotEq'];
-		readonly dotDot: Routes<Table>['rangePatternPrefix$dotDot'];
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternUpperBounded']>[0], 'operator'>>,
+		options?: OptionsArg<Table['buildRangePatternUpperBounded']>
+	) => ReturnType<Table['buildRangePatternUpperBounded']>;
+	readonly rangePatternUpperBounded: Table['buildRangePatternUpperBounded'] & {
+		readonly dotDotEq: Routes<Table>['rangePatternUpperBounded$dotDotEq'];
+		readonly dotDot: Routes<Table>['rangePatternUpperBounded$dotDot'];
 	};
-	readonly rangePatternWithLeftWithRight$dotDotDot: <
-		const V extends OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'operator'>
+	readonly rangePatternBounded$dotDotDot: <
+		const V extends OmitEach<ArgsOf<Table['buildRangePatternBounded']>[0], 'operator'>
 	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'operator'>>,
-		options?: OptionsArg<Table['buildRangePatternWithLeftWithRight']>
-	) => ReturnType<Table['buildRangePatternWithLeftWithRight']>;
-	readonly rangePatternWithLeftWithRight$dotDotEq: <
-		const V extends OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'operator'>
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternBounded']>[0], 'operator'>>,
+		options?: OptionsArg<Table['buildRangePatternBounded']>
+	) => ReturnType<Table['buildRangePatternBounded']>;
+	readonly rangePatternBounded$dotDotEq: <
+		const V extends OmitEach<ArgsOf<Table['buildRangePatternBounded']>[0], 'operator'>
 	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'operator'>>,
-		options?: OptionsArg<Table['buildRangePatternWithLeftWithRight']>
-	) => ReturnType<Table['buildRangePatternWithLeftWithRight']>;
-	readonly rangePatternWithLeftWithRight$dotDot: <
-		const V extends OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'operator'>
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternBounded']>[0], 'operator'>>,
+		options?: OptionsArg<Table['buildRangePatternBounded']>
+	) => ReturnType<Table['buildRangePatternBounded']>;
+	readonly rangePatternBounded$dotDot: <
+		const V extends OmitEach<ArgsOf<Table['buildRangePatternBounded']>[0], 'operator'>
 	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0], 'operator'>>,
-		options?: OptionsArg<Table['buildRangePatternWithLeftWithRight']>
-	) => ReturnType<Table['buildRangePatternWithLeftWithRight']>;
-	readonly rangePatternWithLeftWithRight: {
-		readonly dotDotDot: Routes<Table>['rangePatternWithLeftWithRight$dotDotDot'];
-		readonly dotDotEq: Routes<Table>['rangePatternWithLeftWithRight$dotDotEq'];
-		readonly dotDot: Routes<Table>['rangePatternWithLeftWithRight$dotDot'];
-	};
-	readonly rangePatternWithLeft$withRight: <
-		const V extends OmitEach<ArgsOf<Table['buildRangePatternWithLeft']>[0], 'content'> &
-			ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0]
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildRangePatternWithLeft']>[0], 'content'> &
-					ArgsOf<Table['buildRangePatternWithLeftWithRight']>[0]
-			>,
-		options?: OptionsArg<Table['buildRangePatternWithLeft']>
-	) => ReturnType<Table['buildRangePatternWithLeft']>;
-	readonly rangePatternWithLeft$bare: <
-		const V extends OmitEach<ArgsOf<Table['buildRangePatternWithLeft']>[0], 'content'>
-	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternWithLeft']>[0], 'content'>>,
-		options?: OptionsArg<Table['buildRangePatternWithLeft']>
-	) => ReturnType<Table['buildRangePatternWithLeft']>;
-	readonly rangePatternWithLeft$withRight$dotDotDot: <
-		const V extends OmitEach<ArgsOf<Table['buildRangePatternWithLeft']>[0], 'content'> & {
-			content: ArgsOf<Routes<Table>['rangePatternWithLeftWithRight$dotDotDot']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildRangePatternWithLeft']>[0], 'content'> & {
-					content: ArgsOf<Routes<Table>['rangePatternWithLeftWithRight$dotDotDot']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildRangePatternWithLeft']>
-	) => ReturnType<Table['buildRangePatternWithLeft']>;
-	readonly rangePatternWithLeft$withRight$dotDotEq: <
-		const V extends OmitEach<ArgsOf<Table['buildRangePatternWithLeft']>[0], 'content'> & {
-			content: ArgsOf<Routes<Table>['rangePatternWithLeftWithRight$dotDotEq']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildRangePatternWithLeft']>[0], 'content'> & {
-					content: ArgsOf<Routes<Table>['rangePatternWithLeftWithRight$dotDotEq']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildRangePatternWithLeft']>
-	) => ReturnType<Table['buildRangePatternWithLeft']>;
-	readonly rangePatternWithLeft$withRight$dotDot: <
-		const V extends OmitEach<ArgsOf<Table['buildRangePatternWithLeft']>[0], 'content'> & {
-			content: ArgsOf<Routes<Table>['rangePatternWithLeftWithRight$dotDot']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildRangePatternWithLeft']>[0], 'content'> & {
-					content: ArgsOf<Routes<Table>['rangePatternWithLeftWithRight$dotDot']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildRangePatternWithLeft']>
-	) => ReturnType<Table['buildRangePatternWithLeft']>;
-	readonly rangePatternWithLeft: Table['buildRangePatternWithLeft'] & {
-		readonly withRight: Routes<Table>['rangePatternWithLeft$withRight'] & {
-			readonly dotDotDot: Routes<Table>['rangePatternWithLeft$withRight$dotDotDot'];
-			readonly dotDotEq: Routes<Table>['rangePatternWithLeft$withRight$dotDotEq'];
-			readonly dotDot: Routes<Table>['rangePatternWithLeft$withRight$dotDot'];
-		};
-		readonly bare: Routes<Table>['rangePatternWithLeft$bare'];
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildRangePatternBounded']>[0], 'operator'>>,
+		options?: OptionsArg<Table['buildRangePatternBounded']>
+	) => ReturnType<Table['buildRangePatternBounded']>;
+	readonly rangePatternBounded: Table['buildRangePatternBounded'] & {
+		readonly dotDotDot: Routes<Table>['rangePatternBounded$dotDotDot'];
+		readonly dotDotEq: Routes<Table>['rangePatternBounded$dotDotEq'];
+		readonly dotDot: Routes<Table>['rangePatternBounded$dotDot'];
 	};
 	readonly parametersElementsReceiver: Table['parametersElementsReceiver$seated'];
 	readonly macroDefinition: Routes<Table>['macroDefinitionParen'] & {
@@ -609,10 +541,10 @@ export interface Routes<Table extends AnyTable> {
 		readonly brace: Table['buildDelimTokenTreeBrace'];
 	};
 	readonly rangeExpression: {
-		readonly binary: Table['buildRangeExpressionBinary'];
-		readonly postfix: Table['buildRangeExpressionPostfix'];
-		readonly prefix: Table['buildRangeExpressionPrefix'];
-		readonly bare: Table['buildRangeExpressionBare'];
+		readonly bounded: Table['buildRangeExpressionBounded'];
+		readonly lowerBounded: Table['buildRangeExpressionLowerBounded'];
+		readonly upperBounded: Table['buildRangeExpressionUpperBounded'];
+		readonly unbounded: Table['buildRangeExpressionUnbounded'];
 	};
 	readonly referenceExpression: {
 		readonly rawConst: Table['buildReferenceExpressionRawConst'];
@@ -637,8 +569,9 @@ export interface Routes<Table extends AnyTable> {
 		readonly named: Table['buildFieldPatternNamed'];
 	};
 	readonly rangePattern: {
-		readonly withLeft: Routes<Table>['rangePatternWithLeft'];
-		readonly prefix: Routes<Table>['rangePatternPrefix'];
+		readonly bounded: Routes<Table>['rangePatternBounded'];
+		readonly lowerBounded: Table['buildRangePatternLowerBounded'];
+		readonly upperBounded: Routes<Table>['rangePatternUpperBounded'];
 	};
 	readonly orPattern: {
 		readonly binary: Table['buildOrPatternBinary'];
@@ -940,10 +873,10 @@ export interface Ir<Table extends AnyTable> {
 	readonly orPatternPrefix: Table['buildOrPatternPrefix'];
 	readonly pointerTypeConst: Table['buildPointerTypeConst'];
 	readonly pointerTypeMut: Table['buildPointerTypeMut'];
-	readonly rangeExpressionBinary: Table['buildRangeExpressionBinary'];
-	readonly rangeExpressionPostfix: Table['buildRangeExpressionPostfix'];
-	readonly rangeExpressionPrefix: Table['buildRangeExpressionPrefix'];
-	readonly rangeExpressionBare: Table['buildRangeExpressionBare'];
+	readonly rangeExpressionBounded: Table['buildRangeExpressionBounded'];
+	readonly rangeExpressionLowerBounded: Table['buildRangeExpressionLowerBounded'];
+	readonly rangeExpressionUpperBounded: Table['buildRangeExpressionUpperBounded'];
+	readonly rangeExpressionUnbounded: Table['buildRangeExpressionUnbounded'];
 	readonly foreignModItemSemi: Table['buildForeignModItemSemi'];
 	readonly foreignModItemBody: Table['buildForeignModItemBody'];
 	readonly matchArmWithComma: Routes<Table>['matchArmWithComma'];
@@ -962,8 +895,9 @@ export interface Ir<Table extends AnyTable> {
 	readonly macroDefinitionParen: Routes<Table>['macroDefinitionParen'];
 	readonly macroDefinitionBracket: Routes<Table>['macroDefinitionBracket'];
 	readonly macroDefinitionBrace: Routes<Table>['macroDefinitionBrace'];
-	readonly rangePatternPrefix: Routes<Table>['rangePatternPrefix'];
-	readonly rangePatternWithLeft: Routes<Table>['rangePatternWithLeft'];
+	readonly rangePatternUpperBounded: Routes<Table>['rangePatternUpperBounded'];
+	readonly rangePatternBounded: Routes<Table>['rangePatternBounded'];
+	readonly rangePatternLowerBounded: Table['buildRangePatternLowerBounded'];
 	readonly structItemBrace: Table['buildStructItemBrace'];
 	readonly structItemTuple: Table['buildStructItemTuple'];
 	readonly structItemUnit: Table['buildStructItemUnit'];
@@ -1009,7 +943,6 @@ export interface Ir<Table extends AnyTable> {
 	readonly self: typeof F.buildSelf;
 	readonly super: typeof F.buildSuper;
 	readonly crate: typeof F.buildCrate;
-	readonly rangePatternWithLeftBare: typeof F.buildRangePatternWithLeftBare;
 	readonly wildcardPattern: typeof F.buildWildcardPattern;
 	readonly outerDocCommentMarker: typeof F.buildOuterDocCommentMarker;
 	readonly innerDocCommentMarker: typeof F.buildInnerDocCommentMarker;
@@ -1526,56 +1459,33 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	const macroDefinitionParen: Routes<Table>['macroDefinitionParen'] = $at('macroDefinitionParen$seated');
 	const macroDefinitionBracket: Routes<Table>['macroDefinitionBracket'] = $at('macroDefinitionBracket$seated');
 	const macroDefinitionBrace: Routes<Table>['macroDefinitionBrace'] = $at('macroDefinitionBrace$seated');
-	const rangePatternPrefix$dotDotEq: Routes<Table>['rangePatternPrefix$dotDotEq'] = K.rangePatternPrefix$dotDotEq(
-		$at('buildRangePatternPrefix'),
-		TSKindId.DotDotEq
-	);
-	const rangePatternPrefix$dotDot: Routes<Table>['rangePatternPrefix$dotDot'] = K.rangePatternPrefix$dotDot(
-		$at('buildRangePatternPrefix'),
-		TSKindId.DotDot
-	);
-	const rangePatternPrefix: Routes<Table>['rangePatternPrefix'] = Object.freeze(
-		Object.assign(delegate($at('buildRangePatternPrefix')), {
-			dotDotEq: rangePatternPrefix$dotDotEq,
-			dotDot: rangePatternPrefix$dotDot
+	const rangePatternUpperBounded$dotDotEq: Routes<Table>['rangePatternUpperBounded$dotDotEq'] =
+		K.rangePatternUpperBounded$dotDotEq($at('buildRangePatternUpperBounded'), TSKindId.DotDotEq);
+	const rangePatternUpperBounded$dotDot: Routes<Table>['rangePatternUpperBounded$dotDot'] =
+		K.rangePatternUpperBounded$dotDot($at('buildRangePatternUpperBounded'), TSKindId.DotDot);
+	const rangePatternUpperBounded: Routes<Table>['rangePatternUpperBounded'] = Object.freeze(
+		Object.assign(delegate($at('buildRangePatternUpperBounded')), {
+			dotDotEq: rangePatternUpperBounded$dotDotEq,
+			dotDot: rangePatternUpperBounded$dotDot
 		} as const)
 	);
-	const rangePatternWithLeftWithRight$dotDotDot: Routes<Table>['rangePatternWithLeftWithRight$dotDotDot'] =
-		K.rangePatternWithLeftWithRight$dotDotDot($at('buildRangePatternWithLeftWithRight'), TSKindId.DotDotDot);
-	const rangePatternWithLeftWithRight$dotDotEq: Routes<Table>['rangePatternWithLeftWithRight$dotDotEq'] =
-		K.rangePatternWithLeftWithRight$dotDotEq($at('buildRangePatternWithLeftWithRight'), TSKindId.DotDotEq);
-	const rangePatternWithLeftWithRight$dotDot: Routes<Table>['rangePatternWithLeftWithRight$dotDot'] =
-		K.rangePatternWithLeftWithRight$dotDot($at('buildRangePatternWithLeftWithRight'), TSKindId.DotDot);
-	const rangePatternWithLeftWithRight: Routes<Table>['rangePatternWithLeftWithRight'] = Object.freeze({
-		dotDotDot: rangePatternWithLeftWithRight$dotDotDot,
-		dotDotEq: rangePatternWithLeftWithRight$dotDotEq,
-		dotDot: rangePatternWithLeftWithRight$dotDot
-	} as const);
-	const rangePatternWithLeft$withRight: Routes<Table>['rangePatternWithLeft$withRight'] =
-		K.rangePatternWithLeft$withRight($at('buildRangePatternWithLeft'), $at('buildRangePatternWithLeftWithRight'));
-	const rangePatternWithLeft$bare: Routes<Table>['rangePatternWithLeft$bare'] = K.rangePatternWithLeft$bare(
-		$at('buildRangePatternWithLeft'),
-		TSKindId.RangePatternWithLeftBare
+	const rangePatternBounded$dotDotDot: Routes<Table>['rangePatternBounded$dotDotDot'] = K.rangePatternBounded$dotDotDot(
+		$at('buildRangePatternBounded'),
+		TSKindId.DotDotDot
 	);
-	const rangePatternWithLeft$withRight$dotDotDot: Routes<Table>['rangePatternWithLeft$withRight$dotDotDot'] =
-		K.rangePatternWithLeft$withRight$dotDotDot(
-			$at('buildRangePatternWithLeft'),
-			rangePatternWithLeftWithRight.dotDotDot
-		);
-	const rangePatternWithLeft$withRight$dotDotEq: Routes<Table>['rangePatternWithLeft$withRight$dotDotEq'] =
-		K.rangePatternWithLeft$withRight$dotDotEq($at('buildRangePatternWithLeft'), rangePatternWithLeftWithRight.dotDotEq);
-	const rangePatternWithLeft$withRight$dotDot: Routes<Table>['rangePatternWithLeft$withRight$dotDot'] =
-		K.rangePatternWithLeft$withRight$dotDot($at('buildRangePatternWithLeft'), rangePatternWithLeftWithRight.dotDot);
-	const rangePatternWithLeft: Routes<Table>['rangePatternWithLeft'] = Object.freeze(
-		Object.assign(delegate($at('buildRangePatternWithLeft')), {
-			withRight: Object.freeze(
-				Object.assign(rangePatternWithLeft$withRight, {
-					dotDotDot: rangePatternWithLeft$withRight$dotDotDot,
-					dotDotEq: rangePatternWithLeft$withRight$dotDotEq,
-					dotDot: rangePatternWithLeft$withRight$dotDot
-				} as const)
-			),
-			bare: rangePatternWithLeft$bare
+	const rangePatternBounded$dotDotEq: Routes<Table>['rangePatternBounded$dotDotEq'] = K.rangePatternBounded$dotDotEq(
+		$at('buildRangePatternBounded'),
+		TSKindId.DotDotEq
+	);
+	const rangePatternBounded$dotDot: Routes<Table>['rangePatternBounded$dotDot'] = K.rangePatternBounded$dotDot(
+		$at('buildRangePatternBounded'),
+		TSKindId.DotDot
+	);
+	const rangePatternBounded: Routes<Table>['rangePatternBounded'] = Object.freeze(
+		Object.assign(delegate($at('buildRangePatternBounded')), {
+			dotDotDot: rangePatternBounded$dotDotDot,
+			dotDotEq: rangePatternBounded$dotDotEq,
+			dotDot: rangePatternBounded$dotDot
 		} as const)
 	);
 	const parametersElementsReceiver: Routes<Table>['parametersElementsReceiver'] = $at(
@@ -1628,10 +1538,10 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		} as const)
 	);
 	const rangeExpression: Routes<Table>['rangeExpression'] = Object.freeze({
-		binary: $at('buildRangeExpressionBinary'),
-		postfix: $at('buildRangeExpressionPostfix'),
-		prefix: $at('buildRangeExpressionPrefix'),
-		bare: $at('buildRangeExpressionBare')
+		bounded: $at('buildRangeExpressionBounded'),
+		lowerBounded: $at('buildRangeExpressionLowerBounded'),
+		upperBounded: $at('buildRangeExpressionUpperBounded'),
+		unbounded: $at('buildRangeExpressionUnbounded')
 	} as const);
 	const referenceExpression: Routes<Table>['referenceExpression'] = Object.freeze({
 		rawConst: $at('buildReferenceExpressionRawConst'),
@@ -1660,8 +1570,9 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		named: $at('buildFieldPatternNamed')
 	} as const);
 	const rangePattern: Routes<Table>['rangePattern'] = Object.freeze({
-		withLeft: rangePatternWithLeft,
-		prefix: rangePatternPrefix
+		bounded: rangePatternBounded,
+		lowerBounded: $at('buildRangePatternLowerBounded'),
+		upperBounded: rangePatternUpperBounded
 	} as const);
 	const orPattern: Routes<Table>['orPattern'] = Object.freeze({
 		binary: $at('buildOrPatternBinary'),
@@ -1981,10 +1892,10 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		orPatternPrefix: $at('buildOrPatternPrefix'),
 		pointerTypeConst: $at('buildPointerTypeConst'),
 		pointerTypeMut: $at('buildPointerTypeMut'),
-		rangeExpressionBinary: $at('buildRangeExpressionBinary'),
-		rangeExpressionPostfix: $at('buildRangeExpressionPostfix'),
-		rangeExpressionPrefix: $at('buildRangeExpressionPrefix'),
-		rangeExpressionBare: $at('buildRangeExpressionBare'),
+		rangeExpressionBounded: $at('buildRangeExpressionBounded'),
+		rangeExpressionLowerBounded: $at('buildRangeExpressionLowerBounded'),
+		rangeExpressionUpperBounded: $at('buildRangeExpressionUpperBounded'),
+		rangeExpressionUnbounded: $at('buildRangeExpressionUnbounded'),
 		foreignModItemSemi: $at('buildForeignModItemSemi'),
 		foreignModItemBody: $at('buildForeignModItemBody'),
 		matchArmWithComma: matchArmWithComma,
@@ -2003,8 +1914,9 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		macroDefinitionParen: macroDefinitionParen,
 		macroDefinitionBracket: macroDefinitionBracket,
 		macroDefinitionBrace: macroDefinitionBrace,
-		rangePatternPrefix: rangePatternPrefix,
-		rangePatternWithLeft: rangePatternWithLeft,
+		rangePatternUpperBounded: rangePatternUpperBounded,
+		rangePatternBounded: rangePatternBounded,
+		rangePatternLowerBounded: $at('buildRangePatternLowerBounded'),
 		structItemBrace: $at('buildStructItemBrace'),
 		structItemTuple: $at('buildStructItemTuple'),
 		structItemUnit: $at('buildStructItemUnit'),
@@ -2050,7 +1962,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		self: F.buildSelf,
 		super: F.buildSuper,
 		crate: F.buildCrate,
-		rangePatternWithLeftBare: F.buildRangePatternWithLeftBare,
 		wildcardPattern: F.buildWildcardPattern,
 		outerDocCommentMarker: F.buildOuterDocCommentMarker,
 		innerDocCommentMarker: F.buildInnerDocCommentMarker,

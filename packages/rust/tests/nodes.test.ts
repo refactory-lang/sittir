@@ -3400,18 +3400,18 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 	});
 
-	describe('range_expression_binary', () => {
+	describe('range_expression_bounded', () => {
 		it('factory produces correct type', () => {
-			const node = ir.rangeExpressionBinary({
+			const node = ir.rangeExpressionBounded({
 				start: { $type: TSKindId.Identifier, text: 'test' } as never,
 				operator: '..',
 				end: { $type: TSKindId.Identifier, text: 'test' } as never
 			});
-			expect(node.$type).toBe(TSKindId.RangeExpressionBinary);
+			expect(node.$type).toBe(TSKindId.RangeExpressionBounded);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.rangeExpressionBinary({
+			const node = ir.rangeExpressionBounded({
 				start: { $type: TSKindId.Identifier, text: 'test' } as never,
 				operator: '..',
 				end: { $type: TSKindId.Identifier, text: 'test' } as never
@@ -3421,42 +3421,42 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 	});
 
-	describe('range_expression_postfix', () => {
+	describe('range_expression_lower_bounded', () => {
 		it('factory produces correct type', () => {
-			const node = ir.rangeExpressionPostfix({ $type: TSKindId.Identifier, text: 'test' } as never);
-			expect(node.$type).toBe(TSKindId.RangeExpressionPostfix);
+			const node = ir.rangeExpressionLowerBounded({ $type: TSKindId.Identifier, text: 'test' } as never);
+			expect(node.$type).toBe(TSKindId.RangeExpressionLowerBounded);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.rangeExpressionPostfix({ $type: TSKindId.Identifier, text: 'test' } as never);
+			const node = ir.rangeExpressionLowerBounded({ $type: TSKindId.Identifier, text: 'test' } as never);
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 			expect(rendered).toContain('test');
 		});
 	});
 
-	describe('range_expression_prefix', () => {
+	describe('range_expression_upper_bounded', () => {
 		it('factory produces correct type', () => {
-			const node = ir.rangeExpressionPrefix({ $type: TSKindId.Identifier, text: 'test' } as never);
-			expect(node.$type).toBe(TSKindId.RangeExpressionPrefix);
+			const node = ir.rangeExpressionUpperBounded({ $type: TSKindId.Identifier, text: 'test' } as never);
+			expect(node.$type).toBe(TSKindId.RangeExpressionUpperBounded);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.rangeExpressionPrefix({ $type: TSKindId.Identifier, text: 'test' } as never);
+			const node = ir.rangeExpressionUpperBounded({ $type: TSKindId.Identifier, text: 'test' } as never);
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 			expect(rendered).toContain('test');
 		});
 	});
 
-	describe('range_expression_bare', () => {
+	describe('range_expression_unbounded', () => {
 		it('factory produces correct type', () => {
-			const node = ir.rangeExpressionBare({});
-			expect(node.$type).toBe(TSKindId.RangeExpressionBare);
+			const node = ir.rangeExpressionUnbounded({});
+			expect(node.$type).toBe(TSKindId.RangeExpressionUnbounded);
 			expectBuiltNode(node);
 		});
 		it('render does not throw on minimal config', () => {
-			const node = ir.rangeExpressionBare({});
+			const node = ir.rangeExpressionUnbounded({});
 			expect(() => node.$render!()).not.toThrow();
 		});
 	});
@@ -3773,105 +3773,101 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 	});
 
-	describe('range_pattern_prefix', () => {
+	describe('range_pattern_upper_bounded', () => {
 		it('factory produces correct type', () => {
-			const node = ir.rangePatternPrefix({ operator: '..=', end: TSKindId.SelfModule as never });
-			expect(node.$type).toBe(TSKindId.RangePatternPrefix);
+			const node = ir.rangePatternUpperBounded({ operator: '..=', end: TSKindId.SelfModule as never });
+			expect(node.$type).toBe(TSKindId.RangePatternUpperBounded);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.rangePatternPrefix({ operator: '..=', end: TSKindId.SelfModule as never });
+			const node = ir.rangePatternUpperBounded({ operator: '..=', end: TSKindId.SelfModule as never });
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 		});
 	});
 
-	describe('range_pattern_prefix sub-factories', () => {
+	describe('range_pattern_upper_bounded sub-factories', () => {
 		it('dotDotEq builds the parent', () => {
-			const node = ir.rangePatternPrefix.dotDotEq({ end: TSKindId.SelfModule as never });
-			expect(node.$type).toBe(TSKindId.RangePatternPrefix);
+			const node = ir.rangePatternUpperBounded.dotDotEq({ end: TSKindId.SelfModule as never });
+			expect(node.$type).toBe(TSKindId.RangePatternUpperBounded);
 			const seated = (node as any).operator();
 			expect(seated?.$text?.() ?? seated).toBe(TSKindId.DotDotEq);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 		it('dotDot builds the parent', () => {
-			const node = ir.rangePatternPrefix.dotDot({ end: TSKindId.SelfModule as never });
-			expect(node.$type).toBe(TSKindId.RangePatternPrefix);
+			const node = ir.rangePatternUpperBounded.dotDot({ end: TSKindId.SelfModule as never });
+			expect(node.$type).toBe(TSKindId.RangePatternUpperBounded);
 			const seated = (node as any).operator();
 			expect(seated?.$text?.() ?? seated).toBe(TSKindId.DotDot);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 	});
 
-	describe('range_pattern_with_left_bare', () => {
-		it('is the kind id', () => {
-			expect(ir.rangePatternWithLeftBare).toBe(TSKindId.RangePatternWithLeftBare);
-		});
-	});
-
-	describe('range_pattern_with_left', () => {
+	describe('range_pattern_bounded', () => {
 		it('factory produces correct type', () => {
-			const node = ir.rangePatternWithLeft({
+			const node = ir.rangePatternBounded({
 				start: TSKindId.SelfModule as never,
-				content: TSKindId.RangePatternWithLeftBare as never
+				operator: '...',
+				end: TSKindId.SelfModule as never
 			});
-			expect(node.$type).toBe(TSKindId.RangePatternWithLeft);
+			expect(node.$type).toBe(TSKindId.RangePatternBounded);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.rangePatternWithLeft({
+			const node = ir.rangePatternBounded({
 				start: TSKindId.SelfModule as never,
-				content: TSKindId.RangePatternWithLeftBare as never
+				operator: '...',
+				end: TSKindId.SelfModule as never
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 		});
 	});
 
-	describe('range_pattern_with_left sub-factories', () => {
-		it('withRight builds the parent', () => {
-			const node = ir.rangePatternWithLeft.withRight({
+	describe('range_pattern_bounded sub-factories', () => {
+		it('dotDotDot builds the parent', () => {
+			const node = ir.rangePatternBounded.dotDotDot({
 				start: TSKindId.SelfModule as never,
-				operator: '...',
 				end: TSKindId.SelfModule as never
 			});
-			expect(node.$type).toBe(TSKindId.RangePatternWithLeft);
-			expect((node as any).content()).toBeDefined();
+			expect(node.$type).toBe(TSKindId.RangePatternBounded);
+			const seated = (node as any).operator();
+			expect(seated?.$text?.() ?? seated).toBe(TSKindId.DotDotDot);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
-		it('bare builds the parent', () => {
-			const node = ir.rangePatternWithLeft.bare({ start: TSKindId.SelfModule as never });
-			expect(node.$type).toBe(TSKindId.RangePatternWithLeft);
-			const seated = (node as any).content();
-			expect(seated?.$text?.() ?? seated).toBe(TSKindId.RangePatternWithLeftBare);
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('withRight.dotDotDot builds the parent', () => {
-			const node = ir.rangePatternWithLeft.withRight.dotDotDot({
+		it('dotDotEq builds the parent', () => {
+			const node = ir.rangePatternBounded.dotDotEq({
 				start: TSKindId.SelfModule as never,
-				content: [{ end: TSKindId.SelfModule as never }]
+				end: TSKindId.SelfModule as never
 			});
-			expect(node.$type).toBe(TSKindId.RangePatternWithLeft);
-			expect((node as any).content()).toBeDefined();
+			expect(node.$type).toBe(TSKindId.RangePatternBounded);
+			const seated = (node as any).operator();
+			expect(seated?.$text?.() ?? seated).toBe(TSKindId.DotDotEq);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
-		it('withRight.dotDotEq builds the parent', () => {
-			const node = ir.rangePatternWithLeft.withRight.dotDotEq({
+		it('dotDot builds the parent', () => {
+			const node = ir.rangePatternBounded.dotDot({
 				start: TSKindId.SelfModule as never,
-				content: [{ end: TSKindId.SelfModule as never }]
+				end: TSKindId.SelfModule as never
 			});
-			expect(node.$type).toBe(TSKindId.RangePatternWithLeft);
-			expect((node as any).content()).toBeDefined();
+			expect(node.$type).toBe(TSKindId.RangePatternBounded);
+			const seated = (node as any).operator();
+			expect(seated?.$text?.() ?? seated).toBe(TSKindId.DotDot);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
-		it('withRight.dotDot builds the parent', () => {
-			const node = ir.rangePatternWithLeft.withRight.dotDot({
-				start: TSKindId.SelfModule as never,
-				content: [{ end: TSKindId.SelfModule as never }]
-			});
-			expect(node.$type).toBe(TSKindId.RangePatternWithLeft);
-			expect((node as any).content()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
+	});
+
+	describe('range_pattern_lower_bounded', () => {
+		it('factory produces correct type', () => {
+			const node = ir.rangePatternLowerBounded(TSKindId.SelfModule as never);
+			expect(node.$type).toBe(TSKindId.RangePatternLowerBounded);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.rangePatternLowerBounded(TSKindId.SelfModule as never);
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+			expect(rendered).toContain('self');
 		});
 	});
 

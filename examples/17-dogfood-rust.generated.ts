@@ -410,7 +410,7 @@ export function rebuildSpliceGenerated() {
 								object: rs.build.identifier("buf"),
 								property: rs.build.identifier("replace_range"),
 							}),
-							arguments: rs.build.arguments(rs.build.rangeExpressionBinary({
+							arguments: rs.build.arguments(rs.build.rangeExpressionBounded({
 								start: rs.build.identifier("start"),
 								operator: rs.kinds.DotDot,
 								end: rs.build.identifier("end"),

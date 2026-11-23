@@ -376,12 +376,12 @@
 (await_expression (_)? @expression) @expression.await
 (yield_expression) @expression.yield
 (range_expression) @expression.range
-(range_expression_binary operator: "..=") @expression.range.inclusive
-(range_expression_binary operator: "...") @expression.range.inclusive.legacy
-(range_expression_binary operator: "..") @expression.range.exclusive
-(range_expression_postfix) @expression.range.exclusive
-(range_expression_prefix) @expression.range.exclusive
-(range_expression_bare) @expression.range.exclusive
+(range_expression_bounded operator: "..=") @expression.range.inclusive
+(range_expression_bounded operator: "...") @expression.range.inclusive.legacy
+(range_expression_bounded operator: "..") @expression.range.exclusive
+(range_expression_lower_bounded !end) @expression.range.exclusive
+(range_expression_upper_bounded !start) @expression.range.exclusive
+(range_expression_unbounded !start !end) @expression.range.exclusive
 (type_cast_expression) @expression.cast.conversion
 (type_cast_expression value: (_) @expression)
 (parenthesized_expression) @expression.parenthesized
@@ -419,13 +419,12 @@
 (slice_pattern (patterns)? @elements) @pattern.slice
 (or_pattern) @pattern.or
 (range_pattern) @pattern.range
-(range_pattern_prefix "..=") @pattern.range.inclusive
-(range_pattern_prefix "..") @pattern.range.exclusive
-(range_pattern_with_left (range_pattern_with_left_with_right "..=")) @pattern.range.inclusive
-(range_pattern_with_left (range_pattern_with_left_with_right "...")) @pattern.range.inclusive.legacy
-(range_pattern_with_left (range_pattern_with_left_with_right "..")) @pattern.range.exclusive
-(range_pattern_with_left (range_pattern_with_left_bare)) @pattern.range.exclusive
-(range_pattern_with_left (range_pattern_with_left_with_right end: (_) @end))
+(range_pattern_upper_bounded "..=") @pattern.range.inclusive
+(range_pattern_upper_bounded "..") @pattern.range.exclusive
+(range_pattern_bounded "..=") @pattern.range.inclusive
+(range_pattern_bounded "...") @pattern.range.inclusive.legacy
+(range_pattern_bounded "..") @pattern.range.exclusive
+(range_pattern_lower_bounded !end) @pattern.range.exclusive
 (ref_pattern) @pattern.reference
 (reference_pattern) @pattern.reference.value
 (reference_pattern (mutable_specifier) @exclusive)

@@ -22,9 +22,9 @@ describe('a form whose whole body is one fixed token', () => {
 		const rs = await createEngine(rust, { verifyStructure: 'runtime' });
 		const source = 'fn f() { ..; }\n';
 		const tree = rs.parse(source);
-		const parsed = structureOf(findOfType(tree.$snapshot(), TSKindId.RangeExpressionBare));
-		expect(Object.values(parsed as object)).toEqual([TSKindId.RangeExpressionBare]);
-		const built = rs.build.rangeExpressionBare();
+		const parsed = structureOf(findOfType(tree.$snapshot(), TSKindId.RangeExpressionUnbounded));
+		expect(Object.values(parsed as object)).toEqual([TSKindId.RangeExpressionUnbounded]);
+		const built = rs.build.rangeExpressionUnbounded();
 		expect(structureOf(snapshotOf(built))).toEqual(parsed);
 		expect(rs.render(built).toString()).toBe('..');
 		expect(rs.render(tree).toString()).toBe(source);
@@ -32,9 +32,9 @@ describe('a form whose whole body is one fixed token', () => {
 
 	it.each(['object', 'arena'] as const)('%s storage: has a $with with no setter, read and built alike', async (nodeStorage) => {
 		const rs = await createEngine(rust, { nodeStorage, verifyStructure: 'runtime' });
-		const [parsed] = rs.parse('fn f() { ..; }\n').$query().$descendants.ofType(TSKindId.RangeExpressionBare);
+		const [parsed] = rs.parse('fn f() { ..; }\n').$query().$descendants.ofType(TSKindId.RangeExpressionUnbounded);
 		expect(parsed).toBeDefined();
-		for (const node of [parsed!, rs.build.rangeExpressionBare()]) {
+		for (const node of [parsed!, rs.build.rangeExpressionUnbounded()]) {
 			expect(typeof node.$with).toBe('object');
 			expect(Object.entries(node.$with).filter(([, member]) => typeof member === 'function')).toEqual([]);
 		}

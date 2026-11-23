@@ -16264,14 +16264,14 @@ function wrapPointerTypeMut$with$type(this: Received<Held>, ...args: unknown[]):
 	return wrapPointerTypeMut$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
-export function wrapRangeExpressionBinary(
-	data: T.RangeExpressionBinary,
+export function wrapRangeExpressionBounded(
+	data: T.RangeExpressionBounded,
 	tree: TreeHandle
-): T.RangeExpressionBinary.Parsed {
+): T.RangeExpressionBounded.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.RangeExpressionBinary as const,
+		$type: TSKindId.RangeExpressionBounded as const,
 		start() {
 			return hydrateSlot<T.Expression>(this, '_start', tree);
 		},
@@ -16297,67 +16297,67 @@ export function wrapRangeExpressionBinary(
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		start: wrapRangeExpressionBinary$with$start,
-		operator: wrapRangeExpressionBinary$with$operator,
-		end: wrapRangeExpressionBinary$with$end,
+		start: wrapRangeExpressionBounded$with$start,
+		operator: wrapRangeExpressionBounded$with$operator,
+		end: wrapRangeExpressionBounded$with$end,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.RangeExpressionBinary.Parsed;
+	return node as unknown as T.RangeExpressionBounded.Parsed;
 }
-function wrapRangeExpressionBinary$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapRangeExpressionBounded$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.RangeExpressionBinary;
+	const data = node[INPUT] as T.RangeExpressionBounded;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'start':
-			return applySetter(args, (v: NonNullable<T.RangeExpressionBinary['_start']>) =>
+			return applySetter(args, (v: NonNullable<T.RangeExpressionBounded['_start']>) =>
 				rebuilt(node, handle, () =>
-					wrapRangeExpressionBinary(
-						{ ...$edited(data), _start: admitSlot(handle, 'range_expression_binary', 'start', v) },
+					wrapRangeExpressionBounded(
+						{ ...$edited(data), _start: admitSlot(handle, 'range_expression_bounded', 'start', v) },
 						tree
 					)
 				)
 			);
 		case 'operator':
-			return applySetter(args, (v: NonNullable<T.RangeExpressionBinary['_operator']>) =>
+			return applySetter(args, (v: NonNullable<T.RangeExpressionBounded['_operator']>) =>
 				rebuilt(node, handle, () =>
-					wrapRangeExpressionBinary(
-						{ ...$edited(data), _operator: admitSlot(handle, 'range_expression_binary', 'operator', v) },
+					wrapRangeExpressionBounded(
+						{ ...$edited(data), _operator: admitSlot(handle, 'range_expression_bounded', 'operator', v) },
 						tree
 					)
 				)
 			);
 		case 'end':
-			return applySetter(args, (v: NonNullable<T.RangeExpressionBinary['_end']>) =>
+			return applySetter(args, (v: NonNullable<T.RangeExpressionBounded['_end']>) =>
 				rebuilt(node, handle, () =>
-					wrapRangeExpressionBinary(
-						{ ...$edited(data), _end: admitSlot(handle, 'range_expression_binary', 'end', v) },
+					wrapRangeExpressionBounded(
+						{ ...$edited(data), _end: admitSlot(handle, 'range_expression_bounded', 'end', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`range_expression_binary has no $with.${setter}`);
+	throw new Error(`range_expression_bounded has no $with.${setter}`);
 }
-function wrapRangeExpressionBinary$with$start(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapRangeExpressionBinary$with(receiverOf(this, '$with.start'), 'start', args);
+function wrapRangeExpressionBounded$with$start(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapRangeExpressionBounded$with(receiverOf(this, '$with.start'), 'start', args);
 }
-function wrapRangeExpressionBinary$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapRangeExpressionBinary$with(receiverOf(this, '$with.operator'), 'operator', args);
+function wrapRangeExpressionBounded$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapRangeExpressionBounded$with(receiverOf(this, '$with.operator'), 'operator', args);
 }
-function wrapRangeExpressionBinary$with$end(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapRangeExpressionBinary$with(receiverOf(this, '$with.end'), 'end', args);
+function wrapRangeExpressionBounded$with$end(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapRangeExpressionBounded$with(receiverOf(this, '$with.end'), 'end', args);
 }
 
-export function wrapRangeExpressionPostfix(
-	data: T.RangeExpressionPostfix,
+export function wrapRangeExpressionLowerBounded(
+	data: T.RangeExpressionLowerBounded,
 	tree: TreeHandle
-): T.RangeExpressionPostfix.Parsed {
+): T.RangeExpressionLowerBounded.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.RangeExpressionPostfix as const,
+		$type: TSKindId.RangeExpressionLowerBounded as const,
 		start() {
 			return hydrateSlot<T.Expression>(this, '_start', tree);
 		},
@@ -16376,39 +16376,39 @@ export function wrapRangeExpressionPostfix(
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { start: wrapRangeExpressionPostfix$with$start, [RECEIVER]: node };
+	node.$with = { start: wrapRangeExpressionLowerBounded$with$start, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.RangeExpressionPostfix.Parsed;
+	return node as unknown as T.RangeExpressionLowerBounded.Parsed;
 }
-function wrapRangeExpressionPostfix$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapRangeExpressionLowerBounded$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.RangeExpressionPostfix;
+	const data = node[INPUT] as T.RangeExpressionLowerBounded;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'start':
-			return applySetter(args, (v: NonNullable<T.RangeExpressionPostfix['_start']>) =>
+			return applySetter(args, (v: NonNullable<T.RangeExpressionLowerBounded['_start']>) =>
 				rebuilt(node, handle, () =>
-					wrapRangeExpressionPostfix(
-						{ ...$edited(data), _start: admitSlot(handle, 'range_expression_postfix', 'start', v) },
+					wrapRangeExpressionLowerBounded(
+						{ ...$edited(data), _start: admitSlot(handle, 'range_expression_lower_bounded', 'start', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`range_expression_postfix has no $with.${setter}`);
+	throw new Error(`range_expression_lower_bounded has no $with.${setter}`);
 }
-function wrapRangeExpressionPostfix$with$start(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapRangeExpressionPostfix$with(receiverOf(this, '$with.start'), 'start', args);
+function wrapRangeExpressionLowerBounded$with$start(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapRangeExpressionLowerBounded$with(receiverOf(this, '$with.start'), 'start', args);
 }
 
-export function wrapRangeExpressionPrefix(
-	data: T.RangeExpressionPrefix,
+export function wrapRangeExpressionUpperBounded(
+	data: T.RangeExpressionUpperBounded,
 	tree: TreeHandle
-): T.RangeExpressionPrefix.Parsed {
+): T.RangeExpressionUpperBounded.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.RangeExpressionPrefix as const,
+		$type: TSKindId.RangeExpressionUpperBounded as const,
 		end() {
 			return hydrateSlot<T.Expression>(this, '_end', tree);
 		},
@@ -16427,36 +16427,39 @@ export function wrapRangeExpressionPrefix(
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { end: wrapRangeExpressionPrefix$with$end, [RECEIVER]: node };
+	node.$with = { end: wrapRangeExpressionUpperBounded$with$end, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.RangeExpressionPrefix.Parsed;
+	return node as unknown as T.RangeExpressionUpperBounded.Parsed;
 }
-function wrapRangeExpressionPrefix$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapRangeExpressionUpperBounded$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.RangeExpressionPrefix;
+	const data = node[INPUT] as T.RangeExpressionUpperBounded;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'end':
-			return applySetter(args, (v: NonNullable<T.RangeExpressionPrefix['_end']>) =>
+			return applySetter(args, (v: NonNullable<T.RangeExpressionUpperBounded['_end']>) =>
 				rebuilt(node, handle, () =>
-					wrapRangeExpressionPrefix(
-						{ ...$edited(data), _end: admitSlot(handle, 'range_expression_prefix', 'end', v) },
+					wrapRangeExpressionUpperBounded(
+						{ ...$edited(data), _end: admitSlot(handle, 'range_expression_upper_bounded', 'end', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`range_expression_prefix has no $with.${setter}`);
+	throw new Error(`range_expression_upper_bounded has no $with.${setter}`);
 }
-function wrapRangeExpressionPrefix$with$end(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapRangeExpressionPrefix$with(receiverOf(this, '$with.end'), 'end', args);
+function wrapRangeExpressionUpperBounded$with$end(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapRangeExpressionUpperBounded$with(receiverOf(this, '$with.end'), 'end', args);
 }
 
-export function wrapRangeExpressionBare(data: T.RangeExpressionBare, _tree: TreeHandle): T.RangeExpressionBare.Parsed {
+export function wrapRangeExpressionUnbounded(
+	data: T.RangeExpressionUnbounded,
+	_tree: TreeHandle
+): T.RangeExpressionUnbounded.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.RangeExpressionBare as const,
+		$type: TSKindId.RangeExpressionUnbounded as const,
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -16472,7 +16475,7 @@ export function wrapRangeExpressionBare(data: T.RangeExpressionBare, _tree: Tree
 	};
 	node.$with = { [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.RangeExpressionBare.Parsed;
+	return node as unknown as T.RangeExpressionUnbounded.Parsed;
 }
 
 export function wrapExpressionStatementWithSemi(
@@ -18239,11 +18242,14 @@ function wrapMacroDefinitionBrace$macroRules$native(this: object) {
 	return hydrateSlot<T.MacroRules | undefined>(this, '_macro_rules', tree);
 }
 
-export function wrapRangePatternPrefix(data: T.RangePatternPrefix, tree: TreeHandle): T.RangePatternPrefix.Parsed {
+export function wrapRangePatternUpperBounded(
+	data: T.RangePatternUpperBounded,
+	tree: TreeHandle
+): T.RangePatternUpperBounded.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.RangePatternPrefix as const,
+		$type: TSKindId.RangePatternUpperBounded as const,
 		operator() {
 			return this._operator;
 		},
@@ -18274,129 +18280,51 @@ export function wrapRangePatternPrefix(data: T.RangePatternPrefix, tree: TreeHan
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		operator: wrapRangePatternPrefix$with$operator,
-		end: wrapRangePatternPrefix$with$end,
+		operator: wrapRangePatternUpperBounded$with$operator,
+		end: wrapRangePatternUpperBounded$with$end,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.RangePatternPrefix.Parsed;
+	return node as unknown as T.RangePatternUpperBounded.Parsed;
 }
-function wrapRangePatternPrefix$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapRangePatternUpperBounded$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.RangePatternPrefix;
+	const data = node[INPUT] as T.RangePatternUpperBounded;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'operator':
-			return applySetter(args, (v: NonNullable<T.RangePatternPrefix['_operator']>) =>
+			return applySetter(args, (v: NonNullable<T.RangePatternUpperBounded['_operator']>) =>
 				rebuilt(node, handle, () =>
-					wrapRangePatternPrefix(
-						{ ...$edited(data), _operator: admitSlot(handle, 'range_pattern_prefix', 'operator', v) },
+					wrapRangePatternUpperBounded(
+						{ ...$edited(data), _operator: admitSlot(handle, 'range_pattern_upper_bounded', 'operator', v) },
 						tree
 					)
 				)
 			);
 		case 'end':
-			return applySetter(args, (v: NonNullable<T.RangePatternPrefix['_end']>) =>
+			return applySetter(args, (v: NonNullable<T.RangePatternUpperBounded['_end']>) =>
 				rebuilt(node, handle, () =>
-					wrapRangePatternPrefix({ ...$edited(data), _end: admitSlot(handle, 'range_pattern_prefix', 'end', v) }, tree)
-				)
-			);
-	}
-	throw new Error(`range_pattern_prefix has no $with.${setter}`);
-}
-function wrapRangePatternPrefix$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapRangePatternPrefix$with(receiverOf(this, '$with.operator'), 'operator', args);
-}
-function wrapRangePatternPrefix$with$end(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapRangePatternPrefix$with(receiverOf(this, '$with.end'), 'end', args);
-}
-
-export function wrapRangePatternWithLeftWithRight(
-	data: T.RangePatternWithLeftWithRight,
-	tree: TreeHandle
-): T.RangePatternWithLeftWithRight.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.RangePatternWithLeftWithRight as const,
-		operator() {
-			return this._operator;
-		},
-		end() {
-			return hydrateSlot<
-				| T.LiteralPattern
-				| TSKindId.SelfModule
-				| T.Metavariable
-				| TSKindId.Super
-				| TSKindId.Crate
-				| T.Identifier
-				| T.ScopedIdentifier
-			>(this, '_end', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		operator: wrapRangePatternWithLeftWithRight$with$operator,
-		end: wrapRangePatternWithLeftWithRight$with$end,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.RangePatternWithLeftWithRight.Parsed;
-}
-function wrapRangePatternWithLeftWithRight$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.RangePatternWithLeftWithRight;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'operator':
-			return applySetter(args, (v: NonNullable<T.RangePatternWithLeftWithRight['_operator']>) =>
-				rebuilt(node, handle, () =>
-					wrapRangePatternWithLeftWithRight(
-						{ ...$edited(data), _operator: admitSlot(handle, 'range_pattern_with_left_with_right', 'operator', v) },
-						tree
-					)
-				)
-			);
-		case 'end':
-			return applySetter(args, (v: NonNullable<T.RangePatternWithLeftWithRight['_end']>) =>
-				rebuilt(node, handle, () =>
-					wrapRangePatternWithLeftWithRight(
-						{ ...$edited(data), _end: admitSlot(handle, 'range_pattern_with_left_with_right', 'end', v) },
+					wrapRangePatternUpperBounded(
+						{ ...$edited(data), _end: admitSlot(handle, 'range_pattern_upper_bounded', 'end', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`range_pattern_with_left_with_right has no $with.${setter}`);
+	throw new Error(`range_pattern_upper_bounded has no $with.${setter}`);
 }
-function wrapRangePatternWithLeftWithRight$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapRangePatternWithLeftWithRight$with(receiverOf(this, '$with.operator'), 'operator', args);
+function wrapRangePatternUpperBounded$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapRangePatternUpperBounded$with(receiverOf(this, '$with.operator'), 'operator', args);
 }
-function wrapRangePatternWithLeftWithRight$with$end(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapRangePatternWithLeftWithRight$with(receiverOf(this, '$with.end'), 'end', args);
+function wrapRangePatternUpperBounded$with$end(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapRangePatternUpperBounded$with(receiverOf(this, '$with.end'), 'end', args);
 }
 
-export function wrapRangePatternWithLeft(
-	data: T.RangePatternWithLeft,
-	tree: TreeHandle
-): T.RangePatternWithLeft.Parsed {
+export function wrapRangePatternBounded(data: T.RangePatternBounded, tree: TreeHandle): T.RangePatternBounded.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.RangePatternWithLeft as const,
+		$type: TSKindId.RangePatternBounded as const,
 		start() {
 			return hydrateSlot<
 				| T.LiteralPattern
@@ -18408,8 +18336,19 @@ export function wrapRangePatternWithLeft(
 				| T.ScopedIdentifier
 			>(this, '_start', tree);
 		},
-		content() {
-			return hydrateSlot<T.RangePatternWithLeftWithRight | TSKindId.RangePatternWithLeftBare>(this, '_content', tree);
+		operator() {
+			return this._operator;
+		},
+		end() {
+			return hydrateSlot<
+				| T.LiteralPattern
+				| TSKindId.SelfModule
+				| T.Metavariable
+				| TSKindId.Super
+				| TSKindId.Crate
+				| T.Identifier
+				| T.ScopedIdentifier
+			>(this, '_end', tree);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -18427,44 +18366,116 @@ export function wrapRangePatternWithLeft(
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		start: wrapRangePatternWithLeft$with$start,
-		content: wrapRangePatternWithLeft$with$content,
+		start: wrapRangePatternBounded$with$start,
+		operator: wrapRangePatternBounded$with$operator,
+		end: wrapRangePatternBounded$with$end,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.RangePatternWithLeft.Parsed;
+	return node as unknown as T.RangePatternBounded.Parsed;
 }
-function wrapRangePatternWithLeft$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function wrapRangePatternBounded$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const data = node[INPUT] as T.RangePatternWithLeft;
+	const data = node[INPUT] as T.RangePatternBounded;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'start':
-			return applySetter(args, (v: NonNullable<T.RangePatternWithLeft['_start']>) =>
+			return applySetter(args, (v: NonNullable<T.RangePatternBounded['_start']>) =>
 				rebuilt(node, handle, () =>
-					wrapRangePatternWithLeft(
-						{ ...$edited(data), _start: admitSlot(handle, 'range_pattern_with_left', 'start', v) },
+					wrapRangePatternBounded(
+						{ ...$edited(data), _start: admitSlot(handle, 'range_pattern_bounded', 'start', v) },
 						tree
 					)
 				)
 			);
-		case 'content':
-			return applySetter(args, (v: NonNullable<T.RangePatternWithLeft['_content']>) =>
+		case 'operator':
+			return applySetter(args, (v: NonNullable<T.RangePatternBounded['_operator']>) =>
 				rebuilt(node, handle, () =>
-					wrapRangePatternWithLeft(
-						{ ...$edited(data), _content: admitSlot(handle, 'range_pattern_with_left', 'content', v) },
+					wrapRangePatternBounded(
+						{ ...$edited(data), _operator: admitSlot(handle, 'range_pattern_bounded', 'operator', v) },
+						tree
+					)
+				)
+			);
+		case 'end':
+			return applySetter(args, (v: NonNullable<T.RangePatternBounded['_end']>) =>
+				rebuilt(node, handle, () =>
+					wrapRangePatternBounded(
+						{ ...$edited(data), _end: admitSlot(handle, 'range_pattern_bounded', 'end', v) },
 						tree
 					)
 				)
 			);
 	}
-	throw new Error(`range_pattern_with_left has no $with.${setter}`);
+	throw new Error(`range_pattern_bounded has no $with.${setter}`);
 }
-function wrapRangePatternWithLeft$with$start(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapRangePatternWithLeft$with(receiverOf(this, '$with.start'), 'start', args);
+function wrapRangePatternBounded$with$start(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapRangePatternBounded$with(receiverOf(this, '$with.start'), 'start', args);
 }
-function wrapRangePatternWithLeft$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapRangePatternWithLeft$with(receiverOf(this, '$with.content'), 'content', args);
+function wrapRangePatternBounded$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapRangePatternBounded$with(receiverOf(this, '$with.operator'), 'operator', args);
+}
+function wrapRangePatternBounded$with$end(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapRangePatternBounded$with(receiverOf(this, '$with.end'), 'end', args);
+}
+
+export function wrapRangePatternLowerBounded(
+	data: T.RangePatternLowerBounded,
+	tree: TreeHandle
+): T.RangePatternLowerBounded.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.RangePatternLowerBounded as const,
+		start() {
+			return hydrateSlot<
+				| T.LiteralPattern
+				| TSKindId.SelfModule
+				| T.Metavariable
+				| TSKindId.Super
+				| TSKindId.Crate
+				| T.Identifier
+				| T.ScopedIdentifier
+			>(this, '_start', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { start: wrapRangePatternLowerBounded$with$start, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.RangePatternLowerBounded.Parsed;
+}
+function wrapRangePatternLowerBounded$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.RangePatternLowerBounded;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'start':
+			return applySetter(args, (v: NonNullable<T.RangePatternLowerBounded['_start']>) =>
+				rebuilt(node, handle, () =>
+					wrapRangePatternLowerBounded(
+						{ ...$edited(data), _start: admitSlot(handle, 'range_pattern_lower_bounded', 'start', v) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`range_pattern_lower_bounded has no $with.${setter}`);
+}
+function wrapRangePatternLowerBounded$with$start(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapRangePatternLowerBounded$with(receiverOf(this, '$with.start'), 'start', args);
 }
 
 export function wrapStructItemBrace(data: T.StructItemBrace, tree: TreeHandle): T.StructItemBrace.Parsed {
@@ -29742,26 +29753,26 @@ function viewPointerTypeMut(data: RecordPosition, tree: TreeHandle): T.PointerTy
 	return node as unknown as T.PointerTypeMut.Parsed;
 }
 
-function viewRangeExpressionBinary$start(this: RecordHandle) {
+function viewRangeExpressionBounded$start(this: RecordHandle) {
 	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
-function viewRangeExpressionBinary$operator(this: RecordHandle) {
+function viewRangeExpressionBounded$operator(this: RecordHandle) {
 	return childSlot(this, 6, 1, 2, 0, 3);
 }
-function viewRangeExpressionBinary$end(this: RecordHandle) {
+function viewRangeExpressionBounded$end(this: RecordHandle) {
 	return viewSlot<T.Expression>(this, 7, 4, 3, 0, 4);
 }
-function viewRangeExpressionBinary(data: RecordPosition, tree: TreeHandle): T.RangeExpressionBinary.Parsed {
+function viewRangeExpressionBounded(data: RecordPosition, tree: TreeHandle): T.RangeExpressionBounded.Parsed {
 	const node = {
-		$type: TSKindId.RangeExpressionBinary as const,
+		$type: TSKindId.RangeExpressionBounded as const,
 		$tree: tree,
 		$at: data.$at,
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		start: viewRangeExpressionBinary$start,
-		operator: viewRangeExpressionBinary$operator,
-		end: viewRangeExpressionBinary$end,
+		start: viewRangeExpressionBounded$start,
+		operator: viewRangeExpressionBounded$operator,
+		end: viewRangeExpressionBounded$end,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -29774,21 +29785,21 @@ function viewRangeExpressionBinary(data: RecordPosition, tree: TreeHandle): T.Ra
 	};
 	node.$with = { start: $with$start, operator: $with$operator, end: $with$end, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	return node as unknown as T.RangeExpressionBinary.Parsed;
+	return node as unknown as T.RangeExpressionBounded.Parsed;
 }
 
-function viewRangeExpressionPostfix$start(this: RecordHandle) {
+function viewRangeExpressionLowerBounded$start(this: RecordHandle) {
 	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
-function viewRangeExpressionPostfix(data: RecordPosition, tree: TreeHandle): T.RangeExpressionPostfix.Parsed {
+function viewRangeExpressionLowerBounded(data: RecordPosition, tree: TreeHandle): T.RangeExpressionLowerBounded.Parsed {
 	const node = {
-		$type: TSKindId.RangeExpressionPostfix as const,
+		$type: TSKindId.RangeExpressionLowerBounded as const,
 		$tree: tree,
 		$at: data.$at,
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		start: viewRangeExpressionPostfix$start,
+		start: viewRangeExpressionLowerBounded$start,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -29801,21 +29812,21 @@ function viewRangeExpressionPostfix(data: RecordPosition, tree: TreeHandle): T.R
 	};
 	node.$with = { start: $with$start, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	return node as unknown as T.RangeExpressionPostfix.Parsed;
+	return node as unknown as T.RangeExpressionLowerBounded.Parsed;
 }
 
-function viewRangeExpressionPrefix$end(this: RecordHandle) {
+function viewRangeExpressionUpperBounded$end(this: RecordHandle) {
 	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
-function viewRangeExpressionPrefix(data: RecordPosition, tree: TreeHandle): T.RangeExpressionPrefix.Parsed {
+function viewRangeExpressionUpperBounded(data: RecordPosition, tree: TreeHandle): T.RangeExpressionUpperBounded.Parsed {
 	const node = {
-		$type: TSKindId.RangeExpressionPrefix as const,
+		$type: TSKindId.RangeExpressionUpperBounded as const,
 		$tree: tree,
 		$at: data.$at,
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		end: viewRangeExpressionPrefix$end,
+		end: viewRangeExpressionUpperBounded$end,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -29828,12 +29839,12 @@ function viewRangeExpressionPrefix(data: RecordPosition, tree: TreeHandle): T.Ra
 	};
 	node.$with = { end: $with$end, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	return node as unknown as T.RangeExpressionPrefix.Parsed;
+	return node as unknown as T.RangeExpressionUpperBounded.Parsed;
 }
 
-function viewRangeExpressionBare(data: RecordPosition, tree: TreeHandle): T.RangeExpressionBare.Parsed {
+function viewRangeExpressionUnbounded(data: RecordPosition, tree: TreeHandle): T.RangeExpressionUnbounded.Parsed {
 	const node = {
-		$type: TSKindId.RangeExpressionBare as const,
+		$type: TSKindId.RangeExpressionUnbounded as const,
 		$tree: tree,
 		$at: data.$at,
 		$words: positionWords(data),
@@ -29851,7 +29862,7 @@ function viewRangeExpressionBare(data: RecordPosition, tree: TreeHandle): T.Rang
 	};
 	node.$with = { [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	return node as unknown as T.RangeExpressionBare.Parsed;
+	return node as unknown as T.RangeExpressionUnbounded.Parsed;
 }
 
 function viewExpressionStatementWithSemi$expression(this: RecordHandle) {
@@ -30639,10 +30650,10 @@ function viewMacroDefinitionBrace(data: RecordPosition, tree: TreeHandle): T.Mac
 	return node as unknown as T.MacroDefinitionBrace.Parsed;
 }
 
-function viewRangePatternPrefix$operator(this: RecordHandle) {
+function viewRangePatternUpperBounded$operator(this: RecordHandle) {
 	return childSlot(this, 2, 1, 2, 0, 2);
 }
-function viewRangePatternPrefix$end(this: RecordHandle) {
+function viewRangePatternUpperBounded$end(this: RecordHandle) {
 	return viewSlot<
 		| T.LiteralPattern
 		| TSKindId.SelfModule
@@ -30653,16 +30664,16 @@ function viewRangePatternPrefix$end(this: RecordHandle) {
 		| T.ScopedIdentifier
 	>(this, 3, 4, 3, 0, 3);
 }
-function viewRangePatternPrefix(data: RecordPosition, tree: TreeHandle): T.RangePatternPrefix.Parsed {
+function viewRangePatternUpperBounded(data: RecordPosition, tree: TreeHandle): T.RangePatternUpperBounded.Parsed {
 	const node = {
-		$type: TSKindId.RangePatternPrefix as const,
+		$type: TSKindId.RangePatternUpperBounded as const,
 		$tree: tree,
 		$at: data.$at,
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		operator: viewRangePatternPrefix$operator,
-		end: viewRangePatternPrefix$end,
+		operator: viewRangePatternUpperBounded$operator,
+		end: viewRangePatternUpperBounded$end,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -30675,52 +30686,10 @@ function viewRangePatternPrefix(data: RecordPosition, tree: TreeHandle): T.Range
 	};
 	node.$with = { operator: $with$operator, end: $with$end, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	return node as unknown as T.RangePatternPrefix.Parsed;
+	return node as unknown as T.RangePatternUpperBounded.Parsed;
 }
 
-function viewRangePatternWithLeftWithRight$operator(this: RecordHandle) {
-	return childSlot(this, 2, 1, 2, 0, 2);
-}
-function viewRangePatternWithLeftWithRight$end(this: RecordHandle) {
-	return viewSlot<
-		| T.LiteralPattern
-		| TSKindId.SelfModule
-		| T.Metavariable
-		| TSKindId.Super
-		| TSKindId.Crate
-		| T.Identifier
-		| T.ScopedIdentifier
-	>(this, 3, 4, 3, 0, 3);
-}
-function viewRangePatternWithLeftWithRight(
-	data: RecordPosition,
-	tree: TreeHandle
-): T.RangePatternWithLeftWithRight.Parsed {
-	const node = {
-		$type: TSKindId.RangePatternWithLeftWithRight as const,
-		$tree: tree,
-		$at: data.$at,
-		$words: positionWords(data),
-		$cache: undefined as Record<number, unknown> | undefined,
-		$_layout: data.$_layout,
-		operator: viewRangePatternWithLeftWithRight$operator,
-		end: viewRangePatternWithLeftWithRight$end,
-		$with: undefined as unknown as object,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
-		$engine: handleEngine,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$with = { operator: $with$operator, end: $with$end, [RECEIVER]: node };
-	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	return node as unknown as T.RangePatternWithLeftWithRight.Parsed;
-}
-
-function viewRangePatternWithLeft$start(this: RecordHandle) {
+function viewRangePatternBounded$start(this: RecordHandle) {
 	return viewSlot<
 		| T.LiteralPattern
 		| TSKindId.SelfModule
@@ -30731,19 +30700,31 @@ function viewRangePatternWithLeft$start(this: RecordHandle) {
 		| T.ScopedIdentifier
 	>(this, 2, 4, 3, 0, 2);
 }
-function viewRangePatternWithLeft$content(this: RecordHandle) {
-	return viewSlot<T.RangePatternWithLeftWithRight | TSKindId.RangePatternWithLeftBare>(this, 6, 4, 3, 0, 3);
+function viewRangePatternBounded$operator(this: RecordHandle) {
+	return childSlot(this, 6, 1, 2, 0, 3);
 }
-function viewRangePatternWithLeft(data: RecordPosition, tree: TreeHandle): T.RangePatternWithLeft.Parsed {
+function viewRangePatternBounded$end(this: RecordHandle) {
+	return viewSlot<
+		| T.LiteralPattern
+		| TSKindId.SelfModule
+		| T.Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| T.Identifier
+		| T.ScopedIdentifier
+	>(this, 7, 4, 3, 0, 4);
+}
+function viewRangePatternBounded(data: RecordPosition, tree: TreeHandle): T.RangePatternBounded.Parsed {
 	const node = {
-		$type: TSKindId.RangePatternWithLeft as const,
+		$type: TSKindId.RangePatternBounded as const,
 		$tree: tree,
 		$at: data.$at,
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		start: viewRangePatternWithLeft$start,
-		content: viewRangePatternWithLeft$content,
+		start: viewRangePatternBounded$start,
+		operator: viewRangePatternBounded$operator,
+		end: viewRangePatternBounded$end,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -30754,9 +30735,44 @@ function viewRangePatternWithLeft(data: RecordPosition, tree: TreeHandle): T.Ran
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { start: $with$start, content: $with$content, [RECEIVER]: node };
+	node.$with = { start: $with$start, operator: $with$operator, end: $with$end, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	return node as unknown as T.RangePatternWithLeft.Parsed;
+	return node as unknown as T.RangePatternBounded.Parsed;
+}
+
+function viewRangePatternLowerBounded$start(this: RecordHandle) {
+	return viewSlot<
+		| T.LiteralPattern
+		| TSKindId.SelfModule
+		| T.Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| T.Identifier
+		| T.ScopedIdentifier
+	>(this, 2, 4, 3, 0, 2);
+}
+function viewRangePatternLowerBounded(data: RecordPosition, tree: TreeHandle): T.RangePatternLowerBounded.Parsed {
+	const node = {
+		$type: TSKindId.RangePatternLowerBounded as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		start: viewRangePatternLowerBounded$start,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = { start: $with$start, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	return node as unknown as T.RangePatternLowerBounded.Parsed;
 }
 
 function viewStructItemBrace$visibilityModifier(this: RecordHandle) {
@@ -32584,10 +32600,13 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.OrPatternPrefix]: (d, t) => wrapOrPatternPrefix(d as unknown as T.OrPatternPrefix, t),
 	[TSKindId.PointerTypeConst]: (d, t) => wrapPointerTypeConst(d as unknown as T.PointerTypeConst, t),
 	[TSKindId.PointerTypeMut]: (d, t) => wrapPointerTypeMut(d as unknown as T.PointerTypeMut, t),
-	[TSKindId.RangeExpressionBinary]: (d, t) => wrapRangeExpressionBinary(d as unknown as T.RangeExpressionBinary, t),
-	[TSKindId.RangeExpressionPostfix]: (d, t) => wrapRangeExpressionPostfix(d as unknown as T.RangeExpressionPostfix, t),
-	[TSKindId.RangeExpressionPrefix]: (d, t) => wrapRangeExpressionPrefix(d as unknown as T.RangeExpressionPrefix, t),
-	[TSKindId.RangeExpressionBare]: (d, t) => wrapRangeExpressionBare(d as unknown as T.RangeExpressionBare, t),
+	[TSKindId.RangeExpressionBounded]: (d, t) => wrapRangeExpressionBounded(d as unknown as T.RangeExpressionBounded, t),
+	[TSKindId.RangeExpressionLowerBounded]: (d, t) =>
+		wrapRangeExpressionLowerBounded(d as unknown as T.RangeExpressionLowerBounded, t),
+	[TSKindId.RangeExpressionUpperBounded]: (d, t) =>
+		wrapRangeExpressionUpperBounded(d as unknown as T.RangeExpressionUpperBounded, t),
+	[TSKindId.RangeExpressionUnbounded]: (d, t) =>
+		wrapRangeExpressionUnbounded(d as unknown as T.RangeExpressionUnbounded, t),
 	[TSKindId.ExpressionStatementWithSemi]: (d, t) =>
 		wrapExpressionStatementWithSemi(d as unknown as T.ExpressionStatementWithSemi, t),
 	[TSKindId.ForeignModItemSemi]: (d, t) => wrapForeignModItemSemi(d as unknown as T.ForeignModItemSemi, t),
@@ -32613,10 +32632,11 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.MacroDefinitionParen]: (d, t) => wrapMacroDefinitionParen(d as unknown as T.MacroDefinitionParen, t),
 	[TSKindId.MacroDefinitionBracket]: (d, t) => wrapMacroDefinitionBracket(d as unknown as T.MacroDefinitionBracket, t),
 	[TSKindId.MacroDefinitionBrace]: (d, t) => wrapMacroDefinitionBrace(d as unknown as T.MacroDefinitionBrace, t),
-	[TSKindId.RangePatternPrefix]: (d, t) => wrapRangePatternPrefix(d as unknown as T.RangePatternPrefix, t),
-	[TSKindId.RangePatternWithLeftWithRight]: (d, t) =>
-		wrapRangePatternWithLeftWithRight(d as unknown as T.RangePatternWithLeftWithRight, t),
-	[TSKindId.RangePatternWithLeft]: (d, t) => wrapRangePatternWithLeft(d as unknown as T.RangePatternWithLeft, t),
+	[TSKindId.RangePatternUpperBounded]: (d, t) =>
+		wrapRangePatternUpperBounded(d as unknown as T.RangePatternUpperBounded, t),
+	[TSKindId.RangePatternBounded]: (d, t) => wrapRangePatternBounded(d as unknown as T.RangePatternBounded, t),
+	[TSKindId.RangePatternLowerBounded]: (d, t) =>
+		wrapRangePatternLowerBounded(d as unknown as T.RangePatternLowerBounded, t),
 	[TSKindId.StructItemBrace]: (d, t) => wrapStructItemBrace(d as unknown as T.StructItemBrace, t),
 	[TSKindId.StructItemTuple]: (d, t) => wrapStructItemTuple(d as unknown as T.StructItemTuple, t),
 	[TSKindId.StructItemUnit]: (d, t) => wrapStructItemUnit(d as unknown as T.StructItemUnit, t),
@@ -32852,10 +32872,10 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.OrPatternPrefix]: viewOrPatternPrefix,
 	[TSKindId.PointerTypeConst]: viewPointerTypeConst,
 	[TSKindId.PointerTypeMut]: viewPointerTypeMut,
-	[TSKindId.RangeExpressionBinary]: viewRangeExpressionBinary,
-	[TSKindId.RangeExpressionPostfix]: viewRangeExpressionPostfix,
-	[TSKindId.RangeExpressionPrefix]: viewRangeExpressionPrefix,
-	[TSKindId.RangeExpressionBare]: viewRangeExpressionBare,
+	[TSKindId.RangeExpressionBounded]: viewRangeExpressionBounded,
+	[TSKindId.RangeExpressionLowerBounded]: viewRangeExpressionLowerBounded,
+	[TSKindId.RangeExpressionUpperBounded]: viewRangeExpressionUpperBounded,
+	[TSKindId.RangeExpressionUnbounded]: viewRangeExpressionUnbounded,
 	[TSKindId.ExpressionStatementWithSemi]: viewExpressionStatementWithSemi,
 	[TSKindId.ForeignModItemSemi]: viewForeignModItemSemi,
 	[TSKindId.ForeignModItemBody]: viewForeignModItemBody,
@@ -32879,9 +32899,9 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.MacroDefinitionParen]: viewMacroDefinitionParen,
 	[TSKindId.MacroDefinitionBracket]: viewMacroDefinitionBracket,
 	[TSKindId.MacroDefinitionBrace]: viewMacroDefinitionBrace,
-	[TSKindId.RangePatternPrefix]: viewRangePatternPrefix,
-	[TSKindId.RangePatternWithLeftWithRight]: viewRangePatternWithLeftWithRight,
-	[TSKindId.RangePatternWithLeft]: viewRangePatternWithLeft,
+	[TSKindId.RangePatternUpperBounded]: viewRangePatternUpperBounded,
+	[TSKindId.RangePatternBounded]: viewRangePatternBounded,
+	[TSKindId.RangePatternLowerBounded]: viewRangePatternLowerBounded,
 	[TSKindId.StructItemBrace]: viewStructItemBrace,
 	[TSKindId.StructItemTuple]: viewStructItemTuple,
 	[TSKindId.StructItemUnit]: viewStructItemUnit,

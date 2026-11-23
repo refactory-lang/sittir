@@ -127,9 +127,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -266,9 +266,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -543,9 +543,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -680,9 +680,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetCondition.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -750,8 +750,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.NegativeLiteral.Parsed
 				| T.OrPatternBinary.Parsed
 				| T.OrPatternPrefix.Parsed
-				| T.RangePatternPrefix.Parsed
-				| T.RangePatternWithLeft.Parsed
+				| T.RangePatternBounded.Parsed
+				| T.RangePatternLowerBounded.Parsed
+				| T.RangePatternUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.RefPattern.Parsed
 				| T.ReferencePattern.Parsed
@@ -902,9 +903,9 @@ export interface RustMap extends V.GrammarMap {
 								| T.IntegerLiteralOctal.Parsed
 								| T.MatchExpression.Parsed
 								| T.ParenthesizedExpression.Parsed
-								| T.RangeExpressionBinary.Parsed
-								| T.RangeExpressionPostfix.Parsed
-								| T.RangeExpressionPrefix.Parsed
+								| T.RangeExpressionBounded.Parsed
+								| T.RangeExpressionLowerBounded.Parsed
+								| T.RangeExpressionUpperBounded.Parsed
 								| T.RawStringLiteral.Parsed
 								| T.ReferenceExpressionBare.Parsed
 								| T.ReferenceExpressionMut.Parsed
@@ -1140,9 +1141,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetDeclaration.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -1276,9 +1277,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -1395,8 +1396,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.NegativeLiteral.Parsed
 				| T.OrPatternBinary.Parsed
 				| T.OrPatternPrefix.Parsed
-				| T.RangePatternPrefix.Parsed
-				| T.RangePatternWithLeft.Parsed
+				| T.RangePatternBounded.Parsed
+				| T.RangePatternLowerBounded.Parsed
+				| T.RangePatternUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.RefPattern.Parsed
 				| T.ReferencePattern.Parsed
@@ -1519,9 +1521,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -1659,9 +1661,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetCondition.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -1795,9 +1797,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetCondition.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -2135,9 +2137,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -2328,9 +2330,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -2521,9 +2523,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -2714,9 +2716,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -2907,9 +2909,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -3109,9 +3111,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -3824,9 +3826,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetDeclaration.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -3960,9 +3962,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -4329,9 +4331,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetDeclaration.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -4465,9 +4467,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -4834,9 +4836,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetDeclaration.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -4970,9 +4972,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -5339,9 +5341,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetDeclaration.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -5475,9 +5477,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -5844,9 +5846,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetDeclaration.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -5980,9 +5982,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -6358,9 +6360,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetDeclaration.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -6494,9 +6496,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -7500,9 +7502,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -7647,9 +7649,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -7794,9 +7796,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -7941,9 +7943,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -8088,9 +8090,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -8244,9 +8246,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -8391,9 +8393,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -8538,9 +8540,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -8685,9 +8687,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -8832,9 +8834,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -8979,9 +8981,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -9135,9 +9137,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -9282,9 +9284,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -9429,9 +9431,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -9576,9 +9578,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -9723,9 +9725,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -9870,9 +9872,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -10026,9 +10028,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -10762,9 +10764,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetDeclaration.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -10898,9 +10900,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -11267,9 +11269,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetDeclaration.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -11403,9 +11405,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -11772,9 +11774,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetDeclaration.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -11908,9 +11910,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -12277,9 +12279,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetDeclaration.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -12413,9 +12415,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -12782,9 +12784,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetDeclaration.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -12918,9 +12920,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -13296,9 +13298,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetDeclaration.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -13432,9 +13434,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -15125,8 +15127,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.NegativeLiteral.Parsed
 				| T.OrPatternBinary.Parsed
 				| T.OrPatternPrefix.Parsed
-				| T.RangePatternPrefix.Parsed
-				| T.RangePatternWithLeft.Parsed
+				| T.RangePatternBounded.Parsed
+				| T.RangePatternLowerBounded.Parsed
+				| T.RangePatternUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.RefPattern.Parsed
 				| T.ReferencePattern.Parsed
@@ -15308,8 +15311,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.NegativeLiteral.Parsed
 				| T.OrPatternBinary.Parsed
 				| T.OrPatternPrefix.Parsed
-				| T.RangePatternPrefix.Parsed
-				| T.RangePatternWithLeft.Parsed
+				| T.RangePatternBounded.Parsed
+				| T.RangePatternLowerBounded.Parsed
+				| T.RangePatternUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.RefPattern.Parsed
 				| T.ReferencePattern.Parsed
@@ -17925,8 +17929,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.NegativeLiteral.Parsed
 				| T.OrPatternBinary.Parsed
 				| T.OrPatternPrefix.Parsed
-				| T.RangePatternPrefix.Parsed
-				| T.RangePatternWithLeft.Parsed
+				| T.RangePatternBounded.Parsed
+				| T.RangePatternLowerBounded.Parsed
+				| T.RangePatternUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.RefPattern.Parsed
 				| T.ReferencePattern.Parsed
@@ -18105,9 +18110,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -18299,9 +18304,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -18493,9 +18498,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -18687,9 +18692,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -18881,9 +18886,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -19084,9 +19089,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -19221,9 +19226,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -21436,9 +21441,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -21583,9 +21588,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -21930,9 +21935,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -22063,9 +22068,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -22199,9 +22204,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -22332,9 +22337,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -22467,9 +22472,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -22600,9 +22605,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -22736,9 +22741,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -22869,9 +22874,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -23005,9 +23010,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -23138,9 +23143,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -23274,9 +23279,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -23407,9 +23412,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -23543,9 +23548,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -23676,9 +23681,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -23812,9 +23817,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -23945,9 +23950,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -24081,9 +24086,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -24214,9 +24219,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -24350,9 +24355,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -24483,9 +24488,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -24619,9 +24624,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -24752,9 +24757,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -24888,9 +24893,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -25021,9 +25026,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -25157,9 +25162,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -25293,9 +25298,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -25426,9 +25431,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -25561,9 +25566,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -25694,9 +25699,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -25830,9 +25835,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -25963,9 +25968,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -26099,9 +26104,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -26232,9 +26237,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -26368,9 +26373,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -26501,9 +26506,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -26637,9 +26642,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -26770,9 +26775,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -26906,9 +26911,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -27039,9 +27044,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -27175,9 +27180,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -27308,9 +27313,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -27444,9 +27449,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -27577,9 +27582,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -27713,9 +27718,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -27846,9 +27851,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -27982,9 +27987,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -28115,9 +28120,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -28251,9 +28256,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -28384,9 +28389,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -28520,9 +28525,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -28653,9 +28658,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -28789,9 +28794,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -28922,9 +28927,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -29058,9 +29063,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -29191,9 +29196,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -29327,9 +29332,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -29460,9 +29465,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -29596,9 +29601,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -29729,9 +29734,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -29865,9 +29870,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -29998,9 +30003,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -30134,9 +30139,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -30267,9 +30272,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -30405,9 +30410,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -30683,9 +30688,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -30829,9 +30834,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -30973,9 +30978,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -31167,9 +31172,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -31302,9 +31307,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -31436,9 +31441,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -31588,9 +31593,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -31734,9 +31739,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -32029,9 +32034,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetDeclaration.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -32165,9 +32170,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -32301,9 +32306,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -32447,9 +32452,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -32583,9 +32588,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -32719,9 +32724,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -32852,9 +32857,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -32988,9 +32993,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -33121,9 +33126,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -33261,9 +33266,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -33394,9 +33399,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -33530,9 +33535,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -33663,9 +33668,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -33799,9 +33804,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -33935,9 +33940,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -34068,9 +34073,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -34204,9 +34209,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -34339,9 +34344,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -34475,9 +34480,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -34611,9 +34616,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -34750,9 +34755,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -34986,9 +34991,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetDeclaration.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -35292,8 +35297,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.NegativeLiteral.Parsed
 				| T.OrPatternBinary.Parsed
 				| T.OrPatternPrefix.Parsed
-				| T.RangePatternPrefix.Parsed
-				| T.RangePatternWithLeft.Parsed
+				| T.RangePatternBounded.Parsed
+				| T.RangePatternLowerBounded.Parsed
+				| T.RangePatternUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.RefPattern.Parsed
 				| T.ReferencePattern.Parsed
@@ -35365,8 +35371,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.NegativeLiteral.Parsed
 				| T.OrPatternBinary.Parsed
 				| T.OrPatternPrefix.Parsed
-				| T.RangePatternPrefix.Parsed
-				| T.RangePatternWithLeft.Parsed
+				| T.RangePatternBounded.Parsed
+				| T.RangePatternLowerBounded.Parsed
+				| T.RangePatternUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.RefPattern.Parsed
 				| T.ReferencePattern.Parsed
@@ -35428,8 +35435,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.NegativeLiteral.Parsed
 				| T.OrPatternBinary.Parsed
 				| T.OrPatternPrefix.Parsed
-				| T.RangePatternPrefix.Parsed
-				| T.RangePatternWithLeft.Parsed
+				| T.RangePatternBounded.Parsed
+				| T.RangePatternLowerBounded.Parsed
+				| T.RangePatternUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.RefPattern.Parsed
 				| T.ReferencePattern.Parsed
@@ -35492,8 +35500,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.NegativeLiteral.Parsed
 				| T.OrPatternBinary.Parsed
 				| T.OrPatternPrefix.Parsed
-				| T.RangePatternPrefix.Parsed
-				| T.RangePatternWithLeft.Parsed
+				| T.RangePatternBounded.Parsed
+				| T.RangePatternLowerBounded.Parsed
+				| T.RangePatternUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.RefPattern.Parsed
 				| T.ReferencePattern.Parsed
@@ -35553,8 +35562,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.NegativeLiteral.Parsed
 				| T.OrPatternBinary.Parsed
 				| T.OrPatternPrefix.Parsed
-				| T.RangePatternPrefix.Parsed
-				| T.RangePatternWithLeft.Parsed
+				| T.RangePatternBounded.Parsed
+				| T.RangePatternLowerBounded.Parsed
+				| T.RangePatternUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.RefPattern.Parsed
 				| T.ReferencePattern.Parsed
@@ -35639,6 +35649,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.RawStringLiteral.Parsed
 				| T.ScopedIdentifier.Parsed
 				| T.StringLiteral.Parsed;
+			readonly $forms: V.Form<'start'>;
 		};
 		readonly 'pattern.range.exclusive': {
 			readonly end:
@@ -35717,7 +35728,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.RawStringLiteral.Parsed
 				| T.ScopedIdentifier.Parsed
 				| T.StringLiteral.Parsed;
-			readonly $forms: V.Form<'end', 'start'> | V.Form<'start', 'end'> | V.Form<'end' | 'start'>;
+			readonly $forms: V.Form<'start', 'end'> | V.Form<'end', 'start'> | V.Form<'end' | 'start'>;
 		};
 		readonly 'pattern.range.inclusive': {
 			readonly end:
@@ -35932,8 +35943,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.NegativeLiteral.Parsed
 				| T.OrPatternBinary.Parsed
 				| T.OrPatternPrefix.Parsed
-				| T.RangePatternPrefix.Parsed
-				| T.RangePatternWithLeft.Parsed
+				| T.RangePatternBounded.Parsed
+				| T.RangePatternLowerBounded.Parsed
+				| T.RangePatternUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.RefPattern.Parsed
 				| T.ReferencePattern.Parsed
@@ -35996,8 +36008,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.NegativeLiteral.Parsed
 				| T.OrPatternBinary.Parsed
 				| T.OrPatternPrefix.Parsed
-				| T.RangePatternPrefix.Parsed
-				| T.RangePatternWithLeft.Parsed
+				| T.RangePatternBounded.Parsed
+				| T.RangePatternLowerBounded.Parsed
+				| T.RangePatternUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.RefPattern.Parsed
 				| T.ReferencePattern.Parsed
@@ -36075,8 +36088,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.NegativeLiteral.Parsed
 				| T.OrPatternBinary.Parsed
 				| T.OrPatternPrefix.Parsed
-				| T.RangePatternPrefix.Parsed
-				| T.RangePatternWithLeft.Parsed
+				| T.RangePatternBounded.Parsed
+				| T.RangePatternLowerBounded.Parsed
+				| T.RangePatternUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.RefPattern.Parsed
 				| T.ReferencePattern.Parsed
@@ -36143,8 +36157,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.NegativeLiteral.Parsed
 				| T.OrPatternBinary.Parsed
 				| T.OrPatternPrefix.Parsed
-				| T.RangePatternPrefix.Parsed
-				| T.RangePatternWithLeft.Parsed
+				| T.RangePatternBounded.Parsed
+				| T.RangePatternLowerBounded.Parsed
+				| T.RangePatternUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.RefPattern.Parsed
 				| T.ReferencePattern.Parsed
@@ -36216,8 +36231,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.NegativeLiteral.Parsed
 				| T.OrPatternBinary.Parsed
 				| T.OrPatternPrefix.Parsed
-				| T.RangePatternPrefix.Parsed
-				| T.RangePatternWithLeft.Parsed
+				| T.RangePatternBounded.Parsed
+				| T.RangePatternLowerBounded.Parsed
+				| T.RangePatternUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.RefPattern.Parsed
 				| T.ReferencePattern.Parsed
@@ -36447,9 +36463,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetDeclaration.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -36583,9 +36599,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -36820,9 +36836,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetDeclaration.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -36956,9 +36972,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -37193,9 +37209,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetDeclaration.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -37329,9 +37345,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -37566,9 +37582,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetDeclaration.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -37702,9 +37718,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -37939,9 +37955,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetDeclaration.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -38075,9 +38091,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -38312,9 +38328,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetDeclaration.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -38448,9 +38464,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -38583,9 +38599,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -38730,9 +38746,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetCondition.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -38964,9 +38980,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetDeclaration.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -39100,9 +39116,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -39500,9 +39516,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetDeclaration.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -39636,9 +39652,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -39709,8 +39725,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.NegativeLiteral.Parsed
 				| T.OrPatternBinary.Parsed
 				| T.OrPatternPrefix.Parsed
-				| T.RangePatternPrefix.Parsed
-				| T.RangePatternWithLeft.Parsed
+				| T.RangePatternBounded.Parsed
+				| T.RangePatternLowerBounded.Parsed
+				| T.RangePatternUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.RefPattern.Parsed
 				| T.ReferencePattern.Parsed
@@ -39833,9 +39850,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -40067,9 +40084,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetDeclaration.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -40203,9 +40220,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -40343,9 +40360,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetCondition.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -40578,9 +40595,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.LetDeclaration.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -40714,9 +40731,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -40851,9 +40868,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -40987,9 +41004,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -41201,9 +41218,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.IntegerLiteralOctal.Parsed
 				| T.MatchExpression.Parsed
 				| T.ParenthesizedExpression.Parsed
-				| T.RangeExpressionBinary.Parsed
-				| T.RangeExpressionPostfix.Parsed
-				| T.RangeExpressionPrefix.Parsed
+				| T.RangeExpressionBounded.Parsed
+				| T.RangeExpressionLowerBounded.Parsed
+				| T.RangeExpressionUpperBounded.Parsed
 				| T.RawStringLiteral.Parsed
 				| T.ReferenceExpressionBare.Parsed
 				| T.ReferenceExpressionMut.Parsed
@@ -42140,12 +42157,12 @@ export interface RustMap extends V.GrammarMap {
 			readonly 'expression.parenthesized': TSKindId.ParenthesizedExpression;
 			readonly 'expression.propagate': TSKindId.TryExpression;
 			readonly 'expression.range.exclusive':
-				| TSKindId.RangeExpressionBare
-				| TSKindId.RangeExpressionBinary
-				| TSKindId.RangeExpressionPostfix
-				| TSKindId.RangeExpressionPrefix;
-			readonly 'expression.range.inclusive': TSKindId.RangeExpressionBinary;
-			readonly 'expression.range.inclusive.legacy': TSKindId.RangeExpressionBinary;
+				| TSKindId.RangeExpressionBounded
+				| TSKindId.RangeExpressionLowerBounded
+				| TSKindId.RangeExpressionUnbounded
+				| TSKindId.RangeExpressionUpperBounded;
+			readonly 'expression.range.inclusive': TSKindId.RangeExpressionBounded;
+			readonly 'expression.range.inclusive.legacy': TSKindId.RangeExpressionBounded;
 			readonly 'expression.reference':
 				| TSKindId.ReferenceExpressionBare
 				| TSKindId.ReferenceExpressionMut
@@ -42212,9 +42229,12 @@ export interface RustMap extends V.GrammarMap {
 			readonly 'pattern.list': TSKindId.SlicePattern;
 			readonly 'pattern.mutable': TSKindId.MutPattern;
 			readonly 'pattern.or': TSKindId.OrPatternBinary | TSKindId.OrPatternPrefix;
-			readonly 'pattern.range.exclusive': TSKindId.RangePatternPrefix | TSKindId.RangePatternWithLeft;
-			readonly 'pattern.range.inclusive': TSKindId.RangePatternPrefix | TSKindId.RangePatternWithLeft;
-			readonly 'pattern.range.inclusive.legacy': TSKindId.RangePatternWithLeft;
+			readonly 'pattern.range.exclusive':
+				| TSKindId.RangePatternBounded
+				| TSKindId.RangePatternLowerBounded
+				| TSKindId.RangePatternUpperBounded;
+			readonly 'pattern.range.inclusive': TSKindId.RangePatternBounded | TSKindId.RangePatternUpperBounded;
+			readonly 'pattern.range.inclusive.legacy': TSKindId.RangePatternBounded;
 			readonly 'pattern.reference': TSKindId.RefPattern;
 			readonly 'pattern.reference.value': TSKindId.ReferencePattern;
 			readonly 'pattern.struct': TSKindId.StructPattern;

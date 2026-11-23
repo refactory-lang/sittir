@@ -116,11 +116,11 @@ describe('rust rule ids survive normalize', () => {
 	it.each([
 		['the first element of a separated list', 'rule:trait_bounds:members.1/members.0'],
 		['an arm member that factoring shares with the first arm', 'rule:binary_expression:members.2/members.2'],
-		['a literal minted into its catalog kind', 'rule:range_expression_binary:members.1/content/members.0'],
+		['a literal minted into its catalog kind', 'rule:range_expression_bounded:members.1/content/members.0'],
 		['a list item under a collapsed field', 'rule:token_tree_paren:members.1/content/content'],
 		['a reference a hidden body is spliced over', 'rule:closure_parameters:members.1/content'],
 		['a spliced body under a collapsed optional', 'rule:let_declaration:members.4/content'],
-		['a choice fanned out over its sequence', 'rule:range_pattern_with_left:members.1']
+		['a choice fanned out over its sequence', 'rule:range_pattern_bounded:members.1']
 	])('%s keeps its id (%s)', (_what, id) => {
 		expect(reached.has(id)).toBe(true);
 	});

@@ -444,7 +444,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "argument: arm 431 builds through its holder"
+    "message": "argument: arm 430 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -1108,7 +1108,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.method: arm 480 builds parameters through more than one form"
+    "message": "declaration.member.method: arm 479 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -1116,7 +1116,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.method.private: arm 480 builds parameters through more than one form"
+    "message": "declaration.member.method.private: arm 479 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -1124,7 +1124,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.method.public: arm 480 builds parameters through more than one form"
+    "message": "declaration.member.method.public: arm 479 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -1132,7 +1132,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.method.public.internal: arm 480 builds parameters through more than one form"
+    "message": "declaration.member.method.public.internal: arm 479 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -1140,7 +1140,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.method.public.parent: arm 480 builds parameters through more than one form"
+    "message": "declaration.member.method.public.parent: arm 479 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -1148,7 +1148,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.method.public.restricted: arm 480 builds parameters through more than one form"
+    "message": "declaration.member.method.public.restricted: arm 479 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -1156,7 +1156,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.method.signature: arm 483 builds parameters through more than one form"
+    "message": "declaration.member.method.signature: arm 482 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -1164,7 +1164,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.method.signature.private: arm 483 builds parameters through more than one form"
+    "message": "declaration.member.method.signature.private: arm 482 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -1172,7 +1172,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.method.signature.public: arm 483 builds parameters through more than one form"
+    "message": "declaration.member.method.signature.public: arm 482 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -1180,7 +1180,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.method.signature.public.internal: arm 483 builds parameters through more than one form"
+    "message": "declaration.member.method.signature.public.internal: arm 482 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -1188,7 +1188,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.method.signature.public.parent: arm 483 builds parameters through more than one form"
+    "message": "declaration.member.method.signature.public.parent: arm 482 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -1196,7 +1196,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.method.signature.public.restricted: arm 483 builds parameters through more than one form"
+    "message": "declaration.member.method.signature.public.restricted: arm 482 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -1636,7 +1636,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.type_argument: arm 433 builds through its holder"
+    "message": "element.type_argument: arm 432 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -1756,7 +1756,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "modifier.visibility.public.internal: arm 477 builds through its holder"
+    "message": "modifier.visibility.public.internal: arm 476 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -1780,30 +1780,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.range.exclusive: end's step at content is not a plain slot"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.range.inclusive: end's step at content is not a plain slot"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.range.inclusive.legacy: end's step at content is not a plain slot"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "pattern.struct.rest: arm 321 builds through its holder"
   },
   {
@@ -1812,7 +1788,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.wildcard: arm 426 builds through its holder"
+    "message": "pattern.wildcard: arm 425 builds through its holder"
   },
   {
     "scope": "grammar",

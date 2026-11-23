@@ -201,9 +201,9 @@ export default grammar(enrich(base), wire({
 		},
 		last_match_arm: { before: preference('newline'), 'trailing_comma:': preference('blank') },
 
-		range_expression_binary: { 'operator:/before': preference('tight'), 'operator:/after': preference('tight') },
-		range_expression_prefix: { 'operator:/after': preference('tight') },
-		range_expression_postfix: { 'operator:/before': preference('tight') },
+		range_expression_bounded: { 'operator:/before': preference('tight'), 'operator:/after': preference('tight') },
+		range_expression_upper_bounded: { 'operator:/after': preference('tight') },
+		range_expression_lower_bounded: { 'operator:/before': preference('tight') },
 		unary_expression: { 'operator:/after': preference('tight') },
 		token_tree_punctuation: {
 			'"!"/before': preference('tight'),
@@ -458,12 +458,12 @@ export default grammar(enrich(base), wire({
 
 		// range_expression is a flattened parent of four variant kinds. The
 		// bare-'..' arm (RangeFull, e.g. `let x = ..;`) is a lone literal, so
-		// the first set aliases it into a named node (`_range_expression_bare`
-		// in `rules:`), which `variant('bare')` then hoists as its own kind
+		// the first set aliases it into a named node (`_range_expression_unbounded`
+		// in `rules:`), which `variant('unbounded')` then hoists as its own kind
 		// like the three sequence arms. The arm carries no field: a field on
 		// it would be kept by the variant and route beside the union arms.
 		range_expression: [
-			{ '-1': alias('range_expression_bare') },
+			{ '-1': alias('range_expression_unbounded') },
 			{
 				'0/0': field('start'),
 				'0/1': field('operator'),
@@ -474,10 +474,10 @@ export default grammar(enrich(base), wire({
 				'2/1': field('end')
 			},
 			{
-				'0': variant('binary'),
-				'1': variant('postfix'),
-				'2': variant('prefix'),
-				'3': variant('bare')
+				'0': variant('bounded'),
+				'1': variant('lower_bounded'),
+				'2': variant('upper_bounded'),
+				'3': variant('unbounded')
 			}
 		],
 
@@ -575,11 +575,10 @@ export default grammar(enrich(base), wire({
 				'1/1': field('end')
 			},
 			{
-				'0/1/0': variant('with_right'),
-				'0/1/1': variant('bare'),
-				'1': variant('prefix')
-			},
-			{ '0': variant('with_left') }
+				'0/1/0': variant('bounded'),
+				'0/1/1': variant('lower_bounded'),
+				'1': variant('upper_bounded')
+			}
 		],
 
 		struct_item: { '4/0': variant('brace'), '4/1': variant('tuple'), '4/2': variant('unit') },
@@ -702,7 +701,7 @@ export default grammar(enrich(base), wire({
 			)
 		),
 
-		_range_expression_bare: vocabulary(($) => '..'),
+		_range_expression_unbounded: vocabulary(($) => '..'),
 
 		attributed_element: vocabulary(($) => seq(repeat1($.attribute_item), field('expression', $._expression))),
 

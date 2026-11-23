@@ -143,8 +143,9 @@ export type ReplacingFn = ($: Parameters<SittirRuleFn>[0], member: RuntimeRule) 
 type PatchSet = Record<number | string, PatchValue>;
 
 export function transform<_Base = unknown>(original: RuntimeRule, ...patchSets: PatchSet[]): RuntimeRule {
+	const variantKeys = patchSets.flatMap((patches) => partitionPatchesByVariant(patches).variantEntries.map(([key]) => key));
 	let rule = original;
-	for (const patches of patchSets) rule = applyPatchSet(rule, patches);
+	for (const patches of patchSets) rule = applyPatchSet(rule, patches, variantKeys);
 	return rule;
 }
 
@@ -179,13 +180,13 @@ function stripDirectVariants(rule: unknown, path: readonly string[] | undefined,
 	return label !== undefined || wireIsInlineWrite(rule) ? wireNoteInlineWrite(copy) : copy;
 }
 
-function applyPatchSet(rule: RuntimeRule, patches: PatchSet): RuntimeRule {
+function applyPatchSet(rule: RuntimeRule, patches: PatchSet, variantKeys: readonly string[]): RuntimeRule {
 	recordPatchSites(patches);
 	const hasPathKeys = requiresPathMode(patches);
 	const hasPlaceholderAlias = Object.values(patches).some(
 		(v) => typeof v === 'function' || isAliasPlaceholder(v) || isRulePlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isFlattenPlaceholder(v) || isRegexPlaceholder(v) || isNarrowPlaceholder(v) || isLeadPlaceholder(v) || isRenamePlaceholder(v) || isRefinePlaceholder(v)
 	);
-	if (hasPathKeys || hasPlaceholderAlias) return applyPathPatches(rule, patches);
+	if (hasPathKeys || hasPlaceholderAlias) return applyPathPatches(rule, patches, variantKeys);
 	return appliedAtSite(Object.keys(patches).join(', '), () => applyFlatPatches(rule, patches as Record<number | string, RuntimeRule>)) ?? rule;
 }
 
@@ -241,7 +242,7 @@ function requiresPathMode(patches: PatchSet): boolean {
 	return Object.keys(patches).some((k) => !/^\d+$/.test(k));
 }
 
-function applyPathPatches(original: RuntimeRule, patches: Record<number | string, PatchValue>): RuntimeRule {
+function applyPathPatches(original: RuntimeRule, patches: Record<number | string, PatchValue>, variantKeys: readonly string[]): RuntimeRule {
 	const { variantEntries, otherEntries } = partitionPatchesByVariant(patches);
 	let rule = original;
 	for (const [key, value] of descendantsFirst(otherEntries)) {
@@ -273,7 +274,7 @@ function applyPathPatches(original: RuntimeRule, patches: Record<number | string
 				return isArmDefault(value) ? clearSiblingDefaults(applied, segments) : applied;
 			}) ?? current;
 	}
-	return variantEntries.length > 0 ? applyVariantPatches(rule, variantEntries) : rule;
+	return variantEntries.length > 0 ? applyVariantPatches(rule, variantEntries, variantKeys) : rule;
 }
 
 const DOT_ONLY_ENTRIES = {
@@ -363,7 +364,8 @@ function partitionPatchesByVariant(patches: Record<number | string, PatchValue>)
 
 function applyVariantPatches(
 	rule: RuntimeRule,
-	variantEntries: ReadonlyArray<[string, VariantPlaceholder]>
+	variantEntries: ReadonlyArray<[string, VariantPlaceholder]>,
+	variantKeys: readonly string[]
 ): RuntimeRule {
 	const ordered = [...variantEntries].sort(([a], [b]) => parsePath(b).length - parsePath(a).length);
 	const hoisted = wireWithPatchSites(patchSitesOf(ordered), () => tryHoistSiblingVariants(rule, ordered));
@@ -375,10 +377,11 @@ function applyVariantPatches(
 			);
 		}
 	}
+	const inArms = hoisted === null ? entriesInUnnamedArms(rule, ordered, variantKeys) : [];
+	const deferred = new Set(inArms.map(([key]) => key));
 	let result = hoisted ? hoisted.rule : rule;
 	const missed = new Set<string>();
-	for (const [key, value] of ordered) {
-		if (hoisted?.consumed.has(key)) continue;
+	const applyEntry = ([key, value]: readonly [string, VariantPlaceholder]): void => {
 		const segments = parsePath(key);
 		const current = result;
 		try {
@@ -393,12 +396,82 @@ function applyVariantPatches(
 			if (error instanceof Error) error.message = `${wireGetCurrentRuleKind()} patch ${key}: ${error.message}`;
 			throw error;
 		}
+	};
+	for (const entry of ordered) {
+		if (!hoisted?.consumed.has(entry[0]) && !deferred.has(entry[0])) applyEntry(entry);
+	}
+	const armHoist = inArms.length === 0 ? null : wireWithPatchSites(patchSitesOf(inArms), () => hoistWithinArms(result, inArms));
+	if (armHoist !== null) result = armHoist.rule;
+	for (const entry of inArms) {
+		if (!armHoist?.consumed.has(entry[0])) applyEntry(entry);
 	}
 	registerIfPureVariantChoice(result);
 	for (const [key, value] of variantEntries) {
-		if (value.default === true && !missed.has(key) && !hoisted?.consumed.has(key)) result = clearSiblingDefaults(result, parsePath(key));
+		if (value.default === true && !missed.has(key) && !hoisted?.consumed.has(key) && !armHoist?.consumed.has(key)) result = clearSiblingDefaults(result, parsePath(key));
 	}
 	return result;
+}
+
+function entriesInUnnamedArms(
+	rule: RuntimeRule,
+	entries: ReadonlyArray<[string, VariantPlaceholder]>,
+	variantKeys: readonly string[]
+): ReadonlyArray<[string, VariantPlaceholder]> {
+	const { core } = peelPrecs(rule);
+	if (!isChoiceType(core.type)) return [];
+	const armCount = membersOf(core).length;
+	const armOf = (key: string): { arm: number; depth: number } | undefined => {
+		const [head, ...rest] = parsePath(key);
+		return head?.kind === 'index' ? { arm: memberIndex(head.value, armCount), depth: rest.length } : undefined;
+	};
+	const named = new Set(variantKeys.flatMap((key) => {
+		const at = armOf(key);
+		return at?.depth === 0 ? [at.arm] : [];
+	}));
+	return entries.filter(([key]) => {
+		const at = armOf(key);
+		return at?.depth === 2 && !named.has(at.arm);
+	});
+}
+
+function hoistWithinArms(
+	rule: RuntimeRule,
+	entries: ReadonlyArray<[string, VariantPlaceholder]>
+): { rule: RuntimeRule; consumed: Set<string> } | null {
+	const { precs: precStack, core } = peelPrecs(rule);
+	const arms = membersOf(core);
+	const byArm = new Map<number, [string, VariantPlaceholder][]>();
+	for (const entry of entries) {
+		const head = parsePath(entry[0])[0] as { value: number };
+		const arm = memberIndex(head.value, arms.length);
+		byArm.set(arm, [...(byArm.get(arm) ?? []), entry]);
+	}
+	const consumed = new Set<string>();
+	const hoistedArms = new Map<number, readonly RuntimeRule[]>();
+	for (const [arm, armEntries] of byArm) {
+		const lift = enrichLiftArmOf(arms[arm]!);
+		const within = armEntries.map(([key, value]): [string, VariantPlaceholder] => [key.slice(key.indexOf('/') + 1), value]);
+		const body = lift === null ? arms[arm]! : withoutVariantOf(lift.body, lift.liftName);
+		const hoisted = tryHoistSiblingVariants(wrapInPrec(body, precStack), within, true);
+		if (hoisted === null) continue;
+		if (lift !== null) wireSetLiftBody(lift.liftName, { type: 'BLANK' } as unknown as RuntimeRule);
+		hoistedArms.set(arm, membersOf(hoisted.rule));
+		for (const [key] of armEntries) consumed.add(key);
+	}
+	if (hoistedArms.size === 0) return null;
+	const flat = reconstructContainer(core, arms.flatMap((member, i) => hoistedArms.get(i) ?? [member]));
+	return { rule: wrapInPrec(flat, precStack), consumed };
+}
+
+function withoutVariantOf(rule: RuntimeRule, owner: string): RuntimeRule {
+	const node = rule as RuntimeRule & { annotations?: RuleAnnotations & { variantOf?: string }; members?: RuntimeRule[]; content?: RuntimeRule };
+	const { variantOf, ...kept } = node.annotations ?? {};
+	return {
+		...node,
+		...(variantOf === owner ? { annotations: kept } : {}),
+		...(node.members === undefined ? {} : { members: node.members.map((member) => withoutVariantOf(member, owner)) }),
+		...(typeof node.content === 'object' ? { content: withoutVariantOf(node.content, owner) } : {})
+	} as RuntimeRule;
 }
 
 function registerIfPureVariantChoice(rule: RuntimeRule): void {
@@ -430,7 +503,8 @@ interface SiblingVariantHoistPlan {
 function planSiblingVariantHoist(
 	rule: RuntimeRule,
 	variantEntries: ReadonlyArray<[string, VariantPlaceholder]>,
-	onBail: (reason: string) => void = () => {}
+	onBail: (reason: string) => void = () => {},
+	spliceSequences: boolean = false
 ): SiblingVariantHoistPlan | null {
 	const bail = (reason: string): null => {
 		onBail(reason);
@@ -487,7 +561,12 @@ function planSiblingVariantHoist(
 		if (lift === null) return bail(`arm ${altIdx} has no variant() and no enrich lift to carry it`);
 		lifted.push({ altIdx, lift });
 	}
-	const body = (arm: RuntimeRule): RuntimeRule => replaceAt(core, at, isBlank(arm) ? undefined : place(arm));
+	const placed = (arm: RuntimeRule): readonly RuntimeRule[] => {
+		if (isBlank(arm)) return [];
+		const member = place(arm);
+		return spliceSequences && isSeqType(member.type) ? membersOf(member) : [member];
+	};
+	const body = (arm: RuntimeRule): RuntimeRule => replaceAt(core, at, placed(arm));
 	const emptyArm = choiceMembers.findIndex((arm) => matchesEmpty(body(arm)));
 	if (emptyArm >= 0) return bail(`arm ${emptyArm} would hoist to a variant that matches the empty string`);
 	const bareArm = choiceMembers.findIndex((arm) => variantBranchIsUnmaterializable(body(arm)));
@@ -515,13 +594,13 @@ function memberAt(seq: RuntimeRule, at: readonly number[]): RuntimeRule | undefi
 	return at.reduce<RuntimeRule | undefined>((node, i) => (node !== undefined && isSeqType(node.type) ? membersOf(node)[i] : undefined), seq);
 }
 
-function replaceAt(seq: RuntimeRule, at: readonly number[], replacement: RuntimeRule | undefined): RuntimeRule {
+function replaceAt(seq: RuntimeRule, at: readonly number[], replacement: readonly RuntimeRule[]): RuntimeRule {
 	const [i, ...rest] = at;
 	const members = membersOf(seq);
-	const next = rest.length === 0 ? replacement : replaceAt(members[i!]!, rest, replacement);
+	const next = rest.length === 0 ? replacement : [replaceAt(members[i!]!, rest, replacement)];
 	return reconstructContainer(
 		seq,
-		members.flatMap((member, k) => (k !== i ? [member] : next === undefined ? [] : [next]))
+		members.flatMap((member, k) => (k !== i ? [member] : next))
 	);
 }
 
@@ -558,12 +637,13 @@ function hoistChoiceOf(rule: RuntimeRule | undefined, site: HoistSite): HoistCho
 
 function tryHoistSiblingVariants(
 	rule: RuntimeRule,
-	variantEntries: ReadonlyArray<[string, VariantPlaceholder]>
+	variantEntries: ReadonlyArray<[string, VariantPlaceholder]>,
+	spliceSequences: boolean = false
 ): { rule: RuntimeRule; consumed: Set<string> } | null {
 	const { bail } = peelPrecWrappersFromRule(rule);
 	const parentKind = wireGetCurrentRuleKind();
 	if (!parentKind) return bail('no current rule kind (variant()/transform() called outside rule callback?)');
-	const plan = planSiblingVariantHoist(rule, variantEntries, (reason) => bail(reason));
+	const plan = planSiblingVariantHoist(rule, variantEntries, (reason) => bail(reason), spliceSequences);
 	if (plan === null) return null;
 	if (wireIsExtraRule(parentKind)) return bail(`'${parentKind}' is an extra; a non-token rule may not appear inside an extra`);
 	if (wireIsPrecedenceRankedRule(parentKind))

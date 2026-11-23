@@ -68,7 +68,7 @@ export function rebuildKeywordOpenersRustLoose() {
 					}),
 				}), rs.build.forExpression({
 					left: rs.build.tuplePattern("i", "v"),
-					right: rs.build.parenthesizedExpression(rs.build.rangeExpressionBinary({
+					right: rs.build.parenthesizedExpression(rs.build.rangeExpressionBounded({
 						start: rs.build.integerLiteralDecimal({
 							content: "0",
 						}),

@@ -202,7 +202,7 @@ const clause_bounds_removed$218_type = (value: clause_bounds_removed$218_type$It
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('clause.bounds.removed.type', value);
 	}
@@ -212,7 +212,7 @@ const clause_bounds_removed$218_type = (value: clause_bounds_removed$218_type$It
 				value,
 				[
 					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -267,11 +267,11 @@ const clause_bounds_use$249_bounds$item = (value: clause_bounds_use$249_bounds$i
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [239, 484])) return value;
+		if (seated(value, [239, 483])) return value;
 		return unseated('clause.bounds.use.bounds', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [239, 484])) return value;
+		if (seated(value, [239, 483])) return value;
 		return unseated('clause.bounds.use.bounds', value);
 	}
 	switch (value.$path) {
@@ -678,7 +678,7 @@ const clause_else$291_statements = (value: clause_else$291_statements$Item) => {
 				value,
 				[
 					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
-					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+					384, 385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -690,7 +690,7 @@ const clause_else$291_statements = (value: clause_else$291_statements$Item) => {
 				[
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
-					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -943,9 +943,9 @@ const clause_else$291_statements = (value: clause_else$291_statements$Item) => {
 		case 'expression.cast.conversion':
 			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
 		case 'expression.collection.list':
-			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+			return b.expressionStatement.withSemi(expression_collection_list$435(value));
 		case 'expression.collection.list.repeat':
-			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$434(value));
 		case 'expression.collection.struct':
 			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
 		case 'expression.collection.tuple':
@@ -1357,7 +1357,7 @@ const clause_else$291_trailingExpression = (value: clause_else$291_trailingExpre
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -1436,9 +1436,9 @@ const clause_else$291_trailingExpression = (value: clause_else$291_trailingExpre
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -1620,7 +1620,7 @@ const clause_import_alias$228_name = (value: clause_import_alias$228_name$Item) 
 			case 'crate':
 				return 126;
 			case 'self':
-				return 481;
+				return 480;
 			case 'super':
 				return 125;
 			default:
@@ -1633,7 +1633,7 @@ const clause_import_alias$228_name = (value: clause_import_alias$228_name$Item) 
 		return unseated('clause.import.alias.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 125, 126, 127, 263, 481])) return value;
+		if (seated(value, [1, 125, 126, 127, 263, 480])) return value;
 		return unseated('clause.import.alias.name', value);
 	}
 	switch (value.$path) {
@@ -1699,7 +1699,7 @@ const clause_import_list$227_useClauses$item = (value: clause_import_list$227_us
 			case 'crate':
 				return 126;
 			case 'self':
-				return 481;
+				return 480;
 			case 'super':
 				return 125;
 			default:
@@ -1712,7 +1712,7 @@ const clause_import_list$227_useClauses$item = (value: clause_import_list$227_us
 		return unseated('clause.import.list.useClauses', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 125, 126, 127, 226, 227, 228, 229, 263, 481])) return value;
+		if (seated(value, [1, 125, 126, 127, 226, 227, 228, 229, 263, 480])) return value;
 		return unseated('clause.import.list.useClauses', value);
 	}
 	switch (value.$path) {
@@ -1767,7 +1767,7 @@ const clause_import_list_scoped$226_path = (value: clause_import_list_scoped$226
 			case 'crate':
 				return 126;
 			case 'self':
-				return 481;
+				return 480;
 			case 'super':
 				return 125;
 			default:
@@ -1780,7 +1780,7 @@ const clause_import_list_scoped$226_path = (value: clause_import_list_scoped$226
 		return unseated('clause.import.list.scoped.path', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 125, 126, 127, 263, 481])) return value;
+		if (seated(value, [1, 125, 126, 127, 263, 480])) return value;
 		return unseated('clause.import.list.scoped.path', value);
 	}
 	switch (value.$path) {
@@ -1890,7 +1890,7 @@ const clause_let$288_pattern = (value: clause_let$288_pattern$Item) => {
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -1908,7 +1908,7 @@ const clause_let$288_pattern = (value: clause_let$288_pattern$Item) => {
 				value,
 				[
 					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -1986,14 +1986,14 @@ const clause_let$288_pattern = (value: clause_let$288_pattern$Item) => {
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
 			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
-			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
-			return unbuilt('clause.let.pattern', value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
 			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('clause.let.pattern', value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('clause.let.pattern', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -2215,7 +2215,7 @@ const clause_let$288_value = (value: clause_let$288_value$Item) => {
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -2294,9 +2294,9 @@ const clause_let$288_value = (value: clause_let$288_value$Item) => {
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -2670,7 +2670,7 @@ const clause_let_chain$289_left = (value: clause_let_chain$289_left$Item) => {
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 288, 289, 292, 297, 298, 299, 300,
 					301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372,
-					373, 374, 390, 391, 392, 393, 435, 436
+					373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -2753,9 +2753,9 @@ const clause_let_chain$289_left = (value: clause_let_chain$289_left$Item) => {
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -3127,7 +3127,7 @@ const clause_let_chain$289_rights = (value: clause_let_chain$289_rights$Item) =>
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 288, 292, 297, 298, 299, 300, 301,
 					304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373,
-					374, 390, 391, 392, 393, 435, 436
+					374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -3208,9 +3208,9 @@ const clause_let_chain$289_rights = (value: clause_let_chain$289_rights$Item) =>
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -3559,7 +3559,7 @@ const clause_where_predicate$212_bounds$item = (value: clause_where_predicate$21
 		if (
 			seated(
 				value,
-				[127, 217, 218, 236, 239, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]
+				[127, 217, 218, 236, 239, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]
 			)
 		)
 			return value;
@@ -3571,7 +3571,7 @@ const clause_where_predicate$212_bounds$item = (value: clause_where_predicate$21
 				value,
 				[
 					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240, 242, 243,
-					244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -3709,7 +3709,7 @@ const clause_where_predicate$212_left = (value: clause_where_predicate$212_left$
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [217, 239, 240, 243, 246, 252, 253, 265, 341, 388, 389, 484])) return value;
+		if (seated(value, [217, 239, 240, 243, 246, 252, 253, 265, 341, 388, 389, 483])) return value;
 		return unseated('clause.where.predicate.left', value);
 	}
 	if (isNode(value)) {
@@ -3718,7 +3718,7 @@ const clause_where_predicate$212_left = (value: clause_where_predicate$212_left$
 				value,
 				[
 					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 217, 239, 240, 243, 246, 252, 253, 265,
-					341, 388, 389, 484
+					341, 388, 389, 483
 				]
 			)
 		)
@@ -3882,7 +3882,7 @@ const declaration_constant$205_type = (value: declaration_constant$205_type$Item
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('declaration.constant.type', value);
 	}
@@ -3892,7 +3892,7 @@ const declaration_constant$205_type = (value: declaration_constant$205_type$Item
 				value,
 				[
 					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -4140,7 +4140,7 @@ const declaration_constant$205_value = (value: declaration_constant$205_value$It
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -4219,9 +4219,9 @@ const declaration_constant$205_value = (value: declaration_constant$205_value$It
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -4843,7 +4843,7 @@ const declaration_member_enum_member$200_value = (value: declaration_member_enum
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -4922,9 +4922,9 @@ const declaration_member_enum_member$200_value = (value: declaration_member_enum
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -5341,7 +5341,7 @@ const declaration_module$385_statements$item = (value: declaration_module$385_st
 				value,
 				[
 					180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378, 384, 385,
-					395, 396, 416, 417, 418, 423, 424, 425
+					395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -5355,7 +5355,7 @@ const declaration_module$385_statements$item = (value: declaration_module$385_st
 				value,
 				[
 					178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378, 384,
-					385, 395, 396, 416, 417, 418, 423, 424, 425
+					385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -5795,7 +5795,7 @@ const declaration_module_foreign$396_statements$item = (value: declaration_modul
 				value,
 				[
 					180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378, 384, 385,
-					395, 396, 416, 417, 418, 423, 424, 425
+					395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -5809,7 +5809,7 @@ const declaration_module_foreign$396_statements$item = (value: declaration_modul
 				value,
 				[
 					178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378, 384,
-					385, 395, 396, 416, 417, 418, 423, 424, 425
+					385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -6031,7 +6031,7 @@ const declaration_parameter_receiver$231_lifetime = (value: declaration_paramete
 	}
 	return identifier_lifetime$239(value);
 };
-type declaration_parameter_receiver$439_type$Item =
+type declaration_parameter_receiver$438_type$Item =
 	| '!'
 	| '()'
 	| 'bool'
@@ -6093,7 +6093,7 @@ type declaration_parameter_receiver$439_type$Item =
 	| RustMap['nodes']['type.reference']
 	| BuildInput<RustMap, 'type.tuple'>
 	| RustMap['nodes']['type.tuple'];
-const declaration_parameter_receiver$439_type = (value: declaration_parameter_receiver$439_type$Item) => {
+const declaration_parameter_receiver$438_type = (value: declaration_parameter_receiver$438_type$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!':
@@ -6140,7 +6140,7 @@ const declaration_parameter_receiver$439_type = (value: declaration_parameter_re
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('declaration.parameter.receiver.type', value);
 	}
@@ -6150,7 +6150,7 @@ const declaration_parameter_receiver$439_type = (value: declaration_parameter_re
 				value,
 				[
 					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -6274,7 +6274,7 @@ const declaration_parameter_variadic$232_pattern = (value: declaration_parameter
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -6292,7 +6292,7 @@ const declaration_parameter_variadic$232_pattern = (value: declaration_parameter
 				value,
 				[
 					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -6370,14 +6370,14 @@ const declaration_parameter_variadic$232_pattern = (value: declaration_parameter
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
 			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
-			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
-			return unbuilt('declaration.parameter.variadic.pattern', value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
 			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('declaration.parameter.variadic.pattern', value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('declaration.parameter.variadic.pattern', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -6510,7 +6510,7 @@ const declaration_type_parameter$221_bounds$item = (value: declaration_type_para
 		if (
 			seated(
 				value,
-				[127, 217, 218, 236, 239, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]
+				[127, 217, 218, 236, 239, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]
 			)
 		)
 			return value;
@@ -6522,7 +6522,7 @@ const declaration_type_parameter$221_bounds$item = (value: declaration_type_para
 				value,
 				[
 					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240, 242, 243,
-					244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -6678,7 +6678,7 @@ const declaration_type_parameter$221_default = (value: declaration_type_paramete
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('declaration.type_parameter.default', value);
 	}
@@ -6688,7 +6688,7 @@ const declaration_type_parameter$221_default = (value: declaration_type_paramete
 				value,
 				[
 					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -6741,11 +6741,11 @@ const declaration_type_parameter$221_name = (value: declaration_type_parameter$2
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [484])) return value;
+		if (seated(value, [483])) return value;
 		return unseated('declaration.type_parameter.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [484])) return value;
+		if (seated(value, [483])) return value;
 		return unseated('declaration.type_parameter.name', value);
 	}
 	switch (value.$path) {
@@ -6873,7 +6873,7 @@ const declaration_type_parameter_lifetime$222_bounds$item = (
 		if (
 			seated(
 				value,
-				[127, 217, 218, 236, 239, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]
+				[127, 217, 218, 236, 239, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]
 			)
 		)
 			return value;
@@ -6885,7 +6885,7 @@ const declaration_type_parameter_lifetime$222_bounds$item = (
 				value,
 				[
 					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240, 242, 243,
-					244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -7205,7 +7205,7 @@ const declaration_type_parameter_value$220_type = (value: declaration_type_param
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('declaration.type_parameter.value.type', value);
 	}
@@ -7215,7 +7215,7 @@ const declaration_type_parameter_value$220_type = (value: declaration_type_param
 				value,
 				[
 					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -7524,7 +7524,7 @@ const declaration_variable$206_type = (value: declaration_variable$206_type$Item
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('declaration.variable.type', value);
 	}
@@ -7534,7 +7534,7 @@ const declaration_variable$206_type = (value: declaration_variable$206_type$Item
 				value,
 				[
 					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -7782,7 +7782,7 @@ const declaration_variable$206_value = (value: declaration_variable$206_value$It
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -7861,9 +7861,9 @@ const declaration_variable$206_value = (value: declaration_variable$206_value$It
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -8123,7 +8123,7 @@ const declaration_variable$223_name = (value: declaration_variable$223_name$Item
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -8141,7 +8141,7 @@ const declaration_variable$223_name = (value: declaration_variable$223_name$Item
 				value,
 				[
 					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -8219,14 +8219,14 @@ const declaration_variable$223_name = (value: declaration_variable$223_name$Item
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
 			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
-			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
-			return unbuilt('declaration.variable.name', value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
 			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('declaration.variable.name', value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('declaration.variable.name', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -8352,7 +8352,7 @@ const declaration_variable$223_type = (value: declaration_variable$223_type$Item
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('declaration.variable.type', value);
 	}
@@ -8362,7 +8362,7 @@ const declaration_variable$223_type = (value: declaration_variable$223_type$Item
 				value,
 				[
 					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -8610,7 +8610,7 @@ const declaration_variable$223_value = (value: declaration_variable$223_value$It
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -8689,9 +8689,9 @@ const declaration_variable$223_value = (value: declaration_variable$223_value$It
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -9073,7 +9073,7 @@ const element_attributed$363_value = (value: element_attributed$363_value$Item) 
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -9152,9 +9152,9 @@ const element_attributed$363_value = (value: element_attributed$363_value$Item) 
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -18531,7 +18531,7 @@ const element_struct_base$286_value = (value: element_struct_base$286_value$Item
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -18610,9 +18610,9 @@ const element_struct_base$286_value = (value: element_struct_base$286_value$Item
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -18867,7 +18867,7 @@ const element_struct_field$285_name = (value: element_struct_field$285_name$Item
 		return unnumbered('element.struct.field.name', 'float');
 	}
 	if (isNode(value)) {
-		if (seated(value, [141, 142, 143, 144, 331, 478])) return value;
+		if (seated(value, [141, 142, 143, 144, 331, 477])) return value;
 		return unseated('element.struct.field.name', value);
 	}
 	switch (value.$path) {
@@ -19090,7 +19090,7 @@ const element_struct_field$285_value = (value: element_struct_field$285_value$It
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -19169,9 +19169,9 @@ const element_struct_field$285_value = (value: element_struct_field$285_value$It
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -19346,11 +19346,11 @@ const element_type_binding$251_name = (value: element_type_binding$251_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [484])) return value;
+		if (seated(value, [483])) return value;
 		return unseated('element.type_binding.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [484])) return value;
+		if (seated(value, [483])) return value;
 		return unseated('element.type_binding.name', value);
 	}
 	switch (value.$path) {
@@ -19469,7 +19469,7 @@ const element_type_binding$251_type = (value: element_type_binding$251_type$Item
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('element.type_binding.type', value);
 	}
@@ -19479,7 +19479,7 @@ const element_type_binding$251_type = (value: element_type_binding$251_type$Item
 				value,
 				[
 					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -19527,11 +19527,11 @@ type element_type_binding$251_typeArguments$item$Item =
 	| RustMap['nodes']['element.type_argument'];
 const element_type_binding$251_typeArguments$item = (value: element_type_binding$251_typeArguments$item$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [433])) return value;
+		if (seated(value, [432])) return value;
 		return unseated('element.type_binding.typeArguments', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [433])) return value;
+		if (seated(value, [432])) return value;
 		return unseated('element.type_binding.typeArguments', value);
 	}
 	return unbuilt('element.type_binding.typeArguments', value);
@@ -19741,7 +19741,7 @@ const expression_assignment$271_left = (value: expression_assignment$271_left$It
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -19820,9 +19820,9 @@ const expression_assignment$271_left = (value: expression_assignment$271_left$It
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -20192,7 +20192,7 @@ const expression_assignment$271_right = (value: expression_assignment$271_right$
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -20271,9 +20271,9 @@ const expression_assignment$271_right = (value: expression_assignment$271_right$
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -20643,7 +20643,7 @@ const expression_assignment_compound_add$272_left = (value: expression_assignmen
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -20722,9 +20722,9 @@ const expression_assignment_compound_add$272_left = (value: expression_assignmen
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -21094,7 +21094,7 @@ const expression_assignment_compound_add$272_right = (value: expression_assignme
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -21173,9 +21173,9 @@ const expression_assignment_compound_add$272_right = (value: expression_assignme
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -21547,7 +21547,7 @@ const expression_assignment_compound_bitwise_and$272_left = (
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -21626,9 +21626,9 @@ const expression_assignment_compound_bitwise_and$272_left = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -22000,7 +22000,7 @@ const expression_assignment_compound_bitwise_and$272_right = (
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -22079,9 +22079,9 @@ const expression_assignment_compound_bitwise_and$272_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -22453,7 +22453,7 @@ const expression_assignment_compound_bitwise_or$272_left = (
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -22532,9 +22532,9 @@ const expression_assignment_compound_bitwise_or$272_left = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -22906,7 +22906,7 @@ const expression_assignment_compound_bitwise_or$272_right = (
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -22985,9 +22985,9 @@ const expression_assignment_compound_bitwise_or$272_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -23359,7 +23359,7 @@ const expression_assignment_compound_bitwise_xor$272_left = (
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -23438,9 +23438,9 @@ const expression_assignment_compound_bitwise_xor$272_left = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -23812,7 +23812,7 @@ const expression_assignment_compound_bitwise_xor$272_right = (
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -23891,9 +23891,9 @@ const expression_assignment_compound_bitwise_xor$272_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -24263,7 +24263,7 @@ const expression_assignment_compound_divide$272_left = (value: expression_assign
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -24342,9 +24342,9 @@ const expression_assignment_compound_divide$272_left = (value: expression_assign
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -24716,7 +24716,7 @@ const expression_assignment_compound_divide$272_right = (
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -24795,9 +24795,9 @@ const expression_assignment_compound_divide$272_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -25167,7 +25167,7 @@ const expression_assignment_compound_modulo$272_left = (value: expression_assign
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -25246,9 +25246,9 @@ const expression_assignment_compound_modulo$272_left = (value: expression_assign
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -25620,7 +25620,7 @@ const expression_assignment_compound_modulo$272_right = (
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -25699,9 +25699,9 @@ const expression_assignment_compound_modulo$272_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -26073,7 +26073,7 @@ const expression_assignment_compound_multiply$272_left = (
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -26152,9 +26152,9 @@ const expression_assignment_compound_multiply$272_left = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -26526,7 +26526,7 @@ const expression_assignment_compound_multiply$272_right = (
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -26605,9 +26605,9 @@ const expression_assignment_compound_multiply$272_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -26979,7 +26979,7 @@ const expression_assignment_compound_shift_left$272_left = (
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -27058,9 +27058,9 @@ const expression_assignment_compound_shift_left$272_left = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -27432,7 +27432,7 @@ const expression_assignment_compound_shift_left$272_right = (
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -27511,9 +27511,9 @@ const expression_assignment_compound_shift_left$272_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -27885,7 +27885,7 @@ const expression_assignment_compound_shift_right$272_left = (
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -27964,9 +27964,9 @@ const expression_assignment_compound_shift_right$272_left = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -28338,7 +28338,7 @@ const expression_assignment_compound_shift_right$272_right = (
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -28417,9 +28417,9 @@ const expression_assignment_compound_shift_right$272_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -28791,7 +28791,7 @@ const expression_assignment_compound_subtract$272_left = (
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -28870,9 +28870,9 @@ const expression_assignment_compound_subtract$272_left = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -29244,7 +29244,7 @@ const expression_assignment_compound_subtract$272_right = (
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -29323,9 +29323,9 @@ const expression_assignment_compound_subtract$272_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -29695,7 +29695,7 @@ const expression_await$307_expression = (value: expression_await$307_expression$
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -29774,9 +29774,9 @@ const expression_await$307_expression = (value: expression_await$307_expression$
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -30146,7 +30146,7 @@ const expression_binary_arithmetic_add$270_left = (value: expression_binary_arit
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -30225,9 +30225,9 @@ const expression_binary_arithmetic_add$270_left = (value: expression_binary_arit
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -30597,7 +30597,7 @@ const expression_binary_arithmetic_add$270_right = (value: expression_binary_ari
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -30676,9 +30676,9 @@ const expression_binary_arithmetic_add$270_right = (value: expression_binary_ari
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -31048,7 +31048,7 @@ const expression_binary_arithmetic_divide$270_left = (value: expression_binary_a
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -31127,9 +31127,9 @@ const expression_binary_arithmetic_divide$270_left = (value: expression_binary_a
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -31499,7 +31499,7 @@ const expression_binary_arithmetic_divide$270_right = (value: expression_binary_
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -31578,9 +31578,9 @@ const expression_binary_arithmetic_divide$270_right = (value: expression_binary_
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -31950,7 +31950,7 @@ const expression_binary_arithmetic_modulo$270_left = (value: expression_binary_a
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -32029,9 +32029,9 @@ const expression_binary_arithmetic_modulo$270_left = (value: expression_binary_a
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -32401,7 +32401,7 @@ const expression_binary_arithmetic_modulo$270_right = (value: expression_binary_
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -32480,9 +32480,9 @@ const expression_binary_arithmetic_modulo$270_right = (value: expression_binary_
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -32852,7 +32852,7 @@ const expression_binary_arithmetic_multiply$270_left = (value: expression_binary
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -32931,9 +32931,9 @@ const expression_binary_arithmetic_multiply$270_left = (value: expression_binary
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -33305,7 +33305,7 @@ const expression_binary_arithmetic_multiply$270_right = (
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -33384,9 +33384,9 @@ const expression_binary_arithmetic_multiply$270_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -33756,7 +33756,7 @@ const expression_binary_arithmetic_subtract$270_left = (value: expression_binary
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -33835,9 +33835,9 @@ const expression_binary_arithmetic_subtract$270_left = (value: expression_binary
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -34209,7 +34209,7 @@ const expression_binary_arithmetic_subtract$270_right = (
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -34288,9 +34288,9 @@ const expression_binary_arithmetic_subtract$270_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -34660,7 +34660,7 @@ const expression_binary_bitwise_and$270_left = (value: expression_binary_bitwise
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -34739,9 +34739,9 @@ const expression_binary_bitwise_and$270_left = (value: expression_binary_bitwise
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -35111,7 +35111,7 @@ const expression_binary_bitwise_and$270_right = (value: expression_binary_bitwis
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -35190,9 +35190,9 @@ const expression_binary_bitwise_and$270_right = (value: expression_binary_bitwis
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -35562,7 +35562,7 @@ const expression_binary_bitwise_or$270_left = (value: expression_binary_bitwise_
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -35641,9 +35641,9 @@ const expression_binary_bitwise_or$270_left = (value: expression_binary_bitwise_
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -36013,7 +36013,7 @@ const expression_binary_bitwise_or$270_right = (value: expression_binary_bitwise
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -36092,9 +36092,9 @@ const expression_binary_bitwise_or$270_right = (value: expression_binary_bitwise
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -36464,7 +36464,7 @@ const expression_binary_bitwise_xor$270_left = (value: expression_binary_bitwise
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -36543,9 +36543,9 @@ const expression_binary_bitwise_xor$270_left = (value: expression_binary_bitwise
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -36915,7 +36915,7 @@ const expression_binary_bitwise_xor$270_right = (value: expression_binary_bitwis
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -36994,9 +36994,9 @@ const expression_binary_bitwise_xor$270_right = (value: expression_binary_bitwis
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -37366,7 +37366,7 @@ const expression_binary_comparison_equal$270_left = (value: expression_binary_co
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -37445,9 +37445,9 @@ const expression_binary_comparison_equal$270_left = (value: expression_binary_co
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -37817,7 +37817,7 @@ const expression_binary_comparison_equal$270_right = (value: expression_binary_c
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -37896,9 +37896,9 @@ const expression_binary_comparison_equal$270_right = (value: expression_binary_c
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -38268,7 +38268,7 @@ const expression_binary_comparison_greater$270_left = (value: expression_binary_
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -38347,9 +38347,9 @@ const expression_binary_comparison_greater$270_left = (value: expression_binary_
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -38719,7 +38719,7 @@ const expression_binary_comparison_greater$270_right = (value: expression_binary
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -38798,9 +38798,9 @@ const expression_binary_comparison_greater$270_right = (value: expression_binary
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -39172,7 +39172,7 @@ const expression_binary_comparison_greater_equal$270_left = (
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -39251,9 +39251,9 @@ const expression_binary_comparison_greater_equal$270_left = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -39625,7 +39625,7 @@ const expression_binary_comparison_greater_equal$270_right = (
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -39704,9 +39704,9 @@ const expression_binary_comparison_greater_equal$270_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -40076,7 +40076,7 @@ const expression_binary_comparison_less$270_left = (value: expression_binary_com
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -40155,9 +40155,9 @@ const expression_binary_comparison_less$270_left = (value: expression_binary_com
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -40527,7 +40527,7 @@ const expression_binary_comparison_less$270_right = (value: expression_binary_co
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -40606,9 +40606,9 @@ const expression_binary_comparison_less$270_right = (value: expression_binary_co
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -40980,7 +40980,7 @@ const expression_binary_comparison_less_equal$270_left = (
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -41059,9 +41059,9 @@ const expression_binary_comparison_less_equal$270_left = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -41433,7 +41433,7 @@ const expression_binary_comparison_less_equal$270_right = (
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -41512,9 +41512,9 @@ const expression_binary_comparison_less_equal$270_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -41886,7 +41886,7 @@ const expression_binary_comparison_not_equal$270_left = (
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -41965,9 +41965,9 @@ const expression_binary_comparison_not_equal$270_left = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -42339,7 +42339,7 @@ const expression_binary_comparison_not_equal$270_right = (
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -42418,9 +42418,9 @@ const expression_binary_comparison_not_equal$270_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -42790,7 +42790,7 @@ const expression_binary_logical_and$270_left = (value: expression_binary_logical
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -42869,9 +42869,9 @@ const expression_binary_logical_and$270_left = (value: expression_binary_logical
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -43241,7 +43241,7 @@ const expression_binary_logical_and$270_right = (value: expression_binary_logica
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -43320,9 +43320,9 @@ const expression_binary_logical_and$270_right = (value: expression_binary_logica
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -43692,7 +43692,7 @@ const expression_binary_logical_or$270_left = (value: expression_binary_logical_
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -43771,9 +43771,9 @@ const expression_binary_logical_or$270_left = (value: expression_binary_logical_
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -44143,7 +44143,7 @@ const expression_binary_logical_or$270_right = (value: expression_binary_logical
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -44222,9 +44222,9 @@ const expression_binary_logical_or$270_right = (value: expression_binary_logical
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -44594,7 +44594,7 @@ const expression_binary_shift_left$270_count = (value: expression_binary_shift_l
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -44673,9 +44673,9 @@ const expression_binary_shift_left$270_count = (value: expression_binary_shift_l
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -45045,7 +45045,7 @@ const expression_binary_shift_left$270_operand = (value: expression_binary_shift
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -45124,9 +45124,9 @@ const expression_binary_shift_left$270_operand = (value: expression_binary_shift
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -45496,7 +45496,7 @@ const expression_binary_shift_right$270_count = (value: expression_binary_shift_
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -45575,9 +45575,9 @@ const expression_binary_shift_right$270_count = (value: expression_binary_shift_
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -45947,7 +45947,7 @@ const expression_binary_shift_right$270_operand = (value: expression_binary_shif
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -46026,9 +46026,9 @@ const expression_binary_shift_right$270_operand = (value: expression_binary_shif
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -46454,7 +46454,7 @@ const expression_cast_conversion$273_expression = (value: expression_cast_conver
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -46533,9 +46533,9 @@ const expression_cast_conversion$273_expression = (value: expression_cast_conver
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -46809,7 +46809,7 @@ const expression_cast_conversion$273_type = (value: expression_cast_conversion$2
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('expression.cast.conversion.type', value);
 	}
@@ -46819,7 +46819,7 @@ const expression_cast_conversion$273_type = (value: expression_cast_conversion$2
 				value,
 				[
 					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -46862,7 +46862,7 @@ const expression_cast_conversion$273_type = (value: expression_cast_conversion$2
 			return unbuilt('expression.cast.conversion.type', value);
 	}
 };
-type expression_collection_list$436_elements$item$Item =
+type expression_collection_list$435_elements$item$Item =
 	| '()'
 	| 'false'
 	| 'self'
@@ -47043,7 +47043,7 @@ type expression_collection_list$436_elements$item$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| RustMap['nodes']['statement.return'];
-const expression_collection_list$436_elements$item = (value: expression_collection_list$436_elements$item$Item) => {
+const expression_collection_list$435_elements$item = (value: expression_collection_list$435_elements$item$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '()':
@@ -47069,7 +47069,7 @@ const expression_collection_list$436_elements$item = (value: expression_collecti
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 363, 367, 369, 370, 371, 372, 373,
-					374, 390, 391, 392, 393, 435, 436
+					374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -47150,9 +47150,9 @@ const expression_collection_list$436_elements$item = (value: expression_collecti
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -47317,7 +47317,7 @@ const expression_collection_list$436_elements$item = (value: expression_collecti
 			return unbuilt('expression.collection.list.elements', value);
 	}
 };
-type expression_collection_list_repeat$435_element$Item =
+type expression_collection_list_repeat$434_element$Item =
 	| '()'
 	| 'false'
 	| 'self'
@@ -47496,7 +47496,7 @@ type expression_collection_list_repeat$435_element$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| RustMap['nodes']['statement.return'];
-const expression_collection_list_repeat$435_element = (value: expression_collection_list_repeat$435_element$Item) => {
+const expression_collection_list_repeat$434_element = (value: expression_collection_list_repeat$434_element$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '()':
@@ -47522,7 +47522,7 @@ const expression_collection_list_repeat$435_element = (value: expression_collect
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -47601,9 +47601,9 @@ const expression_collection_list_repeat$435_element = (value: expression_collect
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -47768,7 +47768,7 @@ const expression_collection_list_repeat$435_element = (value: expression_collect
 			return unbuilt('expression.collection.list.repeat.element', value);
 	}
 };
-type expression_collection_list_repeat$435_length$Item =
+type expression_collection_list_repeat$434_length$Item =
 	| '()'
 	| 'false'
 	| 'self'
@@ -47947,7 +47947,7 @@ type expression_collection_list_repeat$435_length$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| RustMap['nodes']['statement.return'];
-const expression_collection_list_repeat$435_length = (value: expression_collection_list_repeat$435_length$Item) => {
+const expression_collection_list_repeat$434_length = (value: expression_collection_list_repeat$434_length$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '()':
@@ -47973,7 +47973,7 @@ const expression_collection_list_repeat$435_length = (value: expression_collecti
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -48052,9 +48052,9 @@ const expression_collection_list_repeat$435_length = (value: expression_collecti
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -48257,11 +48257,11 @@ const expression_collection_struct$282_name = (value: expression_collection_stru
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [247, 264, 484])) return value;
+		if (seated(value, [247, 264, 483])) return value;
 		return unseated('expression.collection.struct.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [247, 264, 484])) return value;
+		if (seated(value, [247, 264, 483])) return value;
 		return unseated('expression.collection.struct.name', value);
 	}
 	switch (value.$path) {
@@ -48482,7 +48482,7 @@ const expression_collection_tuple$280_elements$item = (value: expression_collect
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 363, 367, 369, 370, 371, 372, 373,
-					374, 390, 391, 392, 393, 435, 436
+					374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -48563,9 +48563,9 @@ const expression_collection_tuple$280_elements$item = (value: expression_collect
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -48769,11 +48769,11 @@ const expression_instantiation$245_typeArguments$item = (
 	value: expression_instantiation$245_typeArguments$item$Item
 ) => {
 	if (typeof value === 'number') {
-		if (seated(value, [433])) return value;
+		if (seated(value, [432])) return value;
 		return unseated('expression.instantiation.typeArguments', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [433])) return value;
+		if (seated(value, [432])) return value;
 		return unseated('expression.instantiation.typeArguments', value);
 	}
 	return unbuilt('expression.instantiation.typeArguments', value);
@@ -48791,11 +48791,11 @@ const expression_lambda$369_parameters = (value: expression_lambda$369_parameter
 		return b.closureParameters(b.identifier(value));
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [233, 476])) return b.closureParameters(value);
+		if (seated(value, [233, 475])) return b.closureParameters(value);
 		return unseated('expression.lambda.parameters', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [233, 476])) return b.closureParameters(value);
+		if (seated(value, [233, 475])) return b.closureParameters(value);
 		return unseated('expression.lambda.parameters', value);
 	}
 	switch (value.$path) {
@@ -48819,11 +48819,11 @@ const expression_lambda$369_parameters$item = (value: expression_lambda$369_para
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [233, 476])) return value;
+		if (seated(value, [233, 475])) return value;
 		return unseated('expression.lambda.parameters', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [233, 476])) return value;
+		if (seated(value, [233, 475])) return value;
 		return unseated('expression.lambda.parameters', value);
 	}
 	switch (value.$path) {
@@ -48944,7 +48944,7 @@ const expression_lambda$369_returnType = (value: expression_lambda$369_returnTyp
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('expression.lambda.returnType', value);
 	}
@@ -48954,7 +48954,7 @@ const expression_lambda$369_returnType = (value: expression_lambda$369_returnTyp
 				value,
 				[
 					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -49391,7 +49391,7 @@ const expression_lambda$369_statements = (value: expression_lambda$369_statement
 				value,
 				[
 					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
-					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+					384, 385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -49403,7 +49403,7 @@ const expression_lambda$369_statements = (value: expression_lambda$369_statement
 				[
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
-					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -49656,9 +49656,9 @@ const expression_lambda$369_statements = (value: expression_lambda$369_statement
 		case 'expression.cast.conversion':
 			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
 		case 'expression.collection.list':
-			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+			return b.expressionStatement.withSemi(expression_collection_list$435(value));
 		case 'expression.collection.list.repeat':
-			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$434(value));
 		case 'expression.collection.struct':
 			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
 		case 'expression.collection.tuple':
@@ -50055,7 +50055,7 @@ const expression_lambda$369_trailingExpression = (value: expression_lambda$369_t
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -50134,9 +50134,9 @@ const expression_lambda$369_trailingExpression = (value: expression_lambda$369_t
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -50507,7 +50507,7 @@ const expression_lambda$370_body = (value: expression_lambda$370_body$Item) => {
 					1, 116, 117, 124, 127, 136, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266,
 					267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301,
 					304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373,
-					374, 390, 391, 392, 393, 435, 436
+					374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -50586,9 +50586,9 @@ const expression_lambda$370_body = (value: expression_lambda$370_body$Item) => {
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -50764,11 +50764,11 @@ const expression_lambda$370_parameters = (value: expression_lambda$370_parameter
 		return b.closureParameters(b.identifier(value));
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [233, 476])) return b.closureParameters(value);
+		if (seated(value, [233, 475])) return b.closureParameters(value);
 		return unseated('expression.lambda.parameters', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [233, 476])) return b.closureParameters(value);
+		if (seated(value, [233, 475])) return b.closureParameters(value);
 		return unseated('expression.lambda.parameters', value);
 	}
 	switch (value.$path) {
@@ -50792,11 +50792,11 @@ const expression_lambda$370_parameters$item = (value: expression_lambda$370_para
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [233, 476])) return value;
+		if (seated(value, [233, 475])) return value;
 		return unseated('expression.lambda.parameters', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [233, 476])) return value;
+		if (seated(value, [233, 475])) return value;
 		return unseated('expression.lambda.parameters', value);
 	}
 	switch (value.$path) {
@@ -51202,7 +51202,7 @@ const expression_lambda$370_statements = (value: expression_lambda$370_statement
 				value,
 				[
 					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
-					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+					384, 385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -51214,7 +51214,7 @@ const expression_lambda$370_statements = (value: expression_lambda$370_statement
 				[
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
-					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -51467,9 +51467,9 @@ const expression_lambda$370_statements = (value: expression_lambda$370_statement
 		case 'expression.cast.conversion':
 			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
 		case 'expression.collection.list':
-			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+			return b.expressionStatement.withSemi(expression_collection_list$435(value));
 		case 'expression.collection.list.repeat':
-			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$434(value));
 		case 'expression.collection.struct':
 			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
 		case 'expression.collection.tuple':
@@ -51866,7 +51866,7 @@ const expression_lambda$370_trailingExpression = (value: expression_lambda$370_t
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -51945,9 +51945,9 @@ const expression_lambda$370_trailingExpression = (value: expression_lambda$370_t
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -52317,7 +52317,7 @@ const expression_member$308_object = (value: expression_member$308_object$Item) 
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -52396,9 +52396,9 @@ const expression_member$308_object = (value: expression_member$308_object$Item) 
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -52588,7 +52588,7 @@ const expression_member$308_property = (value: expression_member$308_property$It
 		return unnumbered('expression.member.property', 'float');
 	}
 	if (isNode(value)) {
-		if (seated(value, [141, 142, 143, 144, 331, 478])) return value;
+		if (seated(value, [141, 142, 143, 144, 331, 477])) return value;
 		return unseated('expression.member.property', value);
 	}
 	switch (value.$path) {
@@ -52811,7 +52811,7 @@ const expression_parenthesized$279_expression = (value: expression_parenthesized
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -52890,9 +52890,9 @@ const expression_parenthesized$279_expression = (value: expression_parenthesized
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -53262,7 +53262,7 @@ const expression_propagate$268_argument = (value: expression_propagate$268_argum
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -53341,9 +53341,9 @@ const expression_propagate$268_argument = (value: expression_propagate$268_argum
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -53713,7 +53713,7 @@ const expression_range$391_start = (value: expression_range$391_start$Item) => {
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -53792,9 +53792,9 @@ const expression_range$391_start = (value: expression_range$391_start$Item) => {
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -54164,7 +54164,7 @@ const expression_range$392_end = (value: expression_range$392_end$Item) => {
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -54243,9 +54243,9 @@ const expression_range$392_end = (value: expression_range$392_end$Item) => {
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -54615,7 +54615,7 @@ const expression_range_exclusive$390_end = (value: expression_range_exclusive$39
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -54694,9 +54694,9 @@ const expression_range_exclusive$390_end = (value: expression_range_exclusive$39
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -55066,7 +55066,7 @@ const expression_range_exclusive$390_start = (value: expression_range_exclusive$
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -55145,9 +55145,9 @@ const expression_range_exclusive$390_start = (value: expression_range_exclusive$
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -55517,7 +55517,7 @@ const expression_range_exclusive$391_start = (value: expression_range_exclusive$
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -55596,9 +55596,9 @@ const expression_range_exclusive$391_start = (value: expression_range_exclusive$
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -55968,7 +55968,7 @@ const expression_range_exclusive$392_end = (value: expression_range_exclusive$39
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -56047,9 +56047,9 @@ const expression_range_exclusive$392_end = (value: expression_range_exclusive$39
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -56419,7 +56419,7 @@ const expression_range_inclusive$390_end = (value: expression_range_inclusive$39
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -56498,9 +56498,9 @@ const expression_range_inclusive$390_end = (value: expression_range_inclusive$39
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -56870,7 +56870,7 @@ const expression_range_inclusive$390_start = (value: expression_range_inclusive$
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -56949,9 +56949,9 @@ const expression_range_inclusive$390_start = (value: expression_range_inclusive$
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -57321,7 +57321,7 @@ const expression_range_inclusive_legacy$390_end = (value: expression_range_inclu
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -57400,9 +57400,9 @@ const expression_range_inclusive_legacy$390_end = (value: expression_range_inclu
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -57772,7 +57772,7 @@ const expression_range_inclusive_legacy$390_start = (value: expression_range_inc
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -57851,9 +57851,9 @@ const expression_range_inclusive_legacy$390_start = (value: expression_range_inc
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -58223,7 +58223,7 @@ const expression_reference$371_argument = (value: expression_reference$371_argum
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -58302,9 +58302,9 @@ const expression_reference$371_argument = (value: expression_reference$371_argum
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -58674,7 +58674,7 @@ const expression_reference$372_argument = (value: expression_reference$372_argum
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -58753,9 +58753,9 @@ const expression_reference$372_argument = (value: expression_reference$372_argum
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -59125,7 +59125,7 @@ const expression_reference$373_argument = (value: expression_reference$373_argum
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -59204,9 +59204,9 @@ const expression_reference$373_argument = (value: expression_reference$373_argum
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -59576,7 +59576,7 @@ const expression_reference$374_argument = (value: expression_reference$374_argum
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -59655,9 +59655,9 @@ const expression_reference$374_argument = (value: expression_reference$374_argum
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -60027,7 +60027,7 @@ const expression_subscript$306_index = (value: expression_subscript$306_index$It
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -60106,9 +60106,9 @@ const expression_subscript$306_index = (value: expression_subscript$306_index$It
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -60478,7 +60478,7 @@ const expression_subscript$306_object = (value: expression_subscript$306_object$
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -60557,9 +60557,9 @@ const expression_subscript$306_object = (value: expression_subscript$306_object$
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -60929,7 +60929,7 @@ const expression_unary_deref$267_argument = (value: expression_unary_deref$267_a
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -61008,9 +61008,9 @@ const expression_unary_deref$267_argument = (value: expression_unary_deref$267_a
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -61380,7 +61380,7 @@ const expression_unary_negation$267_argument = (value: expression_unary_negation
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -61459,9 +61459,9 @@ const expression_unary_negation$267_argument = (value: expression_unary_negation
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -61831,7 +61831,7 @@ const expression_unary_not$267_argument = (value: expression_unary_not$267_argum
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -61910,9 +61910,9 @@ const expression_unary_not$267_argument = (value: expression_unary_not$267_argum
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -62282,7 +62282,7 @@ const expression_yield$275_expression = (value: expression_yield$275_expression$
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -62361,9 +62361,9 @@ const expression_yield$275_expression = (value: expression_yield$275_expression$
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -62629,7 +62629,7 @@ const identifier_qualified$263_qualifier = (value: identifier_qualified$263_qual
 			case 'crate':
 				return 126;
 			case 'self':
-				return 481;
+				return 480;
 			case 'super':
 				return 125;
 			default:
@@ -62642,7 +62642,7 @@ const identifier_qualified$263_qualifier = (value: identifier_qualified$263_qual
 		return unseated('identifier.qualified.qualifier', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 125, 126, 127, 237, 247, 263, 481])) return value;
+		if (seated(value, [1, 125, 126, 127, 237, 247, 263, 480])) return value;
 		return unseated('identifier.qualified.qualifier', value);
 	}
 	switch (value.$path) {
@@ -62675,11 +62675,11 @@ const identifier_qualified$264_name = (value: identifier_qualified$264_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [484])) return value;
+		if (seated(value, [483])) return value;
 		return unseated('identifier.qualified.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [484])) return value;
+		if (seated(value, [483])) return value;
 		return unseated('identifier.qualified.name', value);
 	}
 	switch (value.$path) {
@@ -62712,7 +62712,7 @@ const identifier_qualified$264_qualifier = (value: identifier_qualified$264_qual
 			case 'crate':
 				return 126;
 			case 'self':
-				return 481;
+				return 480;
 			case 'super':
 				return 125;
 			default:
@@ -62725,7 +62725,7 @@ const identifier_qualified$264_qualifier = (value: identifier_qualified$264_qual
 		return unseated('identifier.qualified.qualifier', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 125, 126, 127, 247, 263, 481])) return value;
+		if (seated(value, [1, 125, 126, 127, 247, 263, 480])) return value;
 		return unseated('identifier.qualified.qualifier', value);
 	}
 	switch (value.$path) {
@@ -62758,11 +62758,11 @@ const identifier_qualified$265_name = (value: identifier_qualified$265_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [484])) return value;
+		if (seated(value, [483])) return value;
 		return unseated('identifier.qualified.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [484])) return value;
+		if (seated(value, [483])) return value;
 		return unseated('identifier.qualified.name', value);
 	}
 	switch (value.$path) {
@@ -62795,7 +62795,7 @@ const identifier_qualified$265_qualifier = (value: identifier_qualified$265_qual
 			case 'crate':
 				return 126;
 			case 'self':
-				return 481;
+				return 480;
 			case 'super':
 				return 125;
 			default:
@@ -62808,7 +62808,7 @@ const identifier_qualified$265_qualifier = (value: identifier_qualified$265_qual
 		return unseated('identifier.qualified.qualifier', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 125, 126, 127, 237, 246, 247, 263, 481])) return value;
+		if (seated(value, [1, 125, 126, 127, 237, 246, 247, 263, 480])) return value;
 		return unseated('identifier.qualified.qualifier', value);
 	}
 	switch (value.$path) {
@@ -63297,7 +63297,7 @@ const pattern_as$325_pattern = (value: pattern_as$325_pattern$Item) => {
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -63315,7 +63315,7 @@ const pattern_as$325_pattern = (value: pattern_as$325_pattern$Item) => {
 				value,
 				[
 					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -63393,14 +63393,14 @@ const pattern_as$325_pattern = (value: pattern_as$325_pattern$Item) => {
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
 			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
-			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
-			return unbuilt('pattern.as.pattern', value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
 			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('pattern.as.pattern', value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('pattern.as.pattern', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -63451,11 +63451,11 @@ type pattern_generic$315_typeArguments$item$Item =
 	| RustMap['nodes']['element.type_argument'];
 const pattern_generic$315_typeArguments$item = (value: pattern_generic$315_typeArguments$item$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [433])) return value;
+		if (seated(value, [432])) return value;
 		return unseated('pattern.generic.typeArguments', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [433])) return value;
+		if (seated(value, [432])) return value;
 		return unseated('pattern.generic.typeArguments', value);
 	}
 	return unbuilt('pattern.generic.typeArguments', value);
@@ -63541,7 +63541,7 @@ const pattern_list$317_elements$item = (value: pattern_list$317_elements$item$It
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -63559,7 +63559,7 @@ const pattern_list$317_elements$item = (value: pattern_list$317_elements$item$It
 				value,
 				[
 					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -63637,14 +63637,14 @@ const pattern_list$317_elements$item = (value: pattern_list$317_elements$item$It
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
 			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
-			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
-			return unbuilt('pattern.list.elements', value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
 			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('pattern.list.elements', value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('pattern.list.elements', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -63742,7 +63742,7 @@ const pattern_mutable$322_pattern = (value: pattern_mutable$322_pattern$Item) =>
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -63760,7 +63760,7 @@ const pattern_mutable$322_pattern = (value: pattern_mutable$322_pattern$Item) =>
 				value,
 				[
 					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -63838,14 +63838,14 @@ const pattern_mutable$322_pattern = (value: pattern_mutable$322_pattern$Item) =>
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
 			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
-			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
-			return unbuilt('pattern.mutable.pattern', value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
 			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('pattern.mutable.pattern', value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('pattern.mutable.pattern', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -63943,7 +63943,7 @@ const pattern_or$386_left = (value: pattern_or$386_left$Item) => {
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -63961,7 +63961,7 @@ const pattern_or$386_left = (value: pattern_or$386_left$Item) => {
 				value,
 				[
 					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -64039,14 +64039,14 @@ const pattern_or$386_left = (value: pattern_or$386_left$Item) => {
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
 			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
-			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
-			return unbuilt('pattern.or.left', value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
 			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('pattern.or.left', value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('pattern.or.left', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -64144,7 +64144,7 @@ const pattern_or$386_right = (value: pattern_or$386_right$Item) => {
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -64162,7 +64162,7 @@ const pattern_or$386_right = (value: pattern_or$386_right$Item) => {
 				value,
 				[
 					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -64240,14 +64240,14 @@ const pattern_or$386_right = (value: pattern_or$386_right$Item) => {
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
 			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
-			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
-			return unbuilt('pattern.or.right', value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
 			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('pattern.or.right', value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('pattern.or.right', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -64345,7 +64345,7 @@ const pattern_or$387_right = (value: pattern_or$387_right$Item) => {
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -64363,7 +64363,7 @@ const pattern_or$387_right = (value: pattern_or$387_right$Item) => {
 				value,
 				[
 					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -64441,14 +64441,14 @@ const pattern_or$387_right = (value: pattern_or$387_right$Item) => {
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
 			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
-			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
-			return unbuilt('pattern.or.right', value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
 			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('pattern.or.right', value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('pattern.or.right', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -64463,6 +64463,150 @@ const pattern_or$387_right = (value: pattern_or$387_right$Item) => {
 			return statement_block_const$300(value);
 		default:
 			return unbuilt('pattern.or.right', value);
+	}
+};
+type pattern_range$421_start$Item =
+	| 'crate'
+	| 'false'
+	| 'self'
+	| 'super'
+	| 'true'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| number
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.number.negative'>
+	| RustMap['nodes']['literal.number.negative']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const pattern_range$421_start = (value: pattern_range$421_start$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'crate':
+				return 126;
+			case 'self':
+				return 480;
+			case 'super':
+				return 125;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 116, 117, 125, 126, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330, 331, 332,
+					333, 334, 336, 367, 480
+				]
+			)
+		)
+			return value;
+		return unseated('pattern.range.start', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('pattern.range.start', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		case 'literal.boolean.false':
+			return unbuilt('pattern.range.start', value);
+		case 'literal.boolean.true':
+			return unbuilt('pattern.range.start', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return literal_character$145(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$150(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$147(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$149(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$148(value);
+			return unbuilt('pattern.range.start', value);
+		case 'literal.number.float':
+			return literal_number_float$162(value);
+		case 'literal.number.integer':
+			return literal_number_integer$141(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$143(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$142(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$144(value);
+		case 'literal.number.negative':
+			return literal_number_negative$330(value);
+		case 'literal.string':
+			return literal_string$332(value);
+		case 'literal.string.bytes':
+			return literal_string_bytes$332(value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('pattern.range.start', value);
+		case 'literal.string.c':
+			return literal_string_c$332(value);
+		case 'literal.string.c.raw':
+			return unbuilt('pattern.range.start', value);
+		case 'literal.string.raw':
+			return unbuilt('pattern.range.start', value);
+		default:
+			return unbuilt('pattern.range.start', value);
 	}
 };
 type pattern_range_exclusive$419_end$Item =
@@ -64517,7 +64661,7 @@ const pattern_range_exclusive$419_end = (value: pattern_range_exclusive$419_end$
 			case 'crate':
 				return 126;
 			case 'self':
-				return 481;
+				return 480;
 			case 'super':
 				return 125;
 			default:
@@ -64537,7 +64681,7 @@ const pattern_range_exclusive$419_end = (value: pattern_range_exclusive$419_end$
 				value,
 				[
 					1, 116, 117, 125, 126, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330, 331, 332,
-					333, 334, 336, 367, 481
+					333, 334, 336, 367, 480
 				]
 			)
 		)
@@ -64609,7 +64753,7 @@ const pattern_range_exclusive$419_end = (value: pattern_range_exclusive$419_end$
 			return unbuilt('pattern.range.exclusive.end', value);
 	}
 };
-type pattern_range_exclusive$422_start$Item =
+type pattern_range_exclusive$420_end$Item =
 	| 'crate'
 	| 'false'
 	| 'self'
@@ -64655,13 +64799,13 @@ type pattern_range_exclusive$422_start$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| RustMap['nodes']['literal.string.raw'];
-const pattern_range_exclusive$422_start = (value: pattern_range_exclusive$422_start$Item) => {
+const pattern_range_exclusive$420_end = (value: pattern_range_exclusive$420_end$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'crate':
 				return 126;
 			case 'self':
-				return 481;
+				return 480;
 			case 'super':
 				return 125;
 			default:
@@ -64681,7 +64825,295 @@ const pattern_range_exclusive$422_start = (value: pattern_range_exclusive$422_st
 				value,
 				[
 					1, 116, 117, 125, 126, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330, 331, 332,
-					333, 334, 336, 367, 481
+					333, 334, 336, 367, 480
+				]
+			)
+		)
+			return value;
+		return unseated('pattern.range.exclusive.end', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('pattern.range.exclusive.end', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		case 'literal.boolean.false':
+			return unbuilt('pattern.range.exclusive.end', value);
+		case 'literal.boolean.true':
+			return unbuilt('pattern.range.exclusive.end', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return literal_character$145(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$150(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$147(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$149(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$148(value);
+			return unbuilt('pattern.range.exclusive.end', value);
+		case 'literal.number.float':
+			return literal_number_float$162(value);
+		case 'literal.number.integer':
+			return literal_number_integer$141(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$143(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$142(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$144(value);
+		case 'literal.number.negative':
+			return literal_number_negative$330(value);
+		case 'literal.string':
+			return literal_string$332(value);
+		case 'literal.string.bytes':
+			return literal_string_bytes$332(value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('pattern.range.exclusive.end', value);
+		case 'literal.string.c':
+			return literal_string_c$332(value);
+		case 'literal.string.c.raw':
+			return unbuilt('pattern.range.exclusive.end', value);
+		case 'literal.string.raw':
+			return unbuilt('pattern.range.exclusive.end', value);
+		default:
+			return unbuilt('pattern.range.exclusive.end', value);
+	}
+};
+type pattern_range_exclusive$420_start$Item =
+	| 'crate'
+	| 'false'
+	| 'self'
+	| 'super'
+	| 'true'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| number
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.number.negative'>
+	| RustMap['nodes']['literal.number.negative']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const pattern_range_exclusive$420_start = (value: pattern_range_exclusive$420_start$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'crate':
+				return 126;
+			case 'self':
+				return 480;
+			case 'super':
+				return 125;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 116, 117, 125, 126, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330, 331, 332,
+					333, 334, 336, 367, 480
+				]
+			)
+		)
+			return value;
+		return unseated('pattern.range.exclusive.start', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('pattern.range.exclusive.start', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		case 'literal.boolean.false':
+			return unbuilt('pattern.range.exclusive.start', value);
+		case 'literal.boolean.true':
+			return unbuilt('pattern.range.exclusive.start', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return literal_character$145(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$150(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$147(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$149(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$148(value);
+			return unbuilt('pattern.range.exclusive.start', value);
+		case 'literal.number.float':
+			return literal_number_float$162(value);
+		case 'literal.number.integer':
+			return literal_number_integer$141(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$143(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$142(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$144(value);
+		case 'literal.number.negative':
+			return literal_number_negative$330(value);
+		case 'literal.string':
+			return literal_string$332(value);
+		case 'literal.string.bytes':
+			return literal_string_bytes$332(value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('pattern.range.exclusive.start', value);
+		case 'literal.string.c':
+			return literal_string_c$332(value);
+		case 'literal.string.c.raw':
+			return unbuilt('pattern.range.exclusive.start', value);
+		case 'literal.string.raw':
+			return unbuilt('pattern.range.exclusive.start', value);
+		default:
+			return unbuilt('pattern.range.exclusive.start', value);
+	}
+};
+type pattern_range_exclusive$421_start$Item =
+	| 'crate'
+	| 'false'
+	| 'self'
+	| 'super'
+	| 'true'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| number
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.number.negative'>
+	| RustMap['nodes']['literal.number.negative']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const pattern_range_exclusive$421_start = (value: pattern_range_exclusive$421_start$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'crate':
+				return 126;
+			case 'self':
+				return 480;
+			case 'super':
+				return 125;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 116, 117, 125, 126, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330, 331, 332,
+					333, 334, 336, 367, 480
 				]
 			)
 		)
@@ -64805,7 +65237,7 @@ const pattern_range_inclusive$419_end = (value: pattern_range_inclusive$419_end$
 			case 'crate':
 				return 126;
 			case 'self':
-				return 481;
+				return 480;
 			case 'super':
 				return 125;
 			default:
@@ -64825,7 +65257,7 @@ const pattern_range_inclusive$419_end = (value: pattern_range_inclusive$419_end$
 				value,
 				[
 					1, 116, 117, 125, 126, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330, 331, 332,
-					333, 334, 336, 367, 481
+					333, 334, 336, 367, 480
 				]
 			)
 		)
@@ -64895,6 +65327,582 @@ const pattern_range_inclusive$419_end = (value: pattern_range_inclusive$419_end$
 			return unbuilt('pattern.range.inclusive.end', value);
 		default:
 			return unbuilt('pattern.range.inclusive.end', value);
+	}
+};
+type pattern_range_inclusive$420_end$Item =
+	| 'crate'
+	| 'false'
+	| 'self'
+	| 'super'
+	| 'true'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| number
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.number.negative'>
+	| RustMap['nodes']['literal.number.negative']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const pattern_range_inclusive$420_end = (value: pattern_range_inclusive$420_end$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'crate':
+				return 126;
+			case 'self':
+				return 480;
+			case 'super':
+				return 125;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 116, 117, 125, 126, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330, 331, 332,
+					333, 334, 336, 367, 480
+				]
+			)
+		)
+			return value;
+		return unseated('pattern.range.inclusive.end', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('pattern.range.inclusive.end', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		case 'literal.boolean.false':
+			return unbuilt('pattern.range.inclusive.end', value);
+		case 'literal.boolean.true':
+			return unbuilt('pattern.range.inclusive.end', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return literal_character$145(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$150(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$147(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$149(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$148(value);
+			return unbuilt('pattern.range.inclusive.end', value);
+		case 'literal.number.float':
+			return literal_number_float$162(value);
+		case 'literal.number.integer':
+			return literal_number_integer$141(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$143(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$142(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$144(value);
+		case 'literal.number.negative':
+			return literal_number_negative$330(value);
+		case 'literal.string':
+			return literal_string$332(value);
+		case 'literal.string.bytes':
+			return literal_string_bytes$332(value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('pattern.range.inclusive.end', value);
+		case 'literal.string.c':
+			return literal_string_c$332(value);
+		case 'literal.string.c.raw':
+			return unbuilt('pattern.range.inclusive.end', value);
+		case 'literal.string.raw':
+			return unbuilt('pattern.range.inclusive.end', value);
+		default:
+			return unbuilt('pattern.range.inclusive.end', value);
+	}
+};
+type pattern_range_inclusive$420_start$Item =
+	| 'crate'
+	| 'false'
+	| 'self'
+	| 'super'
+	| 'true'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| number
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.number.negative'>
+	| RustMap['nodes']['literal.number.negative']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const pattern_range_inclusive$420_start = (value: pattern_range_inclusive$420_start$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'crate':
+				return 126;
+			case 'self':
+				return 480;
+			case 'super':
+				return 125;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 116, 117, 125, 126, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330, 331, 332,
+					333, 334, 336, 367, 480
+				]
+			)
+		)
+			return value;
+		return unseated('pattern.range.inclusive.start', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('pattern.range.inclusive.start', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		case 'literal.boolean.false':
+			return unbuilt('pattern.range.inclusive.start', value);
+		case 'literal.boolean.true':
+			return unbuilt('pattern.range.inclusive.start', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return literal_character$145(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$150(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$147(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$149(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$148(value);
+			return unbuilt('pattern.range.inclusive.start', value);
+		case 'literal.number.float':
+			return literal_number_float$162(value);
+		case 'literal.number.integer':
+			return literal_number_integer$141(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$143(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$142(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$144(value);
+		case 'literal.number.negative':
+			return literal_number_negative$330(value);
+		case 'literal.string':
+			return literal_string$332(value);
+		case 'literal.string.bytes':
+			return literal_string_bytes$332(value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('pattern.range.inclusive.start', value);
+		case 'literal.string.c':
+			return literal_string_c$332(value);
+		case 'literal.string.c.raw':
+			return unbuilt('pattern.range.inclusive.start', value);
+		case 'literal.string.raw':
+			return unbuilt('pattern.range.inclusive.start', value);
+		default:
+			return unbuilt('pattern.range.inclusive.start', value);
+	}
+};
+type pattern_range_inclusive_legacy$420_end$Item =
+	| 'crate'
+	| 'false'
+	| 'self'
+	| 'super'
+	| 'true'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| number
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.number.negative'>
+	| RustMap['nodes']['literal.number.negative']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const pattern_range_inclusive_legacy$420_end = (value: pattern_range_inclusive_legacy$420_end$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'crate':
+				return 126;
+			case 'self':
+				return 480;
+			case 'super':
+				return 125;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 116, 117, 125, 126, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330, 331, 332,
+					333, 334, 336, 367, 480
+				]
+			)
+		)
+			return value;
+		return unseated('pattern.range.inclusive.legacy.end', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('pattern.range.inclusive.legacy.end', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		case 'literal.boolean.false':
+			return unbuilt('pattern.range.inclusive.legacy.end', value);
+		case 'literal.boolean.true':
+			return unbuilt('pattern.range.inclusive.legacy.end', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return literal_character$145(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$150(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$147(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$149(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$148(value);
+			return unbuilt('pattern.range.inclusive.legacy.end', value);
+		case 'literal.number.float':
+			return literal_number_float$162(value);
+		case 'literal.number.integer':
+			return literal_number_integer$141(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$143(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$142(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$144(value);
+		case 'literal.number.negative':
+			return literal_number_negative$330(value);
+		case 'literal.string':
+			return literal_string$332(value);
+		case 'literal.string.bytes':
+			return literal_string_bytes$332(value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('pattern.range.inclusive.legacy.end', value);
+		case 'literal.string.c':
+			return literal_string_c$332(value);
+		case 'literal.string.c.raw':
+			return unbuilt('pattern.range.inclusive.legacy.end', value);
+		case 'literal.string.raw':
+			return unbuilt('pattern.range.inclusive.legacy.end', value);
+		default:
+			return unbuilt('pattern.range.inclusive.legacy.end', value);
+	}
+};
+type pattern_range_inclusive_legacy$420_start$Item =
+	| 'crate'
+	| 'false'
+	| 'self'
+	| 'super'
+	| 'true'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| number
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.number.negative'>
+	| RustMap['nodes']['literal.number.negative']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const pattern_range_inclusive_legacy$420_start = (value: pattern_range_inclusive_legacy$420_start$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'crate':
+				return 126;
+			case 'self':
+				return 480;
+			case 'super':
+				return 125;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 116, 117, 125, 126, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330, 331, 332,
+					333, 334, 336, 367, 480
+				]
+			)
+		)
+			return value;
+		return unseated('pattern.range.inclusive.legacy.start', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('pattern.range.inclusive.legacy.start', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		case 'literal.boolean.false':
+			return unbuilt('pattern.range.inclusive.legacy.start', value);
+		case 'literal.boolean.true':
+			return unbuilt('pattern.range.inclusive.legacy.start', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return literal_character$145(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$150(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$147(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$149(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$148(value);
+			return unbuilt('pattern.range.inclusive.legacy.start', value);
+		case 'literal.number.float':
+			return literal_number_float$162(value);
+		case 'literal.number.integer':
+			return literal_number_integer$141(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$143(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$142(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$144(value);
+		case 'literal.number.negative':
+			return literal_number_negative$330(value);
+		case 'literal.string':
+			return literal_string$332(value);
+		case 'literal.string.bytes':
+			return literal_string_bytes$332(value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('pattern.range.inclusive.legacy.start', value);
+		case 'literal.string.c':
+			return literal_string_c$332(value);
+		case 'literal.string.c.raw':
+			return unbuilt('pattern.range.inclusive.legacy.start', value);
+		case 'literal.string.raw':
+			return unbuilt('pattern.range.inclusive.legacy.start', value);
+		default:
+			return unbuilt('pattern.range.inclusive.legacy.start', value);
 	}
 };
 type pattern_reference$324_pattern$Item =
@@ -64978,7 +65986,7 @@ const pattern_reference$324_pattern = (value: pattern_reference$324_pattern$Item
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -64996,7 +66004,7 @@ const pattern_reference$324_pattern = (value: pattern_reference$324_pattern$Item
 				value,
 				[
 					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -65074,14 +66082,14 @@ const pattern_reference$324_pattern = (value: pattern_reference$324_pattern$Item
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
 			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
-			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
-			return unbuilt('pattern.reference.pattern', value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
 			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('pattern.reference.pattern', value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('pattern.reference.pattern', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -65179,7 +66187,7 @@ const pattern_reference_value$326_pattern = (value: pattern_reference_value$326_
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -65197,7 +66205,7 @@ const pattern_reference_value$326_pattern = (value: pattern_reference_value$326_
 				value,
 				[
 					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -65275,14 +66283,14 @@ const pattern_reference_value$326_pattern = (value: pattern_reference_value$326_
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
 			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
-			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
-			return unbuilt('pattern.reference.value.pattern', value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
 			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('pattern.reference.value.pattern', value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('pattern.reference.value.pattern', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -65341,11 +66349,11 @@ const pattern_struct$319_type = (value: pattern_struct$319_type$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [265, 484])) return value;
+		if (seated(value, [265, 483])) return value;
 		return unseated('pattern.struct.type', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [265, 484])) return value;
+		if (seated(value, [265, 483])) return value;
 		return unseated('pattern.struct.type', value);
 	}
 	switch (value.$path) {
@@ -65368,11 +66376,11 @@ const pattern_struct_field$414_name = (value: pattern_struct_field$414_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [482])) return value;
+		if (seated(value, [481])) return value;
 		return unseated('pattern.struct.field.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [482])) return value;
+		if (seated(value, [481])) return value;
 		return unseated('pattern.struct.field.name', value);
 	}
 	switch (value.$path) {
@@ -65392,11 +66400,11 @@ const pattern_struct_field$415_name = (value: pattern_struct_field$415_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [478])) return value;
+		if (seated(value, [477])) return value;
 		return unseated('pattern.struct.field.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [478])) return value;
+		if (seated(value, [477])) return value;
 		return unseated('pattern.struct.field.name', value);
 	}
 	switch (value.$path) {
@@ -65487,7 +66495,7 @@ const pattern_struct_field$415_pattern = (value: pattern_struct_field$415_patter
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -65505,7 +66513,7 @@ const pattern_struct_field$415_pattern = (value: pattern_struct_field$415_patter
 				value,
 				[
 					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -65583,14 +66591,14 @@ const pattern_struct_field$415_pattern = (value: pattern_struct_field$415_patter
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
 			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
-			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
-			return unbuilt('pattern.struct.field.pattern', value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
 			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('pattern.struct.field.pattern', value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('pattern.struct.field.pattern', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -65688,7 +66696,7 @@ const pattern_struct_tuple$318_fields$item = (value: pattern_struct_tuple$318_fi
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -65706,7 +66714,7 @@ const pattern_struct_tuple$318_fields$item = (value: pattern_struct_tuple$318_fi
 				value,
 				[
 					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -65784,14 +66792,14 @@ const pattern_struct_tuple$318_fields$item = (value: pattern_struct_tuple$318_fi
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
 			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
-			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
-			return unbuilt('pattern.struct.tuple.fields', value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
 			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('pattern.struct.tuple.fields', value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('pattern.struct.tuple.fields', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -65923,7 +66931,7 @@ const pattern_tuple$316_elements$item = (value: pattern_tuple$316_elements$item$
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -65942,7 +66950,7 @@ const pattern_tuple$316_elements$item = (value: pattern_tuple$316_elements$item$
 				[
 					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 301, 314, 315, 316, 317,
 					318, 319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 369, 370, 386, 387, 419,
-					422, 426
+					420, 421, 425
 				]
 			)
 		)
@@ -66045,14 +67053,14 @@ const pattern_tuple$316_elements$item = (value: pattern_tuple$316_elements$item$
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
 			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
-			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
-			return unbuilt('pattern.tuple.elements', value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
 			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('pattern.tuple.elements', value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('pattern.tuple.elements', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -66475,7 +67483,7 @@ const statement_block$313_statements = (value: statement_block$313_statements$It
 				value,
 				[
 					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
-					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+					384, 385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -66487,7 +67495,7 @@ const statement_block$313_statements = (value: statement_block$313_statements$It
 				[
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
-					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -66740,9 +67748,9 @@ const statement_block$313_statements = (value: statement_block$313_statements$It
 		case 'expression.cast.conversion':
 			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
 		case 'expression.collection.list':
-			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+			return b.expressionStatement.withSemi(expression_collection_list$435(value));
 		case 'expression.collection.list.repeat':
-			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$434(value));
 		case 'expression.collection.struct':
 			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
 		case 'expression.collection.tuple':
@@ -67139,7 +68147,7 @@ const statement_block$313_trailingExpression = (value: statement_block$313_trail
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -67218,9 +68226,9 @@ const statement_block$313_trailingExpression = (value: statement_block$313_trail
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -67779,7 +68787,7 @@ const statement_block_async$310_statements = (value: statement_block_async$310_s
 				value,
 				[
 					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
-					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+					384, 385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -67791,7 +68799,7 @@ const statement_block_async$310_statements = (value: statement_block_async$310_s
 				[
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
-					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -68044,9 +69052,9 @@ const statement_block_async$310_statements = (value: statement_block_async$310_s
 		case 'expression.cast.conversion':
 			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
 		case 'expression.collection.list':
-			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+			return b.expressionStatement.withSemi(expression_collection_list$435(value));
 		case 'expression.collection.list.repeat':
-			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$434(value));
 		case 'expression.collection.struct':
 			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
 		case 'expression.collection.tuple':
@@ -68443,7 +69451,7 @@ const statement_block_async$310_trailingExpression = (value: statement_block_asy
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -68522,9 +69530,9 @@ const statement_block_async$310_trailingExpression = (value: statement_block_asy
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -69083,7 +70091,7 @@ const statement_block_const$300_statements = (value: statement_block_const$300_s
 				value,
 				[
 					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
-					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+					384, 385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -69095,7 +70103,7 @@ const statement_block_const$300_statements = (value: statement_block_const$300_s
 				[
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
-					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -69348,9 +70356,9 @@ const statement_block_const$300_statements = (value: statement_block_const$300_s
 		case 'expression.cast.conversion':
 			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
 		case 'expression.collection.list':
-			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+			return b.expressionStatement.withSemi(expression_collection_list$435(value));
 		case 'expression.collection.list.repeat':
-			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$434(value));
 		case 'expression.collection.struct':
 			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
 		case 'expression.collection.tuple':
@@ -69747,7 +70755,7 @@ const statement_block_const$300_trailingExpression = (value: statement_block_con
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -69826,9 +70834,9 @@ const statement_block_const$300_trailingExpression = (value: statement_block_con
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -70387,7 +71395,7 @@ const statement_block_generator$311_statements = (value: statement_block_generat
 				value,
 				[
 					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
-					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+					384, 385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -70399,7 +71407,7 @@ const statement_block_generator$311_statements = (value: statement_block_generat
 				[
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
-					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -70652,9 +71660,9 @@ const statement_block_generator$311_statements = (value: statement_block_generat
 		case 'expression.cast.conversion':
 			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
 		case 'expression.collection.list':
-			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+			return b.expressionStatement.withSemi(expression_collection_list$435(value));
 		case 'expression.collection.list.repeat':
-			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$434(value));
 		case 'expression.collection.struct':
 			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
 		case 'expression.collection.tuple':
@@ -71053,7 +72061,7 @@ const statement_block_generator$311_trailingExpression = (
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -71132,9 +72140,9 @@ const statement_block_generator$311_trailingExpression = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -71693,7 +72701,7 @@ const statement_block_try$312_statements = (value: statement_block_try$312_state
 				value,
 				[
 					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
-					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+					384, 385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -71705,7 +72713,7 @@ const statement_block_try$312_statements = (value: statement_block_try$312_state
 				[
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
-					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -71958,9 +72966,9 @@ const statement_block_try$312_statements = (value: statement_block_try$312_state
 		case 'expression.cast.conversion':
 			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
 		case 'expression.collection.list':
-			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+			return b.expressionStatement.withSemi(expression_collection_list$435(value));
 		case 'expression.collection.list.repeat':
-			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$434(value));
 		case 'expression.collection.struct':
 			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
 		case 'expression.collection.tuple':
@@ -72357,7 +73365,7 @@ const statement_block_try$312_trailingExpression = (value: statement_block_try$3
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -72436,9 +73444,9 @@ const statement_block_try$312_trailingExpression = (value: statement_block_try$3
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -72997,7 +74005,7 @@ const statement_block_unsafe$309_statements = (value: statement_block_unsafe$309
 				value,
 				[
 					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
-					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+					384, 385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -73009,7 +74017,7 @@ const statement_block_unsafe$309_statements = (value: statement_block_unsafe$309
 				[
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
-					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -73262,9 +74270,9 @@ const statement_block_unsafe$309_statements = (value: statement_block_unsafe$309
 		case 'expression.cast.conversion':
 			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
 		case 'expression.collection.list':
-			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+			return b.expressionStatement.withSemi(expression_collection_list$435(value));
 		case 'expression.collection.list.repeat':
-			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$434(value));
 		case 'expression.collection.struct':
 			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
 		case 'expression.collection.tuple':
@@ -73661,7 +74669,7 @@ const statement_block_unsafe$309_trailingExpression = (value: statement_block_un
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -73740,9 +74748,9 @@ const statement_block_unsafe$309_trailingExpression = (value: statement_block_un
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -74112,7 +75120,7 @@ const statement_break$304_expression = (value: statement_break$304_expression$It
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -74191,9 +75199,9 @@ const statement_break$304_expression = (value: statement_break$304_expression$It
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -74603,7 +75611,7 @@ const statement_if$287_condition = (value: statement_if$287_condition$Item) => {
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 288, 289, 292, 297, 298, 299, 300,
 					301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372,
-					373, 374, 390, 391, 392, 393, 435, 436
+					373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -74686,9 +75694,9 @@ const statement_if$287_condition = (value: statement_if$287_condition$Item) => {
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -75247,7 +76255,7 @@ const statement_if$287_statements = (value: statement_if$287_statements$Item) =>
 				value,
 				[
 					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
-					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+					384, 385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -75259,7 +76267,7 @@ const statement_if$287_statements = (value: statement_if$287_statements$Item) =>
 				[
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
-					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -75512,9 +76520,9 @@ const statement_if$287_statements = (value: statement_if$287_statements$Item) =>
 		case 'expression.cast.conversion':
 			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
 		case 'expression.collection.list':
-			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+			return b.expressionStatement.withSemi(expression_collection_list$435(value));
 		case 'expression.collection.list.repeat':
-			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$434(value));
 		case 'expression.collection.struct':
 			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
 		case 'expression.collection.tuple':
@@ -75911,7 +76919,7 @@ const statement_if$287_trailingExpression = (value: statement_if$287_trailingExp
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -75990,9 +76998,9 @@ const statement_if$287_trailingExpression = (value: statement_if$287_trailingExp
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -76182,7 +77190,7 @@ const statement_import$224_argument = (value: statement_import$224_argument$Item
 			case 'crate':
 				return 126;
 			case 'self':
-				return 481;
+				return 480;
 			case 'super':
 				return 125;
 			default:
@@ -76195,7 +77203,7 @@ const statement_import$224_argument = (value: statement_import$224_argument$Item
 		return unseated('statement.import.argument', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 125, 126, 127, 226, 227, 228, 229, 263, 481])) return value;
+		if (seated(value, [1, 125, 126, 127, 226, 227, 228, 229, 263, 480])) return value;
 		return unseated('statement.import.argument', value);
 	}
 	switch (value.$path) {
@@ -76673,7 +77681,7 @@ const statement_loop$298_statements = (value: statement_loop$298_statements$Item
 				value,
 				[
 					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
-					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+					384, 385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -76685,7 +77693,7 @@ const statement_loop$298_statements = (value: statement_loop$298_statements$Item
 				[
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
-					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -76938,9 +77946,9 @@ const statement_loop$298_statements = (value: statement_loop$298_statements$Item
 		case 'expression.cast.conversion':
 			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
 		case 'expression.collection.list':
-			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+			return b.expressionStatement.withSemi(expression_collection_list$435(value));
 		case 'expression.collection.list.repeat':
-			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$434(value));
 		case 'expression.collection.struct':
 			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
 		case 'expression.collection.tuple':
@@ -77337,7 +78345,7 @@ const statement_loop$298_trailingExpression = (value: statement_loop$298_trailin
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -77416,9 +78424,9 @@ const statement_loop$298_trailingExpression = (value: statement_loop$298_trailin
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -77678,7 +78686,7 @@ const statement_loop_for_each$299_left = (value: statement_loop_for_each$299_lef
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -77696,7 +78704,7 @@ const statement_loop_for_each$299_left = (value: statement_loop_for_each$299_lef
 				value,
 				[
 					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -77774,14 +78782,14 @@ const statement_loop_for_each$299_left = (value: statement_loop_for_each$299_lef
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
 			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
-			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
-			return unbuilt('statement.loop.for_each.left', value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
 			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('statement.loop.for_each.left', value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('statement.loop.for_each.left', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -78003,7 +79011,7 @@ const statement_loop_for_each$299_right = (value: statement_loop_for_each$299_ri
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -78082,9 +79090,9 @@ const statement_loop_for_each$299_right = (value: statement_loop_for_each$299_ri
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -78643,7 +79651,7 @@ const statement_loop_for_each$299_statements = (value: statement_loop_for_each$2
 				value,
 				[
 					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
-					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+					384, 385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -78655,7 +79663,7 @@ const statement_loop_for_each$299_statements = (value: statement_loop_for_each$2
 				[
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
-					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -78908,9 +79916,9 @@ const statement_loop_for_each$299_statements = (value: statement_loop_for_each$2
 		case 'expression.cast.conversion':
 			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
 		case 'expression.collection.list':
-			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+			return b.expressionStatement.withSemi(expression_collection_list$435(value));
 		case 'expression.collection.list.repeat':
-			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$434(value));
 		case 'expression.collection.struct':
 			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
 		case 'expression.collection.tuple':
@@ -79307,7 +80315,7 @@ const statement_loop_for_each$299_trailingExpression = (value: statement_loop_fo
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -79386,9 +80394,9 @@ const statement_loop_for_each$299_trailingExpression = (value: statement_loop_fo
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -79762,7 +80770,7 @@ const statement_loop_while$297_condition = (value: statement_loop_while$297_cond
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 288, 289, 292, 297, 298, 299, 300,
 					301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372,
-					373, 374, 390, 391, 392, 393, 435, 436
+					373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -79845,9 +80853,9 @@ const statement_loop_while$297_condition = (value: statement_loop_while$297_cond
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -80420,7 +81428,7 @@ const statement_loop_while$297_statements = (value: statement_loop_while$297_sta
 				value,
 				[
 					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
-					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+					384, 385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -80432,7 +81440,7 @@ const statement_loop_while$297_statements = (value: statement_loop_while$297_sta
 				[
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
-					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -80685,9 +81693,9 @@ const statement_loop_while$297_statements = (value: statement_loop_while$297_sta
 		case 'expression.cast.conversion':
 			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
 		case 'expression.collection.list':
-			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+			return b.expressionStatement.withSemi(expression_collection_list$435(value));
 		case 'expression.collection.list.repeat':
-			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$434(value));
 		case 'expression.collection.struct':
 			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
 		case 'expression.collection.tuple':
@@ -81084,7 +82092,7 @@ const statement_loop_while$297_trailingExpression = (value: statement_loop_while
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -81163,9 +82171,9 @@ const statement_loop_while$297_trailingExpression = (value: statement_loop_while
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -81535,7 +82543,7 @@ const statement_return$274_expression = (value: statement_return$274_expression$
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -81614,9 +82622,9 @@ const statement_return$274_expression = (value: statement_return$274_expression$
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -81890,7 +82898,7 @@ const type_array$240_element = (value: type_array$240_element$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('type.array.element', value);
 	}
@@ -81900,7 +82908,7 @@ const type_array$240_element = (value: type_array$240_element$Item) => {
 				value,
 				[
 					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -82148,7 +83156,7 @@ const type_array$240_length = (value: type_array$240_length$Item) => {
 					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -82227,9 +83235,9 @@ const type_array$240_length = (value: type_array$240_length$Item) => {
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -82510,7 +83518,7 @@ const type_bounded$248_left = (value: type_bounded$248_left$Item) => {
 		if (
 			seated(
 				value,
-				[127, 218, 236, 239, 240, 242, 243, 246, 248, 249, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]
+				[127, 218, 236, 239, 240, 242, 243, 246, 248, 249, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]
 			)
 		)
 			return value;
@@ -82522,7 +83530,7 @@ const type_bounded$248_left = (value: type_bounded$248_left$Item) => {
 				value,
 				[
 					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 239, 240, 242, 243, 244,
-					246, 248, 249, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					246, 248, 249, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -82685,7 +83693,7 @@ const type_bounded$248_right = (value: type_bounded$248_right$Item) => {
 		if (
 			seated(
 				value,
-				[127, 218, 236, 239, 240, 242, 243, 246, 248, 249, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]
+				[127, 218, 236, 239, 240, 242, 243, 246, 248, 249, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]
 			)
 		)
 			return value;
@@ -82697,7 +83705,7 @@ const type_bounded$248_right = (value: type_bounded$248_right$Item) => {
 				value,
 				[
 					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 239, 240, 242, 243, 244,
-					246, 248, 249, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					246, 248, 249, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -82855,7 +83863,7 @@ const type_bracketed$237_type = (value: type_bracketed$237_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 238, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [127, 218, 236, 238, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('type.bracketed.type', value);
 	}
@@ -82865,7 +83873,7 @@ const type_bracketed$237_type = (value: type_bracketed$237_type$Item) => {
 				value,
 				[
 					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 238, 240, 242, 243, 244,
-					246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -82930,11 +83938,11 @@ const type_dynamic$256_trait = (value: type_dynamic$256_trait$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [217, 242, 243, 246, 265, 484])) return value;
+		if (seated(value, [217, 242, 243, 246, 265, 483])) return value;
 		return unseated('type.dynamic.trait', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [217, 242, 243, 246, 265, 484])) return value;
+		if (seated(value, [217, 242, 243, 246, 265, 483])) return value;
 		return unseated('type.dynamic.trait', value);
 	}
 	switch (value.$path) {
@@ -82966,11 +83974,11 @@ const type_generic$246_type = (value: type_generic$246_type$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 265, 484])) return value;
+		if (seated(value, [1, 265, 483])) return value;
 		return unseated('type.generic.type', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 265, 484])) return value;
+		if (seated(value, [1, 265, 483])) return value;
 		return unseated('type.generic.type', value);
 	}
 	switch (value.$path) {
@@ -82988,11 +83996,11 @@ type type_generic$246_typeArguments$item$Item =
 	| RustMap['nodes']['element.type_argument'];
 const type_generic$246_typeArguments$item = (value: type_generic$246_typeArguments$item$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [433])) return value;
+		if (seated(value, [432])) return value;
 		return unseated('type.generic.typeArguments', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [433])) return value;
+		if (seated(value, [432])) return value;
 		return unseated('type.generic.typeArguments', value);
 	}
 	return unbuilt('type.generic.typeArguments', value);
@@ -83009,11 +84017,11 @@ const type_generic_turbofish$247_type = (value: type_generic_turbofish$247_type$
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [263, 484])) return value;
+		if (seated(value, [263, 483])) return value;
 		return unseated('type.generic.turbofish.type', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [263, 484])) return value;
+		if (seated(value, [263, 483])) return value;
 		return unseated('type.generic.turbofish.type', value);
 	}
 	switch (value.$path) {
@@ -83031,11 +84039,11 @@ type type_generic_turbofish$247_typeArguments$item$Item =
 	| RustMap['nodes']['element.type_argument'];
 const type_generic_turbofish$247_typeArguments$item = (value: type_generic_turbofish$247_typeArguments$item$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [433])) return value;
+		if (seated(value, [432])) return value;
 		return unseated('type.generic.turbofish.typeArguments', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [433])) return value;
+		if (seated(value, [432])) return value;
 		return unseated('type.generic.turbofish.typeArguments', value);
 	}
 	return unbuilt('type.generic.turbofish.typeArguments', value);
@@ -83149,7 +84157,7 @@ const type_pointer$388_type = (value: type_pointer$388_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('type.pointer.type', value);
 	}
@@ -83159,7 +84167,7 @@ const type_pointer$388_type = (value: type_pointer$388_type$Item) => {
 				value,
 				[
 					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -83311,7 +84319,7 @@ const type_pointer$389_type = (value: type_pointer$389_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('type.pointer.type', value);
 	}
@@ -83321,7 +84329,7 @@ const type_pointer$389_type = (value: type_pointer$389_type$Item) => {
 				value,
 				[
 					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -83473,7 +84481,7 @@ const type_qualified$238_alias = (value: type_qualified$238_alias$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('type.qualified.alias', value);
 	}
@@ -83483,7 +84491,7 @@ const type_qualified$238_alias = (value: type_qualified$238_alias$Item) => {
 				value,
 				[
 					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -83635,7 +84643,7 @@ const type_qualified$238_type = (value: type_qualified$238_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('type.qualified.type', value);
 	}
@@ -83645,7 +84653,7 @@ const type_qualified$238_type = (value: type_qualified$238_type$Item) => {
 				value,
 				[
 					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -83811,7 +84819,7 @@ const type_reference$252_type = (value: type_reference$252_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('type.reference.type', value);
 	}
@@ -83821,7 +84829,7 @@ const type_reference$252_type = (value: type_reference$252_type$Item) => {
 				value,
 				[
 					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -83973,7 +84981,7 @@ const type_tuple$243_types$item = (value: type_tuple$243_types$item$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('type.tuple.types', value);
 	}
@@ -83983,7 +84991,7 @@ const type_tuple$243_types$item = (value: type_tuple$243_types$item$Item) => {
 				value,
 				[
 					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -84358,7 +85366,7 @@ const declaration_parameter_receiver$231 = (
 		mutable: (input.$flags ?? []).includes('mutable')
 	});
 };
-const declaration_parameter_receiver$439 = (
+const declaration_parameter_receiver$438 = (
 	input: PathInput<RustMap, 'declaration.parameter.receiver'>
 ): ReturnType<typeof b.receiverParameterDeclaration> => {
 	const unroutedSlot = unroutedIn(input, ['attributes', 'type']);
@@ -84368,7 +85376,7 @@ const declaration_parameter_receiver$439 = (
 		type:
 			input.type === undefined
 				? missing('declaration.parameter.receiver.type')
-				: declaration_parameter_receiver$439_type(input.type),
+				: declaration_parameter_receiver$438_type(input.type),
 		mutable: (input.$flags ?? []).includes('mutable')
 	});
 };
@@ -85136,7 +86144,7 @@ const expression_cast_conversion$273 = (
 		type: expression_cast_conversion$273_type(input.type)
 	});
 };
-const expression_collection_list$436 = (
+const expression_collection_list$435 = (
 	input: PathInput<RustMap, 'expression.collection.list'>
 ): ReturnType<typeof b.arrayExpressionList> => {
 	const unroutedSlot = unroutedIn(input, ['elements']);
@@ -85147,19 +86155,19 @@ const expression_collection_list$436 = (
 		elements$first === undefined
 			? undefined
 			: b.arrayExpressionListElements(
-					expression_collection_list$436_elements$item(elements$first),
-					...elements$rest.map(expression_collection_list$436_elements$item)
+					expression_collection_list$435_elements$item(elements$first),
+					...elements$rest.map(expression_collection_list$435_elements$item)
 				)
 	);
 };
-const expression_collection_list_repeat$435 = (
+const expression_collection_list_repeat$434 = (
 	input: PathInput<RustMap, 'expression.collection.list.repeat'>
 ): ReturnType<typeof b.arrayExpressionSemi> => {
 	const unroutedSlot = unroutedIn(input, ['element', 'length']);
 	if (unroutedSlot !== undefined) return unrouted('expression.collection.list.repeat', unroutedSlot);
 	return b.arrayExpressionSemi({
-		element: expression_collection_list_repeat$435_element(input.element),
-		length: expression_collection_list_repeat$435_length(input.length)
+		element: expression_collection_list_repeat$434_element(input.element),
+		length: expression_collection_list_repeat$434_length(input.length)
 	});
 };
 const expression_collection_struct$282 = (
@@ -85319,35 +86327,35 @@ const expression_propagate$268 = (
 };
 const expression_range$391 = (
 	input: PathInput<RustMap, 'expression.range'>
-): ReturnType<typeof b.rangeExpressionPostfix> => {
+): ReturnType<typeof b.rangeExpressionLowerBounded> => {
 	const unroutedSlot = unroutedIn(input, ['start']);
 	if (unroutedSlot !== undefined) return unrouted('expression.range', unroutedSlot);
-	return b.rangeExpressionPostfix(
+	return b.rangeExpressionLowerBounded(
 		input.start === undefined ? missing('expression.range.start') : expression_range$391_start(input.start)
 	);
 };
 const expression_range$392 = (
 	input: PathInput<RustMap, 'expression.range'>
-): ReturnType<typeof b.rangeExpressionPrefix> => {
+): ReturnType<typeof b.rangeExpressionUpperBounded> => {
 	const unroutedSlot = unroutedIn(input, ['end']);
 	if (unroutedSlot !== undefined) return unrouted('expression.range', unroutedSlot);
-	return b.rangeExpressionPrefix(
+	return b.rangeExpressionUpperBounded(
 		input.end === undefined ? missing('expression.range.end') : expression_range$392_end(input.end)
 	);
 };
 const expression_range$393 = (
 	input: PathInput<RustMap, 'expression.range'>
-): ReturnType<typeof b.rangeExpressionBare> => {
+): ReturnType<typeof b.rangeExpressionUnbounded> => {
 	const unroutedSlot = unroutedIn(input, []);
 	if (unroutedSlot !== undefined) return unrouted('expression.range', unroutedSlot);
-	return b.rangeExpressionBare();
+	return b.rangeExpressionUnbounded();
 };
 const expression_range_exclusive$390 = (
 	input: PathInput<RustMap, 'expression.range.exclusive'>
-): ReturnType<typeof b.rangeExpressionBinary> => {
+): ReturnType<typeof b.rangeExpressionBounded> => {
 	const unroutedSlot = unroutedIn(input, ['end', 'start']);
 	if (unroutedSlot !== undefined) return unrouted('expression.range.exclusive', unroutedSlot);
-	return b.rangeExpressionBinary({
+	return b.rangeExpressionBounded({
 		start:
 			input.start === undefined
 				? missing('expression.range.exclusive.start')
@@ -85361,10 +86369,10 @@ const expression_range_exclusive$390 = (
 };
 const expression_range_exclusive$391 = (
 	input: PathInput<RustMap, 'expression.range.exclusive'>
-): ReturnType<typeof b.rangeExpressionPostfix> => {
+): ReturnType<typeof b.rangeExpressionLowerBounded> => {
 	const unroutedSlot = unroutedIn(input, ['start']);
 	if (unroutedSlot !== undefined) return unrouted('expression.range.exclusive', unroutedSlot);
-	return b.rangeExpressionPostfix(
+	return b.rangeExpressionLowerBounded(
 		input.start === undefined
 			? missing('expression.range.exclusive.start')
 			: expression_range_exclusive$391_start(input.start)
@@ -85372,26 +86380,26 @@ const expression_range_exclusive$391 = (
 };
 const expression_range_exclusive$392 = (
 	input: PathInput<RustMap, 'expression.range.exclusive'>
-): ReturnType<typeof b.rangeExpressionPrefix> => {
+): ReturnType<typeof b.rangeExpressionUpperBounded> => {
 	const unroutedSlot = unroutedIn(input, ['end']);
 	if (unroutedSlot !== undefined) return unrouted('expression.range.exclusive', unroutedSlot);
-	return b.rangeExpressionPrefix(
+	return b.rangeExpressionUpperBounded(
 		input.end === undefined ? missing('expression.range.exclusive.end') : expression_range_exclusive$392_end(input.end)
 	);
 };
 const expression_range_exclusive$393 = (
 	input: PathInput<RustMap, 'expression.range.exclusive'>
-): ReturnType<typeof b.rangeExpressionBare> => {
+): ReturnType<typeof b.rangeExpressionUnbounded> => {
 	const unroutedSlot = unroutedIn(input, []);
 	if (unroutedSlot !== undefined) return unrouted('expression.range.exclusive', unroutedSlot);
-	return b.rangeExpressionBare();
+	return b.rangeExpressionUnbounded();
 };
 const expression_range_inclusive$390 = (
 	input: PathInput<RustMap, 'expression.range.inclusive'>
-): ReturnType<typeof b.rangeExpressionBinary> => {
+): ReturnType<typeof b.rangeExpressionBounded> => {
 	const unroutedSlot = unroutedIn(input, ['end', 'start']);
 	if (unroutedSlot !== undefined) return unrouted('expression.range.inclusive', unroutedSlot);
-	return b.rangeExpressionBinary({
+	return b.rangeExpressionBounded({
 		start:
 			input.start === undefined
 				? missing('expression.range.inclusive.start')
@@ -85405,10 +86413,10 @@ const expression_range_inclusive$390 = (
 };
 const expression_range_inclusive_legacy$390 = (
 	input: PathInput<RustMap, 'expression.range.inclusive.legacy'>
-): ReturnType<typeof b.rangeExpressionBinary> => {
+): ReturnType<typeof b.rangeExpressionBounded> => {
 	const unroutedSlot = unroutedIn(input, ['end', 'start']);
 	if (unroutedSlot !== undefined) return unrouted('expression.range.inclusive.legacy', unroutedSlot);
-	return b.rangeExpressionBinary({
+	return b.rangeExpressionBounded({
 		start:
 			input.start === undefined
 				? missing('expression.range.inclusive.legacy.start')
@@ -85779,37 +86787,89 @@ const pattern_or$387 = (input: PathInput<RustMap, 'pattern.or'>): ReturnType<typ
 	if (unroutedSlot !== undefined) return unrouted('pattern.or', unroutedSlot);
 	return b.orPatternPrefix(pattern_or$387_right(input.right));
 };
+const pattern_range$421 = (
+	input: PathInput<RustMap, 'pattern.range'>
+): ReturnType<typeof b.rangePatternLowerBounded> => {
+	const unroutedSlot = unroutedIn(input, ['start']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.range', unroutedSlot);
+	return b.rangePatternLowerBounded(
+		input.start === undefined ? missing('pattern.range.start') : pattern_range$421_start(input.start)
+	);
+};
 const pattern_range_exclusive$419 = (
 	input: PathInput<RustMap, 'pattern.range.exclusive'>
-): ReturnType<typeof b.rangePatternPrefix> => {
+): ReturnType<typeof b.rangePatternUpperBounded> => {
 	const unroutedSlot = unroutedIn(input, ['end']);
 	if (unroutedSlot !== undefined) return unrouted('pattern.range.exclusive', unroutedSlot);
-	return b.rangePatternPrefix({
+	return b.rangePatternUpperBounded({
 		end: input.end === undefined ? missing('pattern.range.exclusive.end') : pattern_range_exclusive$419_end(input.end),
 		operator: 100
 	});
 };
-const pattern_range_exclusive$422 = (
+const pattern_range_exclusive$420 = (
 	input: PathInput<RustMap, 'pattern.range.exclusive'>
-): ReturnType<typeof b.rangePatternWithLeft> => {
-	const unroutedSlot = unroutedIn(input, ['start']);
+): ReturnType<typeof b.rangePatternBounded> => {
+	const unroutedSlot = unroutedIn(input, ['end', 'start']);
 	if (unroutedSlot !== undefined) return unrouted('pattern.range.exclusive', unroutedSlot);
-	return b.rangePatternWithLeft({
+	return b.rangePatternBounded({
 		start:
 			input.start === undefined
 				? missing('pattern.range.exclusive.start')
-				: pattern_range_exclusive$422_start(input.start),
-		content: 421
+				: pattern_range_exclusive$420_start(input.start),
+		end: input.end === undefined ? missing('pattern.range.exclusive.end') : pattern_range_exclusive$420_end(input.end),
+		operator: 100
 	});
+};
+const pattern_range_exclusive$421 = (
+	input: PathInput<RustMap, 'pattern.range.exclusive'>
+): ReturnType<typeof b.rangePatternLowerBounded> => {
+	const unroutedSlot = unroutedIn(input, ['start']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.range.exclusive', unroutedSlot);
+	return b.rangePatternLowerBounded(
+		input.start === undefined
+			? missing('pattern.range.exclusive.start')
+			: pattern_range_exclusive$421_start(input.start)
+	);
 };
 const pattern_range_inclusive$419 = (
 	input: PathInput<RustMap, 'pattern.range.inclusive'>
-): ReturnType<typeof b.rangePatternPrefix> => {
+): ReturnType<typeof b.rangePatternUpperBounded> => {
 	const unroutedSlot = unroutedIn(input, ['end']);
 	if (unroutedSlot !== undefined) return unrouted('pattern.range.inclusive', unroutedSlot);
-	return b.rangePatternPrefix({
+	return b.rangePatternUpperBounded({
 		end: input.end === undefined ? missing('pattern.range.inclusive.end') : pattern_range_inclusive$419_end(input.end),
 		operator: 137
+	});
+};
+const pattern_range_inclusive$420 = (
+	input: PathInput<RustMap, 'pattern.range.inclusive'>
+): ReturnType<typeof b.rangePatternBounded> => {
+	const unroutedSlot = unroutedIn(input, ['end', 'start']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.range.inclusive', unroutedSlot);
+	return b.rangePatternBounded({
+		start:
+			input.start === undefined
+				? missing('pattern.range.inclusive.start')
+				: pattern_range_inclusive$420_start(input.start),
+		end: input.end === undefined ? missing('pattern.range.inclusive.end') : pattern_range_inclusive$420_end(input.end),
+		operator: 137
+	});
+};
+const pattern_range_inclusive_legacy$420 = (
+	input: PathInput<RustMap, 'pattern.range.inclusive.legacy'>
+): ReturnType<typeof b.rangePatternBounded> => {
+	const unroutedSlot = unroutedIn(input, ['end', 'start']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.range.inclusive.legacy', unroutedSlot);
+	return b.rangePatternBounded({
+		start:
+			input.start === undefined
+				? missing('pattern.range.inclusive.legacy.start')
+				: pattern_range_inclusive_legacy$420_start(input.start),
+		end:
+			input.end === undefined
+				? missing('pattern.range.inclusive.legacy.end')
+				: pattern_range_inclusive_legacy$420_end(input.end),
+		operator: 48
 	});
 };
 const pattern_reference$324 = (input: PathInput<RustMap, 'pattern.reference'>): ReturnType<typeof b.refPattern> => {
@@ -86261,7 +87321,7 @@ const declaration_module_foreign = (input: PathInput<RustMap, 'declaration.modul
 const declaration_parameter_receiver = (input: PathInput<RustMap, 'declaration.parameter.receiver'>) => {
 	if (input.type !== undefined && input.lifetime === undefined) {
 		if (input.attributes !== undefined) return unrouted('declaration.parameter.receiver', 'attributes');
-		return declaration_parameter_receiver$439(input);
+		return declaration_parameter_receiver$438(input);
 	}
 	if (input.attributes !== undefined) return unrouted('declaration.parameter.receiver', 'attributes');
 	return declaration_parameter_receiver$231(input);
@@ -87107,10 +88167,10 @@ const expression_cast_conversion = (input: PathInput<RustMap, 'expression.cast.c
 	return expression_cast_conversion$273(input);
 };
 const expression_collection_list = (input: PathInput<RustMap, 'expression.collection.list'>) => {
-	return expression_collection_list$436(input);
+	return expression_collection_list$435(input);
 };
 const expression_collection_list_repeat = (input: PathInput<RustMap, 'expression.collection.list.repeat'>) => {
-	return expression_collection_list_repeat$435(input);
+	return expression_collection_list_repeat$434(input);
 };
 const expression_collection_struct = (input: PathInput<RustMap, 'expression.collection.struct'>) => {
 	return expression_collection_struct$282(input);
@@ -87280,6 +88340,21 @@ const pattern_mutable = (input: PathInput<RustMap, 'pattern.mutable'>) => {
 const pattern_or = (input: PathInput<RustMap, 'pattern.or'>) => {
 	if (input.right !== undefined && input.left === undefined) return pattern_or$387(input);
 	return pattern_or$386(input);
+};
+const pattern_range = (input: PathInput<RustMap, 'pattern.range'>) => {
+	return pattern_range$421(input);
+};
+const pattern_range_exclusive = (input: PathInput<RustMap, 'pattern.range.exclusive'>) => {
+	if (input.start !== undefined && input.end === undefined) return pattern_range_exclusive$421(input);
+	if (input.end !== undefined && input.start === undefined) return pattern_range_exclusive$419(input);
+	return pattern_range_exclusive$420(input);
+};
+const pattern_range_inclusive = (input: PathInput<RustMap, 'pattern.range.inclusive'>) => {
+	if (input.end !== undefined && input.start === undefined) return pattern_range_inclusive$419(input);
+	return pattern_range_inclusive$420(input);
+};
+const pattern_range_inclusive_legacy = (input: PathInput<RustMap, 'pattern.range.inclusive.legacy'>) => {
+	return pattern_range_inclusive_legacy$420(input);
 };
 const pattern_reference = (input: PathInput<RustMap, 'pattern.reference'>) => {
 	return pattern_reference$324(input);
@@ -87517,6 +88592,10 @@ export const portableBuild = {
 		list: pattern_list,
 		mutable: pattern_mutable,
 		or: pattern_or,
+		range: Object.assign(pattern_range, {
+			exclusive: pattern_range_exclusive,
+			inclusive: Object.assign(pattern_range_inclusive, { legacy: pattern_range_inclusive_legacy })
+		}),
 		reference: Object.assign(pattern_reference, { value: pattern_reference_value }),
 		struct: Object.assign(pattern_struct, { field: pattern_struct_field, tuple: pattern_struct_tuple }),
 		tuple: pattern_tuple

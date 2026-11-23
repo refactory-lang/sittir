@@ -380,9 +380,9 @@ describe('portable is: rust', async () => {
 
 	it('pins a prefix range pattern by its operator, and never reads a range with a left bound as exclusive by default', () => {
 		const SOURCE = 'fn f(x: u8) { match x { ..=5 => 0, ..9 => 1, 1..=5 => 2, _ => 3 } }\n';
-		const inclusive = find(SOURCE, 'range_pattern_prefix', '..=5');
-		const exclusive = find(SOURCE, 'range_pattern_prefix', '..9');
-		const left = find(SOURCE, 'range_pattern_with_left', '1..=5');
+		const inclusive = find(SOURCE, 'range_pattern_upper_bounded', '..=5');
+		const exclusive = find(SOURCE, 'range_pattern_upper_bounded', '..9');
+		const left = find(SOURCE, 'range_pattern_bounded', '1..=5');
 		expect(at('pattern.range.inclusive')(inclusive)).toBe(true);
 		expect(at('pattern.range.exclusive')(inclusive)).toBe(false);
 		expect(at('pattern.range.exclusive')(exclusive)).toBe(true);
@@ -393,7 +393,7 @@ describe('portable is: rust', async () => {
 
 	it('reads a range with a left bound by its operator, as tree-sitter matches the claims', () => {
 		const SOURCE = 'fn f() { match x { 1..=5 => {}, 1...5 => {}, 1..5 => {}, 1.. => {}, _ => {} } }\n';
-		const ranges = ['1..=5', '1...5', '1..5', '1..'].map((text) => find(SOURCE, 'range_pattern_with_left', text));
+		const ranges = ['1..=5', '1...5', '1..5', '1..'].map((text) => find(SOURCE, text === '1..' ? 'range_pattern_lower_bounded' : 'range_pattern_bounded', text));
 		expect(ranges.map((n) => at('pattern.range.inclusive')(n))).toEqual([true, true, false, false]);
 		expect(ranges.map((n) => at('pattern.range.exclusive')(n))).toEqual([false, false, true, true]);
 		expect(ranges.map((n) => at('pattern.range')(n))).toEqual([true, true, true, true]);
@@ -402,15 +402,15 @@ describe('portable is: rust', async () => {
 	it('pins a range expression by its operator, and reads a range open at either end as exclusive', () => {
 		const SOURCE = 'fn f() { let a = 1..=2; let b = 1...2; let c = 1..2; let d = 1..; let e = ..2; let g = ..; }\n';
 		for (const text of ['1..=2', '1...2']) {
-			const range = find(SOURCE, 'range_expression_binary', text);
+			const range = find(SOURCE, 'range_expression_bounded', text);
 			expect(at('expression.range.inclusive')(range), text).toBe(true);
 			expect(at('expression.range.exclusive')(range), text).toBe(false);
 		}
 		for (const [kind, text] of [
-			['range_expression_binary', '1..2'],
-			['range_expression_postfix', '1..'],
-			['range_expression_prefix', '..2'],
-			['range_expression_bare', undefined]
+			['range_expression_bounded', '1..2'],
+			['range_expression_lower_bounded', '1..'],
+			['range_expression_upper_bounded', '..2'],
+			['range_expression_unbounded', undefined]
 		] as const) {
 			const range = find(SOURCE, kind, text);
 			expect(at('expression.range.exclusive')(range), kind).toBe(true);
