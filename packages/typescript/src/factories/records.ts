@@ -22478,7 +22478,15 @@ function withNumberFloatPoint(node: object, setter: string, args: readonly unkno
 			const config = inputs.config as T.NumberFloatPoint.Config;
 			const options = inputs.options as T.NumberFloatPoint.Options;
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildNumberFloatPoint$patch(node, { ...config, exponent: value }, options))
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildNumberFloatPoint$patch(
+								node,
+								{ ...config, exponentSign: undefined, exponent: undefined },
+								{ ...options, marker: undefined }
+							)
+						: buildNumberFloatPoint$patch(node, { ...config, exponent: value }, options)
+				)
 			);
 		}
 	}
@@ -22674,7 +22682,15 @@ function withNumberFloatLeadingPoint(node: object, setter: string, args: readonl
 			const config = inputs.config as T.NumberFloatLeadingPoint.Config;
 			const options = inputs.options as T.NumberFloatLeadingPoint.Options;
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildNumberFloatLeadingPoint$patch(node, { ...config, exponent: value }, options))
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildNumberFloatLeadingPoint$patch(
+								node,
+								{ ...config, exponentSign: undefined, exponent: undefined },
+								{ ...options, marker: undefined }
+							)
+						: buildNumberFloatLeadingPoint$patch(node, { ...config, exponent: value }, options)
+				)
 			);
 		}
 	}

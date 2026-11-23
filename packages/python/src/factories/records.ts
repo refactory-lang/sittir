@@ -15035,7 +15035,15 @@ function withFloatPoint(node: object, setter: string, args: readonly unknown[]):
 			const config = inputs.config as T.FloatPoint.Config;
 			const options = inputs.options as T.FloatPoint.Options;
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildFloatPoint$patch(node, { ...config, exponent: value }, options))
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildFloatPoint$patch(
+								node,
+								{ ...config, exponentSign: undefined, exponent: undefined },
+								{ ...options, marker: undefined }
+							)
+						: buildFloatPoint$patch(node, { ...config, exponent: value }, options)
+				)
 			);
 		}
 		case 'imaginary':
@@ -15326,7 +15334,15 @@ function withFloatLeadingPoint(node: object, setter: string, args: readonly unkn
 			const config = inputs.config as T.FloatLeadingPoint.Config;
 			const options = inputs.options as T.FloatLeadingPoint.Options;
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildFloatLeadingPoint$patch(node, { ...config, exponent: value }, options))
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildFloatLeadingPoint$patch(
+								node,
+								{ ...config, exponentSign: undefined, exponent: undefined },
+								{ ...options, marker: undefined }
+							)
+						: buildFloatLeadingPoint$patch(node, { ...config, exponent: value }, options)
+				)
 			);
 		}
 		case 'imaginary':

@@ -96,6 +96,7 @@ import {
 } from './shared.ts';
 import { wrapperChainFor, type WrapperChain } from '../compiler/model/wrapper-chain.ts';
 import {
+	coOptionalBranchOfNode,
 	constructorTargetKind,
 	builtTypeSurfaceOf,
 	listViewHint,
@@ -490,6 +491,10 @@ const VOCABULARY_IMPORTS = [
 	'NoneOf',
 	'GatedList',
 	'WithoutGroup',
+	'ArmRows',
+	'CoOptionalRows',
+	'BranchHint',
+	'BranchShapesOf',
 	'RenameKeys',
 	'GrammarTypeMap',
 	'NodeMethods',
@@ -957,7 +962,7 @@ function emitNamespaceInterfaceLine(
 	);
 }
 
-function emitNodeSurfaceInterfaces(lines: string[], node: AssembledNode, nodeMap: NodeMap, surface: BuiltTypeSurface, indent: string, seated = false): void {
+function emitNodeSurfaceInterfaces(lines: string[], node: AssembledNode, nodeMap: NodeMap, surface: BuiltTypeSurface, indent: string, shapesOf?: 'FlatShapesOf' | 'BranchShapesOf'): void {
 	const methods = triviaPositionsOf(node.kind, nodeMap) === undefined ? 'NodeMethods' : 'NodeMethodsOf';
 	const saves = node.grammarRoot ? ', SavesFile' : '';
 	const emit = (name: string, extendsList: string, withNode: boolean, self = 'this', exported = true): void => {
@@ -983,13 +988,13 @@ function emitNodeSurfaceInterfaces(lines: string[], node: AssembledNode, nodeMap
 		['Bound', 'BoundOf', 'BoundByKindId', ', HoldsSource'],
 		['Parsed', 'ParsedOf', 'ParsedByKindId', ', HoldsSource, HoldsTree']
 	] as const) {
-		if (!seated) {
+		if (shapesOf === undefined) {
 			emit(name, `${of}<${surface.mainType}, ${byKindId}>, ${methods}${held}${saves}`, true);
 			continue;
 		}
 		emit(`${name}Surface`, `${of}<${surface.mainType}, ${byKindId}>, ${methods}${held}${saves}`, true, name, false);
 		lines.push(
-			`${indent}export type ${name} = ${name}Surface & FlatShapesOf<${name}Surface, ${surface.mainType}, ${byKindId}>;`
+			`${indent}export type ${name} = ${name}Surface & ${shapesOf}<${name}Surface, ${surface.mainType}, ${byKindId}>;`
 		);
 	}
 }
@@ -1113,9 +1118,14 @@ function emitSlotHints(
 	if (groupSeats.length > 0) {
 		const flat = groupSeats.map((seat) => {
 			const keys = seat.keys.map((key) => `readonly ${JSON.stringify(key.name)}: ${JSON.stringify(key.field)}`).join('; ');
-			return `FlatHint<${JSON.stringify(seat.slot)}, T.${seat.group}, { ${keys} }, ${seat.optional}, ${JSON.stringify(seat.stored)}>`;
+			return `FlatHint<${JSON.stringify(seat.slot)}, T.${seat.group}, { ${keys} }, ${seat.optional}>`;
 		});
 		lines.push(`    readonly $flat: ${flat.join(' | ')};`);
+	}
+	const branch = coOptionalBranchOfNode(node);
+	if (branch !== undefined) {
+		const union = (names: readonly string[]): string => names.map((name) => JSON.stringify(name)).join(' | ');
+		lines.push(`    readonly $branch: BranchHint<${union([...branch.keys, ...branch.options])}, ${union(branch.required)}, ${union(branch.needed)}>;`);
 	}
 	if (listSlots.length > 0) {
 		lines.push('    readonly $listSlots: {');
@@ -1448,7 +1458,7 @@ function emitNamespaceSugarBlock(
 	const surface = emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries })
 		? builtTypeSurfaceOf(node, nodeMap, kindEntries)
 		: undefined;
-	if (surface !== undefined) emitNodeSurfaceInterfaces(lines, node, nodeMap, surface, '  ', groupSeatHints(node, nodeMap, kindEntries).length > 0);
+	if (surface !== undefined) emitNodeSurfaceInterfaces(lines, node, nodeMap, surface, '  ', groupSeatHints(node, nodeMap, kindEntries).length > 0 ? 'FlatShapesOf' : coOptionalBranchOfNode(node) === undefined ? undefined : 'BranchShapesOf');
 	else {
 		lines.push(`  export type Bound = BoundFor<${nsKey}>;`);
 		lines.push(`  export type Parsed = BoundFor<${nsKey}>;`);

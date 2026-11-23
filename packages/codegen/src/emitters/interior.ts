@@ -13,7 +13,7 @@ import {
 	type AssembledNode
 } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { lexedContentSlot, ownTextLeaf, slotLiteralValues, type LooseRefusal } from './shared.ts';
+import { lexedContentSlot, ownTextLeaf, resolveSingleFieldFactorySlot, slotLiteralValues, type LooseRefusal } from './shared.ts';
 import { anchoredLeafRegex, regexLiteral } from '../compiler/model/leaf-pattern.ts';
 import { includesNonEmpty, patternDfa } from '../compiler/model/pattern-automaton.ts';
 import { integerSpelling } from '@sittir/common/portable/utils';
@@ -422,10 +422,24 @@ export function numericConfigSlots(node: AssembledNode): string | undefined {
 	return slots.length === 0 ? undefined : `{ ${slots.join('; ')} }`;
 }
 
-export function numericInputRefusal(node: AssembledNode, bare: NumberShape | undefined): string | undefined {
+export function bareNumberShape(node: AssembledNode, nodeMap: NodeMap): NumberShape | undefined {
+	const sole = resolveSingleFieldFactorySlot(node, nodeMap);
+	return bareInteriorText(node.kind, node)?.number ?? (sole === undefined ? undefined : numericSlotShape(sole));
+}
+
+function numericRefusalArguments(node: AssembledNode, bare: NumberShape | undefined): string | undefined {
 	const slots = numericConfigSlots(node);
 	if (bare === undefined && slots === undefined) return undefined;
-	return `NumericInput<I, ${bare === undefined ? 'undefined' : bare.base === 'float' ? 'false' : 'true'}${slots === undefined ? '' : `, ${slots}`}>`;
+	return `${bare === undefined ? 'undefined' : bare.base === 'float' ? 'false' : 'true'}${slots === undefined ? '' : `, ${slots}`}`;
+}
+
+export function numericInputRefusal(node: AssembledNode, bare: NumberShape | undefined): string | undefined {
+	const refusal = numericRefusalArguments(node, bare);
+	return refusal === undefined ? undefined : `NumericInput<I, ${refusal}>`;
+}
+
+export function numericSeatRefusal(node: AssembledNode, nodeMap: NodeMap, surface: 'strict' | 'loose'): string | undefined {
+	return numericRefusalArguments(node, surface === 'loose' ? bareNumberShape(node, nodeMap) : undefined);
 }
 
 export function numberInputTest(shape: NumberShape, value: string): string {

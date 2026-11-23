@@ -1242,7 +1242,19 @@ export interface AssembledNonterminalInit {
 	readonly sourceRuleIds: readonly RuleId[];
 	readonly metadata?: OpaqueFacts;
 	readonly ruleMetadata?: RuleMetadata;
+	readonly coOptional?: SlotCoOptional;
+	readonly arms?: SlotArms;
 	storageInfo?: FieldStorageInfo;
+}
+
+export interface SlotCoOptional {
+	readonly branch?: RuleId;
+	readonly required: boolean;
+}
+
+export interface SlotArms {
+	readonly choice: RuleId;
+	readonly held: readonly { readonly arm: number; readonly required: boolean }[];
 }
 
 export function mergeSourceRuleIds(...groups: readonly (readonly RuleId[] | undefined)[]): readonly RuleId[] {
@@ -1269,6 +1281,8 @@ export class AssembledNonterminal {
 	readonly sourceRuleIds: readonly RuleId[];
 	readonly metadata: OpaqueFacts;
 	readonly ruleMetadata?: RuleMetadata;
+	readonly coOptional?: SlotCoOptional;
+	readonly arms?: SlotArms;
 	storageInfo?: FieldStorageInfo;
 	optionDefaultArm?: string;
 	optionDefaultKind?: string;
@@ -1318,6 +1332,8 @@ export class AssembledNonterminal {
 		this.sourceRuleIds = init.sourceRuleIds;
 		this.metadata = init.metadata ?? opaqueFacts({});
 		this.ruleMetadata = init.ruleMetadata;
+		this.coOptional = init.coOptional;
+		this.arms = init.arms;
 		this.storageInfo = init.storageInfo;
 	}
 
@@ -1333,6 +1349,8 @@ export class AssembledNonterminal {
 			sourceRuleIds: this.sourceRuleIds,
 			metadata: this.metadata,
 			ruleMetadata: this.ruleMetadata,
+			coOptional: this.coOptional,
+			arms: this.arms,
 			storageInfo: this.storageInfo,
 			...overrides
 		});

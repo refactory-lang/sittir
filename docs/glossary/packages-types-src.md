@@ -230,13 +230,13 @@ Marks one slot that holds a list: the item type and the options of the list kind
 
 ### `packages/types/src/node-surface.ts::FlatShapesOf`
 
-The flattened members of a seated node, one shape per seat, intersected; both the `Bound` and the `Parsed` alias of a seated kind add it to their surface. A required seat has one shape, present. An optional seat is the union of a present and an absent shape. Each flattened field is a property whose value is its reader: a function on the present shape and `undefined` on the absent one, so a plain property check narrows the whole shape, siblings included (`if (block.matchArms !== undefined) block.lastArm()`); the stored property (`Stored`) narrows it the same way.
+The flattened members of a seated node, one shape per seat, intersected; both the `Bound` and the `Parsed` alias of a seated kind add it to their surface. A required seat has one shape, present. An optional seat is the union of a present and an absent shape. Each flattened field is a property whose value is its reader: a function on the present shape and `undefined` on the absent one, so a plain property check narrows the whole shape, siblings included (`if (block.matchArms !== undefined) block.lastArm()`); `$has` (`FlatHas`) narrows it the same way, and also answers a flattened key that a node holds whatever its type.
 
-The present shape pins the stored property to the group, reads the seat and every flattened field, and its `$with` sets every flattened field and the seat; clearing the seat yields the absent shape. The absent shape pins the stored property and every flattened field to `undefined`, reads the seat as `undefined`, and its `$with` sets only the group's required field (when the group has exactly one) and the seat, each yielding the present shape; an optional field cannot be set on an absent group. Each setter names the node it yields (the surface, the other seats' shapes, and this seat's new shape), so a chain keeps the shapes. The surface's own `$with` omits the seat and its keys, so the shape's setters are the only ones. The union is one level per seat, which keeps it shallow for the checker.
+The present shape reads the seat and every flattened field, and its `$with` sets every flattened field and the seat; clearing the seat yields the absent shape. The absent shape pins every flattened field to `undefined`, reads the seat as `undefined`, and its `$with` sets only the group's required field (when the group has exactly one) and the seat, each yielding the present shape; an optional field cannot be set on an absent group. Each setter names the node it yields (the surface, the other seats' shapes, and this seat's new shape), so a chain keeps the shapes. The surface's own `$with` omits the seat and its keys, so the shape's setters are the only ones. The union is one level per seat, which keeps it shallow for the checker.
 
 ### `packages/types/src/node-surface.ts::FlatHint`
 
-Marks a kind that seats a flattened group: the slot that holds the group (`Slot`), the group's type, the keys that flatten it (`Keys`, a map from the name the parent reads and sets each key by to the group field it stands for; the two differ only for a key the seat prefixed), whether the seat is optional, and the parent's storage property that holds the group (`Stored`). Stamped under the reserved `$flat` key of `__slotHints__`, from the fact that gives the strict factory its flattened config keys; a kind that seats several groups stamps the union of their hints, and the surface types read each key, accessor and setter from the hint that names it. Each key is a reader property and a `$with` setter on the parent, with the shape the group's own accessor and setter have for its field, present or absent as `FlatShapesOf` gives them; the seat's own accessor stays, except where a key spells it.
+Marks a kind that seats a flattened group: the slot that holds the group (`Slot`), the group's type, the keys that flatten it (`Keys`, a map from the name the parent reads and sets each key by to the group field it stands for; the two differ only for a key the seat prefixed), and whether the seat is optional. Stamped under the reserved `$flat` key of `__slotHints__`, from the fact that gives the strict factory its flattened config keys; a kind that seats several groups stamps the union of their hints, and the surface types read each key, accessor and setter from the hint that names it. Each key is a reader property and a `$with` setter on the parent, with the shape the group's own accessor and setter have for its field, present or absent as `FlatShapesOf` gives them; the seat's own accessor stays, except where a key spells it.
 
 ### `packages/types/src/node-surface.ts::NarrowTo`
 
@@ -924,7 +924,7 @@ Whether structure is verified at compile time only, or also at run time.
 
 ### `packages/types/src/node-surface.ts::Seat`
 
-A row call's signature: generic over its arguments, refusing undeclared keys, and returning its result. A call with one argument that is an empty array is refused when the row takes items but never none: that argument is the item list, the reading the coercer gives a lone array, and an empty array inside the list or beside another argument stays one item.
+A row call's signature: generic over its arguments, refusing undeclared keys, and returning its result. A call with one argument that is an empty array is refused when the row takes items but never none: that argument is the item list, the reading the coercer gives a lone array, and an empty array inside the list or beside another argument stays one item. A seat that names the numeric slots of its config (`W`) or whether a bare value is an integer (`Bare`) also refuses the numeric literals `RefuseNumeric` refuses in the first argument, as the builder does; one that names neither, and a row called with no argument, refuse nothing more. A seat that builds a kind with an optional branch names the slots the branch requires (`Needed`) and returns the shape the config decides (`BuiltShape`): `build({ integer: 1, exponent: 3 })` is the present shape and `build({ integer: 1 })` the absent one, with no guard needed on a node just built.
 
 ### `packages/types/src/node-surface.ts::ConfigSeat`
 
@@ -949,6 +949,54 @@ The numeric kind id a node carries at runtime, the `$type` property. `NarrowTo` 
 ### `packages/types/src/node-surface.ts::Admit::$type`
 
 The numeric kind id a node carries at runtime, the `$type` property. `Admit` requires that existing numeric tag on a value and attaches the node marker; the alias emits no code.
+
+### `packages/types/src/node-surface.ts::RefuseNumericFirst`
+
+The numeric refusal a `Seat` applies to the first argument of its row: `RefuseNumeric` of it, and `unknown` when the seat names no numeric slot or bare value, or the row is called with no argument.
+
+### `packages/types/src/node-surface.ts::BranchHint`
+
+The `$branch` entry of a node's `__slotHints__`: the names the optional branch holds (`Names`), the ones whose presence makes it present (`Required`), and the config slots a present-shaped `$with` setter needs (`Needed`). `BranchShapesOf` reads it to type the node as branch-present or branch-absent; `SlotHintsOf` removes it so the hint never appears as a slot.
+
+### `packages/types/src/node-surface.ts::BranchGetter`
+
+The getter of one branch slot on one shape of a branch-typed node. On the present shape a required slot returns its value and an optional one its value or `undefined`; on the absent shape every branch getter returns `undefined`.
+
+### `packages/types/src/node-surface.ts::BranchSetter`
+
+The `$with` setter of one branch slot on one shape. On the absent shape only the slot the branch requires has one, and it returns the present shape; on the present shape each setter keeps the present shape, except that clearing a required slot clears the whole branch and returns the absent shape. Every setter returns an edited node, which has no `$query` or `$snapshot`, as `WithSlot` does.
+
+### `packages/types/src/node-surface.ts::BranchMembers`
+
+The properties of one shape of a branch-typed node: the stored property of each branch name, the narrowed getters (`BranchGetter`) and the shape's `$with` setters (`BranchSetter`). `BranchShapesOf` builds one for the present shape and one for the absent shape.
+
+### `packages/types/src/node-surface.ts::BranchShapesOf`
+
+The node surface of a kind that has an optional branch, as a union of its branch-present and branch-absent shapes, the way `FlatShapesOf` does for a flattened group. The generated `Bound` and `Parsed` of such a kind are the surface intersected with it, so a branch slot read or written without first narrowing to the shape that holds it is a type error, and the absent shape's `$with` takes only the slot the branch requires.
+
+### `packages/types/src/node-surface.ts::PresentOf`
+
+The members of a branch-typed node type `R` that are the branch-present shape: those whose getter for a `Needed` slot cannot return `undefined`.
+
+### `packages/types/src/node-surface.ts::AbsentOf`
+
+The members of a branch-typed node type `R` that are the branch-absent shape: those whose getter for a `Needed` slot returns only `undefined`.
+
+### `packages/types/src/node-surface.ts::BuiltShape`
+
+What a seat that builds a kind with an optional branch returns for its call `A`: the present shape (`PresentOf`) when the config names a slot the branch requires, the absent shape (`AbsentOf`) when it names none of them, and the whole node type when the config does not prove it: a held value that may be either, a key set to `undefined`, text, a number, or a node passed as the config (its slots are read by getters, not named by key). A seat whose kind has no branch (`Needed` is `never`) returns its node type as before. The decision is made on the literal config, since the seat takes its arguments as `const`.
+
+### `packages/types/src/node-surface.ts::FlatHas`
+
+The `$has` of a node that seats a flattened group, declared once for the whole union of its shapes (a declaration inside each shape would leave TypeScript two unrelated signatures, and the guard would not narrow). Naming the seat or the group's one required key narrows the node to its present shape when true and to its absent shape when false; naming any other key answers a boolean. The setter results carry it too (`ShapeNode`).
+
+### `packages/types/src/node-surface.ts::BranchNode`
+
+A branch-typed node of the given shape as a setter returns it: the surface without `$query` and `$snapshot` (`Edited`, since a rebuilt node keeps no parse), the shared `$has` (`BranchHas`) and the shape's members.
+
+### `packages/types/src/node-surface.ts::BranchHas`
+
+The `$has` of a node with an optional branch, declared once for both shapes. Naming a slot the branch requires narrows the node to its present shape when true and to its absent shape when false, and any one required slot decides it; naming any other slot of the branch answers a boolean and narrows nothing, since an optional slot says nothing about the branch.
 
 ### `packages/types/src/engine-api.ts::StructureRow::single`
 
@@ -1968,3 +2016,39 @@ A native slot read: called on the node, returns the slot as the tree stores it.
 ### `packages/types/src/query.ts::NativeSlots`
 
 A tree's native slot reads, by kind id and accessor name.
+
+### `packages/types/src/index.ts::NoneOf`
+
+A config type whose every key of `T` is optional and `never`: it names the keys a config must not carry. A group's flattened keys are `NoneOf` of themselves in the arm of a parent's input that seats no group, so the keys come together or not at all.
+
+### `packages/types/src/index.ts::WithoutGroup`
+
+A parent's own input where the group's flattened keys are forbidden beside the seat: `P` with `NoneOf<G>` added, so a config that gives the seat cannot give a key of the group beside it. A parent that is `undefined` (an optional argument left out) or already a built node (it has a `$type`) is let through as it is: a node is not a config, and its accessors share the group's key names.
+
+### `packages/types/src/index.ts::BranchPresent`
+
+A config row's first member with the branch present: the `Needed` keys are required. A member that is not an object (loose text, a number) or is a built node passes as it is.
+
+### `packages/types/src/index.ts::BranchAbsent`
+
+A config row's first member with the branch absent: none of the `Branch` keys. Only an object member that names a key of the branch has an absent shape; loose text, a number or a built node belongs to the present shape alone.
+
+### `packages/types/src/index.ts::CoOptionalRows`
+
+The argument tuples of a builder whose config holds an optional branch of several slots and has no group node to seat it, as a union of two tuples: `[config: BranchPresent, options?: O]`, and `[config: BranchPresent | BranchAbsent, options?: O without the branch's options]`. The branch is present as a whole, which needs its `Needed` keys, or absent as a whole, which names none of its `Branch` keys nor the options in `BranchOptions`. The second tuple keeps the other options, and takes a held union of both shapes, which no one tuple of the pair takes; it takes no option of the branch, since a union does not say the branch is present. The row is a union of tuples rather than overloads because `ArgsOf` reads only the last overload. A float's exponent is the example: `{ integer: 1, exponent: 2 }` takes `{ marker: 'E' }`, `{ integer: 1 }` does not, and `{ integer: 1, exponentSign: '+' }` takes neither. A row whose config is optional (`[config?: C, options?: O]`, a kind made only of the branch) keeps that arity in the second tuple, so a call with no argument still compiles; the first tuple stays required, since it needs the branch's keys. The emitter writes it from the kind's `coOptional` stamps (`coOptionalBranchOf`).
+
+### `packages/types/src/index.ts::RefusedSlots`
+
+The numeric slots of a config `C` (the keys of `W`) that hold a literal `NumericLiteral` refuses, each member of a union judged on its own. A value that is not a literal is never refused.
+
+### `packages/types/src/index.ts::RefuseNumeric`
+
+What `NumericInput` refuses, as a value an argument list holds or not, the way `RefuseUndeclared` is: `unknown` when `I` holds no refused literal, otherwise `{ readonly refused: … }`, which no argument carries, naming the refused slots (`a bare number` for the bare value). `NumericInput` itself is an intersection, which changes the argument list of a generic whose parameters are read at their constraint (`ArgsOf`); this is `unknown` there, so a row that carries the refusal is still the call it describes.
+
+### `packages/types/src/index.ts::NumericRefusals`
+
+The refusals `RefuseNumeric` reports, named once: `a bare number` when the bare value is a literal `NumericLiteral` refuses, and the numeric slots of a config that hold one (`RefusedSlots`). `never` when nothing is refused, which `RefuseNumeric` tests against.
+
+### `packages/types/src/index.ts::ArmRows`
+
+The argument tuples of a builder whose rule is a required choice of arms that hold different slots: one tuple per arm, each needing the keys its arm requires and naming none that only another arm holds, so mixing arms and an empty config are type errors. A key every arm holds is in each tuple. A row that leads with an optional config keeps it optional in a tuple only when that arm requires nothing. A config member that is not an object, or is a built node, is in every tuple. The tuples are a union and not overloads, because `ArgsOf` and `Parameters` read only an overload's last signature. An arm's config replaces the keys it requires instead of intersecting them (`Omit` then `Required<Pick>`): intersecting a slot's widened union with itself multiplies its members and overflows the checker on a kind reached through a flattened group.

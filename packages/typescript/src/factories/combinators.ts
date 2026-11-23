@@ -124,6 +124,10 @@ export const catchClause$flatten$catchClauseGroup =
 		return _fwd<ReturnType<PF>>(parent, seated ? { ...rest, catchClauseGroup: _c(child)(inner) } : rest, options);
 	};
 
+export const binaryExpression$branch =
+	<PF extends (...args: never[]) => unknown, R = ReturnType<PF>>(parent: PF) =>
+	(...args: readonly unknown[]): R =>
+		_s<R>(parent)(...args);
 export const binaryExpression$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -278,6 +282,16 @@ export const typeQueryMemberExpression$qmarkDot =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
+
+export const numberFloatPoint$branch =
+	<PF extends (...args: never[]) => unknown, R = ReturnType<PF>>(parent: PF) =>
+	(...args: readonly unknown[]): R =>
+		_s<R>(parent)(...args);
+
+export const numberFloatLeadingPoint$branch =
+	<PF extends (...args: never[]) => unknown, R = ReturnType<PF>>(parent: PF) =>
+	(...args: readonly unknown[]): R =>
+		_s<R>(parent)(...args);
 
 export const constraint$extends =
 	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>

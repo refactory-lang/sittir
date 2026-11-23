@@ -27,7 +27,9 @@ describe('typescript float number arms name their parts', () => {
 	it('the marker is written only when the exponent group is, and its option chooses the case', () => {
 		expect(ts.build.number.floatPoint({ integer: '1', fraction: '5' }).$render()).toBe('1.5');
 		expect(ts.build.number.floatPoint({ integer: '1', exponent: '3' }, { marker: 'E' }).$render()).toBe('1.E3');
-		expect(ts.build.number.floatPoint({ integer: '1', exponent: '3' }).$with.marker('E').$render()).toBe('1.E3');
+		const built = ts.build.number.floatPoint({ integer: '1', exponent: '3' });
+		if (!built.$has('exponent')) throw new Error('a float built with an exponent reads it');
+		expect(built.$with.marker('E').$render()).toBe('1.E3');
 	});
 
 	it('the slot guards reject a part that does not fit its pattern', () => {

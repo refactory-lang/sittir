@@ -5486,7 +5486,7 @@ splicing it too would flatten its one key onto the parent and leave the
 arm with no spelling to reach it by. Such an (unlabelled) group is not an
 arm — there is nothing to choose between — and has no name a caller would
 type; its keys are flattened onto the parent's `strict` by the overlay
-(`flattenShape`), present as a whole or absent as a whole. A parent may seat several such groups, and every one flattens. The seat lists its keys, each as the parent's config key (`key`) for a group field (`field`). A group field that collides with another slot of the parent, or with a field of another group the parent seats, is flattened under `prefixedKey` of its own seat's config key and the field (the group's `left` in seat `binaryIn` is `binaryInLeft`; two groups that both have `step` flatten it once per seat, each under its own seat's prefix), so no two keys meet; a prefixed key that still collides fails the emit, naming both. A key that spells the seat's own slot is not a collision, since the group's value is what that slot reads. A direct-shaped group (one slot, taken positionally by its factory) is a
+(`flattenShape`), present as a whole or absent as a whole: a group binds co-optional slots, all of them with the group or none, and a config gives either the group under its seat or its keys, never both. A parent may seat several such groups, and every one flattens. The seat lists its keys, each as the parent's config key (`key`) for a group field (`field`). A group field that collides with another slot of the parent, or with a field of another group the parent seats, is flattened under `prefixedKey` of its own seat's config key and the field (the group's `left` in seat `binaryIn` is `binaryInLeft`; two groups that both have `step` flatten it once per seat, each under its own seat's prefix), so no two keys meet; a prefixed key that still collides fails the emit, naming both. A key that spells the seat's own slot is not a collision, since the group's value is what that slot reads. A direct-shaped group (one slot, taken positionally by its factory) is a
 flatten with one key: the seat records `directKey` and `flattenShape` builds
 the group from that key's value alone (python `slice.step`, `except_clause.exception`,
 typescript `_import_clause_default_import.import_clause_group`). A forwarded
@@ -6271,6 +6271,21 @@ The token the gate is keyed on.
 
 The fixed text of a literal leaf whatever its field: a non-optional string
 or a symbol carrying `literal`.
+
+### `packages/codegen/src/compiler/model/node-map.ts::SlotCoOptional`
+
+The slot's part in an optional branch that binds several slots and has no group
+node to seat them (the four float kinds, where the branch sits inside a token):
+`branch` is the rule id of the optional sequence that is the branch, `required`
+whether the slot was required inside it. A slot with the fact is present with
+its branch or absent with it; a required one is what makes the branch present.
+`collectSlots` sets `branch` from the nearest enclosing optional sequence; a
+branch nested in another stamped branch records an `unclassifiable-shape`
+diagnostic (`nested-optional-branch`), which blocks.
+
+### `packages/codegen/src/compiler/model/node-map.ts::SlotArms`
+
+Which arms of one required choice hold a slot, and whether each arm requires it. `choice` is the rule id of the choice whose arms the slot came from; `held` lists, per arm index, whether the slot is required inside that arm. A slot every arm holds carries an entry for each arm. Only a choice whose arms hold different slots is stamped, so a choice whose arms hold the same slots leaves its slots without one. The stamp is set where the arms merge and read by the factory emitter, which types the builder's config as one config per arm.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::hasArmEdgeSeams`
 
