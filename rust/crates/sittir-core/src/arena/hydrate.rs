@@ -180,11 +180,12 @@ pub struct Placed {
 }
 
 /// What placing reads of a child a walk met, beside its entry: whether it
-/// is named, and for an extra or an `ERROR` its record's kind.
+/// holds sides (`Kid::holder`), and for an extra or an `ERROR` its record's
+/// kind.
 #[derive(Debug, Clone, Copy)]
 struct Beside {
     kind: KindId,
-    named: bool,
+    holder: bool,
     /// Whether the node is an extra or an `ERROR`: an entry of a side, and
     /// no child a side is placed on.
     aside: bool,
@@ -328,7 +329,7 @@ impl OpenRun {
         match (index, self.last) {
             (Some(index), _) if self.index == Some(index) => {
                 self.entries.push(RunEntry::Record { at, shared: true });
-                self.beside.push(Beside { kind: KindId::BLANK, named: false, aside: true, extra: None, span: Span { start: 0, end: 0 }, fixed_token_or_flag: false, flag: false });
+                self.beside.push(Beside { kind: KindId::BLANK, holder: false, aside: true, extra: None, span: Span { start: 0, end: 0 }, fixed_token_or_flag: false, flag: false });
                 self.depth += depth - own;
             }
             (Some(index), Some((last, entry))) if last == index && entry + 1 == self.entries.len() => {
@@ -393,7 +394,7 @@ impl OpenRun {
         if !kinds.exposes_in_place(kind) {
             return None;
         }
-        let mut holders = self.children(holder).filter(|&child| self.beside[child].named);
+        let mut holders = self.children(holder).filter(|&child| self.beside[child].holder);
         let item = if leading { holders.next() } else { holders.last() }?;
         let beside = &self.beside[item];
         let side = if leading { TriviaSide::Leading } else { TriviaSide::Trailing };
@@ -447,7 +448,7 @@ impl OpenRun {
                 .iter()
                 .map(|&child| {
                     let beside = &self.beside[child];
-                    Sibling { span: beside.span, holder: beside.named && !beside.aside, entry: beside.aside, flag: beside.flag }
+                    Sibling { span: beside.span, holder: beside.holder, entry: beside.aside, flag: beside.flag }
                 })
                 .collect();
             for (position, &child) in children.iter().enumerate() {
@@ -704,9 +705,9 @@ impl<'a> Hydration<'a> {
         let facts = facts_of(&kid, &node);
         let depth = self.depth_of(kid.grammar);
         let stamped = |stamp: Stamp| crate::read::stamp(facts.kind, facts.display(), stamp.0, stamp.1);
-        let aside = kid.extra || kid.error();
+        let aside = kid.entry();
         let kind = if kid.error() { KindId::ERROR } else { self.stamp.map_or(facts.kind, stamped) };
-        let beside = Beside { kind: kid.grammar, named: kid.named && kid.start < kid.end, aside, extra: aside.then_some(kind), span: kid.span(), fixed_token_or_flag: false, flag: false };
+        let beside = Beside { kind: kid.grammar, holder: kid.holder(), aside, extra: aside.then_some(kind), span: kid.span(), fixed_token_or_flag: false, flag: false };
         if let Some(open) = self.open.last_mut() {
             open.meet(&kid, facts, depth, beside);
         }
