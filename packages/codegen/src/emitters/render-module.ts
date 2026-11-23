@@ -8,7 +8,6 @@ import { isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing
 import type { SpacingAddress } from '../types/spacing.ts';
 import { isFixedTextLeaf, isLexicalToken, isTerminalNode, layoutDisplaysOf, layoutNodeOf, separatorCandidateTexts } from '../compiler/model/node-map.ts';
 import { NEWLINE_KINDS, PREFERRED_NEWLINE, breakingKindsOfText, TIGHT_KINDS, layoutKindsOfText, leafEdgesOf } from '../compiler/model/layout-kinds.ts';
-import { STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import { wordCharAsciiTable } from '../util/word-matcher.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
@@ -89,7 +88,6 @@ import {
 	classifyPrimitiveField,
 	fieldTypeComponents,
 	kindEnumAltIdPairs,
-	slotSeparatorTexts,
 	compareOrdinal,
 	isTextLeaf
 } from './shared.ts';
@@ -3077,34 +3075,6 @@ function edgeIdOf(plan: RenderPlan, node: AssembledNode): number {
 	throw new Error(`kind '${node.kind}' has kind-edge sites but no edge row to prepare and write them from`);
 }
 
-function sourceTrailingSeparator(
-	node: AssembledList,
-	kindEntries: readonly KindEnumEntry[]
-): { readonly kind: number; readonly separators: readonly number[] } | undefined {
-	if (node.trailingDelimiter !== 'optional') return undefined;
-	const idOf = (entry: KindEnumEntry | undefined, spelled: string): number => {
-		if (entry === undefined) {
-			throw emitShapeFailure({
-				code: 'trailing-separator-without-kind-id',
-				ownerKind: node.kind,
-				message: `list '${node.kind}' has an optional trailing separator ${JSON.stringify(spelled)} with no kind id to find in its source`,
-				details: { separator: spelled }
-			});
-		}
-		return entry.id;
-	};
-	const model = renderSlotModelOf(node);
-	const field = [...model.named, ...model.unnamed].find(isMultiple);
-	const literals = field === undefined ? [] : slotSeparatorTexts(field, false);
-	const separators = [
-		...literals.map((text) => idOf(findKindEntryForLiteral(kindEntries, text), text)),
-		...node.separatorTokenArms.map((arm) =>
-			arm.type === STRING ? idOf(findKindEntryForLiteral(kindEntries, arm.value), arm.value) : idOf(findKindEntry(kindEntries, arm.name), arm.name)
-		)
-	];
-	return { kind: idOf(findKindEntry(kindEntries, node.kind), node.kind), separators: [...new Set(separators)] };
-}
-
 function delimiterSiteOf(plan: RenderPlan, node: AssembledNode): DelimiterSite | undefined {
 	return plan.delimiterSites.find((site) => site.source === node.kind);
 }
@@ -3493,7 +3463,6 @@ function prepareStructImpl(
 	if (isCompound) {
 		body.push(...rootEdgeStamp(plan, node, fillFields));
 		const delim = node instanceof AssembledList ? delimiterSiteOf(plan, node) : undefined;
-		const trailing = delim !== undefined && node instanceof AssembledList ? sourceTrailingSeparator(node, kindEntries) : undefined;
 		if (kindEdgeSidesOf(plan, node).size > 0) body.push(prepareEdgesLine(plan, node, templateBody));
 		body.push(...slotGapFills(node));
 		for (const site of synthesizedSpacingSites(plan, node)) {
@@ -3502,12 +3471,7 @@ function prepareStructImpl(
 		}
 		body.push(...seatLoops(seated));
 		if (delim !== undefined) {
-			const fallback = `ctx.options.delimiter_at(options::${delim.constName})`;
-			const value =
-				trailing === undefined
-					? fallback
-					: `::sittir_core::prepare::source_trailing_delimiter(${PREPARE_MOD}::LayoutTarget::sides(&parts.layout, overlay).as_ref(), ::sittir_core::types::KindId(${trailing.kind}), &[${trailing.separators.map((id) => `::sittir_core::types::KindId(${id})`).join(', ')}], ${fallback}, ctx)`;
-			body.push(`    let delimiter = ${value};`, `    ${PREPARE_MOD}::Setting::fill(&mut parts.delimiter, overlay, delimiter);`);
+			body.push(`    ${PREPARE_MOD}::Setting::fill(&mut parts.delimiter, overlay, ctx.options.delimiter_at(options::${delim.constName}));`);
 		}
 		const sep = node instanceof AssembledList ? separatorSiteOf(plan, node) : undefined;
 		if (sep !== undefined && node instanceof AssembledList) {

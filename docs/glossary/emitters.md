@@ -3639,13 +3639,6 @@ sides use. An arm missing either side is left out.
  */
 ```
 
-### `packages/codegen/src/emitters/shared.ts::slotSeparatorTexts`
-
-The literal separator texts a repeated slot's values carry — the one source
-of "what separates this slot", which the render module reads for the
-slot's separator texts. `elidedOnly` narrows to the
-values that may be absent, which is the elidable-list form.
-
 ### `packages/codegen/src/emitters/shared.ts::canonicalSeparatedListField`
 
 ```text
@@ -13280,30 +13273,9 @@ render's.
 
 A list's delimiter is filled from the table like any site, zero included:
 the table's value is the grammar's declared default or a render option, and
-the node's own value still wins. One exception: a list whose trailing
-separator is optional takes its trailing flag from the source while its
-last item is still its source's last (`sourceTrailingSeparator`).
+the node's own value still wins.
 
 It reads a coordinate (`READ_COORDINATE`).
-
-### `packages/codegen/src/emitters/render-module.ts::sourceTrailingSeparator`
-
-The facts a list's generated `prepare` passes to `source_trailing_delimiter`:
-the list's own kind id and the kind ids of its separator tokens (the multiple
-slot's literal separators and the token arms of its separator rule), or
-nothing when the list's trailing separator is not optional. A separator with
-no kind id is a compile error.
-
-When a list has them, an unset `delimiter` is filled by
-`source_trailing_delimiter` instead of the plain table value. A list read
-or rebuilt from a source list (its layout's `sides`) whose trailing edge is
-unchanged, so that its last item is still the source's last, takes its
-trailing flag from that source list: set if the source list's last child
-that is not an extra is one of these separators, clear otherwise. The child
-is read from the tree, never from the span's text, so a comment the span
-includes is not mistaken for a separator. The leading flag and every other
-list take the table value. The source wins both ways, so a source with no
-trailing separator renders none even where the table's default is trailing.
 
 ### `packages/codegen/src/emitters/render-module.ts::optionDefaultFills`
 

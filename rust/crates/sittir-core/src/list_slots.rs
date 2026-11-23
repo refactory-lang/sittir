@@ -48,28 +48,51 @@ pub fn slot_gaps(routed: &Routed) -> Vec<SlotGaps> {
         .filter(|(_, at)| at.len() >= 2)
         .filter_map(|(slot, at)| {
             let key = *routed.keys.get(slot.index())?;
-            let gaps = at
-                .windows(2)
-                .filter_map(|pair| {
-                    let (first, last) = (&routed.children[pair[0]], &routed.children[pair[1]]);
-                    let mut separators = Vec::new();
-                    for between in pair[0] + 1..pair[1] {
-                        match routed.routes[between] {
-                            Route::Separator { slot: own, .. } if own == slot => separators.push(&routed.children[between]),
-                            Route::Trivia => {}
-                            _ => return None,
-                        }
-                    }
-                    let [separator] = separators.as_slice() else { return None };
-                    Some(SlotGap {
-                        items: (first.index, last.index),
-                        separator: Separator { kind: separator.grammar, start: separator.start, end: separator.end },
-                    })
-                })
-                .collect();
-            Some(SlotGaps { key, gaps })
+            Some(SlotGaps { key, gaps: gaps_between(&routed.children, &routed.routes, slot, &at) })
         })
         .collect()
+}
+
+/// The gaps of the slot `slot` whose items are the children at `at`.
+fn gaps_between(children: &[crate::read::Kid], routes: &[Route], slot: crate::types::SlotId, at: &[usize]) -> Vec<SlotGap> {
+    at.windows(2)
+        .filter_map(|pair| {
+            let (first, last) = (&children[pair[0]], &children[pair[1]]);
+            let mut separators = Vec::new();
+            for between in pair[0] + 1..pair[1] {
+                match routes[between] {
+                    Route::Separator { slot: own, .. } if own == slot => separators.push(&children[between]),
+                    Route::Trivia => {}
+                    _ => return None,
+                }
+            }
+            let [separator] = separators.as_slice() else { return None };
+            Some(SlotGap {
+                items: (first.index, last.index),
+                separator: Separator { kind: separator.grammar, start: separator.start, end: separator.end },
+            })
+        })
+        .collect()
+}
+
+/// The separator a list slot stores, of the kinds its gaps hold: the one
+/// most take, a tie going to `preferred`, the arm the options the tree was
+/// read with write there, and only where it differs from that arm. A kind
+/// with no separator preference stores none: it has the one separator its
+/// template writes.
+#[must_use]
+pub fn stored_separator(kinds: &[crate::types::KindId], preferred: Option<crate::types::KindId>) -> Option<crate::types::KindId> {
+    majority(kinds, preferred).filter(|&kind| preferred.is_some_and(|written| written != kind))
+}
+
+/// What `stored_separator` answers for the slot `slot` of a node with
+/// these routed children.
+#[must_use]
+pub fn parsed_separator(children: &[crate::read::Kid], routes: &[Route], slot: crate::types::SlotId, preferred: Option<crate::types::KindId>) -> Option<crate::types::KindId> {
+    preferred?;
+    let at: Vec<usize> = routes.iter().enumerate().filter_map(|(at, route)| matches!(*route, Route::Slot { slot: own, .. } if own == slot).then_some(at)).collect();
+    let kinds: Vec<crate::types::KindId> = gaps_between(children, routes, slot, &at).iter().map(|gap| gap.separator.kind).collect();
+    stored_separator(&kinds, preferred)
 }
 
 /// Each item of a routed node's list slots, in document order, with the

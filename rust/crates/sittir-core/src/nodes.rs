@@ -160,6 +160,14 @@ pub trait Nodes<'t> {
     /// token too.
     fn holds_error(&mut self, index: NodeIndex) -> bool;
 
+    /// The delimiter option the parse stored on the list `at`, itself `None`
+    /// for a node that stores none; `None` for a backer that keeps no
+    /// stored option, which resolves it from the node's children.
+    fn stored_delimiter(&mut self, at: &Kid) -> Option<Option<crate::types::Delimiter>> {
+        let _ = at;
+        None
+    }
+
     /// The outermost `ERROR` that is or holds the node at `index`, or `None`
     /// when none does. A tree whose root holds no error answers at once;
     /// otherwise the node's ancestors are climbed, so the cost follows the
@@ -520,6 +528,10 @@ impl<'t> Nodes<'t> for Navigation<'t> {
 
     fn holds_error(&mut self, index: NodeIndex) -> bool {
         self.nodes().holds_error(index)
+    }
+
+    fn stored_delimiter(&mut self, at: &Kid) -> Option<Option<crate::types::Delimiter>> {
+        self.nodes().stored_delimiter(at)
     }
 
     fn error_holding(&mut self, index: NodeIndex) -> Option<Kid> {

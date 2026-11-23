@@ -193,6 +193,9 @@ pub struct ReadCtx<'s> {
     /// coordinate spans the whole source (`ReadCtx::over_records`): unset on
     /// a read rooted at a record, whose row its parse stamped.
     pub root_is_source: bool,
+    /// The options the tree is read with, which a list's separator is
+    /// resolved against (`ReadCtx::with_read_options`): set on a hydration.
+    pub read_options: Option<&'s crate::options::ResolvedOptions>,
 }
 
 /// The names the nodes of a read keep past a call, where its records
@@ -347,7 +350,21 @@ pub enum Origin {
 
 impl<'s> ReadCtx<'s> {
     pub fn new(source: &'s str, tree_id: impl Into<Option<crate::types::TreeId>>, shows: fn(KindId) -> bool) -> Self {
-        Self { source, tree_id: tree_id.into(), shows, relaxes: relaxes_nothing, snapshot: None, sides: None, changed: None, inline_units: false, inline_items: false, units_only: false, start: true, at: None, names: None, root_is_source: true }
+        Self { source, tree_id: tree_id.into(), shows, relaxes: relaxes_nothing, snapshot: None, sides: None, changed: None, inline_units: false, inline_items: false, units_only: false, start: true, at: None, names: None, root_is_source: true, read_options: None }
+    }
+
+    /// This read's context, reading with `options`.
+    #[must_use]
+    pub fn with_read_options(mut self, options: &'s crate::options::ResolvedOptions) -> Self {
+        self.read_options = Some(options);
+        self
+    }
+
+    /// The separator the options this tree is read with write between the
+    /// items of a list of `kind`, none for a kind with no separator site.
+    #[must_use]
+    pub fn separator_of(&self, kind: KindId) -> Option<KindId> {
+        self.read_options?.separator_of(kind)
     }
 
     /// The read names each node its coordinates name by `names`.

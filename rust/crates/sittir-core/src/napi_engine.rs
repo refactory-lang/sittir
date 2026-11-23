@@ -2112,10 +2112,6 @@ where
         self.trees.line_starts_inside_tokens(at)
     }
 
-    fn last_list_child_kind(&self, at: crate::slot::NodeIdOrCoordinate<'_>, span: crate::types::Span, kind: crate::types::KindId) -> Option<crate::types::KindId> {
-        self.trees.last_list_child_kind(at, span, kind)
-    }
-
     fn for_each_edge_level(&self, at: crate::slot::NodeIdOrCoordinate<'_>, side: crate::options::Side, f: &mut dyn FnMut(crate::render::EdgeLevel)) {
         self.trees.for_each_edge_level(at, side, f);
     }

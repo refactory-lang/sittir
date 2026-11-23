@@ -921,7 +921,7 @@ impl<'a> Hydration<'a> {
                 break;
             }
             self.errors.pop();
-            self.finish(draft, &parsed_side(row, None), KindId::ERROR)?;
+            self.finish(draft, &parsed_side(row, None, None), KindId::ERROR)?;
         }
         Ok(())
     }
@@ -1019,7 +1019,7 @@ impl<'a> Hydration<'a> {
                 break;
             }
             self.errors.pop();
-            self.finish(error, &parsed_side(row, None), KindId::ERROR)?;
+            self.finish(error, &parsed_side(row, None, None), KindId::ERROR)?;
         }
         let run = self.open.iter().rposition(|open| open.at == draft.at).and_then(|found| {
             self.open.truncate(found + 1);
@@ -1084,11 +1084,13 @@ fn facts_of(kid: &crate::nodes::Kid, node: &crate::tree_sitter::Node<'_>) -> Nod
     NodeFacts::of(kid, node.is_missing(), node.has_error() || node.is_missing() || kid.error())
 }
 
-/// The side record of a parsed record read at `row`: where it came from,
-/// and a list's delimiters.
+/// The side record of a parsed record read at `row`: where it came from, a
+/// list's delimiters, and the separator of its slot at a word
+/// (`list_slots::parsed_separator`).
 #[must_use]
-pub fn parsed_side(row: Row, delimiter: Option<crate::types::Delimiter>) -> SideRecord {
-    SideRecord { at: Some(row), delimiter, ..SideRecord::default() }
+pub fn parsed_side(row: Row, delimiter: Option<crate::types::Delimiter>, separator: Option<(u32, KindId)>) -> SideRecord {
+    let slots = separator.map(|(word, separator)| super::SideSlot { word, separator: Some(separator), ..super::SideSlot::default() }).into_iter().collect();
+    SideRecord { at: Some(row), delimiter, slots, ..SideRecord::default() }
 }
 
 /// What the coordinate of the child `at` names: its stamped kind and its

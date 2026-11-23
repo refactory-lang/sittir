@@ -644,6 +644,16 @@ impl<'t> Nodes<'t> for RunNodes<'t> {
         self.answering(|walk| walk.facts(index).is_some_and(|facts| facts.holds_error))
     }
 
+    /// A record's side holds its delimiter option; a row stores none, so a
+    /// list read as one resolves it from its children.
+    fn stored_delimiter(&mut self, at: &Kid) -> Option<Option<crate::types::Delimiter>> {
+        self.answering(|walk| {
+            let NodeSite::Record(record) = walk.site(at.index)? else { return None };
+            let stored = walk.side(record).map(|side| side.delimiter);
+            Some(walk.answer(stored, None))
+        })
+    }
+
     /// A record an `ERROR` holds names no node (`SideRecord::held_by_error`),
     /// so a node's own `ERROR` is the only one to find, and nothing above it
     /// is read.

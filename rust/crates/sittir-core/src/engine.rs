@@ -255,51 +255,6 @@ pub fn node_at_span(nodes: &mut dyn Nodes<'_>, from: NodeIndex, span: Span, kind
     search(nodes, from, span, kind)
 }
 
-/// The node holding the children of a list spanning `span` that has no node
-/// of its own, found going down from the node at `from` as tree-sitter finds
-/// the smallest node holding a span (`Node::descendant_for_byte_range`): at
-/// each level, the first child that reaches the span's end and passes its
-/// start (or, empty, reaches its start), when it starts at or before the
-/// span does. It is the outermost of the nodes sharing the last bytes the
-/// descent met or, when those bytes are exactly `span`, the node strictly
-/// around them, none when `from` spans it. `None` for a span that ends
-/// before it starts.
-fn list_holder(nodes: &mut dyn Nodes<'_>, from: NodeIndex, span: Span) -> Option<NodeIndex> {
-    if span.start > span.end {
-        return None;
-    }
-    let reaches = |child: &Kid| child.end >= span.end && if child.width() == 0 { child.end >= span.start } else { child.end > span.start };
-    let mut outermost = nodes.kid(from);
-    let (mut node, mut around) = (from, None);
-    loop {
-        let child = if span.start == span.end { nodes.kids(node).iter().copied().find(|child| reaches(child)) } else { nodes.child_past(node, span.start).filter(|child| reaches(child)) };
-        match child.filter(|child| child.start <= span.start) {
-            Some(child) => {
-                if child.span() != outermost.span() {
-                    around = Some(outermost.index);
-                    outermost = child;
-                }
-                node = child.index;
-            }
-            None => return if outermost.span() == span { around } else { Some(outermost.index) },
-        }
-    }
-}
-
-/// The last child that is neither an extra nor a zero-width token (which
-/// spells no delimiter) of the list spanning `span`, found going down from
-/// the node at `from`: of the node the read stamped `kind` at that span
-/// (`node_at_span`), or, for a list with no node of its own, of the node
-/// holding its children (`list_holder`), among the children within the span.
-#[must_use]
-pub fn last_list_child(nodes: &mut dyn Nodes<'_>, from: NodeIndex, span: Span, kind: KindId) -> Option<Kid> {
-    let holder = match node_at_span(nodes, from, span, kind) {
-        Some(list) => list.index,
-        None => list_holder(nodes, from, span)?,
-    };
-    nodes.kids(holder).iter().rev().find(|child| !child.extra && child.width() > 0 && child.start >= span.start && child.end <= span.end).copied()
-}
-
 // ─── ParsedTree ────────────────────────────────────────────────────────────────────────────
 
 /// Owned parse result — tree + source + format.
@@ -421,6 +376,12 @@ pub trait Backing<G: EngineGrammar>: Sized {
 
     /// Whether the node at `index` can hold an extra or `ERROR` on a side.
     fn holds_entries(&self, nodes: &mut dyn Nodes<'_>, index: NodeIndex) -> bool;
+
+    /// The list slots the parse stamped on the node at `index`, of `kind`;
+    /// none for a node whose slots are measured from its children.
+    fn stamped_slots(&self, _index: NodeIndex, _kind: KindId) -> Option<Vec<crate::layout::SlotLayout>> {
+        None
+    }
 
     /// Counts the heap of `value`, inserted into a read cache, less what the
     /// value it replaced held, where this backer keeps a count.
@@ -1201,6 +1162,20 @@ impl<G: EngineGrammar> Backing<G> for Records<'_, G> {
         self.grammar.surface_kinds().named_extras || nodes.holds_error(index) || self.entry_starts(|starts| starts.is_none_or(|starts| !starts.is_empty()))
     }
 
+    /// A record holds its list's separator, in its side record's slot entry,
+    /// where it differs from the arm of the options it was read with; a kind
+    /// with no separator site holds none.
+    fn stamped_slots(&self, index: NodeIndex, kind: KindId) -> Option<Vec<crate::layout::SlotLayout>> {
+        if self.options.separator_of(kind).is_none() {
+            return Some(Vec::new());
+        }
+        let crate::arena::NodeSite::Record(at) = self.table.site(index)? else { return None };
+        let (shape, bits) = self.shape;
+        let record = shape(crate::arena::ArenaRead::header_kind(self.built, at, bits).ok()?)?;
+        let side = crate::arena::SideRecord::read(self.built, crate::arena::side_of(self.built, at).ok()?).ok()?;
+        Some(side.slots.iter().filter(|slot| slot.separator.is_some()).filter_map(|slot| Some(crate::layout::SlotLayout { slot: record.cells.iter().find(|cell| cell.word == slot.word)?.key.to_string(), separator: slot.separator, ..crate::layout::SlotLayout::default() })).collect())
+    }
+
     fn count_cached<V: HeapBytes>(&self, _: &V, _: Option<&V>) {}
 
     fn grew(&self) {}
@@ -1909,19 +1884,23 @@ impl<G: EngineGrammar, B: Backing<G>> Lookups<'_, G, B> {
     /// a separator site and it differs from that site's arm: a list with no
     /// site has the one separator its template writes.
     fn node_slots(&mut self, index: crate::types::NodeIndex) -> Arc<NodeSlots> {
-        use crate::list_slots::{majority, SlotGaps};
+        use crate::list_slots::{stored_separator, SlotGaps};
         let tree = self.tree;
         if let Some(slots) = tree.caches().slots.lock().unwrap_or_else(std::sync::PoisonError::into_inner).get(&index) {
             return Arc::clone(slots);
         }
         let at = self.nodes.kid(index);
-        let slots = tree.grammar().slot_routes(&mut self.nodes, &at).map_or_else(Vec::new, |routed| crate::list_slots::slot_gaps(&routed));
         let mut measured = NodeSlots::default();
-        for SlotGaps { key, gaps } in &slots {
+        if let Some(stamped) = tree.stamped_slots(index, at.grammar) {
+            measured.layouts = stamped;
+        } else {
+            let slots = tree.grammar().slot_routes(&mut self.nodes, &at).map_or_else(Vec::new, |routed| crate::list_slots::slot_gaps(&routed));
             let preferred = tree.options().separator_of(at.grammar);
-            let kinds: Vec<KindId> = gaps.iter().map(|gap| gap.separator.kind).collect();
-            let separator = majority(&kinds, preferred).filter(|&kind| preferred.is_some_and(|written| written != kind));
-            measured.layouts.push(crate::layout::SlotLayout { slot: (*key).to_string(), separator, ..crate::layout::SlotLayout::default() });
+            for SlotGaps { key, gaps } in &slots {
+                let kinds: Vec<KindId> = gaps.iter().map(|gap| gap.separator.kind).collect();
+                let separator = stored_separator(&kinds, preferred);
+                measured.layouts.push(crate::layout::SlotLayout { slot: (*key).to_string(), separator, ..crate::layout::SlotLayout::default() });
+            }
         }
         let measured = Arc::new(measured);
         let replaced = tree.caches().slots.lock().unwrap_or_else(std::sync::PoisonError::into_inner).insert(index, Arc::clone(&measured));
@@ -2254,12 +2233,6 @@ impl<G: EngineGrammar, B: Backing<G>> Lookups<'_, G, B> {
         Some(line_starts_inside_tokens(&mut self.nodes, index, self.tree.source()))
     }
 
-    /// What `SourceTable::last_list_child_kind` answers, going down from the
-    /// node at `from`.
-    fn last_list_child_kind(&mut self, from: NodeIndex, span: Span, kind: KindId) -> Option<KindId> {
-        last_list_child(&mut self.nodes, from, span, kind).map(|kid| kid.grammar)
-    }
-
     /// Visits the levels at the edge on `side` of `at`
     /// (`SourceTable::for_each_edge_level`).
     fn edge_levels(&mut self, at: Named, side: crate::options::Side, f: &mut dyn FnMut(crate::render::EdgeLevel)) {
@@ -2443,11 +2416,6 @@ impl<G: EngineGrammar, B: Backing<G>> SourceTable for Seating<'_, G, B> {
 
     fn line_starts_inside_tokens(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Vec<u32> {
         self.own(at).and_then(|(mut lookups, named)| lookups.line_starts(named.index)).unwrap_or_default()
-    }
-
-    fn last_list_child_kind(&self, at: crate::slot::NodeIdOrCoordinate<'_>, span: Span, kind: KindId) -> Option<KindId> {
-        let (mut lookups, named) = self.own(at)?;
-        lookups.last_list_child_kind(named.index, span, kind)
     }
 
     fn slot_layouts(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Vec<crate::layout::SlotLayout> {
@@ -2715,7 +2683,7 @@ impl<G: EngineGrammar> Engine<G> {
             writer.finish(entry, root).map_err(|refusal| refusal.to_string())?;
             root
         } else {
-            let mut ctx = crate::read::ReadCtx::new(source, crate::types::TreeId(0), grammar.shows()).with_relaxes(grammar.relaxes());
+            let mut ctx = crate::read::ReadCtx::new(source, crate::types::TreeId(0), grammar.shows()).with_relaxes(grammar.relaxes()).with_read_options(&self.options);
             let (mut placed, mut apart) = (Vec::new(), Vec::new());
             let root = crate::arena::hydrate_whole::<N>(&mut tree.walk(), &mut ctx, Some(entry), grammar.surface_kinds(), rows, &mut writer, &mut placed, &mut apart).map_err(|refusal| refusal.describe(&G::kind_name))?;
             writer.finish(entry, root).map_err(|refusal| refusal.to_string())?;
@@ -3041,10 +3009,6 @@ impl<G: EngineGrammar, B: Backing<G>> SourceTable for ReadSources<'_, G, B> {
 
     fn line_starts_inside_tokens(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Vec<u32> {
         self.seating(at).map_or_else(Vec::new, |seating| seating.line_starts_inside_tokens(at))
-    }
-
-    fn last_list_child_kind(&self, at: crate::slot::NodeIdOrCoordinate<'_>, span: crate::types::Span, kind: KindId) -> Option<KindId> {
-        self.seating(at)?.last_list_child_kind(at, span, kind)
     }
 
     fn sides(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Option<Box<dyn crate::trivia::FramedTrivia>> {

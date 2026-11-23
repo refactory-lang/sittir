@@ -96,7 +96,7 @@ impl EngineGrammar for TypeScriptGrammar {
     }
 
     fn delimiter(self, nodes: &mut dyn sittir_core::nodes::Nodes<'_>, at: &sittir_core::nodes::Kid) -> Option<sittir_core::types::Delimiter> {
-        <AnyNode as sittir_core::read::ReadNode>::delimiter(nodes, at)
+        nodes.stored_delimiter(at).unwrap_or_else(|| <AnyNode as sittir_core::read::ReadNode>::delimiter(nodes, at))
     }
 
     sittir_core::records_codec! {

@@ -4,9 +4,12 @@
 
 use sittir_core::arena::side::{RunEntry, SideRecord};
 use sittir_core::arena::{header_of, Address, ArenaRead, BodySlot, Cell, CellWord, EdgePart, HydrateNode, ListCell, ReadRows, RecordCells, RecordGrammar, RecordShape};
-use sittir_core::engine::Engine;
+use sittir_core::engine::{Backing, Engine, EngineGrammar, Records};
+use sittir_core::layout::SlotLayout;
+use sittir_core::nodes::{Kid, Nodes, Step, Visit};
 use sittir_core::options::ResolvedOptions;
-use sittir_core::types::KindId;
+use sittir_core::types::{Delimiter, KindId, NodeIndex};
+use sittir_parity_tests::{fixture_sources, parsed};
 
 type ShapeFn = fn(KindId) -> Option<RecordShape>;
 
@@ -128,4 +131,74 @@ fn record_shapes_hold_the_tokens_their_bodies_write_at_each_edge() {
     assert_eq!(suite.edges[0], [EdgePart::Token(python::_INDENT)]);
     let simple = <sittir_python::render::AnyNode as RecordCells>::shape(python::_SIMPLE_STATEMENTS).expect("a record");
     assert_eq!(simple.edges[1], [EdgePart::Token(python::_NEWLINE)]);
+}
+
+const MIXED_LISTS: [&str; 3] = ["type T = { a: string, b: number; c: boolean; d: string }\n", "type T = { a: string; b: number, c: boolean }\n", "type T = {\n  a: string // c\n  b: number\n}\n"];
+
+fn read_kids<G: EngineGrammar, B: Backing<G>>(tree: &B) -> Vec<Kid> {
+    let mut kids = Vec::new();
+    tree.nodes().walk(NodeIndex::ROOT, &mut |step, kid| {
+        if kid.entry() {
+            return Visit::Pass;
+        }
+        if step == Step::Meet {
+            kids.push(*kid);
+        }
+        Visit::Enter
+    });
+    kids
+}
+
+type ListAnswer = (KindId, KindId, u32, u32, KindId, Vec<SlotLayout>);
+
+fn list_answers<G: EngineGrammar, B: Backing<G>>(tree: &B) -> Vec<ListAnswer> {
+    read_kids::<G, B>(tree).into_iter().filter_map(|kid| Some((kid.grammar, kid.display, kid.start, kid.end, tree.slot_separator(kid.index)?, tree.slot_layouts(kid.index)))).collect()
+}
+
+fn delimiters<G: EngineGrammar + Copy, B: Backing<G>>(grammar: G, tree: &B) -> Vec<(KindId, u32, u32, Delimiter)> {
+    let kids = read_kids::<G, B>(tree);
+    let mut nodes = tree.nodes();
+    kids.iter().filter_map(|kid| Some((kid.grammar, kid.start, kid.end, grammar.delimiter(&mut nodes, kid)?))).collect()
+}
+
+fn each_slot_content_read<G: RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions, mut check: impl FnMut(&str, &sittir_core::engine::ParsedTree<G>, &Records<'_, G>)) {
+    let extra = if name == "typescript" { MIXED_LISTS.as_slice() } else { &[] };
+    for source in fixture_sources(name).iter().map(String::as_str).chain(extra.iter().copied()) {
+        let tree = parsed(grammar, options(), source);
+        let mut engine = Engine::new(grammar, options()).expect("an engine");
+        let Some(root) = engine.parse_records_with::<N>(source, ReadRows::SlotContent).expect("a read").root else { continue };
+        let built = engine.written().built();
+        let Ok(records) = Records::over(&engine, &built, root) else { continue };
+        check(source, &tree, &records);
+    }
+}
+
+macro_rules! each_grammar {
+    ($check:ident) => {
+        $check::<_, sittir_rust::render::AnyNode>("rust", sittir_rust::RustGrammar, sittir_rust::render::options::defaults);
+        $check::<_, sittir_typescript::render::AnyNode>("typescript", sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults);
+        $check::<_, sittir_python::render::AnyNode>("python", sittir_python::PythonGrammar, sittir_python::render::options::defaults);
+        $check::<_, sittir_regex::render::AnyNode>("regex", sittir_regex::RegexGrammar, sittir_regex::render::options::defaults);
+        $check::<_, sittir_scm::render::AnyNode>("scm", sittir_scm::ScmGrammar, sittir_scm::render::options::defaults);
+    };
+}
+
+#[test]
+fn parsed_lists_answer_their_separators_from_stamps() {
+    fn check<G: RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions) {
+        each_slot_content_read::<G, N>(name, grammar, options, |source, tree, records| {
+            assert_eq!(list_answers::<G, _>(records), list_answers::<G, _>(tree), "{name} {source:?}");
+        });
+    }
+    each_grammar!(check);
+}
+
+#[test]
+fn the_query_reads_the_stored_delimiter() {
+    fn check<G: RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions) {
+        each_slot_content_read::<G, N>(name, grammar, options, |source, tree, records| {
+            assert_eq!(delimiters(grammar, records), delimiters(grammar, tree), "{name} {source:?}");
+        });
+    }
+    each_grammar!(check);
 }

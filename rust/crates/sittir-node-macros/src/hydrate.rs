@@ -63,8 +63,8 @@ fn record_start(words: u32) -> TokenStream {
     }
 }
 
-fn record_end(delimiter: &TokenStream) -> TokenStream {
-    quote!(records.finish(__draft, &::sittir_core::arena::parsed_side(__row, #delimiter), __stored_kind(&__node)))
+fn record_end(delimiter: &TokenStream, separator: &TokenStream) -> TokenStream {
+    quote!(records.finish(__draft, &::sittir_core::arena::parsed_side(__row, #delimiter, #separator), __stored_kind(&__node)))
 }
 
 fn words_of(ident: &Ident, attrs: &KindAttrs) -> syn::Result<u32> {
@@ -161,7 +161,16 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
     } else {
         quote!(::core::option::Option::None)
     };
-    let (collect, keep) = if flank.is_some() {
+    let chosen = fields.iter().any(|field| matches!(field.role, Role::SeparatorKind(_)));
+    let separator = if chosen {
+        let item = attrs.item.as_ref().ok_or_else(|| syn::Error::new_spanned(ident, "a list's separator choice needs `#[node(item = …)]`"))?;
+        let (position, slot) = slots.iter().find(|(_, field, _)| field.ident == item).map(|&(i, _, slot)| (i, slot)).ok_or_else(|| syn::Error::new_spanned(item, "`item` names one of the list's slots"))?;
+        let word = slot.cell.word.ok_or_else(|| syn::Error::new_spanned(item, "a list slot has its record cell"))?;
+        quote!(::sittir_core::list_slots::parsed_separator(&children, &routes, ::sittir_core::types::SlotId(#position), ctx.separator_of(__at.grammar)).map(|kind| (#word, kind)))
+    } else {
+        quote!(::core::option::Option::None)
+    };
+    let (collect, keep) = if flank.is_some() || chosen {
         (
             quote!(let (mut children, mut routes) = (::std::vec::Vec::new(), ::std::vec::Vec::new());),
             quote! {
@@ -173,7 +182,7 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
         (quote!(), quote!())
     };
     let start = record_start(words);
-    let end = record_end(&delimiter);
+    let end = record_end(&delimiter, &separator);
     Ok(quote! {
         #start
         #(#starts)*
@@ -252,7 +261,7 @@ fn interior(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], _pattern: &L
         .transpose()?
         .ok_or_else(|| syn::Error::new_spanned(ident, "a token interior's record has a `verbatim` cell, the text a spelling outside the interior reads as"))?;
     let start = record_start(words);
-    let end = record_end(&quote!(::core::option::Option::None));
+    let end = record_end(&quote!(::core::option::Option::None), &quote!(::core::option::Option::None));
     Ok(quote! {
         #start
         records.meet_under(cursor, __at.count)?;
@@ -317,7 +326,7 @@ fn envelope(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Resu
         (quote!(), quote!())
     };
     let start = record_start(words);
-    let end = record_end(&quote!(::core::option::Option::None));
+    let end = record_end(&quote!(::core::option::Option::None), &quote!(::core::option::Option::None));
     Ok(quote! {
         const _: () = assert!(#wraps_hidden || <#inner as ::sittir_core::record::Stored>::STORED & ::sittir_core::record::stored::RECORD == 0, #message);
         #start
