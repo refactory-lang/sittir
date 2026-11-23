@@ -256,8 +256,7 @@ pub fn edge_item<K: std::ops::Deref<Target = [Kid]>>(list: &Kid, kinds: SurfaceK
     let kids = kids();
     let mut holders = kids.iter().filter(|kid| kid.holder());
     let item = if side == TriviaSide::Leading { holders.next() } else { holders.next_back() }?;
-    let at_edge = if side == TriviaSide::Leading { item.start == list.start } else { item.end == list.end };
-    (at_edge && !kinds.units.contains(&item.grammar)).then_some(*item)
+    kinds.takes_edge(item.grammar, item.span(), list.span(), side).then_some(*item)
 }
 
 /// The kinds of a grammar the assignment reads from its surface: the list
@@ -289,6 +288,15 @@ impl SurfaceKinds {
     #[must_use]
     pub fn exposes_in_place(&self, kind: KindId) -> bool {
         self.lists.contains(&kind) || self.wrappers.contains(&kind)
+    }
+
+    /// Whether a list's first or last holder child, of `kind` and spanning
+    /// `item`, takes the list's `side`: it lies at that edge of `list` and is
+    /// not a unit kind.
+    #[must_use]
+    pub fn takes_edge(&self, kind: KindId, item: Span, list: Span, side: TriviaSide) -> bool {
+        let at_edge = if side == TriviaSide::Leading { item.start == list.start } else { item.end == list.end };
+        at_edge && !self.units.contains(&kind)
     }
 
     /// Whether the grammar has a depth member at all.

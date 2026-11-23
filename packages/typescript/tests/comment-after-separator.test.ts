@@ -67,6 +67,11 @@ describe.each(Object.entries(storages))('a comment after an item`s separator, re
 		rendersAs(root.$with.statements(declaration.$with.body(body.$with.members(a!, z!))), 'interface I {\n  a: string;\n  z: boolean\n}\n');
 	});
 
+	it('gives a comment past the last member`s automatic semicolon to that member', () => {
+		const [, b] = interfaceMembers(ts.parse('interface I {\n  a: string\n  b: number // d\n}\n')).members;
+		expect(owns(b)).toEqual({ leading: [], trailing: ['// d'] });
+	});
+
 	it('gives the comment after an enum member`s comma to the member after it', () => {
 		const [declaration] = ts.parse('enum E {\n  A, // c\n  B\n}\n').statements();
 		if (declaration === undefined || !ts.is.enumDeclaration(declaration)) throw new Error('expected an enum');

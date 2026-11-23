@@ -386,18 +386,18 @@ impl OpenRun {
 
     /// The item a list or wrapper of `kind` spanning `span` passes an extra
     /// on `side` to (`SurfaceKinds::exposes_in_place`): its first or last
-    /// child (`children`, under the row at `holder` or the record's node),
-    /// when that begins or ends where the node does and the surface exposes
-    /// it as a node.
+    /// holder child (`children`, under the row at `holder` or the record's
+    /// node), when that child takes the edge (`SurfaceKinds::takes_edge`).
     fn passed(&self, kind: KindId, span: Span, holder: Option<usize>, leading: bool, kinds: crate::trivia_table::SurfaceKinds) -> Option<usize> {
+        use crate::trivia_table::TriviaSide;
         if !kinds.exposes_in_place(kind) {
             return None;
         }
-        let mut children = self.children(holder);
-        let item = if leading { children.next() } else { children.last() }?;
+        let mut holders = self.children(holder).filter(|&child| self.beside[child].named);
+        let item = if leading { holders.next() } else { holders.last() }?;
         let beside = &self.beside[item];
-        let touches = if leading { beside.span.start == span.start } else { beside.span.end == span.end };
-        (touches && beside.named && !kinds.units.contains(&beside.kind)).then_some(item)
+        let side = if leading { TriviaSide::Leading } else { TriviaSide::Trailing };
+        kinds.takes_edge(beside.kind, beside.span, span, side).then_some(item)
     }
 
     /// Where the node an extra on a side of the entry at `entry` is placed
