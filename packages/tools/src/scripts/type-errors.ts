@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { posix, resolve } from 'node:path';
 
-import { parseTypeCheckDiagnostics, type TypeCheckDiagnostic } from '@sittir/codegen';
+import { parseTypeCheckDiagnostics } from '@sittir/codegen';
 
 export interface TypeErrorsOptions {
 	log: string;
@@ -11,45 +11,92 @@ export interface TypeErrorsOptions {
 export interface PackageTypeErrors {
 	package: string;
 	errors: number;
+	projects: number;
 }
 
 export interface TypeErrorSummary {
+	records: number;
 	errors: number;
+	repeats: number;
 	packages: PackageTypeErrors[];
 }
 
 const RECORD = /error TS\d+:/g;
+const PROJECT_PREFIX = /^(\S+) type-check: (.*)$/;
 
-function packageOf(diagnostic: TypeCheckDiagnostic): string {
-	return /(?:^|\/)packages\/([^/]+)\//.exec(diagnostic.file ?? '')?.[1] ?? '(root)';
+interface ReportedError {
+	project: string;
+	file: string | undefined;
+	line: number | undefined;
+	column: number | undefined;
+	code: string;
+}
+
+function ownerOf(file: string): string {
+	return /(?:^|\/)packages\/([^/]+)\//.exec(file)?.[1] ?? '(root)';
+}
+
+function reportedErrors(output: string): ReportedError[] {
+	const found: ReportedError[] = [];
+	for (const line of output.split('\n')) {
+		const prefixed = PROJECT_PREFIX.exec(line);
+		const project = prefixed?.[1] ?? '';
+		const text = prefixed?.[2] ?? line;
+		for (const diagnostic of parseTypeCheckDiagnostics(text)) {
+			found.push({ project, file: diagnostic.file, line: diagnostic.line, column: diagnostic.column, code: diagnostic.code });
+		}
+	}
+	return found;
 }
 
 export function summarizeTypeErrors(output: string): TypeErrorSummary {
-	const recorded = output.match(RECORD)?.length ?? 0;
-	const diagnostics = parseTypeCheckDiagnostics(output);
-	if (diagnostics.length !== recorded) {
+	const records = output.match(RECORD)?.length ?? 0;
+	const reported = reportedErrors(output);
+	if (reported.length !== records) {
 		throw new Error(
-			`the log has ${recorded} error TS records but ${diagnostics.length} parse as diagnostics, so the log is not fully read`
+			`the log has ${records} error TS records but ${reported.length} parse as diagnostics, so the log is not fully read`
 		);
 	}
-	const counts = new Map<string, number>();
-	for (const diagnostic of diagnostics) {
-		const pkg = packageOf(diagnostic);
-		counts.set(pkg, (counts.get(pkg) ?? 0) + 1);
+	const groups = new Map<string, { owner: string; file: string; projects: Set<string>; reports: number }>();
+	for (const error of reported) {
+		const file =
+			error.file === undefined
+				? ''
+				: posix.isAbsolute(error.file)
+					? posix.normalize(error.file)
+					: posix.normalize(posix.join(error.project, error.file));
+		const key = [file, error.line ?? '', error.column ?? '', error.code].join('|');
+		const group = groups.get(key) ?? { owner: ownerOf(file), file, projects: new Set<string>(), reports: 0 };
+		groups.set(key, group);
+		group.projects.add(error.project);
+		group.reports += 1;
 	}
-	const packages = [...counts]
-		.map(([name, errors]) => ({ package: name, errors }))
+	const byOwner = new Map<string, { errors: number; projects: Set<string> }>();
+	for (const group of groups.values()) {
+		const row = byOwner.get(group.owner) ?? { errors: 0, projects: new Set<string>() };
+		byOwner.set(group.owner, row);
+		row.errors += 1;
+		for (const project of group.projects) row.projects.add(project);
+	}
+	const errors = [...byOwner.values()].reduce((sum, row) => sum + row.errors, 0);
+	if (errors !== groups.size) {
+		throw new Error(`per-package errors sum to ${errors} but there are ${groups.size} distinct errors`);
+	}
+	const repeats = [...groups.values()].reduce((sum, group) => sum + group.reports - 1, 0);
+	if (errors + repeats !== records) {
+		throw new Error(`${errors} distinct errors and ${repeats} repeats do not add up to ${records} error TS records`);
+	}
+	const packages = [...byOwner]
+		.map(([name, row]) => ({ package: name, errors: row.errors, projects: row.projects.size }))
 		.sort((a, b) => b.errors - a.errors || (a.package < b.package ? -1 : a.package > b.package ? 1 : 0));
-	const total = packages.reduce((sum, row) => sum + row.errors, 0);
-	if (total !== recorded) {
-		throw new Error(`per-package errors sum to ${total} but the log holds ${recorded} error TS records`);
-	}
-	return { errors: total, packages };
+	return { records, errors, repeats, packages };
 }
 
 function formatTypeErrors(summary: TypeErrorSummary): string {
-	const lines = summary.packages.map((row) => `${String(row.errors).padStart(6)}  ${row.package}`);
-	lines.push(`${String(summary.errors).padStart(6)}  total`);
+	const lines = summary.packages.map(
+		(row) => `${String(row.errors).padStart(6)}  ${row.package}  (reported by ${row.projects} projects)`
+	);
+	lines.push(`${String(summary.errors).padStart(6)}  distinct errors from ${summary.records} records (${summary.repeats} repeats)`);
 	return lines.join('\n');
 }
 

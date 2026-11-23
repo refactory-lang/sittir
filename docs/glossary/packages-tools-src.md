@@ -544,15 +544,15 @@ Options for `run`: the type-check log to read, and whether to print JSON.
 
 ### `packages/tools/src/scripts/type-errors.ts::PackageTypeErrors`
 
-One package's error count: the package named by the `packages/<name>/` segment of the error's file, or `(root)` for an error with no file or no such segment.
+One package's distinct errors, each counted in the package that holds its file, and the number of projects that reported them.
 
 ### `packages/tools/src/scripts/type-errors.ts::TypeErrorSummary`
 
-The per-package type errors of a type-check log: the total, and the packages in order of their error counts, most first.
+The type errors of a type-check log: the error records, the distinct errors (each counted once), the repeats (records beyond the first for each distinct error), and the packages in order of their distinct-error counts, most first.
 
 ### `packages/tools/src/scripts/type-errors.ts::summarizeTypeErrors`
 
-Counts the errors of a type-check log per package. A log has no total line (tsrs prints none), so the check is against its records: every `error TS<code>:` occurrence must parse as a diagnostic, or the log is refused as not fully read, and the per-package counts must sum to the number of records. Throws when either fails, so a count that leaves an error out is never printed.
+Counts the distinct type errors of a type-check log per package that holds their file. A project's record is resolved against the `packages/<name> type-check:` prefix that reported it, so a file shared by several projects (each re-checking it through a relative import) gives one key: its path, line, column and code. The total is the number of `error TS` records, counted by a regex independent of the parser. Refuses a log whose records do not all parse, whose distinct per-package counts disagree with the distinct keys, or whose distinct errors plus repeats do not add up to the records. Each package row also says how many projects reported its errors.
 
 ### `packages/tools/src/scripts/type-errors.ts::run`
 
