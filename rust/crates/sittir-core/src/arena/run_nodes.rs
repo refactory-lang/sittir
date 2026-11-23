@@ -9,10 +9,10 @@
 use std::collections::HashMap;
 
 use super::side::{NodeFacts, RunEntry};
-use super::{Address, ArenaError, ArenaRead, SideRecord};
+use super::{Address, ArenaError, ArenaRead, BodySlot, Cell, CellWord, EdgePart, ListCell, RecordShape, SideRecord};
 use crate::nodes::{Kid, Kids, Nodes};
 use crate::options::Side;
-use crate::types::{NodeIndex, Span};
+use crate::types::{KindId, NodeIndex, Span};
 
 /// Where a node is kept: its own record, the entry of its row in the run of
 /// the record `holder`, or, for a unit with no row, its site in its holder.
@@ -93,6 +93,18 @@ pub struct RunNodes<'t> {
     arena: &'t dyn ArenaRead,
     text: &'t str,
     table: &'t RunTable,
+    shape: (super::ShapeOf, u32),
+}
+
+/// What a slot of a record's render body holds at one of the record's edges.
+enum SlotEdge {
+    Absent,
+    /// A child the record's run holds.
+    Content,
+    /// A unit or a set flag: its kind.
+    Unit(KindId),
+    /// The content record that shares the record's own node.
+    Shared(Address),
 }
 
 /// One answer's read of the records, with the table held for it.
@@ -108,7 +120,8 @@ fn malformed(what: &'static str, at: Address) -> ArenaError {
 impl<'t> RunNodes<'t> {
     /// Navigation of the node the record at `record` was read as and the
     /// nodes under it, its bytes indexing `text`, the source it was read
-    /// from, over `table`, which holds those nodes alone: that node is its
+    /// from, over `table`, which holds those nodes alone, `shape` laying out
+    /// each record and giving its kind field's bits: that node is its
     /// root, with no parent, as a built node is, so nothing above it is
     /// read and it answers whether or not the records above it are still
     /// held.
@@ -118,8 +131,8 @@ impl<'t> RunNodes<'t> {
     /// What reading the record refuses, and `ArenaError::Malformed` for a
     /// record an `ERROR` holds, whose interior no view names
     /// (`SideRecord::held_by_error`).
-    pub fn holding(arena: &'t dyn ArenaRead, text: &'t str, record: Address, table: &'t RunTable) -> Result<Self, ArenaError> {
-        let nodes = Self { arena, text, table };
+    pub fn holding(arena: &'t dyn ArenaRead, text: &'t str, record: Address, table: &'t RunTable, shape: (super::ShapeOf, u32)) -> Result<Self, ArenaError> {
+        let nodes = Self { arena, text, table, shape };
         nodes.answering(|walk| {
             if walk.side(record)?.held_by_error {
                 return Err(ArenaError::Malformed { what: "record an ERROR holds", word: record.0 });
@@ -132,8 +145,8 @@ impl<'t> RunNodes<'t> {
     /// Navigation over `table`, which a navigation of the source rooted
     /// (`holding`).
     #[must_use]
-    pub fn over(arena: &'t dyn ArenaRead, text: &'t str, table: &'t RunTable) -> Self {
-        Self { arena, text, table }
+    pub fn over(arena: &'t dyn ArenaRead, text: &'t str, table: &'t RunTable, shape: (super::ShapeOf, u32)) -> Self {
+        Self { arena, text, table, shape }
     }
 
     fn answering<R>(&self, f: impl FnOnce(&mut Walk<'_>) -> R) -> R {
@@ -534,6 +547,85 @@ impl Walk<'_> {
         Ok(kids.into())
     }
 
+    /// The fixed token, unit or list separator the render body of the
+    /// record of the node at `index` writes at its edge on `side`: its first
+    /// part there that writes anything, through a content that shares its
+    /// node. None for a node with no record, for a source's root with an
+    /// extra or `ERROR` at that edge (the parser leaves one at no other
+    /// node's edge), and where that part is a child of its run.
+    fn edge_token(&mut self, holder: &Kid, side: Side, (shape_of, bits): (super::ShapeOf, u32), arm: &dyn Fn(KindId) -> Option<KindId>) -> Result<Option<KindId>, ArenaError> {
+        let index = holder.index;
+        let Some(NodeSite::Record(mut at)) = self.site(index) else { return Ok(None) };
+        if self.side(at)?.parent.is_none() && self.edge(index, side).is_some_and(|kid| kid.entry() && if side == Side::Before { kid.start == holder.start } else { kid.end == holder.end }) {
+            return Ok(None);
+        }
+        let flank = if side == Side::Before { crate::types::Delimiter::LEADING } else { crate::types::Delimiter::TRAILING };
+        'record: loop {
+            let kind = self.arena.header_kind(at, bits)?;
+            let Some(shape) = shape_of(kind) else { return Ok(None) };
+            for part in shape.edges[side as usize] {
+                let (edge, guarded) = match *part {
+                    EdgePart::Token(token) => return Ok(Some(token)),
+                    EdgePart::Slot(slot) => (self.slot_edge(at, shape, slot, side, bits)?, None),
+                    EdgePart::Guarded { slot, token } => (self.slot_edge(at, shape, slot, side, bits)?, Some(token)),
+                    EdgePart::List { cell, separator } => {
+                        let edge = self.slot_edge(at, shape, BodySlot::Cell(cell), side, bits)?;
+                        if !matches!(edge, SlotEdge::Absent) && self.side(at)?.delimiter.is_some_and(|set| set.has(flank)) {
+                            let word = shape.cells.get(usize::from(cell)).ok_or(malformed("body slot cell", at))?.word;
+                            let held = SideRecord::read(self.arena, super::side_of(self.arena, at)?)?;
+                            let stamped = held.slots.iter().find(|slot| slot.word == word).and_then(|slot| slot.separator);
+                            return Ok(Some(stamped.or_else(|| arm(kind)).unwrap_or(separator)));
+                        }
+                        (edge, None)
+                    }
+                };
+                match (edge, guarded) {
+                    (SlotEdge::Absent, _) => {}
+                    (_, Some(token)) => return Ok(Some(token)),
+                    (SlotEdge::Unit(kind), None) => return Ok(Some(kind)),
+                    (SlotEdge::Content, None) => return Ok(None),
+                    (SlotEdge::Shared(content), None) => {
+                        at = content;
+                        continue 'record;
+                    }
+                }
+            }
+            return Ok(None);
+        }
+    }
+
+    /// What `slot` of the record at `at` holds at its edge on `side`: a
+    /// list slot's item there.
+    fn slot_edge(&mut self, at: Address, shape: RecordShape, slot: BodySlot, side: Side, bits: u32) -> Result<SlotEdge, ArenaError> {
+        let arena = self.arena;
+        let words = arena.words(at, shape.words)?;
+        let cell = match slot {
+            BodySlot::Flag { word, bit, kind } => {
+                let held = *words.get(word as usize).ok_or(malformed("flag word", at))?;
+                return Ok(if held >> bit & 1 == 1 { SlotEdge::Unit(kind) } else { SlotEdge::Absent });
+            }
+            BodySlot::Cell(cell) => *shape.cells.get(usize::from(cell)).ok_or(malformed("body slot cell", at))?,
+        };
+        let held = words.get(cell.word as usize..(cell.word + cell.width) as usize).ok_or(malformed("cell word", at))?;
+        let decoded = match cell.run {
+            None => Cell::decode_parsed(held, cell, bits)?,
+            Some(width) => {
+                let mut items = ListCell::of_word(CellWord(held[0]), arena)?.items(arena, width)?;
+                match if side == Side::Before { items.next() } else { items.next_back() } {
+                    Some(item) => Cell::decode_parsed(item, cell, bits)?,
+                    None => Cell::Absent,
+                }
+            }
+        };
+        Ok(match decoded {
+            Cell::Absent => SlotEdge::Absent,
+            Cell::Unit { kind, .. } if kind == KindId::BLANK => SlotEdge::Absent,
+            Cell::Unit { kind, .. } => SlotEdge::Unit(kind),
+            Cell::Child { at: child, .. } if self.side(child)?.content => SlotEdge::Shared(child),
+            _ => SlotEdge::Content,
+        })
+    }
+
     fn parent_of(&mut self, index: NodeIndex) -> Result<Option<NodeIndex>, ArenaError> {
         let met = self.table.met.get(index.0 as usize).ok_or(ArenaError::Malformed { what: "node id", word: index.0 })?;
         let (site, known) = (met.site, met.parent);
@@ -630,6 +722,14 @@ impl<'t> Nodes<'t> for RunNodes<'t> {
 
     fn edge(&mut self, index: NodeIndex, side: Side) -> Option<Kid> {
         self.answering(|walk| walk.edge(index, side))
+    }
+
+    fn edge_token(&mut self, holder: &Kid, side: Side, arm: &dyn Fn(KindId) -> Option<KindId>) -> Option<KindId> {
+        let shape = self.shape;
+        self.answering(|walk| {
+            let token = walk.edge_token(holder, side, shape, arm);
+            walk.answer(token, None)
+        })
     }
 
     fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {

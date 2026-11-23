@@ -6,10 +6,9 @@ use sittir_core::arena::side::{RunEntry, SideRecord};
 use sittir_core::arena::{header_of, Address, ArenaRead, BodySlot, Cell, CellWord, EdgePart, HydrateNode, ListCell, ReadRows, RecordCells, RecordGrammar, RecordShape};
 use sittir_core::engine::{Backing, Engine, EngineGrammar, Records};
 use sittir_core::layout::SlotLayout;
-use sittir_core::nodes::{Kid, Nodes, Step, Visit};
 use sittir_core::options::ResolvedOptions;
-use sittir_core::types::{Delimiter, KindId, NodeIndex};
-use sittir_parity_tests::{fixture_sources, parsed};
+use sittir_core::types::{Delimiter, KindId};
+use sittir_parity_tests::{edge_chains, edge_sources, fixture_sources, parsed, read_kids, with_layout, MIXED_LISTS};
 
 type ShapeFn = fn(KindId) -> Option<RecordShape>;
 
@@ -133,22 +132,6 @@ fn record_shapes_hold_the_tokens_their_bodies_write_at_each_edge() {
     assert_eq!(simple.edges[1], [EdgePart::Token(python::_NEWLINE)]);
 }
 
-const MIXED_LISTS: [&str; 3] = ["type T = { a: string, b: number; c: boolean; d: string }\n", "type T = { a: string; b: number, c: boolean }\n", "type T = {\n  a: string // c\n  b: number\n}\n"];
-
-fn read_kids<G: EngineGrammar, B: Backing<G>>(tree: &B) -> Vec<Kid> {
-    let mut kids = Vec::new();
-    tree.nodes().walk(NodeIndex::ROOT, &mut |step, kid| {
-        if kid.entry() {
-            return Visit::Pass;
-        }
-        if step == Step::Meet {
-            kids.push(*kid);
-        }
-        Visit::Enter
-    });
-    kids
-}
-
 type ListAnswer = (KindId, KindId, u32, u32, KindId, Vec<SlotLayout>);
 
 fn list_answers<G: EngineGrammar, B: Backing<G>>(tree: &B) -> Vec<ListAnswer> {
@@ -181,6 +164,58 @@ macro_rules! each_grammar {
         $check::<_, sittir_regex::render::AnyNode>("regex", sittir_regex::RegexGrammar, sittir_regex::render::options::defaults);
         $check::<_, sittir_scm::render::AnyNode>("scm", sittir_scm::ScmGrammar, sittir_scm::render::options::defaults);
     };
+}
+
+#[test]
+fn edge_levels_agree_from_render_bodies() {
+    fn check<G: RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions) {
+        let chains = edge_chains::<G, N>(name, grammar, options, &edge_sources(name));
+        assert!(!chains.compared.is_empty(), "{name}: some edge level compared");
+        eprintln!("{name}: {} edge levels equal, {} chains place the same, {} chains listed", chains.compared.len(), chains.same_placed, chains.listed.len());
+    }
+    each_grammar!(check);
+}
+
+#[test]
+fn edge_levels_at_a_zero_width_fixed_token_agree() {
+    fn check<G: RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions, token: KindId) {
+        let source = with_layout(name).expect("a layout file").to_owned();
+        let chains = edge_chains::<G, N>(name, grammar, options, &[source]);
+        assert!(chains.compared.iter().any(|level| level.grammar == token), "{name}: the zero-width token is an edge level");
+    }
+    check::<_, sittir_python::render::AnyNode>("python", sittir_python::PythonGrammar, sittir_python::render::options::defaults, sittir_python::render::kind_ids::_NEWLINE);
+    check::<_, sittir_typescript::render::AnyNode>("typescript", sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults, sittir_typescript::render::kind_ids::_AUTOMATIC_SEMICOLON);
+}
+
+#[test]
+fn an_edge_chain_at_a_root_after_leading_whitespace_is_read_from_the_whole_source() {
+    use sittir_core::engine::Backing as _;
+    use sittir_core::nodes::Nodes as _;
+    use sittir_core::options::Side;
+    use sittir_core::render::SourceTable as _;
+    use sittir_core::slot::NodeIdOrCoordinate;
+    use sittir_core::types::NodeIndex;
+    use sittir_rust::render::{kind_ids as kind, options, AnyNode};
+    use sittir_rust::RustGrammar as Grammar;
+    let levels = |source: &str, side: Side| {
+        let tree = parsed(Grammar, options::defaults(), source);
+        let coordinate = tree.read_ctx().coordinate_of(&tree.nodes().kid(NodeIndex::ROOT));
+        let mut object = Vec::new();
+        tree.seating().for_each_edge_level((&coordinate).into(), side, &mut |level| object.push(level.grammar));
+        let mut engine = Engine::new(Grammar, options::defaults()).expect("an engine");
+        let root = engine.parse_records_with::<AnyNode>(source, sittir_core::arena::ReadRows::SlotContent).expect("a read").root.expect("a root");
+        let built = engine.written().built();
+        let records = Records::over(&engine, &built, root).expect("the records");
+        let name = records.node_names().and_then(|names| names.name(NodeIndex::ROOT)).expect("the root's name");
+        let mut arena = Vec::new();
+        records.seating().for_each_edge_level(NodeIdOrCoordinate::of(name), side, &mut |level| arena.push(level.grammar));
+        assert_eq!(arena, object, "{source:?} {side:?}");
+        object
+    };
+    assert_eq!(levels("\n\nfn f() {}", Side::Before), [kind::SOURCE_FILE]);
+    assert!(levels("\n\nfn f() {}", Side::After).len() > 1, "the last item ends where the source does");
+    assert_eq!(levels("\n\nfn f() {}\n", Side::After), [kind::SOURCE_FILE]);
+    assert!(levels("fn f() {}", Side::Before).len() > 1, "the first item starts where the source does");
 }
 
 #[test]

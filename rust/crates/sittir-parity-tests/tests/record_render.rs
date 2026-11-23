@@ -17,7 +17,7 @@ use sittir_core::render::RenderError;
 use sittir_core::slot::ChangedEdges;
 use sittir_core::types::NodeIndex;
 use sittir_core::SlotValue;
-use sittir_parity_tests::{edit_in_place, load_fixtures, OverRead, ParityFixture};
+use sittir_parity_tests::{edge_chains, edge_sources, edit_in_place, load_fixtures, OverRead, ParityFixture};
 
 /// How a source's records render alike.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -250,6 +250,50 @@ fn every_regex_source_renders_alike_from_its_records() {
 #[test]
 fn every_scm_source_renders_alike_from_its_records() {
     corpus("scm", &Renders { grammar: sittir_scm::ScmGrammar, options: sittir_scm::render::options::defaults, native: sittir_scm::render::render_node_parts });
+}
+
+/// How many chains `name` lists (`edge_chains`), each fixture holding a
+/// chain that differs from the position walk's rendering the same bytes from
+/// its tree and from its records, every node untouched and edited.
+fn listed_chains_render_alike<G: RecordGrammar + Copy, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + RecordCells>(name: &str, renders: &Renders<G, N>) -> usize {
+    let chains = edge_chains::<G, N>(name, renders.grammar, renders.options, &edge_sources(name));
+    let mut holding: Vec<&str> = chains.differing.iter().map(String::as_str).collect();
+    holding.sort_unstable();
+    holding.dedup();
+    for source in &holding {
+        same_bytes(name, renders, source);
+    }
+    eprintln!("{name}: {} listed chains, {} fixtures with a differing chain render the same bytes", chains.listed.len(), holding.len());
+    chains.listed.len()
+}
+
+/// `source` renders the same bytes from its tree and from its records, every
+/// node untouched and edited.
+fn same_bytes<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + RecordCells>(name: &str, renders: &Renders<G, N>, source: &str) {
+    renders.renders_alike(source).unwrap_or_else(|apart| panic!("{name} {source:?}: {apart}"));
+    let (_, apart) = renders.nodes_alike(source).unwrap_or_else(|apart| panic!("{name} {source:?}: {apart}"));
+    if let Some(EditedApart { at, native, record }) = apart.first() {
+        panic!("{name} {source:?}: edited {at}:\n native {native:?}\n record {record:?}");
+    }
+}
+
+#[test]
+fn a_root_after_leading_whitespace_renders_the_same_bytes() {
+    for source in ["\n\nfn f() {}", "\n\nfn f() {}\n", "\n// c\nfn f(a: u8,) {}\n"] {
+        same_bytes("rust", &rust(), source);
+    }
+}
+
+#[test]
+fn a_listed_edge_chain_renders_the_same_bytes() {
+    let listed = [
+        listed_chains_render_alike("rust", &rust()),
+        listed_chains_render_alike("typescript", &Renders { grammar: sittir_typescript::TypeScriptGrammar, options: sittir_typescript::render::options::defaults, native: sittir_typescript::render::render_node_parts }),
+        listed_chains_render_alike("python", &python()),
+        listed_chains_render_alike("regex", &Renders { grammar: sittir_regex::RegexGrammar, options: sittir_regex::render::options::defaults, native: sittir_regex::render::render_node_parts }),
+        listed_chains_render_alike("scm", &Renders { grammar: sittir_scm::ScmGrammar, options: sittir_scm::render::options::defaults, native: sittir_scm::render::render_node_parts }),
+    ];
+    assert!(listed.iter().sum::<usize>() > 0, "some chain is listed");
 }
 
 /// The node of kind `kind` spanning `text` in `source`, read one level

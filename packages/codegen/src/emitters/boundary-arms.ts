@@ -228,6 +228,11 @@ function modeled(next: number, marks: readonly BoundaryMark[], path: Path, field
 	return { next, marks, fields, ...(path.unsupported === undefined ? {} : { unsupported: path.unsupported }) };
 }
 
+function memberMarks(member: BoundaryMember, side: BoundarySide): readonly BoundaryMark[] {
+	const site = side === 'before' ? member.before : member.after;
+	return site === undefined ? [] : [{ at: 'site', site }];
+}
+
 function markKey(mark: BoundaryMark): string {
 	switch (mark.at) {
 		case 'site':
@@ -264,8 +269,7 @@ class BoundaryWalk {
 		const out: RawArm[] = [];
 		const emit: Emit = (each) => out.push(each);
 		for (const member of this.inputs.members.get(kind) ?? []) {
-			const site = side === 'before' ? member.before : member.after;
-			const marks: readonly BoundaryMark[] = site === undefined ? [] : [{ at: 'site', site }];
+			const marks = memberMarks(member, side);
 			emit(member.id === undefined ? { next: undefined, unknown: member.text, marks } : modeled(member.id, marks, START));
 		}
 		const template = this.inputs.templates.get(kind);
@@ -391,7 +395,12 @@ class BoundaryWalk {
 		const facts = kind === undefined ? undefined : this.inputs.kindOf(kind);
 		const id = element.id ?? facts?.id;
 		if (id !== undefined) emit(modeled(id, marks, path, fields));
-		if (id !== undefined && (element.hidden ?? facts?.hidden) !== true) return;
+		if (id !== undefined && (element.hidden ?? facts?.hidden) !== true) {
+			for (const member of this.inputs.members.get(kind ?? '') ?? []) {
+				if (member.id !== undefined) emit(modeled(member.id, joined(side, marks, memberMarks(member, side)), path, fields));
+			}
+			return;
+		}
 		if (kind === undefined || (!this.inputs.templates.has(kind) && !this.inputs.members.has(kind))) {
 			if (id === undefined) emit({ next: undefined, unknown: kind ?? element.text ?? '', marks });
 			return;

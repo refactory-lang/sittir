@@ -330,6 +330,7 @@ pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[
     ::sittir_core::options::EdgeSite { before: Some(SiteId(11)), after: Some(SiteId(12)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(115)), after: Some(SiteId(116)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(127)), after: Some(SiteId(128)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
+    ::sittir_core::options::EdgeSite { before: None, after: None, before_arms: &[], after_arms: &[], before_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(2), field: None, marks: &[::sittir_core::options::BoundaryMark::Site(SiteId(144))] }, ::sittir_core::options::BoundaryArm { next: KindId(3), field: None, marks: &[::sittir_core::options::BoundaryMark::Site(SiteId(146))] }, ::sittir_core::options::BoundaryArm { next: KindId(4), field: None, marks: &[::sittir_core::options::BoundaryMark::Site(SiteId(148))] }], after_bounds: &[::sittir_core::options::BoundaryArm { next: KindId(2), field: None, marks: &[::sittir_core::options::BoundaryMark::Site(SiteId(145))] }, ::sittir_core::options::BoundaryArm { next: KindId(3), field: None, marks: &[::sittir_core::options::BoundaryMark::Site(SiteId(147))] }, ::sittir_core::options::BoundaryArm { next: KindId(4), field: None, marks: &[::sittir_core::options::BoundaryMark::Site(SiteId(149))] }] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(15)), after: Some(SiteId(16)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(59)), after: Some(SiteId(60)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(27)), after: Some(SiteId(28)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] },
@@ -344,8 +345,8 @@ pub static EDGE_ROWS: &[Option<EdgeRow>] = &[
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, Some(EdgeRow(0)), None, None, None, Some(EdgeRow(1)), None, Some(EdgeRow(2)), Some(EdgeRow(3)), Some(EdgeRow(4)), None, Some(EdgeRow(5)), Some(EdgeRow(6)), Some(EdgeRow(7)), Some(EdgeRow(8)), Some(EdgeRow(9)),
-    None, None, Some(EdgeRow(10)), Some(EdgeRow(11)), Some(EdgeRow(12)), None, None, None, Some(EdgeRow(13)), Some(EdgeRow(14)), Some(EdgeRow(15)), None, None, Some(EdgeRow(16)), Some(EdgeRow(17)), Some(EdgeRow(18)),
-    Some(EdgeRow(19)),
+    None, None, Some(EdgeRow(10)), Some(EdgeRow(11)), Some(EdgeRow(12)), None, Some(EdgeRow(13)), None, Some(EdgeRow(14)), Some(EdgeRow(15)), Some(EdgeRow(16)), None, None, Some(EdgeRow(17)), Some(EdgeRow(18)), Some(EdgeRow(19)),
+    Some(EdgeRow(20)),
 ];
 
 /// Per kind id, its `KindFlags`: `ANON` (the parser's anonymous token), `LINE_TERMINATED`, `LINE_BREAK_TERMINATED`, `ROOT`, `JOINS_NEXT`.

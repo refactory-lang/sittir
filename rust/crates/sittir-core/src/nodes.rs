@@ -232,6 +232,15 @@ pub trait Nodes<'t> {
         self.kids(index).iter().find(|kid| kid.end > byte).copied()
     }
 
+    /// The fixed token, unit or list separator the render body of `holder`
+    /// writes at its edge on `side`, `arm` answering the separator the read's
+    /// options write for a list of a kind; none where that edge is a child,
+    /// and for a node with no record, whose edge is found by position.
+    fn edge_token(&mut self, holder: &Kid, side: Side, arm: &dyn Fn(KindId) -> Option<KindId>) -> Option<KindId> {
+        let _ = (holder, side, arm);
+        None
+    }
+
     /// The node after the node at `index` among its parent's children.
     fn next(&mut self, index: NodeIndex) -> Option<Kid> {
         let parent = self.parent(index)?;
@@ -249,17 +258,28 @@ pub trait Nodes<'t> {
     }
 }
 
-/// Visits the child at the edge on `side` of `holder`, then the child at
-/// the same edge of that one, level by level down, while each starts
-/// (`Side::Before`) or ends (`Side::After`) where its holder does: one
-/// `Nodes::edge` a level, and no node's children listed.
-pub fn for_each_edge_child(nodes: &mut dyn Nodes<'_>, holder: &Kid, side: Side, visit: &mut dyn FnMut(&Kid)) {
+/// Visits each level at the edge on `side` of `holder`, from the level
+/// below it down: a child that starts (`Side::Before`) or ends
+/// (`Side::After`) where its holder does, found with one `Nodes::edge` and
+/// no node's children listed, until a node's render body writes a fixed
+/// token, a unit or a list's separator there (`Nodes::edge_token`), the last
+/// level. `stamped` is the kind a read stamps a level's grammar and display
+/// kinds with, and `arm` the separator the options the tree was read with
+/// write for a list of a kind.
+pub fn for_each_edge_part(nodes: &mut dyn Nodes<'_>, holder: &Kid, side: Side, stamped: &dyn Fn(KindId, KindId) -> KindId, arm: &dyn Fn(KindId) -> Option<KindId>, visit: &mut dyn FnMut(crate::render::EdgeLevel)) {
     let mut holder = *holder;
-    while let Some(child) = nodes.edge(holder.index, side).filter(|child| match side {
-        Side::Before => child.start == holder.start,
-        Side::After => child.end == holder.end,
-    }) {
-        visit(&child);
+    loop {
+        if let Some(token) = nodes.edge_token(&holder, side, arm) {
+            visit(crate::render::EdgeLevel { stamp: stamped(token, token), grammar: token, display: token, field: None });
+            return;
+        }
+        let Some(child) = nodes.edge(holder.index, side).filter(|child| match side {
+            Side::Before => child.start == holder.start,
+            Side::After => child.end == holder.end,
+        }) else {
+            return;
+        };
+        visit(crate::render::EdgeLevel { stamp: stamped(child.grammar, child.display), grammar: child.grammar, display: child.display, field: child.field });
         holder = child;
     }
 }
@@ -516,6 +536,10 @@ impl<'t> Nodes<'t> for Navigation<'t> {
 
     fn edge(&mut self, index: NodeIndex, side: Side) -> Option<Kid> {
         self.nodes().edge(index, side)
+    }
+
+    fn edge_token(&mut self, holder: &Kid, side: Side, arm: &dyn Fn(KindId) -> Option<KindId>) -> Option<KindId> {
+        self.nodes().edge_token(holder, side, arm)
     }
 
     fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {

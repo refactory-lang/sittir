@@ -2,7 +2,7 @@
 
 > **Execution:** the prototype session executes this plan inline, task by task, with superpowers:executing-plans. This repository uses no subagents for code. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Status:** **stopped at Task 5 (2026-11-22): rendered bytes move.** With a record's edge read from its body, an edited `(Debug, Eq,)` in rust renders `(Debug , Eq ,)` and an edited `(identifier)*` in scm renders `(identifier) *`: 43 rust fixtures (71 nodes) and 17 scm fixtures (17 nodes). None of them holds a listed separator chain, and the 50 fixtures that do render the same bytes. 3,631 chains differ otherwise: a unit that skips its enum kind (1,648), a fixed token whose kind differs from the parse's (1,112), a kind with no edge part (867), and 4 others. Task 5's code is uncommitted in the worktree. Written 2026-11-17, updated 2026-11-22. **It lands inside the hydrate-at-parse branch and its PR, and Task 10, the render's table, follows Task 9 there** (the maintainer, 2026-11-22: "2 and let's have prototype finish it in one shot"). Tasks 2–10 and 3a run straight through, by the rule in the arena plan's Task 6 status:
+**Status:** written 2026-11-17, updated 2026-11-23. **It lands inside the hydrate-at-parse branch and its PR, and Task 10, the render's table, follows Task 9 there** (the maintainer, 2026-11-22: "2 and let's have prototype finish it in one shot"). Tasks 2–10 and 3a run straight through, by the rule in the arena plan's Task 6 status:
 - Each commit runs its own targeted tests, red then green, and each piece is pushed so CI runs its suite.
 - `validate:history`, the full suites, storage parity and the census run once, at Task 10's gates on the final head. A step below that names one of them is read that way. Task 3a's arena baseline still runs at Task 3a, since the final comparison reads it.
 - The stop conditions below still stop the work.
@@ -14,7 +14,7 @@ Where the work stands:
   - named fixed tokens leave query results (Task 6).
 
   Task 4 is written from the delimiter audit (2026-11-17). `probe/delimiter-by-kind` and `probe/delimiter-options-decide` are kept. In arena storage a node is named by its `NodeId`, so wherever this plan says a coordinate or a node's index, read that node's `NodeId`. A unit is named by its holder's `NodeId` and its slot, which is what `NodeSite::Unit` means below. A flag's keyword has no cell, so it has no site, and no side is kept on it (the arena spec).
-- **Tasks 2, 3, 3a and 4** are done (`0a524d9eb`, `4e4ccad56`, `6fc600773`, `5febfa404`). The stored-layout row did not move under arena storage. Task 4's `validate:history` comparison runs with the final head's gates. **Task 5 is next.**
+- **Tasks 2, 3, 3a and 4** are done (`0a524d9eb`, `4e4ccad56`, `6fc600773`, `5febfa404`). The stored-layout row did not move under arena storage. **Task 5** is done: a record's edge comes from its body, a holder of a visible enum has an arm for each member, and every fixture holding a chain that differs from the position walk's renders the same bytes on both storages. The `validate:history` comparisons of Tasks 4 and 5 run with the final head's gates. **Task 6 is next.**
 - **The same-line comment branch** (`fix/same-line-comment-after-separator`): a comment last on its row after an item's separator is leading of the next item, as on master. The maintainer, 2026-11-17: "Preserve master's behavior - let's not solve this one right now". Replacing that item loses the comment; that is a known gap, filed as an issue. Giving the comment to the item before was built and withdrawn, and nothing of its tokens-between fact remains.
 
   The branch still carries:
@@ -302,20 +302,20 @@ The maintainer's rulings (2026-11-17, the spec's Decided list):
 - Produces `nodes::for_each_edge_part(nodes, holder, side, shape_of, visit)`. It walks `EdgePart`s at a record level and positions at a row level.
 - `edge_levels` identifies the coordinate's node by its index, not `kid.span() != coord.span`.
 
-- [ ] **Step 1: Write the failing tests.**
+- [x] **Step 1: Write the failing tests.**
   - `edge_levels_agree_from_render_bodies`: for every parsed node and side in `read_fixtures`, the `EdgeLevel` sequence of the `All` tree equals the `SlotContent` tree's, except a chain that ends in a list's separator whose source token is not the list's resolved separator. The test lists those chains by grammar and counts them.
   - `edge_levels_at_a_zero_width_fixed_token_agree`: python `with_layout` and typescript `with_layout`, same assertion.
   - `a_listed_edge_chain_renders_the_same_bytes`: for every fixture holding a listed chain, the rendered bytes equal the `All` tree's, on both storages.
-- [ ] **Step 2: Run them.** Run `PARITY edge_levels`. Expected: FAIL, the `SlotContent` tree stops at a slot child.
-- [ ] **Step 3: Implement the record-level walk.** At a record level the walk reads `shape.edges[side]` in order:
+- [x] **Step 2: Run them.** Run `PARITY edge_levels`. Expected: FAIL, the `SlotContent` tree stops at a slot child.
+- [x] **Step 3: Implement the record-level walk.** At a record level the walk reads `shape.edges[side]` in order:
   - `Token(kind)` yields a level of that kind with field `None`, and the walk stops;
   - `Slot(Cell(i))` that is present descends into it (a record, a row, or a unit, which yields its kind and stops), `Slot(Flag { .. })` that is set yields its `kind` and stops, and an absent one goes to the next part;
   - `Guarded { slot, token }` yields `token` when `slot` is present;
   - a list whose `delimiter` holds this side's flag yields its resolved separator, `SideSlot::separator` or else the arm of the options the tree was read with, and the walk stops. Without the flag the walk goes on to the list's edge item. No new field is stored.
 
   At a row level the walk stays positional.
-- [ ] **Step 4: Run.** Run Step 2's command. Expected: PASS. `validate:history` is unchanged. If any rendered byte moves, stop and report the case with its source: it goes to the maintainer.
-- [ ] **Step 5: Commit:** `feat(core): a record's edge levels come from its body's edge parts`.
+- [x] **Step 4: Run.** Run Step 2's command. Expected: PASS. `validate:history` is unchanged. If any rendered byte moves, stop and report the case with its source: it goes to the maintainer.
+- [x] **Step 5: Commit:** `feat(core): a record's edge levels come from its body's edge parts`.
 
 ### Task 6: Navigation lists units from cells
 

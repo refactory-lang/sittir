@@ -12,57 +12,15 @@ use sittir_core::arena::side::FIELD_BITS;
 use sittir_core::arena::{HydrateNode, RecordCells, RecordGrammar};
 use sittir_core::engine::{node_at_index, Engine, EngineGrammar};
 use sittir_core::layout::LayoutWorkCounter;
-use sittir_core::nodes::{for_each_edge_child, Kid, Navigation, Nodes, Step, TreeNodes, Visit};
+use sittir_core::nodes::{for_each_edge_part, Kid, Navigation, Nodes, Step, TreeNodes, Visit};
 use sittir_core::options::{ResolvedOptions, Side};
 use sittir_core::read::{descendant_count, LentCursor};
 use sittir_core::tree_sitter;
 use sittir_core::trivia_table::DepthMembers;
 use sittir_core::types::NodeIndex;
-use sittir_parity_tests::{each_grammar, fixture_sources, parsed};
+use sittir_parity_tests::{each_grammar, parsed, read_fixtures, with_errors};
 use std::fmt::Write as _;
 use std::sync::Arc;
-
-/// A file with an `ERROR` node and a `MISSING` token, by grammar.
-fn with_errors(name: &str) -> &'static str {
-    match name {
-        "python" => "def f(:\n    pass\nx = )\n",
-        "regex" => "a{2,|(a))",
-        "rust" => "fn f( {\n    let x = ;\n    g(1\n}\n",
-        "scm" => "(a !)\n(a field: )\n",
-        "typescript" => "if (a { b(); }\nlet x = ;\n",
-        _ => unreachable!("one of the five grammars"),
-    }
-}
-
-/// Nested python blocks, which open and close levels by `INDENT` and
-/// `DEDENT`, and typescript statements ended by automatic semicolons.
-fn with_layout(name: &str) -> Option<&'static str> {
-    match name {
-        "python" => Some("class C:\n    def f(self):\n        if x:\n            for y in z:\n                pass\n        return 1\n\n\ndef g():\n    while a:\n        b()\n    else:\n        c()\n"),
-        "typescript" => Some("let a = 1\nlet b = a\nfoo()\nconst c = () => {\n  return b\n}\nclass K {\n  x = 1\n  y\n}\n"),
-        _ => None,
-    }
-}
-
-/// Identifiers and strings with characters outside ASCII.
-fn non_ascii(name: &str) -> Option<&'static str> {
-    match name {
-        "python" => Some("名前 = \"héllo wörld\"  # ✓ комментарий\ndef größe(π):\n    return f\"{π} ✓\"\n"),
-        "rust" => Some("fn größe(π: f64) -> &'static str {\n    // ✓ комментарий\n    \"ñ ✓\"\n}\n"),
-        "typescript" => Some("const π = \"ünïcödé\";\nlet 变量 = `${π} ✓`; // комментарий\n"),
-        "regex" => Some("ü+[à-ÿ]✓"),
-        "scm" => Some("((identifier) @名前 (#eq? @名前 \"ñ ✓\"))\n"),
-        _ => None,
-    }
-}
-
-/// Every fixture tree of `name`: its round-trip fixtures and the files
-/// above.
-fn fixtures(name: &str) -> Vec<String> {
-    let mut sources = fixture_sources(name);
-    sources.extend([Some(with_errors(name)), with_layout(name), non_ascii(name)].into_iter().flatten().map(str::to_owned));
-    sources
-}
 
 /// What the fixtures of a grammar held: nodes, `ERROR`s, `ERROR`s with no
 /// node under them, `MISSING` tokens and nodes shown as an alias.
@@ -113,7 +71,7 @@ fn backers_agree<G: RecordGrammar, N: HydrateNode + RecordCells>(name: &str, gra
 /// What every fixture tree of `name` held, each checked by `backers_agree`.
 fn grammar_agrees<G: RecordGrammar + Copy, N: HydrateNode + RecordCells>(name: &str, grammar: G, options: fn() -> ResolvedOptions) -> Held {
     let mut held = Held::default();
-    for source in fixtures(name) {
+    for source in read_fixtures(name) {
         backers_agree::<G, N>(name, grammar, options(), &source, &mut held);
     }
     let mut errors = Held::default();
@@ -163,7 +121,7 @@ fn leaves(nodes: &mut dyn Nodes<'_>, root: NodeIndex) -> Vec<Kid> {
 /// leaves hold.
 fn rows_cover<G: RecordGrammar + Copy, N: HydrateNode + RecordCells>(name: &str, grammar: G, options: fn() -> ResolvedOptions) -> u32 {
     let mut covered = 0;
-    for source in fixtures(name) {
+    for source in read_fixtures(name) {
         let Some(found) = over_records::<G, N, _>(name, grammar, options(), &source, |nodes, root| leaves(nodes, root)) else { continue };
         let mut at = 0;
         for leaf in found {
@@ -213,6 +171,10 @@ impl<'t> Nodes<'t> for Counting<'_, 't> {
         self.inner.edge(index, side)
     }
 
+    fn edge_token(&mut self, holder: &Kid, side: Side, arm: &dyn Fn(sittir_core::types::KindId) -> Option<sittir_core::types::KindId>) -> Option<sittir_core::types::KindId> {
+        self.inner.edge_token(holder, side, arm)
+    }
+
     fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {
         self.inner.parent(index)
     }
@@ -226,27 +188,22 @@ impl<'t> Nodes<'t> for Counting<'_, 't> {
     }
 }
 
-/// What names a node whatever navigation answers it: its span and kinds.
-type Named = (u32, u32, sittir_core::types::KindId, sittir_core::types::KindId);
-
-fn named(kid: &Kid) -> Named {
-    (kid.start, kid.end, kid.grammar, kid.display)
-}
+/// What an edge level names: its kinds and the field its holder tags it with.
+type EdgeNamed = (sittir_core::types::KindId, sittir_core::types::KindId, Option<sittir_core::types::FieldId>);
 
 /// The children at the edge on each side of each node of `holders`, level
 /// by level down, each level found with one `Nodes::edge` and no child
 /// listed.
-fn edge_paths(name: &str, source: &str, nodes: &mut dyn Nodes<'_>, holders: &[NodeIndex]) -> Vec<Vec<Named>> {
+fn edge_paths(name: &str, source: &str, nodes: &mut dyn Nodes<'_>, holders: &[NodeIndex]) -> Vec<Vec<EdgeNamed>> {
     let mut paths = Vec::new();
     for &index in holders {
         let holder = nodes.kid(index);
         for side in [Side::Before, Side::After] {
             let mut counting = Counting { inner: &mut *nodes, listed: 0, edges: 0 };
             let mut path = Vec::new();
-            for_each_edge_child(&mut counting, &holder, side, &mut |kid| path.push(named(kid)));
-            assert_eq!(
-                (counting.listed, counting.edges),
-                (0, path.len() + 1),
+            for_each_edge_part(&mut counting, &holder, side, &|grammar, _| grammar, &|_| None, &mut |level| path.push((level.grammar, level.display, level.field)));
+            assert!(
+                counting.listed == 0 && counting.edges <= path.len() + 1,
                 "{name} {source:?}: the edge on side {side:?} below {} lists no children and asks each level's child once",
                 index.0
             );
@@ -269,26 +226,21 @@ fn preorder(nodes: &mut dyn Nodes<'_>, root: NodeIndex) -> Vec<NodeIndex> {
 }
 
 /// The edge children every fixture of `name` holds, found alike through
-/// its tree and a lent cursor, and, where its root has a record, through
-/// the records a read of it leaves. The root's own two paths are left out
-/// of the records' comparison: a read's root spans its whole source, so a
-/// child that starts past leading whitespace is not at its edge, where the
-/// tree's root starts at its first token.
+/// its tree and a lent cursor, and walked through the records a read of it
+/// leaves with no child listed. What a record's chain places is compared
+/// with its tree's in `edge_chains`.
 fn edge_paths_agree<G: RecordGrammar + Copy, N: HydrateNode + RecordCells>(name: &str, grammar: G, options: fn() -> ResolvedOptions) -> usize {
     let mut levels = 0;
-    for source in fixtures(name) {
+    for source in read_fixtures(name) {
         let tree = parsed(grammar, options(), &source);
         let work = LayoutWorkCounter::default();
         let mut nodes = TreeNodes::new(tree.tree(), tree.source(), &work);
         let holders: Vec<NodeIndex> = (0..descendant_count(&tree.tree().root_node())).map(NodeIndex::new).collect();
         let from_tree = edge_paths(name, &source, &mut nodes, &holders);
-        let from_records = over_records::<G, N, _>(name, grammar, options(), &source, |runs, root| {
+        over_records::<G, N, _>(name, grammar, options(), &source, |runs, root| {
             let holders = preorder(runs, root);
             edge_paths(name, &source, runs, &holders)
         });
-        if let Some(from_records) = from_records {
-            assert_eq!(from_records[2..], from_tree[2..], "{name} {source:?}: below the root, the records and the tree find the same edge children");
-        }
         let mut cursor = tree.tree().walk();
         let mut lent = LentCursor::new(&mut cursor, tree.source());
         assert_eq!(edge_paths(name, &source, &mut lent, &holders), from_tree, "{name} {source:?}: a lent cursor finds the same edge children");
@@ -308,7 +260,7 @@ fn an_edge_level_lists_no_children() {
 fn depth_members_match_the_walk() {
     let kinds = sittir_python::render::kind_ids::SURFACE_KINDS;
     let mut opened = 0;
-    for source in fixtures("python") {
+    for source in read_fixtures("python") {
         let tree = parsed(sittir_python::PythonGrammar, sittir_python::render::options::defaults(), &source);
         let count = descendant_count(&tree.tree().root_node());
         let work = LayoutWorkCounter::default();
@@ -379,7 +331,7 @@ fn parent_lookups_grow_with_the_tree() {
 fn lists_inside_entries<G: RecordGrammar + Copy, N: HydrateNode + RecordCells>(name: &str, grammar: G, options: fn() -> ResolvedOptions) -> (u32, Vec<String>) {
     let lists = grammar.surface_kinds().lists;
     let (mut inside, mut named) = (0, Vec::new());
-    for source in fixtures(name) {
+    for source in read_fixtures(name) {
         let mut engine = Engine::new(grammar, options()).expect("an engine");
         let Some(root) = engine.parse_records::<N>(&source).unwrap_or_else(|refusal| panic!("{name} {source:?}: a read: {refusal}")).root else { continue };
         engine

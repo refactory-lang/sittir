@@ -404,8 +404,14 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                 Ok(match part {
                     crate::attrs::EdgePartAttr::Token(kind) => quote!(::sittir_core::arena::EdgePart::Token(#kind)),
                     crate::attrs::EdgePartAttr::Slot(name) => {
-                        let slot = body_slot(name)?;
-                        quote!(::sittir_core::arena::EdgePart::Slot(#slot))
+                        let list = celled.iter().enumerate().find(|(_, (field, _))| field.ident == name).and_then(|(at, (_, slot))| Some((at, slot.separators.iter().flatten().next()?)));
+                        if let Some((at, separator)) = list {
+                            let at = u8::try_from(at).map_err(|_| syn::Error::new_spanned(name, format!("`{ident}` has more cells than a `u8` indexes")))?;
+                            quote!(::sittir_core::arena::EdgePart::List { cell: #at, separator: #separator })
+                        } else {
+                            let slot = body_slot(name)?;
+                            quote!(::sittir_core::arena::EdgePart::Slot(#slot))
+                        }
                     }
                     crate::attrs::EdgePartAttr::Guarded(name, token) => {
                         let slot = body_slot(name)?;

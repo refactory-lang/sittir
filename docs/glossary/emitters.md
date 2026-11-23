@@ -14992,6 +14992,10 @@ The dropped arms, with their reasons.
 
 Builds the boundary table from the inputs, recording each dropped arm.
 
+### `packages/codegen/src/emitters/boundary-arms.ts::memberMarks`
+
+The site mark an enum member's own arm places on one side, none where the member has no site there. The enum's row uses it for each member. A holder of a visible enum uses it too, joined after its marks for the enum: an arena record's chain reaches the member from the holder with no level for the enum, because the cell stores only the member, so the holder's arm for the member places what the two levels placed. A member spelled in two tokens, such as `unique symbol`, is shown under the member's own kind on its last token, so it takes its own site on both sides.
+
 ### `packages/codegen/src/emitters/factories.ts::splicedEnvelopeAdmission`
 
 The admission expression for a spliced envelope slot: the kinds it accepts.

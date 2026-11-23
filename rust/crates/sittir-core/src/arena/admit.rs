@@ -48,6 +48,11 @@ pub enum EdgePart {
     Token(KindId),
     /// A slot: its content is the edge when it is present.
     Slot(BodySlot),
+    /// A list slot with a separator, at the index of its cell: when present,
+    /// the edge is the list's separator where its delimiter holds this side,
+    /// else its item at this edge. `separator` is the one its render writes
+    /// where no option or stamp chooses another.
+    List { cell: u8, separator: KindId },
     /// A fixed token the body writes there when `slot` is present.
     Guarded { slot: BodySlot, token: KindId },
 }

@@ -1093,7 +1093,7 @@ impl<G: EngineGrammar> Records<'_, G> {
         let mut starts = crate::arena::read_entry_starts(self.built, self.source).ok()??;
         let written = self.written_sites()?;
         if !written.is_empty() {
-            let mut runs = crate::arena::RunNodes::over(self.built, self.text, &self.table);
+            let mut runs = crate::arena::RunNodes::over(self.built, self.text, &self.table, self.shape);
             for (site, _) in written {
                 if let Some(index) = runs.index_at(site) {
                     starts.push(runs.kid(index).start);
@@ -1181,7 +1181,7 @@ impl<G: EngineGrammar> Backing<G> for Records<'_, G> {
     fn grew(&self) {}
 
     fn nodes(&self) -> Navigation<'_> {
-        Navigation::Runs(crate::arena::RunNodes::over(self.built, self.text, &self.table))
+        Navigation::Runs(crate::arena::RunNodes::over(self.built, self.text, &self.table, self.shape))
     }
 
     fn node_index(&self, nodes: &mut Navigation<'_>, at: crate::slot::NodeIdOrCoordinate<'_>) -> Option<NodeIndex> {
@@ -1232,7 +1232,7 @@ impl<G: EngineGrammar> Backing<G> for Records<'_, G> {
 
     fn edited_in(&self, _: &mut dyn Nodes<'_>, index: NodeIndex, own_sides: bool) -> (bool, u64) {
         let Some(written) = self.written_sites() else { return (false, 0) };
-        let mut runs = crate::arena::RunNodes::over(self.built, self.text, &self.table);
+        let mut runs = crate::arena::RunNodes::over(self.built, self.text, &self.table, self.shape);
         let mut walked = 0;
         let edited = written.into_iter().any(|(site, side)| {
             walked += 1;
@@ -1301,7 +1301,7 @@ impl<'a, G: crate::arena::RecordGrammar> Records<'a, G> {
     /// record an `ERROR` holds.
     pub fn over(engine: &Engine<G>, built: &'a crate::arena::BuiltChunks, record: crate::arena::Address) -> Result<Self, crate::arena::ArenaError> {
         let records = Self::of_source(engine, built, crate::arena::RunNodes::source_of(built, record)?)?;
-        crate::arena::RunNodes::holding(built, records.text, record, &records.table)?;
+        crate::arena::RunNodes::holding(built, records.text, record, &records.table, records.shape)?;
         Ok(records)
     }
 
@@ -1379,7 +1379,7 @@ impl<'a, G: crate::arena::RecordGrammar> Records<'a, G> {
     /// record of the source holds.
     #[must_use]
     pub fn index_at(&self, site: crate::arena::NodeSite) -> Option<NodeIndex> {
-        crate::arena::RunNodes::over(self.built, self.text, &self.table).index_at(site)
+        crate::arena::RunNodes::over(self.built, self.text, &self.table, self.shape).index_at(site)
     }
 }
 
@@ -2245,13 +2245,9 @@ impl<G: EngineGrammar, B: Backing<G>> Lookups<'_, G, B> {
     fn edge_levels(&mut self, at: Named, side: crate::options::Side, f: &mut dyn FnMut(crate::render::EdgeLevel)) {
         let Some(kid) = self.kid(at.index) else { return };
         f(crate::render::EdgeLevel { stamp: at.stamp.unwrap_or(kid.grammar), grammar: kid.grammar, display: kid.display, field: None });
-        if kid.span() != at.span {
-            return;
-        }
-        let ctx = self.tree.read_ctx();
-        crate::nodes::for_each_edge_child(&mut self.nodes, &kid, side, &mut |child| {
-            f(crate::render::EdgeLevel { stamp: ctx.stamped_kind(child.grammar, child.display), grammar: child.grammar, display: child.display, field: child.field });
-        });
+        let (ctx, options) = (self.tree.read_ctx(), self.tree.options());
+        let holder = Kid { start: at.span.start, end: at.span.end, ..kid };
+        crate::nodes::for_each_edge_part(&mut self.nodes, &holder, side, &|grammar, display| ctx.stamped_kind(grammar, display), &|kind| options.separator_of(kind), f);
     }
 
     fn spelled_end_kind(&mut self, at: Named) -> Option<KindId> {

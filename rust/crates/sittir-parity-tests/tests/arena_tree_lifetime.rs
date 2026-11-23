@@ -25,7 +25,7 @@ fn nodes_left<G: EngineGrammar, N: HydrateNode>(name: &str, engine: &mut Engine<
     assert_eq!(entry.breaks_lf, !source.contains('\r'), "{name} {source:?}");
     let Some(root) = parse.root else { return 0 };
     let table = RunTable::default();
-    let mut nodes = RunNodes::holding(&*built, entry.text, root, &table).unwrap_or_else(|refusal| panic!("{name} {source:?}: its root: {refusal}"));
+    let mut nodes = RunNodes::holding(&*built, entry.text, root, &table, (<G as EngineGrammar>::shape, <G as EngineGrammar>::KIND_BITS)).unwrap_or_else(|refusal| panic!("{name} {source:?}: its root: {refusal}"));
     let mut met = 0;
     nodes.walk(NodeIndex::ROOT, &mut |step, _| {
         met += u32::from(step == Step::Meet);
@@ -254,7 +254,7 @@ fn errors_kept<G: sittir_core::arena::RecordGrammar + Copy, N: HydrateNode>(gram
     let Some(root) = engine.parse_records::<N>(source).expect("a parse").root else { return Vec::new() };
     let built = engine.written().built();
     let table = RunTable::default();
-    let mut nodes = RunNodes::holding(&*built, source, root, &table).expect("its root");
+    let mut nodes = RunNodes::holding(&*built, source, root, &table, (<G as EngineGrammar>::shape, <G as EngineGrammar>::KIND_BITS)).expect("its root");
     let mut errors = Vec::new();
     nodes.walk(NodeIndex::ROOT, &mut |step, kid| {
         if step == Step::Meet && kid.grammar == sittir_core::types::KindId::ERROR {
@@ -293,7 +293,7 @@ fn a_source_that_parses_to_an_error_alone_has_its_error_s_record_for_a_root() {
     let root = parse.root.expect("a root");
     let built = engine.written().built();
     let table = RunTable::default();
-    let mut nodes = RunNodes::holding(&*built, source, root, &table).expect("its root");
+    let mut nodes = RunNodes::holding(&*built, source, root, &table, (<sittir_rust::RustGrammar as EngineGrammar>::shape, <sittir_rust::RustGrammar as EngineGrammar>::KIND_BITS)).expect("its root");
     let kid = nodes.kid(NodeIndex::ROOT);
     assert_eq!((kid.grammar, kid.start, kid.end), (sittir_core::types::KindId::ERROR, 0, 13));
     let tree = parsed(sittir_rust::RustGrammar, sittir_rust::render::options::defaults(), source);

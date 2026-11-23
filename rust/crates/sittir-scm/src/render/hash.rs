@@ -7,4 +7,4 @@
 // (packages/scm/src/backend.ts) compares it against the TS-side copy to
 // detect a native binary built from older generated code.
 
-pub const RENDER_MODULE_HASH: &str = "775347b450a973ea4819dbef019a57cb009fcc2d67b7491708f2d5d554f27d03";
+pub const RENDER_MODULE_HASH: &str = "f3066bb457315936869b6589a37d418a81d4ae6684318b33f4076d27566e3a3d";

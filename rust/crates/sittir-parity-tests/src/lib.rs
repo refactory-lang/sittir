@@ -100,6 +100,225 @@ pub fn fixture_sources(grammar: &str) -> Vec<String> {
     sources
 }
 
+/// A file with an `ERROR` node and a `MISSING` token, by grammar.
+#[must_use]
+pub fn with_errors(name: &str) -> &'static str {
+    match name {
+        "python" => "def f(:\n    pass\nx = )\n",
+        "regex" => "a{2,|(a))",
+        "rust" => "fn f( {\n    let x = ;\n    g(1\n}\n",
+        "scm" => "(a !)\n(a field: )\n",
+        "typescript" => "if (a { b(); }\nlet x = ;\n",
+        _ => unreachable!("one of the five grammars"),
+    }
+}
+
+/// Nested python blocks, which open and close levels by `INDENT` and
+/// `DEDENT`, and typescript statements ended by automatic semicolons.
+#[must_use]
+pub fn with_layout(name: &str) -> Option<&'static str> {
+    match name {
+        "python" => Some("class C:\n    def f(self):\n        if x:\n            for y in z:\n                pass\n        return 1\n\n\ndef g():\n    while a:\n        b()\n    else:\n        c()\n"),
+        "typescript" => Some("let a = 1\nlet b = a\nfoo()\nconst c = () => {\n  return b\n}\nclass K {\n  x = 1\n  y\n}\n"),
+        _ => None,
+    }
+}
+
+/// Identifiers and strings with characters outside ASCII.
+#[must_use]
+fn non_ascii(name: &str) -> Option<&'static str> {
+    match name {
+        "python" => Some("名前 = \"héllo wörld\"  # ✓ комментарий\ndef größe(π):\n    return f\"{π} ✓\"\n"),
+        "rust" => Some("fn größe(π: f64) -> &'static str {\n    // ✓ комментарий\n    \"ñ ✓\"\n}\n"),
+        "typescript" => Some("const π = \"ünïcödé\";\nlet 变量 = `${π} ✓`; // комментарий\n"),
+        "regex" => Some("ü+[à-ÿ]✓"),
+        "scm" => Some("((identifier) @名前 (#eq? @名前 \"ñ ✓\"))\n"),
+        _ => None,
+    }
+}
+
+/// Every source a read of `name` is checked over: its round-trip fixtures,
+/// a file with errors, one with layout tokens, and one outside ASCII.
+///
+/// # Panics
+///
+/// If the grammar's fixtures cannot be loaded (`load_fixtures`).
+#[must_use]
+pub fn read_fixtures(name: &str) -> Vec<String> {
+    let mut sources = fixture_sources(name);
+    sources.extend([Some(with_errors(name)), with_layout(name), non_ascii(name)].into_iter().flatten().map(str::to_owned));
+    sources
+}
+
+/// Lists whose separators differ from one another.
+pub const MIXED_LISTS: [&str; 3] = ["type T = { a: string, b: number; c: boolean; d: string }\n", "type T = { a: string; b: number, c: boolean }\n", "type T = {\n  a: string // c\n  b: number\n}\n"];
+
+/// The sources an edge chain of `name` is compared over: its read fixtures
+/// and, for typescript, the lists above.
+///
+/// # Panics
+///
+/// If the grammar's fixtures cannot be loaded (`load_fixtures`).
+#[must_use]
+pub fn edge_sources(name: &str) -> Vec<String> {
+    let mut sources = read_fixtures(name);
+    if name == "typescript" {
+        sources.extend(MIXED_LISTS.iter().map(|source| (*source).to_owned()));
+    }
+    sources
+}
+
+/// Every node of `tree` no extra or `ERROR` holds, in preorder.
+pub fn read_kids<G: sittir_core::engine::EngineGrammar, B: sittir_core::engine::Backing<G>>(tree: &B) -> Vec<sittir_core::nodes::Kid> {
+    use sittir_core::nodes::{Step, Visit};
+    let mut kids = Vec::new();
+    sittir_core::nodes::Nodes::walk(&mut tree.nodes(), sittir_core::types::NodeIndex::ROOT, &mut |step, kid| {
+        if kid.entry() {
+            return Visit::Pass;
+        }
+        if step == Step::Meet {
+            kids.push(*kid);
+        }
+        Visit::Enter
+    });
+    kids
+}
+
+/// An edge chain that ends, in the source, in a list's separator other than
+/// the list's resolved separator: the source, the side, and both chains.
+#[cfg(feature = "arena")]
+#[derive(Debug)]
+pub struct ListedEdge {
+    pub source: String,
+    pub side: sittir_core::options::Side,
+    pub in_source: Vec<sittir_core::render::EdgeLevel>,
+    pub from_body: Vec<sittir_core::render::EdgeLevel>,
+}
+
+/// What comparing a read's edge chains found: the levels of the chains
+/// that are equal, how many others place the same marks, seams and line
+/// holds, the chains listed, and each source holding a chain that differs.
+#[cfg(feature = "arena")]
+#[derive(Debug, Default)]
+pub struct EdgeChains {
+    pub compared: Vec<sittir_core::render::EdgeLevel>,
+    pub same_placed: usize,
+    pub listed: Vec<ListedEdge>,
+    pub differing: Vec<String>,
+}
+
+/// One thing an edge chain makes a render place.
+#[cfg(feature = "arena")]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Placed {
+    Mark(sittir_core::options::BoundaryMark),
+    TokenSeam(sittir_core::layout_kinds::LayoutKinds),
+    LineHold(sittir_core::options::KindFlags),
+}
+
+/// What `levels` at the `side` edge of a slice place, in order: each pair's
+/// boundary marks but a depth move, and after it each level's token seam and
+/// line hold.
+#[cfg(feature = "arena")]
+fn placed(options: &sittir_core::options::ResolvedOptions, table: &sittir_core::render::WhitespaceTable, levels: &[sittir_core::render::EdgeLevel], side: sittir_core::options::Side) -> Vec<Placed> {
+    use sittir_core::options::{BoundaryMark, KindFlags, ResolvedOptions, Side};
+    let mut out = Vec::new();
+    if side == Side::After {
+        out.extend(levels.iter().filter_map(|level| [level.stamp, level.display, level.grammar].into_iter().find_map(|kind| options.token_seam(kind))).map(Placed::TokenSeam));
+    }
+    let mut pairs: Vec<_> = levels.windows(2).collect();
+    if side == Side::After {
+        pairs.reverse();
+    }
+    for pair in pairs {
+        let Some(arms) = [pair[0].stamp, pair[0].grammar].into_iter().find_map(|kind| options.boundary_arms(kind, side)) else { continue };
+        out.extend(ResolvedOptions::boundary_marks(arms, pair[1].display, pair[1].field).iter().filter(|mark| match **mark {
+            BoundaryMark::Site(site) | BoundaryMark::Flank(site) => ![table.indent, table.dedent].contains(&options.site_arm(site).arm),
+            BoundaryMark::Seam(_) => true,
+        }).map(|mark| Placed::Mark(*mark)));
+    }
+    if side == Side::After {
+        for (at, level) in levels.iter().enumerate() {
+            let kind = if at == 0 { level.stamp } else { level.grammar };
+            out.extend([KindFlags::LINE_TERMINATED, KindFlags::LINE_BREAK_TERMINATED].into_iter().find(|&flag| options.kind_has(kind, flag)).map(Placed::LineHold));
+        }
+    }
+    out
+}
+
+/// The levels at the `side` edge of `kid` found by position alone.
+#[cfg(feature = "arena")]
+fn levels_by_position<G: sittir_core::engine::EngineGrammar, B: sittir_core::engine::Backing<G>>(tree: &B, kid: &sittir_core::nodes::Kid, side: sittir_core::options::Side) -> Vec<sittir_core::render::EdgeLevel> {
+    use sittir_core::nodes::Nodes as _;
+    use sittir_core::options::Side;
+    let ctx = tree.read_ctx();
+    let level = |at: &sittir_core::nodes::Kid, field| sittir_core::render::EdgeLevel { stamp: ctx.stamped_kind(at.grammar, at.display), grammar: at.grammar, display: at.display, field };
+    let mut nodes = tree.nodes();
+    let (mut levels, mut holder) = (vec![level(kid, None)], *kid);
+    while let Some(child) = nodes.edge(holder.index, side).filter(|child| match side {
+        Side::Before => child.start == holder.start,
+        Side::After => child.end == holder.end,
+    }) {
+        levels.push(level(&child, child.field));
+        holder = child;
+    }
+    levels
+}
+
+/// Each named node's edge chains on both sides, from a read with no fixed
+/// token rows, against the same node's chains by position in a read that
+/// writes every row.
+///
+/// # Panics
+///
+/// When a chain differs other than by ending in a separator of a list at
+/// its holder's edge and places something the position walk's does not.
+#[cfg(feature = "arena")]
+pub fn edge_chains<G: sittir_core::arena::RecordGrammar + Copy, N: sittir_core::arena::HydrateNode>(name: &str, grammar: G, options: fn() -> sittir_core::options::ResolvedOptions, sources: &[String]) -> EdgeChains {
+    use sittir_core::arena::{EdgePart, ReadRows};
+    use sittir_core::engine::{Engine, EngineGrammar, Records};
+    use sittir_core::options::Side;
+    use sittir_core::render::SourceTable as _;
+    let read_options = options();
+    let mut chains = EdgeChains::default();
+    for source in sources {
+        let (mut whole, mut content) = (Engine::new(grammar, options()).expect("an engine"), Engine::new(grammar, options()).expect("an engine"));
+        let whole_root = whole.parse_records_with::<N>(source, ReadRows::All).expect("a read").root;
+        let content_root = content.parse_records_with::<N>(source, ReadRows::SlotContent).expect("a read").root;
+        let (Some(whole_root), Some(content_root)) = (whole_root, content_root) else { continue };
+        let (whole_built, content_built) = (whole.written().built(), content.written().built());
+        let (Ok(all), Ok(records)) = (Records::over(&whole, &whole_built, whole_root), Records::over(&content, &content_built, content_root)) else { continue };
+        let seating = records.seating();
+        let mut of_all = read_kids::<G, _>(&all).into_iter();
+        for kid in read_kids::<G, _>(&records) {
+            let same = of_all.by_ref().find(|other| (other.grammar, other.display, other.start, other.end) == (kid.grammar, kid.display, kid.start, kid.end));
+            let same = same.unwrap_or_else(|| panic!("{name} {source:?}: no node of the whole read for {kid:?}"));
+            let Some(id) = records.node_names().and_then(|names| names.name(kid.index)) else { continue };
+            for side in [Side::Before, Side::After] {
+                let in_source = levels_by_position::<G, _>(&all, &same, side);
+                let mut from_body = Vec::new();
+                seating.for_each_edge_level(sittir_core::slot::NodeIdOrCoordinate::of(id), side, &mut |level| from_body.push(level));
+                if from_body == in_source {
+                    chains.compared.extend(in_source);
+                    continue;
+                }
+                chains.differing.push(source.clone());
+                let (last, above) = in_source.split_last().expect("a chain holds its node");
+                let at_a_list = above.last().and_then(|holder| <G as EngineGrammar>::shape(holder.grammar)).is_some_and(|shape| shape.edges[side as usize].iter().any(|part| matches!(part, EdgePart::List { .. })));
+                if !(at_a_list && from_body.starts_with(above) && from_body.get(above.len()).is_none_or(|next| next.grammar != last.grammar)) {
+                    let table = grammar.whitespace().0;
+                    assert_eq!(placed(&read_options, table, &from_body, side), placed(&read_options, table, &in_source, side), "{name} {source:?}: {side:?} edge of {kid:?}:\n  in source {in_source:?}\n  from body {from_body:?}");
+                    chains.same_placed += 1;
+                    chains.compared.extend(in_source);
+                    continue;
+                }
+                chains.listed.push(ListedEdge { source: source.clone(), side, in_source, from_body });
+            }
+        }
+    }
+    chains
+}
+
 /// What `$check` answers for each of the five grammars, by name: called
 /// with the grammar's name, the grammar, and its default options.
 #[macro_export]
