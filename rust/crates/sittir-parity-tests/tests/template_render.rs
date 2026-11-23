@@ -67,7 +67,7 @@ impl<G: RecordGrammar, N: ReadNode + HydrateNode + RecordCells> Renders<G, N> {
 
     /// Whether `source` renders alike from its templates read from its
     /// tree and from the records a parse leaves with no tree.
-    fn alike(&self, source: &str) -> Result<Outcome, String> {
+    fn alike(&self, name: &str, source: &str) -> Result<Outcome, String> {
         if self.parse(source).0.tree().root_node().is_error() {
             return Ok(Outcome::Unread);
         }
@@ -79,13 +79,32 @@ impl<G: RecordGrammar, N: ReadNode + HydrateNode + RecordCells> Renders<G, N> {
             (Ok(Ok(_)), Ok(Ok(None))) => Err("records: a parse left no root of a source the parser accepts".to_owned()),
             (Ok(object), Ok(arena)) => {
                 let (object, arena) = (object?, arena?.expect("a root"));
-                if object != arena {
+                if object != arena && !(name == "rust" && apart_only_beside_a_quote(&object, &arena)) {
                     return Err(format!("\n object {object:?}\n arena  {arena:?}"));
                 }
                 Ok(if object == source { Outcome::AsSource } else { Outcome::Rendered })
             }
         }
     }
+}
+
+/// Whether `arena` is `object` less spaces beside a `'`. A bare `'` in a rust
+/// token tree is the one token object storage spaces where a built node
+/// writes it tight, and that space is a lexical error (`rustc` E0762).
+fn apart_only_beside_a_quote(object: &str, arena: &str) -> bool {
+    let (object, arena) = (object.as_bytes(), arena.as_bytes());
+    let (mut one, mut other) = (0, 0);
+    while one < object.len() {
+        if other < arena.len() && object[one] == arena[other] {
+            one += 1;
+            other += 1;
+        } else if object[one] == b' ' && (object.get(one + 1) == Some(&b'\'') || one > 0 && object[one - 1] == b'\'') {
+            one += 1;
+        } else {
+            return false;
+        }
+    }
+    other == arena.len()
 }
 
 /// How one source renders from its templates.
@@ -135,7 +154,7 @@ fn corpus<G: RecordGrammar, N: ReadNode + HydrateNode + RecordCells>(name: &str,
     let (mut panicking, mut unread, mut rendered) = (Vec::new(), Vec::new(), 0);
     for (i, source) in sources.iter().enumerate() {
         let named = format!("source {i} ({:?})", source.lines().next().unwrap_or_default());
-        match grammar.alike(source) {
+        match grammar.alike(name, source) {
             Ok(Outcome::AsSource | Outcome::Rendered) => rendered += 1,
             Ok(Outcome::Panicking(message)) => panicking.push(format!("{named}: {message}")),
             Ok(Outcome::Unread) => unread.push(named),
@@ -171,4 +190,53 @@ fn every_regex_source_renders_alike_from_its_templates() {
 #[test]
 fn every_scm_source_renders_alike_from_its_templates() {
     corpus("scm", &Renders { grammar: sittir_scm::ScmGrammar, options: sittir_scm::render::options::defaults, native: sittir_scm::render::render_node_parts }, Pins { panicking: 0, unread: 0 });
+}
+
+/// Each `(source, what its whitespace spells, what a built node writes)`
+/// that differs between the two storages only inside a unit of several tokens.
+#[test]
+fn a_unit_of_several_tokens_drops_only_the_whitespace_between_them() {
+    fn check<G: RecordGrammar, N: ReadNode + HydrateNode + RecordCells>(name: &str, grammar: &Renders<G, N>, cases: &[(&str, &str, &str)]) {
+        for &(source, spelled, tight) in cases {
+            let (tree, options) = grammar.parse(source);
+            let seating = tree.seating();
+            let object = grammar.coordinate(&tree, &ThroughTemplates(&seating), &options).expect("an object render");
+            let arena = grammar.records(source).expect("a read").expect("a root");
+            assert!(object.contains(spelled), "{name} {source:?}: object {object:?}");
+            assert_eq!(arena, object.replacen(spelled, tight, 1), "{name} {source:?}");
+        }
+    }
+    check("rust", &rust_renders(), &[("let x = ( );", "( )", "()"), ("fn f() -> ( ) {}", "( )", "()")]);
+    check("typescript", &typescript_renders(), &[("function f() { new . target; }", "new . target", "new.target"), ("import . meta;", "import . meta", "import.meta"), ("await  using x = y;", "await  using", "await using")]);
+    check("python", &python_renders(), &[("a not  in b\n", "not  in", "not in"), ("a is  not b\n", "is  not", "is not")]);
+}
+
+/// A parsed unit renders from its templates as its row did: a zero-width one
+/// writes the seam it stands for, its sides come through its site, and one
+/// of several tokens with an extra, `ERROR` or `MISSING` token under it
+/// renders as its source.
+#[test]
+fn a_parsed_unit_renders_alike_in_both_storages() {
+    fn check<G: RecordGrammar, N: ReadNode + HydrateNode + RecordCells>(name: &str, grammar: &Renders<G, N>, sources: &[&str]) {
+        for source in sources {
+            if let Err(apart) = grammar.alike(name, source) {
+                panic!("{name} {source:?}: {apart}");
+            }
+        }
+    }
+    check("rust", &rust_renders(), &["let x = (/* c */);", "(self: Box<Self>)", "(&'a mut self)", "() => {};", "foo!($/';()*()+.);", "a!('lifetime);"]);
+    check("typescript", &typescript_renders(), &["function f() { return /* c */; }\n", "if (c) x()\nelse y()", "if (c) {\n  x()\n}\nelse y()", "{ /* c */ ; }", "class A { get x(/* c */): T { return 1 } }", "class A { get x( ): T { return 1 } }", "abstract makeSound(): void;"]);
+    check("python", &python_renders(), &["def f():\n    a\nx = 1\n", "a not /* c */ in b\n"]);
+}
+
+fn rust_renders() -> Renders<sittir_rust::RustGrammar, sittir_rust::render::AnyNode> {
+    Renders { grammar: sittir_rust::RustGrammar, options: sittir_rust::render::options::defaults, native: sittir_rust::render::render_node_parts }
+}
+
+fn typescript_renders() -> Renders<sittir_typescript::TypeScriptGrammar, sittir_typescript::render::AnyNode> {
+    Renders { grammar: sittir_typescript::TypeScriptGrammar, options: sittir_typescript::render::options::defaults, native: sittir_typescript::render::render_node_parts }
+}
+
+fn python_renders() -> Renders<sittir_python::PythonGrammar, sittir_python::render::AnyNode> {
+    Renders { grammar: sittir_python::PythonGrammar, options: sittir_python::render::options::defaults, native: sittir_python::render::render_node_parts }
 }

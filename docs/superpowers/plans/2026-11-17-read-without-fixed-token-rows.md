@@ -397,21 +397,21 @@ The maintainer's rulings (2026-11-17, the spec's Decided list):
 - Consumes Task 6's `named_fixed_pairs`.
 - `ReadRows` is deleted, and `parse_records` writes slot content and trivia rows only.
 
-- [ ] **Step 1: Show the row-pinning tests pin rows (working standard 4).**
+- [x] **Step 1: Show the row-pinning tests pin rows (working standard 4).**
   - Run `backers_agree` and `runs_agree` with `parse_records` switched to `SlotContent`. Expected: FAIL on a fixed-token row.
   - Record the first failing node in the ledger.
   - Write `named-fixed-query.test.ts` in the three packages, both storages: for each pair's source, `root.$query().$descendants.ofType(kinds.<Token>)` holds no item, and `ofType(kinds.<Holder>)` holds one item for each holder in the source. Run them before the switch. Expected: FAIL, the token query finds each.
-- [ ] **Step 2: Retake them.** Both compare against the tree with fixed tokens and units filtered by role (`slot_routes`: not `Route::Slot` and not `Route::Trivia`, or a unit). Expected: PASS.
-- [ ] **Step 3: Delete the old paths.**
+- [x] **Step 2: Retake them.** Both compare against the tree with fixed tokens and units filtered by role (`slot_routes`: not `Route::Slot` and not `Route::Trivia`, or a unit). Expected: PASS.
+- [x] **Step 3: Delete the old paths.**
   - Delete `ReadRows` and the `All` branches.
   - Rerun `named-fixed-query.test.ts`. Expected: PASS.
   - The stage-one parity tests become checks of the new tree against the tree-sitter tree, filtered the same way.
-- [ ] **Step 4: Tighten the pins.**
+- [x] **Step 4: Tighten the pins.**
   - Rerun `deep_read_words` and set its two pins to the new word counts, which must be lower than 62,092 and 35,611.
   - Rerun the census.
 
   Expected: read words at or below the spec's "stage one" column on every corpus, less the choice-list slot entries Task 1 counted.
-- [ ] **Step 5: Commit:** `feat(core): a parsed read stores no row for a fixed token or a unit`.
+- [x] **Step 5: Commit:** `feat(core): a parsed read stores no row for a fixed token or a unit`.
 
 ### Task 10: A render keeps no table of the nodes it visits
 

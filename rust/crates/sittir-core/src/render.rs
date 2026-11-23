@@ -577,6 +577,22 @@ pub trait RenderSink {
     fn leaf_kind(&mut self, kind: KindId) {
         let _ = kind;
     }
+    /// Write `text` as the bytes of a parsed unit of `kind` that no row
+    /// names, as `slice` writes a coordinate's.
+    ///
+    /// # Errors
+    ///
+    /// What writing the text refuses.
+    fn unit_text(&mut self, kind: KindId, text: &str) -> RenderResult {
+        let _ = kind;
+        self.text(text)
+    }
+    /// A parsed unit of `kind` that no row names has ended: the seam it
+    /// stands for (`ResolvedOptions::token_seam`), when it stands for one, is
+    /// held as a gap, which a render that ends there drops.
+    fn unit_seam(&mut self, kind: KindId) {
+        let _ = kind;
+    }
     /// A node of `kind` begins its body; `exit_kind` ends the one begun last.
     fn enter_kind(&mut self, kind: KindId) {
         let _ = kind;

@@ -38,28 +38,34 @@ pub fn runs_agree<G: RecordGrammar, N: RecordCells>(parsed: &Records<'_, G>, roo
     let count = nodes.kid(NodeIndex::ROOT).count;
     let members = crate::trivia_table::DepthMembers::scanned((0..count).map(|index| nodes.kid(NodeIndex(index))), kinds);
     let mut agree = vec![false; count as usize];
-    let mut rows = std::collections::HashMap::new();
     let mut pending = vec![(root, NodeIndex::ROOT)];
     while let Some((run, row)) = pending.pop() {
-        rows.insert(run, row);
         let (met, kept) = (runs.kid(run), nodes.kid(row));
+        if crate::nodes::Nodes::is_unit(&mut runs, run) {
+            let same = (met.named, met.field, met.extra) == (kept.named, kept.field, kept.extra);
+            agree[row.0 as usize..(row.0 + kept.count) as usize].fill(same);
+            continue;
+        }
         let top = row == NodeIndex::ROOT;
-        let (met_kids, kept_kids) = (runs.kids(run), nodes.kids(row));
+        let aligned = aligned_kids(parsed.grammar(), &mut runs, run, nodes, row);
+        let placed: Vec<NodeIndex> = aligned.held.iter().map(|(met, _)| met.index).filter(|&index| !crate::nodes::Nodes::is_unit(&mut runs, index)).collect();
         let same = crate::nodes::Kid { index: kept.index, count: kept.count, start: if top { kept.start } else { met.start }, end: if top { kept.end } else { met.end }, ..met } == kept
-            && met.leaf() == kept.leaf()
             && runs.missing(run) == nodes.missing(row)
             && runs.holds_error(run) == nodes.holds_error(row)
             && runs.depth_move(run, kinds) == Ok(members.between(row, row + kept.count))
-            && met_kids.len() == kept_kids.len()
-            && met_kids.iter().all(|kid| runs.parent(kid.index) == Some(run))
-            && runs.edge(run, crate::options::Side::Before).map(|kid| kid.index) == met_kids.first().map(|kid| kid.index)
-            && runs.edge(run, crate::options::Side::After).map(|kid| kid.index) == met_kids.last().map(|kid| kid.index)
+            && aligned.apart.is_none()
+            && aligned.held.iter().all(|(kid, _)| runs.parent(kid.index) == Some(run))
+            && runs.edge(run, crate::options::Side::Before).map(|kid| kid.index) == placed.first().copied()
+            && runs.edge(run, crate::options::Side::After).map(|kid| kid.index) == placed.last().copied()
             && match runs.site(run) {
                 Some(super::NodeSite::Record(at)) => cells_name_rows::<N>(&mut runs, built, at, G::KIND_BITS).map_err(|refusal| refusal.to_string())?,
                 _ => true,
             };
         agree[row.0 as usize] = same;
-        pending.extend(met_kids.iter().zip(kept_kids.iter()).map(|(met, kept)| (met.index, kept.index)));
+        for token in &aligned.fixed {
+            agree[token.index.0 as usize..(token.index.0 + token.count) as usize].fill(true);
+        }
+        pending.extend(aligned.held.iter().map(|(met, kept)| (met.index, kept.index)));
     }
     if let Some(refusal) = runs.refused() {
         return Err(refusal.to_string());
@@ -72,6 +78,49 @@ pub fn runs_agree<G: RecordGrammar, N: RecordCells>(parsed: &Records<'_, G>, roo
         }
     }
     Ok(parity)
+}
+
+/// The children of a tree's node as a read of it holds them.
+#[derive(Debug, Default)]
+pub struct AlignedKids {
+    /// Each child the read holds, as the records list it and as the tree does.
+    pub held: Vec<(crate::nodes::Kid, crate::nodes::Kid)>,
+    /// Each child of the tree its holder's template writes, which the
+    /// records don't list.
+    pub fixed: Vec<crate::nodes::Kid>,
+    /// The first child of either that the other has no place for.
+    pub apart: Option<crate::nodes::Kid>,
+}
+
+/// The children of the node at `run` in `records` beside those of the node
+/// at `row` in `tree`: a node with a place by its kinds and span, a unit by
+/// its kind and its slot route, each in its own order since a unit has no
+/// offset to sit among the extras beside it by, and a child the holder routes
+/// as a fixed token or a separator as one the records don't list.
+pub fn aligned_kids<G: crate::engine::EngineGrammar>(grammar: G, records: &mut dyn crate::nodes::Nodes<'_>, run: NodeIndex, tree: &mut dyn crate::nodes::Nodes<'_>, row: NodeIndex) -> AlignedKids {
+    use crate::read::Route;
+    let (met, kept) = (records.kids(run), tree.kids(row));
+    let at = tree.kid(row);
+    let routed = grammar.slot_routes(tree, &at);
+    let route = |kid: &crate::nodes::Kid| routed.as_ref().and_then(|routed| routed.children.iter().position(|child| child.index == kid.index).map(|found| routed.routes[found]));
+    let (units, placed): (Vec<_>, Vec<_>) = met.iter().copied().partition(|one| records.is_unit(one.index));
+    let (mut next_placed, mut next_unit) = (0, 0);
+    let mut aligned = AlignedKids::default();
+    for kid in kept.iter() {
+        if let Some(one) = placed.get(next_placed).filter(|one| (one.grammar, one.display, one.start, one.end) == (kid.grammar, kid.display, kid.start, kid.end)) {
+            aligned.held.push((*one, *kid));
+            next_placed += 1;
+        } else if let Some(one) = units.get(next_unit).copied().filter(|one| matches!(route(kid), Some(Route::Slot { .. })) && (one.grammar == kid.grammar || one.grammar == kid.display || grammar.unit_id(tree, kid) == Some(one.grammar))) {
+            aligned.held.push((one, *kid));
+            next_unit += 1;
+        } else if matches!(route(kid), Some(Route::Layout | Route::Separator { .. })) {
+            aligned.fixed.push(*kid);
+        } else {
+            aligned.apart = aligned.apart.or(Some(*kid));
+        }
+    }
+    aligned.apart = aligned.apart.or_else(|| placed.get(next_placed).or_else(|| units.get(next_unit)).copied());
+    aligned
 }
 
 /// Whether each leaf and unit cell of the record at `at` in `arena`, and of

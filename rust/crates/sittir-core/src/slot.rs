@@ -268,21 +268,92 @@ impl NodeIdOrCoordinate<'_> {
     /// rendered node of the same kind writes them. `adjacent` drops the
     /// leading seam for a position that forbids whitespace before it.
     pub fn write_between_edges(self, w: &mut dyn crate::render::RenderSink, adjacent: bool) -> Result<(), crate::render::RenderError> {
-        let edges = self.edges();
-        if adjacent {
-            w.seam(crate::layout_kinds::LayoutKinds::TIGHT);
-        } else if let Some(seam) = edges.and_then(|e| e.before) {
-            w.seam_arm(seam);
-        }
-        w.boundary(self, crate::options::Side::Before);
-        w.slice(self)?;
-        w.boundary(self, crate::options::Side::After);
-        if let Some(seam) = edges.and_then(|e| e.after) {
-            w.seam_arm(seam);
-        }
+        write_edged(self.edges(), adjacent, w, |w| {
+            w.boundary(self, crate::options::Side::Before);
+            w.slice(self)?;
+            w.boundary(self, crate::options::Side::After);
+            Ok(())
+        })?;
         w.end_lines_after(self);
         Ok(())
     }
+}
+
+/// `body` between the seams `edges` place, tight before it when `adjacent`.
+fn write_edged(edges: Option<CoordinateEdges>, adjacent: bool, w: &mut dyn crate::render::RenderSink, body: impl FnOnce(&mut dyn crate::render::RenderSink) -> crate::render::RenderResult) -> crate::render::RenderResult {
+    if adjacent {
+        w.seam(crate::layout_kinds::LayoutKinds::TIGHT);
+    } else if let Some(seam) = edges.and_then(|e| e.before) {
+        w.seam_arm(seam);
+    }
+    body(w)?;
+    if let Some(seam) = edges.and_then(|e| e.after) {
+        w.seam_arm(seam);
+    }
+    Ok(())
+}
+
+/// A render body's writes for one parsed unit: its text goes as a source
+/// token's bytes, and the sites its template places around it as they are.
+#[cfg(feature = "arena")]
+struct UnitBytes<'w> {
+    w: &'w mut dyn crate::render::RenderSink,
+    kind: crate::types::KindId,
+    wrote: bool,
+}
+
+#[cfg(feature = "arena")]
+impl crate::render::RenderSink for UnitBytes<'_> {
+    fn text(&mut self, s: &str) -> crate::render::RenderResult {
+        self.wrote = true;
+        self.w.unit_text(self.kind, s)
+    }
+    fn join_arm(&mut self, arm: crate::render::JoinArm) {
+        self.w.join_arm(arm);
+    }
+    fn site(&mut self, kind: crate::types::KindId) {
+        self.w.site(kind);
+    }
+    fn site_at(&mut self, site: crate::types::SiteId) {
+        self.w.site_at(site);
+    }
+    fn edge(&mut self, kind: crate::types::KindId, side: crate::options::Side, stamped: Option<crate::options::EdgeArm>) {
+        self.w.edge(kind, side, stamped);
+    }
+    fn seam(&mut self, _: crate::layout_kinds::LayoutKinds) {}
+    fn indent(&mut self) {}
+    fn dedent(&mut self, _: crate::layout_kinds::LayoutKinds) {}
+    fn ends_line(&self) -> bool {
+        self.w.ends_line()
+    }
+    fn seat_trailing(&mut self) -> crate::render::RenderResult {
+        Ok(())
+    }
+    fn defer_trailing(&mut self, render: &mut dyn FnMut(&mut dyn crate::render::RenderSink) -> crate::render::RenderResult) -> crate::render::RenderResult {
+        render(self)
+    }
+}
+
+/// Write a parsed unit of `kind` that no row names, as a coordinate's bytes
+/// are written: the text `body` writes, and for a zero-width unit only the
+/// seam it stands for (`RenderSink::unit_seam`).
+///
+/// # Errors
+///
+/// What writing its text refuses.
+#[cfg(feature = "arena")]
+pub(crate) fn write_parsed_unit(kind: crate::types::KindId, edges: Option<CoordinateEdges>, adjacent: bool, w: &mut dyn crate::render::RenderSink, body: impl FnOnce(&mut dyn crate::render::RenderSink) -> crate::render::RenderResult) -> crate::render::RenderResult {
+    write_edged(edges, adjacent, w, |w| {
+        let mut bytes = UnitBytes { w: &mut *w, kind, wrote: false };
+        body(&mut bytes)?;
+        if !bytes.wrote {
+            w.unit_text(kind, "")?;
+        }
+        w.unit_seam(kind);
+        Ok(())
+    })?;
+    w.end_line_after(kind);
+    Ok(())
 }
 
 impl NodeCoordinate {

@@ -367,14 +367,14 @@ impl<T: Clone + crate::trivia::FromTriviaText + 'static> LayoutAt<'_, T> {
         if self.enveloped() {
             return Ok((None, Vec::new()));
         }
+        let units = |id: crate::types::NodeId| -> Result<Vec<UnitSides<T>>, ArenaError> {
+            let key_of = |word: u32| (self.keys)(word).ok_or(malformed("slot word", word));
+            prep.store.units(Address(id.address()), prep.built)?.into_iter().map(|(word, item, trivia)| Ok(UnitSides { slot: key_of(word)?.to_owned(), item, trivia })).collect()
+        };
         let (mut trivia, units) = match (self.at(prep)?, self.key.place) {
+            (Some(at), PrepPlace::Stored(Place::Node(id))) if id.site().is_none() => (source_sides(prep, at), units(id)?),
             (Some(at), _) => (source_sides(prep, at), Vec::new()),
-            (None, PrepPlace::Stored(place @ Place::Node(id))) if id.site().is_none() => {
-                let record = Address(id.address());
-                let key_of = |word: u32| (self.keys)(word).ok_or(malformed("slot word", word));
-                let units = prep.store.units(record, prep.built)?.into_iter().map(|(word, item, trivia)| Ok(UnitSides { slot: key_of(word)?.to_owned(), item, trivia })).collect::<Result<_, ArenaError>>()?;
-                (read_entries(prep, prep.store.sides(place, prep.built)?)?, units)
-            }
+            (None, PrepPlace::Stored(place @ Place::Node(id))) if id.site().is_none() => (read_entries(prep, prep.store.sides(place, prep.built)?)?, units(id)?),
             (None, PrepPlace::Stored(place @ (Place::Node(_) | Place::RootLeaf))) => (read_entries(prep, prep.store.sides(place, prep.built)?)?, Vec::new()),
             _ => return Err(malformed("record place", 0)),
         };
@@ -455,6 +455,9 @@ struct Item {
     at: CellAt,
     site: Site<PrepPlace>,
     row: Option<ParsedRow>,
+    /// The kind of a parsed unit its cell names with no row: it takes a
+    /// coordinate's edges.
+    unit: Option<KindId>,
 }
 
 /// Scalar slots stay inline. Lists keep owned scratch so preparation can append to parsed arenas.
@@ -502,6 +505,10 @@ impl<T, N, const ADJACENT: bool> SlotAt<'_, T, N, ADJACENT> {
         let place = self.key.place;
         let item = |cell: Cell, item: u32| -> Result<Option<Item>, ArenaError> {
             let site = Site { holder: place, word, item: ItemIndex(item) };
+            let unit = match cell {
+                Cell::Unit { kind, row: None } if view.node().is_some() && kind != KindId::BLANK => Some(kind),
+                _ => None,
+            };
             let cell = match cell {
                 Cell::Absent => match prep.prepared.node(place).and_then(|node| node.slot(word)).and_then(|slot| slot.unit) {
                     Some(kind) if self.shape.run.is_none() => Cell::Unit { kind, row: None },
@@ -510,7 +517,7 @@ impl<T, N, const ADJACENT: bool> SlotAt<'_, T, N, ADJACENT> {
                 cell => cell,
             };
             let at = CellAt { cell, node: self.key.node, site: Some(site) };
-            Ok(Some(Item { at, site, row: view.cell_row(cell)? }))
+            Ok(Some(Item { at, site, row: view.cell_row(cell)?, unit }))
         };
         if self.shape.run.is_none() {
             return Ok(Items::One([item(view.slot_cell(words, record, self.shape)?, 0)?]));
@@ -535,10 +542,20 @@ impl<T, N, const ADJACENT: bool> SlotAt<'_, T, N, ADJACENT> {
 /// The edge item a slot item gives a root's edge: a parsed node's
 /// coordinate, else its type's snapshot geometry, else nothing to read.
 fn edge_item<T, N: PrepareRecord<T>>(prep: &RecordPrep<'_, T>, item: Item) -> EdgeItem<'static> {
-    match item.row {
-        Some(row) => EdgeItem::Node(row.id),
-        None => N::snapshot_edge(prep, item.at).map_or(EdgeItem::Rebuilt, EdgeItem::Snapshot),
+    match (item.row, item.unit, item.at.node) {
+        (Some(row), ..) => EdgeItem::Node(row.id),
+        (None, Some(_), Some(node)) => unit_edge(prep, node),
+        _ => N::snapshot_edge(prep, item.at).map_or(EdgeItem::Rebuilt, EdgeItem::Snapshot),
     }
+}
+
+/// The edge item a parsed unit gives the root of `node`'s source: a unit has
+/// no span, and what lies past it to the source's edge is that edge's
+/// whitespace, so the item is the source between its outer whitespace.
+fn unit_edge<T>(prep: &RecordPrep<'_, T>, node: NodeId) -> EdgeItem<'static> {
+    let Some(source) = prep.sources.source_of(NodeIdOrCoordinate::of(node)) else { return EdgeItem::Rebuilt };
+    let span = crate::types::Span { start: crate::types::narrow(source.len() - source.trim_start().len()), end: crate::types::narrow(source.trim_end().len()) };
+    EdgeItem::Bytes { node: crate::slot::NodeIdOrOwnedCoordinate::NodeId(node), span }
 }
 
 impl<'r, T, N: PrepareRecord<T>, const ADJACENT: bool> EdgeItems<RecordPrep<'r, T>> for SlotAt<'r, T, N, ADJACENT> {
@@ -571,6 +588,11 @@ fn prepare_item<T: Clone + 'static, N: PrepareRecord<T> + Prepare + HydrateNode>
 }
 
 fn prepare_item_in_place<T: Clone + 'static, N: PrepareRecord<T> + Prepare + HydrateNode>(prep: &mut RecordPrep<'_, T>, item: Item, ctx: &RenderContext<'_>) -> Result<(), RenderError> {
+    if let Some(kind) = item.unit {
+        let edges = crate::prepare::unit_coordinate_edges(kind, prep.prepared.coordinate_edges(item.site), ctx);
+        prep.prepared.set_coordinate_edges(item.site, edges);
+        return Ok(());
+    }
     let Some(row) = item.row else { return N::prepare_record(prep, item.at, ctx) };
     let at = row.at(None);
     at.resolve(ctx.sources)?;
@@ -605,7 +627,7 @@ impl<T, N> PresentItems for Fills<'_, '_, T, N> {
 impl<T, N: PrepareRecord<T>> GapItems for Fills<'_, '_, T, N> {
     fn fill_gap(&mut self, at: usize, side: Side, seam: SeamArm) {
         let item = self.items[at];
-        if item.row.is_some() {
+        if item.row.is_some() || item.unit.is_some() {
             fill_coordinate_gap(self.prep.prepared.coordinate_edges_mut(item.site), side, seam);
         } else if N::takes_gaps(item.at.cell) {
             let stored = stored_edges(self.prep, item.at);
@@ -617,6 +639,12 @@ impl<T, N: PrepareRecord<T>> GapItems for Fills<'_, '_, T, N> {
 impl<T, N: PrepareRecord<T>> SeatItems for Fills<'_, '_, T, N> {
     fn fill_seat(&mut self, at: usize, table: &[Option<SiteId>], ctx: &RenderContext<'_>) {
         let item = self.items[at];
+        if let Some(kind) = item.unit {
+            if let Some(seat) = seat_site(table, kind) {
+                seat_coordinate(self.prep.prepared.coordinate_edges_mut(item.site), seat, ctx);
+            }
+            return;
+        }
         match item.row {
             Some(row) => {
                 let Some(seat) = coord_seat(row.at(None), table, ctx) else { return };

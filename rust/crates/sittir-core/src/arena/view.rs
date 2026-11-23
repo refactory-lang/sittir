@@ -646,6 +646,9 @@ enum SlotCell<V> {
     Parsed(ParsedRow, Cell),
     /// A built value's view.
     View(V),
+    /// A parsed unit its holder's cell names by its kind alone, and the view
+    /// that writes its kind's text.
+    Unit(KindId, V),
     Refused(ArenaError),
 }
 
@@ -678,7 +681,7 @@ impl<'a, T, V: RecordView<'a, T>, const ADJACENT: bool> RecordSlot<'a, T, V, ADJ
     fn of_cell(ctx: RecordCtx<'a, T>, site: Site<PrepPlace>, key: &'static str, decoded: Result<Cell, ArenaError>) -> Self {
         let cell = match decoded {
             Ok(Cell::Absent) => match ctx.prepared.node(site.holder).and_then(|node| node.slot(site.word)).and_then(|slot| slot.unit) {
-                Some(kind) => Self::cell(ctx, site, Cell::Unit { kind, row: None }),
+                Some(kind) => V::from_cell(ctx, Cell::Unit { kind, row: None }, Some(site)).map_or_else(SlotCell::Refused, SlotCell::View),
                 None => SlotCell::Absent,
             },
             Ok(cell) => Self::cell(ctx, site, cell),
@@ -690,7 +693,10 @@ impl<'a, T, V: RecordView<'a, T>, const ADJACENT: bool> RecordSlot<'a, T, V, ADJ
     fn cell(ctx: RecordCtx<'a, T>, site: Site<PrepPlace>, cell: Cell) -> SlotCell<V> {
         match ctx.cell_row(cell) {
             Ok(Some(row)) => SlotCell::Parsed(row, cell),
-            Ok(None) => V::from_cell(ctx, cell, Some(site)).map_or_else(SlotCell::Refused, SlotCell::View),
+            Ok(None) => V::from_cell(ctx, cell, Some(site)).map_or_else(SlotCell::Refused, |view| match cell {
+                Cell::Unit { kind, row: None } if ctx.node.is_some() && kind != KindId::BLANK => SlotCell::Unit(kind, view),
+                _ => SlotCell::View(view),
+            }),
             Err(refused) => SlotCell::Refused(refused),
         }
     }
@@ -716,6 +722,8 @@ impl<'a, T, V: RecordView<'a, T> + Render, const ADJACENT: bool> Render for Reco
         match &self.cell {
             SlotCell::Absent => Err(RenderError::Record(ArenaError::MissingField(self.key))),
             SlotCell::View(view) => view.render(w),
+            SlotCell::Unit(_, view) if self.ctx.prepared.facet(self.site).is_some() => view.render(w),
+            SlotCell::Unit(kind, view) => crate::slot::write_parsed_unit(*kind, self.ctx.prepared.coordinate_edges(self.site), ADJACENT, w, |w| view.render(w)),
             SlotCell::Refused(refused) => Err(RenderError::Record(refused.clone())),
             &SlotCell::Parsed(row, cell) => {
                 let at = self.at(row);
@@ -747,7 +755,7 @@ impl<T, V: KindOf, const ADJACENT: bool> KindTest for RecordSlot<'_, T, V, ADJAC
     fn kind_in(&self, _: &dyn RenderSink, kinds: &[KindId]) -> bool {
         match &self.cell {
             SlotCell::Parsed(row, _) => kinds.contains(&row.kind),
-            SlotCell::View(view) => view.kind_in(kinds),
+            SlotCell::View(view) | SlotCell::Unit(_, view) => view.kind_in(kinds),
             SlotCell::Absent | SlotCell::Refused(_) => false,
         }
     }

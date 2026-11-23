@@ -117,22 +117,40 @@ fn leaves(nodes: &mut dyn Nodes<'_>, root: NodeIndex) -> Vec<Kid> {
 
 /// The leaves of every fixture of `name` whose root has a record, read
 /// through the records a read of it leaves: in source order with no byte
-/// in two, and nothing but whitespace between them. Answers the bytes the
-/// leaves hold.
+/// in two, and between them nothing but whitespace and the tokens of its
+/// tree that their holders' templates write. Answers the bytes the leaves
+/// hold.
 fn rows_cover<G: RecordGrammar + Copy, N: HydrateNode + RecordCells>(name: &str, grammar: G, options: fn() -> ResolvedOptions) -> u32 {
     let mut covered = 0;
     for source in read_fixtures(name) {
-        let Some(found) = over_records::<G, N, _>(name, grammar, options(), &source, |nodes, root| leaves(nodes, root)) else { continue };
+        let Some(found) = over_records::<G, N, _>(name, grammar, options(), &source, |nodes, root| {
+            let kids = leaves(nodes, root);
+            kids.into_iter().filter(|kid| !nodes.is_unit(kid.index)).collect::<Vec<_>>()
+        }) else {
+            continue;
+        };
+        let tree = parsed(grammar, options(), &source);
+        let tokens = leaves(&mut tree.nodes(), NodeIndex::ROOT);
+        let mut token = tokens.iter().peekable();
+        let mut gap_holds_only_tokens = |from: u32, to: u32| {
+            let mut at = from;
+            while let Some(next) = token.next_if(|next| next.start < to) {
+                if next.end <= at {
+                    continue;
+                }
+                assert!(source[at as usize..next.start.max(at) as usize].chars().all(char::is_whitespace), "{name} {source:?}: bytes before the token at {} lie in no token", next.start);
+                at = next.end;
+            }
+            assert!(at >= to || source[at as usize..to as usize].chars().all(char::is_whitespace), "{name} {source:?}: bytes {at}..{to} lie in no token");
+        };
         let mut at = 0;
         for leaf in found {
             assert!(leaf.start >= at, "{name} {source:?}: the leaf at {} starts at {} inside the one before, which ends at {at}", leaf.index.0, leaf.start);
-            let gap = &source[at as usize..leaf.start as usize];
-            assert!(gap.chars().all(char::is_whitespace), "{name} {source:?}: {gap:?} before {} lies in no leaf", leaf.index.0);
+            gap_holds_only_tokens(at, leaf.start);
             covered += leaf.width();
             at = leaf.end;
         }
-        let rest = &source[at as usize..];
-        assert!(rest.chars().all(char::is_whitespace), "{name} {source:?}: {rest:?} lies in no leaf");
+        gap_holds_only_tokens(at, u32::try_from(source.len()).expect("a source offset"));
     }
     covered
 }

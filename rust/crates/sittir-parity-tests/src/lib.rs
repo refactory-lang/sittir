@@ -264,6 +264,25 @@ pub fn read_kids<G: sittir_core::engine::EngineGrammar, B: sittir_core::engine::
     kids
 }
 
+/// Each node with a place in the source that `records` lists, beside the same
+/// node of `tree`, the root by being the root, at the span a record's root
+/// holds: its whole source.
+///
+/// # Panics
+///
+/// When the tree holds no such node.
+#[must_use]
+pub fn same_nodes<G: sittir_core::engine::EngineGrammar, B: sittir_core::engine::Backing<G>>(tree: &sittir_core::engine::ParsedTree<G>, records: &B) -> Vec<(sittir_core::nodes::Kid, sittir_core::nodes::Kid)> {
+    let mut of_tree = read_kids::<G, _>(tree).into_iter();
+    read_kids::<G, _>(records)
+        .into_iter()
+        .map(|kid| {
+            let same = if kid.index == sittir_core::types::NodeIndex::ROOT { of_tree.next().map(|root| sittir_core::nodes::Kid { start: kid.start, end: kid.end, ..root }) } else { of_tree.by_ref().find(|other| (other.grammar, other.display, other.start, other.end) == (kid.grammar, kid.display, kid.start, kid.end)) };
+            (same.unwrap_or_else(|| panic!("the tree holds no node for {kid:?}")), kid)
+        })
+        .collect()
+}
+
 /// An edge chain that ends, in the source, in a list's separator other than
 /// the list's resolved separator: the source, the side, and both chains.
 #[cfg(feature = "arena")]
@@ -345,9 +364,8 @@ fn levels_by_position<G: sittir_core::engine::EngineGrammar, B: sittir_core::eng
     levels
 }
 
-/// Each named node's edge chains on both sides, from a read with no fixed
-/// token rows, against the same node's chains by position in a read that
-/// writes every row.
+/// Each named node's edge chains on both sides, from a read's records,
+/// against the same node's chains by position in the tree it was read from.
 ///
 /// # Panics
 ///
@@ -355,27 +373,23 @@ fn levels_by_position<G: sittir_core::engine::EngineGrammar, B: sittir_core::eng
 /// its holder's edge and places something the position walk's does not.
 #[cfg(feature = "arena")]
 pub fn edge_chains<G: sittir_core::arena::RecordGrammar + Copy, N: sittir_core::arena::HydrateNode>(name: &str, grammar: G, options: fn() -> sittir_core::options::ResolvedOptions, sources: &[String]) -> EdgeChains {
-    use sittir_core::arena::{EdgePart, ReadRows};
+    use sittir_core::arena::EdgePart;
     use sittir_core::engine::{Engine, EngineGrammar, Records};
     use sittir_core::options::Side;
     use sittir_core::render::SourceTable as _;
     let read_options = options();
     let mut chains = EdgeChains::default();
     for source in sources {
-        let (mut whole, mut content) = (Engine::new(grammar, options()).expect("an engine"), Engine::new(grammar, options()).expect("an engine"));
-        let whole_root = whole.parse_records_with::<N>(source, ReadRows::All).expect("a read").root;
-        let content_root = content.parse_records_with::<N>(source, ReadRows::SlotContent).expect("a read").root;
-        let (Some(whole_root), Some(content_root)) = (whole_root, content_root) else { continue };
-        let (whole_built, content_built) = (whole.written().built(), content.written().built());
-        let (Ok(all), Ok(records)) = (Records::over(&whole, &whole_built, whole_root), Records::over(&content, &content_built, content_root)) else { continue };
+        let tree = parsed(grammar, options(), source);
+        let mut engine = Engine::new(grammar, options()).expect("an engine");
+        let Some(root) = engine.parse_records::<N>(source).expect("a read").root else { continue };
+        let built = engine.written().built();
+        let Ok(records) = Records::over(&engine, &built, root) else { continue };
         let seating = records.seating();
-        let mut of_all = read_kids::<G, _>(&all).into_iter();
-        for kid in read_kids::<G, _>(&records) {
-            let same = of_all.by_ref().find(|other| (other.grammar, other.display, other.start, other.end) == (kid.grammar, kid.display, kid.start, kid.end));
-            let same = same.unwrap_or_else(|| panic!("{name} {source:?}: no node of the whole read for {kid:?}"));
+        for (same, kid) in same_nodes::<G, _>(&tree, &records) {
             let Some(id) = records.node_names().and_then(|names| names.name(kid.index)) else { continue };
             for side in [Side::Before, Side::After] {
-                let in_source = levels_by_position::<G, _>(&all, &same, side);
+                let in_source = levels_by_position::<G, _>(&tree, &same, side);
                 let mut from_body = Vec::new();
                 seating.for_each_edge_level(sittir_core::slot::NodeIdOrCoordinate::of(id), side, &mut |level| from_body.push(level));
                 if from_body == in_source {
@@ -641,8 +655,12 @@ impl<G: sittir_core::arena::RecordGrammar> OverRead<G> {
                 if let Some(at) = over.place(run).and_then(Place::as_record) {
                     records.insert(row, at);
                 }
-                let (met, kept) = (ours.kids(run), theirs.kids(row));
-                pending.extend(met.iter().zip(kept.iter()).map(|(met, kept)| (met.index, kept.index)));
+                if ours.is_unit(run) {
+                    continue;
+                }
+                let aligned = sittir_core::arena::aligned_kids(grammar, &mut ours, run, &mut theirs, row);
+                assert_eq!(aligned.apart.map(|kid| (G::kind_name(kid.grammar), kid.start, kid.end, kid.named)), None, "{:?}: the tree holds each node a run lists, under {}", tree.source(), G::kind_name(theirs.kid(row).grammar));
+                pending.extend(aligned.held.iter().map(|(one, same)| (one.index, same.index)));
             }
             records
         };

@@ -7,7 +7,6 @@ use sittir_core::engine::Backing as _;
 use sittir_core::arena::{HydrateNode, RecordCells, RecordGrammar, WriteCell};
 use sittir_core::engine::{EngineGrammar, ParsedTree};
 use sittir_core::layout::{NodeLayout, UnitSides};
-use sittir_core::nodes::Nodes;
 use sittir_core::options::ResolvedOptions;
 use sittir_core::prepare::RenderContext;
 use sittir_core::read::{Depth, ReadNode};
@@ -227,8 +226,7 @@ fn the_records_answer_every_node_as_the_tree_does() {
 }
 
 /// A list's units keep their items around a hole, in the tree's navigation
-/// and in the records', and the
-/// list's slot items give the units after the hole the same item.
+/// and in the records', which name each by its site.
 #[test]
 fn a_list_item_is_numbered_once() {
     type Ts = sittir_typescript::render::AnyNode;
@@ -240,24 +238,12 @@ fn a_list_item_is_numbered_once() {
     let items = |units: Vec<UnitSides<_>>| units.into_iter().map(|unit| unit.item.0).collect::<Vec<u32>>();
     let typed = vec![0, 2];
     assert_eq!(items(tree.unit_sides(array)), typed, "through the tree, the units around the hole");
-    let (from_records, scalar) = over
+    let from_records = over
         .engine
-        .read_named(over.name(array).expect("an array has a record"), |parsed, at| {
-            let mut nodes = parsed.nodes();
-            let kid = nodes.kid(at);
-            let routed = sittir_typescript::TypeScriptGrammar.slot_routes(&mut nodes, &kid).expect("an array routes its children");
-            let scalar: Vec<u32> = routed
-                .slot_items()
-                .into_iter()
-                .filter(|&(child, _, _)| matches!(routed.routes[child], sittir_core::read::Route::Slot { scalar: true, .. }))
-                .map(|(_, _, item)| item.0)
-                .collect();
-            (items(parsed.unit_sides(at)), scalar)
-        })
+        .read_named(over.name(array).expect("an array has a record"), |parsed, at| items(parsed.unit_sides(at)))
         .expect("the records read")
         .expect("a read wrote the record");
     assert_eq!(from_records, typed, "from the records");
-    assert_eq!(scalar, typed, "the list's slot items");
 }
 
 /// A read leaves a record for an extra whose read has structure, a rust

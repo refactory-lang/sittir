@@ -1,26 +1,23 @@
 //! A parsed read with no row for a fixed token or a unit answers every
-//! reader as a read that writes them all does.
+//! reader as the tree it was read from does.
 #![cfg(feature = "arena")]
 
-use std::collections::BTreeMap;
-
 use sittir_core::arena::side::{RunEntry, SideRecord};
-use sittir_core::arena::{header_of, Address, ArenaRead, BodySlot, Cell, CellWord, EdgePart, HydrateNode, ListCell, NodeSite, Placed, ReadRows, RecordCells, RecordGrammar, RecordShape};
-use sittir_core::engine::{Backing, Descendant, Engine, EngineGrammar, Records};
+use sittir_core::arena::{header_of, Address, ArenaRead, BodySlot, Cell, CellWord, EdgePart, HydrateNode, ListCell, NodeSite, Placed, RecordCells, RecordGrammar, RecordShape};
+use sittir_core::engine::{Backing, Descendant, Engine, EngineGrammar, ParsedTree, Records};
 use sittir_core::layout::SlotLayout;
 use sittir_core::options::ResolvedOptions;
-use sittir_core::nodes::Nodes as _;
 use sittir_core::render::SourceTable as _;
 use sittir_core::slot::{ChangedEdges, NodeIdOrCoordinate};
 use sittir_core::trivia_table::TriviaSide;
-use sittir_core::types::{Delimiter, KindId, NodeId, NodeIndex, Span};
-use sittir_parity_tests::{edge_chains, edge_sources, fixture_sources, named_fixed_pairs, out_of_order_units, parsed, read_fixtures, read_kids, with_layout, MIXED_LISTS};
+use sittir_core::types::{Delimiter, KindId, NodeIndex, Span};
+use sittir_parity_tests::{edge_chains, edge_sources, fixture_sources, named_fixed_pairs, out_of_order_units, parsed, read_fixtures, read_kids, same_nodes, with_layout, MIXED_LISTS};
 
 type ShapeFn = fn(KindId) -> Option<RecordShape>;
 
-fn read<G: RecordGrammar + Copy, N: HydrateNode + RecordCells, R>(grammar: G, options: fn() -> ResolvedOptions, source: &str, rows: ReadRows, answer: impl FnOnce(&dyn ArenaRead, Address) -> R) -> R {
+fn read<G: RecordGrammar + Copy, N: HydrateNode + RecordCells, R>(grammar: G, options: fn() -> ResolvedOptions, source: &str, answer: impl FnOnce(&dyn ArenaRead, Address) -> R) -> R {
     let mut engine = Engine::new(grammar, options()).expect("an engine");
-    let parsed = engine.parse_records_with::<N>(source, rows).expect("a read");
+    let parsed = engine.parse_records::<N>(source).expect("a read");
     let built = engine.written().built();
     answer(&*built, parsed.root.expect("a root record"))
 }
@@ -61,33 +58,26 @@ fn cells_of<G: RecordGrammar, N: RecordCells>(arena: &dyn ArenaRead, at: Address
 }
 
 #[test]
-fn a_slot_content_read_writes_no_fixed_token_row() {
+fn a_read_writes_no_fixed_token_row() {
     use sittir_typescript::render::{kind_ids as kind, options, AnyNode};
     use sittir_typescript::TypeScriptGrammar as Grammar;
-    let arguments = |rows| {
-        read::<Grammar, AnyNode, _>(Grammar, options::defaults, "f(a, b)\n", rows, |arena, root| {
-            let at = record_of(arena, root, kind::ARGUMENTS);
-            let named: Vec<u32> = cells_of::<Grammar, AnyNode>(arena, at).iter().filter_map(|cell| if let Cell::ParsedLeaf { row, .. } = cell { Some(row.0) } else { None }).collect();
-            (side_of(arena, at).run.len(), named)
-        })
-    };
-    assert_eq!(arguments(ReadRows::SlotContent), (2, vec![2, 3]));
-    assert_eq!(arguments(ReadRows::All).0, 5);
+    let arguments = read::<Grammar, AnyNode, _>(Grammar, options::defaults, "f(a, b)\n", |arena, root| {
+        let at = record_of(arena, root, kind::ARGUMENTS);
+        let named: Vec<u32> = cells_of::<Grammar, AnyNode>(arena, at).iter().filter_map(|cell| if let Cell::ParsedLeaf { row, .. } = cell { Some(row.0) } else { None }).collect();
+        (side_of(arena, at).run.len(), named)
+    });
+    assert_eq!(arguments, (2, vec![2, 3]));
 }
 
 #[test]
-fn a_slot_content_read_holds_a_unit_by_its_kind() {
-    fn units<G: RecordGrammar + Copy, N: HydrateNode + RecordCells>(grammar: G, options: fn() -> ResolvedOptions, source: &str, holder: KindId, rows: ReadRows) -> Vec<Option<u32>> {
-        read::<G, N, _>(grammar, options, source, rows, |arena, root| {
+fn a_read_holds_a_unit_by_its_kind() {
+    fn units<G: RecordGrammar + Copy, N: HydrateNode + RecordCells>(grammar: G, options: fn() -> ResolvedOptions, source: &str, holder: KindId) -> Vec<Option<u32>> {
+        read::<G, N, _>(grammar, options, source, |arena, root| {
             cells_of::<G, N>(arena, record_of(arena, root, holder)).iter().filter_map(|cell| if let Cell::Unit { row, .. } = cell { Some(row.map(|row| row.0)) } else { None }).collect()
         })
     }
-    let rust = |rows| units::<_, sittir_rust::render::AnyNode>(sittir_rust::RustGrammar, sittir_rust::render::options::defaults, "fn f(x: u8) {}\n", sittir_rust::render::kind_ids::PARAMETER, rows);
-    assert_eq!(rust(ReadRows::SlotContent), [None]);
-    assert!(rust(ReadRows::All)[0].is_some());
-    let typescript = |rows| units::<_, sittir_typescript::render::AnyNode>(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults, "f()\n", sittir_typescript::render::kind_ids::EXPRESSION_STATEMENT, rows);
-    assert_eq!(typescript(ReadRows::SlotContent), [None]);
-    assert!(typescript(ReadRows::All)[0].is_some());
+    assert_eq!(units::<_, sittir_rust::render::AnyNode>(sittir_rust::RustGrammar, sittir_rust::render::options::defaults, "fn f(x: u8) {}\n", sittir_rust::render::kind_ids::PARAMETER), [None]);
+    assert_eq!(units::<_, sittir_typescript::render::AnyNode>(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults, "f()\n", sittir_typescript::render::kind_ids::EXPRESSION_STATEMENT), [None]);
 }
 
 const GRAMMARS: [(&str, ShapeFn); 5] = [
@@ -150,15 +140,10 @@ fn delimiters<G: EngineGrammar + Copy, B: Backing<G>>(grammar: G, tree: &B) -> V
     kids.iter().filter_map(|kid| Some((kid.grammar, kid.start, kid.end, grammar.delimiter(&mut nodes, kid)?))).collect()
 }
 
-fn each_slot_content_read<G: RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions, mut check: impl FnMut(&str, &sittir_core::engine::ParsedTree<G>, &Records<'_, G>)) {
+fn each_read<G: RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions, mut check: impl FnMut(&str, &ParsedTree<G>, &Records<'_, G>)) {
     let extra = if name == "typescript" { MIXED_LISTS.as_slice() } else { &[] };
     for source in fixture_sources(name).iter().map(String::as_str).chain(extra.iter().copied()) {
-        let tree = parsed(grammar, options(), source);
-        let mut engine = Engine::new(grammar, options()).expect("an engine");
-        let Some(root) = engine.parse_records_with::<N>(source, ReadRows::SlotContent).expect("a read").root else { continue };
-        let built = engine.written().built();
-        let Ok(records) = Records::over(&engine, &built, root) else { continue };
-        check(source, &tree, &records);
+        over_tree_and_records::<G, N>(grammar, options, source, |tree, records| check(source, tree, records));
     }
 }
 
@@ -209,7 +194,7 @@ fn an_edge_chain_at_a_root_after_leading_whitespace_is_read_from_the_whole_sourc
         let mut object = Vec::new();
         tree.seating().for_each_edge_level((&coordinate).into(), side, &mut |level| object.push(level.grammar));
         let mut engine = Engine::new(Grammar, options::defaults()).expect("an engine");
-        let root = engine.parse_records_with::<AnyNode>(source, sittir_core::arena::ReadRows::SlotContent).expect("a read").root.expect("a root");
+        let root = engine.parse_records::<AnyNode>(source).expect("a read").root.expect("a root");
         let built = engine.written().built();
         let records = Records::over(&engine, &built, root).expect("the records");
         let name = records.node_names().and_then(|names| names.name(NodeIndex::ROOT)).expect("the root's name");
@@ -227,7 +212,7 @@ fn an_edge_chain_at_a_root_after_leading_whitespace_is_read_from_the_whole_sourc
 #[test]
 fn parsed_lists_answer_their_separators_from_stamps() {
     fn check<G: RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions) {
-        each_slot_content_read::<G, N>(name, grammar, options, |source, tree, records| {
+        each_read::<G, N>(name, grammar, options, |source, tree, records| {
             assert_eq!(list_answers::<G, _>(records), list_answers::<G, _>(tree), "{name} {source:?}");
         });
     }
@@ -237,21 +222,20 @@ fn parsed_lists_answer_their_separators_from_stamps() {
 #[test]
 fn the_query_reads_the_stored_delimiter() {
     fn check<G: RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions) {
-        each_slot_content_read::<G, N>(name, grammar, options, |source, tree, records| {
+        each_read::<G, N>(name, grammar, options, |source, tree, records| {
             assert_eq!(delimiters(grammar, records), delimiters(grammar, tree), "{name} {source:?}");
         });
     }
     each_grammar!(check);
 }
 
-fn over_both_reads<G: RecordGrammar + Copy, N: HydrateNode>(grammar: G, options: fn() -> ResolvedOptions, source: &str, answer: impl FnOnce(&Records<'_, G>, &Records<'_, G>)) {
-    let (mut whole, mut content) = (Engine::new(grammar, options()).expect("an engine"), Engine::new(grammar, options()).expect("an engine"));
-    let whole_root = whole.parse_records_with::<N>(source, ReadRows::All).expect("a read").root;
-    let content_root = content.parse_records_with::<N>(source, ReadRows::SlotContent).expect("a read").root;
-    let (Some(whole_root), Some(content_root)) = (whole_root, content_root) else { return };
-    let (whole_built, content_built) = (whole.written().built(), content.written().built());
-    let (Ok(all), Ok(records)) = (Records::over(&whole, &whole_built, whole_root), Records::over(&content, &content_built, content_root)) else { return };
-    answer(&all, &records);
+fn over_tree_and_records<G: RecordGrammar + Copy, N: HydrateNode>(grammar: G, options: fn() -> ResolvedOptions, source: &str, answer: impl FnOnce(&ParsedTree<G>, &Records<'_, G>)) {
+    let tree = parsed(grammar, options(), source);
+    let mut engine = Engine::new(grammar, options()).expect("an engine");
+    let Some(root) = engine.parse_records::<N>(source).expect("a read").root else { return };
+    let built = engine.written().built();
+    let Ok(records) = Records::over(&engine, &built, root) else { return };
+    answer(&tree, &records);
 }
 
 /// A query's item: its stamped kind, its span (none for a unit), and the
@@ -271,50 +255,34 @@ fn listed<G: EngineGrammar, B: Backing<G>>(tree: &B, index: NodeIndex, depth: Op
         .collect()
 }
 
-/// The nodes `all` and `content` list alike, by their ids in each. An item
-/// only `all` lists goes to `dropped`.
-fn aligned(context: &str, all: &[Listed], content: &[Listed], dropped: &mut dyn FnMut(KindId)) -> Vec<(NodeIndex, NodeIndex)> {
-    let (mut rest, mut same) = (content.iter().peekable(), Vec::new());
-    for one in all {
-        match rest.peek() {
-            Some(other) if (other.0, other.1) == (one.0, one.1) => {
-                if let (Some(whole), Some(held)) = (one.2, other.2) {
-                    same.push((whole, held));
-                }
-                rest.next();
-            }
-            _ => dropped(one.0),
-        }
-    }
-    assert!(rest.next().is_none(), "{context}: the read without rows lists more:\n  all {all:?}\n  content {content:?}");
-    same
+/// The nodes a query lists alike over `tree` and `records`, by their ids in
+/// each: a unit by its kind, which a kept row shows as a unit too.
+fn aligned(context: &str, tree: &[Listed], records: &[Listed]) -> Vec<(NodeIndex, NodeIndex)> {
+    assert_eq!(tree.len(), records.len(), "{context}:\n  tree {tree:?}\n  records {records:?}");
+    tree.iter()
+        .zip(records)
+        .filter_map(|(one, other)| {
+            assert_eq!((one.0, one.1), (other.0, other.1), "{context}:\n  tree {tree:?}\n  records {records:?}");
+            Some((one.2?, other.2?))
+        })
+        .collect()
 }
 
 #[test]
 fn queries_list_units_in_render_body_order() {
     fn check<G: RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions) {
-        let pairs = named_fixed_pairs(name);
-        let mut left: BTreeMap<(&'static str, &'static str), u32> = BTreeMap::new();
         let mut sources = read_fixtures(name);
         sources.extend(out_of_order_units(name).into_iter().map(str::to_owned));
         for source in &sources {
-            over_both_reads::<G, N>(grammar, options, source, |all, records| {
+            over_tree_and_records::<G, N>(grammar, options, source, |tree, records| {
                 let context = format!("{name} {source:?}");
-                let token = |kind: KindId| pairs.iter().any(|pair| pair.token == G::kind_name(kind));
-                let whole = aligned(&context, &listed::<G, _>(all, NodeIndex::ROOT, None), &listed::<G, _>(records, NodeIndex::ROOT, None), &mut |kind| assert!(token(kind), "{context}: dropped {}, in no pair", G::kind_name(kind)));
+                let whole = aligned(&context, &listed::<G, _>(tree, NodeIndex::ROOT, None), &listed::<G, _>(records, NodeIndex::ROOT, None));
                 for (at, held) in std::iter::once((NodeIndex::ROOT, NodeIndex::ROOT)).chain(whole) {
-                    let holder = all.nodes().kid(at);
-                    let names = [G::kind_name(holder.grammar), G::kind_name(holder.display)];
-                    aligned(&context, &listed::<G, _>(all, at, Some(1)), &listed::<G, _>(records, held, Some(1)), &mut |kind| {
-                        let pair = pairs.iter().find(|pair| pair.token == G::kind_name(kind) && names.contains(&pair.holder));
-                        let pair = pair.unwrap_or_else(|| panic!("{context}: {names:?} dropped {}, in no pair", G::kind_name(kind)));
-                        *left.entry((pair.holder, pair.token)).or_default() += 1;
-                    });
-                    aligned(&context, &listed::<G, _>(all, at, None), &listed::<G, _>(records, held, None), &mut |kind| assert!(token(kind), "{context}: dropped {}, in no pair", G::kind_name(kind)));
+                    aligned(&context, &listed::<G, _>(tree, at, Some(1)), &listed::<G, _>(records, held, Some(1)));
+                    aligned(&context, &listed::<G, _>(tree, at, None), &listed::<G, _>(records, held, None));
                 }
             });
         }
-        eprintln!("{name}: named fixed tokens dropped: {left:?}");
     }
     each_grammar!(check);
 }
@@ -323,10 +291,10 @@ fn queries_list_units_in_render_body_order() {
 fn a_named_fixed_token_leaves_query_results() {
     fn check<G: RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions) {
         for pair in named_fixed_pairs(name) {
-            over_both_reads::<G, N>(grammar, options, pair.source, |all, records| {
+            over_tree_and_records::<G, N>(grammar, options, pair.source, |tree, records| {
                 let count = |items: &[Listed], of: &str| items.iter().filter(|item| G::kind_name(item.0) == of).count();
-                let (whole, held) = (listed::<G, _>(all, NodeIndex::ROOT, None), listed::<G, _>(records, NodeIndex::ROOT, None));
-                assert!(count(&whole, pair.token) > 0, "{name} {pair:?}: the source holds the token");
+                let (whole, held) = (listed::<G, _>(tree, NodeIndex::ROOT, None), listed::<G, _>(records, NodeIndex::ROOT, None));
+                assert!(read_kids::<G, _>(tree).iter().any(|kid| [kid.grammar, kid.display].iter().any(|&kind| G::kind_name(kind) == pair.token)), "{name} {pair:?}: the source holds the token");
                 assert_eq!(count(&held, pair.token), 0, "{name} {pair:?}: the token leaves the query");
                 assert_eq!(count(&held, pair.holder), count(&whole, pair.holder), "{name} {pair:?}: the holder is found as often");
             });
@@ -335,31 +303,15 @@ fn a_named_fixed_token_leaves_query_results() {
     each_grammar!(check);
 }
 
-/// Each node with a place in the source that both reads list, by its name
-/// in each.
-fn same_named_nodes<G: RecordGrammar + Copy>(all: &Records<'_, G>, records: &Records<'_, G>) -> Vec<(NodeId, NodeId)> {
-    let mut of_all = read_kids::<G, _>(all).into_iter();
-    read_kids::<G, _>(records)
-        .into_iter()
-        .filter_map(|kid| {
-            let same = of_all.by_ref().find(|other| (other.grammar, other.display, other.start, other.end) == (kid.grammar, kid.display, kid.start, kid.end)).expect("the whole read holds the node");
-            Some((all.node_names()?.name(same.index)?, records.node_names()?.name(kid.index)?))
-        })
-        .collect()
-}
-
 fn line_starts_agree<G: RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions, source: &str) -> usize {
     let mut compared = 0;
-    over_both_reads::<G, N>(grammar, options, source, |all, records| {
-        let (whole, held) = (all.seating(), records.seating());
-        let mut nodes = all.nodes();
-        let mut of_whole = read_kids::<G, _>(all).into_iter();
-        for kid in read_kids::<G, _>(records) {
-            let same = of_whole.by_ref().find(|other| (other.grammar, other.display, other.start, other.end) == (kid.grammar, kid.display, kid.start, kid.end)).expect("the whole read holds the node");
-            let (Some(of_all), Some(of_records)) = (all.node_names().and_then(|names| names.name(same.index)), records.node_names().and_then(|names| names.name(kid.index))) else { continue };
+    over_tree_and_records::<G, N>(grammar, options, source, |tree, records| {
+        let held = records.seating();
+        let mut nodes = tree.nodes();
+        for (same, kid) in same_nodes::<G, _>(tree, records) {
+            let Some(id) = records.node_names().and_then(|names| names.name(kid.index)) else { continue };
             let by_position = sittir_core::engine::line_starts_inside_tokens(&mut nodes, same.index, source);
-            assert_eq!(by_position, whole.line_starts_inside_tokens(NodeIdOrCoordinate::of(of_all)), "{name} {source:?}: the whole read at {kid:?}");
-            assert_eq!(by_position, held.line_starts_inside_tokens(NodeIdOrCoordinate::of(of_records)), "{name} {source:?}: the read without rows at {kid:?}");
+            assert_eq!(by_position, held.line_starts_inside_tokens(NodeIdOrCoordinate::of(id)), "{name} {source:?}: at {kid:?}");
             compared += 1;
         }
     });
@@ -371,11 +323,13 @@ fn depth_moves_agree_without_depth_member_rows() {
     fn check<G: RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions) {
         let (mut compared, mut moved) = (0, 0);
         for source in read_fixtures(name) {
-            over_both_reads::<G, N>(grammar, options, &source, |all, records| {
-                let (whole, held) = (all.seating(), records.seating());
-                for (of_all, of_records) in same_named_nodes(all, records) {
-                    let depth = whole.depth_move(NodeIdOrCoordinate::of(of_all));
-                    assert_eq!(depth, held.depth_move(NodeIdOrCoordinate::of(of_records)), "{name} {source:?}");
+            over_tree_and_records::<G, N>(grammar, options, &source, |tree, records| {
+                let (whole, held, ctx) = (tree.seating(), records.seating(), tree.read_ctx());
+                for (same, kid) in same_nodes::<G, _>(tree, records) {
+                    let Some(id) = records.node_names().and_then(|names| names.name(kid.index)) else { continue };
+                    let coordinate = ctx.coordinate_of(&same);
+                    let depth = whole.depth_move((&coordinate).into());
+                    assert_eq!(depth, held.depth_move(NodeIdOrCoordinate::of(id)), "{name} {source:?}");
                     compared += 1;
                     moved += usize::from(depth != 0);
                 }
@@ -416,8 +370,8 @@ fn a_token_read_by_its_interior_keeps_the_lines_inside_it() {
             _ => return,
         };
         assert!(line_starts_agree::<G, N>(name, grammar, options, source) > 0, "{name}: the source holds nodes");
-        over_both_reads::<G, N>(grammar, options, source, |all, _| {
-            let nodes = &mut all.nodes();
+        over_tree_and_records::<G, N>(grammar, options, source, |tree, _| {
+            let nodes = &mut tree.nodes();
             assert!(!sittir_core::engine::line_starts_inside_tokens(nodes, NodeIndex::ROOT, source).is_empty(), "{name}: a line starts inside the token");
         });
     }
@@ -452,69 +406,29 @@ fn holder_of<G: RecordGrammar, N: RecordCells>(arena: &dyn ArenaRead, site: Node
     }
 }
 
-/// The token a row holds as its one child: the member an enum kind's row
-/// spells, which a read without rows holds as the unit, under the kind the
-/// grammar folds that raw token into, of the same name.
-fn spelled_by(arena: &dyn ArenaRead, site: NodeSite) -> Option<KindId> {
-    let NodeSite::Row { holder, entry } = site else { return None };
-    let run = side_of(arena, holder).run;
-    match (run.get(entry as usize)?, run.get(entry as usize + 1)) {
-        (RunEntry::Row { inner: 1, .. }, Some(RunEntry::Row { facts, .. })) => Some(facts.kind),
-        _ => None,
-    }
-}
+/// A placed side: its holder's kind and span, the side, and the extra's kind
+/// and span.
+type PlacedSide = (KindId, Option<Span>, TriviaSide, KindId, Span);
 
-/// A placed side: its holder's kind and span, the side, the extra's kind and
-/// span, and the token its holder spells.
-type PlacedSide = (KindId, Option<Span>, TriviaSide, KindId, Span, Option<KindId>);
-
-fn placed_sides<G: RecordGrammar + Copy, N: HydrateNode + RecordCells>(grammar: G, options: fn() -> ResolvedOptions, source: &str, rows: ReadRows) -> (Vec<PlacedSide>, Vec<Placed>) {
+fn placed_sides<G: RecordGrammar + Copy, N: HydrateNode + RecordCells>(grammar: G, options: fn() -> ResolvedOptions, source: &str) -> (Vec<PlacedSide>, Vec<Placed>) {
     let mut engine = Engine::new(grammar, options()).expect("an engine");
-    let (_, placed) = engine.parse_placed_with::<N>(source, rows).expect("a read");
+    let (_, placed) = engine.parse_placed::<N>(source).expect("a read");
     let built = engine.written().built();
     let sides = placed
         .iter()
         .map(|one| {
             let (kind, span) = holder_of::<G, N>(&*built, one.site);
-            (kind, span, one.side, one.kind, one.span, spelled_by(&*built, one.site))
+            (kind, span, one.side, one.kind, one.span)
         })
         .collect();
     (sides, placed)
 }
 
-fn rendered<G: RecordGrammar + Copy, N: HydrateNode>(grammar: G, options: fn() -> ResolvedOptions, source: &str, rows: ReadRows) -> String {
+fn rendered<G: RecordGrammar + Copy, N: HydrateNode>(grammar: G, options: fn() -> ResolvedOptions, source: &str) -> String {
     let mut engine = Engine::new(grammar, options()).expect("an engine");
-    let root = engine.parse_records_with::<N>(source, rows).expect("a read").root.expect("a root record");
+    let root = engine.parse_records::<N>(source).expect("a read").root.expect("a root record");
     let (built, options) = (engine.written().built(), engine.options().clone());
     engine.render_at(&built, root, ChangedEdges::default(), &options, false, |_| Ok(())).expect("a render")
-}
-
-#[test]
-fn placements_differ_only_beside_named_fixed_tokens() {
-    fn check<G: RecordGrammar + Copy, N: HydrateNode + RecordCells>(name: &str, grammar: G, options: fn() -> ResolvedOptions) {
-        let pairs = named_fixed_pairs(name);
-        let (mut same, mut moved) = (0, Vec::new());
-        for source in read_fixtures(name) {
-            let (whole, _) = placed_sides::<G, N>(grammar, options, &source, ReadRows::All);
-            let (mut held, _) = placed_sides::<G, N>(grammar, options, &source, ReadRows::SlotContent);
-            for one in whole {
-                let found = held.iter().position(|other| (other.3, other.4) == (one.3, one.4));
-                let now = found.map(|at| held.swap_remove(at));
-                if now.is_some_and(|other| other.2 == one.2 && if other.1.is_none() { other.0 == one.0 || one.5.is_some_and(|spelled| G::kind_name(spelled) == G::kind_name(other.0)) } else { (other.0, other.1) == (one.0, one.1) }) {
-                    same += 1;
-                    continue;
-                }
-                assert!(pairs.iter().any(|pair| pair.token == G::kind_name(one.0)), "{name} {source:?}: {one:?} moved to {now:?}, beside no named fixed token");
-                moved.push(format!("{} {:?} {:?} -> {:?}", G::kind_name(one.0), one.2, one.4, now.map(|other| (G::kind_name(other.0), other.2))));
-            }
-            assert!(held.is_empty(), "{name} {source:?}: the read without rows places more: {held:?}");
-        }
-        eprintln!("{name}: {same} placed sides equal, {} beside a named fixed token", moved.len());
-        for one in moved {
-            eprintln!("  {name}: {one}");
-        }
-    }
-    each_grammar!(check);
 }
 
 #[test]
@@ -522,8 +436,8 @@ fn a_comment_beside_a_flag_stays_on_its_neighbour() {
     type N = sittir_rust::render::AnyNode;
     let (grammar, options) = (sittir_rust::RustGrammar, sittir_rust::render::options::defaults as fn() -> ResolvedOptions);
     let source = "fn f(x: & /* c */ mut T) {}";
-    assert_eq!(rendered::<_, N>(grammar, options, source, ReadRows::All), rendered::<_, N>(grammar, options, source, ReadRows::SlotContent));
-    let (sides, placed) = placed_sides::<_, N>(grammar, options, source, ReadRows::SlotContent);
+    assert_eq!(rendered::<_, N>(grammar, options, source), source);
+    let (sides, placed) = placed_sides::<_, N>(grammar, options, source);
     assert!(!placed.iter().any(|one| matches!(one.site, NodeSite::Flag { .. })), "no side is keyed to the flag");
     let at = u32::try_from(source.find('T').expect("the type")).expect("an offset");
     assert!(sides.iter().any(|side| side.1 == Some(Span { start: at, end: at + 1 }) && side.2 == TriviaSide::Leading), "the comment leads `T`: {sides:?}");
@@ -534,7 +448,7 @@ fn a_comment_beside_a_unit_keeps_its_side_through_the_units_site() {
     type N = sittir_rust::render::AnyNode;
     let (grammar, options) = (sittir_rust::RustGrammar, sittir_rust::render::options::defaults as fn() -> ResolvedOptions);
     let source = "fn f(x: /* c */ u8) {}";
-    assert_eq!(rendered::<_, N>(grammar, options, source, ReadRows::All), rendered::<_, N>(grammar, options, source, ReadRows::SlotContent));
-    let (_, placed) = placed_sides::<_, N>(grammar, options, source, ReadRows::SlotContent);
+    assert_eq!(rendered::<_, N>(grammar, options, source), source);
+    let (_, placed) = placed_sides::<_, N>(grammar, options, source);
     assert!(placed.iter().any(|one| matches!(one.site, NodeSite::Unit(_))), "a side is keyed to the unit's site: {placed:?}");
 }

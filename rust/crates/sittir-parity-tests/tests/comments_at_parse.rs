@@ -5,9 +5,10 @@
 //! with a line-break member in each gap the side holds whose whitespace
 //! holds a line break in the source, and in no other. A
 //! unit has no inside: what the tree's placement assigns inside one, the
-//! parse keeps nowhere, as it keeps no side of a node its holder keeps as a
-//! fixed token or a flag, and the tree's placement gives a flag's keyword no
-//! side. The parse sets apart the list items the tree's lookup does: an item
+//! parse keeps nowhere. A node its holder keeps as a fixed token or a flag has
+//! no side: what the tree's placement seats on one of the named fixed tokens,
+//! the parse seats on a neighbour, as a built node has it, and the tree's
+//! placement gives a flag's keyword no side. The parse sets apart the list items the tree's lookup does: an item
 //! with a record in its record's header, any other with a blank-line member
 //! first on the leading side it places. Looking up every side of every node
 //! of the records' tree takes its placement no step.
@@ -26,14 +27,14 @@ use sittir_core::trivia::{TriviaEntry, TriviaSeam};
 use sittir_core::trivia_store::Place;
 use sittir_core::trivia_table::TriviaSide;
 use sittir_core::types::NodeIndex;
-use sittir_parity_tests::{fixture_sources, parsed};
+use sittir_parity_tests::{fixture_sources, named_fixed_pairs, parsed};
 
 /// The bytes of an entry: where it starts and ends in the source.
 type Bytes = (u32, u32);
 
 /// The nodes of `source` whose extras and `ERROR`s the parse placed apart
 /// from the tree's placement, and how many the tree's placement assigns.
-fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G, options: fn() -> ResolvedOptions, source: &str) -> (Vec<String>, usize) {
+fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions, source: &str) -> (Vec<String>, usize) {
     let tree = parsed(grammar, options(), source);
     let mut engine = Engine::new(grammar, options()).expect("an engine");
     let parse = engine.parse_records::<N>(source).expect("a parse");
@@ -46,6 +47,28 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
     let placement = tree.placed_trivia();
     let (mut ours, mut theirs) = (records.nodes(), tree.nodes());
     let (mut apart, mut assigned) = (Vec::new(), 0);
+    let mut beside_fixed = std::collections::BTreeSet::new();
+    let mut under = vec![NodeIndex::ROOT];
+    while let Some(row) = under.pop() {
+        let at = theirs.kid(row);
+        let routed = grammar.slot_routes(&mut theirs, &at);
+        for kid in theirs.kids(row).iter() {
+            under.push(kid.index);
+            if !routed.as_ref().is_some_and(|routed| routed.keeps_as_fixed_token_or_flag(kid.index)) {
+                continue;
+            }
+            for side in [TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner] {
+                for entry in placement.tables().flat_map(|table| table.side(kid.index, side).iter()) {
+                    let held = theirs.kid(entry.index());
+                    beside_fixed.insert((held.start, held.end));
+                    if !named_fixed_pairs(name).iter().any(|pair| [kid.grammar, kid.display].iter().any(|&kind| pair.token == G::kind_name(kind))) {
+                        apart.push(format!("{}..{} {} {side:?}: holds a side and is no named fixed token", kid.start, kid.end, G::kind_name(kid.grammar)));
+                    }
+                }
+            }
+        }
+    }
+    let mut seated_beside = std::collections::BTreeSet::new();
     let mut pending = vec![(NodeIndex::ROOT, NodeIndex::ROOT, None)];
     while let Some((run, row, holder)) = pending.pop() {
         let routed = holder.and_then(|holder| {
@@ -84,7 +107,9 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
                 apart.push(format!("{}..{} {} {side:?}: the tree's placement gives a flag's keyword a side", kid.start, kid.end, G::kind_name(kid.grammar)));
             }
             drop(records.side_entries(run, side, false));
-            if placed != kept.iter().copied().map(Some).collect::<Vec<_>>() {
+            seated_beside.extend(placed.iter().flatten().filter(|bytes| beside_fixed.contains(bytes)).copied());
+            let in_place: Vec<Option<Bytes>> = placed.iter().copied().filter(|one| !one.is_some_and(|bytes| beside_fixed.contains(&bytes))).collect();
+            if in_place != kept.iter().copied().map(Some).collect::<Vec<_>>() {
                 let kid = theirs.kid(row);
                 apart.push(format!("{}..{} {} {side:?}: parse placed {placed:?}, the tree's placement {kept:?}", kid.start, kid.end, G::kind_name(kid.grammar)));
             }
@@ -99,7 +124,7 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
                 SideEntry::Layout(TriviaEntry::Value(SlotValue::Node(member))) => Some(member_letter(member)),
                 SideEntry::Layout(_) | SideEntry::Written(_) => None,
             }));
-            if !fixed_token_or_flag && !inside_a_unit && placed.iter().all(Option::is_some) && written != looked_up {
+            if !fixed_token_or_flag && !inside_a_unit && in_place.len() == placed.len() && placed.iter().all(Option::is_some) && written != looked_up {
                 let kid = theirs.kid(row);
                 apart.push(format!("{}..{} {} {side:?}: parse wrote {written:?}, the tree seats {looked_up:?}", kid.start, kid.end, G::kind_name(kid.grammar)));
             }
@@ -115,8 +140,13 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
                 }
             }
         }
-        let (met, kept) = (ours.kids(run), theirs.kids(row));
-        pending.extend(met.iter().zip(kept.iter()).map(|(met, kept)| (met.index, kept.index, Some(row))));
+        if !ours.is_unit(run) {
+            let aligned = sittir_core::arena::aligned_kids(grammar, &mut ours, run, &mut theirs, row);
+            pending.extend(aligned.held.iter().map(|(met, kept)| (met.index, kept.index, Some(row))));
+        }
+    }
+    if seated_beside != beside_fixed {
+        apart.push(format!("beside a named fixed token the tree seats {beside_fixed:?}, the parse {seated_beside:?}"));
     }
     (apart, assigned)
 }
@@ -153,7 +183,7 @@ fn shape_of(entries: impl IntoIterator<Item = Option<char>>) -> String {
 
 fn fixtures_apart<G: sittir_core::arena::RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions) -> (Vec<String>, usize) {
     fixture_sources(name).iter().fold((Vec::new(), 0), |(mut apart, assigned), source| {
-        let (found, extras) = placed_apart::<G, N>(grammar, options, source);
+        let (found, extras) = placed_apart::<G, N>(name, grammar, options, source);
         apart.extend(found.into_iter().next().map(|first| format!("{name} {source:?}: {first}")));
         (apart, assigned + extras)
     })
@@ -215,7 +245,7 @@ fn a_parse_places_a_comment_beside_a_separator_as_the_tree_s_placement_does() {
     let apart: Vec<String> = sources
         .iter()
         .flat_map(|source| {
-            let (apart, assigned) = placed_apart::<_, sittir_typescript::render::AnyNode>(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults, source);
+            let (apart, assigned) = placed_apart::<_, sittir_typescript::render::AnyNode>("typescript", sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults, source);
             assert!(assigned > 0, "{source:?} holds extras");
             apart.into_iter().map(move |line| format!("{source:?}: {line}"))
         })
@@ -225,7 +255,7 @@ fn a_parse_places_a_comment_beside_a_separator_as_the_tree_s_placement_does() {
 
 #[test]
 fn a_parse_places_an_error_at_a_zero_width_token_by_its_place_in_the_tree_as_the_tree_s_placement_does() {
-    let (apart, assigned) = placed_apart::<_, sittir_python::render::AnyNode>(sittir_python::PythonGrammar, sittir_python::render::options::defaults, "print(f\"a\"'b {c}\")\n");
+    let (apart, assigned) = placed_apart::<_, sittir_python::render::AnyNode>("python", sittir_python::PythonGrammar, sittir_python::render::options::defaults, "print(f\"a\"'b {c}\")\n");
     assert!(assigned > 0, "the source holds an ERROR");
     assert!(apart.is_empty(), "{} sides apart:\n{}", apart.len(), apart.join("\n"));
 }
@@ -262,8 +292,8 @@ fn a_parse_keeps_no_side_of_a_node_its_holder_keeps_as_a_fixed_token_or_a_flag()
     ];
     let found = rust
         .iter()
-        .map(|source| (*source, placed_apart::<_, sittir_rust::render::AnyNode>(sittir_rust::RustGrammar, sittir_rust::render::options::defaults, source)))
-        .chain(typescript.iter().map(|source| (*source, placed_apart::<_, sittir_typescript::render::AnyNode>(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults, source))));
+        .map(|source| (*source, placed_apart::<_, sittir_rust::render::AnyNode>("rust", sittir_rust::RustGrammar, sittir_rust::render::options::defaults, source)))
+        .chain(typescript.iter().map(|source| (*source, placed_apart::<_, sittir_typescript::render::AnyNode>("typescript", sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults, source))));
     let apart: Vec<String> = found.flat_map(|(source, (apart, _))| apart.into_iter().map(move |line| format!("{source:?}: {line}"))).collect();
     assert!(apart.is_empty(), "{} sides apart:\n{}", apart.len(), apart.join("\n"));
 }

@@ -941,6 +941,36 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         self.site_mark(arm, strength, flank);
     }
 
+    /// What comes before a source token's bytes `text`, of `kind`: any text
+    /// held for a named one, and its leaf edges.
+    fn open_leaf(&mut self, kind: Option<crate::types::KindId>, text: &str) -> crate::render::RenderResult {
+        let token = kind.is_some_and(|kind| crate::render::RenderSink::kind_has(self, kind, crate::options::KindFlags::ANON));
+        if !token {
+            self.write_deferred(Some(text))?;
+        }
+        if let Some(kind) = kind {
+            crate::render::RenderSink::leaf_kind(self, kind);
+        }
+        Ok(())
+    }
+
+    /// Writes a source token's bytes `text`, of `kind`: its last token joins
+    /// what follows when its kind says so, or when its kind is unknown.
+    fn close_leaf(&mut self, kind: Option<crate::types::KindId>, text: &str) -> crate::render::RenderResult {
+        self.write_chunk(text)?;
+        if !text.is_empty() {
+            self.joins_next = match kind {
+                Some(kind) if kind != crate::types::KindId::ERROR && self.options.is_some() => {
+                    crate::render::RenderSink::kind_has(self, kind, crate::options::KindFlags::JOINS_NEXT)
+                }
+                _ => true,
+            };
+        }
+        self.probe_kind = None;
+        self.end_leaf();
+        Ok(())
+    }
+
     /// Holds the seam each token at a coordinate's end writes in place of
     /// text (`ResolvedOptions::token_seam`). The whitespace such a token
     /// stands for follows it, outside the coordinate's bytes, so its seam
@@ -1424,25 +1454,9 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
             &respelled
         };
         let kind = crate::render::RenderSink::kind_of(self, coord);
-        let token = kind.is_some_and(|kind| crate::render::RenderSink::kind_has(self, kind, crate::options::KindFlags::ANON));
-        if !token {
-            self.write_deferred(Some(text))?;
-        }
-        if let Some(kind) = kind {
-            crate::render::RenderSink::leaf_kind(self, kind);
-        }
+        self.open_leaf(kind, text)?;
         self.probe_slice(coord);
-        self.write_chunk(text)?;
-        if !text.is_empty() {
-            self.joins_next = match kind {
-                Some(kind) if kind != crate::types::KindId::ERROR && self.options.is_some() => {
-                    crate::render::RenderSink::kind_has(self, kind, crate::options::KindFlags::JOINS_NEXT)
-                }
-                _ => true,
-            };
-        }
-        self.probe_kind = None;
-        self.end_leaf();
+        self.close_leaf(kind, text)?;
         if !text.is_empty() && sources.is_source_root(coord) {
             self.depth.hold(coord, self.sources);
             return Ok(());
@@ -1456,6 +1470,17 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
             }
         }
         Ok(())
+    }
+
+    fn unit_text(&mut self, kind: crate::types::KindId, text: &str) -> crate::render::RenderResult {
+        self.open_leaf(Some(kind), text)?;
+        self.close_leaf(Some(kind), text)
+    }
+
+    fn unit_seam(&mut self, kind: crate::types::KindId) {
+        if let Some(seam) = self.options.and_then(|options| options.token_seam(kind)) {
+            self.merge_seam(seam);
+        }
     }
 
     fn open_frame(&mut self, origin: Option<crate::slot::NodeIdOrCoordinate<'_>>) {

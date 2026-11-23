@@ -562,7 +562,7 @@ impl Walk<'_> {
                 match *part {
                     BodySlot::Flag { word, bit, kind, tokens, field } => {
                         let held = *words.get(word as usize).ok_or(malformed("flag word", at))?;
-                        if held >> bit & 1 == 1 && !self.flag_has_row(at, tokens, kind)? {
+                        if held >> bit & 1 == 1 {
                             let token = *tokens.first().ok_or(malformed("flag keyword", at))?;
                             out.push(Listed::Unit { site: NodeSite::Flag { holder: at, word, bit }, kind: token, alias: (token != kind).then_some(kind), field, listed: false });
                         }
@@ -584,34 +584,6 @@ impl Walk<'_> {
             }
         }
         self.list_through(at, usize::MAX, &mut next, out)
-    }
-
-    /// Whether the run of the record at `at` holds its flag's keyword: a row
-    /// of one of `tokens`, shown as `kind` or as itself, that no cell of the
-    /// record names.
-    fn flag_has_row(&mut self, at: Address, tokens: &[KindId], kind: KindId) -> Result<bool, ArenaError> {
-        let (shape_of, bits, _) = self.shape;
-        let mut named: Vec<u32> = super::view::parsed_cells(self.arena, at, shape_of, bits)?
-            .into_iter()
-            .filter_map(|(_, _, cell)| match cell {
-                Cell::Unit { row: Some(row), .. } | Cell::ParsedLeaf { row, .. } if row.0 >= 2 => Some(row.0 - 2),
-                _ => None,
-            })
-            .collect();
-        named.sort_unstable();
-        let run = self.run(at)?;
-        let mut entry = 0;
-        while let Some(&found) = run.get(entry) {
-            let RunEntry::Row { facts, inner, .. } = found else {
-                entry += 1;
-                continue;
-            };
-            if tokens.contains(&facts.kind) && (facts.display() == kind || facts.display() == facts.kind) && named.binary_search(&crate::types::narrow(entry)).is_err() {
-                return Ok(true);
-            }
-            entry += 1 + inner as usize;
-        }
-        Ok(false)
     }
 
     /// Lists what the cell value `held`, item `item` of the slot `cell` of

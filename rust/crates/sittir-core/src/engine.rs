@@ -760,8 +760,10 @@ pub trait Backing<G: EngineGrammar>: Sized {
             }
             let unit = if held_unit { Some(kid.grammar) } else { self.grammar().unit_id(nodes, &kid) };
             let holder = levels.len().checked_sub(2).map_or(start, |above| levels[above].0[levels[above].1]);
-            if let (None, Some(crate::read::Router::Children(route, ..))) = (unit, router(&holder)) {
-                if !kid.error() && !matches!(route(&kid), Ok(crate::read::Route::Slot { .. })) {
+            if let (false, Some(crate::read::Router::Children(route, ..))) = (held_unit, router(&holder)) {
+                let routed = route(&kid);
+                let written_by_holder = if unit.is_some() { matches!(routed, Ok(crate::read::Route::Layout | crate::read::Route::Separator { .. })) } else { !kid.error() && !matches!(routed, Ok(crate::read::Route::Slot { .. })) };
+                if written_by_holder {
                     continue;
                 }
             }
@@ -1189,6 +1191,16 @@ impl<G: EngineGrammar> Backing<G> for Records<'_, G> {
         let record = shape(crate::arena::ArenaRead::header_kind(self.built, at, bits).ok()?)?;
         let side = crate::arena::SideRecord::read(self.built, crate::arena::side_of(self.built, at).ok()?).ok()?;
         Some(side.slots.iter().filter(|slot| slot.separator.is_some()).filter_map(|slot| Some(crate::layout::SlotLayout { slot: record.cells.iter().find(|cell| cell.word == slot.word)?.key.to_string(), separator: slot.separator, ..crate::layout::SlotLayout::default() })).collect())
+    }
+
+    /// A record's units are named by their sites, which keep their items
+    /// around a list's holes where no separator is left to count them.
+    fn unit_sides(&self, index: NodeIndex) -> Vec<crate::layout::UnitSides<G::Trivia>> {
+        let Some(crate::arena::NodeSite::Record(at)) = self.table.site(index) else { return Vec::new() };
+        let (shape, bits, _) = self.shape;
+        let Some(record) = crate::arena::ArenaRead::header_kind(self.built, at, bits).ok().and_then(shape) else { return Vec::new() };
+        let units = self.store.units(at, self.built).unwrap_or_default();
+        units.into_iter().filter_map(|(word, item, trivia)| Some(crate::layout::UnitSides { slot: record.cells.iter().find(|cell| cell.word == word)?.key.to_owned(), item, trivia })).collect()
     }
 
     fn count_cached<V: HeapBytes>(&self, _: &V, _: Option<&V>) {}
@@ -2684,33 +2696,23 @@ impl<G: EngineGrammar> Engine<G> {
 
     #[cfg(feature = "arena")]
     pub fn parse_records<N: crate::arena::HydrateNode>(&mut self, source: &str) -> Result<ParsedRecords, String> {
-        self.parse_records_with::<N>(source, crate::arena::ReadRows::All)
+        self.read_records::<N>(source, None)
     }
 
-    /// `parse_records`, each run holding the children `rows` says.
+    /// `parse_records`, and each side the read placed. A diagnostic.
     ///
     /// # Errors
     ///
     /// The parser's failure, and what the read refuses.
     #[cfg(feature = "arena")]
-    pub fn parse_records_with<N: crate::arena::HydrateNode>(&mut self, source: &str, rows: crate::arena::ReadRows) -> Result<ParsedRecords, String> {
-        self.read_records::<N>(source, rows, None)
-    }
-
-    /// `parse_records_with`, and each side the read placed. A diagnostic.
-    ///
-    /// # Errors
-    ///
-    /// The parser's failure, and what the read refuses.
-    #[cfg(feature = "arena")]
-    pub fn parse_placed_with<N: crate::arena::HydrateNode>(&mut self, source: &str, rows: crate::arena::ReadRows) -> Result<(ParsedRecords, Vec<crate::arena::Placed>), String> {
+    pub fn parse_placed<N: crate::arena::HydrateNode>(&mut self, source: &str) -> Result<(ParsedRecords, Vec<crate::arena::Placed>), String> {
         let mut kept = Vec::new();
-        let parsed = self.read_records::<N>(source, rows, Some(&mut kept))?;
+        let parsed = self.read_records::<N>(source, Some(&mut kept))?;
         Ok((parsed, kept))
     }
 
     #[cfg(feature = "arena")]
-    fn read_records<N: crate::arena::HydrateNode>(&mut self, source: &str, rows: crate::arena::ReadRows, kept: Option<&mut Vec<crate::arena::Placed>>) -> Result<ParsedRecords, String> {
+    fn read_records<N: crate::arena::HydrateNode>(&mut self, source: &str, kept: Option<&mut Vec<crate::arena::Placed>>) -> Result<ParsedRecords, String> {
         let tree = self.parser.parse(source, None).ok_or_else(|| {
             let snippet: String = source.chars().take(80).collect();
             format!("parse failed (source: {snippet:?})")
@@ -2729,7 +2731,7 @@ impl<G: EngineGrammar> Engine<G> {
         } else {
             let mut ctx = crate::read::ReadCtx::new(source, crate::types::TreeId(0), grammar.shows()).with_relaxes(grammar.relaxes()).with_read_options(&self.options);
             let (mut placed, mut apart) = (Vec::new(), Vec::new());
-            let root = crate::arena::hydrate_whole::<N>(&mut tree.walk(), &mut ctx, Some(entry), grammar.surface_kinds(), rows, &mut writer, &mut placed, &mut apart).map_err(|refusal| refusal.describe(&G::kind_name))?;
+            let root = crate::arena::hydrate_whole::<N>(&mut tree.walk(), &mut ctx, Some(entry), grammar.surface_kinds(), &mut writer, &mut placed, &mut apart).map_err(|refusal| refusal.describe(&G::kind_name))?;
             writer.finish(entry, root).map_err(|refusal| refusal.to_string())?;
             drop(built);
             if let Some(kept) = kept {

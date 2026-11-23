@@ -56,16 +56,6 @@ impl HydrateError {
     }
 }
 
-/// Which of a node's children a read writes to its run.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ReadRows {
-    /// Every child.
-    All,
-    /// Slot content held as a leaf or a record, trivia, and what lies inside
-    /// those: no fixed token and no unit.
-    SlotContent,
-}
-
 /// What a parsed child is held as in its holder's record.
 #[derive(Debug, Clone, Copy)]
 pub enum Hydrated {
@@ -169,8 +159,6 @@ pub struct Hydration<'a> {
     /// Where the walk keeps the read's root's starts (`SideRecord::starts`),
     /// in the order it placed each side and set each item apart.
     starts: Option<Vec<u32>>,
-    /// Which children the walk writes to each run.
-    rows: ReadRows,
 }
 
 
@@ -280,8 +268,10 @@ struct OpenRun {
     /// word and its item in that slot.
     units: Vec<(usize, u32, crate::types::ItemIndex)>,
     /// How many written entries come before each entry, and last how many
-    /// are written; none until a slot-content walk asks.
-    numbers: Option<Vec<u32>>,
+    /// are written; none until the walk asks.
+    numbers: Vec<u32>,
+    /// Whether `numbers` counts the entries met so far.
+    numbered: bool,
 }
 
 impl OpenRun {
@@ -289,7 +279,7 @@ impl OpenRun {
     /// whose walk ended, emptied.
     fn reopened(spare: Option<OpenRun>, at: Address, entering: Option<(NodeIndex, NodeFacts)>, own: i32, within: bool) -> OpenRun {
         let Some(mut run) = spare else {
-            return OpenRun { at, index: entering.map(|(index, _)| index), facts: entering.map(|(_, facts)| facts), entries: Vec::new(), rows: Vec::new(), last: None, early: Vec::new(), beside: Vec::new(), passes: Vec::new(), met: Vec::new(), depth: own, own, within, units: Vec::new(), numbers: None };
+            return OpenRun { at, index: entering.map(|(index, _)| index), facts: entering.map(|(_, facts)| facts), entries: Vec::new(), rows: Vec::new(), last: None, early: Vec::new(), beside: Vec::new(), passes: Vec::new(), met: Vec::new(), depth: own, own, within, units: Vec::new(), numbers: Vec::new(), numbered: false };
         };
         run.entries.clear();
         run.rows.clear();
@@ -298,7 +288,8 @@ impl OpenRun {
         run.passes.clear();
         run.met.clear();
         run.units.clear();
-        OpenRun { at, index: entering.map(|(index, _)| index), facts: entering.map(|(_, facts)| facts), last: None, depth: own, own, within, numbers: None, ..run }
+        run.numbers.clear();
+        OpenRun { at, index: entering.map(|(index, _)| index), facts: entering.map(|(_, facts)| facts), last: None, depth: own, own, within, numbered: false, ..run }
     }
 
     /// Whether the entry at `entry` is written to the run.
@@ -309,40 +300,46 @@ impl OpenRun {
     /// Counts the written entries before each entry, once the entries it
     /// counts are met.
     fn number(&mut self) {
-        if self.numbers.is_some() {
+        if self.numbered {
             return;
         }
+        let mut numbers = std::mem::take(&mut self.numbers);
+        numbers.clear();
+        numbers.reserve(self.entries.len() + 1);
         let mut written = 0;
-        let mut numbers = Vec::with_capacity(self.entries.len() + 1);
         for entry in 0..self.entries.len() {
             numbers.push(written);
             written += u32::from(self.writes(entry));
         }
         numbers.push(written);
-        self.numbers = Some(numbers);
+        self.numbers = numbers;
+        self.numbered = true;
     }
 
     /// The number `entry` is written under: itself where every entry is
     /// written, else the written entries before it (`OpenRun::number`).
     fn written_number(&self, entry: usize) -> u32 {
-        self.numbers.as_ref().map_or_else(|| crate::types::narrow(entry), |numbers| numbers[entry])
+        if self.numbered { self.numbers[entry] } else { crate::types::narrow(entry) }
     }
 
-    /// The run as a slot-content read writes it: the entries it keeps, each
-    /// row's `inner` counting the ones it keeps inside it.
+    /// The run as the read writes it, compacted in place: the
+    /// entries it keeps, each row's `inner` counting the ones it keeps inside
+    /// it. The walk over this run has ended.
     fn written_run(&mut self) -> Vec<RunEntry> {
         self.number();
-        let mut out = Vec::with_capacity(self.written_number(self.entries.len()) as usize);
-        for (at, &entry) in self.entries.iter().enumerate() {
+        let mut kept = 0;
+        for at in 0..self.entries.len() {
             if !self.writes(at) {
                 continue;
             }
-            out.push(match entry {
+            self.entries[kept] = match self.entries[at] {
                 RunEntry::Row { facts, span, inner } => RunEntry::Row { facts, span, inner: self.written_number(at + 1 + inner as usize) - self.written_number(at + 1) },
                 record @ RunEntry::Record { .. } => record,
-            });
+            };
+            kept += 1;
         }
-        out
+        self.entries.truncate(kept);
+        std::mem::take(&mut self.entries)
     }
 
     /// The entry the node at descendant index `row` was met as.
@@ -356,7 +353,7 @@ impl OpenRun {
         if let Some(last) = self.beside.last_mut() {
             last.kept = false;
         }
-        self.numbers = None;
+        self.numbered = false;
     }
 
     /// The entry at `entry`, the last child met with all under it, is a
@@ -365,7 +362,14 @@ impl OpenRun {
         for beside in &mut self.beside[entry..] {
             beside.kept = false;
         }
-        self.numbers = None;
+        self.numbered = false;
+    }
+
+    /// Whether the entry at `entry`, the last child met with all under it,
+    /// is `MISSING` or has an extra, an `ERROR` or a `MISSING` token under
+    /// it: source its kind's text doesn't hold.
+    fn keeps_unit_row(&self, entry: usize) -> bool {
+        (entry..self.entries.len()).any(|at| self.beside[at].aside || matches!(self.entries[at], RunEntry::Row { facts, .. } if facts.missing))
     }
 
     /// Whether the entry at `entry` is a unit whose row is not written.
@@ -420,13 +424,13 @@ impl OpenRun {
             self.passes.extend(edges.map(|edges| (self.entries.len(), edges)));
             self.entries.push(RunEntry::Record { at, shared: false });
             self.beside.push(beside);
-            self.numbers = None;
+            self.numbered = false;
             return;
         }
         let kept = self.rows.last().is_none_or(|&(open, _)| self.beside[open].kept);
         self.beside.push(Beside { kept, ..beside });
         let entry = self.entries.len();
-        self.numbers = None;
+        self.numbered = false;
         self.entries.push(RunEntry::Row { facts, span: kid.span(), inner: 0 });
         self.rows.push((entry, kid.index.get() + kid.count));
         self.last = Some((kid.index, entry));
@@ -446,7 +450,7 @@ impl OpenRun {
             (Some(index), _) if self.index == Some(index) => {
                 self.entries.push(RunEntry::Record { at, shared: true });
                 self.beside.push(Beside { kind: KindId::BLANK, holder: false, aside: true, extra: None, span: Span { start: 0, end: 0 }, fixed_token_or_flag: false, flag: false, kept: true });
-                self.numbers = None;
+                self.numbered = false;
                 self.depth += depth - own;
             }
             (Some(index), Some((last, entry))) if last == index && entry + 1 == self.entries.len() => {
@@ -631,7 +635,7 @@ impl<'a> Hydration<'a> {
     /// A hydration into `tree` whose walks hold no extra: `hydrate_into`
     /// makes the one a walk writes records through.
     pub(crate) fn new(tree: &'a mut dyn HydrateInto) -> Self {
-        Self { tree, extras: None, open: Vec::new(), met: None, entering: None, met_at: None, source: None, kinds: None, errors: Vec::new(), stamp: None, placed: Vec::new(), text: "", apart: Vec::new(), places: false, spare: Vec::new(), starts: None, rows: ReadRows::All }
+        Self { tree, extras: None, open: Vec::new(), met: None, entering: None, met_at: None, source: None, kinds: None, errors: Vec::new(), stamp: None, placed: Vec::new(), text: "", apart: Vec::new(), places: false, spare: Vec::new(), starts: None }
     }
 
     /// The levels a node of `kind` opens (1), closes (-1) or neither, as
@@ -709,50 +713,49 @@ impl<'a> Hydration<'a> {
     /// `value` as the record `draft` holds it: a leaf or a unit named by the
     /// record's run, 1 for the record's own node, else two past the number
     /// the node's entry is written under, since a cell packs no row 0. A
-    /// slot-content read holds a unit by its kind alone, as a built record
-    /// does.
+    /// read holds a unit by its kind alone, as a built record
+    /// does, unless its row is kept for what lies under it.
     ///
     /// # Errors
     ///
     /// `ArenaError::Malformed` for a node the record's walk did not meet.
     fn held(&mut self, draft: Draft, value: Hydrated) -> Result<Hydrated, ArenaError> {
-        let slot_content = self.rows == ReadRows::SlotContent;
         let (Hydrated::Leaf { row, .. } | Hydrated::Unit { row: Some(row), .. }) = value else { return Ok(value) };
         let outside = ArenaError::Malformed { what: "cell row outside its holder's run", word: row.0 };
         let open = self.open.iter_mut().rfind(|open| open.at == draft.at).ok_or(outside.clone())?;
         let entry = if open.index == Some(row) { None } else { Some(open.entry_of(row).ok_or(outside)?) };
-        if slot_content {
-            open.number();
-        }
+        open.number();
         let named = NodeIndex(entry.map_or(1, |entry| open.written_number(entry) + 2));
         Ok(match value {
             Hydrated::Leaf { kind, span, .. } => Hydrated::Leaf { kind, row: named, span },
-            Hydrated::Unit { kind, .. } if slot_content => Hydrated::Unit { kind, row: None },
+            Hydrated::Unit { kind, .. } if entry.is_none_or(|entry| !open.writes(entry)) => Hydrated::Unit { kind, row: None },
             Hydrated::Unit { kind, .. } => Hydrated::Unit { kind, row: Some(named) },
             value => value,
         })
     }
 
-    /// Under a slot-content read, keeps where the unit `value` sits in
+    /// Keeps where the unit `value` sits in
     /// `draft`, at item `item` of the slot at `word`: a unit has no row to
     /// name it.
     fn note_unit(&mut self, draft: Draft, value: Hydrated, word: u32, item: usize) {
-        let (ReadRows::SlotContent, Hydrated::Unit { row: Some(row), .. }) = (self.rows, value) else { return };
+        let Hydrated::Unit { row: Some(row), .. } = value else { return };
         let Some(open) = self.open.iter_mut().rfind(|open| open.at == draft.at) else { return };
         if open.index != Some(row) {
-            if let Some(entry) = open.entry_of(row) {
+            if let Some(entry) = open.entry_of(row).filter(|&entry| !open.writes(entry)) {
                 open.units.push((entry, word, crate::types::ItemIndex(crate::types::narrow(item))));
             }
         }
     }
 
-    /// The child a slot just took is `value`: where a slot-content read holds
-    /// it as a unit, its row and what lies inside it are not written.
+    /// The child a slot just took is `value`: where the read holds it as a
+    /// unit, its row and what lies inside it are not written, unless
+    /// it is `MISSING` or an extra, an `ERROR` or a `MISSING` token lies
+    /// inside it.
     fn took(&mut self, value: &Hydrated) {
-        let (ReadRows::SlotContent, &Hydrated::Unit { row: Some(row), .. }) = (self.rows, value) else { return };
+        let &Hydrated::Unit { row: Some(row), .. } = value else { return };
         let Some(open) = self.open.last_mut() else { return };
         if open.index != Some(row) {
-            if let Some(entry) = open.entry_of(row) {
+            if let Some(entry) = open.entry_of(row).filter(|&entry| !open.keeps_unit_row(entry)) {
                 open.drop_from(entry);
             }
         }
@@ -896,9 +899,8 @@ impl<'a> Hydration<'a> {
     /// Where its holder routed the node the walk met last. One it keeps as a
     /// fixed token or a flag (`Route::keeps_as_fixed_token_or_flag`, the
     /// holder's flag slots `flags`) has no cell, so no side is placed on it.
-    /// A slot-content read writes no row for that node or for a separator.
+    /// No row is written for that node or for a separator.
     pub fn role(&mut self, route: crate::read::Route, flags: &[bool]) {
-        let slot_content = self.rows == ReadRows::SlotContent;
         let Some(open) = self.open.last_mut() else { return };
         let fixed = route.keeps_as_fixed_token_or_flag(flags);
         if fixed {
@@ -907,7 +909,7 @@ impl<'a> Hydration<'a> {
                 beside.flag = route.is_flag(flags);
             }
         }
-        if slot_content && (fixed || matches!(route, crate::read::Route::Separator { .. })) {
+        if fixed || matches!(route, crate::read::Route::Separator { .. }) {
             open.drop_last();
         }
     }
@@ -1029,9 +1031,7 @@ impl<'a> Hydration<'a> {
         let side = match run {
             Some(mut run) => {
                 run.close_to(u32::MAX);
-                if self.rows == ReadRows::SlotContent {
-                    run.number();
-                }
+                run.number();
                 let edges = if self.places {
                     let from = self.placed.len();
                     run.placed(self.kinds, self.text, &mut self.placed);
@@ -1053,7 +1053,7 @@ impl<'a> Hydration<'a> {
                     let read = SideRecord { spans: self.tree.spans(), starts: self.starts.take().map(sorted), ..SideRecord::default() }.write_in(&mut *self.tree)?;
                     self.tree.keeps_read_side(read);
                 }
-                let entries = if self.rows == ReadRows::SlotContent { run.written_run() } else { std::mem::take(&mut run.entries) };
+                let entries = run.written_run();
                 let record = SideRecord { parent, content, held_by_error, node: run.facts, source: self.source.map(|source| source.0), depth: run.depth, run: entries, ..side.clone() };
                 let at = record.write_in(&mut *self.tree);
                 run.entries = record.run;
@@ -1281,7 +1281,7 @@ impl<T: HydrateNode, const A: bool> HydrateSlot for NonEmptyVec<Option<SlotValue
 /// The whole tree `cursor` walks, read as `N`, its records written into
 /// `into` in one walk, each naming the entry `source` of the source they
 /// are read from and stamped with its depth move, by the depth members of
-/// `kinds`, each run holding the children `rows` says: the root's record,
+/// `kinds`, each run holding slot content and trivia: the root's record,
 /// `None` when it has none. Each extra and `ERROR` it places goes to
 /// `placed`, and where each list item the source sets apart is kept to
 /// `apart`.
@@ -1290,10 +1290,10 @@ impl<T: HydrateNode, const A: bool> HydrateSlot for NonEmptyVec<Option<SlotValue
 ///
 /// What the hydration refuses; what it wrote before stays written.
 #[allow(clippy::too_many_arguments, reason = "the walk's inputs and the two lists it hands back")]
-pub fn hydrate_whole<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, source: Option<Address>, kinds: crate::trivia_table::SurfaceKinds, rows: ReadRows, into: &mut dyn HydrateInto, placed: &mut Vec<Placed>, apart: &mut Vec<(super::NodeSite, crate::layout_kinds::LayoutKinds)>) -> Result<Option<Address>, HydrateError> {
+pub fn hydrate_whole<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, source: Option<Address>, kinds: crate::trivia_table::SurfaceKinds, into: &mut dyn HydrateInto, placed: &mut Vec<Placed>, apart: &mut Vec<(super::NodeSite, crate::layout_kinds::LayoutKinds)>) -> Result<Option<Address>, HydrateError> {
     crate::read::goto(cursor, NodeIndex::ROOT);
     let places = kinds.named_extras || cursor.node().has_error();
-    let records = &mut Hydration { extras: Some(extra_walk::<N>), source, kinds: Some(kinds), stamp: Some((ctx.shows, ctx.relaxes)), text: ctx.source, places, starts: Some(Vec::new()), rows, ..Hydration::new(into) };
+    let records = &mut Hydration { extras: Some(extra_walk::<N>), source, kinds: Some(kinds), stamp: Some((ctx.shows, ctx.relaxes)), text: ctx.source, places, starts: Some(Vec::new()), ..Hydration::new(into) };
     records.meet(cursor)?;
     ctx.begin_read();
     ctx.at = None;

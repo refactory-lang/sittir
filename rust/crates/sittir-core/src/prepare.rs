@@ -560,7 +560,19 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
 /// kind's), with each side its holder seated (`seated`) set over it.
 #[must_use]
 pub fn coordinate_edges(coord: crate::slot::NodeIdOrCoordinate<'_>, seated: Option<CoordinateEdges>, ctx: &RenderContext<'_>) -> Option<CoordinateEdges> {
-    let mut edges = [coord.stamp(ctx.sources), ctx.sources.kind_of(coord)].into_iter().flatten().find_map(|kind| ctx.options.edge_arms(kind));
+    edges_seated([coord.stamp(ctx.sources), ctx.sources.kind_of(coord)].into_iter().flatten().find_map(|kind| ctx.options.edge_arms(kind)), seated)
+}
+
+/// The edges a parsed unit of `kind` that no row names renders between: its
+/// kind's, under what its holder `seated` on it, as a coordinate's.
+#[cfg(feature = "arena")]
+#[must_use]
+pub fn unit_coordinate_edges(kind: KindId, seated: Option<CoordinateEdges>, ctx: &RenderContext<'_>) -> Option<CoordinateEdges> {
+    edges_seated(ctx.options.edge_arms(kind), seated)
+}
+
+/// `edges`, each side `seated` sets taking its arm.
+fn edges_seated(mut edges: Option<CoordinateEdges>, seated: Option<CoordinateEdges>) -> Option<CoordinateEdges> {
     if let Some(seated) = seated {
         let edges = edges.get_or_insert(CoordinateEdges { before: None, after: None });
         if seated.before.is_some() {

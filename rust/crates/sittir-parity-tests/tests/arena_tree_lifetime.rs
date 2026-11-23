@@ -15,9 +15,10 @@ use sittir_core::read::descendant_count;
 use sittir_core::types::NodeIndex;
 use sittir_parity_tests::{fixture_sources, parsed};
 
-/// How many nodes the records of `source` hold, parsed by `engine` as `N`;
-/// 0 for a source that parses to an `ERROR` alone.
-fn nodes_left<G: EngineGrammar, N: HydrateNode>(name: &str, engine: &mut Engine<G>, source: &str) -> u32 {
+/// How many nodes the records of `source` hold, parsed by `engine` as `N`,
+/// each of the nodes of the tree `beside`, when given, held or written by its
+/// holder's template; 0 for a source that parses to an `ERROR` alone.
+fn nodes_left<G: EngineGrammar + Copy, N: HydrateNode>(name: &str, engine: &mut Engine<G>, source: &str, beside: Option<&sittir_core::engine::ParsedTree<G>>) -> u32 {
     let parse = engine.parse_records::<N>(source).unwrap_or_else(|refusal| panic!("{name} {source:?}: {refusal}"));
     let built = engine.written().built();
     let entry = Source::read(&*built, parse.source).unwrap_or_else(|refusal| panic!("{name} {source:?}: its source entry: {refusal}"));
@@ -32,6 +33,26 @@ fn nodes_left<G: EngineGrammar, N: HydrateNode>(name: &str, engine: &mut Engine<
         Visit::Enter
     });
     assert_eq!(nodes.refused(), None, "{name} {source:?}");
+    if let Some(tree) = beside.filter(|tree| !tree.tree().root_node().is_error()) {
+        let grammar = engine.grammar();
+        let mut theirs = tree.nodes();
+        let (mut held, mut accounted) = (0, 0);
+        let mut pending = vec![(NodeIndex::ROOT, NodeIndex::ROOT)];
+        while let Some((run, row)) = pending.pop() {
+            held += 1;
+            if nodes.is_unit(run) {
+                accounted += theirs.kid(row).count;
+                continue;
+            }
+            accounted += 1;
+            let aligned = sittir_core::arena::aligned_kids(grammar, &mut nodes, run, &mut theirs, row);
+            assert_eq!(aligned.apart, None, "{name} {source:?}: the records and the tree hold the same children");
+            accounted += aligned.fixed.iter().map(|kid| kid.count).sum::<u32>();
+            pending.extend(aligned.held.iter().map(|(met, kept)| (met.index, kept.index)));
+        }
+        assert_eq!(held, met, "{name} {source:?}: every node of the records stands for a node of the tree");
+        assert_eq!(accounted, descendant_count(&tree.tree().root_node()), "{name} {source:?}: every node the parser made is held or written by its holder");
+    }
     met
 }
 
@@ -42,12 +63,7 @@ fn every_fixture_is_left_whole<G: EngineGrammar + Copy, N: HydrateNode>(name: &s
     let mut nodes = 0;
     for source in &sources {
         let tree = parsed(grammar, options(), source);
-        let root = tree.tree().root_node();
-        let left = nodes_left::<G, N>(name, &mut engine, source);
-        if !root.is_error() {
-            assert_eq!(left, descendant_count(&root), "{name} {source:?}: every node the parser made is in the records");
-        }
-        nodes += left;
+        nodes += nodes_left::<G, N>(name, &mut engine, source, Some(&tree));
     }
     nodes
 }
@@ -74,13 +90,14 @@ fn nested(before: &str, after: &str) -> String {
 
 #[test]
 fn a_deeply_nested_source_is_read_whole_at_parse() {
-    let rust = nodes_left::<_, sittir_rust::render::AnyNode>("rust", &mut Engine::new(sittir_rust::RustGrammar, sittir_rust::render::options::defaults()).expect("an engine"), &nested("fn f() {\n    let x = ", ";\n}\n"));
+    let rust = nodes_left::<_, sittir_rust::render::AnyNode>("rust", &mut Engine::new(sittir_rust::RustGrammar, sittir_rust::render::options::defaults()).expect("an engine"), &nested("fn f() {\n    let x = ", ";\n}\n"), None);
     let typescript = nodes_left::<_, sittir_typescript::render::AnyNode>(
         "typescript",
         &mut Engine::new(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults()).expect("an engine"),
         &nested("let x = ", ";\n"),
+        None,
     );
-    let python = nodes_left::<_, sittir_python::render::AnyNode>("python", &mut Engine::new(sittir_python::PythonGrammar, sittir_python::render::options::defaults()).expect("an engine"), &nested("x = ", "\n"));
+    let python = nodes_left::<_, sittir_python::render::AnyNode>("python", &mut Engine::new(sittir_python::PythonGrammar, sittir_python::render::options::defaults()).expect("an engine"), &nested("x = ", "\n"), None);
     for (name, nodes) in [("rust", rust), ("typescript", typescript), ("python", python)] {
         assert!(nodes as usize > NESTED, "{name}: {nodes} nodes for {NESTED} levels");
     }
@@ -141,8 +158,10 @@ where
                 apart.push(format!("{}..{} {} {side:?}:\n  records {left:?}\n  tree    {kept:?}", kid.start, kid.end, G::kind_name(kid.grammar)));
             }
         }
-        let (met, kept) = (ours.kids(run), theirs.kids(row));
-        pending.extend(met.iter().zip(kept.iter()).map(|(met, kept)| (met.index, kept.index)));
+        if !ours.is_unit(run) {
+            let aligned = sittir_core::arena::aligned_kids(grammar, &mut ours, run, &mut theirs, row);
+            pending.extend(aligned.held.iter().map(|(met, kept)| (met.index, kept.index)));
+        }
     }
     apart
 }
