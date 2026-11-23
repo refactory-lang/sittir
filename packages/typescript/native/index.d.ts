@@ -465,6 +465,12 @@ export declare function readSnapshotLayouts(engine: object, node: number, holder
 export declare function readSources(engine: object, nodes: Array<number>): Array<number>
 
 /**
+ * r" `storedLayout` for the records of the source of the node a read
+ * r" left that the key `node` names: `{ slots }`. A diagnostic.
+ */
+export declare function readStoredLayout(engine: object, node: number): { slots: number }
+
+/**
  * r" The text bytes `start` to `end` cover in the source the
  * r" record at `node` of the built arena was read from: one string
  * r" of that span's characters, so the source itself never

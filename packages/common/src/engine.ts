@@ -300,6 +300,13 @@ export interface NativeEngineLike<TNode = unknown> {
 	 * @throws when the engine is in use or disposed, or the read is refused.
 	 */
 	backerParity?(source: string): BackerParity;
+	/**
+	 * What the records of the read holding the node keyed `node` store of their layout apart from its read-time
+	 * options, as `storedLayout` answers for a tree. A diagnostic. Present when the addon carries the record codec.
+	 *
+	 * @throws when the engine is disposed, or no read's record holds `node`.
+	 */
+	readStoredLayout?(node: number): StoredLayout;
 	descendants(
 		from: string,
 		kinds: number[] | undefined | null,
@@ -353,6 +360,7 @@ const TREE_FUNCTIONS = [
 
 const ENGINE_FUNCTIONS = [
 	'backerParity',
+	'readStoredLayout',
 	'render',
 	'renderAt',
 	'renderToFile',

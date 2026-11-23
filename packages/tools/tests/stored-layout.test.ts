@@ -1,7 +1,29 @@
 import { describe, expect, it } from 'vitest';
-import { runStoredLayout, storedLayoutOf } from '../src/validate/stored-layout.ts';
+import { nativeEngineOf } from '@sittir/common/engine';
+import { loadCorpusEntries } from '../src/validate/common.ts';
+import { nativeBackendOf, runStoredLayout, storedLayoutOf } from '../src/validate/stored-layout.ts';
 
 const grammars = ['rust', 'typescript', 'python', 'regex', 'scm'] as const;
+
+describe('an arena tree answers what it stores of its layout from its records', () => {
+	it('through the addon, from a read of the source', async () => {
+		const engine = nativeEngineOf(await nativeBackendOf('rust'));
+		try {
+			const { root } = JSON.parse(engine.parseRecords?.('fn f(a: u8,\n    b: u8) {}\n') ?? '{}') as { root: number };
+			expect(engine.readStoredLayout?.(root)).toEqual({ slots: 0 });
+		} finally {
+			engine.dispose();
+		}
+	});
+
+	for (const grammar of grammars) {
+		it(`as its tree does, in every ${grammar} corpus entry`, async () => {
+			const [objectOf, arenaOf] = await Promise.all([storedLayoutOf(grammar, 'object'), storedLayoutOf(grammar, 'arena')]);
+			const apart = loadCorpusEntries(grammar).filter(({ source }) => objectOf(source).slots !== arenaOf(source).slots);
+			expect(apart.map(({ name }) => name)).toEqual([]);
+		});
+	}
+});
 
 describe('every corpus entry reads what it stores of its layout', () => {
 	for (const grammar of grammars) {

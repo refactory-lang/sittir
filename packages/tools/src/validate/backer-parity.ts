@@ -1,7 +1,7 @@
 import { readFileSync, realpathSync } from 'node:fs';
 import { isAbsolute, relative, resolve } from 'node:path';
-import { nativeEngineOf, type BackerParity } from '@sittir/common/engine';
-import { nativeBackendOf } from './stored-layout.ts';
+import type { BackerParity } from '@sittir/common/engine';
+import { nativeBackendOf, withFreshEngine } from './stored-layout.ts';
 
 export interface BackerParityOptions {
 	readonly corpus: string;
@@ -48,13 +48,10 @@ export function censusPasses({ nodes, differing }: BackerParityCensus): boolean 
 }
 
 function recordParity(native: Awaited<ReturnType<typeof nativeBackendOf>>, source: string): BackerParity {
-	const engine = nativeEngineOf(native);
-	try {
+	return withFreshEngine(native, (engine) => {
 		if (!engine.backerParity) throw new Error('backer-parity needs an addon built with arena storage');
 		return engine.backerParity(source);
-	} finally {
-		engine.dispose();
-	}
+	});
 }
 
 export async function backerParityOf(grammar: string): Promise<(source: string) => BackerParity> {

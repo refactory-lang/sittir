@@ -1,7 +1,8 @@
 import { nativeEngineOf, type LayoutWork, type NativeEngineLike, type NativeModuleLike, type StoredLayout } from '@sittir/common/engine';
 import { treeOf } from '@sittir/common/utils';
 import { requireGrammarModule } from '../grammar-internals.ts';
-import { loadCorpusEntries } from './common.ts';
+import type { NodeStorage } from '@sittir/types';
+import { loadCorpusEntries, validationStorage } from './common.ts';
 
 /** A corpus entry whose stored layout was refused. */
 export interface LayoutRefusal {
@@ -35,6 +36,23 @@ export async function withTreeOf(grammar: string): Promise<<T>(source: string, u
 	};
 }
 
+export function withFreshEngine<T>(native: NativeModuleLike, use: (engine: NativeEngineLike) => T): T {
+	const engine = nativeEngineOf(native);
+	try {
+		return use(engine);
+	} finally {
+		engine.dispose();
+	}
+}
+
+function storedInRecords(native: NativeModuleLike, source: string): StoredLayout {
+	return withFreshEngine(native, (engine) => {
+		if (!engine.parseRecords || !engine.readStoredLayout) throw new Error('an arena stored layout needs an addon built with arena storage');
+		const { root } = JSON.parse(engine.parseRecords(source)) as { root: number | null };
+		return root === null ? { slots: 0 } : engine.readStoredLayout(root);
+	});
+}
+
 /** A function reading the work done so far by the layout reads of the tree a parsed node belongs to (`NativeEngineLike.layoutWork`). */
 export async function layoutWorkOf(grammar: string): Promise<(node: object) => LayoutWork> {
 	const native = await nativeBackendOf(grammar);
@@ -47,7 +65,11 @@ export async function layoutWorkOf(grammar: string): Promise<(node: object) => L
 }
 
 /** What `source` stores of its layout apart from its read-time options (`NativeEngineLike.storedLayout`). */
-export async function storedLayoutOf(grammar: string): Promise<(source: string) => StoredLayout> {
+export async function storedLayoutOf(grammar: string, storage: NodeStorage = validationStorage()): Promise<(source: string) => StoredLayout> {
+	if (storage === 'arena') {
+		const native = await nativeBackendOf(grammar);
+		return (source) => storedInRecords(native, source);
+	}
 	const withTree = await withTreeOf(grammar);
 	return (source) => withTree(source, (engine, treeId) => engine.storedLayout(treeId));
 }

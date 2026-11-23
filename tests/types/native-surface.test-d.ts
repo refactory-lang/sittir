@@ -64,6 +64,7 @@ type Shaped = Record<
 	| 'layoutWork'
 	| 'storedLayout'
 	| 'backerParity'
+	| 'readStoredLayout'
 	| 'treeMemory'
 	| 'engineStamp'
 	| 'builtWords'
@@ -76,6 +77,7 @@ type Shapes<M extends Shaped> = {
 	readonly layoutWork: Ret<M['layoutWork']>;
 	readonly storedLayout: Ret<M['storedLayout']>;
 	readonly backerParity: Ret<M['backerParity']>;
+	readonly readStoredLayout: Ret<M['readStoredLayout']>;
 	readonly treeMemory: Ret<M['treeMemory']>;
 	readonly engineStamp: Ret<M['engineStamp']>;
 	readonly builtWords: Ret<M['builtWords']>;
@@ -89,6 +91,7 @@ type DeclaredShapes = {
 	readonly layoutWork: LayoutWork;
 	readonly storedLayout: StoredLayout;
 	readonly backerParity: BackerParity;
+	readonly readStoredLayout: StoredLayout;
 	readonly treeMemory: ReturnType<Declared['treeMemory']>;
 	readonly engineStamp: ReturnType<Declared['engineStamp']>;
 	readonly builtWords: ReturnType<NonNullable<NativeEngineLike['builtWords']>>;

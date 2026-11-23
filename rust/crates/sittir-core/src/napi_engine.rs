@@ -1015,6 +1015,13 @@ macro_rules! napi_engine {
                 with_read_node(engine, node, |tree, index| Ok(tree.slot_layouts(index)))
             }
 
+            /// `storedLayout` for the records of the source of the node a read
+            /// left that the key `node` names: `{ slots }`. A diagnostic.
+            #[::napi_derive::napi(ts_return_type = "{ slots: number }")]
+            pub fn read_stored_layout(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, node: f64) -> ::napi::Result<$crate::layout::StoredLayout> {
+                with_read_node(engine, node, |tree, _| Ok(tree.stored_layout()))
+            }
+
             /// `slotSeparator` for the node a read left that the key `node` names.
             #[::napi_derive::napi(ts_return_type = "import('../src/types.ts').TSKindId | null")]
             pub fn read_slot_separator(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, node: f64) -> ::napi::Result<Option<$crate::types::KindId>> {

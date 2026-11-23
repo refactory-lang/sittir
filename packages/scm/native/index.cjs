@@ -748,6 +748,7 @@ module.exports.readSlotLayouts = nativeBinding.readSlotLayouts
 module.exports.readSlotSeparator = nativeBinding.readSlotSeparator
 module.exports.readSnapshotLayouts = nativeBinding.readSnapshotLayouts
 module.exports.readSources = nativeBinding.readSources
+module.exports.readStoredLayout = nativeBinding.readStoredLayout
 module.exports.readText = nativeBinding.readText
 module.exports.readTriviaSide = nativeBinding.readTriviaSide
 module.exports.readUnitSides = nativeBinding.readUnitSides
