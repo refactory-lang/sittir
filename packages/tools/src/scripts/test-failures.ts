@@ -1,14 +1,23 @@
-import { readFileSync } from 'node:fs';
 import { relative, resolve, sep } from 'node:path';
 
 import { REPO_ROOT } from '@sittir/codegen/grammars';
 
 import type { VitestJsonReport } from './record-test-run.ts';
+import { readVitestReport } from './vitest-report.ts';
 
 export interface TestFailuresOptions {
 	report?: string;
 	json?: boolean;
 	examples?: number;
+	against?: string;
+}
+
+export interface FailureComparison {
+	current: number;
+	older: number;
+	new: string[];
+	fixed: string[];
+	unchanged: number;
 }
 
 export interface FailureGroup {
@@ -139,15 +148,69 @@ export function formatFailureSummary(summary: FailureSummary): string {
 	return lines.join('\n');
 }
 
+function failureKey(failure: TestFailure): string {
+	if (failure.fullName !== undefined) return `${failure.file} | ${failure.fullName}`;
+	return `${failure.file} | (file) ${failure.message.split('\n')[0]?.trim() ?? ''}`;
+}
+
+function failureKeys(report: VitestJsonReport, label: string): Set<string> {
+	const keys = new Set<string>();
+	for (const failure of collectFailures(report)) {
+		const key = failureKey(failure);
+		if (keys.has(key)) {
+			throw new Error(`duplicate failure key in the ${label} report: ${key}`);
+		}
+		keys.add(key);
+	}
+	return keys;
+}
+
+export function compareFailures(current: VitestJsonReport, older: VitestJsonReport): FailureComparison {
+	const now = failureKeys(current, 'current');
+	const before = failureKeys(older, 'older');
+	const added = [...now].filter((key) => !before.has(key)).sort(byText);
+	const removed = [...before].filter((key) => !now.has(key)).sort(byText);
+	const unchanged = now.size - added.length;
+	const currentFailures = summarizeFailures(current, 0).failures;
+	const olderFailures = summarizeFailures(older, 0).failures;
+	if (added.length + unchanged !== currentFailures) {
+		throw new Error(
+			`new ${added.length} + unchanged ${unchanged} does not equal the ${currentFailures} failures in the current report`
+		);
+	}
+	if (removed.length + unchanged !== olderFailures) {
+		throw new Error(
+			`fixed ${removed.length} + unchanged ${unchanged} does not equal the ${olderFailures} failures in the older report`
+		);
+	}
+	return { current: currentFailures, older: olderFailures, new: added, fixed: removed, unchanged };
+}
+
+function formatFailureComparison(comparison: FailureComparison): string {
+	const lines: string[] = [`new: ${comparison.new.length} (failing now, not failing in the older report)`];
+	for (const key of comparison.new) lines.push(`    + ${key}`);
+	lines.push(`fixed: ${comparison.fixed.length} (failing in the older report, passing now)`);
+	for (const key of comparison.fixed) lines.push(`    - ${key}`);
+	lines.push(`unchanged: ${comparison.unchanged}`);
+	lines.push(
+		`reconciles: ${comparison.current} failures now = ${comparison.new.length} new + ${comparison.unchanged} unchanged; ${comparison.older} failures in the older report = ${comparison.fixed.length} fixed + ${comparison.unchanged} unchanged`
+	);
+	return lines.join('\n');
+}
+
 export async function run(opts: TestFailuresOptions): Promise<number> {
-	let summary: FailureSummary;
 	try {
-		const report = JSON.parse(readFileSync(resolve(opts.report ?? '.vitest-report.json'), 'utf8')) as VitestJsonReport;
-		summary = summarizeFailures(report, opts.examples ?? 3);
+		const report = readVitestReport(resolve(opts.report ?? '.vitest-report.json'));
+		if (opts.against !== undefined) {
+			const comparison = compareFailures(report, readVitestReport(resolve(opts.against)));
+			console.log(opts.json ? JSON.stringify(comparison, null, 2) : formatFailureComparison(comparison));
+			return 0;
+		}
+		const summary = summarizeFailures(report, opts.examples ?? 3);
+		console.log(opts.json ? JSON.stringify(summary, null, 2) : formatFailureSummary(summary));
+		return 0;
 	} catch (error) {
 		console.error(`test-failures: ${error instanceof Error ? error.message : String(error)}`);
 		return 1;
 	}
-	console.log(opts.json ? JSON.stringify(summary, null, 2) : formatFailureSummary(summary));
-	return 0;
 }

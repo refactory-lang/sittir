@@ -869,6 +869,7 @@ Group the failures in a vitest JSON report by error message
 - `--report <path>` — Vitest JSON report (default: .vitest-report.json in the cwd)
 - `--json` — Machine-readable JSON output
 - `--examples <n>` — Examples shown per group (default: `3`)
+- `--against <path>` — Older vitest JSON report: list new, fixed and unchanged failures by test name
 
 **Example**
 

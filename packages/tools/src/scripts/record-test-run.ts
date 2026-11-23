@@ -28,12 +28,15 @@ export interface VitestJsonAssertionResult {
 	status: 'passed' | 'failed' | 'skipped' | 'pending' | 'todo';
 	fullName: string;
 	failureMessages: string[];
+	duration?: number;
 }
 
 export interface VitestJsonTestResult {
 	name: string;
 	status: 'passed' | 'failed';
 	message?: string;
+	startTime?: number;
+	endTime?: number;
 	assertionResults: VitestJsonAssertionResult[];
 }
 

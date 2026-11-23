@@ -476,4 +476,16 @@ Renders a summary as plain text: each group's count and signature, its per-packa
 
 ### `packages/tools/src/scripts/test-failures.ts::run`
 
-Reads the vitest JSON report, summarizes it, and prints the text or JSON form. Returns 0 when the report was read and grouped, even when it holds failures. Returns 1, printing the reason to stderr, when the report cannot be read or its failure count does not match `numFailedTests`.
+Reads the vitest JSON report, summarizes it, and prints the text or JSON form. With `against`, compares it with an older report instead and prints the comparison. Returns 0 when the report was read and grouped or compared, even when it holds failures. Returns 1, printing the reason to stderr, when a report cannot be read, is not a vitest report, or its failure count does not match `numFailedTests`.
+
+### `packages/tools/src/scripts/test-failures.ts::FailureComparison`
+
+The result of comparing two reports' failures by key: the failure counts of the current and the older report, the keys failing now but not in the older report (`new`), the keys failing in the older report but not now (`fixed`), and the count failing in both (`unchanged`).
+
+### `packages/tools/src/scripts/test-failures.ts::compareFailures`
+
+Compares the failures of a current report with an older one. A failure's key is `<repo-relative file> | <full name>`, or, for a failed file with no assertion results, `<file> | (file) <first line of its message>`. Throws when a key occurs twice in one report, since a repeated key would make the comparison ambiguous. Throws when `new + unchanged` differs from the current report's failure count, or `fixed + unchanged` from the older report's, so a comparison that does not reconcile is never returned. A test absent from the older report counts as new, including one that was renamed.
+
+### `packages/tools/src/scripts/vitest-report.ts::readVitestReport`
+
+Reads one vitest JSON report from a path and checks that it is one: `testResults`, `numTotalTests` and `numFailedTests` must be present. Throws, naming the path, when it is not, so a file that is not a report is never read as one.
