@@ -178,7 +178,7 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
   - `createEngine(python, { api: 'portable' })` has `build.declaration.property.getter`, typed by `BuildInput`.
   - `parse(source)` returns `File<G>`, projected whole in the call; `project(node, carried?)` reports kept nodes through `PortableCarried` from `@sittir/types`.
   - Nothing named in the spec's removed rows is exported.
-- [ ] **Step 2: Implement.** Delete the interpreters and move every caller (tools, tests, conformance) to the engine. Remove the Task 4 interpreter comparison, with its rows recorded in the commit.
+- [ ] **Step 2: Implement.** First, in every grammar, the count of corpus structures only the interpreter builds is zero, or each remaining path is a row the user has ruled on. Then delete the interpreters and move every caller (tools, tests, conformance) to the engine. Remove the Task 4 interpreter comparison, with its rows recorded in the commit.
 - [ ] **Step 3: Three-way verification,** plus the workspace type-check. Commit.
 
 ### Task 7: Gates and ratchets
