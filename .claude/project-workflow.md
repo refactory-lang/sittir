@@ -37,6 +37,10 @@ Validator entry points live under `sittir validate` (not `tool`): `validate coun
 
 When adding a new diagnostic, implement it as `export async function run(opts: <Name>Options)` in `packages/tools/src/<category>/<name>.ts`, re-export it from `packages/tools/src/index.ts` (`export { run as <camelName>, type <Name>Options }`), add a `CommandModule` in `packages/cli/src/commands/tool/<name>.ts` (using the option mixins from `packages/cli/src/framework/options.ts`), and register it in the `toolModules` array in `packages/cli/src/commands/tool/index.ts`. A tool that times work calls `measureBuilt(<name>)` (`packages/tools/src/built.ts`) before it measures.
 
+A tool's documentation changes with it: each new exported declaration gets its entry in `docs/glossary/`, `docs/cli-command-glossary.md` is regenerated, and a tool peers should reach for first gets a line in the list above.
+
+A tool change needs no regen, validation run, native build or full suite (the maintainer, 2026-11-22), unless it changes codegen or a validator, which take the three-way verification in the working standards. It still passes what CI checks: its own tests, the tools build, lint, the glossary keys and the CLI glossary.
+
 ## Specs and branches
 
 - Specs and plans live under `docs/superpowers/specs/` and `docs/superpowers/plans/` as dated documents (`YYYY-MM-DD-<slug>.md`). The historical `specs/NNN-feature-name/` tree no longer exists.

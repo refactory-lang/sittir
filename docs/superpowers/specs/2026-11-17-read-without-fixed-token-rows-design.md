@@ -1,6 +1,6 @@
 # A parsed read stores no row for a fixed token or a unit
 
-**Status:** approved by the maintainer, 2026-11-17, with every open question ruled (§ Decided by the maintainer). Written by the engine-api session from the coordinate census (`docs/superpowers/probes/2026-11-17-read-coordinate-census/`) and the code on the hydrate-at-parse branch at `1f0170702`. Entries marked "to verify" are checked by a probe or parity test before they are built. This is the task after the hydrate-at-parse branch lands. The release of parsed records stays held until stage one has landed and been measured.
+**Status:** approved by the maintainer, 2026-11-17, with every open question ruled (§ Decided by the maintainer). Written by the engine-api session from the coordinate census (`docs/superpowers/probes/2026-11-17-read-coordinate-census/`) and the code on the hydrate-at-parse branch at `1f0170702`. Entries marked "to verify" are checked by a probe or parity test before they are built. It lands inside the hydrate-at-parse branch (§ Decided by the maintainer).
 
 ## Decided by the maintainer
 
@@ -12,9 +12,10 @@
 - **A list's trailing separator is its `delimiter` preference, held as every declared preference is** (2026-11-17, open question 3, re-reviewed). First ruled as one bit beside the list's run. Asked again whether a bit or the side slot's token list should hold it, the maintainer answered "That's an option like any other", and then "This is something we already adjudicated in the past". The earlier adjudications, which this spec follows and adds nothing to:
   - `docs/superpowers/specs/2026-09-07-choice-separator-spacing-design.md`: every separated-list kind has `_separator` and `_delimiter` options; the grammar declares each as a preference under the list's slot (`preference('separator', 'semi')`, `preference('delimiter', 'Delimiter.Trailing')`), typed by kind id; "a parsed node keeps its token and a built one takes the resolved" default, through the same option fill.
   - `docs/python-grammar-sittir-glossary.md` § `tuple`: where a trailing separator carries meaning it is the grammar's rule, not an option. Python's `tuple` is re-authored with `_tuple_elements`, whose first element carries a required comma, so "a built `tuple(x)` renders `(x,)`".
-  - So removing the separator's row adds no new form. The list's delimiter and separator choices are read where the declared preference is already read and stamped, and the body of this spec is to be reconciled with that: no bit beside the run and no new place in `SideSlot::tokens` are introduced. An earlier line of this entry read the answer as "stored nowhere"; that was brainstorm's misreading.
+  - So removing the separator's row adds no new form. The list's delimiter and separator choices are read where the declared preference is already read and stamped, and the body of this spec is to be reconciled with that: no bit beside the run and no new field in `SideSlot` are introduced. An earlier line of this entry read the answer as "stored nowhere"; that was brainstorm's misreading.
 - **A parsed list's delimiter is its delimiter option, resolved by the generated read code, by one logic for both storages** (2026-11-17, on seeing the measurement of "store nothing": "It's not a delimiter slot, it's a delimiter option? And the generated parse code can resolve what we apply (just like it does in object storage) - in fact maybe our problem is that … object storage and arena storage are interpreting the values from tree-sitter differently - apart from the laziness, they should share the logic - it should simply be a matter of which storage is being used."). A list carries a delimiter option, as a built list given one does, and the read resolves its value from the tree-sitter tree once. That resolution is the same code whichever storage holds the result; a second reader of the same fact (the span test in `read::delimiter`, the width test in `last_list_child`) is a second derivation and goes. This supersedes the same day's "By kind" (measured +159 typescript rows, kept on `probe/delimiter-by-kind`) and "Store nothing from the source; the options decide" (measured +502 rows, with one-item lists changing meaning: rust `let (a,) = t`, python `a[1,]`, `print a,`; kept on `probe/delimiter-options-decide`). Where the two differ, object storage's read is the reference ("object storage for the most part is the 'mature' reader in this sense"): the shared logic starts from what it resolves, and a case where arena's answer is the right one is shown by example before it is taken. Before code: an audit of every place that derives a list's delimiter or separator from the tree, per storage, showing where the two storages or two readers differ, and the one rule they unify on with validation under it.
 - **The automatic semicolon is not permitted in a list's trailing spot** (2026-11-17: "Can the grammar be adjusted so that automatic semicolon is not permitted in the trailing spot"). The one case where two readers of a list's delimiter disagree is typescript `type T = {\n  a: string // c\n}`: the zero-width automatic semicolon lands after the comment as the list's last child, so the list's span runs past its last member, the read resolves trailing, and a rebuild writes a stray `;`. The fix is in the grammar, not in a reader's test: the member list's separator choice admits the automatic arm between members and not after the last one, so the parse never has a zero-width trailing separator and the delimiter option resolves to none there. The grammar alone cannot say it: the external scanner emits the token, declines when the next character is `/`, and is called again after the comment, and dropping the arm from the trailing choice makes the parser insert a MISSING member in every line-separated list (measured). So the fix is in the vendored scanner ("Patch the vendored scanner as tree-sitter-javascript 0.25 does"): it scans a same-line `//` comment before deciding, as tree-sitter-javascript 0.25.0's does, and places the token at the member's end, where it already sits when no comment follows. The list's span then ends at its last member and the read resolves no trailing delimiter. No node is added. Before it lands: the trees of the commented, the plain, the explicit-`;`, the explicit-`,`, the interface and the one-member list before and after, the same check for every other site the scanner's automatic semicolon serves (statements, class members), and validation.
+- **The row removal lands inside the hydrate-at-parse branch, and the render's table goes after it there** (2026-11-22, choosing that order: "2 and let's have prototype finish it in one shot").
 - **Named fixed tokens leave navigation** ("Accept", 2026-11-17, open question 4): a polymorph form's named fixed text (`self`, `mutable_specifier`, a getter's `formal_parameters`, `this`, doc-comment markers, python's `newline`, `indent` and `dedent`) has no row and is not listed; a comment beside one is seated as a built node seats it. The parity test lists every placement that changes.
 - **Two stages, rows first** (2026-11-17, open question 5): the rows go, measured; then the one-word parsed cell, measured.
 - **The public surface rows are approved** (2026-11-17, open question 6) as § Public surfaces has them. The two marked "to verify" (the parse's error list, `$snapshot`) are checked before code, and a `$snapshot` that lists a fixed token today comes back as its own row.
@@ -108,7 +109,7 @@ Navigation (`Nodes` over `RunNodes`, `rust/crates/sittir-core/src/arena/run_node
 
 - every record (child nodes with a record, trivia records);
 - every row: a variable-text leaf, a node with no record, and what lies under trivia;
-- each unit from its cell, with its kind and no span (`QueryItem::Unit`), at the place its holder kind's render body writes the unit's slot. No run entry is kept for it.
+- each unit from its cell or, for a boolean slot, its flag, with its kind and no span (`QueryItem::Unit`), at the place its holder kind's render body writes the unit's slot. No run entry is kept for it.
 
 The render body is the only source of that order:
 
@@ -170,23 +171,20 @@ Every reader takes a fixed token's offsets through navigation's `Kid`, which `Ru
   - **The separators are not stamped.**
     - A parsed record's slot layouts come from `SourceTable::slot_layouts` (`LayoutAt::stored_slots`). That is `Lookups::node_slots` over the kids: `list_slots::slot_gaps`, then `majority`, which prefers a separator written over the list's first gap (`written_separator`).
     - It gives the slot separator: `slot_separator`, and `separator_kind` where the list's separator is a choice.
-    - It gives each gap that takes another: `separator_before`, which is what prepare puts in `SlotLayout::tokens` (`SlotTarget::separators`).
 - **After.**
   - **The delimiter takes no new stamp.** `last_list_child_kind` reads the trailing flag of the `DELIMITER` the source list's record already holds, and `last_list_child` goes with the rows. Superseded (Decided: a parsed list's delimiter is its option, resolved once by the generated read code for both storages): the read resolves the option once, `last_list_child` and its `SourceTable` method go as a second derivation, and no parity step compares two readers.
-  - **The separators are stamped by the walk**, while its working list still holds the separator tokens, into the side record's existing slot entry:
-    - `SideSlot::separator`: the kind the gaps' majority takes;
-    - `SideSlot::tokens`: each gap whose kind is another, by its item's place, the form `SlotLayout::tokens` already has.
+  - **The list's separator is stamped by the walk**, while its working list still holds the separator tokens, into the side record's existing slot entry. `SideSlot::separator` holds the kind most of the list's gaps take, a tie going to the options' arm, and only where it differs from that arm.
 
-    A parsed record's `stored_slots` reads them as it reads a built record's, and `separator_before` reads its holder's `tokens` by the item's place. The majority and the outliers give back every gap's kind, so the render's choice between the majority and a written separator is made as today. `separator_kind` and `tokens` render as shipped, mixed `object_type_content` lists included.
+    An item owns no separator (the maintainer, 2026-11-21; [the node query spec](2026-10-02-node-query-traversal-modification-api-design.md), "The separator"). A parsed record's `stored_slots` reads the stamp as it reads a built record's, and every gap of a rebuilt list writes the slot's separator, else the options'. Object storage resolves the separator by the same function at lookup, over its tree's children. Both compare against the options the tree was read with, never a render call's. An untouched list is its source slice, so its own gaps still render as written.
   - **Only a list whose separator is a choice is stamped**, which today is typescript's `object_type_content`. A list with one separator gives every gap that one, its kind's own, so a stamp there would hold nothing a reader lacks. The parity step checks this: `slot_separator` answers the same for every fixed-separator list from its kind as from its kids.
-  - No new form is added: no bit beside the run, and no new place in `tokens`.
+  - No new form is added: no bit beside the run, and no new field in `SideSlot`.
 - **The leading flag is unchanged.** A parsed list's `DELIMITER` holds its source's flags, as today. A rebuilt list takes the trailing flag from its source and the leading flag from the options, as today.
   - No grammar declares a delimiter default with `LEADING`.
   - Typescript's `object_type_content` allows `LEADING`, so a render option can set it.
 - **A trailing separator that carries meaning is the kind's rule**, not a stamp or an option. A list whose single element needs its trailing separator renders it at one element, built or parsed (`AssembledList::singleElementNeedsTrailing`, pinned by `packages/{rust,python}/tests/single-element-list.test.ts`). These lists are python's `tuple_elements`, `tuple_pattern_elements`, `expression_list`, `pattern_list` and `case_pattern_list`, and rust's `tuple_expression_elements`.
 - **What it costs.**
   - The delimiter costs nothing new. The trailing separators' rows go with the other fixed-token rows: the census counts 19,250 lists with a fixed separator that end with one on matter.js and 17,950 on next.js, each a 4-word row today.
-  - The separator stamps cost one slot entry (`SideSlot`, 8 words) on each parsed `object_type_content` with a gap, plus a token run where a gap differs from the majority.
+  - The separator stamp costs one slot entry (`SideSlot`, 6 words) on each parsed `object_type_content` whose separator differs from the options' arm.
   - `object_type_content`'s separator rows go: 3,088 on matter.js and 26,692 on next.js, 25,288 of them automatic semicolons.
   - The first step measures the slot entries.
 
@@ -211,7 +209,7 @@ The rule is the parsed-comments spec's and does not change.
 - **No side is placed on a fixed token.** `placed` seats a side only on a named child, and an anonymous fixed token is never named.
   - **Named fixed tokens.** For the named ones listed under navigation, a comment beside one is seated as if it were unnamed, as a built node seats it (the built form has no such child).
   - **Expected cases.** These are the only placements expected to change. The parity test lists each one: node, side, kind and span, before and after.
-- **Sides on a unit** are keyed by the unit's site (holder, slot word, item). The shared-arena spec gives that key ("Sides by site"), and a built unit's sides already use it (`trivia_store::Site`). Parsed sides are keyed by row today ("each parsed tree's by row", `trivia_store.rs`).
+- **Sides on a unit** are keyed by the unit's site (holder, slot word, item). The shared-arena spec gives that key ("Sides by site"), and a built unit's sides already use it (`trivia_store::Site`). Parsed sides are keyed by row today ("each parsed tree's by row", `trivia_store.rs`). A flag's keyword has no cell, so it has no site, and no side is kept on it (the arena spec, "A side on a node that its holder keeps as a fixed token or a flag is not kept").
 
 ## ERROR, header-only records, zero width and MISSING
 
@@ -267,7 +265,7 @@ Neither needs the other. The row removal lands first.
 
 Read words as a share of today, by corpus. Each row's lowest is in bold.
 
-- **Fixed-token rows:** the fixed-token rows alone. Separators of a list kind with several candidates are left out of it: the gaps that differ from their list's majority are stamped in `SideSlot::tokens`, at a cost the first step measures.
+- **Fixed-token rows:** the fixed-token rows alone. Separators of a list kind with several candidates are left out of it: such a list's separator is stamped in `SideSlot::separator`, at a cost the first step measures.
 - **Stage one:** the fixed-token rows and the unit rows: keyword, punctuation or enum, external-scanner and boolean-slot units. It is a lower bound: the census counts the token inside an enum node with no record (for example `string` in `predefined_type`) among "a token inside a slot-held node that has no record", and does not split it out.
 - **One-word cell:** that change alone.
 - **Fixed-token rows and one-word cell:** the two together, without the unit rows.
@@ -289,7 +287,7 @@ The fixed-token rows are 16.2% of a read's words on matter.js and 13.5% on next.
 
 ## Release under this layout
 
-Release stays held until stage one has landed and been measured (§ Decided by the maintainer, question 7). This section is what it will be ruled against: what a parsed record holds under the layout above, and how it and its source are counted and freed.
+Release was ruled 2026-11-20 ("A: release like built") and is built on the hydrate-at-parse branch. Its design is the arena plan's Task 6d, which stands wherever this section differs: a JavaScript view holds no count, so gap 2 below is dropped. This section shows what a parsed record holds under the layout above, and why removing rows changes no count.
 
 **What a parsed record holds:**
 
@@ -307,7 +305,7 @@ Release stays held until stage one has landed and been measured (§ Decided by t
 
 **Rows hold no reference.** A row is facts, span and inner count, with no address. Removing fixed-token rows, and unit rows, removes offsets, not holders. The release's rules are the same under both layouts. It walks fewer run entries and frees fewer words.
 
-**The four gaps, restated against this layout.** They are proposed and not approved (plan, "Four corrections found against the code").
+**The four gaps, restated against this layout,** as they were proposed (plan, "Four corrections found against the code").
 
 1. **Who holds the source.** Every parsed side record holds it, one count per side record, added once at the end of the parse. Under this layout every stored offset still lies in some record: its `AT`, its leaf cells, captured strings and rows. Every record has `SOURCE`. Fixed tokens and units read no source at all, since their text is their kind's. So the holder set is unchanged.
    - Header-only and zero-width records hold only `AT`, and still need the count.
@@ -343,14 +341,14 @@ The cascade over a parsed record walks its parsed cells (child cells and list ru
 - **Parity tests on every fixture**, before and after, with rows still written while both answers are compared:
   - edge levels, for each parsed node and side;
   - depth moves;
-  - each parsed list's delimiter, slot separator and per-gap tokens, as `source_trailing_delimiter`, `slot_separator` and `slot_layouts`, and `separator_before` answer them;
+  - each parsed list's delimiter and slot separator, as `source_trailing_delimiter`, `slot_separator` and `slot_layouts` answer them;
   - line starts inside tokens;
   - placed sides: node, side, kind and span;
   - query results, units' order included: each node's `$children` and `$descendants` as (kind, span) sequences, on every fixture, and on a fixture for each of the 20 kinds whose cells are out of document order where the corpus has none.
 - **Validation numbers** unchanged across all grammars (`sittir validate history`, compared per row). No render output is expected to change: an untouched node is its source slice, and a rebuilt one writes its template.
 - **Tests that pin rows** change by design: `record_nodes.rs`'s `backers_agree`, and `arena/parsed.rs::runs_agree`, which compare the records' navigation with the tree's. They then compare against the tree with fixed tokens and units filtered out by role. Each one is listed and shown to pin rows before its expectation changes.
 - **Parse and render timings** on CI's paired run against master's arena, per grammar. The walk does the same work and writes fewer words.
-- **The layout diagnostics answer for an arena tree** (accepted by the maintainer, 2026-11-18). `layoutBaseline`, `storedLayout` and `layoutWork` answer only for an object tree today, because an arena parse has no tree id, so the layout-runs lane of `validate --node-storage arena` parses with a bare native engine and its rows describe object trees. Stage one makes them answer from an arena tree's records (the runs `backerParity` already computes, 13,880 on the validation corpus with 0 apart from the object tree's), so that lane measures the storage it names before stage one's layout changes are gated on it.
+- **The stored-layout row answers for an arena tree** (accepted by the maintainer, 2026-11-18, for the three layout diagnostics of that day). `storedLayout` answers only for an object tree, because an arena parse has no tree id, so the validate row it feeds describes object trees under `--node-storage arena`. Stage one makes it read the lane's storage, so that row measures the storage it names before stage one's layout changes are gated on it. `layoutBaseline` and the layout-runs lane went with lazy placement. `layoutWork` stays object-only here (brainstorm's call, 2026-11-23): no validate row reads it, its two tests pin object storage, and an arena read has no tree to accumulate it on until the arena plan's Task 10 makes work the call's record.
 
 ## Order
 
@@ -359,10 +357,8 @@ The cascade over a parsed record walks its parsed cells (child cells and list ru
 3. **Rows go** (stage one). The walk stops writing fixed-token and unit rows; unit cells take the built form, a unit is listed from its cell, and unit sides are keyed by site; the readers read the stored facts, and the tests that pin rows are retaken.
 4. **The one-word parsed cell** (stage two), as its own change.
 
-Release (the four gaps) stays held until step 3 has landed and been measured.
-
 ## Open questions for the maintainer
 
 1. ~~Do unit rows go too?~~ Ruled 2026-11-17: yes (see Decided by the maintainer).
 2–6. Ruled 2026-11-17 (see Decided by the maintainer): a unit is listed from its cell, in its render body's order; a list's trailing separator is its delimiter preference; named fixed tokens leave navigation; two stages, rows first; the public surface rows are approved.
-7. **Release.** Ruled 2026-11-17: "Keep holding". The four gaps stay proposed until the row removal has landed and been measured, and the hydrate-at-parse branch lands without parsed release (a parsed record is freed with its engine, as before it).
+7. **Release.** Ruled 2026-11-20: "A: release like built", which replaces 2026-11-17's "Keep holding". The hydrate-at-parse branch releases a parsed record as it does a built one.
