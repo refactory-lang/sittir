@@ -404,6 +404,7 @@ impl Cell {
             Cell::Child { kind, at, changed } if changed == ChangedEdges::default() => (form::NODE, &[record_kind(kind, bits)?, record(at.0)?.0, 0]),
             Cell::Unit { kind: KindId::BLANK, row: None } if shape.forms & form::BLANK != 0 => (form::UNIT, &[0]),
             Cell::Unit { kind, row: Some(row) } => (form::UNIT, &[CellShape::pack(kind, row.0, bits)?]),
+            Cell::Unit { kind, row: None } => (form::UNIT, &[record_kind(kind, bits)?]),
             Cell::ParsedText { span } => (form::TEXT, &[span.start.checked_add(1).ok_or(ArenaError::Unwritable("a span past what a parsed cell holds"))?, end_word(span)?]),
             _ => return Err(ArenaError::Unwritable("a value no parsed record holds")),
         };
@@ -453,6 +454,13 @@ impl Cell {
             form::NODE => {
                 let (kind, row) = CellShape::unpack(field(0)?, bits)?;
                 Ok(Cell::ParsedLeaf { kind, span: span(field(1)?, field(2)?)?, row: NodeIndex(row) })
+            }
+            form::UNIT if field(0)? >> bits == 0 => {
+                let kind = kind_field(field(0)?, bits);
+                if kind == KindId::BLANK || kind == KindId::ERROR {
+                    return Err(malformed("cell kind", field(0)?));
+                }
+                Ok(Cell::Unit { kind, row: None })
             }
             form::UNIT => {
                 let (kind, row) = CellShape::unpack(field(0)?, bits)?;
@@ -884,7 +892,17 @@ mod tests {
         at_row((1 << (32 - BITS)) - 1).encode_parsed(&mut words, unit, BITS).expect("the last row fits");
         assert_eq!(Cell::decode_parsed(&words, unit, BITS), Ok(at_row((1 << (32 - BITS)) - 1)));
         assert!(Cell::Unit { kind: KindId::ERROR, row: Some(NodeIndex(1)) }.encode_parsed(&mut words, unit, BITS).is_err());
-        assert!(Cell::Unit { kind: KindId(3), row: None }.encode_parsed(&mut words, unit, BITS).is_err(), "a parsed unit names its row");
+    }
+
+    #[test]
+    fn a_parsed_unit_may_hold_its_kind_alone() {
+        let unit = shape(form::UNIT, 1);
+        let mut words = [0];
+        Cell::Unit { kind: KindId(3), row: None }.encode_parsed(&mut words, unit, BITS).expect("it fits");
+        assert_eq!(words, [3]);
+        assert_eq!(Cell::decode_parsed(&words, unit, BITS), Ok(Cell::Unit { kind: KindId(3), row: None }));
+        assert!(Cell::Unit { kind: KindId::ERROR, row: None }.encode_parsed(&mut words, unit, BITS).is_err());
+        assert!(Cell::decode_parsed(&[u32::from(KindId::ERROR.0)], unit, BITS).is_err());
     }
 
     #[test]

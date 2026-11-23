@@ -107,6 +107,7 @@ pub fn site_name(arena: &dyn ArenaRead, shape: fn(KindId) -> Option<RecordShape>
     let (holder, entry) = match site {
         super::NodeSite::Record(at) => return Ok(Some(crate::types::NodeId::record(at.0))),
         super::NodeSite::Row { holder, entry } => (holder, entry),
+        super::NodeSite::Unit(site) => return Ok(Some(crate::types::NodeId::leaf(site.holder.0, site.word, site.item.0))),
     };
     let sites = match known.entry(holder) {
         std::collections::hash_map::Entry::Occupied(sites) => sites.into_mut(),

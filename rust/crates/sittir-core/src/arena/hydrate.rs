@@ -56,8 +56,18 @@ impl HydrateError {
     }
 }
 
+/// Which of a node's children a read writes to its run.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ReadRows {
+    /// Every child.
+    All,
+    /// Slot content held as a leaf or a record, trivia, and what lies inside
+    /// those: no fixed token and no unit.
+    SlotContent,
+}
+
 /// What a parsed child is held as in its holder's record.
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum Hydrated {
     /// A leaf: its stored kind, its row and its byte span.
     Leaf { kind: KindId, row: NodeIndex, span: Span },
@@ -159,6 +169,11 @@ pub struct Hydration<'a> {
     /// Where the walk keeps the read's root's starts (`SideRecord::starts`),
     /// in the order it placed each side and set each item apart.
     starts: Option<Vec<u32>>,
+    /// Which children the walk writes to each run.
+    rows: ReadRows,
+    /// The list being written's items as the walk met them, kept from list
+    /// to list.
+    list_items: Vec<Option<Hydrated>>,
 }
 
 
@@ -197,6 +212,8 @@ struct Beside {
     fixed_token_or_flag: bool,
     /// Whether that node is a flag's keyword (`Route::is_flag`).
     flag: bool,
+    /// Whether its row is written. A record always is (`OpenRun::writes`).
+    kept: bool,
 }
 
 /// The two answers `read::stamp` takes of a grammar: whether a display kind
@@ -262,6 +279,12 @@ struct OpenRun {
     /// Whether the node is an extra or an `ERROR`, or lies under one: an
     /// entry a side holds whole, under which nothing is placed.
     within: bool,
+    /// Each unit whose row is not written, by its entry, with its slot's
+    /// word and its item in that slot.
+    units: Vec<(usize, u32, crate::types::ItemIndex)>,
+    /// How many written entries come before each entry, and last how many
+    /// are written; none until a slot-content walk asks.
+    numbers: Option<Vec<u32>>,
 }
 
 impl OpenRun {
@@ -269,7 +292,7 @@ impl OpenRun {
     /// whose walk ended, emptied.
     fn reopened(spare: Option<OpenRun>, at: Address, entering: Option<(NodeIndex, NodeFacts)>, own: i32, within: bool) -> OpenRun {
         let Some(mut run) = spare else {
-            return OpenRun { at, index: entering.map(|(index, _)| index), facts: entering.map(|(_, facts)| facts), entries: Vec::new(), rows: Vec::new(), last: None, early: Vec::new(), beside: Vec::new(), passes: Vec::new(), met: Vec::new(), depth: own, own, within };
+            return OpenRun { at, index: entering.map(|(index, _)| index), facts: entering.map(|(_, facts)| facts), entries: Vec::new(), rows: Vec::new(), last: None, early: Vec::new(), beside: Vec::new(), passes: Vec::new(), met: Vec::new(), depth: own, own, within, units: Vec::new(), numbers: None };
         };
         run.entries.clear();
         run.rows.clear();
@@ -277,7 +300,100 @@ impl OpenRun {
         run.beside.clear();
         run.passes.clear();
         run.met.clear();
-        OpenRun { at, index: entering.map(|(index, _)| index), facts: entering.map(|(_, facts)| facts), last: None, depth: own, own, within, ..run }
+        run.units.clear();
+        OpenRun { at, index: entering.map(|(index, _)| index), facts: entering.map(|(_, facts)| facts), last: None, depth: own, own, within, numbers: None, ..run }
+    }
+
+    /// Whether the entry at `entry` is written to the run.
+    fn writes(&self, entry: usize) -> bool {
+        self.beside[entry].kept || matches!(self.entries[entry], RunEntry::Record { .. })
+    }
+
+    /// Counts the written entries before each entry, once the entries it
+    /// counts are met.
+    fn number(&mut self) {
+        if self.numbers.is_some() {
+            return;
+        }
+        let mut written = 0;
+        let mut numbers = Vec::with_capacity(self.entries.len() + 1);
+        for entry in 0..self.entries.len() {
+            numbers.push(written);
+            written += u32::from(self.writes(entry));
+        }
+        numbers.push(written);
+        self.numbers = Some(numbers);
+    }
+
+    /// The number `entry` is written under: itself where every entry is
+    /// written, else the written entries before it (`OpenRun::number`).
+    fn written_number(&self, entry: usize) -> u32 {
+        self.numbers.as_ref().map_or_else(|| crate::types::narrow(entry), |numbers| numbers[entry])
+    }
+
+    /// The run as a slot-content read writes it: the entries it keeps, each
+    /// row's `inner` counting the ones it keeps inside it.
+    fn written_run(&mut self) -> Vec<RunEntry> {
+        self.number();
+        let mut out = Vec::with_capacity(self.written_number(self.entries.len()) as usize);
+        for (at, &entry) in self.entries.iter().enumerate() {
+            if !self.writes(at) {
+                continue;
+            }
+            out.push(match entry {
+                RunEntry::Row { facts, span, inner } => RunEntry::Row { facts, span, inner: self.written_number(at + 1 + inner as usize) - self.written_number(at + 1) },
+                record @ RunEntry::Record { .. } => record,
+            });
+        }
+        out
+    }
+
+    /// The entry the node at descendant index `row` was met as.
+    fn entry_of(&self, row: NodeIndex) -> Option<usize> {
+        self.met.binary_search_by_key(&row, |&(index, _)| index).ok().map(|found| self.met[found].1 as usize)
+    }
+
+    /// The last entry met is a fixed token or a flag: no row of it, or of
+    /// what lies inside it, is written.
+    fn drop_last(&mut self) {
+        if let Some(last) = self.beside.last_mut() {
+            last.kept = false;
+        }
+        self.numbers = None;
+    }
+
+    /// The entry at `entry`, the last child met with all under it, is a
+    /// unit: none of those rows are written.
+    fn drop_from(&mut self, entry: usize) {
+        for beside in &mut self.beside[entry..] {
+            beside.kept = false;
+        }
+        self.numbers = None;
+    }
+
+    /// Whether the entry at `entry` is a unit whose row is not written.
+    fn dropped_unit(&self, entry: usize) -> bool {
+        self.units.iter().any(|&(unit, ..)| unit == entry)
+    }
+
+    /// Whether a side can be placed on the entry at `entry`: a holder that
+    /// is written or is a unit, which keeps its side by its site.
+    fn seats(&self, entry: usize) -> bool {
+        self.beside[entry].holder && (self.writes(entry) || self.dropped_unit(entry))
+    }
+
+    /// `site`, as the written run names it: a row of this run by its written
+    /// number, a unit by its site, and none for a fixed token.
+    fn written_site(&self, site: super::NodeSite) -> Option<super::NodeSite> {
+        let super::NodeSite::Row { holder, entry } = site else { return Some(site) };
+        if holder != self.at {
+            return Some(site);
+        }
+        let at = entry as usize;
+        if self.writes(at) {
+            return Some(super::NodeSite::Row { holder, entry: self.written_number(at) });
+        }
+        self.units.iter().find(|&&(unit, ..)| unit == at).map(|&(_, word, item)| super::NodeSite::Unit(crate::trivia_store::Site { holder, word, item }))
     }
 
     /// Closes each open row whose subtree ends at or before `index`: the
@@ -307,10 +423,13 @@ impl OpenRun {
             self.passes.extend(edges.map(|edges| (self.entries.len(), edges)));
             self.entries.push(RunEntry::Record { at, shared: false });
             self.beside.push(beside);
+            self.numbers = None;
             return;
         }
-        self.beside.push(beside);
+        let kept = self.rows.last().is_none_or(|&(open, _)| self.beside[open].kept);
+        self.beside.push(Beside { kept, ..beside });
         let entry = self.entries.len();
+        self.numbers = None;
         self.entries.push(RunEntry::Row { facts, span: kid.span(), inner: 0 });
         self.rows.push((entry, kid.index.get() + kid.count));
         self.last = Some((kid.index, entry));
@@ -329,7 +448,8 @@ impl OpenRun {
         match (index, self.last) {
             (Some(index), _) if self.index == Some(index) => {
                 self.entries.push(RunEntry::Record { at, shared: true });
-                self.beside.push(Beside { kind: KindId::BLANK, holder: false, aside: true, extra: None, span: Span { start: 0, end: 0 }, fixed_token_or_flag: false, flag: false });
+                self.beside.push(Beside { kind: KindId::BLANK, holder: false, aside: true, extra: None, span: Span { start: 0, end: 0 }, fixed_token_or_flag: false, flag: false, kept: true });
+                self.numbers = None;
                 self.depth += depth - own;
             }
             (Some(index), Some((last, entry))) if last == index && entry + 1 == self.entries.len() => {
@@ -394,7 +514,7 @@ impl OpenRun {
         if !kinds.exposes_in_place(kind) {
             return None;
         }
-        let mut holders = self.children(holder).filter(|&child| self.beside[child].holder);
+        let mut holders = self.children(holder).filter(|&child| self.seats(child));
         let item = if leading { holders.next() } else { holders.last() }?;
         let beside = &self.beside[item];
         let side = if leading { TriviaSide::Leading } else { TriviaSide::Trailing };
@@ -428,7 +548,7 @@ impl OpenRun {
             return None;
         }
         let own = super::NodeSite::Record(self.at);
-        let edge = |leading: bool| self.passed(facts.kind, span, None, leading, kinds).map_or(own, |item| self.target(item, leading, Some(kinds)));
+        let edge = |leading: bool| self.passed(facts.kind, span, None, leading, kinds).and_then(|item| self.written_site(self.target(item, leading, Some(kinds)))).unwrap_or(own);
         Some((edge(true), edge(false)))
     }
 
@@ -448,7 +568,7 @@ impl OpenRun {
                 .iter()
                 .map(|&child| {
                     let beside = &self.beside[child];
-                    Sibling { span: beside.span, holder: beside.holder, entry: beside.aside, flag: beside.flag }
+                    Sibling { span: beside.span, holder: self.seats(child), entry: beside.aside, flag: beside.flag }
                 })
                 .collect();
             for (position, &child) in children.iter().enumerate() {
@@ -460,25 +580,38 @@ impl OpenRun {
                     Owner::Inner if holder.is_some_and(|holder| kinds.is_some_and(|kinds| !kinds.has_inside(self.beside[holder].kind))) => continue,
                     Owner::Inner => (holder.map_or(super::NodeSite::Record(self.at), |holder| self.site(holder)), TriviaSide::Inner, span.start),
                 };
-                if !self.keeps_as_fixed_token_or_flag(site) {
+                if self.keeps_as_fixed_token_or_flag(site) {
+                    continue;
+                }
+                if let Some(site) = self.written_site(site) {
                     let (before, after) = crate::trivia_table::line_breaks_beside(text, span, kind);
                     out.push(Placed { site, side, within, extra, kind, span, before, after });
                 }
             }
         };
+        let mut skip_to = 0;
         for (at, entry) in self.entries.iter().enumerate() {
+            if at < skip_to {
+                continue;
+            }
             while open.len() > 1 && open.last().is_some_and(|&(_, end, _)| end <= at) {
                 if let Some((holder, _, children)) = open.pop() {
                     close(holder, &children, out);
                 }
             }
+            let inner = if let RunEntry::Row { inner, .. } = *entry { inner as usize } else { 0 };
+            if !self.writes(at) && inner > 0 {
+                if self.dropped_unit(at) {
+                    skip_to = at + 1 + inner;
+                } else {
+                    continue;
+                }
+            }
             if let Some((_, _, children)) = open.last_mut() {
                 children.push(at);
             }
-            if let RunEntry::Row { inner, .. } = *entry {
-                if inner > 0 {
-                    open.push((Some(at), at + 1 + inner as usize, Vec::new()));
-                }
+            if inner > 0 && self.writes(at) {
+                open.push((Some(at), at + 1 + inner, Vec::new()));
             }
         }
         while let Some((holder, _, children)) = open.pop() {
@@ -501,7 +634,7 @@ impl<'a> Hydration<'a> {
     /// A hydration into `tree` whose walks hold no extra: `hydrate_into`
     /// makes the one a walk writes records through.
     pub(crate) fn new(tree: &'a mut dyn HydrateInto) -> Self {
-        Self { tree, extras: None, open: Vec::new(), met: None, entering: None, met_at: None, source: None, kinds: None, errors: Vec::new(), stamp: None, placed: Vec::new(), text: "", apart: Vec::new(), places: false, spare: Vec::new(), starts: None }
+        Self { tree, extras: None, open: Vec::new(), met: None, entering: None, met_at: None, source: None, kinds: None, errors: Vec::new(), stamp: None, placed: Vec::new(), text: "", apart: Vec::new(), places: false, spare: Vec::new(), starts: None, rows: ReadRows::All, list_items: Vec::new() }
     }
 
     /// The levels a node of `kind` opens (1), closes (-1) or neither, as
@@ -576,28 +709,48 @@ impl<'a> Hydration<'a> {
         Ok(Draft { at, words })
     }
 
-    /// `value` as the record `draft` holds it: a leaf or a unit named by
-    /// the record's run, 1 for the record's own node, else two past the
-    /// node's entry there, since a cell packs no row 0.
+    /// `value` as the record `draft` holds it, at item `item` of the slot at
+    /// `word`: a leaf or a unit named by the record's run, 1 for the
+    /// record's own node, else two past the number the node's entry is
+    /// written under, since a cell packs no row 0. A slot-content read holds
+    /// a unit by its kind alone, as a built record does.
     ///
     /// # Errors
     ///
     /// `ArenaError::Malformed` for a node the record's walk did not meet.
-    fn held(&self, draft: Draft, value: Hydrated) -> Result<Hydrated, ArenaError> {
-        let in_run = |row: NodeIndex| {
-            let outside = ArenaError::Malformed { what: "cell row outside its holder's run", word: row.0 };
-            let open = self.open.iter().rfind(|open| open.at == draft.at).ok_or(outside.clone())?;
-            if open.index == Some(row) {
-                return Ok(NodeIndex(1));
-            }
-            let found = open.met.binary_search_by_key(&row, |&(index, _)| index).map_err(|_| outside)?;
-            Ok(NodeIndex(open.met[found].1 + 2))
-        };
+    fn held(&mut self, draft: Draft, value: Hydrated, word: u32, item: usize) -> Result<Hydrated, ArenaError> {
+        let slot_content = self.rows == ReadRows::SlotContent;
+        let (Hydrated::Leaf { row, .. } | Hydrated::Unit { row: Some(row), .. }) = value else { return Ok(value) };
+        let outside = ArenaError::Malformed { what: "cell row outside its holder's run", word: row.0 };
+        let open = self.open.iter_mut().rfind(|open| open.at == draft.at).ok_or(outside.clone())?;
+        let entry = if open.index == Some(row) { None } else { Some(open.entry_of(row).ok_or(outside)?) };
+        if slot_content {
+            open.number();
+        }
+        let named = NodeIndex(entry.map_or(1, |entry| open.written_number(entry) + 2));
         Ok(match value {
-            Hydrated::Leaf { kind, row, span } => Hydrated::Leaf { kind, row: in_run(row)?, span },
-            Hydrated::Unit { kind, row: Some(row) } => Hydrated::Unit { kind, row: Some(in_run(row)?) },
+            Hydrated::Leaf { kind, span, .. } => Hydrated::Leaf { kind, row: named, span },
+            Hydrated::Unit { kind, .. } if slot_content => {
+                if let Some(entry) = entry {
+                    open.units.push((entry, word, crate::types::ItemIndex(crate::types::narrow(item))));
+                }
+                Hydrated::Unit { kind, row: None }
+            }
+            Hydrated::Unit { kind, .. } => Hydrated::Unit { kind, row: Some(named) },
             value => value,
         })
+    }
+
+    /// The child a slot just took is `value`: where a slot-content read holds
+    /// it as a unit, its row and what lies inside it are not written.
+    fn took(&mut self, value: &Hydrated) {
+        let (ReadRows::SlotContent, &Hydrated::Unit { row: Some(row), .. }) = (self.rows, value) else { return };
+        let Some(open) = self.open.last_mut() else { return };
+        if open.index != Some(row) {
+            if let Some(entry) = open.entry_of(row) {
+                open.drop_from(entry);
+            }
+        }
     }
 
     /// Writes the cell of the slot of shape `shape` of `draft`: `value`,
@@ -608,7 +761,7 @@ impl<'a> Hydration<'a> {
     /// What encoding the cell refuses, and a cell past the record's words.
     pub fn cell(&mut self, draft: Draft, shape: CellShape, value: Option<Hydrated>) -> Result<(), HydrateError> {
         let bits = self.tree.kind_bits();
-        let value = value.map(|value| self.held(draft, value)).transpose()?;
+        let value = value.map(|value| self.held(draft, value, shape.word, 0)).transpose()?;
         let out = self.tree.words_mut(draft.place(shape.word, shape.width)?, shape.width)?;
         value.map_or(Cell::Absent, |value| value.cell()).encode_parsed(out, shape, bits)?;
         Ok(())
@@ -632,11 +785,15 @@ impl<'a> Hydration<'a> {
         let words = len.checked_mul(width).and_then(|cells| cells.checked_add(1)).ok_or(ArenaError::Full)?;
         let cell = draft.place(shape.word, 1)?;
         let bits = self.tree.kind_bits();
-        let items = items.map(|item| item.map(|item| self.held(draft, item)).transpose()).collect::<Result<Vec<_>, _>>()?;
+        let mut met = std::mem::take(&mut self.list_items);
+        met.clear();
+        met.extend(items);
+        let items = met.iter().enumerate().map(|(at, item)| item.map(|item| self.held(draft, item, shape.word, at)).transpose()).collect::<Result<Vec<_>, _>>()?;
         if let Some(item) = (crate::types::NodeId::SITE_ITEMS..len).zip(&items[crate::types::NodeId::SITE_ITEMS.min(len) as usize..]).find_map(|(item, value)| matches!(value, Some(Hydrated::Leaf { .. })).then_some(item)) {
             return Err(ArenaError::LeafItemPastNames { item }.into());
         }
-        self.set_apart(draft, &items)?;
+        self.set_apart(draft, &met)?;
+        self.list_items = met;
         let run = self.tree.alloc(words)?;
         let out = self.tree.words_mut(run, words)?;
         out[0] = len;
@@ -667,7 +824,7 @@ impl<'a> Hydration<'a> {
         for item in items.iter().flatten() {
             let entry = match *item {
                 Hydrated::Record { at, .. } => open.entries[unsearched..].iter().position(|entry| matches!(*entry, RunEntry::Record { at: held, .. } if held == at)).map(|found| unsearched + found),
-                Hydrated::Leaf { row, .. } | Hydrated::Unit { row: Some(row), .. } => row.get().checked_sub(2).map(|entry| entry as usize),
+                Hydrated::Leaf { row, .. } | Hydrated::Unit { row: Some(row), .. } => open.entry_of(row),
                 Hydrated::Unit { row: None, .. } | Hydrated::Text { .. } => None,
             };
             let Some(entry) = entry else { continue };
@@ -675,7 +832,9 @@ impl<'a> Hydration<'a> {
             let Some(last) = before.replace(entry) else { continue };
             let extras = (last + 1..entry).filter(|&at| open.beside[at].aside).map(|at| open.beside[at].span);
             if let Some(kind) = crate::list_slots::sets_apart(self.text, open.beside[last].span.end, open.beside[entry].span.start, extras) {
-                apart.push((open.target(last, false, self.kinds), kind, open.beside[last].span.end));
+                if let Some(site) = open.written_site(open.target(last, false, self.kinds)) {
+                    apart.push((site, kind, open.beside[last].span.end));
+                }
             }
         }
         let bits = self.tree.kind_bits();
@@ -707,7 +866,7 @@ impl<'a> Hydration<'a> {
         let stamped = |stamp: Stamp| crate::read::stamp(facts.kind, facts.display(), stamp.0, stamp.1);
         let aside = kid.entry();
         let kind = if kid.error() { KindId::ERROR } else { self.stamp.map_or(facts.kind, stamped) };
-        let beside = Beside { kind: kid.grammar, holder: kid.holder(), aside, extra: aside.then_some(kind), span: kid.span(), fixed_token_or_flag: false, flag: false };
+        let beside = Beside { kind: kid.grammar, holder: kid.holder(), aside, extra: aside.then_some(kind), span: kid.span(), fixed_token_or_flag: false, flag: false, kept: true };
         if let Some(open) = self.open.last_mut() {
             open.meet(&kid, facts, depth, beside);
         }
@@ -722,14 +881,22 @@ impl<'a> Hydration<'a> {
         Ok(kid)
     }
 
-    /// The node the walk met last is one its holder keeps as a fixed token or
-    /// a flag (`Route::keeps_as_fixed_token_or_flag`), which has no cell: no
-    /// side is placed on it. `flag` when it is a flag's keyword
-    /// (`Route::is_flag`).
-    pub fn met_fixed_token_or_flag(&mut self, flag: bool) {
-        if let Some(beside) = self.open.last_mut().and_then(|open| open.beside.last_mut()) {
-            beside.fixed_token_or_flag = true;
-            beside.flag = flag;
+    /// Where its holder routed the node the walk met last. One it keeps as a
+    /// fixed token or a flag (`Route::keeps_as_fixed_token_or_flag`, the
+    /// holder's flag slots `flags`) has no cell, so no side is placed on it.
+    /// A slot-content read writes no row for that node or for a separator.
+    pub fn role(&mut self, route: crate::read::Route, flags: &[bool]) {
+        let slot_content = self.rows == ReadRows::SlotContent;
+        let Some(open) = self.open.last_mut() else { return };
+        let fixed = route.keeps_as_fixed_token_or_flag(flags);
+        if fixed {
+            if let Some(beside) = open.beside.last_mut() {
+                beside.fixed_token_or_flag = true;
+                beside.flag = route.is_flag(flags);
+            }
+        }
+        if slot_content && (fixed || matches!(route, crate::read::Route::Separator { .. })) {
+            open.drop_last();
         }
     }
 
@@ -850,6 +1017,9 @@ impl<'a> Hydration<'a> {
         let side = match run {
             Some(mut run) => {
                 run.close_to(u32::MAX);
+                if self.rows == ReadRows::SlotContent {
+                    run.number();
+                }
                 let edges = if self.places {
                     let from = self.placed.len();
                     run.placed(self.kinds, self.text, &mut self.placed);
@@ -871,7 +1041,8 @@ impl<'a> Hydration<'a> {
                     let read = SideRecord { spans: self.tree.spans(), starts: self.starts.take().map(sorted), ..SideRecord::default() }.write_in(&mut *self.tree)?;
                     self.tree.keeps_read_side(read);
                 }
-                let record = SideRecord { parent, content, held_by_error, node: run.facts, source: self.source.map(|source| source.0), depth: run.depth, run: std::mem::take(&mut run.entries), ..side.clone() };
+                let entries = if self.rows == ReadRows::SlotContent { run.written_run() } else { std::mem::take(&mut run.entries) };
+                let record = SideRecord { parent, content, held_by_error, node: run.facts, source: self.source.map(|source| source.0), depth: run.depth, run: entries, ..side.clone() };
                 let at = record.write_in(&mut *self.tree);
                 run.entries = record.run;
                 self.spare.push(run);
@@ -937,7 +1108,9 @@ impl<T: HydrateNode> HydrateNode for Box<T> {
 
 /// The child the cursor is on, as its holder's slot holds it.
 fn hydrate_value<T: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, records: &mut Hydration<'_>) -> Result<Hydrated, HydrateError> {
-    crate::stack::grown(|| T::hydrate(cursor, ctx, records))
+    let value = crate::stack::grown(|| T::hydrate(cursor, ctx, &mut *records))?;
+    records.took(&value);
+    Ok(value)
 }
 
 fn one(acc: &mut Option<Hydrated>, at: SlotSite, value: impl FnOnce() -> Result<Hydrated, HydrateError>) -> Result<(), HydrateError> {
@@ -1076,17 +1249,19 @@ impl<T: HydrateNode, const A: bool> HydrateSlot for NonEmptyVec<Option<SlotValue
 /// The whole tree `cursor` walks, read as `N`, its records written into
 /// `into` in one walk, each naming the entry `source` of the source they
 /// are read from and stamped with its depth move, by the depth members of
-/// `kinds`: the root's record, `None` when it has none. Each extra and
-/// `ERROR` it places goes to `placed`, and where each list item the source
-/// sets apart is kept to `apart`.
+/// `kinds`, each run holding the children `rows` says: the root's record,
+/// `None` when it has none. Each extra and `ERROR` it places goes to
+/// `placed`, and where each list item the source sets apart is kept to
+/// `apart`.
 ///
 /// # Errors
 ///
 /// What the hydration refuses; what it wrote before stays written.
-pub fn hydrate_whole<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, source: Option<Address>, kinds: crate::trivia_table::SurfaceKinds, into: &mut dyn HydrateInto, placed: &mut Vec<Placed>, apart: &mut Vec<(super::NodeSite, crate::layout_kinds::LayoutKinds)>) -> Result<Option<Address>, HydrateError> {
+#[allow(clippy::too_many_arguments, reason = "the walk's inputs and the two lists it hands back")]
+pub fn hydrate_whole<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, source: Option<Address>, kinds: crate::trivia_table::SurfaceKinds, rows: ReadRows, into: &mut dyn HydrateInto, placed: &mut Vec<Placed>, apart: &mut Vec<(super::NodeSite, crate::layout_kinds::LayoutKinds)>) -> Result<Option<Address>, HydrateError> {
     crate::read::goto(cursor, NodeIndex::ROOT);
     let places = kinds.named_extras || cursor.node().has_error();
-    let records = &mut Hydration { extras: Some(extra_walk::<N>), source, kinds: Some(kinds), stamp: Some((ctx.shows, ctx.relaxes)), text: ctx.source, places, starts: Some(Vec::new()), ..Hydration::new(into) };
+    let records = &mut Hydration { extras: Some(extra_walk::<N>), source, kinds: Some(kinds), stamp: Some((ctx.shows, ctx.relaxes)), text: ctx.source, places, starts: Some(Vec::new()), rows, ..Hydration::new(into) };
     records.meet(cursor)?;
     ctx.begin_read();
     ctx.at = None;

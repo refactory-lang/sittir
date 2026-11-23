@@ -189,9 +189,7 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
                     ::core::result::Result::Err(refusal) => break 'walk ::core::result::Result::Err(::sittir_core::arena::HydrateError::from(refusal)),
                 };
                 ctx.at = ::core::option::Option::Some(__child);
-                if __route.keeps_as_fixed_token_or_flag(__FLAGS) {
-                    records.met_fixed_token_or_flag(__route.is_flag(__FLAGS));
-                }
+                records.role(__route, __FLAGS);
                 let __entered = match __route {
                     #(#takes)*
                     #(#separators)*

@@ -2689,6 +2689,16 @@ impl<G: EngineGrammar> Engine<G> {
 
     #[cfg(feature = "arena")]
     pub fn parse_records<N: crate::arena::HydrateNode>(&mut self, source: &str) -> Result<ParsedRecords, String> {
+        self.parse_records_with::<N>(source, crate::arena::ReadRows::All)
+    }
+
+    /// `parse_records`, each run holding the children `rows` says.
+    ///
+    /// # Errors
+    ///
+    /// The parser's failure, and what the read refuses.
+    #[cfg(feature = "arena")]
+    pub fn parse_records_with<N: crate::arena::HydrateNode>(&mut self, source: &str, rows: crate::arena::ReadRows) -> Result<ParsedRecords, String> {
         let tree = self.parser.parse(source, None).ok_or_else(|| {
             let snippet: String = source.chars().take(80).collect();
             format!("parse failed (source: {snippet:?})")
@@ -2707,7 +2717,7 @@ impl<G: EngineGrammar> Engine<G> {
         } else {
             let mut ctx = crate::read::ReadCtx::new(source, crate::types::TreeId(0), grammar.shows()).with_relaxes(grammar.relaxes());
             let (mut placed, mut apart) = (Vec::new(), Vec::new());
-            let root = crate::arena::hydrate_whole::<N>(&mut tree.walk(), &mut ctx, Some(entry), grammar.surface_kinds(), &mut writer, &mut placed, &mut apart).map_err(|refusal| refusal.describe(&G::kind_name))?;
+            let root = crate::arena::hydrate_whole::<N>(&mut tree.walk(), &mut ctx, Some(entry), grammar.surface_kinds(), rows, &mut writer, &mut placed, &mut apart).map_err(|refusal| refusal.describe(&G::kind_name))?;
             writer.finish(entry, root).map_err(|refusal| refusal.to_string())?;
             drop(built);
             self.place_extras(placed, apart).map_err(|refusal| refusal.to_string())?;

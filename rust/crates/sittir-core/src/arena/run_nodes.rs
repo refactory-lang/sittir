@@ -14,12 +14,13 @@ use crate::nodes::{Kid, Kids, Nodes};
 use crate::options::Side;
 use crate::types::{NodeIndex, Span};
 
-/// Where a node is kept: its own record, or the entry of its row in the run
-/// of the record `holder`.
+/// Where a node is kept: its own record, the entry of its row in the run of
+/// the record `holder`, or, for a unit with no row, its site in its holder.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NodeSite {
     Record(Address),
     Row { holder: Address, entry: u32 },
+    Unit(crate::trivia_store::Site<Address>),
 }
 
 /// A node's parent as a navigation knows it: not looked up yet, none (a
@@ -180,6 +181,7 @@ impl<'t> RunNodes<'t> {
             let met = match site {
                 NodeSite::Record(at) => walk.named_record(at),
                 NodeSite::Row { holder, entry } => walk.row_index(holder, entry + 2),
+                NodeSite::Unit(site) => Err(malformed("a unit's site, which names no row", site.holder)),
             };
             walk.answer(met.map(Some), None)
         })
@@ -191,7 +193,7 @@ impl<'t> RunNodes<'t> {
         self.answering(|walk| {
             let root = match site {
                 NodeSite::Record(at) => walk.node_record(at).and_then(|at| Ok(walk.side(at)?.parent.is_none())),
-                NodeSite::Row { .. } => Ok(false),
+                NodeSite::Row { .. } | NodeSite::Unit(_) => Ok(false),
             };
             walk.answer(root, false)
         })
@@ -254,6 +256,14 @@ pub fn node_record(arena: &dyn ArenaRead, mut at: Address) -> Result<Address, Ar
     }
 }
 
+/// The record a node kept at `site` lies in: its own, or its holder.
+fn holder_of(site: NodeSite) -> Address {
+    match site {
+        NodeSite::Record(at) | NodeSite::Row { holder: at, .. } => at,
+        NodeSite::Unit(site) => site.holder,
+    }
+}
+
 impl Walk<'_> {
     fn site(&self, index: NodeIndex) -> Option<NodeSite> {
         self.table.met.get(index.0 as usize).map(|met| met.site)
@@ -264,7 +274,7 @@ impl Walk<'_> {
     fn kept_at(&mut self, site: NodeSite) -> Result<NodeSite, ArenaError> {
         Ok(match site {
             NodeSite::Record(at) => NodeSite::Record(self.node_record(at)?),
-            row @ NodeSite::Row { .. } => row,
+            held @ (NodeSite::Row { .. } | NodeSite::Unit(_)) => held,
         })
     }
 
@@ -298,6 +308,7 @@ impl Walk<'_> {
                 let last = records.next_back().unwrap_or(first);
                 Ok(Some((first, self.rightmost(last)?)))
             }
+            NodeSite::Unit(_) => Ok(None),
         }
     }
 
@@ -308,7 +319,7 @@ impl Walk<'_> {
             return Ok(bound.places);
         }
         if self.table.spans.is_none() {
-            let (NodeSite::Record(at) | NodeSite::Row { holder: at, .. }) = of;
+            let at = holder_of(of);
             let source = self.side(at)?.source.map(Address).ok_or(malformed("parsed record source", at))?;
             self.table.spans = Some(super::read_spans(self.arena, source)?);
         }
@@ -330,7 +341,7 @@ impl Walk<'_> {
                 return Ok(entry < row && row <= entry + inner);
             }
         }
-        let (NodeSite::Record(held) | NodeSite::Row { holder: held, .. }) = site;
+        let held = holder_of(site);
         let Some((first, last)) = self.bound_of(of)? else { return Ok(false) };
         let spans = self.table.spans.as_deref().unwrap_or_default();
         Ok(spans.iter().position(|span| span.contains(&held)).is_some_and(|span| (first..=last).contains(&(span, held.0))))
@@ -510,6 +521,7 @@ impl Walk<'_> {
         let entries = match site {
             NodeSite::Record(at) => self.entries(at)?,
             NodeSite::Row { holder, entry } => self.inside(holder, entry)?,
+            NodeSite::Unit(_) => Vec::new(),
         };
         let mut kids = Vec::with_capacity(entries.len());
         for (holder, entry, found) in entries {
@@ -532,7 +544,7 @@ impl Walk<'_> {
         }
         let parent = match site {
             NodeSite::Row { holder, entry } => Some(self.above(holder, entry)?),
-            NodeSite::Record(_) => None,
+            NodeSite::Record(_) | NodeSite::Unit(_) => None,
         };
         self.table.met[index.0 as usize].parent = parent.map_or(Parent::Root, Parent::Node);
         Ok(parent)
@@ -555,6 +567,7 @@ impl Walk<'_> {
                 });
                 records.into_iter().try_fold(rows, |moved, at| Ok(moved + self.side(at)?.depth))
             }
+            NodeSite::Unit(_) => Ok(0),
         }
     }
 

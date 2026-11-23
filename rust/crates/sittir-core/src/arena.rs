@@ -48,7 +48,7 @@ pub(crate) use borrowed::{rewrite_layout, side_of};
 pub use built::{render_entry_at, render_record_entry};
 pub use built_write::{BuiltWriter, ReadWriter};
 pub use cell::{flag, header_of, kind_field, parsed_tag, with_kind, Cell, CellWord, ListCell, LINK_WORDS};
-pub use hydrate::{hydrate_error, hydrate_whole, parsed_side, row_of as hydrated_row, Draft, HydrateError, HydrateInto, HydrateNode, HydrateSlot, Hydrated, Hydration, Placed};
+pub use hydrate::{hydrate_error, hydrate_whole, parsed_side, row_of as hydrated_row, Draft, ReadRows, HydrateError, HydrateInto, HydrateNode, HydrateSlot, Hydrated, Hydration, Placed};
 pub use memory::{ChunkMem, ChunkUnit};
 pub use parsed::{runs_agree, BackerParity, RecordGrammar};
 pub use prep::{own_seat, prepare_root, record_snapshot_edge, seat_through, view_kind_in, CellAt, LayoutAt, PrepareRecord, RecordAt, RecordPrep, SettingAt, SettingOf, SlotAt};
