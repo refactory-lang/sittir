@@ -171,9 +171,6 @@ pub struct Hydration<'a> {
     starts: Option<Vec<u32>>,
     /// Which children the walk writes to each run.
     rows: ReadRows,
-    /// The list being written's items as the walk met them, kept from list
-    /// to list.
-    list_items: Vec<Option<Hydrated>>,
 }
 
 
@@ -634,7 +631,7 @@ impl<'a> Hydration<'a> {
     /// A hydration into `tree` whose walks hold no extra: `hydrate_into`
     /// makes the one a walk writes records through.
     pub(crate) fn new(tree: &'a mut dyn HydrateInto) -> Self {
-        Self { tree, extras: None, open: Vec::new(), met: None, entering: None, met_at: None, source: None, kinds: None, errors: Vec::new(), stamp: None, placed: Vec::new(), text: "", apart: Vec::new(), places: false, spare: Vec::new(), starts: None, rows: ReadRows::All, list_items: Vec::new() }
+        Self { tree, extras: None, open: Vec::new(), met: None, entering: None, met_at: None, source: None, kinds: None, errors: Vec::new(), stamp: None, placed: Vec::new(), text: "", apart: Vec::new(), places: false, spare: Vec::new(), starts: None, rows: ReadRows::All }
     }
 
     /// The levels a node of `kind` opens (1), closes (-1) or neither, as
@@ -709,16 +706,16 @@ impl<'a> Hydration<'a> {
         Ok(Draft { at, words })
     }
 
-    /// `value` as the record `draft` holds it, at item `item` of the slot at
-    /// `word`: a leaf or a unit named by the record's run, 1 for the
-    /// record's own node, else two past the number the node's entry is
-    /// written under, since a cell packs no row 0. A slot-content read holds
-    /// a unit by its kind alone, as a built record does.
+    /// `value` as the record `draft` holds it: a leaf or a unit named by the
+    /// record's run, 1 for the record's own node, else two past the number
+    /// the node's entry is written under, since a cell packs no row 0. A
+    /// slot-content read holds a unit by its kind alone, as a built record
+    /// does.
     ///
     /// # Errors
     ///
     /// `ArenaError::Malformed` for a node the record's walk did not meet.
-    fn held(&mut self, draft: Draft, value: Hydrated, word: u32, item: usize) -> Result<Hydrated, ArenaError> {
+    fn held(&mut self, draft: Draft, value: Hydrated) -> Result<Hydrated, ArenaError> {
         let slot_content = self.rows == ReadRows::SlotContent;
         let (Hydrated::Leaf { row, .. } | Hydrated::Unit { row: Some(row), .. }) = value else { return Ok(value) };
         let outside = ArenaError::Malformed { what: "cell row outside its holder's run", word: row.0 };
@@ -730,15 +727,23 @@ impl<'a> Hydration<'a> {
         let named = NodeIndex(entry.map_or(1, |entry| open.written_number(entry) + 2));
         Ok(match value {
             Hydrated::Leaf { kind, span, .. } => Hydrated::Leaf { kind, row: named, span },
-            Hydrated::Unit { kind, .. } if slot_content => {
-                if let Some(entry) = entry {
-                    open.units.push((entry, word, crate::types::ItemIndex(crate::types::narrow(item))));
-                }
-                Hydrated::Unit { kind, row: None }
-            }
+            Hydrated::Unit { kind, .. } if slot_content => Hydrated::Unit { kind, row: None },
             Hydrated::Unit { kind, .. } => Hydrated::Unit { kind, row: Some(named) },
             value => value,
         })
+    }
+
+    /// Under a slot-content read, keeps where the unit `value` sits in
+    /// `draft`, at item `item` of the slot at `word`: a unit has no row to
+    /// name it.
+    fn note_unit(&mut self, draft: Draft, value: Hydrated, word: u32, item: usize) {
+        let (ReadRows::SlotContent, Hydrated::Unit { row: Some(row), .. }) = (self.rows, value) else { return };
+        let Some(open) = self.open.iter_mut().rfind(|open| open.at == draft.at) else { return };
+        if open.index != Some(row) {
+            if let Some(entry) = open.entry_of(row) {
+                open.units.push((entry, word, crate::types::ItemIndex(crate::types::narrow(item))));
+            }
+        }
     }
 
     /// The child a slot just took is `value`: where a slot-content read holds
@@ -761,7 +766,10 @@ impl<'a> Hydration<'a> {
     /// What encoding the cell refuses, and a cell past the record's words.
     pub fn cell(&mut self, draft: Draft, shape: CellShape, value: Option<Hydrated>) -> Result<(), HydrateError> {
         let bits = self.tree.kind_bits();
-        let value = value.map(|value| self.held(draft, value, shape.word, 0)).transpose()?;
+        if let Some(value) = value {
+            self.note_unit(draft, value, shape.word, 0);
+        }
+        let value = value.map(|value| self.held(draft, value)).transpose()?;
         let out = self.tree.words_mut(draft.place(shape.word, shape.width)?, shape.width)?;
         value.map_or(Cell::Absent, |value| value.cell()).encode_parsed(out, shape, bits)?;
         Ok(())
@@ -785,15 +793,19 @@ impl<'a> Hydration<'a> {
         let words = len.checked_mul(width).and_then(|cells| cells.checked_add(1)).ok_or(ArenaError::Full)?;
         let cell = draft.place(shape.word, 1)?;
         let bits = self.tree.kind_bits();
-        let mut met = std::mem::take(&mut self.list_items);
-        met.clear();
-        met.extend(items);
-        let items = met.iter().enumerate().map(|(at, item)| item.map(|item| self.held(draft, item, shape.word, at)).transpose()).collect::<Result<Vec<_>, _>>()?;
+        let mut items: Vec<Option<Hydrated>> = items.collect();
+        for (at, item) in items.iter().enumerate() {
+            if let Some(item) = *item {
+                self.note_unit(draft, item, shape.word, at);
+            }
+        }
         if let Some(item) = (crate::types::NodeId::SITE_ITEMS..len).zip(&items[crate::types::NodeId::SITE_ITEMS.min(len) as usize..]).find_map(|(item, value)| matches!(value, Some(Hydrated::Leaf { .. })).then_some(item)) {
             return Err(ArenaError::LeafItemPastNames { item }.into());
         }
-        self.set_apart(draft, &met)?;
-        self.list_items = met;
+        self.set_apart(draft, &items)?;
+        for item in items.iter_mut().flatten() {
+            *item = self.held(draft, *item)?;
+        }
         let run = self.tree.alloc(words)?;
         let out = self.tree.words_mut(run, words)?;
         out[0] = len;
