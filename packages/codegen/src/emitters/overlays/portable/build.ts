@@ -68,6 +68,8 @@ import { findKindEntry, fixedTextKinds, type KindEnumEntry } from '../../kind-di
 import { membershipKindsOf } from '../../membership.ts';
 import { finalSeatOf, lexedContentSlot, registeredSlots } from '../../shared.ts';
 
+const CARRIES_NODE_FLAGS: Readonly<Record<string, readonly string[]>> = { 'expression.interpolation': ['debug'] };
+
 export type PickDiagnosticCode =
 	| 'portable-pick-undecided'
 	| 'portable-form-product'
@@ -1141,6 +1143,10 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				if (route.route !== 'delimiter') continue;
 				const list = route.path === undefined ? undefined : (stepsOf(route.path) ?? refuseList(route.name, entry.vocab));
 				flagSteps[route.name] = { ...(flagSteps[route.name] ?? { presets: [] }), delimiter: route.delimiter, ...(list === undefined ? {} : { list }) };
+			}
+			for (const flag of CARRIES_NODE_FLAGS[entry.vocab] ?? []) {
+				const step = flagSteps[flag];
+				if (step !== undefined) flagSteps[flag] = { ...step, carriesNode: true };
 			}
 			const sharingAt = (path: readonly SlotStep[], i: number): readonly { readonly name: string; readonly path: readonly SlotStep[] }[] =>
 				survivors.flatMap(({ name, site: { path: other } }) => (other.length < i || !path.slice(0, i).every((step, j) => sameStep(step, other[j]!)) ? [] : [{ name, path: other }]));

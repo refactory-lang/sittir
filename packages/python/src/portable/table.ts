@@ -13130,7 +13130,8 @@ export const build: PortableBuildTable = {
 									kind: 40,
 									presence: true
 								}
-							]
+							],
+							carriesNode: true
 						}
 					},
 					when: [
@@ -13231,7 +13232,8 @@ export const build: PortableBuildTable = {
 									kind: 40,
 									presence: true
 								}
-							]
+							],
+							carriesNode: true
 						}
 					},
 					when: [

@@ -188,6 +188,8 @@ export interface PortableFlagStep {
 	readonly delimiter?: number;
 	readonly list?: readonly PortableSlotStep[];
 	readonly template?: PortableTemplate;
+	/** Where the flag holds, the node's source text is part of its value, so a read keeps the parsed node. A build still sets the flag. */
+	readonly carriesNode?: true;
 }
 
 /** A test a build arm passes for its input: a structure that states every `required` slot and none of the `absent` ones, the slots the path's other arms have and this one lacks (arms with fewer slots come first); a structure whose `empty` list slots are each left out or empty, for an arm whose kind holds only layout and reads with those lists empty; a flag stated or not; a slot's value of one of `kinds`; a fixed literal's text; the boolean a binding declares its kind's value; or the form chosen at a supertype's variant site: the render options' choice at `<variant>/variant`, the `default` form when they make none. */
