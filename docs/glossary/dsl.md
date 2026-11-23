@@ -5172,6 +5172,8 @@ scope. A body whose elements are all fielded is left alone.
  */
 ```
 
+When the grammar labelled only the repeated elements (java's `provides A with B, C`), the head takes that label and the repeat is left as written, so the parser labels every element and link folds them into one list. The head is then fielded, so a second enrich leaves it alone.
+
 The mint declines when the element is a choice one of whose arms already
 carries a field (`hasFieldedArm`): a uniform `element` field over that
 choice would erase the arm's own label, which routes that arm at read
@@ -5183,7 +5185,7 @@ enum_assignment)`) is the shape this covers.
 
 ### `packages/codegen/src/dsl/enrich.ts::separatedListTail`
 
-The one list-element predicate: whether the member at `i` heads a separated list. That is, the next member (through prec wrappers) is a repeat whose content `separatorOf` reads as `seq(SEP, element)` with no trailing separator, the element has the head's shape (`sameElementShape`), and the head is neither fielded inside nor able to match empty. It returns the repeat, its content and the prec wrappers on each, which `fieldSeparatedListElements` rebuilds. A list's head and its tail elements are one slot, so they are fielded together or not at all. The per-member field passes (`applySymbolToField`, `tryPromoteInRepeatSeq`, `tryPromoteInRepeatMember`, `applyChoiceArmFieldWrap`) leave a member for which this holds to `fieldSeparatedListElements`, which fields the head and every tail element with one name. A pass that fielded the head alone would leave an unfielded tail that list fusion, which compares field names, cannot join to it (go `statements`).
+The one list-element predicate: whether the member at `i` heads a separated list. That is, the next member (through prec wrappers) is a repeat whose content `separatorOf` reads as `seq(SEP, element)` with no trailing separator, the element has the head's shape (`sameElementShape`), and the head is neither fielded inside nor able to match empty. An unfielded head also matches a repeat element the grammar labelled, compared through that label, and `elementField` then holds its name. It returns the repeat, its content and the prec wrappers on each, which `fieldSeparatedListElements` rebuilds. A list's head and its tail elements are one slot, so they are fielded together or not at all. The per-member field passes (`applySymbolToField`, `tryPromoteInRepeatSeq`, `tryPromoteInRepeatMember`, `applyChoiceArmFieldWrap`) leave a member for which this holds to `fieldSeparatedListElements`, which fields the head and every tail element with one name. A pass that fielded the head alone would leave an unfielded tail that list fusion, which compares field names, cannot join to it (go `statements`).
 
 ### `packages/codegen/src/dsl/enrich.ts::SeparatedListTail`
 

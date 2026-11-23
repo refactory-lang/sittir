@@ -845,6 +845,7 @@ interface SeparatedListTail {
 	readonly repeatCursor: Rule;
 	readonly inner: RuntimeRule;
 	readonly innerElement: Rule;
+	readonly elementField: string | undefined;
 	readonly outerPrecStack: readonly PrecWrapperLike[];
 	readonly innerPrecStack: readonly PrecWrapperLike[];
 }
@@ -858,10 +859,13 @@ function separatedListTail(members: readonly Rule[], i: number, symbols: SymbolS
 	const detected = separatorOf(inner, symbols);
 	if (!detected || detected.trailing) return null;
 	const innerElement = detected.content as unknown as Rule;
-	if (!sameElementShape(leading, innerElement)) return null;
+	const labelled = !isFieldType((leading as { type: string }).type) && isFieldType((innerElement as { type: string }).type)
+		? (innerElement as unknown as { name: string; content: Rule })
+		: undefined;
+	if (!sameElementShape(leading, labelled?.content ?? innerElement)) return null;
 	if (hasFieldedArm(leading)) return null;
 	if (matchesEmpty(leading as unknown as RuntimeRule)) return null;
-	return { repeatCursor, inner, innerElement, outerPrecStack, innerPrecStack };
+	return { repeatCursor, inner, innerElement, elementField: labelled?.name, outerPrecStack, innerPrecStack };
 }
 
 function fieldTerminatedListElements(
@@ -899,6 +903,11 @@ function fieldSeparatedListElements(
 		if (isFieldType((leading as { type: string }).type)) continue;
 		const tail = separatedListTail(members, i, symbols);
 		if (!tail) continue;
+		if (tail.elementField !== undefined) {
+			const labelledMembers = members.slice();
+			labelledMembers[i] = makeField(tail.elementField, leading);
+			return { ...(seqRule as object), members: labelledMembers } as Rule;
+		}
 		const { repeatCursor, inner, innerElement, outerPrecStack, innerPrecStack } = tail;
 		const fieldName = reserve(elementSlotName(leading, site, ruleOrigins));
 

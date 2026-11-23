@@ -3063,27 +3063,27 @@ static const TSMapSlice ts_field_map_slices[PRODUCTION_ID_COUNT] = {
   [247] = {.index = 634, .length = 3},
   [248] = {.index = 637, .length = 3},
   [249] = {.index = 640, .length = 2},
-  [250] = {.index = 642, .length = 1},
-  [251] = {.index = 643, .length = 2},
-  [252] = {.index = 645, .length = 7},
-  [253] = {.index = 652, .length = 3},
-  [254] = {.index = 655, .length = 6},
-  [255] = {.index = 661, .length = 5},
-  [256] = {.index = 666, .length = 4},
-  [257] = {.index = 670, .length = 1},
-  [258] = {.index = 671, .length = 3},
-  [259] = {.index = 674, .length = 2},
-  [260] = {.index = 676, .length = 1},
-  [261] = {.index = 677, .length = 2},
-  [262] = {.index = 679, .length = 2},
-  [263] = {.index = 681, .length = 3},
-  [264] = {.index = 684, .length = 1},
-  [265] = {.index = 685, .length = 3},
-  [266] = {.index = 688, .length = 3},
-  [267] = {.index = 691, .length = 4},
-  [268] = {.index = 695, .length = 4},
-  [269] = {.index = 699, .length = 4},
-  [270] = {.index = 703, .length = 5},
+  [250] = {.index = 642, .length = 2},
+  [251] = {.index = 644, .length = 2},
+  [252] = {.index = 646, .length = 7},
+  [253] = {.index = 653, .length = 3},
+  [254] = {.index = 656, .length = 6},
+  [255] = {.index = 662, .length = 5},
+  [256] = {.index = 667, .length = 4},
+  [257] = {.index = 671, .length = 1},
+  [258] = {.index = 672, .length = 3},
+  [259] = {.index = 675, .length = 2},
+  [260] = {.index = 677, .length = 1},
+  [261] = {.index = 678, .length = 3},
+  [262] = {.index = 681, .length = 2},
+  [263] = {.index = 683, .length = 3},
+  [264] = {.index = 686, .length = 1},
+  [265] = {.index = 687, .length = 3},
+  [266] = {.index = 690, .length = 3},
+  [267] = {.index = 693, .length = 4},
+  [268] = {.index = 697, .length = 4},
+  [269] = {.index = 701, .length = 4},
+  [270] = {.index = 705, .length = 5},
 };
 
 static const TSFieldMapEntry ts_field_map_entries[] = {
@@ -3966,10 +3966,11 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_package, 1},
   [642] =
     {field_provided, 1},
-  [643] =
+    {field_provider, 3},
+  [644] =
     {field_name, 1},
     {field_type, 0},
-  [645] =
+  [646] =
     {field_body, 7},
     {field_extends, 4},
     {field_implements, 5},
@@ -3977,75 +3978,76 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 2},
     {field_permits, 6},
     {field_type_parameters, 3},
-  [652] =
+  [653] =
     {field_constructor, 3},
     {field_object, 0},
     {field_type_arguments, 2},
-  [655] =
+  [656] =
     {field_body, 8},
     {field_dimensions, 4, .inherited = true},
     {field_modifiers, 2},
     {field_name, 4, .inherited = true},
     {field_type, 3},
     {field_value, 6},
-  [661] =
+  [662] =
     {field_body, 8},
     {field_condition, 3},
     {field_init, 2},
     {field_update, 5},
     {field_update, 6, .inherited = true},
-  [666] =
+  [667] =
     {field_body, 8},
     {field_condition, 3},
     {field_update, 5},
     {field_update, 6, .inherited = true},
-  [670] =
-    {field_modules, 1},
   [671] =
+    {field_modules, 1},
+  [672] =
     {field_modules, 3},
     {field_modules, 4, .inherited = true},
     {field_package, 1},
-  [674] =
+  [675] =
     {field_modules, 0, .inherited = true},
     {field_modules, 1, .inherited = true},
-  [676] =
-    {field_provider, 1},
   [677] =
+    {field_provider, 1},
+  [678] =
     {field_provided, 1},
+    {field_provider, 3},
     {field_provider, 4, .inherited = true},
-  [679] =
+  [681] =
     {field_provider, 0, .inherited = true},
     {field_provider, 1, .inherited = true},
-  [681] =
+  [683] =
     {field_modifiers, 0},
     {field_name, 2},
     {field_type, 1},
-  [684] =
+  [686] =
     {field_value, 1},
-  [685] =
+  [687] =
     {field_dimensions, 4},
     {field_name, 1},
     {field_type, 0},
-  [688] =
+  [690] =
     {field_name, 1},
     {field_type, 0},
     {field_value, 4, .inherited = true},
-  [691] =
+  [693] =
     {field_dimensions, 5},
     {field_modifiers, 0},
     {field_name, 2},
     {field_type, 1},
-  [695] =
+  [697] =
     {field_modifiers, 0},
     {field_name, 2},
     {field_type, 1},
     {field_value, 5, .inherited = true},
-  [699] =
+  [701] =
     {field_dimensions, 4},
     {field_name, 1},
     {field_type, 0},
     {field_value, 5, .inherited = true},
-  [703] =
+  [705] =
     {field_dimensions, 5},
     {field_modifiers, 0},
     {field_name, 2},

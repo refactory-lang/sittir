@@ -5344,6 +5344,4885 @@
     "wrappedText": "module com.foo {\n    requires com.example.foo.http;\n}\n"
   },
   {
+    "expectedOutput": "\nmodule com.example.foo {\n    requires com.example.http;\n    requires java.logging;\n\n    requires transitive com.example.network;\n\n    exports com.example.bar;\n    exports com.example.internal to com.example.probe;\n\n    opens com.example.quux;\n    opens com.example.internal to com.example.network, com.example.probe;\n\n    uses com.example.Intf;\n    provides com.example.Intf with com.example.Impl;\n}\n",
+    "grammar": "java",
+    "input": {
+      "$errors": [],
+      "$type": 157,
+      "_toplevel_statements": [
+        {
+          "$type": 240,
+          "_annotations": [],
+          "_body": {
+            "$type": 241,
+            "_module_directives": [
+              {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      152,
+                      155
+                    ]
+                  }
+                },
+                "$type": 243,
+                "_modifiers": [],
+                "_module": {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        149
+                      ]
+                    }
+                  },
+                  "$type": 271,
+                  "_name": {
+                    "$_layout": {
+                      "trivia": {
+                        "leading": [
+                          149
+                        ]
+                      }
+                    },
+                    "$text": "http",
+                    "$type": 1
+                  },
+                  "_scope": {
+                    "$_layout": {
+                      "trivia": {
+                        "trailing": [
+                          149
+                        ]
+                      }
+                    },
+                    "$type": 271,
+                    "_name": {
+                      "$_layout": {
+                        "trivia": {
+                          "leading": [
+                            149
+                          ]
+                        }
+                      },
+                      "$text": "example",
+                      "$type": 1
+                    },
+                    "_scope": {
+                      "$_layout": {
+                        "trivia": {
+                          "trailing": [
+                            149
+                          ]
+                        }
+                      },
+                      "$text": "com",
+                      "$type": 1
+                    }
+                  }
+                }
+              },
+              {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      152
+                    ]
+                  }
+                },
+                "$type": 243,
+                "_modifiers": [],
+                "_module": {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        149
+                      ]
+                    }
+                  },
+                  "$type": 271,
+                  "_name": {
+                    "$_layout": {
+                      "trivia": {
+                        "leading": [
+                          149
+                        ]
+                      }
+                    },
+                    "$text": "logging",
+                    "$type": 1
+                  },
+                  "_scope": {
+                    "$_layout": {
+                      "trivia": {
+                        "trailing": [
+                          149
+                        ]
+                      }
+                    },
+                    "$text": "java",
+                    "$type": 1
+                  }
+                }
+              },
+              {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      153
+                    ]
+                  }
+                },
+                "$type": 243,
+                "_modifiers": [
+                  84
+                ],
+                "_module": {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        149
+                      ]
+                    }
+                  },
+                  "$type": 271,
+                  "_name": {
+                    "$_layout": {
+                      "trivia": {
+                        "leading": [
+                          149
+                        ]
+                      }
+                    },
+                    "$text": "network",
+                    "$type": 1
+                  },
+                  "_scope": {
+                    "$_layout": {
+                      "trivia": {
+                        "trailing": [
+                          149
+                        ]
+                      }
+                    },
+                    "$type": 271,
+                    "_name": {
+                      "$_layout": {
+                        "trivia": {
+                          "leading": [
+                            149
+                          ]
+                        }
+                      },
+                      "$text": "example",
+                      "$type": 1
+                    },
+                    "_scope": {
+                      "$_layout": {
+                        "trivia": {
+                          "trailing": [
+                            149
+                          ]
+                        }
+                      },
+                      "$text": "com",
+                      "$type": 1
+                    }
+                  }
+                }
+              },
+              {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      153
+                    ]
+                  }
+                },
+                "$type": 245,
+                "_modules": [],
+                "_package": {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        149
+                      ]
+                    }
+                  },
+                  "$type": 271,
+                  "_name": {
+                    "$_layout": {
+                      "trivia": {
+                        "leading": [
+                          149
+                        ]
+                      }
+                    },
+                    "$text": "bar",
+                    "$type": 1
+                  },
+                  "_scope": {
+                    "$_layout": {
+                      "trivia": {
+                        "trailing": [
+                          149
+                        ]
+                      }
+                    },
+                    "$type": 271,
+                    "_name": {
+                      "$_layout": {
+                        "trivia": {
+                          "leading": [
+                            149
+                          ]
+                        }
+                      },
+                      "$text": "example",
+                      "$type": 1
+                    },
+                    "_scope": {
+                      "$_layout": {
+                        "trivia": {
+                          "trailing": [
+                            149
+                          ]
+                        }
+                      },
+                      "$text": "com",
+                      "$type": 1
+                    }
+                  }
+                }
+              },
+              {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      152
+                    ]
+                  }
+                },
+                "$type": 245,
+                "_modules": [
+                  {
+                    "$_layout": {
+                      "trivia": {
+                        "trailing": [
+                          149
+                        ]
+                      }
+                    },
+                    "$type": 271,
+                    "_name": {
+                      "$_layout": {
+                        "trivia": {
+                          "leading": [
+                            149
+                          ]
+                        }
+                      },
+                      "$text": "probe",
+                      "$type": 1
+                    },
+                    "_scope": {
+                      "$_layout": {
+                        "trivia": {
+                          "trailing": [
+                            149
+                          ]
+                        }
+                      },
+                      "$type": 271,
+                      "_name": {
+                        "$_layout": {
+                          "trivia": {
+                            "leading": [
+                              149
+                            ]
+                          }
+                        },
+                        "$text": "example",
+                        "$type": 1
+                      },
+                      "_scope": {
+                        "$_layout": {
+                          "trivia": {
+                            "trailing": [
+                              149
+                            ]
+                          }
+                        },
+                        "$text": "com",
+                        "$type": 1
+                      }
+                    }
+                  }
+                ],
+                "_package": {
+                  "$type": 271,
+                  "_name": {
+                    "$_layout": {
+                      "trivia": {
+                        "leading": [
+                          149
+                        ]
+                      }
+                    },
+                    "$text": "internal",
+                    "$type": 1
+                  },
+                  "_scope": {
+                    "$_layout": {
+                      "trivia": {
+                        "trailing": [
+                          149
+                        ]
+                      }
+                    },
+                    "$type": 271,
+                    "_name": {
+                      "$_layout": {
+                        "trivia": {
+                          "leading": [
+                            149
+                          ]
+                        }
+                      },
+                      "$text": "example",
+                      "$type": 1
+                    },
+                    "_scope": {
+                      "$_layout": {
+                        "trivia": {
+                          "trailing": [
+                            149
+                          ]
+                        }
+                      },
+                      "$text": "com",
+                      "$type": 1
+                    }
+                  }
+                }
+              },
+              {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      153
+                    ]
+                  }
+                },
+                "$type": 246,
+                "_modules": [],
+                "_package": {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        149
+                      ]
+                    }
+                  },
+                  "$type": 271,
+                  "_name": {
+                    "$_layout": {
+                      "trivia": {
+                        "leading": [
+                          149
+                        ]
+                      }
+                    },
+                    "$text": "quux",
+                    "$type": 1
+                  },
+                  "_scope": {
+                    "$_layout": {
+                      "trivia": {
+                        "trailing": [
+                          149
+                        ]
+                      }
+                    },
+                    "$type": 271,
+                    "_name": {
+                      "$_layout": {
+                        "trivia": {
+                          "leading": [
+                            149
+                          ]
+                        }
+                      },
+                      "$text": "example",
+                      "$type": 1
+                    },
+                    "_scope": {
+                      "$_layout": {
+                        "trivia": {
+                          "trailing": [
+                            149
+                          ]
+                        }
+                      },
+                      "$text": "com",
+                      "$type": 1
+                    }
+                  }
+                }
+              },
+              {
+                "$_layout": {
+                  "slots": [
+                    {
+                      "before": 149,
+                      "slot": "_modules"
+                    }
+                  ],
+                  "trivia": {
+                    "leading": [
+                      152
+                    ]
+                  }
+                },
+                "$type": 246,
+                "_modules": [
+                  {
+                    "$type": 271,
+                    "_name": {
+                      "$_layout": {
+                        "trivia": {
+                          "leading": [
+                            149
+                          ]
+                        }
+                      },
+                      "$text": "network",
+                      "$type": 1
+                    },
+                    "_scope": {
+                      "$_layout": {
+                        "trivia": {
+                          "trailing": [
+                            149
+                          ]
+                        }
+                      },
+                      "$type": 271,
+                      "_name": {
+                        "$_layout": {
+                          "trivia": {
+                            "leading": [
+                              149
+                            ]
+                          }
+                        },
+                        "$text": "example",
+                        "$type": 1
+                      },
+                      "_scope": {
+                        "$_layout": {
+                          "trivia": {
+                            "trailing": [
+                              149
+                            ]
+                          }
+                        },
+                        "$text": "com",
+                        "$type": 1
+                      }
+                    }
+                  },
+                  {
+                    "$_layout": {
+                      "trivia": {
+                        "trailing": [
+                          149
+                        ]
+                      }
+                    },
+                    "$type": 271,
+                    "_name": {
+                      "$_layout": {
+                        "trivia": {
+                          "leading": [
+                            149
+                          ]
+                        }
+                      },
+                      "$text": "probe",
+                      "$type": 1
+                    },
+                    "_scope": {
+                      "$_layout": {
+                        "trivia": {
+                          "trailing": [
+                            149
+                          ]
+                        }
+                      },
+                      "$type": 271,
+                      "_name": {
+                        "$_layout": {
+                          "trivia": {
+                            "leading": [
+                              149
+                            ]
+                          }
+                        },
+                        "$text": "example",
+                        "$type": 1
+                      },
+                      "_scope": {
+                        "$_layout": {
+                          "trivia": {
+                            "trailing": [
+                              149
+                            ]
+                          }
+                        },
+                        "$text": "com",
+                        "$type": 1
+                      }
+                    }
+                  }
+                ],
+                "_package": {
+                  "$type": 271,
+                  "_name": {
+                    "$_layout": {
+                      "trivia": {
+                        "leading": [
+                          149
+                        ]
+                      }
+                    },
+                    "$text": "internal",
+                    "$type": 1
+                  },
+                  "_scope": {
+                    "$_layout": {
+                      "trivia": {
+                        "trailing": [
+                          149
+                        ]
+                      }
+                    },
+                    "$type": 271,
+                    "_name": {
+                      "$_layout": {
+                        "trivia": {
+                          "leading": [
+                            149
+                          ]
+                        }
+                      },
+                      "$text": "example",
+                      "$type": 1
+                    },
+                    "_scope": {
+                      "$_layout": {
+                        "trivia": {
+                          "trailing": [
+                            149
+                          ]
+                        }
+                      },
+                      "$text": "com",
+                      "$type": 1
+                    }
+                  }
+                }
+              },
+              {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      153
+                    ]
+                  }
+                },
+                "$type": 247,
+                "_type": {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        149
+                      ]
+                    }
+                  },
+                  "$type": 271,
+                  "_name": {
+                    "$_layout": {
+                      "trivia": {
+                        "leading": [
+                          149
+                        ]
+                      }
+                    },
+                    "$text": "Intf",
+                    "$type": 1
+                  },
+                  "_scope": {
+                    "$_layout": {
+                      "trivia": {
+                        "trailing": [
+                          149
+                        ]
+                      }
+                    },
+                    "$type": 271,
+                    "_name": {
+                      "$_layout": {
+                        "trivia": {
+                          "leading": [
+                            149
+                          ]
+                        }
+                      },
+                      "$text": "example",
+                      "$type": 1
+                    },
+                    "_scope": {
+                      "$_layout": {
+                        "trivia": {
+                          "trailing": [
+                            149
+                          ]
+                        }
+                      },
+                      "$text": "com",
+                      "$type": 1
+                    }
+                  }
+                }
+              },
+              {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      152
+                    ],
+                    "trailing": [
+                      152,
+                      156
+                    ]
+                  }
+                },
+                "$type": 248,
+                "_provided": {
+                  "$type": 271,
+                  "_name": {
+                    "$_layout": {
+                      "trivia": {
+                        "leading": [
+                          149
+                        ]
+                      }
+                    },
+                    "$text": "Intf",
+                    "$type": 1
+                  },
+                  "_scope": {
+                    "$_layout": {
+                      "trivia": {
+                        "trailing": [
+                          149
+                        ]
+                      }
+                    },
+                    "$type": 271,
+                    "_name": {
+                      "$_layout": {
+                        "trivia": {
+                          "leading": [
+                            149
+                          ]
+                        }
+                      },
+                      "$text": "example",
+                      "$type": 1
+                    },
+                    "_scope": {
+                      "$_layout": {
+                        "trivia": {
+                          "trailing": [
+                            149
+                          ]
+                        }
+                      },
+                      "$text": "com",
+                      "$type": 1
+                    }
+                  }
+                },
+                "_provider": [
+                  {
+                    "$_layout": {
+                      "trivia": {
+                        "trailing": [
+                          149
+                        ]
+                      }
+                    },
+                    "$type": 271,
+                    "_name": {
+                      "$_layout": {
+                        "trivia": {
+                          "leading": [
+                            149
+                          ]
+                        }
+                      },
+                      "$text": "Impl",
+                      "$type": 1
+                    },
+                    "_scope": {
+                      "$_layout": {
+                        "trivia": {
+                          "trailing": [
+                            149
+                          ]
+                        }
+                      },
+                      "$type": 271,
+                      "_name": {
+                        "$_layout": {
+                          "trivia": {
+                            "leading": [
+                              149
+                            ]
+                          }
+                        },
+                        "$text": "example",
+                        "$type": 1
+                      },
+                      "_scope": {
+                        "$_layout": {
+                          "trivia": {
+                            "trailing": [
+                              149
+                            ]
+                          }
+                        },
+                        "$text": "com",
+                        "$type": 1
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "_name": {
+            "$type": 271,
+            "_name": {
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    149
+                  ]
+                }
+              },
+              "$text": "foo",
+              "$type": 1
+            },
+            "_scope": {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    149
+                  ]
+                }
+              },
+              "$type": 271,
+              "_name": {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "example",
+                "$type": 1
+              },
+              "_scope": {
+                "$_layout": {
+                  "trivia": {
+                    "trailing": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "com",
+                "$type": 1
+              }
+            }
+          },
+          "_open": false
+        }
+      ]
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "program"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(program toplevel_statements: (module_declaration name: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)) body: (module_body module_directives: (requires_module_directive module: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))) module_directives: (requires_module_directive module: (scoped_identifier scope: (identifier) name: (identifier))) module_directives: (requires_module_directive modifiers: (requires_modifier) module: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))) module_directives: (exports_module_directive package: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))) module_directives: (exports_module_directive package: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)) modules: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))) module_directives: (opens_module_directive package: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))) module_directives: (opens_module_directive package: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)) modules: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)) modules: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))) module_directives: (uses_module_directive type: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))) module_directives: (provides_module_directive provided: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)) provider: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))))))",
+    "expectedSourceOut": "\nmodule com.example.foo {\n    requires com.example.http;\n    requires java.logging;\n\n    requires transitive com.example.network;\n\n    exports com.example.bar;\n    exports com.example.internal to com.example.probe;\n\n    opens com.example.quux;\n    opens com.example.internal to com.example.network, com.example.probe;\n\n    uses com.example.Intf;\n    provides com.example.Intf with com.example.Impl;\n}\n",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "program",
+    "sourceIn": "\nmodule com.example.foo {\n    requires com.example.http;\n    requires java.logging;\n\n    requires transitive com.example.network;\n\n    exports com.example.bar;\n    exports com.example.internal to com.example.probe;\n\n    opens com.example.quux;\n    opens com.example.internal to com.example.network, com.example.probe;\n\n    uses com.example.Intf;\n    provides com.example.Intf with com.example.Impl;\n}\n",
+    "wrappedOffset": 0,
+    "wrappedText": "\nmodule com.example.foo {\n    requires com.example.http;\n    requires java.logging;\n\n    requires transitive com.example.network;\n\n    exports com.example.bar;\n    exports com.example.internal to com.example.probe;\n\n    opens com.example.quux;\n    opens com.example.internal to com.example.network, com.example.probe;\n\n    uses com.example.Intf;\n    provides com.example.Intf with com.example.Impl;\n}\n"
+  },
+  {
+    "expectedOutput": "module com.example.foo {\n    requires com.example.http;\n    requires java.logging;\n\n    requires transitive com.example.network;\n\n    exports com.example.bar;\n    exports com.example.internal to com.example.probe;\n\n    opens com.example.quux;\n    opens com.example.internal to com.example.network, com.example.probe;\n\n    uses com.example.Intf;\n    provides com.example.Intf with com.example.Impl;\n}",
+    "grammar": "java",
+    "input": {
+      "$type": 240,
+      "_annotations": [],
+      "_body": {
+        "$type": 241,
+        "_module_directives": [
+          {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  152,
+                  155
+                ]
+              }
+            },
+            "$type": 243,
+            "_modifiers": [],
+            "_module": {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    149
+                  ]
+                }
+              },
+              "$type": 271,
+              "_name": {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "http",
+                "$type": 1
+              },
+              "_scope": {
+                "$_layout": {
+                  "trivia": {
+                    "trailing": [
+                      149
+                    ]
+                  }
+                },
+                "$type": 271,
+                "_name": {
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "example",
+                  "$type": 1
+                },
+                "_scope": {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "com",
+                  "$type": 1
+                }
+              }
+            }
+          },
+          {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  152
+                ]
+              }
+            },
+            "$type": 243,
+            "_modifiers": [],
+            "_module": {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    149
+                  ]
+                }
+              },
+              "$type": 271,
+              "_name": {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "logging",
+                "$type": 1
+              },
+              "_scope": {
+                "$_layout": {
+                  "trivia": {
+                    "trailing": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "java",
+                "$type": 1
+              }
+            }
+          },
+          {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  153
+                ]
+              }
+            },
+            "$type": 243,
+            "_modifiers": [
+              84
+            ],
+            "_module": {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    149
+                  ]
+                }
+              },
+              "$type": 271,
+              "_name": {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "network",
+                "$type": 1
+              },
+              "_scope": {
+                "$_layout": {
+                  "trivia": {
+                    "trailing": [
+                      149
+                    ]
+                  }
+                },
+                "$type": 271,
+                "_name": {
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "example",
+                  "$type": 1
+                },
+                "_scope": {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "com",
+                  "$type": 1
+                }
+              }
+            }
+          },
+          {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  153
+                ]
+              }
+            },
+            "$type": 245,
+            "_modules": [],
+            "_package": {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    149
+                  ]
+                }
+              },
+              "$type": 271,
+              "_name": {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "bar",
+                "$type": 1
+              },
+              "_scope": {
+                "$_layout": {
+                  "trivia": {
+                    "trailing": [
+                      149
+                    ]
+                  }
+                },
+                "$type": 271,
+                "_name": {
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "example",
+                  "$type": 1
+                },
+                "_scope": {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "com",
+                  "$type": 1
+                }
+              }
+            }
+          },
+          {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  152
+                ]
+              }
+            },
+            "$type": 245,
+            "_modules": [
+              {
+                "$_layout": {
+                  "trivia": {
+                    "trailing": [
+                      149
+                    ]
+                  }
+                },
+                "$type": 271,
+                "_name": {
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "probe",
+                  "$type": 1
+                },
+                "_scope": {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        149
+                      ]
+                    }
+                  },
+                  "$type": 271,
+                  "_name": {
+                    "$_layout": {
+                      "trivia": {
+                        "leading": [
+                          149
+                        ]
+                      }
+                    },
+                    "$text": "example",
+                    "$type": 1
+                  },
+                  "_scope": {
+                    "$_layout": {
+                      "trivia": {
+                        "trailing": [
+                          149
+                        ]
+                      }
+                    },
+                    "$text": "com",
+                    "$type": 1
+                  }
+                }
+              }
+            ],
+            "_package": {
+              "$type": 271,
+              "_name": {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "internal",
+                "$type": 1
+              },
+              "_scope": {
+                "$_layout": {
+                  "trivia": {
+                    "trailing": [
+                      149
+                    ]
+                  }
+                },
+                "$type": 271,
+                "_name": {
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "example",
+                  "$type": 1
+                },
+                "_scope": {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "com",
+                  "$type": 1
+                }
+              }
+            }
+          },
+          {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  153
+                ]
+              }
+            },
+            "$type": 246,
+            "_modules": [],
+            "_package": {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    149
+                  ]
+                }
+              },
+              "$type": 271,
+              "_name": {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "quux",
+                "$type": 1
+              },
+              "_scope": {
+                "$_layout": {
+                  "trivia": {
+                    "trailing": [
+                      149
+                    ]
+                  }
+                },
+                "$type": 271,
+                "_name": {
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "example",
+                  "$type": 1
+                },
+                "_scope": {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "com",
+                  "$type": 1
+                }
+              }
+            }
+          },
+          {
+            "$_layout": {
+              "slots": [
+                {
+                  "before": 149,
+                  "slot": "_modules"
+                }
+              ],
+              "trivia": {
+                "leading": [
+                  152
+                ]
+              }
+            },
+            "$type": 246,
+            "_modules": [
+              {
+                "$type": 271,
+                "_name": {
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "network",
+                  "$type": 1
+                },
+                "_scope": {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        149
+                      ]
+                    }
+                  },
+                  "$type": 271,
+                  "_name": {
+                    "$_layout": {
+                      "trivia": {
+                        "leading": [
+                          149
+                        ]
+                      }
+                    },
+                    "$text": "example",
+                    "$type": 1
+                  },
+                  "_scope": {
+                    "$_layout": {
+                      "trivia": {
+                        "trailing": [
+                          149
+                        ]
+                      }
+                    },
+                    "$text": "com",
+                    "$type": 1
+                  }
+                }
+              },
+              {
+                "$_layout": {
+                  "trivia": {
+                    "trailing": [
+                      149
+                    ]
+                  }
+                },
+                "$type": 271,
+                "_name": {
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "probe",
+                  "$type": 1
+                },
+                "_scope": {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        149
+                      ]
+                    }
+                  },
+                  "$type": 271,
+                  "_name": {
+                    "$_layout": {
+                      "trivia": {
+                        "leading": [
+                          149
+                        ]
+                      }
+                    },
+                    "$text": "example",
+                    "$type": 1
+                  },
+                  "_scope": {
+                    "$_layout": {
+                      "trivia": {
+                        "trailing": [
+                          149
+                        ]
+                      }
+                    },
+                    "$text": "com",
+                    "$type": 1
+                  }
+                }
+              }
+            ],
+            "_package": {
+              "$type": 271,
+              "_name": {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "internal",
+                "$type": 1
+              },
+              "_scope": {
+                "$_layout": {
+                  "trivia": {
+                    "trailing": [
+                      149
+                    ]
+                  }
+                },
+                "$type": 271,
+                "_name": {
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "example",
+                  "$type": 1
+                },
+                "_scope": {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "com",
+                  "$type": 1
+                }
+              }
+            }
+          },
+          {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  153
+                ]
+              }
+            },
+            "$type": 247,
+            "_type": {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    149
+                  ]
+                }
+              },
+              "$type": 271,
+              "_name": {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "Intf",
+                "$type": 1
+              },
+              "_scope": {
+                "$_layout": {
+                  "trivia": {
+                    "trailing": [
+                      149
+                    ]
+                  }
+                },
+                "$type": 271,
+                "_name": {
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "example",
+                  "$type": 1
+                },
+                "_scope": {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "com",
+                  "$type": 1
+                }
+              }
+            }
+          },
+          {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  152
+                ],
+                "trailing": [
+                  152,
+                  156
+                ]
+              }
+            },
+            "$type": 248,
+            "_provided": {
+              "$type": 271,
+              "_name": {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "Intf",
+                "$type": 1
+              },
+              "_scope": {
+                "$_layout": {
+                  "trivia": {
+                    "trailing": [
+                      149
+                    ]
+                  }
+                },
+                "$type": 271,
+                "_name": {
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "example",
+                  "$type": 1
+                },
+                "_scope": {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "com",
+                  "$type": 1
+                }
+              }
+            },
+            "_provider": [
+              {
+                "$_layout": {
+                  "trivia": {
+                    "trailing": [
+                      149
+                    ]
+                  }
+                },
+                "$type": 271,
+                "_name": {
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "Impl",
+                  "$type": 1
+                },
+                "_scope": {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        149
+                      ]
+                    }
+                  },
+                  "$type": 271,
+                  "_name": {
+                    "$_layout": {
+                      "trivia": {
+                        "leading": [
+                          149
+                        ]
+                      }
+                    },
+                    "$text": "example",
+                    "$type": 1
+                  },
+                  "_scope": {
+                    "$_layout": {
+                      "trivia": {
+                        "trailing": [
+                          149
+                        ]
+                      }
+                    },
+                    "$text": "com",
+                    "$type": 1
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "_name": {
+        "$type": 271,
+        "_name": {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                149
+              ]
+            }
+          },
+          "$text": "foo",
+          "$type": 1
+        },
+        "_scope": {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                149
+              ]
+            }
+          },
+          "$type": 271,
+          "_name": {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  149
+                ]
+              }
+            },
+            "$text": "example",
+            "$type": 1
+          },
+          "_scope": {
+            "$_layout": {
+              "trivia": {
+                "trailing": [
+                  149
+                ]
+              }
+            },
+            "$text": "com",
+            "$type": 1
+          }
+        }
+      },
+      "_open": false
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "module_declaration"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(module_declaration name: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)) body: (module_body module_directives: (requires_module_directive module: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))) module_directives: (requires_module_directive module: (scoped_identifier scope: (identifier) name: (identifier))) module_directives: (requires_module_directive modifiers: (requires_modifier) module: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))) module_directives: (exports_module_directive package: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))) module_directives: (exports_module_directive package: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)) modules: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))) module_directives: (opens_module_directive package: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))) module_directives: (opens_module_directive package: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)) modules: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)) modules: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))) module_directives: (uses_module_directive type: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))) module_directives: (provides_module_directive provided: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)) provider: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)))))",
+    "expectedSourceOut": "module com.example.foo {\n    requires com.example.http;\n    requires java.logging;\n\n    requires transitive com.example.network;\n\n    exports com.example.bar;\n    exports com.example.internal to com.example.probe;\n\n    opens com.example.quux;\n    opens com.example.internal to com.example.network, com.example.probe;\n\n    uses com.example.Intf;\n    provides com.example.Intf with com.example.Impl;\n}",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "module_declaration",
+    "sourceIn": "module com.example.foo {\n    requires com.example.http;\n    requires java.logging;\n\n    requires transitive com.example.network;\n\n    exports com.example.bar;\n    exports com.example.internal to com.example.probe;\n\n    opens com.example.quux;\n    opens com.example.internal to com.example.network, com.example.probe;\n\n    uses com.example.Intf;\n    provides com.example.Intf with com.example.Impl;\n}",
+    "wrappedOffset": 0,
+    "wrappedText": "module com.example.foo {\n    requires com.example.http;\n    requires java.logging;\n\n    requires transitive com.example.network;\n\n    exports com.example.bar;\n    exports com.example.internal to com.example.probe;\n\n    opens com.example.quux;\n    opens com.example.internal to com.example.network, com.example.probe;\n\n    uses com.example.Intf;\n    provides com.example.Intf with com.example.Impl;\n}\n"
+  },
+  {
+    "expectedOutput": "com.example.foo",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "foo",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$type": 271,
+        "_name": {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                149
+              ]
+            }
+          },
+          "$text": "example",
+          "$type": 1
+        },
+        "_scope": {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                149
+              ]
+            }
+          },
+          "$text": "com",
+          "$type": 1
+        }
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))",
+    "expectedSourceOut": "com.example.foo",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "com.example.foo",
+    "wrappedOffset": 7,
+    "wrappedText": "import com.example.foo;\n"
+  },
+  {
+    "expectedOutput": "com.example",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "example",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$text": "com",
+        "$type": 1
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (identifier) name: (identifier))",
+    "expectedSourceOut": "com.example",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "com.example",
+    "wrappedOffset": 7,
+    "wrappedText": "import com.example;\n"
+  },
+  {
+    "expectedOutput": "com.example.http",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "http",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$type": 271,
+        "_name": {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                149
+              ]
+            }
+          },
+          "$text": "example",
+          "$type": 1
+        },
+        "_scope": {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                149
+              ]
+            }
+          },
+          "$text": "com",
+          "$type": 1
+        }
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))",
+    "expectedSourceOut": "com.example.http",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "com.example.http",
+    "wrappedOffset": 7,
+    "wrappedText": "import com.example.http;\n"
+  },
+  {
+    "expectedOutput": "com.example",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "example",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$text": "com",
+        "$type": 1
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (identifier) name: (identifier))",
+    "expectedSourceOut": "com.example",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "com.example",
+    "wrappedOffset": 7,
+    "wrappedText": "import com.example;\n"
+  },
+  {
+    "expectedOutput": "java.logging",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "logging",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$text": "java",
+        "$type": 1
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (identifier) name: (identifier))",
+    "expectedSourceOut": "java.logging",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "java.logging",
+    "wrappedOffset": 7,
+    "wrappedText": "import java.logging;\n"
+  },
+  {
+    "expectedOutput": "com.example.network",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "network",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$type": 271,
+        "_name": {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                149
+              ]
+            }
+          },
+          "$text": "example",
+          "$type": 1
+        },
+        "_scope": {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                149
+              ]
+            }
+          },
+          "$text": "com",
+          "$type": 1
+        }
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))",
+    "expectedSourceOut": "com.example.network",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "com.example.network",
+    "wrappedOffset": 7,
+    "wrappedText": "import com.example.network;\n"
+  },
+  {
+    "expectedOutput": "com.example",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "example",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$text": "com",
+        "$type": 1
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (identifier) name: (identifier))",
+    "expectedSourceOut": "com.example",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "com.example",
+    "wrappedOffset": 7,
+    "wrappedText": "import com.example;\n"
+  },
+  {
+    "expectedOutput": "com.example.bar",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "bar",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$type": 271,
+        "_name": {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                149
+              ]
+            }
+          },
+          "$text": "example",
+          "$type": 1
+        },
+        "_scope": {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                149
+              ]
+            }
+          },
+          "$text": "com",
+          "$type": 1
+        }
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))",
+    "expectedSourceOut": "com.example.bar",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "com.example.bar",
+    "wrappedOffset": 7,
+    "wrappedText": "import com.example.bar;\n"
+  },
+  {
+    "expectedOutput": "com.example",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "example",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$text": "com",
+        "$type": 1
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (identifier) name: (identifier))",
+    "expectedSourceOut": "com.example",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "com.example",
+    "wrappedOffset": 7,
+    "wrappedText": "import com.example;\n"
+  },
+  {
+    "expectedOutput": "com.example.internal",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "internal",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$type": 271,
+        "_name": {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                149
+              ]
+            }
+          },
+          "$text": "example",
+          "$type": 1
+        },
+        "_scope": {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                149
+              ]
+            }
+          },
+          "$text": "com",
+          "$type": 1
+        }
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))",
+    "expectedSourceOut": "com.example.internal",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "com.example.internal",
+    "wrappedOffset": 7,
+    "wrappedText": "import com.example.internal;\n"
+  },
+  {
+    "expectedOutput": "com.example",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "example",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$text": "com",
+        "$type": 1
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (identifier) name: (identifier))",
+    "expectedSourceOut": "com.example",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "com.example",
+    "wrappedOffset": 7,
+    "wrappedText": "import com.example;\n"
+  },
+  {
+    "expectedOutput": "com.example.probe",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "probe",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$type": 271,
+        "_name": {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                149
+              ]
+            }
+          },
+          "$text": "example",
+          "$type": 1
+        },
+        "_scope": {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                149
+              ]
+            }
+          },
+          "$text": "com",
+          "$type": 1
+        }
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))",
+    "expectedSourceOut": "com.example.probe",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "com.example.probe",
+    "wrappedOffset": 7,
+    "wrappedText": "import com.example.probe;\n"
+  },
+  {
+    "expectedOutput": "com.example",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "example",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$text": "com",
+        "$type": 1
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (identifier) name: (identifier))",
+    "expectedSourceOut": "com.example",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "com.example",
+    "wrappedOffset": 7,
+    "wrappedText": "import com.example;\n"
+  },
+  {
+    "expectedOutput": "com.example.quux",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "quux",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$type": 271,
+        "_name": {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                149
+              ]
+            }
+          },
+          "$text": "example",
+          "$type": 1
+        },
+        "_scope": {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                149
+              ]
+            }
+          },
+          "$text": "com",
+          "$type": 1
+        }
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))",
+    "expectedSourceOut": "com.example.quux",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "com.example.quux",
+    "wrappedOffset": 7,
+    "wrappedText": "import com.example.quux;\n"
+  },
+  {
+    "expectedOutput": "com.example",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "example",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$text": "com",
+        "$type": 1
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (identifier) name: (identifier))",
+    "expectedSourceOut": "com.example",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "com.example",
+    "wrappedOffset": 7,
+    "wrappedText": "import com.example;\n"
+  },
+  {
+    "expectedOutput": "com.example.internal",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "internal",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$type": 271,
+        "_name": {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                149
+              ]
+            }
+          },
+          "$text": "example",
+          "$type": 1
+        },
+        "_scope": {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                149
+              ]
+            }
+          },
+          "$text": "com",
+          "$type": 1
+        }
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))",
+    "expectedSourceOut": "com.example.internal",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "com.example.internal",
+    "wrappedOffset": 7,
+    "wrappedText": "import com.example.internal;\n"
+  },
+  {
+    "expectedOutput": "com.example",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "example",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$text": "com",
+        "$type": 1
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (identifier) name: (identifier))",
+    "expectedSourceOut": "com.example",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "com.example",
+    "wrappedOffset": 7,
+    "wrappedText": "import com.example;\n"
+  },
+  {
+    "expectedOutput": "com.example.network",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "network",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$type": 271,
+        "_name": {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                149
+              ]
+            }
+          },
+          "$text": "example",
+          "$type": 1
+        },
+        "_scope": {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                149
+              ]
+            }
+          },
+          "$text": "com",
+          "$type": 1
+        }
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))",
+    "expectedSourceOut": "com.example.network",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "com.example.network",
+    "wrappedOffset": 7,
+    "wrappedText": "import com.example.network;\n"
+  },
+  {
+    "expectedOutput": "com.example",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "example",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$text": "com",
+        "$type": 1
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (identifier) name: (identifier))",
+    "expectedSourceOut": "com.example",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "com.example",
+    "wrappedOffset": 7,
+    "wrappedText": "import com.example;\n"
+  },
+  {
+    "expectedOutput": "com.example.probe",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "probe",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$type": 271,
+        "_name": {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                149
+              ]
+            }
+          },
+          "$text": "example",
+          "$type": 1
+        },
+        "_scope": {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                149
+              ]
+            }
+          },
+          "$text": "com",
+          "$type": 1
+        }
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))",
+    "expectedSourceOut": "com.example.probe",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "com.example.probe",
+    "wrappedOffset": 7,
+    "wrappedText": "import com.example.probe;\n"
+  },
+  {
+    "expectedOutput": "com.example",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "example",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$text": "com",
+        "$type": 1
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (identifier) name: (identifier))",
+    "expectedSourceOut": "com.example",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "com.example",
+    "wrappedOffset": 7,
+    "wrappedText": "import com.example;\n"
+  },
+  {
+    "expectedOutput": "com.example.Intf",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "Intf",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$type": 271,
+        "_name": {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                149
+              ]
+            }
+          },
+          "$text": "example",
+          "$type": 1
+        },
+        "_scope": {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                149
+              ]
+            }
+          },
+          "$text": "com",
+          "$type": 1
+        }
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))",
+    "expectedSourceOut": "com.example.Intf",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "com.example.Intf",
+    "wrappedOffset": 7,
+    "wrappedText": "import com.example.Intf;\n"
+  },
+  {
+    "expectedOutput": "com.example",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "example",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$text": "com",
+        "$type": 1
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (identifier) name: (identifier))",
+    "expectedSourceOut": "com.example",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "com.example",
+    "wrappedOffset": 7,
+    "wrappedText": "import com.example;\n"
+  },
+  {
+    "expectedOutput": "com.example.Intf",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "Intf",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$type": 271,
+        "_name": {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                149
+              ]
+            }
+          },
+          "$text": "example",
+          "$type": 1
+        },
+        "_scope": {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                149
+              ]
+            }
+          },
+          "$text": "com",
+          "$type": 1
+        }
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))",
+    "expectedSourceOut": "com.example.Intf",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "com.example.Intf",
+    "wrappedOffset": 7,
+    "wrappedText": "import com.example.Intf;\n"
+  },
+  {
+    "expectedOutput": "com.example",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "example",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$text": "com",
+        "$type": 1
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (identifier) name: (identifier))",
+    "expectedSourceOut": "com.example",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "com.example",
+    "wrappedOffset": 7,
+    "wrappedText": "import com.example;\n"
+  },
+  {
+    "expectedOutput": "com.example.Impl",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "Impl",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$type": 271,
+        "_name": {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                149
+              ]
+            }
+          },
+          "$text": "example",
+          "$type": 1
+        },
+        "_scope": {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                149
+              ]
+            }
+          },
+          "$text": "com",
+          "$type": 1
+        }
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))",
+    "expectedSourceOut": "com.example.Impl",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "com.example.Impl",
+    "wrappedOffset": 7,
+    "wrappedText": "import com.example.Impl;\n"
+  },
+  {
+    "expectedOutput": "com.example",
+    "grammar": "java",
+    "input": {
+      "$type": 271,
+      "_name": {
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              149
+            ]
+          }
+        },
+        "$text": "example",
+        "$type": 1
+      },
+      "_scope": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$text": "com",
+        "$type": 1
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "scoped_identifier"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(scoped_identifier scope: (identifier) name: (identifier))",
+    "expectedSourceOut": "com.example",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "scoped_identifier",
+    "sourceIn": "com.example",
+    "wrappedOffset": 7,
+    "wrappedText": "import com.example;\n"
+  },
+  {
+    "expectedOutput": "{\n    requires com.example.http;\n    requires java.logging;\n\n    requires transitive com.example.network;\n\n    exports com.example.bar;\n    exports com.example.internal to com.example.probe;\n\n    opens com.example.quux;\n    opens com.example.internal to com.example.network, com.example.probe;\n\n    uses com.example.Intf;\n    provides com.example.Intf with com.example.Impl;\n}",
+    "grammar": "java",
+    "input": {
+      "$type": 241,
+      "_module_directives": [
+        {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                152,
+                155
+              ]
+            }
+          },
+          "$type": 243,
+          "_modifiers": [],
+          "_module": {
+            "$_layout": {
+              "trivia": {
+                "trailing": [
+                  149
+                ]
+              }
+            },
+            "$type": 271,
+            "_name": {
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    149
+                  ]
+                }
+              },
+              "$text": "http",
+              "$type": 1
+            },
+            "_scope": {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    149
+                  ]
+                }
+              },
+              "$type": 271,
+              "_name": {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "example",
+                "$type": 1
+              },
+              "_scope": {
+                "$_layout": {
+                  "trivia": {
+                    "trailing": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "com",
+                "$type": 1
+              }
+            }
+          }
+        },
+        {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                152
+              ]
+            }
+          },
+          "$type": 243,
+          "_modifiers": [],
+          "_module": {
+            "$_layout": {
+              "trivia": {
+                "trailing": [
+                  149
+                ]
+              }
+            },
+            "$type": 271,
+            "_name": {
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    149
+                  ]
+                }
+              },
+              "$text": "logging",
+              "$type": 1
+            },
+            "_scope": {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    149
+                  ]
+                }
+              },
+              "$text": "java",
+              "$type": 1
+            }
+          }
+        },
+        {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                153
+              ]
+            }
+          },
+          "$type": 243,
+          "_modifiers": [
+            84
+          ],
+          "_module": {
+            "$_layout": {
+              "trivia": {
+                "trailing": [
+                  149
+                ]
+              }
+            },
+            "$type": 271,
+            "_name": {
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    149
+                  ]
+                }
+              },
+              "$text": "network",
+              "$type": 1
+            },
+            "_scope": {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    149
+                  ]
+                }
+              },
+              "$type": 271,
+              "_name": {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "example",
+                "$type": 1
+              },
+              "_scope": {
+                "$_layout": {
+                  "trivia": {
+                    "trailing": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "com",
+                "$type": 1
+              }
+            }
+          }
+        },
+        {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                153
+              ]
+            }
+          },
+          "$type": 245,
+          "_modules": [],
+          "_package": {
+            "$_layout": {
+              "trivia": {
+                "trailing": [
+                  149
+                ]
+              }
+            },
+            "$type": 271,
+            "_name": {
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    149
+                  ]
+                }
+              },
+              "$text": "bar",
+              "$type": 1
+            },
+            "_scope": {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    149
+                  ]
+                }
+              },
+              "$type": 271,
+              "_name": {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "example",
+                "$type": 1
+              },
+              "_scope": {
+                "$_layout": {
+                  "trivia": {
+                    "trailing": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "com",
+                "$type": 1
+              }
+            }
+          }
+        },
+        {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                152
+              ]
+            }
+          },
+          "$type": 245,
+          "_modules": [
+            {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    149
+                  ]
+                }
+              },
+              "$type": 271,
+              "_name": {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "probe",
+                "$type": 1
+              },
+              "_scope": {
+                "$_layout": {
+                  "trivia": {
+                    "trailing": [
+                      149
+                    ]
+                  }
+                },
+                "$type": 271,
+                "_name": {
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "example",
+                  "$type": 1
+                },
+                "_scope": {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "com",
+                  "$type": 1
+                }
+              }
+            }
+          ],
+          "_package": {
+            "$type": 271,
+            "_name": {
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    149
+                  ]
+                }
+              },
+              "$text": "internal",
+              "$type": 1
+            },
+            "_scope": {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    149
+                  ]
+                }
+              },
+              "$type": 271,
+              "_name": {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "example",
+                "$type": 1
+              },
+              "_scope": {
+                "$_layout": {
+                  "trivia": {
+                    "trailing": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "com",
+                "$type": 1
+              }
+            }
+          }
+        },
+        {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                153
+              ]
+            }
+          },
+          "$type": 246,
+          "_modules": [],
+          "_package": {
+            "$_layout": {
+              "trivia": {
+                "trailing": [
+                  149
+                ]
+              }
+            },
+            "$type": 271,
+            "_name": {
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    149
+                  ]
+                }
+              },
+              "$text": "quux",
+              "$type": 1
+            },
+            "_scope": {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    149
+                  ]
+                }
+              },
+              "$type": 271,
+              "_name": {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "example",
+                "$type": 1
+              },
+              "_scope": {
+                "$_layout": {
+                  "trivia": {
+                    "trailing": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "com",
+                "$type": 1
+              }
+            }
+          }
+        },
+        {
+          "$_layout": {
+            "slots": [
+              {
+                "before": 149,
+                "slot": "_modules"
+              }
+            ],
+            "trivia": {
+              "leading": [
+                152
+              ]
+            }
+          },
+          "$type": 246,
+          "_modules": [
+            {
+              "$type": 271,
+              "_name": {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "network",
+                "$type": 1
+              },
+              "_scope": {
+                "$_layout": {
+                  "trivia": {
+                    "trailing": [
+                      149
+                    ]
+                  }
+                },
+                "$type": 271,
+                "_name": {
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "example",
+                  "$type": 1
+                },
+                "_scope": {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "com",
+                  "$type": 1
+                }
+              }
+            },
+            {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    149
+                  ]
+                }
+              },
+              "$type": 271,
+              "_name": {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "probe",
+                "$type": 1
+              },
+              "_scope": {
+                "$_layout": {
+                  "trivia": {
+                    "trailing": [
+                      149
+                    ]
+                  }
+                },
+                "$type": 271,
+                "_name": {
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "example",
+                  "$type": 1
+                },
+                "_scope": {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "com",
+                  "$type": 1
+                }
+              }
+            }
+          ],
+          "_package": {
+            "$type": 271,
+            "_name": {
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    149
+                  ]
+                }
+              },
+              "$text": "internal",
+              "$type": 1
+            },
+            "_scope": {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    149
+                  ]
+                }
+              },
+              "$type": 271,
+              "_name": {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "example",
+                "$type": 1
+              },
+              "_scope": {
+                "$_layout": {
+                  "trivia": {
+                    "trailing": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "com",
+                "$type": 1
+              }
+            }
+          }
+        },
+        {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                153
+              ]
+            }
+          },
+          "$type": 247,
+          "_type": {
+            "$_layout": {
+              "trivia": {
+                "trailing": [
+                  149
+                ]
+              }
+            },
+            "$type": 271,
+            "_name": {
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    149
+                  ]
+                }
+              },
+              "$text": "Intf",
+              "$type": 1
+            },
+            "_scope": {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    149
+                  ]
+                }
+              },
+              "$type": 271,
+              "_name": {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "example",
+                "$type": 1
+              },
+              "_scope": {
+                "$_layout": {
+                  "trivia": {
+                    "trailing": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "com",
+                "$type": 1
+              }
+            }
+          }
+        },
+        {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                152
+              ],
+              "trailing": [
+                152,
+                156
+              ]
+            }
+          },
+          "$type": 248,
+          "_provided": {
+            "$type": 271,
+            "_name": {
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    149
+                  ]
+                }
+              },
+              "$text": "Intf",
+              "$type": 1
+            },
+            "_scope": {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    149
+                  ]
+                }
+              },
+              "$type": 271,
+              "_name": {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "example",
+                "$type": 1
+              },
+              "_scope": {
+                "$_layout": {
+                  "trivia": {
+                    "trailing": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "com",
+                "$type": 1
+              }
+            }
+          },
+          "_provider": [
+            {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    149
+                  ]
+                }
+              },
+              "$type": 271,
+              "_name": {
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      149
+                    ]
+                  }
+                },
+                "$text": "Impl",
+                "$type": 1
+              },
+              "_scope": {
+                "$_layout": {
+                  "trivia": {
+                    "trailing": [
+                      149
+                    ]
+                  }
+                },
+                "$type": 271,
+                "_name": {
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "example",
+                  "$type": 1
+                },
+                "_scope": {
+                  "$_layout": {
+                    "trivia": {
+                      "trailing": [
+                        149
+                      ]
+                    }
+                  },
+                  "$text": "com",
+                  "$type": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "module_body"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(module_body module_directives: (requires_module_directive module: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))) module_directives: (requires_module_directive module: (scoped_identifier scope: (identifier) name: (identifier))) module_directives: (requires_module_directive modifiers: (requires_modifier) module: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))) module_directives: (exports_module_directive package: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))) module_directives: (exports_module_directive package: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)) modules: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))) module_directives: (opens_module_directive package: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))) module_directives: (opens_module_directive package: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)) modules: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)) modules: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))) module_directives: (uses_module_directive type: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))) module_directives: (provides_module_directive provided: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)) provider: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier))))",
+    "expectedSourceOut": "{\n    requires com.example.http;\n    requires java.logging;\n\n    requires transitive com.example.network;\n\n    exports com.example.bar;\n    exports com.example.internal to com.example.probe;\n\n    opens com.example.quux;\n    opens com.example.internal to com.example.network, com.example.probe;\n\n    uses com.example.Intf;\n    provides com.example.Intf with com.example.Impl;\n}",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "module_body",
+    "sourceIn": "{\n    requires com.example.http;\n    requires java.logging;\n\n    requires transitive com.example.network;\n\n    exports com.example.bar;\n    exports com.example.internal to com.example.probe;\n\n    opens com.example.quux;\n    opens com.example.internal to com.example.network, com.example.probe;\n\n    uses com.example.Intf;\n    provides com.example.Intf with com.example.Impl;\n}",
+    "wrappedOffset": 15,
+    "wrappedText": "module com.foo {\n    requires com.example.http;\n    requires java.logging;\n\n    requires transitive com.example.network;\n\n    exports com.example.bar;\n    exports com.example.internal to com.example.probe;\n\n    opens com.example.quux;\n    opens com.example.internal to com.example.network, com.example.probe;\n\n    uses com.example.Intf;\n    provides com.example.Intf with com.example.Impl;\n}\n"
+  },
+  {
+    "expectedOutput": "requires com.example.http;",
+    "grammar": "java",
+    "input": {
+      "$type": 243,
+      "_modifiers": [],
+      "_module": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$type": 271,
+        "_name": {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                149
+              ]
+            }
+          },
+          "$text": "http",
+          "$type": 1
+        },
+        "_scope": {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                149
+              ]
+            }
+          },
+          "$type": 271,
+          "_name": {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  149
+                ]
+              }
+            },
+            "$text": "example",
+            "$type": 1
+          },
+          "_scope": {
+            "$_layout": {
+              "trivia": {
+                "trailing": [
+                  149
+                ]
+              }
+            },
+            "$text": "com",
+            "$type": 1
+          }
+        }
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "requires_module_directive"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(requires_module_directive module: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)))",
+    "expectedSourceOut": "requires com.example.http;",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "requires_module_directive",
+    "sourceIn": "requires com.example.http;",
+    "wrappedOffset": 21,
+    "wrappedText": "module com.foo {\n    requires com.example.http;\n}\n"
+  },
+  {
+    "expectedOutput": "requires java.logging;",
+    "grammar": "java",
+    "input": {
+      "$type": 243,
+      "_modifiers": [],
+      "_module": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$type": 271,
+        "_name": {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                149
+              ]
+            }
+          },
+          "$text": "logging",
+          "$type": 1
+        },
+        "_scope": {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                149
+              ]
+            }
+          },
+          "$text": "java",
+          "$type": 1
+        }
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "requires_module_directive"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(requires_module_directive module: (scoped_identifier scope: (identifier) name: (identifier)))",
+    "expectedSourceOut": "requires java.logging;",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "requires_module_directive",
+    "sourceIn": "requires java.logging;",
+    "wrappedOffset": 21,
+    "wrappedText": "module com.foo {\n    requires java.logging;\n}\n"
+  },
+  {
+    "expectedOutput": "requires transitive com.example.network;",
+    "grammar": "java",
+    "input": {
+      "$type": 243,
+      "_modifiers": [
+        84
+      ],
+      "_module": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$type": 271,
+        "_name": {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                149
+              ]
+            }
+          },
+          "$text": "network",
+          "$type": 1
+        },
+        "_scope": {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                149
+              ]
+            }
+          },
+          "$type": 271,
+          "_name": {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  149
+                ]
+              }
+            },
+            "$text": "example",
+            "$type": 1
+          },
+          "_scope": {
+            "$_layout": {
+              "trivia": {
+                "trailing": [
+                  149
+                ]
+              }
+            },
+            "$text": "com",
+            "$type": 1
+          }
+        }
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "requires_module_directive"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(requires_module_directive modifiers: (requires_modifier) module: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)))",
+    "expectedSourceOut": "requires transitive com.example.network;",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "requires_module_directive",
+    "sourceIn": "requires transitive com.example.network;",
+    "wrappedOffset": 21,
+    "wrappedText": "module com.foo {\n    requires transitive com.example.network;\n}\n"
+  },
+  {
+    "expectedOutput": "exports com.example.bar;",
+    "grammar": "java",
+    "input": {
+      "$type": 245,
+      "_modules": [],
+      "_package": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$type": 271,
+        "_name": {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                149
+              ]
+            }
+          },
+          "$text": "bar",
+          "$type": 1
+        },
+        "_scope": {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                149
+              ]
+            }
+          },
+          "$type": 271,
+          "_name": {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  149
+                ]
+              }
+            },
+            "$text": "example",
+            "$type": 1
+          },
+          "_scope": {
+            "$_layout": {
+              "trivia": {
+                "trailing": [
+                  149
+                ]
+              }
+            },
+            "$text": "com",
+            "$type": 1
+          }
+        }
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "exports_module_directive"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(exports_module_directive package: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)))",
+    "expectedSourceOut": "exports com.example.bar;",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "exports_module_directive",
+    "sourceIn": "exports com.example.bar;",
+    "wrappedOffset": 155,
+    "wrappedText": "module com.foo {\n    requires com.example.http;\n    requires java.logging;\n\n    requires transitive com.example.network;\n\n    exports com.example.bar;\n    exports com.example.bar;\n\n    opens com.example.quux;\n    opens com.example.internal to com.example.network, com.example.probe;\n\n    uses com.example.Intf;\n    provides com.example.Intf with com.example.Impl;\n}\n"
+  },
+  {
+    "expectedOutput": "exports com.example.internal to com.example.probe;",
+    "grammar": "java",
+    "input": {
+      "$type": 245,
+      "_modules": [
+        {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                149
+              ]
+            }
+          },
+          "$type": 271,
+          "_name": {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  149
+                ]
+              }
+            },
+            "$text": "probe",
+            "$type": 1
+          },
+          "_scope": {
+            "$_layout": {
+              "trivia": {
+                "trailing": [
+                  149
+                ]
+              }
+            },
+            "$type": 271,
+            "_name": {
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    149
+                  ]
+                }
+              },
+              "$text": "example",
+              "$type": 1
+            },
+            "_scope": {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    149
+                  ]
+                }
+              },
+              "$text": "com",
+              "$type": 1
+            }
+          }
+        }
+      ],
+      "_package": {
+        "$type": 271,
+        "_name": {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                149
+              ]
+            }
+          },
+          "$text": "internal",
+          "$type": 1
+        },
+        "_scope": {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                149
+              ]
+            }
+          },
+          "$type": 271,
+          "_name": {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  149
+                ]
+              }
+            },
+            "$text": "example",
+            "$type": 1
+          },
+          "_scope": {
+            "$_layout": {
+              "trivia": {
+                "trailing": [
+                  149
+                ]
+              }
+            },
+            "$text": "com",
+            "$type": 1
+          }
+        }
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "exports_module_directive"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(exports_module_directive package: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)) modules: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)))",
+    "expectedSourceOut": "exports com.example.internal to com.example.probe;",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "exports_module_directive",
+    "sourceIn": "exports com.example.internal to com.example.probe;",
+    "wrappedOffset": 155,
+    "wrappedText": "module com.foo {\n    requires com.example.http;\n    requires java.logging;\n\n    requires transitive com.example.network;\n\n    exports com.example.bar;\n    exports com.example.internal to com.example.probe;\n\n    opens com.example.quux;\n    opens com.example.internal to com.example.network, com.example.probe;\n\n    uses com.example.Intf;\n    provides com.example.Intf with com.example.Impl;\n}\n"
+  },
+  {
+    "expectedOutput": "opens com.example.quux;",
+    "grammar": "java",
+    "input": {
+      "$type": 246,
+      "_modules": [],
+      "_package": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$type": 271,
+        "_name": {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                149
+              ]
+            }
+          },
+          "$text": "quux",
+          "$type": 1
+        },
+        "_scope": {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                149
+              ]
+            }
+          },
+          "$type": 271,
+          "_name": {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  149
+                ]
+              }
+            },
+            "$text": "example",
+            "$type": 1
+          },
+          "_scope": {
+            "$_layout": {
+              "trivia": {
+                "trailing": [
+                  149
+                ]
+              }
+            },
+            "$text": "com",
+            "$type": 1
+          }
+        }
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "opens_module_directive"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(opens_module_directive package: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)))",
+    "expectedSourceOut": "opens com.example.quux;",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "opens_module_directive",
+    "sourceIn": "opens com.example.quux;",
+    "wrappedOffset": 239,
+    "wrappedText": "module com.foo {\n    requires com.example.http;\n    requires java.logging;\n\n    requires transitive com.example.network;\n\n    exports com.example.bar;\n    exports com.example.internal to com.example.probe;\n\n    opens com.example.quux;\n    opens com.example.quux;\n\n    uses com.example.Intf;\n    provides com.example.Intf with com.example.Impl;\n}\n"
+  },
+  {
+    "expectedOutput": "opens com.example.internal to com.example.network, com.example.probe;",
+    "grammar": "java",
+    "input": {
+      "$_layout": {
+        "slots": [
+          {
+            "before": 149,
+            "slot": "_modules"
+          }
+        ]
+      },
+      "$type": 246,
+      "_modules": [
+        {
+          "$type": 271,
+          "_name": {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  149
+                ]
+              }
+            },
+            "$text": "network",
+            "$type": 1
+          },
+          "_scope": {
+            "$_layout": {
+              "trivia": {
+                "trailing": [
+                  149
+                ]
+              }
+            },
+            "$type": 271,
+            "_name": {
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    149
+                  ]
+                }
+              },
+              "$text": "example",
+              "$type": 1
+            },
+            "_scope": {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    149
+                  ]
+                }
+              },
+              "$text": "com",
+              "$type": 1
+            }
+          }
+        },
+        {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                149
+              ]
+            }
+          },
+          "$type": 271,
+          "_name": {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  149
+                ]
+              }
+            },
+            "$text": "probe",
+            "$type": 1
+          },
+          "_scope": {
+            "$_layout": {
+              "trivia": {
+                "trailing": [
+                  149
+                ]
+              }
+            },
+            "$type": 271,
+            "_name": {
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    149
+                  ]
+                }
+              },
+              "$text": "example",
+              "$type": 1
+            },
+            "_scope": {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    149
+                  ]
+                }
+              },
+              "$text": "com",
+              "$type": 1
+            }
+          }
+        }
+      ],
+      "_package": {
+        "$type": 271,
+        "_name": {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                149
+              ]
+            }
+          },
+          "$text": "internal",
+          "$type": 1
+        },
+        "_scope": {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                149
+              ]
+            }
+          },
+          "$type": 271,
+          "_name": {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  149
+                ]
+              }
+            },
+            "$text": "example",
+            "$type": 1
+          },
+          "_scope": {
+            "$_layout": {
+              "trivia": {
+                "trailing": [
+                  149
+                ]
+              }
+            },
+            "$text": "com",
+            "$type": 1
+          }
+        }
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "opens_module_directive"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(opens_module_directive package: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)) modules: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)) modules: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)))",
+    "expectedSourceOut": "opens com.example.internal to com.example.network, com.example.probe;",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "opens_module_directive",
+    "sourceIn": "opens com.example.internal to com.example.network, com.example.probe;",
+    "wrappedOffset": 239,
+    "wrappedText": "module com.foo {\n    requires com.example.http;\n    requires java.logging;\n\n    requires transitive com.example.network;\n\n    exports com.example.bar;\n    exports com.example.internal to com.example.probe;\n\n    opens com.example.quux;\n    opens com.example.internal to com.example.network, com.example.probe;\n\n    uses com.example.Intf;\n    provides com.example.Intf with com.example.Impl;\n}\n"
+  },
+  {
+    "expectedOutput": "uses com.example.Intf;",
+    "grammar": "java",
+    "input": {
+      "$type": 247,
+      "_type": {
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              149
+            ]
+          }
+        },
+        "$type": 271,
+        "_name": {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                149
+              ]
+            }
+          },
+          "$text": "Intf",
+          "$type": 1
+        },
+        "_scope": {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                149
+              ]
+            }
+          },
+          "$type": 271,
+          "_name": {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  149
+                ]
+              }
+            },
+            "$text": "example",
+            "$type": 1
+          },
+          "_scope": {
+            "$_layout": {
+              "trivia": {
+                "trailing": [
+                  149
+                ]
+              }
+            },
+            "$text": "com",
+            "$type": 1
+          }
+        }
+      }
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "uses_module_directive"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(uses_module_directive type: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)))",
+    "expectedSourceOut": "uses com.example.Intf;",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "uses_module_directive",
+    "sourceIn": "uses com.example.Intf;",
+    "wrappedOffset": 314,
+    "wrappedText": "module com.foo {\n    requires com.example.http;\n    requires java.logging;\n\n    requires transitive com.example.network;\n\n    exports com.example.bar;\n    exports com.example.internal to com.example.probe;\n\n    opens com.example.quux;\n    opens com.example.internal to com.example.network, com.example.probe;\n\n    uses com.example.Intf;\n    provides com.example.Intf with com.example.Impl;\n}\n"
+  },
+  {
+    "expectedOutput": "provides com.example.Intf with com.example.Impl;",
+    "grammar": "java",
+    "input": {
+      "$type": 248,
+      "_provided": {
+        "$type": 271,
+        "_name": {
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                149
+              ]
+            }
+          },
+          "$text": "Intf",
+          "$type": 1
+        },
+        "_scope": {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                149
+              ]
+            }
+          },
+          "$type": 271,
+          "_name": {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  149
+                ]
+              }
+            },
+            "$text": "example",
+            "$type": 1
+          },
+          "_scope": {
+            "$_layout": {
+              "trivia": {
+                "trailing": [
+                  149
+                ]
+              }
+            },
+            "$text": "com",
+            "$type": 1
+          }
+        }
+      },
+      "_provider": [
+        {
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                149
+              ]
+            }
+          },
+          "$type": 271,
+          "_name": {
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  149
+                ]
+              }
+            },
+            "$text": "Impl",
+            "$type": 1
+          },
+          "_scope": {
+            "$_layout": {
+              "trivia": {
+                "trailing": [
+                  149
+                ]
+              }
+            },
+            "$type": 271,
+            "_name": {
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    149
+                  ]
+                }
+              },
+              "$text": "example",
+              "$type": 1
+            },
+            "_scope": {
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    149
+                  ]
+                }
+              },
+              "$text": "com",
+              "$type": 1
+            }
+          }
+        }
+      ]
+    },
+    "kind": "render",
+    "options": {
+      "program": {
+        "before": 152
+      }
+    },
+    "pattern": "provides_module_directive"
+  },
+  {
+    "edits": [],
+    "expectedReparseTree": "(provides_module_directive provided: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)) provider: (scoped_identifier scope: (scoped_identifier scope: (identifier) name: (identifier)) name: (identifier)))",
+    "expectedSourceOut": "provides com.example.Intf with com.example.Impl;",
+    "grammar": "java",
+    "kind": "roundtrip",
+    "pattern": "provides_module_directive",
+    "sourceIn": "provides com.example.Intf with com.example.Impl;",
+    "wrappedOffset": 341,
+    "wrappedText": "module com.foo {\n    requires com.example.http;\n    requires java.logging;\n\n    requires transitive com.example.network;\n\n    exports com.example.bar;\n    exports com.example.internal to com.example.probe;\n\n    opens com.example.quux;\n    opens com.example.internal to com.example.network, com.example.probe;\n\n    uses com.example.Intf;\n    provides com.example.Intf with com.example.Impl;\n}\n"
+  },
+  {
     "expectedOutput": "\nimport java.util.Vector;\n",
     "grammar": "java",
     "input": {

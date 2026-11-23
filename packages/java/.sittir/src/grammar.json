@@ -4799,8 +4799,15 @@
           "value": "with"
         },
         {
-          "type": "SYMBOL",
-          "name": "_name"
+          "type": "FIELD",
+          "name": "provider",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_name"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         },
         {
           "type": "REPEAT",
