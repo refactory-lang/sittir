@@ -10369,14 +10369,14 @@ Every node a test builds passes through the file's `expectBuiltNode`: `sourceOf`
 
 ### `packages/codegen/src/emitters/test.ts::rendersText`
 
-True when a kind's render writes non-whitespace text for the arguments the dummy machinery samples. A layout member (`layoutSymbolsOf`) writes none: its text is whitespace, and at a node's edge the engine writes it as a gap. Any other kind with no body is a leaf and writes its text; a body that `writesText` writes it directly; a supertype writes text when every subtype does; any other kind writes text when some required slot referenced in its body holds only values that write text. A cycle reads as `false`.
+True when a kind's render writes non-whitespace text for the arguments the dummy machinery samples. A layout member (`layoutSymbolsOf`) writes none: its text is whitespace, and at a node's edge the engine writes it as a gap. Any other kind with no body is a leaf and writes its text; a body that `writesText` writes it directly; a supertype writes text when every subtype does; any other kind writes text when some slot of `minimalSlots` referenced in its body holds only values that write text. A cycle reads as `false`.
 
 ### `packages/codegen/src/emitters/test.ts::factoryCallArgs`
 
 ```text
 /**
  * The arguments a kind's factory call takes in the emitted tests: the
- * minimal (required-only) form for the type check and the render form.
+ * minimal form (`minimalSlots`) for the type check and the render form.
  * Shared by the kind's own test and by the namespaced-constructor tests
  * that build a child through its parent.
  */
@@ -10385,8 +10385,8 @@ True when a kind's render writes non-whitespace text for the arguments the dummy
 #### body
 
 ```text
-// Build two configs. The type-check test uses the minimal config — only
-// required, non-auto-stamp fields/children. Auto-stamp slots are excluded
+// Build two configs. The type-check test uses the minimal config — the
+// non-auto-stamp slots of `minimalSlots`. Auto-stamp slots are excluded
 // (the factory stamps them directly; supplying would be a type error).
 //
 // The render test needs NON-EMPTY output, which the minimal config can
@@ -14065,6 +14065,22 @@ The storage members a separated list's interface declares for its options, one o
 ### `packages/codegen/src/emitters/test.ts::delimiterSamples`
 
 The sample text of every leaf that ends a delimited composite: the shortest text its pattern accepts, so the generated tests build a string with a matching start and end instead of `test` on both sides.
+
+### `packages/codegen/src/emitters/test.ts::armSeats`
+
+The slots a build must fill so a rule writes one arm of each choice it requires. An optional or repeated position and a seam choice need nothing, and a sequence needs what each of its positions needs. A choice needs nothing when one arm is empty, writes only fixed text, or holds only required slots. Otherwise a choice a slot holds needs that slot, and a slotless choice needs the slots of its first arm.
+
+### `packages/codegen/src/emitters/test.ts::ArmSeatCtx`
+
+What `armSeats` reads: the owner kind's entry of `NodeMap.slotByRuleId`.
+
+### `packages/codegen/src/emitters/test.ts::minimalSlots`
+
+The slots a minimal build of a kind fills: its required slots and the `armSeats` of its rule. `factoryCallArgs`, `childInput` and `rendersText` read this one set, so a generated test's config and its non-empty render assertion agree.
+
+### `packages/codegen/src/emitters/test.ts::MinimalSlotsCtx`
+
+What `minimalSlots` reads: the node map.
 
 ### `packages/codegen/src/emitters/reparse-hosts.ts::emitReparseHosts`
 

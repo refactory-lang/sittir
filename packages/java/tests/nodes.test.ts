@@ -239,13 +239,26 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('cast_expression', () => {
 		it('factory produces correct type', () => {
-			const node = ir.castExpression({});
+			const node = ir.castExpression({
+				castExpressionArm: {
+					$type: TSKindId.CastExpressionArm,
+					type: TSKindId.VoidType as never,
+					value: TSKindId.This as never
+				} as never
+			});
 			expect(node.$type).toBe(TSKindId.CastExpression);
 			expectBuiltNode(node);
 		});
-		it('render does not throw on minimal config', () => {
-			const node = ir.castExpression({});
-			expect(() => node.$render!()).not.toThrow();
+		it('render produces non-empty string', () => {
+			const node = ir.castExpression({
+				castExpressionArm: {
+					$type: TSKindId.CastExpressionArm,
+					type: TSKindId.VoidType as never,
+					value: TSKindId.This as never
+				} as never
+			});
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
 		});
 	});
 
@@ -1512,7 +1525,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 		it('cast builds the parent', () => {
-			const node = ir.assertStatement.cast({});
+			const node = ir.assertStatement.cast({
+				castExpressionArm: {
+					$type: TSKindId.CastExpressionArm,
+					type: TSKindId.VoidType as never,
+					value: TSKindId.This as never
+				} as never
+			});
 			expect(node.$type).toBe(TSKindId.AssertStatement);
 			expect((node as any).content()).toBeDefined();
 			expect(node.$render!().length).toBeGreaterThan(0);

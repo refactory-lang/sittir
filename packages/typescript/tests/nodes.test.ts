@@ -867,7 +867,11 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 		it('delegate.binary builds the parent', () => {
-			const node = ir.yieldExpression.delegate.binary({});
+			const node = ir.yieldExpression.delegate.binary({
+				left: TSKindId.Undefined as never,
+				operator: '&&',
+				right: TSKindId.Undefined as never
+			});
 			expect(node.$type).toBe(TSKindId.YieldExpression);
 			expect((node as any).expression()).toBeDefined();
 			expect(node.$render!().length).toBeGreaterThan(0);
@@ -1388,13 +1392,22 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('binary_expression', () => {
 		it('factory produces correct type', () => {
-			const node = ir.binaryExpression({});
+			const node = ir.binaryExpression({
+				left: TSKindId.Undefined as never,
+				operator: '&&',
+				right: TSKindId.Undefined as never
+			});
 			expect(node.$type).toBe(TSKindId.BinaryExpression);
 			expectBuiltNode(node);
 		});
-		it('render does not throw on minimal config', () => {
-			const node = ir.binaryExpression({});
-			expect(() => node.$render!()).not.toThrow();
+		it('render produces non-empty string', () => {
+			const node = ir.binaryExpression({
+				left: TSKindId.Undefined as never,
+				operator: '&&',
+				right: TSKindId.Undefined as never
+			});
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
 		});
 	});
 
@@ -1403,6 +1416,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const node = ir.binaryExpression.in({ left: TSKindId.Undefined as never, right: TSKindId.Undefined as never });
 			expect(node.$type).toBe(TSKindId.BinaryExpression);
 			expect((node as any).binaryExpressionIn()?.$type).toBe(TSKindId.BinaryExpressionIn);
+			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 	});
 
@@ -1425,9 +1439,11 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			expect(node.$type).toBe(TSKindId.SequenceExpression);
 			expectBuiltNode(node);
 		});
-		it('render does not throw on minimal config', () => {
+		it('render produces non-empty string', () => {
 			const node = ir.sequenceExpression(TSKindId.Undefined as never);
-			expect(() => node.$render!()).not.toThrow();
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+			expect(rendered).toContain('undefined');
 		});
 	});
 
@@ -1980,9 +1996,10 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			expect(node.$type).toBe(TSKindId.ExtendsClauseSingle);
 			expectBuiltNode(node);
 		});
-		it('render does not throw on minimal config', () => {
+		it('render produces non-empty string', () => {
 			const node = ir.extendsClauseSingle({ value: TSKindId.Undefined as never });
-			expect(() => node.$render!()).not.toThrow();
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
 		});
 	});
 

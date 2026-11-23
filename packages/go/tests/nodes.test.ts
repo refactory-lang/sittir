@@ -1052,7 +1052,16 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 				$type: TSKindId.FieldDeclarationList,
 				fieldDeclarationListGroup: {
 					$type: TSKindId.FieldDeclarationListGroup,
-					fieldDeclarations: [{ $type: TSKindId.FieldDeclaration, names: [] } as never]
+					fieldDeclarations: [
+						{
+							$type: TSKindId.FieldDeclaration,
+							names: [{ $type: TSKindId.FieldIdentifier, text: 'test' } as never],
+							type: {
+								$type: TSKindId.ParenthesizedType,
+								type: { $type: TSKindId.TypeIdentifier, text: 'test' } as never
+							} as never
+						} as never
+					]
 				} as never
 			} as never);
 			expect(node.$type).toBe(TSKindId.StructType);
@@ -1063,11 +1072,21 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 				$type: TSKindId.FieldDeclarationList,
 				fieldDeclarationListGroup: {
 					$type: TSKindId.FieldDeclarationListGroup,
-					fieldDeclarations: [{ $type: TSKindId.FieldDeclaration, names: [] } as never]
+					fieldDeclarations: [
+						{
+							$type: TSKindId.FieldDeclaration,
+							names: [{ $type: TSKindId.FieldIdentifier, text: 'test' } as never],
+							type: {
+								$type: TSKindId.ParenthesizedType,
+								type: { $type: TSKindId.TypeIdentifier, text: 'test' } as never
+							} as never
+						} as never
+					]
 				} as never
 			} as never);
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
+			expect(rendered).toContain('test');
 		});
 	});
 
@@ -1105,13 +1124,26 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('field_declaration', () => {
 		it('factory produces correct type', () => {
-			const node = ir.fieldDeclaration({});
+			const node = ir.fieldDeclaration({
+				names: [{ $type: TSKindId.FieldIdentifier, text: 'test' } as never],
+				type: {
+					$type: TSKindId.ParenthesizedType,
+					type: { $type: TSKindId.TypeIdentifier, text: 'test' } as never
+				} as never
+			});
 			expect(node.$type).toBe(TSKindId.FieldDeclaration);
 			expectBuiltNode(node);
 		});
-		it('render does not throw on minimal config', () => {
-			const node = ir.fieldDeclaration({});
-			expect(() => node.$render!()).not.toThrow();
+		it('render produces non-empty string', () => {
+			const node = ir.fieldDeclaration({
+				names: [{ $type: TSKindId.FieldIdentifier, text: 'test' } as never],
+				type: {
+					$type: TSKindId.ParenthesizedType,
+					type: { $type: TSKindId.TypeIdentifier, text: 'test' } as never
+				} as never
+			});
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
 		});
 	});
 
@@ -1125,6 +1157,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			});
 			expect(node.$type).toBe(TSKindId.FieldDeclaration);
 			expect((node as any).fieldDeclarationArm()).toBeDefined();
+			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 	});
 
@@ -2975,12 +3008,34 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('field_declarations', () => {
 		it('factory produces correct type', () => {
-			const node = ir.fieldDeclarations(...[{ $type: TSKindId.FieldDeclaration, names: [] } as never]);
+			const node = ir.fieldDeclarations(
+				...[
+					{
+						$type: TSKindId.FieldDeclaration,
+						names: [{ $type: TSKindId.FieldIdentifier, text: 'test' } as never],
+						type: {
+							$type: TSKindId.ParenthesizedType,
+							type: { $type: TSKindId.TypeIdentifier, text: 'test' } as never
+						} as never
+					} as never
+				]
+			);
 			expect(node.$type).toBe(TSKindId.FieldDeclarations);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.fieldDeclarations(...[{ $type: TSKindId.FieldDeclaration, names: [] } as never]);
+			const node = ir.fieldDeclarations(
+				...[
+					{
+						$type: TSKindId.FieldDeclaration,
+						names: [{ $type: TSKindId.FieldIdentifier, text: 'test' } as never],
+						type: {
+							$type: TSKindId.ParenthesizedType,
+							type: { $type: TSKindId.TypeIdentifier, text: 'test' } as never
+						} as never
+					} as never
+				]
+			);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 	});

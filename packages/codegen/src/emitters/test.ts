@@ -1,7 +1,9 @@
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { compileAnchoredPattern, samplePattern } from '../types/runtime-shapes.ts';
-import { SEQ, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, SEQ, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
+import type { Multiplicity, RenderRule, RuleId } from '../types/rule.ts';
+import { isSeamChoice } from '../compiler/model/render-rules.ts';
 import { patternDfa, shortestAccepted } from '../compiler/model/pattern-automaton.ts';
 import { wrapperChainOfSlot } from '../compiler/model/wrapper-chain.ts';
 import { isDelimiterToken, isFixedTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
@@ -73,9 +75,10 @@ function rendersText(
 	if (body === undefined) return true;
 	if (writesText(body)) return true;
 	if (!(node instanceof AbstractAssembledCompound)) return false;
+	const minimal = minimalSlots(node, { nodeMap });
 	return node.slots.some(
 		(slot) =>
-			isRequired(slot) &&
+			minimal.has(slot) &&
 			refersTo(body, slot.name) &&
 			slot.values.length > 0 &&
 			slot.values.every((value) => !isNodeRef(value) || rendersText(storageKindOfRef(value.node), nodeMap, bodies, layout, within))
@@ -256,6 +259,31 @@ function pushRenderTest(
 	}
 }
 
+interface ArmSeatCtx {
+	readonly owned: ReadonlyMap<RuleId, AssembledNonterminal> | undefined;
+}
+
+function armSeats(rule: RenderRule, ctx: ArmSeatCtx): readonly AssembledNonterminal[] {
+	const { multiplicity } = rule as { multiplicity?: Multiplicity };
+	if (multiplicity === 'optional' || multiplicity === 'array' || isSeamChoice(rule)) return [];
+	if (rule.type === SEQ) return rule.members.flatMap((member) => armSeats(member as RenderRule, ctx));
+	const slot = rule.id === undefined ? undefined : ctx.owned?.get(rule.id);
+	if (rule.type !== CHOICE) return slot === undefined ? [] : [slot];
+	const arms = rule.members.map((member) => armSeats(member as RenderRule, ctx));
+	if (arms.some((arm) => arm.every(isRequired))) return [];
+	return slot === undefined ? arms[0]! : [slot];
+}
+
+interface MinimalSlotsCtx {
+	readonly nodeMap: NodeMap;
+}
+
+function minimalSlots(node: AbstractAssembledCompound, ctx: MinimalSlotsCtx): ReadonlySet<AssembledNonterminal> {
+	const rule = ctx.nodeMap.normalizedRules?.[node.kind];
+	const inArm = rule === undefined ? [] : armSeats(rule, { owned: ctx.nodeMap.slotByRuleId.get(node.kind) });
+	return new Set([...node.slots.filter(isRequired), ...inArm]);
+}
+
 function factoryCallArgs(
 	node: AuthoredCompound,
 	nodeMap: NodeMap,
@@ -265,7 +293,8 @@ function factoryCallArgs(
 	options?: DummyOptions
 ): { typeConfigArg: string; renderConfigArg: string; registeredOptionsArg: string | undefined } {
 	const registeredSet = new Set(registeredSlots(node));
-	const seated = (f: AssembledNonterminal): boolean => isRequired(f) || (options?.populateOptional === true && !isMultiple(f));
+	const minimal = minimalSlots(node, { nodeMap });
+	const seated = (f: AssembledNonterminal): boolean => minimal.has(f) || (options?.populateOptional === true && !isMultiple(f));
 	const inner: DummyOptions | undefined = options?.texts === undefined ? undefined : { texts: options.texts };
 	const typeConfigParts: string[] = [];
 	for (const f of node.slots) {
@@ -877,8 +906,9 @@ function childInput(
 		return path?.length === 1 ? `ir.${path[0]}(${item})` : `[${item}]`;
 	}
 	const populateOptional = depth === 0 && options?.populateOptional === true;
+	const minimal = minimalSlots(node, { nodeMap });
 	const parts = node.slots.flatMap((f) => {
-		if (isRequired(f) || (populateOptional && !isMultiple(f))) return fieldDummyParts(f, nodeMap, kindEntries, false, at, inner);
+		if (minimal.has(f) || (populateOptional && !isMultiple(f))) return fieldDummyParts(f, nodeMap, kindEntries, false, at, inner);
 		return isMultiple(f) ? [`${f.propertyName}: []`] : [];
 	});
 	return `{ ${[`$type: ${type}`, ...parts].join(', ')} }`;

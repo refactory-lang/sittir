@@ -296,7 +296,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const node = ir.attributeItem({
 				$type: TSKindId.Attribute,
 				path: TSKindId.SelfModule as never,
-				input: { $type: TSKindId.AttributeInput } as never
+				input: { $type: TSKindId.AttributeInput, value: { $type: TSKindId.Identifier, text: 'test' } as never } as never
 			} as never);
 			expect(node.$type).toBe(TSKindId.AttributeItem);
 			expectBuiltNode(node);
@@ -305,11 +305,12 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const node = ir.attributeItem({
 				$type: TSKindId.Attribute,
 				path: TSKindId.SelfModule as never,
-				input: { $type: TSKindId.AttributeInput } as never
+				input: { $type: TSKindId.AttributeInput, value: { $type: TSKindId.Identifier, text: 'test' } as never } as never
 			} as never);
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 			expect(rendered).toContain('self');
+			expect(rendered).toContain('test');
 		});
 	});
 
@@ -318,7 +319,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const node = ir.innerAttributeItem({
 				$type: TSKindId.Attribute,
 				path: TSKindId.SelfModule as never,
-				input: { $type: TSKindId.AttributeInput } as never
+				input: { $type: TSKindId.AttributeInput, value: { $type: TSKindId.Identifier, text: 'test' } as never } as never
 			} as never);
 			expect(node.$type).toBe(TSKindId.InnerAttributeItem);
 			expectBuiltNode(node);
@@ -327,11 +328,12 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const node = ir.innerAttributeItem({
 				$type: TSKindId.Attribute,
 				path: TSKindId.SelfModule as never,
-				input: { $type: TSKindId.AttributeInput } as never
+				input: { $type: TSKindId.AttributeInput, value: { $type: TSKindId.Identifier, text: 'test' } as never } as never
 			} as never);
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 			expect(rendered).toContain('self');
+			expect(rendered).toContain('test');
 		});
 	});
 
@@ -350,7 +352,10 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('attribute sub-factories', () => {
 		it('input builds the parent', () => {
-			const node = ir.attribute.input({ path: TSKindId.SelfModule as never });
+			const node = ir.attribute.input({
+				path: TSKindId.SelfModule as never,
+				value: { $type: TSKindId.Identifier, text: 'test' } as never
+			});
 			expect(node.$type).toBe(TSKindId.Attribute);
 			expect((node as any).input()?.$type).toBe(TSKindId.AttributeInput);
 			expect(node.$render!().length).toBeGreaterThan(0);
