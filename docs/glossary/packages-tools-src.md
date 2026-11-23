@@ -464,11 +464,11 @@ One group of failures that share a signature: the number of failures, the count 
 
 ### `packages/tools/src/scripts/test-failures.ts::FailureSummary`
 
-The grouped result: total failures, the groups in order, and the split between failed assertions and failed files that have no assertion results. `failures` equals `failedTests + failedFiles`.
+The grouped result: total failures, the groups in order, and the split between failed assertions and failed files (suite errors, or files with no failing assertion). `failures` equals `failedTests + failedFiles`.
 
 ### `packages/tools/src/scripts/test-failures.ts::summarizeFailures`
 
-Groups the failures of a parsed vitest JSON report. A failure is one failed assertion, or one test file that failed with no assertion results. Its signature is the headline of its first failure message, with ANSI escapes removed, file paths replaced by `<path>` (a comma-separated list of them collapsed to one `<path>`), each digit run replaced by `#`, and the text from the first ` on <Type>._<slot>` defect location onward dropped. The headline is the first non-empty line, except that an `Error: Command failed:` wrapper yields its first later line that starts with an error name. Nothing else is normalized, so a kind name in the message survives into the signature. Groups are sorted by count descending, then by signature. Throws when the failed assertion count differs from the report's `numFailedTests`, so a report that does not add up is never summarized silently.
+Groups the failures of a parsed vitest JSON report. A failure is one failed assertion, or one failed test file that has a suite error (a non-empty file message, such as a failing `afterAll`) or no failing assertion. A file with a failed test and a suite error contributes both. Its signature is the headline of its first failure message, with ANSI escapes removed, file paths replaced by `<path>` (a comma-separated list of them collapsed to one `<path>`), each digit run replaced by `#`, and the text from the first ` on <Type>._<slot>` defect location onward dropped. The headline is the first non-empty line, except that an `Error: Command failed:` wrapper yields its first later line that starts with an error name. Nothing else is normalized, so a kind name in the message survives into the signature. Groups are sorted by count descending, then by signature. Throws when the failed assertion count differs from the report's `numFailedTests`, so a report that does not add up is never summarized silently. Throws when the report says `success: false` and names no failure, so a failed run never prints zero failures.
 
 ### `packages/tools/src/scripts/test-failures.ts::formatFailureSummary`
 
@@ -484,19 +484,15 @@ The result of comparing two reports' failures by key: the failure counts of the 
 
 ### `packages/tools/src/scripts/test-failures.ts::compareFailures`
 
-Compares the failures of a current report with an older one. A failure's key is `<checkout-relative file> | <full name>`, or, for a failed file with no assertion results, `<file> | (file) <first line of its message>`. Throws when a key occurs twice in one report, since a repeated key would make the comparison ambiguous. Throws when `new + unchanged` differs from the current report's failure count, or `fixed + unchanged` from the older report's, so a comparison that does not reconcile is never returned. A test absent from the older report counts as new, including one that was renamed.
+Compares the failures of a current report with an older one. A failure's key is `<checkout-relative file> | <full name>`, or, for a failed file with a suite error or no failing assertion, `<file> | (file) <first line of its message>`. Throws when a key occurs twice in one report, since a repeated key would make the comparison ambiguous. Throws when `new + unchanged` differs from the current report's failure count, or `fixed + unchanged` from the older report's, so a comparison that does not reconcile is never returned. A test absent from the older report counts as new, including one that was renamed.
 
 ### `packages/tools/src/scripts/vitest-report.ts::readVitestReport`
 
 Reads one vitest JSON report from a path and checks that it is one: `testResults`, `numTotalTests` and `numFailedTests` must be present. Throws, naming the path, when it is not, so a file that is not a report is never read as one.
 
-### `packages/tools/src/scripts/vitest-report.ts::checkoutRelativeFile`
+### `packages/tools/src/scripts/vitest-report.ts::checkoutRelativeNames`
 
-A test file's path in a vitest report, made relative to the git checkout that holds it, with `/` separators. A report from another worktree therefore names its files the same way as this one, so two reports of the same failures compare equal whichever checkout ran them.
-
-### `packages/tools/src/scripts/vitest-report.ts::checkoutRootOf`
-
-The root of the git checkout that holds a file: the nearest ancestor directory with a `.git` entry (a directory in a clone, a file in a worktree). Throws when the file does not exist, or when no ancestor has one, so a file whose checkout cannot be found is refused rather than named after some other tree. The file must exist because a deleted worktree's files would otherwise resolve to the checkout that contains it.
+Keys every file a report names by its path inside the checkout the report ran in, as a map from the file's name in the report to its key with `/` separators. The checkout is found from the files that still exist: each one's nearest ancestor with a `.git` entry, which must agree across them. Throws when none of the files exists, when existing files lie in more than one checkout, when a live file is in no checkout, or when any named file (deleted ones included) falls outside that checkout. So a deleted file keeps its key, and a removed worktree, even one nested in the main checkout, is refused rather than named after its parent.
 
 ### `packages/tools/src/scripts/test-durations.ts::TestDurationsOptions`
 

@@ -46,6 +46,7 @@ export interface VitestJsonReport {
 	numFailedTests: number;
 	numPendingTests: number;
 	numTodoTests: number;
+	success?: boolean;
 	testResults: VitestJsonTestResult[];
 }
 

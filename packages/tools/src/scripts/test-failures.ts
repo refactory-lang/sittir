@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 
 import type { VitestJsonReport } from './record-test-run.ts';
-import { checkoutRelativeFile, readVitestReport } from './vitest-report.ts';
+import { checkoutRelativeNames, readVitestReport } from './vitest-report.ts';
 
 export interface TestFailuresOptions {
 	report?: string;
@@ -74,14 +74,18 @@ function packageOf(file: string): string {
 }
 
 function collectFailures(report: VitestJsonReport): TestFailure[] {
+	const names = checkoutRelativeNames(report);
 	const failures: TestFailure[] = [];
 	for (const result of report.testResults) {
-		const file = checkoutRelativeFile(result.name);
+		const file = names.get(result.name) as string;
+		let failedAssertions = 0;
 		for (const assertion of result.assertionResults) {
 			if (assertion.status !== 'failed') continue;
+			failedAssertions += 1;
 			failures.push({ file, fullName: assertion.fullName, message: assertion.failureMessages[0] ?? '' });
 		}
-		if (result.status === 'failed' && result.assertionResults.length === 0) {
+		const suiteError = (result.message ?? '') !== '';
+		if (result.status === 'failed' && (suiteError || failedAssertions === 0)) {
 			failures.push({ file, fullName: undefined, message: result.message ?? '' });
 		}
 	}
@@ -111,6 +115,9 @@ function groupFailures(failures: TestFailure[], examples: number): FailureGroup[
 
 export function summarizeFailures(report: VitestJsonReport, examples: number): FailureSummary {
 	const failures = collectFailures(report);
+	if (report.success === false && failures.length === 0) {
+		throw new Error('the report says the run failed but names no failing test or failed file, so there is nothing to group');
+	}
 	const failedTests = failures.filter((failure) => failure.fullName !== undefined).length;
 	if (failedTests !== report.numFailedTests) {
 		throw new Error(
@@ -137,7 +144,7 @@ export function formatFailureSummary(summary: FailureSummary): string {
 		lines.push('');
 	}
 	lines.push(
-		`${summary.failures} failures in ${summary.groups.length} groups (${summary.failedTests} failed tests, ${summary.failedFiles} failed files with no tests)`
+		`${summary.failures} failures in ${summary.groups.length} groups (${summary.failedTests} failed tests, ${summary.failedFiles} failed files, each a suite error or a file with no failing test)`
 	);
 	return lines.join('\n');
 }

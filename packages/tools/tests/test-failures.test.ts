@@ -214,7 +214,7 @@ describe('formatFailureSummary', () => {
 			3
 		);
 		expect(formatFailureSummary(summary).split('\n').at(-1)).toBe(
-			'3 failures in 2 groups (2 failed tests, 1 failed files with no tests)'
+			'3 failures in 2 groups (2 failed tests, 1 failed files, each a suite error or a file with no failing test)'
 		);
 	});
 });
