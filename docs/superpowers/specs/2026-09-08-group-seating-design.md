@@ -237,6 +237,11 @@ and `build.binaryExpression.in(...)` build them. A `conflicts` entry naming the 
 names the default kind instead. A blank name without `default: true` is refused, and so
 is one variant name on two keys.
 
+`binary_expression_in` becoming its own kind puts it directly in the 129 typescript slots
+that hold an expression. It reads as a raw arm there for the reason it already did, so the
+typescript per-value raw-arm ceiling is 4,504 where it was 4,375, and the per-kind ceiling
+stays 30 (the maintainer, 2026-11-23: "Allow +129").
+
 A mandatory single group is the degenerate case with one overload. Today's
 forwarded parent already accepts the group's Config that way
 (`buildMatchBlock(config: MatchBlockArms.Config)`), emitted by the base
