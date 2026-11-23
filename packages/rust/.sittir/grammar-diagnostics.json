@@ -972,7 +972,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.enum_member.private: arm 200 builds fields through more than one form"
+    "message": "declaration.member.enum_member.private: a preset at visibilityModifier.content.visibilityModifierPubScope.content that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -980,7 +980,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.enum_member.public: arm 200 builds fields through more than one form"
+    "message": "declaration.member.enum_member.public: a preset at visibilityModifier.content that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -988,7 +988,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.enum_member.public.internal: arm 200 builds fields through more than one form"
+    "message": "declaration.member.enum_member.public.internal: a preset at visibilityModifier.content.visibilityModifierPubScope.content that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -996,7 +996,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.enum_member.public.parent: arm 200 builds fields through more than one form"
+    "message": "declaration.member.enum_member.public.parent: a preset at visibilityModifier.content.visibilityModifierPubScope.content that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -1004,7 +1004,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.enum_member.public.restricted: arm 200 builds fields through more than one form"
+    "message": "declaration.member.enum_member.public.restricted: scope's step at content is not a plain slot"
   },
   {
     "scope": "grammar",
@@ -1020,7 +1020,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.enum_member.struct.private: arm 200 builds fields through more than one form"
+    "message": "declaration.member.enum_member.struct.private: a container at fieldDeclaration with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1028,7 +1028,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.enum_member.struct.public: arm 200 builds fields through more than one form"
+    "message": "declaration.member.enum_member.struct.public: a container at fieldDeclaration with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1036,7 +1036,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.enum_member.struct.public.internal: arm 200 builds fields through more than one form"
+    "message": "declaration.member.enum_member.struct.public.internal: a container at fieldDeclaration with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1044,7 +1044,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.enum_member.struct.public.parent: arm 200 builds fields through more than one form"
+    "message": "declaration.member.enum_member.struct.public.parent: a container at fieldDeclaration with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -1052,7 +1052,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.enum_member.struct.public.restricted: arm 200 builds fields through more than one form"
+    "message": "declaration.member.enum_member.struct.public.restricted: scope's step at content is not a plain slot"
   },
   {
     "scope": "grammar",
@@ -1068,7 +1068,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.enum_member.tuple.private: arm 200 builds fields through more than one form"
+    "message": "declaration.member.enum_member.tuple.private: a preset at visibilityModifier.content.visibilityModifierPubScope.content that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -1076,7 +1076,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.enum_member.tuple.public: arm 200 builds fields through more than one form"
+    "message": "declaration.member.enum_member.tuple.public: a preset at visibilityModifier.content that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -1084,7 +1084,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.enum_member.tuple.public.internal: arm 200 builds fields through more than one form"
+    "message": "declaration.member.enum_member.tuple.public.internal: a preset at visibilityModifier.content.visibilityModifierPubScope.content that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -1092,7 +1092,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.enum_member.tuple.public.parent: arm 200 builds fields through more than one form"
+    "message": "declaration.member.enum_member.tuple.public.parent: a preset at visibilityModifier.content.visibilityModifierPubScope.content that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -1100,7 +1100,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.member.enum_member.tuple.public.restricted: arm 200 builds fields through more than one form"
+    "message": "declaration.member.enum_member.tuple.public.restricted: scope's step at content is not a plain slot"
   },
   {
     "scope": "grammar",

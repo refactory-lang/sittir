@@ -529,6 +529,42 @@ describe.each(STORAGES)('rust: a range pattern read through either claim of its 
 	});
 });
 
+describe.each(STORAGES)('rust: an enum variant whose path names its body, in %s storage', (nodeStorage) => {
+	const ENUM_MEMBER = 'declaration.member.enum_member';
+	it.each([
+		['pub A', 'public', { name: 'A' }, 'pub A,'],
+		['pub(crate) A', 'public.internal', { name: 'A' }, 'pub(crate) A,'],
+		['crate A', 'public.internal', { name: 'A' }, 'pub(crate) A,'],
+		['pub(self) A', 'private', { name: 'A' }, 'pub(self) A,'],
+		['pub(super) A', 'public.parent', { name: 'A' }, 'pub(super) A,'],
+		['pub A = 1', 'public', { name: 'A', value: { $path: 'literal.number.integer', $value: 1 } }, 'pub A = 1,'],
+		['pub A()', 'tuple.public', { name: 'A', fields: [] }, 'pub A(),'],
+		['pub A {}', 'struct.public', { name: 'A', fields: [] }, 'pub A {},'],
+		['pub(crate) A()', 'tuple.public.internal', { name: 'A', fields: [] }, 'pub(crate) A(),'],
+		['pub(self) A {}', 'struct.private', { name: 'A', fields: [] }, 'pub(self) A {},']
+	] as const)('%s reads only what its path holds and builds back', async (variant, path, slots, rendered) => {
+		using engine = await createEngine(await languageByName('rust'), { api: 'strict', nodeStorage });
+		const runtime = await portableRuntime(engine);
+		const read = runtime.read(engine.parse(`enum E { ${variant} }\n`));
+		expect([...structuresIn(read)].find((candidate) => candidate.$path.startsWith(ENUM_MEMBER))).toEqual({ $path: `${ENUM_MEMBER}.${path}`, ...slots });
+		expect(engine.render(runtime.build(read as PortableStructure) as never).toString().replace(/\s+/g, ' ').trim()).toBe(`enum E { ${rendered} }`);
+	});
+
+	it.each(['pub(in a) A', 'pub(in a) A()', 'pub(in a) A {}'])('%s builds back with its scope', async (variant) => {
+		using engine = await createEngine(await languageByName('rust'), { api: 'strict', nodeStorage });
+		const runtime = await portableRuntime(engine);
+		const read = runtime.read(engine.parse(`enum E { ${variant} }\n`));
+		expect(engine.render(runtime.build(read as PortableStructure) as never).toString().replace(/\s+/g, ' ').trim()).toBe(`enum E { ${variant}, }`);
+	});
+
+	it.each(['public', 'private', 'public.internal', 'public.parent'])('%s refuses a body in its input, as the plain path does', async (path) => {
+		using engine = await createEngine(await languageByName('rust'), { api: 'strict', nodeStorage });
+		const runtime = await portableRuntime(engine);
+		const field = { $path: 'declaration.member.field', name: 'x', type: 'u8' };
+		expect(() => runtime.build({ $path: `${ENUM_MEMBER}.${path}`, name: 'A', fields: [field] } as never)).toThrow('enum_variant has no slot fields');
+	});
+});
+
 describe.each(GRAMMARS)('the generated portable build of %s', (grammar) => {
 	it.each(STORAGES)('builds every corpus structure as the interpreter does, in %s storage', async (nodeStorage) => {
 		const language = await languageByName(grammar);

@@ -12753,124 +12753,7 @@ export const build: PortableBuildTable = {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float'
 							}
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'fieldDeclarationList',
-									optional: true,
-									kinds: [201]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [201, 'elements'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'orderedFieldDeclarationList',
-									optional: true,
-									kinds: [203]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [203, 'elements'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
 						}
-					],
-					owners: [
-						[0, 1, 2],
-						[0, 1, 3]
 					],
 					presets: [
 						{
@@ -12981,124 +12864,7 @@ export const build: PortableBuildTable = {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float'
 							}
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'fieldDeclarationList',
-									optional: true,
-									kinds: [201]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [201, 'elements'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'orderedFieldDeclarationList',
-									optional: true,
-									kinds: [203]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [203, 'elements'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
 						}
-					],
-					owners: [
-						[0, 1, 2],
-						[0, 1, 3]
 					],
 					presets: [
 						{
@@ -13194,124 +12960,7 @@ export const build: PortableBuildTable = {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float'
 							}
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'fieldDeclarationList',
-									optional: true,
-									kinds: [201]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [201, 'elements'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'orderedFieldDeclarationList',
-									optional: true,
-									kinds: [203]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [203, 'elements'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
 						}
-					],
-					owners: [
-						[0, 1, 2],
-						[0, 1, 3]
 					],
 					presets: [
 						{
@@ -13422,124 +13071,7 @@ export const build: PortableBuildTable = {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float'
 							}
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'fieldDeclarationList',
-									optional: true,
-									kinds: [201]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [201, 'elements'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'orderedFieldDeclarationList',
-									optional: true,
-									kinds: [203]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [203, 'elements'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
 						}
-					],
-					owners: [
-						[0, 1, 2],
-						[0, 1, 3]
 					],
 					presets: [
 						{
@@ -13709,124 +13241,7 @@ export const build: PortableBuildTable = {
 									}
 								}
 							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'fieldDeclarationList',
-									optional: true,
-									kinds: [201]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [201, 'elements'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'orderedFieldDeclarationList',
-									optional: true,
-									kinds: [203]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [203, 'elements'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
 						}
-					],
-					owners: [
-						[0, 1, 2, 3],
-						[0, 1, 2, 4]
 					],
 					presets: [
 						{
@@ -14182,45 +13597,7 @@ export const build: PortableBuildTable = {
 									]
 								}
 							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'orderedFieldDeclarationList',
-									kinds: [203]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [203, 'elements'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
 						}
-					],
-					owners: [
-						[0, 1, 2],
-						[0, 1, 3]
 					],
 					presets: [
 						{
@@ -14417,45 +13794,7 @@ export const build: PortableBuildTable = {
 									]
 								}
 							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'orderedFieldDeclarationList',
-									kinds: [203]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [203, 'elements'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
 						}
-					],
-					owners: [
-						[0, 1, 2],
-						[0, 1, 3]
 					],
 					presets: [
 						{
@@ -14637,45 +13976,7 @@ export const build: PortableBuildTable = {
 									]
 								}
 							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'orderedFieldDeclarationList',
-									kinds: [203]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [203, 'elements'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
 						}
-					],
-					owners: [
-						[0, 1, 2],
-						[0, 1, 3]
 					],
 					presets: [
 						{
@@ -14872,45 +14173,7 @@ export const build: PortableBuildTable = {
 									]
 								}
 							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'orderedFieldDeclarationList',
-									kinds: [203]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [203, 'elements'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
 						}
-					],
-					owners: [
-						[0, 1, 2],
-						[0, 1, 3]
 					],
 					presets: [
 						{
@@ -15166,45 +14429,7 @@ export const build: PortableBuildTable = {
 									]
 								}
 							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
-									builder: 'orderedFieldDeclarationList',
-									kinds: [203]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [203, 'elements'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
 						}
-					],
-					owners: [
-						[0, 1, 2, 3],
-						[0, 1, 2, 4]
 					],
 					presets: [
 						{
@@ -15455,83 +14680,6 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'fieldDeclarationList',
-									kinds: [201]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [201, 'elements'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
 									builder: 'orderedFieldDeclarationList',
 									kinds: [203]
 								},
@@ -15561,10 +14709,6 @@ export const build: PortableBuildTable = {
 								}
 							]
 						}
-					],
-					owners: [
-						[0, 1, 2],
-						[0, 1, 3]
 					],
 					presets: [
 						{
@@ -15690,83 +14834,6 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'fieldDeclarationList',
-									kinds: [201]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [201, 'elements'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
 									builder: 'orderedFieldDeclarationList',
 									kinds: [203]
 								},
@@ -15796,10 +14863,6 @@ export const build: PortableBuildTable = {
 								}
 							]
 						}
-					],
-					owners: [
-						[0, 1, 2],
-						[0, 1, 3]
 					],
 					presets: [
 						{
@@ -15910,83 +14973,6 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'fieldDeclarationList',
-									kinds: [201]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [201, 'elements'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
 									builder: 'orderedFieldDeclarationList',
 									kinds: [203]
 								},
@@ -16016,10 +15002,6 @@ export const build: PortableBuildTable = {
 								}
 							]
 						}
-					],
-					owners: [
-						[0, 1, 2],
-						[0, 1, 3]
 					],
 					presets: [
 						{
@@ -16145,83 +15127,6 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'fieldDeclarationList',
-									kinds: [201]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [201, 'elements'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
 									builder: 'orderedFieldDeclarationList',
 									kinds: [203]
 								},
@@ -16251,10 +15156,6 @@ export const build: PortableBuildTable = {
 								}
 							]
 						}
-					],
-					owners: [
-						[0, 1, 2],
-						[0, 1, 3]
 					],
 					presets: [
 						{
@@ -16439,83 +15340,6 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'fieldDeclarationList',
-									kinds: [201]
-								},
-								{
-									key: 'elements',
-									stored: '_elements',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [201, 'elements'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							name: 'fields',
-							steps: [
-								{
-									key: 'body',
 									builder: 'orderedFieldDeclarationList',
 									kinds: [203]
 								},
@@ -16545,10 +15369,6 @@ export const build: PortableBuildTable = {
 								}
 							]
 						}
-					],
-					owners: [
-						[0, 1, 2, 3],
-						[0, 1, 2, 4]
 					],
 					presets: [
 						{

@@ -871,8 +871,12 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const entries = routes.readEntries.get(kind) ?? [];
 		const own = entries.filter((other) => other.vocab === entry.vocab).map((other) => formOf(kind, other));
 		const below = entries.filter((other) => other.vocab.startsWith(`${entry.vocab}.`)).flatMap((other) => formOf(kind, other) ?? []);
+		const untested = (other: ReadEntry): ReadEntry => ({ ...other, children: other.children.filter((child) => !entry.children.some((mine) => JSON.stringify(mine) === JSON.stringify(child))) });
+		const beside = entries
+			.filter((other) => other.vocab !== entry.vocab && !other.vocab.startsWith(`${entry.vocab}.`) && portablePathHasFacts(entry.vocab, other.vocab))
+			.flatMap((other) => formOf(kind, untested(other)) ?? []);
 		const isForm = (form: Omit<RefinedForm, 'own'> | undefined): form is Omit<RefinedForm, 'own'> => form !== undefined;
-		return [...(own.every(isForm) ? own.map((form) => ({ ...form, own: true })) : []), ...below.map((form) => ({ ...form, own: false }))];
+		return [...(own.every(isForm) ? own.map((form) => ({ ...form, own: true })) : []), ...[...below, ...beside].map((form) => ({ ...form, own: false }))];
 	};
 	const pinHolds = (pin: RefinedForm, held: string): boolean =>
 		pin.kinds.some((named) => reachedBy(model, held, named).length > 0 || concreteKinds(model, [named]).flatMap((kind) => [kind, ...membershipKindsOf([kind], nodeMap)]).includes(held));
@@ -886,6 +890,11 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const own = pins.filter((pin) => pin.own);
 		return pins.some((pin) => !pin.own && entersPinned(path, pin)) || (own.length > 0 && own.every((pin) => entersPinned(path, pin)));
 	};
+	const entersOtherKind = (path: readonly SlotStep[], guaranteed: Guaranteed): boolean =>
+		path.slice(1).some((step, i) => {
+			const kinds = guaranteed.present(path.slice(0, i + 1));
+			return kinds !== undefined && kinds.length > 0 && !pinHolds({ path: [], kinds, own: true }, step.owner);
+		});
 	const narrowedBy = (path: readonly SlotStep[], at: Seat, pin: RefinedForm): Seat | undefined => {
 		if (!endsAt(path, pin)) return at;
 		const [first] = at.entered;
@@ -1007,11 +1016,12 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const refined = refinedFormsOf(kind, entry);
 		const forms = refined.filter((pin) => pin.own).length;
 		const guaranteed = guaranteedBy(model, entry);
+		const claimsOfPath = (routes.readEntries.get(kind) ?? []).filter((other) => other.vocab === entry.vocab).map((other) => guaranteedBy(model, other));
 		const pinnedOut = new Set<readonly SlotStep[]>();
 		const routedAll = entryRoutes(entry).flatMap((route) => {
 			const path = route.path;
 			if (path === undefined) return [];
-			if (outOfForms(path, refined)) return (pinnedOut.add(path), []);
+			if (outOfForms(path, refined) || claimsOfPath.every((claim) => entersOtherKind(path, claim))) return (pinnedOut.add(path), []);
 			const built = portableSlotOf(route, guaranteed, entryRoutes(entry));
 			if (built === undefined) return [];
 			const seats = built.seats.flatMap((seat) => pinnedSeat(path, seat, refined) ?? []);
